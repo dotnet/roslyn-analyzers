@@ -1,14 +1,27 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectSuffixAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpIdentifiersShouldHaveCorrectSuffixFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectSuffixAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicIdentifiersShouldHaveCorrectSuffixFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class IdentifiersShouldHaveCorrectSuffixTests : DiagnosticAnalyzerTestBase
     {
+        public IdentifiersShouldHaveCorrectSuffixTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new IdentifiersShouldHaveCorrectSuffixAnalyzer();
@@ -420,7 +433,6 @@ public class MyCollectionDataTable : DataTable, IEnumerable
         [Fact]
         public void CA1710_AllScenarioDiagnostics_VisualBasic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 Imports System.Collections
@@ -772,7 +784,6 @@ GetCA1710BasicResultAt(line: 263, column: 14, symbolName: "WronglyNamedType", re
         [Fact]
         public void CA1710_NoDiagnostics_VisualBasic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 Imports System.Collections
@@ -1110,10 +1121,10 @@ public class C
                 line,
                 column,
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
+                string.Format(CultureInfo.CurrentCulture,
                     isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
                     symbolName,
                     replacementName));
         }
@@ -1124,10 +1135,10 @@ public class C
                 line,
                 column,
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
+                string.Format(CultureInfo.CurrentCulture,
                     isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
                     symbolName,
                     replacementName));
         }

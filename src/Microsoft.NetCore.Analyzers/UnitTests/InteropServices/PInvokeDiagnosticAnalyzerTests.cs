@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -9,10 +10,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public class PInvokeDiagnosticAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        #region Verifiers 
+        #region Verifiers
 
-        private static readonly string s_CA1401RuleText = SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
-        private static readonly string s_CA2101RuleText = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
+        private static readonly string s_CA1401RuleText = MicrosoftNetCoreAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
+        private static readonly string s_CA2101RuleText = MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -26,12 +27,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
         private static DiagnosticResult CSharpResult1401(int line, int column, string typeName)
         {
-            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(s_CA1401RuleText, typeName));
+            return GetCSharpResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(CultureInfo.CurrentCulture, s_CA1401RuleText, typeName));
         }
 
         private static DiagnosticResult BasicResult1401(int line, int column, string typeName)
         {
-            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(s_CA1401RuleText, typeName));
+            return GetBasicResultAt(line, column, PInvokeDiagnosticAnalyzer.RuleCA1401Id, string.Format(CultureInfo.CurrentCulture, s_CA1401RuleText, typeName));
         }
 
         private static DiagnosticResult CSharpResult2101(int line, int column)
@@ -46,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
         #endregion
 
-        #region CA1401 tests 
+        #region CA1401 tests
 
         [Fact]
         public void CA1401CSharpTest()
@@ -258,7 +259,7 @@ End Class
 
         #endregion
 
-        #region CA2101 tests 
+        #region CA2101 tests
 
         [Fact]
         public void CA2101SimpleCSharpTest()

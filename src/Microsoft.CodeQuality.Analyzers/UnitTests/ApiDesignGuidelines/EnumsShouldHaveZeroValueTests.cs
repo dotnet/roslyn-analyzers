@@ -1,8 +1,9 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
 using Test.Utilities;
+using System.Globalization;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -22,10 +23,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
-            string expectedMessage4 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage4 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E4", "A4");
 
             var code = @"
 public class Outer
@@ -120,8 +121,8 @@ internal enum NoZeroValuedField
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
 
             var code = @"// Some comment
 public class Outer
@@ -174,8 +175,8 @@ internal enum E2
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 public class Outer
@@ -246,9 +247,9 @@ internal enum E4
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
 
             var code = @"
 Public Class C
@@ -321,9 +322,9 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
-            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E", "A");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E2", "A2");
+            string expectedMessage3 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename, "E3", "A3");
 
             var code = @"
 Public Class Outer
@@ -362,9 +363,9 @@ End Enum
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
-            string expectedMessage3 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E3");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
+            string expectedMessage3 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E3");
 
             var code = @"
 Public Class Outer
@@ -424,8 +425,8 @@ End Enum";
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue, "E2");
 
             var code = @"
 Public Class Outer

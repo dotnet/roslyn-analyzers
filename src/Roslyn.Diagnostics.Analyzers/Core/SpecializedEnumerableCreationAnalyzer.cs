@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -15,7 +16,6 @@ namespace Roslyn.Diagnostics.Analyzers
     public abstract class SpecializedEnumerableCreationAnalyzer : DiagnosticAnalyzer
     {
         internal const string SpecializedCollectionsMetadataName = "Roslyn.Utilities.SpecializedCollections";
-        internal const string IEnumerableMetadataName = "System.Collections.Generic.IEnumerable`1";
         internal const string LinqEnumerableMetadataName = "System.Linq.Enumerable";
         internal const string EmptyMethodName = "Empty";
 
@@ -54,7 +54,7 @@ namespace Roslyn.Diagnostics.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol specializedCollectionsSymbol = context.Compilation.GetTypeByMetadataName(SpecializedCollectionsMetadataName);
+                    INamedTypeSymbol specializedCollectionsSymbol = context.Compilation.GetOrCreateTypeByMetadataName(SpecializedCollectionsMetadataName);
                     if (specializedCollectionsSymbol == null)
                     {
                         // TODO: In the future, we may want to run this analyzer even if the SpecializedCollections
@@ -64,13 +64,13 @@ namespace Roslyn.Diagnostics.Analyzers
                         return;
                     }
 
-                    INamedTypeSymbol genericEnumerableSymbol = context.Compilation.GetTypeByMetadataName(IEnumerableMetadataName);
+                    INamedTypeSymbol genericEnumerableSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
                     if (genericEnumerableSymbol == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol linqEnumerableSymbol = context.Compilation.GetTypeByMetadataName(LinqEnumerableMetadataName);
+                    INamedTypeSymbol linqEnumerableSymbol = context.Compilation.GetOrCreateTypeByMetadataName(LinqEnumerableMetadataName);
                     if (linqEnumerableSymbol == null)
                     {
                         return;
@@ -105,7 +105,7 @@ namespace Roslyn.Diagnostics.Analyzers
             public void Initialize(CodeBlockStartAnalysisContext<TLanguageKindEnum> context)
             {
                 if (context.OwningSymbol is IMethodSymbol methodSymbol &&
-    methodSymbol.ReturnType.OriginalDefinition == _genericEnumerableSymbol)
+    Equals(methodSymbol.ReturnType.OriginalDefinition, _genericEnumerableSymbol))
                 {
                     GetSyntaxAnalyzer(context, _genericEnumerableSymbol, _genericEmptyEnumerableSymbol);
                 }
@@ -130,7 +130,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 TypeInfo typeInfo = semanticModel.GetTypeInfo(expression);
 
                 return typeInfo.ConvertedType != null &&
-                    typeInfo.ConvertedType.OriginalDefinition == GenericEnumerableSymbol &&
+                    Equals(typeInfo.ConvertedType.OriginalDefinition, GenericEnumerableSymbol) &&
                     typeInfo.Type is IArrayTypeSymbol arrayType &&
                     arrayType.Rank == 1;
             }
@@ -138,7 +138,7 @@ namespace Roslyn.Diagnostics.Analyzers
             protected void AnalyzeMemberAccessName(SyntaxNode name, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic)
             {
                 if (semanticModel.GetSymbolInfo(name).Symbol is IMethodSymbol methodSymbol &&
-                    methodSymbol.OriginalDefinition == _genericEmptyEnumerableSymbol)
+                    Equals(methodSymbol.OriginalDefinition, _genericEmptyEnumerableSymbol))
                 {
                     addDiagnostic(Diagnostic.Create(UseEmptyEnumerableRule, name.Parent.GetLocation()));
                 }

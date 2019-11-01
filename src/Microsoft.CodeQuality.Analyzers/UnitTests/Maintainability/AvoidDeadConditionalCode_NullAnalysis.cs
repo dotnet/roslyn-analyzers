@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -6554,6 +6556,71 @@ public class C
         }
     }
 }");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void ArrayInitializerNotParentedByArrayCreation()
+        {
+            VerifyBasic(@"
+Class C
+    Public Sub F(p As Object)
+        Dim a = {M}
+        Dim b = If(p, new C())
+    End Sub
+End Class
+", validationMode: TestValidationMode.AllowCompileErrors);
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality." + AvoidDeadConditionalCode.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(7,13): warning CA1508: 'param == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                    GetCSharpResultAt(7, 13, @"param == null", "true")
+                };
+            }
+
+            VerifyCSharp(@"
+class Test
+{
+    void M1(string param)
+    {
+        param = null;
+        if (param == null)
+        {
+        }
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(5,12): warning CA1508: 'param Is Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                    GetBasicResultAt(5, 12, "param Is Nothing", "True")
+                };
+            }
+
+            VerifyBasic(@"
+Module Test
+    Sub M1(param As String)
+        param = Nothing
+        If param Is Nothing Then
+        End If
+    End Sub
+End Module", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -42,7 +44,7 @@ struct S
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
             VerifyCSharp(code,
                 GetCSharpResultAt(2, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage));
         }
@@ -76,7 +78,7 @@ struct S : IEquatable<S>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "S");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "S");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -95,13 +97,13 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoParameterListAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoParameterListAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -114,13 +116,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -133,13 +133,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride2()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride2()
         {
             var code = @"
 using System;
@@ -152,13 +150,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoParametersAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoParametersAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -171,13 +167,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterDeclarationAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterDeclarationAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -190,13 +184,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithWrongReturnTypeAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithWrongReturnTypeAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -209,9 +201,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -225,13 +215,13 @@ class C : IEquatable<C>
     public bool Equals(C other)
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoReturnTypeAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoReturnTypeAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -244,9 +234,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -280,7 +268,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -307,8 +295,8 @@ struct C : B
     }
 }
 ";
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
@@ -333,6 +321,70 @@ public struct S : IValueObject<S>
     public override int GetHashCode() => value;
 }";
             VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2027, "https://github.com/dotnet/roslyn-analyzers/issues/2027")]
+        public void NoDiagnosticForDerivedTypesWithBaseTypeWithIEquatableImplementation_01()
+        {
+            var code = @"
+using System;
+
+public class A<T> : IEquatable<T>
+    where T : A<T>
+{
+    public virtual bool Equals(T other) => false;
+
+    public override bool Equals(object obj) => Equals(obj as T);
+}
+
+public class B : A<B>
+{
+}";
+            VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2027, "https://github.com/dotnet/roslyn-analyzers/issues/2027")]
+        public void NoDiagnosticForDerivedTypesWithBaseTypeWithIEquatableImplementation_02()
+        {
+            var code = @"
+using System;
+
+public class A<T> : IEquatable<T>
+    where T: class
+{
+    public virtual bool Equals(T other) => false;
+
+    public override bool Equals(object obj) => Equals(obj as T);
+}
+
+public class B : A<B>
+{
+}
+
+public class C<T> : A<T>
+    where T : class
+{
+}
+
+public class D : C<D>
+{
+}";
+            VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2324, "https://github.com/dotnet/roslyn-analyzers/issues/2324")]
+        public void CA1066_CSharp_RefStruct_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public ref struct S
+{
+    public override bool Equals(object other)
+    {
+        return false;
+    }
+}
+",
+            parseOptions: new CSharpParseOptions(LanguageVersion.CSharp8));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

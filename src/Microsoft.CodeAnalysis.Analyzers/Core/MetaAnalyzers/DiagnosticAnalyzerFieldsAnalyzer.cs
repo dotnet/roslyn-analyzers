@@ -34,30 +34,41 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotStorePerCompilationDataOntoFieldsRule);
 
+#pragma warning disable RS1025 // Configure generated code analysis
+        public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1025 // Configure generated code analysis
+        {
+            context.EnableConcurrentExecution();
+
+            base.Initialize(context);
+        }
+
         [SuppressMessage("AnalyzerPerformance", "RS1012:Start action has no registered actions.", Justification = "Method returns an analyzer that is registered by the caller.")]
         protected override DiagnosticAnalyzerSymbolAnalyzer GetDiagnosticAnalyzerSymbolAnalyzer(CompilationStartAnalysisContext compilationContext, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
         {
             Compilation compilation = compilationContext.Compilation;
 
-            INamedTypeSymbol compilationType = compilation.GetTypeByMetadataName(s_compilationTypeFullName);
+            INamedTypeSymbol compilationType = compilation.GetOrCreateTypeByMetadataName(s_compilationTypeFullName);
             if (compilationType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol symbolType = compilation.GetTypeByMetadataName(s_symbolTypeFullName);
+            INamedTypeSymbol symbolType = compilation.GetOrCreateTypeByMetadataName(s_symbolTypeFullName);
             if (symbolType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationType = compilation.GetTypeByMetadataName(s_operationTypeFullName);
+            INamedTypeSymbol operationType = compilation.GetOrCreateTypeByMetadataName(s_operationTypeFullName);
             if (operationType == null)
             {
                 return null;
             }
 
-            return new FieldsAnalyzer(compilationType, symbolType, operationType, diagnosticAnalyzer, diagnosticAnalyzerAttribute);
+            var attributeUsageAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
+
+            return new FieldsAnalyzer(compilationType, symbolType, operationType, attributeUsageAttribute, diagnosticAnalyzer, diagnosticAnalyzerAttribute);
         }
 
         private sealed class FieldsAnalyzer : SyntaxNodeWithinAnalyzerTypeCompilationAnalyzer<TClassDeclarationSyntax, TFieldDeclarationSyntax>
@@ -65,19 +76,21 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             private readonly INamedTypeSymbol _compilationType;
             private readonly INamedTypeSymbol _symbolType;
             private readonly INamedTypeSymbol _operationType;
+            private readonly INamedTypeSymbol _attributeUsageAttribute;
 
-            public FieldsAnalyzer(INamedTypeSymbol compilationType, INamedTypeSymbol symbolType, INamedTypeSymbol operationType, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
+            public FieldsAnalyzer(INamedTypeSymbol compilationType, INamedTypeSymbol symbolType, INamedTypeSymbol operationType, INamedTypeSymbol attributeUsageAttribute, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
                 : base(diagnosticAnalyzer, diagnosticAnalyzerAttribute)
             {
                 _compilationType = compilationType;
                 _symbolType = symbolType;
                 _operationType = operationType;
+                _attributeUsageAttribute = attributeUsageAttribute;
             }
 
             protected override void AnalyzeDiagnosticAnalyzer(SymbolAnalysisContext symbolContext)
             {
                 var namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                if (!HasDiagnosticAnalyzerAttribute(namedType))
+                if (!HasDiagnosticAnalyzerAttribute(namedType, _attributeUsageAttribute))
                 {
                     // We are interested only in DiagnosticAnalyzer types with DiagnosticAnalyzerAttribute.
                     return;

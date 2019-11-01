@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetFramework.Analyzers
@@ -27,16 +28,16 @@ namespace Microsoft.NetFramework.Analyzers
 
             public MvcAttributeSymbols(Compilation compilation)
             {
-                this.ValidateAntiforgeryTokenAttributeSymbol = WellKnownTypes.ValidateAntiforgeryTokenAttribute(compilation);
-                this.HttpGetAttributeSymbol = WellKnownTypes.HttpGetAttribute(compilation);
-                this.HttpPostAttributeSymbol = WellKnownTypes.HttpPostAttribute(compilation);
-                this.HttpPutAttributeSymbol = WellKnownTypes.HttpPutAttribute(compilation);
-                this.HttpDeleteAttributeSymbol = WellKnownTypes.HttpDeleteAttribute(compilation);
-                this.HttpPatchAttributeSymbol = WellKnownTypes.HttpPatchAttribute(compilation);
-                this.AcceptVerbsAttributeSymbol = WellKnownTypes.AcceptVerbsAttribute(compilation);
-                this.NonActionAttributeSymbol = WellKnownTypes.NonActionAttribute(compilation);
-                this.ChildActionOnlyAttributeSymbol = WellKnownTypes.ChildActionOnlyAttribute(compilation);
-                this.HttpVerbsSymbol = WellKnownTypes.HttpVerbs(compilation);
+                this.ValidateAntiforgeryTokenAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcValidateAntiForgeryTokenAttribute);
+                this.HttpGetAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpGetAttribute);
+                this.HttpPostAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPostAttribute);
+                this.HttpPutAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPutAttribute);
+                this.HttpDeleteAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpDeleteAttribute);
+                this.HttpPatchAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPatchAttribute);
+                this.AcceptVerbsAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcAcceptVerbsAttribute);
+                this.NonActionAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcNonActionAttribute);
+                this.ChildActionOnlyAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcChildActionOnlyAttribute);
+                this.HttpVerbsSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpVerbs);
             }
 
             /// <summary>
@@ -108,7 +109,7 @@ namespace Microsoft.NetFramework.Analyzers
                                 }
                             }
                             else if (parameterType.TypeKind == TypeKind.Enum
-                                && parameterType == this.HttpVerbsSymbol)
+                                && Equals(parameterType, this.HttpVerbsSymbol))
                             {
                                 // The [AcceptVerbs(HttpVerbs.Delete)] case.
 
@@ -137,7 +138,7 @@ namespace Microsoft.NetFramework.Analyzers
             /// <returns>True if .NET attribute's type matches the specified type, false otherwise.</returns>
             private static bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol symbol)
             {
-                return symbol != null && attributeData.AttributeClass == symbol;
+                return symbol != null && Equals(attributeData.AttributeClass, symbol);
             }
         }
     }

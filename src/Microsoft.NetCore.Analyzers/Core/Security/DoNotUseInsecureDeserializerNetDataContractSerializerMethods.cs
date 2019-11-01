@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -16,15 +16,14 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     class DoNotUseInsecureDeserializerNetDataContractSerializerMethods : DoNotUseInsecureDeserializerMethodsBase
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2310",
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedTitle),
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerMethodUsedTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerMethodUsedMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
-                descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedDescription));
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2310-do-not-use-insecure-deserializer-netdatacontractserializer",
+                descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>
             WellKnownTypeNames.SystemRuntimeSerializationNetDataContractSerializer;

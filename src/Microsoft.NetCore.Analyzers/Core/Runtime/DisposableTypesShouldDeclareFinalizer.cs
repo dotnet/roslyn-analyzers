@@ -19,10 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2216";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableTypesShouldDeclareFinalizerTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableTypesShouldDeclareFinalizerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableTypesShouldDeclareFinalizerDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -47,11 +47,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     Compilation compilation = compilationStartAnalysisContext.Compilation;
 
                     ImmutableHashSet<INamedTypeSymbol> nativeResourceTypes = ImmutableHashSet.Create(
-                        WellKnownTypes.IntPtr(compilation),
-                        WellKnownTypes.UIntPtr(compilation),
-                        WellKnownTypes.HandleRef(compilation)
+                        compilation.GetSpecialType(SpecialType.System_IntPtr),
+                        compilation.GetSpecialType(SpecialType.System_UIntPtr),
+                        compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)
                     );
-                    var disposableType = WellKnownTypes.IDisposable(compilation);
+                    var disposableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         operationAnalysisContext =>

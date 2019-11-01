@@ -20,6 +20,11 @@
     <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
     <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>

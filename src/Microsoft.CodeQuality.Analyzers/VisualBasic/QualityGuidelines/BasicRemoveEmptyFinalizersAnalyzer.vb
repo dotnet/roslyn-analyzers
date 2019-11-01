@@ -1,4 +1,5 @@
 ﻿Imports Analyzer.Utilities
+Imports Analyzer.Utilities.Extensions
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
@@ -31,7 +32,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
                             Return False
                         End If
 
-                        Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation)
+                        Dim conditionalAttributeSymbol = analysisContext.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(GetType(ConditionalAttribute).FullName)
                         Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
                     End If
                 End If

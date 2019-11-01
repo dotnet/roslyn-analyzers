@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -30,16 +30,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1303";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -53,14 +53,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol localizableStateAttributeSymbol = WellKnownTypes.LocalizableAttribute(compilationContext.Compilation);
-                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
-                INamedTypeSymbol systemConsoleSymbol = WellKnownTypes.Console(compilationContext.Compilation);
+                INamedTypeSymbol localizableStateAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelLocalizableAttribute);
+                INamedTypeSymbol conditionalAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
+                INamedTypeSymbol systemConsoleSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 ImmutableHashSet<INamedTypeSymbol> typesToIgnore = GetTypesToIgnore(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
                     }
@@ -71,12 +73,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
                         var argument = (IArgumentOperation)operationContext.Operation;
-                        switch (argument.Parent?.Kind)
+                        IMethodSymbol targetMethod = null;
+                        switch (argument.Parent)
                         {
-                            case OperationKind.Invocation:
-                            case OperationKind.ObjectCreation:
-                                AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
-                                return;
+                            case IInvocationOperation invocation:
+                                targetMethod = invocation.TargetMethod;
+                                break;
+
+                            case IObjectCreationOperation objectCreation:
+                                targetMethod = objectCreation.Constructor;
+                                break;
+                        }
+
+                        if (ShouldAnalyze(targetMethod))
+                        {
+                            AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.Argument);
 
@@ -86,16 +97,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (propertyReference.Parent is IAssignmentOperation assignment &&
                             assignment.Target == propertyReference &&
                             !propertyReference.Property.IsIndexer &&
-                            propertyReference.Property.SetMethod?.Parameters.Length == 1)
+                            propertyReference.Property.SetMethod?.Parameters.Length == 1 &&
+                            ShouldAnalyze(propertyReference.Property))
                         {
                             IParameterSymbol valueSetterParam = propertyReference.Property.SetMethod.Parameters[0];
                             AnalyzeArgument(valueSetterParam, propertyReference.Property, assignment, operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.PropertyReference);
 
+                    return;
+
+                    // Local functions
+                    bool ShouldAnalyze(ISymbol symbol)
+                        => symbol != null && !symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
+
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
-                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))
+                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                            lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
@@ -142,16 +161,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue> ComputeValueContentAnalysisResult()
                     {
-                        foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
+                        var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                        if (cfg != null)
                         {
-                            IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
-                            if (topmostBlock != null)
-                            {
-                                var cfg = topmostBlock.GetEnclosingControlFlowGraph();
-                                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                                    operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
-                            }
+                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
+                            return ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                                operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                         }
 
                         return null;
@@ -164,31 +179,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             var builder = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
-            var xmlWriter = WellKnownTypes.XmlWriter(compilation);
+            var xmlWriter = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlWriter);
             if (xmlWriter != null)
             {
                 builder.Add(xmlWriter);
             }
 
-            var webUILiteralControl = WellKnownTypes.WebUILiteralControl(compilation);
+            var webUILiteralControl = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUILiteralControl);
             if (webUILiteralControl != null)
             {
                 builder.Add(webUILiteralControl);
             }
 
-            var unitTestingAssert = WellKnownTypes.UnitTestingAssert(compilation);
+            var unitTestingAssert = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingAssert);
             if (unitTestingAssert != null)
             {
                 builder.Add(unitTestingAssert);
             }
 
-            var unitTestingCollectionAssert = WellKnownTypes.UnitTestingCollectionAssert(compilation);
+            var unitTestingCollectionAssert = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingCollectionAssert);
             if (unitTestingCollectionAssert != null)
             {
                 builder.Add(unitTestingCollectionAssert);
             }
 
-            var unitTestingCollectionStringAssert = WellKnownTypes.UnitTestingCollectionStringAssert(compilation);
+            var unitTestingCollectionStringAssert = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingStringAssert);
             if (unitTestingCollectionStringAssert != null)
             {
                 builder.Add(unitTestingCollectionStringAssert);
@@ -239,21 +254,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // FxCop compat: For overrides, check for localizability of the corresponding parameter in the overridden method.
             var method = (IMethodSymbol)parameterSymbol.ContainingSymbol;
             if (method.IsOverride &&
-                method.OverriddenMethod.Parameters.Length == method.Parameters.Length)
+                method.OverriddenMethod?.Parameters.Length == method.Parameters.Length)
             {
                 int parameterIndex = method.GetParameterIndex(parameterSymbol);
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];
-                if (overridenParameter.Type == parameterSymbol.Type)
+                if (Equals(overridenParameter.Type, parameterSymbol.Type))
                 {
                     return ShouldBeLocalized(overridenParameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore);
                 }
             }
-
-            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
-            bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
-                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
 
             if (IsLocalizableByNameHeuristic(parameterSymbol) ||
                 containingPropertySymbolOpt != null && IsLocalizableByNameHeuristic(containingPropertySymbolOpt))
@@ -271,6 +280,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return false;
+
+            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
+            static bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
+                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
         }
 
         private static LocalizableAttributeState GetLocalizableAttributeState(ISymbol symbol, INamedTypeSymbol localizableAttributeTypeSymbol)
@@ -314,12 +329,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var literals = new StringBuilder();
             foreach (string literal in literalValues.Order())
             {
+                // sanitize the literal to ensure it's not multiline
+                // replace any newline characters with a space
+                var sanitizedLiteral = literal.Replace(Environment.NewLine, " ");
+                sanitizedLiteral = sanitizedLiteral.Replace((char)13, ' ');
+                sanitizedLiteral = sanitizedLiteral.Replace((char)10, ' ');
+
                 if (literals.Length > 0)
                 {
                     literals.Append(", ");
                 }
 
-                literals.Append(literal);
+                literals.Append(sanitizedLiteral);
             }
 
             return literals.ToString();

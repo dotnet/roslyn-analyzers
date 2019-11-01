@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -7,10 +7,8 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
+using System.Linq;
 
 namespace Microsoft.NetCore.Analyzers.Data
 {
@@ -19,18 +17,18 @@ namespace Microsoft.NetCore.Analyzers.Data
     {
         internal const string RuleId = "CA2100";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemDataAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesTitle), SystemDataAnalyzersResources.ResourceManager, typeof(SystemDataAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageNoNonLiterals = new LocalizableResourceString(nameof(SystemDataAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals), SystemDataAnalyzersResources.ResourceManager, typeof(SystemDataAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNoNonLiterals = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemDataAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), SystemDataAnalyzersResources.ResourceManager, typeof(SystemDataAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ReviewSQLQueriesForSecurityVulnerabilitiesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNoNonLiterals,
                                                                              DiagnosticCategory.Security,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -43,9 +41,9 @@ namespace Microsoft.NetCore.Analyzers.Data
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
-                INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
-                IPropertySymbol commandTextProperty = iDbCommandType?.GetProperty("CommandText");
+                INamedTypeSymbol iDbCommandType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDbCommand);
+                INamedTypeSymbol iDataAdapterType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDataAdapter);
+                IPropertySymbol commandTextProperty = iDbCommandType?.GetMembers("CommandText").OfType<IPropertySymbol>().FirstOrDefault();
 
                 if (iDbCommandType == null ||
                     iDataAdapterType == null ||
@@ -57,6 +55,11 @@ namespace Microsoft.NetCore.Analyzers.Data
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     ISymbol symbol = operationBlockStartContext.OwningSymbol;
+                    if (symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                        Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    {
+                        return;
+                    }
 
                     var isInDbCommandConstructor = false;
                     var isInDataAdapterConstructor = false;
@@ -92,7 +95,7 @@ namespace Microsoft.NetCore.Analyzers.Data
 
                         // If we're calling another constructor in the same class from this constructor, assume that all parameters are safe and skip analysis. Parameter usage
                         // will be analyzed there
-                        if (invocation.TargetMethod.ContainingType == symbol.ContainingType)
+                        if (Equals(invocation.TargetMethod.ContainingType, symbol.ContainingType))
                         {
                             return;
                         }
@@ -209,15 +212,20 @@ namespace Microsoft.NetCore.Analyzers.Data
             if (argumentValue.Type.SpecialType != SpecialType.System_String || !argumentValue.ConstantValue.HasValue)
             {
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
-                var cfg = argumentValue.GetEnclosingControlFlowGraph();
-                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                    operationContext.Options, Rule, operationContext.CancellationToken);
-                ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
-                if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                if (argumentValue.TryGetEnclosingControlFlowGraph(out var cfg))
                 {
-                    // The value is a constant literal or default/unitialized, so avoid flagging this usage.
-                    return false;
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                    var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                        operationContext.Options, Rule, operationContext.CancellationToken);
+                    if (valueContentResult != null)
+                    {
+                        ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
+                        if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                        {
+                            // The value is a constant literal or default/unitialized, so avoid flagging this usage.
+                            return false;
+                        }
+                    }
                 }
 
                 // Review if the symbol passed to {invocation} in {method/field/constructor/etc} has user input.
@@ -240,11 +248,11 @@ namespace Microsoft.NetCore.Analyzers.Data
             implementsDataCommand = false;
             foreach (var @interface in containingType.AllInterfaces)
             {
-                if (@interface == iDbCommandType)
+                if (Equals(@interface, iDbCommandType))
                 {
                     implementsDbCommand = true;
                 }
-                else if (@interface == iDataAdapterType)
+                else if (Equals(@interface, iDataAdapterType))
                 {
                     implementsDataCommand = true;
                 }

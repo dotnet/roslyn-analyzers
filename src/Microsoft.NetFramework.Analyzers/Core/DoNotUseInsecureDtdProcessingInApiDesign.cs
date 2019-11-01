@@ -24,7 +24,9 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
 
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1026 // Enable concurrent execution
         {
             // TODO: Make analyzer thread-safe.
             //analysisContext.EnableConcurrentExecution();
@@ -122,7 +124,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                 if (!(SyntaxNodeHelper.GetDeclaredSymbol(node, model) is IMethodSymbol methodSymbol) ||
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != _xmlTypes.XmlDocument) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlDocument, baseTypesOnly: true)))
+                    !((!Equals(methodSymbol.ContainingType, _xmlTypes.XmlDocument)) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -159,7 +161,7 @@ namespace Microsoft.NetFramework.Analyzers
                             rule,
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(MicrosoftNetFrameworkAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage),
-                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                             )
                         )
                     );
@@ -176,7 +178,7 @@ namespace Microsoft.NetFramework.Analyzers
                 if (!(SyntaxNodeHelper.GetDeclaredSymbol(node, model) is IMethodSymbol methodSymbol) ||
                     // skip constructors since we report on the absence of secure assignment in AnalyzeNodeForXmlDocumentDerivedTypeConstructorDecl
                     methodSymbol.MethodKind == MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != _xmlTypes.XmlDocument) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlDocument, baseTypesOnly: true)))
+                    !((!Equals(methodSymbol.ContainingType, _xmlTypes.XmlDocument)) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlDocument, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -222,7 +224,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                 if (!(SyntaxNodeHelper.GetDeclaredSymbol(node, model) is IMethodSymbol methodSymbol) ||
                     methodSymbol.MethodKind != MethodKind.Constructor ||
-                    !((methodSymbol.ContainingType != _xmlTypes.XmlTextReader) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlTextReader, baseTypesOnly: true)))
+                    !((!Equals(methodSymbol.ContainingType, _xmlTypes.XmlTextReader)) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -278,7 +280,7 @@ namespace Microsoft.NetFramework.Analyzers
                         rule,
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(MicrosoftNetFrameworkAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage),
-                            SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                            SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                         )
                     )
                 );
@@ -291,7 +293,7 @@ namespace Microsoft.NetFramework.Analyzers
 
 
                 if (!(SyntaxNodeHelper.GetDeclaredSymbol(node, model) is IMethodSymbol methodSymbol) ||
-                   !((methodSymbol.ContainingType != _xmlTypes.XmlTextReader) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlTextReader, baseTypesOnly: true)))
+                   !((!Equals(methodSymbol.ContainingType, _xmlTypes.XmlTextReader)) && methodSymbol.ContainingType.DerivesFrom(_xmlTypes.XmlTextReader, baseTypesOnly: true)))
                 {
                     return;
                 }
@@ -412,7 +414,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
                 INamedTypeSymbol xmlDocumentSym = _xmlTypes.XmlDocument;
-                if ((typeSymbol != xmlDocumentSym) && typeSymbol.DerivesFrom(xmlDocumentSym, baseTypesOnly: true))
+                if ((!Equals(typeSymbol, xmlDocumentSym)) && typeSymbol.DerivesFrom(xmlDocumentSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
 
@@ -451,7 +453,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
                 var typeSymbol = (INamedTypeSymbol)symbol;
                 INamedTypeSymbol xmlTextReaderSym = _xmlTypes.XmlTextReader;
-                if ((typeSymbol != xmlTextReaderSym) && typeSymbol.DerivesFrom(xmlTextReaderSym, baseTypesOnly: true))
+                if ((!Equals(typeSymbol, xmlTextReaderSym)) && typeSymbol.DerivesFrom(xmlTextReaderSym, baseTypesOnly: true))
                 {
                     bool explicitlyDeclared = true;
 

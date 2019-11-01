@@ -8,6 +8,8 @@
     <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
     <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <TargetFrameworksForPackage>$(TargetFrameworks)</TargetFrameworksForPackage>
+    <TargetFrameworksForPackage Condition="'$(TargetFrameworksForPackage)' == ''">$(TargetFramework)</TargetFrameworksForPackage>
   </PropertyGroup>
 
   <!-- 
@@ -17,6 +19,7 @@
     <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <Target Name="GenerateAnalyzerRulesets"
@@ -25,10 +28,13 @@
 
     <PropertyGroup>
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
+      <_GeneratedEditorconfigsDir>$(IntermediateOutputPath)Editorconfig</_GeneratedEditorconfigsDir>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
-      <DevelopmentDependency Condition="'$(DevelopmentDependency)' == ''">true</DevelopmentDependency>
+      <DevelopmentDependency Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != ''">true</DevelopmentDependency>
       <GenerateAnalyzerMdFile Condition="'$(GenerateAnalyzerMdFile)' == ''">true</GenerateAnalyzerMdFile>
+      <GenerateAnalyzerSarifFile Condition="'$(GenerateAnalyzerSarifFile)' == ''">true</GenerateAnalyzerSarifFile>
+      <GenerateAnalyzerConfigurationFile Condition="'$(GenerateAnalyzerConfigurationFile)' == ''">true</GenerateAnalyzerConfigurationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
@@ -44,7 +50,17 @@
       <AnalyzerDocumentationFileName>$(NuspecPackageId).md</AnalyzerDocumentationFileName>
     </PropertyGroup>
     
-    <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
+    <PropertyGroup Condition="'$(GenerateAnalyzerSarifFile)' == 'true'">
+      <AnalyzerSarifFileDir Condition="'$(AnalyzerSarifFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerSarifFileDir>
+      <AnalyzerSarifFileName>$(NuspecPackageId).sarif</AnalyzerSarifFileName>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(GenerateAnalyzerConfigurationFile)' == 'true'">
+      <AnalyzerConfigurationFileDir>$(RepoRoot)docs</AnalyzerConfigurationFileDir>
+      <AnalyzerConfigurationFileName>Analyzer Configuration.md</AnalyzerConfigurationFileName>
+    </PropertyGroup>
+    
+    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerRulesetsPath"/>
     </MSBuild>
 
@@ -52,8 +68,7 @@
       <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
       <AnalyzerRulesetAssembly Update="@(AnalyzerRulesetAssembly)" Condition="'%(AnalyzerRulesetAssembly.TargetFramework)' == ''" TargetFramework="$(TargetFramework)" />
     </ItemGroup>
-
-    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" $(ContainsPortedFxCopRules)' />
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules)' />
   </Target>
   
   <Target Name="GenerateAnalyzerNuspecFile"
@@ -68,7 +83,7 @@
       <_NuspecMetadata Include="requireLicenseAcceptance=$(PackageRequireLicenseAcceptance)" />
       <_NuspecMetadata Include="description=$(Description)" />
       <_NuspecMetadata Include="copyright=$(Copyright)" />
-      <_NuspecMetadata Include="licenseUrl=$(PackageLicenseUrl)" />
+      <_NuspecMetadata Include="license=$(PackageLicenseExpression)" />
       <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
       <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
       <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
@@ -87,6 +102,6 @@
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>
 
-    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)"' />
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)"' />
   </Target>
 </Project>

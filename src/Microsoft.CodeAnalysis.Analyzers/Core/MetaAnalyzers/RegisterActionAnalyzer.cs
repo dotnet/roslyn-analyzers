@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
@@ -120,31 +121,31 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         {
             Compilation compilation = compilationContext.Compilation;
 
-            INamedTypeSymbol analysisContext = compilation.GetTypeByMetadataName(AnalysisContextFullName);
+            INamedTypeSymbol analysisContext = compilation.GetOrCreateTypeByMetadataName(AnalysisContextFullName);
             if (analysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol compilationStartAnalysisContext = compilation.GetTypeByMetadataName(CompilationStartAnalysisContextFullName);
+            INamedTypeSymbol compilationStartAnalysisContext = compilation.GetOrCreateTypeByMetadataName(CompilationStartAnalysisContextFullName);
             if (compilationStartAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol codeBlockStartAnalysisContext = compilation.GetTypeByMetadataName(CodeBlockStartAnalysisContextFullName);
+            INamedTypeSymbol codeBlockStartAnalysisContext = compilation.GetOrCreateTypeByMetadataName(CodeBlockStartAnalysisContextFullName);
             if (codeBlockStartAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationBlockStartAnalysisContext = compilation.GetTypeByMetadataName(OperationBlockStartAnalysisContextFullName);
+            INamedTypeSymbol operationBlockStartAnalysisContext = compilation.GetOrCreateTypeByMetadataName(OperationBlockStartAnalysisContextFullName);
             if (operationBlockStartAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol symbolKind = compilation.GetTypeByMetadataName(SymbolKindFullName);
+            INamedTypeSymbol symbolKind = compilation.GetOrCreateTypeByMetadataName(SymbolKindFullName);
             if (symbolKind == null)
             {
                 return null;
@@ -394,7 +395,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     }
                     else
                     {
-                        ITypeParameterSymbol typeParam = method.TypeParameters.SingleOrDefault(t => t.Name == TLanguageKindEnumName);
+                        ITypeParameterSymbol typeParam = method.TypeParameters.FirstOrDefault(t => t.Name == TLanguageKindEnumName);
                         if (typeParam != null)
                         {
                             int index = method.TypeParameters.IndexOf(typeParam);
@@ -444,7 +445,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             {
                 if (IsContextType(parameter.Type, _compilationStartAnalysisContext, _codeBlockStartAnalysisContext, _operationBlockStartAnalysisContext))
                 {
-                    _declaredStartAnalysisContextParams = _declaredStartAnalysisContextParams ?? new HashSet<IParameterSymbol>();
+                    _declaredStartAnalysisContextParams ??= new HashSet<IParameterSymbol>();
                     _declaredStartAnalysisContextParams.Add(parameter);
                 }
             }
@@ -455,7 +456,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 // This is to avoid false positives, as the registration responsibility is not on the current method.
                 if (IsContextType(parameter.Type, _compilationStartAnalysisContext, _codeBlockStartAnalysisContext, _operationBlockStartAnalysisContext))
                 {
-                    _startAnalysisContextParamsToSkip = _startAnalysisContextParamsToSkip ?? new HashSet<IParameterSymbol>();
+                    _startAnalysisContextParamsToSkip ??= new HashSet<IParameterSymbol>();
                     _startAnalysisContextParamsToSkip.Add(parameter);
                 }
             }
@@ -486,7 +487,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     return;
                 }
 
-                _nestedActionsMap = _nestedActionsMap ?? new Dictionary<IParameterSymbol, List<NodeAndSymbol>>();
+                _nestedActionsMap ??= new Dictionary<IParameterSymbol, List<NodeAndSymbol>>();
                 if (!_nestedActionsMap.TryGetValue(contextParameter, out List<NodeAndSymbol> registerInvocations))
                 {
                     registerInvocations = new List<NodeAndSymbol>();

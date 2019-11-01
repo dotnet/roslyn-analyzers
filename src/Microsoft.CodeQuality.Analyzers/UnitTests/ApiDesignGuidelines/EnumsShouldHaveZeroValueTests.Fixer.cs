@@ -1,38 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
+using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumsShouldHaveZeroValueAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpEnumsShouldHaveZeroValueFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumsShouldHaveZeroValueAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicEnumsShouldHaveZeroValueFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class EnumsShouldHaveZeroValueFixerTests : CodeFixTestBase
+    public class EnumsShouldHaveZeroValueFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new EnumsShouldHaveZeroValueAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicEnumsShouldHaveZeroValueFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EnumsShouldHaveZeroValueAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpEnumsShouldHaveZeroValueFixer();
-        }
-
         [Fact]
-        public void CSharp_EnumsShouldZeroValueFlagsRename()
+        public async Task CSharp_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
 public class Outer
@@ -111,11 +94,20 @@ public enum NoZeroValuedField
     A5 = 1,
     B5 = 2
 }";
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(7, 9, 7, 10).WithArguments("E", "A"),
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(15, 5, 15, 7).WithArguments("E2", "A2"),
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(22, 5, 22, 7).WithArguments("E3", "A3"),
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(29, 5, 29, 7).WithArguments("E4", "A4"),
+                },
+                expectedFixedCode);
         }
 
         [Fact]
-        public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
+        public async Task CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"// Some comment
 public class Outer
@@ -149,11 +141,18 @@ public enum E2
 {
     None = 0
 }";
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero).WithSpan(5, 17, 5, 18).WithArguments("E"),
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero).WithSpan(13, 13, 13, 15).WithArguments("E2"),
+                },
+                expectedFixedCode);
         }
 
         [Fact]
-        public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
+        public async Task CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
 public class Outer
@@ -211,11 +210,18 @@ public enum E4
     A = 0
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero).WithSpan(4, 17, 4, 18).WithArguments("E"),
+                    VerifyCS.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero).WithSpan(9, 17, 9, 19).WithArguments("E2"),
+                },
+                expectedFixedCode);
         }
 
         [Fact]
-        public void VisualBasic_EnumsShouldZeroValueFlagsRename()
+        public async Task VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
 Public Class Outer
@@ -272,12 +278,20 @@ Public Enum NoZeroValuedField
     B5 = 2
 End Enum
 ";
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(5, 9, 5, 10).WithArguments("E", "A"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(12, 5, 12, 7).WithArguments("E2", "A2"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(18, 5, 18, 7).WithArguments("E3", "A3"),
+                },
+                expectedFixedCode);
         }
 
         [WorkItem(836193, "DevDiv")]
         [Fact]
-        public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
+        public async Task VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             var code = @"
 Public Class Outer
@@ -334,11 +348,19 @@ Public Enum NoZeroValuedField
     B5 = 2
 End Enum
 ";
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(5, 9, 5, 10).WithArguments("E", "A"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(12, 5, 12, 7).WithArguments("E2", "A2"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleRename).WithSpan(18, 5, 18, 7).WithArguments("E3", "A3"),
+                },
+                expectedFixedCode);
         }
 
         [Fact]
-        public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
+        public async Task VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"
 Public Class Outer
@@ -379,11 +401,19 @@ Public Enum E3
     None
 End Enum";
 
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero).WithSpan(4, 17, 4, 18).WithArguments("E"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero).WithSpan(11, 13, 11, 15).WithArguments("E2"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZero).WithSpan(17, 13, 17, 15).WithArguments("E3"),
+                },
+                expectedFixedCode);
         }
 
         [Fact]
-        public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
+        public async Task VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
 Public Class C
@@ -431,7 +461,14 @@ Public Enum E4
     A = 0
 End Enum
 ";
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(
+                code,
+                new[]
+                {
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero).WithSpan(3, 17, 3, 18).WithArguments("E"),
+                    VerifyVB.Diagnostic(EnumsShouldHaveZeroValueAnalyzer.RuleNoZero).WithSpan(7, 17, 7, 19).WithArguments("E2"),
+                },
+                expectedFixedCode);
         }
     }
 }

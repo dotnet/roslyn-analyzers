@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1019: Define accessors for attribute arguments
-    /// 
+    ///
     /// Cause:
     /// In its constructor, an attribute defines arguments that do not have corresponding properties.
     /// </summary>
@@ -24,10 +24,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string MakePublicCase = "MakePublic";
         internal const string RemoveSetterCase = "RemoveSetter";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_defaultRuleMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_increaseVisibilityMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_removeSetterMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_defaultRuleMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_increaseVisibilityMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_removeSetterMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                                     s_localizableTitle,
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
                 if (attributeType == null)
                 {
                     return;
@@ -97,7 +97,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static IEnumerable<IParameterSymbol> GetAllPublicConstructorParameters(INamedTypeSymbol attributeType)
         {
             // FxCop compatibility:
-            // Only examine parameters of public constructors. Can't use protected 
+            // Only examine parameters of public constructors. Can't use protected
             // constructors to define an attribute so this rule only applies to
             // public constructors.
             IEnumerable<IMethodSymbol> instanceConstructorsToCheck = attributeType.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public);
@@ -175,7 +175,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (property.SetMethod != null &&
                             property.SetMethod.DeclaredAccessibility == Accessibility.Public &&
-                            property.ContainingType == attributeType)
+                            Equals(property.ContainingType, attributeType))
                         {
                             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
                             addDiagnostic(GetRemoveSetterDiagnostic(parameter, property));

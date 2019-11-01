@@ -18,13 +18,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1816";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageNotCalledWithFinalizer = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotCalled = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalled), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotPassedThis = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotPassedThis), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOutsideDispose = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageOutsideDispose), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotCalledWithFinalizer = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotCalled = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalled), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotPassedThis = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotPassedThis), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOutsideDispose = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageOutsideDispose), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor NotCalledWithFinalizerRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -74,10 +74,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
-                                                        .GetTypeByMetadataName("System.GC")
+                                                        .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGC)
                                                         ?.GetMembers("SuppressFinalize")
                                                         .OfType<IMethodSymbol>()
-                                                        .SingleOrDefault();
+                                                        .FirstOrDefault();
 
                 if (gcSuppressFinalizeMethodSymbol == null)
                 {
@@ -154,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Checks for GC.SuppressFinalize(this)
-                    if (invocationExpression.Arguments.Count() != 1)
+                    if (!invocationExpression.Arguments.HasExactly(1))
                     {
                         return;
                     }
@@ -186,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // We allow constructors in sealed types to call GC.SuppressFinalize.
                 // This allows types that derive from Component (such SqlConnection)
-                // to prevent the finalizer they inherit from Component from ever 
+                // to prevent the finalizer they inherit from Component from ever
                 // being called.
                 if (method.ContainingType.IsSealed && method.IsConstructor() && !method.IsStatic)
                 {
@@ -206,8 +206,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return SuppressFinalizeUsage.CanCall;
                 }
 
-                // We don't require that non-public types call GC.SuppressFinalize 
-                // if they don't have a finalizer as the owner of the assembly can 
+                // We don't require that non-public types call GC.SuppressFinalize
+                // if they don't have a finalizer as the owner of the assembly can
                 // control whether any finalizable types derive from them.
                 if (method.ContainingType.DeclaredAccessibility != Accessibility.Public && !hasFinalizer)
                 {

@@ -7,6 +7,8 @@ using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.PooledObjects;
 
+#pragma warning disable CA2002
+
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
@@ -45,11 +47,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private ImmutableArray<int> ComputeHashCodeParts()
         {
             var builder = ArrayBuilder<int>.GetInstance();
-            ComputeHashCodeParts(builder);
+            ComputeHashCodeParts(builder.Add);
             return builder.ToImmutableAndFree();
         }
 
-        protected abstract void ComputeHashCodeParts(ArrayBuilder<int> builder);
+        protected abstract void ComputeHashCodeParts(Action<int> addPart);
 
         public sealed override int GetHashCode() => GetOrComputeHashCode();
 

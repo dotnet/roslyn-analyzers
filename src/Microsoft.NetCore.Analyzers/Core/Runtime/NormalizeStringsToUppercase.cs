@@ -23,10 +23,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1308";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageToUpper = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseMessageToUpper), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageToUpper = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseMessageToUpper), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor ToUpperRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -47,19 +47,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var stringType = WellKnownTypes.String(compilationStartContext.Compilation);
+                var stringType = compilationStartContext.Compilation.GetSpecialType(SpecialType.System_String);
                 if (stringType == null)
                 {
                     return;
                 }
 
-                var cultureInfo = compilationStartContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var cultureInfo = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 var invariantCulture = cultureInfo?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 // We want to flag calls to "ToLowerInvariant" and "ToLower(CultureInfo.InvariantCulture)".
                 var toLowerInvariant = stringType.GetMembers("ToLowerInvariant").OfType<IMethodSymbol>().FirstOrDefault();
                 var toLowerWithCultureInfo = cultureInfo != null ?
-                    stringType.GetMembers("ToLower").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && m.Parameters[0].Type == cultureInfo) :
+                    stringType.GetMembers("ToLower").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && Equals(m.Parameters[0].Type, cultureInfo)) :
                     null;
 
                 if (toLowerInvariant == null && toLowerWithCultureInfo == null)
@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // We want to recommend calling "ToUpperInvariant" or "ToUpper(CultureInfo.InvariantCulture)".
                 var toUpperInvariant = stringType.GetMembers("ToUpperInvariant").OfType<IMethodSymbol>().FirstOrDefault();
                 var toUpperWithCultureInfo = cultureInfo != null ?
-                    stringType.GetMembers("ToUpper").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && m.Parameters[0].Type == cultureInfo) :
+                    stringType.GetMembers("ToUpper").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && Equals(m.Parameters[0].Type, cultureInfo)) :
                     null; ;
 
                 if (toUpperInvariant == null && toUpperWithCultureInfo == null)

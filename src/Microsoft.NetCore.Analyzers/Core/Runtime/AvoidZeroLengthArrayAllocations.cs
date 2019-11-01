@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -27,8 +27,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.AvoidZeroLengthArrayAllocationsTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.AvoidZeroLengthArrayAllocationsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidZeroLengthArrayAllocationsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         /// <summary>The diagnostic descriptor used when Array.Empty should be used instead of a new array allocation.</summary>
         internal static readonly DiagnosticDescriptor UseArrayEmptyDescriptor = new DiagnosticDescriptor(
@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Only if it is, register the syntax node action provided by the derived implementations.
             context.RegisterCompilationStartAction(ctx =>
             {
-                INamedTypeSymbol typeSymbol = ctx.Compilation.GetTypeByMetadataName(ArrayTypeName);
+                INamedTypeSymbol typeSymbol = ctx.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (elementType.TypeKind != TypeKind.Pointer)
                     {
-                        var arrayType = context.Compilation.GetTypeByMetadataName(ArrayTypeName);
+                        var arrayType = context.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
                         IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
                         var constructed = emptyMethod.Construct(elementType);
 

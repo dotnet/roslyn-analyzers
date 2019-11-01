@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -24,35 +25,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         private static DiagnosticResult GetCA2225CSharpDefaultResultAt(int line, int column, string alternateName, string operatorName)
         {
             // Provide a method named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
             return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA2225CSharpPropertyResultAt(int line, int column, string alternateName, string operatorName)
         {
             // Provide a property named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty, alternateName, operatorName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty, alternateName, operatorName);
             return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA2225CSharpMultipleResultAt(int line, int column, string alternateName1, string alternateName2, string operatorName)
         {
             // Provide a method named '{0}' or '{1}' as an alternate for operator {2}
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple, alternateName1, alternateName2, operatorName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple, alternateName1, alternateName2, operatorName);
             return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA2225CSharpVisibilityResultAt(int line, int column, string alternateName, string operatorName)
         {
             // Mark {0} as public because it is a friendly alternate for operator {1}.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility, alternateName, operatorName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility, alternateName, operatorName);
             return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA2225BasicDefaultResultAt(int line, int column, string alternateName, string operatorName)
         {
             // Provide a method named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
             return GetBasicResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
         }
 

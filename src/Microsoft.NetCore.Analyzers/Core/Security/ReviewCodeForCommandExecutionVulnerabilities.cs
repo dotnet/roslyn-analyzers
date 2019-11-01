@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
@@ -12,8 +12,8 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA3006",
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle),
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities");
 

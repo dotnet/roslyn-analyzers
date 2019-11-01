@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
@@ -20,10 +20,15 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+
+            // This analyzer is triggered by an attribute, even if it appears in generated code
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var attributeSymbol = compilation.GetTypeByMetadataName(AllocationRules.PerformanceSensitiveAttributeName);
+                var attributeSymbol = compilation.GetOrCreateTypeByMetadataName(AllocationRules.PerformanceSensitiveAttributeName);
 
                 // Bail if PerformanceSensitiveAttribute is not delcared in the compilation.
                 if (attributeSymbol == null)

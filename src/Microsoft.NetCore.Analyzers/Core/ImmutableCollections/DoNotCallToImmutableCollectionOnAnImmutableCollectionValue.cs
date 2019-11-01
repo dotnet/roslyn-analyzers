@@ -21,8 +21,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
         private const string ImmutableArrayMetadataName = "System.Collections.Immutable.ImmutableArray`1";
         internal const string RuleId = "CA2009";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemCollectionsImmutableAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle), SystemCollectionsImmutableAnalyzersResources.ResourceManager, typeof(SystemCollectionsImmutableAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemCollectionsImmutableAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage), SystemCollectionsImmutableAnalyzersResources.ResourceManager, typeof(SystemCollectionsImmutableAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -55,24 +55,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var immutableArraySymbol = compilation.GetTypeByMetadataName(ImmutableArrayMetadataName);
-                if (immutableArraySymbol is null)
-                {
-                    var systemNamespace = compilation.GlobalNamespace.GetMembers(nameof(System)).OfType<INamespaceSymbol>().SingleOrDefault();
-                    var systemCollectionsNamespace = systemNamespace?.GetMembers(nameof(System.Collections)).OfType<INamespaceSymbol>().SingleOrDefault();
-                    var systemCollectionsImmutableNamespace = systemCollectionsNamespace?.GetMembers(nameof(System.Collections.Immutable)).OfType<INamespaceSymbol>().SingleOrDefault();
-                    if (systemCollectionsImmutableNamespace is null)
-                    {
-                        return;
-                    }
-
-                    var immutableArrayTypes = systemCollectionsImmutableNamespace.GetMembers(nameof(ImmutableArray)).OfType<INamedTypeSymbol>().Where(type => type.MetadataName == typeof(ImmutableArray<>).Name).ToArray();
-                    var localSymbol = immutableArrayTypes.FirstOrDefault(type => type.ContainingAssembly.Equals(compilation.Assembly));
-                    var publicSymbol = immutableArrayTypes.FirstOrDefault(type => type.DeclaredAccessibility == Accessibility.Public);
-                    var fallbackSymbol = immutableArrayTypes.FirstOrDefault();
-                    immutableArraySymbol = localSymbol ?? publicSymbol ?? fallbackSymbol;
-                }
-
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+                var immutableArraySymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(ImmutableArrayMetadataName);
                 if (immutableArraySymbol is null)
                 {
                     return;

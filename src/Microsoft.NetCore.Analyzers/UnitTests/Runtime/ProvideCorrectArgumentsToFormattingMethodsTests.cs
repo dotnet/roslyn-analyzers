@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -339,16 +340,73 @@ public class C
 ");
         }
 
+        [Theory]
+        [WorkItem(2799, "https://github.com/dotnet/roslyn-analyzers/issues/2799")]
+        // No configuration - validate no diagnostics in default configuration
+        [InlineData("")]
+        // Match by method name
+        [InlineData("dotnet_code_quality.additional_string_formatting_methods = MyFormat")]
+        // Setting only for Rule ID
+        [InlineData("dotnet_code_quality." + ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId + ".additional_string_formatting_methods = MyFormat")]
+        // Match by documentation ID without "M:" prefix
+        [InlineData("dotnet_code_quality.additional_string_formatting_methods = Test.MyFormat(System.String,System.Object[])~System.String")]
+        // Match by documentation ID with "M:" prefix
+        [InlineData("dotnet_code_quality.additional_string_formatting_methods = M:Test.MyFormat(System.String,System.Object[])~System.String")]
+        public void EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(8,17): warning CA2241: Provide correct arguments to formatting methods
+                    GetCA2241CSharpResultAt(8, 17)
+                };
+            }
+
+            VerifyCSharp(@"
+class Test
+{
+    public static string MyFormat(string format, params object[] args) => format;
+
+    void M1(string param)
+    {
+        var a = MyFormat("""", 1);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(8,17): warning CA2241: Provide correct arguments to formatting methods
+                    GetCA2241BasicResultAt(8, 17)
+                };
+            }
+
+            VerifyBasic(@"
+Class Test
+    Public Shared Function MyFormat(format As String, ParamArray args As Object()) As String
+        Return format
+    End Function
+
+    Private Sub M1(ByVal param As String)
+        Dim a = MyFormat("""", 1)
+    End Sub
+End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
         #endregion
 
         private static DiagnosticResult GetCA2241CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
 
         private static DiagnosticResult GetCA2241BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
     }
 }

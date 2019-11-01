@@ -20,7 +20,9 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureXSLTScriptExecution);
 
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1026 // Enable concurrent execution
         {
             // TODO: Make analyzer thread-safe.
             //analysisContext.EnableConcurrentExecution();
@@ -141,7 +143,7 @@ namespace Microsoft.NetFramework.Analyzers
                             LocalizableResourceString message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 isSetInBlock ? nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage) :
                                     nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
-                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                             );
 
                             context.ReportDiagnostic(

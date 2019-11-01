@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,17 +16,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5362";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClass),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClass),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClassMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClassMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClassDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClassDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -52,14 +52,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var serializableAttributeTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
 
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var nonSerializedAttribute = WellKnownTypes.NonSerializedAttribute(compilation);
+                    var nonSerializedAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
 
                     if (nonSerializedAttribute == null)
                     {
@@ -146,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
 
-                    HashSet<ITypeSymbol> GetAssociatedTypes(ITypeSymbol type)
+                    static HashSet<ITypeSymbol> GetAssociatedTypes(ITypeSymbol type)
                     {
                         var result = new HashSet<ITypeSymbol>();
 
@@ -194,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     // point: The point to be added
                     // degree: The out degree of all vertices in the graph
                     // graph: The graph
-                    bool AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    static bool AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         degree.TryAdd(point, 0);
                         return graph.TryAdd(point, new ConcurrentDictionary<ISymbol, bool>());
@@ -224,7 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     //
                     // degree: The in degree of all vertices in the graph
                     // graph: The graph
-                    void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    static void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         var stack = new Stack<ISymbol>(degree.Where(s => s.Value == 0).Select(s => s.Key));
 

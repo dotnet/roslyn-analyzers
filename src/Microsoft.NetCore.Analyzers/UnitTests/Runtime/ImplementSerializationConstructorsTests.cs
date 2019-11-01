@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -401,18 +402,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 GetCA2229BasicResultAt(5, 30, "CA2229SerializableProper", CA2229Message));
         }
 
-        internal static readonly string CA2229Message = SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor;
-        internal static readonly string CA2229MessageSealed = SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate;
-        internal static readonly string CA2229MessageUnsealed = SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily;
+        internal static readonly string CA2229Message = MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor;
+        internal static readonly string CA2229MessageSealed = MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate;
+        internal static readonly string CA2229MessageUnsealed = MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily;
 
         private static DiagnosticResult GetCA2229CSharpResultAt(int line, int column, string objectName, string message)
         {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, message, objectName));
         }
 
         private static DiagnosticResult GetCA2229BasicResultAt(int line, int column, string objectName, string message)
         {
-            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, message, objectName));
         }
     }
 }

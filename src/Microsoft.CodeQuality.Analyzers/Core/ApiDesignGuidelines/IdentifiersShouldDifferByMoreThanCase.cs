@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using System.Threading;
+using Analyzer.Utilities.PooledObjects;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -22,12 +23,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public const string Parameter = "Parameters of";
 
         internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                                      new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                                      new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                                      new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
+                                                                                      new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                                       DiagnosticCategory.Naming,
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: false,
-                                                                                      description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                                      description: new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
@@ -45,13 +46,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             IEnumerable<INamespaceSymbol> globalNamespaces = context.Compilation.GlobalNamespace.GetNamespaceMembers()
-                .Where(item => item.ContainingAssembly == context.Compilation.Assembly);
+                .Where(item => Equals(item.ContainingAssembly, context.Compilation.Assembly));
 
             IEnumerable<INamedTypeSymbol> globalTypes = context.Compilation.GlobalNamespace.GetTypeMembers().Where(item =>
-                    item.ContainingAssembly == context.Compilation.Assembly &&
+                    Equals(item.ContainingAssembly, context.Compilation.Assembly) &&
                     MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
-            CheckTypeNames(globalTypes, context.ReportDiagnostic);
+            CheckTypeNames(globalTypes, context);
             CheckNamespaceMembers(globalNamespaces, context);
         }
 
@@ -91,12 +92,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Get all the potentially externally visible types in the namespace
                 IEnumerable<INamedTypeSymbol> typeMembers = @namespace.GetTypeMembers().Where(item =>
-                    item.ContainingAssembly == context.Compilation.Assembly &&
+                    Equals(item.ContainingAssembly, context.Compilation.Assembly) &&
                     MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
                 if (typeMembers.Any())
                 {
-                    CheckTypeNames(typeMembers, context.ReportDiagnostic);
+                    CheckTypeNames(typeMembers, context);
                 }
                 else
                 {
@@ -125,73 +126,105 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void CheckTypeMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
         {
-            // Remove constructors, indexers, operators and destructors for name check
-            IEnumerable<ISymbol> membersForNameCheck = members.Where(item => !item.IsConstructor() && !item.IsDestructor() && !item.IsIndexer() && !item.IsUserDefinedOperator());
-            if (membersForNameCheck.Any())
-            {
-                CheckMemberNames(membersForNameCheck, addDiagnostic);
-            }
-        }
-
-        private static void CheckParameterMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
-        {
-            IEnumerable<ISymbol> violatingMembers = members
-                .Where(item => item.ContainingType.DelegateInvokeMethod == null && HasViolatingParameters(item));
-
-            IEnumerable<ISymbol> violatingDelegates = members.Select(item =>
-            {
-                if (item is INamedTypeSymbol typeSymbol &&
-    typeSymbol.DelegateInvokeMethod != null &&
-    HasViolatingParameters(typeSymbol.DelegateInvokeMethod))
-                {
-                    return item;
-                }
-                else
-                {
-                    return null;
-                }
-            }).WhereNotNull();
-
-            foreach (ISymbol symbol in violatingMembers.Concat(violatingDelegates))
-            {
-                addDiagnostic(symbol.CreateDiagnostic(Rule, Parameter, symbol.ToDisplayString()));
-            }
-        }
-
-        #region NameCheck Methods
-
-        private static bool HasViolatingParameters(ISymbol symbol)
-        {
-            ImmutableArray<IParameterSymbol> parameters = symbol.GetParameters();
-
-            // If there is only one parameter, then return an empty collection
-            if (!parameters.Skip(1).Any())
-            {
-                return false;
-            }
-
-            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1).Any();
-        }
-
-        private static void CheckMemberNames(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
-        {
             // If there is only one member, then return
             if (!members.Skip(1).Any())
             {
                 return;
             }
 
-            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
-            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
-
-            foreach (IGrouping<string, ISymbol> group in memberList)
+            using var overloadsToSkip = PooledHashSet<ISymbol>.GetInstance();
+            using var membersByName = PooledDictionary<string, PooledHashSet<ISymbol>>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            foreach (var member in members)
             {
-                ISymbol symbol = group.First().ContainingSymbol;
-                addDiagnostic(symbol.CreateDiagnostic(Rule, Member, GetSymbolDisplayString(group)));
+                // Ignore constructors, indexers, operators and destructors for name check
+                if (member.IsConstructor() ||
+                    member.IsDestructor() ||
+                    member.IsIndexer() ||
+                    member.IsUserDefinedOperator() ||
+                    overloadsToSkip.Contains(member))
+                {
+                    continue;
+                }
+
+                var name = DiagnosticHelpers.GetMemberName(member);
+                if (!membersByName.TryGetValue(name, out var membersWithName))
+                {
+                    membersWithName = PooledHashSet<ISymbol>.GetInstance();
+                    membersByName[name] = membersWithName;
+                }
+
+                membersWithName.Add(member);
+
+                if (member is IMethodSymbol method)
+                {
+                    foreach (var overload in method.GetOverloads())
+                    {
+                        overloadsToSkip.Add(overload);
+                    }
+                }
+            }
+
+            foreach (var (name, membersWithName) in membersByName)
+            {
+                if (membersWithName.Count > 1 &&
+                    !membersWithName.All(m => m.IsOverride))
+                {
+                    ISymbol symbol = membersWithName.First().ContainingSymbol;
+                    addDiagnostic(symbol.CreateDiagnostic(Rule, Member, GetSymbolDisplayString(membersWithName)));
+                }
+
+                membersWithName.Free();
             }
         }
 
-        private static void CheckTypeNames(IEnumerable<ITypeSymbol> types, Action<Diagnostic> addDiagnostic)
+        private static void CheckParameterMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
+        {
+            foreach (var member in members)
+            {
+                if (IsViolatingMember(member) || IsViolatingDelegate(member))
+                {
+                    addDiagnostic(member.CreateDiagnostic(Rule, Parameter, member.ToDisplayString()));
+                }
+            }
+
+            return;
+
+            // Local functions
+            static bool IsViolatingMember(ISymbol member)
+                => member.ContainingType.DelegateInvokeMethod == null &&
+                   HasViolatingParameters(member);
+
+            static bool IsViolatingDelegate(ISymbol member)
+                => member is INamedTypeSymbol typeSymbol &&
+                   typeSymbol.DelegateInvokeMethod != null &&
+                   HasViolatingParameters(typeSymbol.DelegateInvokeMethod);
+        }
+
+        #region NameCheck Methods
+
+        private static bool HasViolatingParameters(ISymbol symbol)
+        {
+            var parameters = symbol.GetParameters();
+
+            // We only analyze symbols with more then one parameter.
+            if (parameters.Length <= 1)
+            {
+                return false;
+            }
+
+            using var uniqueNames = PooledHashSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            foreach (var parameter in parameters)
+            {
+                if (!uniqueNames.Add(parameter.Name))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void CheckTypeNames(IEnumerable<INamedTypeSymbol> types, CompilationAnalysisContext context)
         {
             // If there is only one type, then return
             if (!types.Skip(1).Any())
@@ -199,12 +232,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<IGrouping<string, ITypeSymbol>> typeList = types.GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase)
-                .Where((group) => group.Count() > 1);
-
-            foreach (IGrouping<string, ITypeSymbol> group in typeList)
+            using var typesByName = PooledDictionary<string, PooledHashSet<ISymbol>>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            foreach (var type in types)
             {
-                addDiagnostic(Diagnostic.Create(Rule, Location.None, Type, GetSymbolDisplayString(group)));
+                var name = DiagnosticHelpers.GetMemberName(type);
+                if (!typesByName.TryGetValue(name, out var typesWithName))
+                {
+                    typesWithName = PooledHashSet<ISymbol>.GetInstance();
+                    typesByName[name] = typesWithName;
+                }
+
+                typesWithName.Add(type);
+            }
+
+            foreach (var (name, typesWithName) in typesByName)
+            {
+                if (typesWithName.Count > 1)
+                {
+                    context.ReportNoLocationDiagnostic(Rule, Type, GetSymbolDisplayString(typesWithName));
+                }
+
+                typesWithName.Free();
             }
         }
 
@@ -216,11 +264,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
-
-            foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
+            using var namespacesByName = PooledDictionary<string, PooledHashSet<ISymbol>>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            foreach (var namespaceSym in namespaces)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
+                var name = namespaceSym.ToDisplayString();
+                if (!namespacesByName.TryGetValue(name, out var namespacesWithName))
+                {
+                    namespacesWithName = PooledHashSet<ISymbol>.GetInstance();
+                    namespacesByName[name] = namespacesWithName;
+                }
+
+                namespacesWithName.Add(namespaceSym);
+            }
+
+            foreach (var (name, namespacesWithName) in namespacesByName)
+            {
+                if (namespacesWithName.Count > 1)
+                {
+                    context.ReportNoLocationDiagnostic(Rule, Namespace, GetSymbolDisplayString(namespacesWithName));
+                }
+
+                namespacesWithName.Free();
             }
         }
 
@@ -228,7 +292,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         #region Helper Methods
 
-        private static string GetSymbolDisplayString(IGrouping<string, ISymbol> group)
+        private static string GetSymbolDisplayString(PooledHashSet<ISymbol> group)
         {
             return string.Join(", ", group.Select(s => s.ToDisplayString()).OrderBy(k => k, StringComparer.Ordinal));
         }

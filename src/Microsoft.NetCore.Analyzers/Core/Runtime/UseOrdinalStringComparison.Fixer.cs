@@ -1,11 +1,11 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -23,9 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonTitle;
 
             if (IsInArgumentContext(node))
             {
@@ -34,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                                    diagnostic);
+                                        context.Diagnostics);
             }
             else if (IsInIdentifierNameContext(node))
             {
@@ -43,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                                    diagnostic);
+                                        context.Diagnostics);
             }
         }
 
@@ -78,7 +76,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal static SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
-            INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
+            INamedTypeSymbol stringComparisonType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
             return generator.MemberAccessExpression(
                 generator.TypeExpressionForStaticMemberAccess(stringComparisonType),
                 generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
@@ -86,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected static bool CanAddStringComparison(IMethodSymbol methodSymbol, SemanticModel model)
         {
-            if (WellKnownTypes.StringComparison(model.Compilation) == null)
+            if (model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison) == null)
             {
                 return false;
             }

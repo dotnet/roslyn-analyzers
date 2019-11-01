@@ -1,17 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInstantiateArgumentExceptionsCorrectlyFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicInstantiateArgumentExceptionsCorrectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class InstantiateArgumentExceptionsCorrectlyTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string s_noArguments = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments;
-        private static readonly string s_incorrectMessage = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage;
-        private static readonly string s_incorrectParameterName = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName;
+        private static readonly string s_noArguments = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments;
+        private static readonly string s_incorrectMessage = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage;
+        private static readonly string s_incorrectParameterName = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -616,13 +623,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
-            string message = string.Format(format, args);
+            string message = string.Format(CultureInfo.CurrentCulture, format, args);
             return GetCSharpResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column, string format, params string[] args)
         {
-            string message = string.Format(format, args);
+            string message = string.Format(CultureInfo.CurrentCulture, format, args);
             return GetBasicResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
     }

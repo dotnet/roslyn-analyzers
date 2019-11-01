@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetFramework.Analyzers.Helpers
@@ -31,26 +33,26 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public CompilationSecurityTypes(Compilation compilation)
         {
             HandleProcessCorruptedStateExceptionsAttribute =
-                SecurityTypes.HandleProcessCorruptedStateExceptionsAttribute(compilation);
-            SystemObject = SecurityTypes.SystemObject(compilation);
-            SystemException = SecurityTypes.SystemException(compilation);
-            SystemSystemException = SecurityTypes.SystemSystemException(compilation);
-            XmlDocument = SecurityTypes.XmlDocument(compilation);
-            XPathDocument = SecurityTypes.XPathDocument(compilation);
-            XmlSchema = SecurityTypes.XmlSchema(compilation);
-            DataSet = SecurityTypes.DataSet(compilation);
-            XmlSerializer = SecurityTypes.XmlSerializer(compilation);
-            DataTable = SecurityTypes.DataTable(compilation);
-            XmlNode = SecurityTypes.XmlNode(compilation);
-            DataViewManager = SecurityTypes.DataViewManager(compilation);
-            XmlTextReader = SecurityTypes.XmlTextReader(compilation);
-            XmlReader = SecurityTypes.XmlReader(compilation);
-            DtdProcessing = SecurityTypes.DtdProcessing(compilation);
-            XmlReaderSettings = SecurityTypes.XmlReaderSettings(compilation);
-            XslCompiledTransform = SecurityTypes.XslCompiledTransform(compilation);
-            XmlResolver = SecurityTypes.XmlResolver(compilation);
-            XmlSecureResolver = SecurityTypes.XmlSecureResolver(compilation);
-            XsltSettings = SecurityTypes.XsltSettings(compilation);
+                compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeExceptionServicesHandleProcessCorruptedStateExceptionsAttribute);
+            SystemObject = compilation.GetSpecialType(SpecialType.System_Object);
+            SystemException = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
+            SystemSystemException = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSystemException);
+            XmlDocument = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlDocument);
+            XPathDocument = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXPathXPathDocument);
+            XmlSchema = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlSchemaXmlSchema);
+            DataSet = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+            XmlSerializer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlSerializationXmlSerializer);
+            DataTable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+            XmlNode = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlNode);
+            DataViewManager = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataViewManager);
+            XmlTextReader = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlTextReader);
+            XmlReader = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
+            DtdProcessing = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlDtdProcessing);
+            XmlReaderSettings = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReaderSettings);
+            XslCompiledTransform = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXslXslCompiledTransform);
+            XmlResolver = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlResolver);
+            XmlSecureResolver = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlSecureResolver);
+            XsltSettings = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXslXsltSettings);
         }
     }
 }

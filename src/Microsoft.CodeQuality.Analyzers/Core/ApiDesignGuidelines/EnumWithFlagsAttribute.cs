@@ -1,30 +1,30 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// Implements CA1027 and CA2217
-    /// 
+    ///
     /// 1) CA1027: Mark enums with FlagsAttribute
-    /// 
+    ///
     /// Cause:
     /// The values of a public enumeration are powers of two or are combinations of other values that are defined in the enumeration,
     /// and the System.FlagsAttribute attribute is not present.
     /// To reduce false positives, this rule does not report a violation for enumerations that have contiguous values.
-    /// 
+    ///
     /// 2) CA2217: Do not mark enums with FlagsAttribute
-    /// 
+    ///
     /// Cause:
     /// An externally visible enumeration is marked with FlagsAttribute and it has one or more values that are not powers of two or
     /// a combination of the other defined values on the enumeration.
@@ -36,9 +36,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleIdDoNotMarkEnumsWithFlags = "CA2217";
         internal const string RuleNameForExportAttribute = "EnumWithFlagsAttributeRules";
 
-        private static readonly LocalizableString s_localizableTitleCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1027 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1027 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor Rule1027 = new DiagnosticDescriptor(RuleIdMarkEnumsWithFlags,
                                                                              s_localizableTitleCA1027,
                                                                              s_localizableMessageCA1027,
@@ -49,9 +49,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2217 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor Rule2217 = new DiagnosticDescriptor(RuleIdDoNotMarkEnumsWithFlags,
                                                                              s_localizableTitleCA2217,
                                                                              s_localizableMessageCA2217,
@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var flagsAttributeType = WellKnownTypes.FlagsAttribute(compilationStartContext.Compilation);
+                var flagsAttributeType = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
                 if (flagsAttributeType == null)
                 {
                     return;
@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {
-                    bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttributeType);
+                    bool hasFlagsAttribute = symbol.GetAttributes().Any(a => Equals(a.AttributeClass, flagsAttributeType));
                     if (hasFlagsAttribute)
                     {
                         // Check "CA2217: Do not mark enums with FlagsAttribute"
@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         {
                             Debug.Assert(missingValues != null);
 
-                            string missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
+                            string missingValuesString = missingValues.Select(v => v.ToString(CultureInfo.InvariantCulture)).Aggregate((i, j) => i + ", " + j);
                             symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
                         }
                     }

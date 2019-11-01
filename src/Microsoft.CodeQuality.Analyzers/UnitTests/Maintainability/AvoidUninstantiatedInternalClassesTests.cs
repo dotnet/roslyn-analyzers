@@ -4,6 +4,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUninstantiatedInternalClassesAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpAvoidUninstantiatedInternalClassesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUninstantiatedInternalClassesAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicAvoidUninstantiatedInternalClassesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
@@ -1229,6 +1235,43 @@ public class JobStateChangeHandler<TState>
 {
 }
 ");
+        }
+
+        [Fact, WorkItem(2751, "https://github.com/dotnet/roslyn-analyzers/issues/2751")]
+        public void CA1812_CSharp_NoDiagnostic_TypeDeclaredInCoClassAttribute()
+        {
+            VerifyCSharp(@"
+using System.Runtime.InteropServices;
+
+[CoClass(typeof(CFoo))]
+internal interface IFoo {}
+
+internal class CFoo {}
+");
+        }
+
+        [Fact, WorkItem(2751, "https://github.com/dotnet/roslyn-analyzers/issues/2751")]
+        public void CA1812_CSharp_DontFailOnInvalidCoClassUsages()
+        {
+            VerifyCSharp(@"
+using System.Runtime.InteropServices;
+
+[CoClass]
+internal interface IFoo1 {}
+
+[CoClass(CFoo)]
+internal interface IFoo2 {}
+
+[CoClass(typeof(CFoo), null)]
+internal interface IFoo3 {}
+
+[CoClass(typeof(IFoo3))] // This isn't a class-type
+internal interface IFoo4 {}
+
+internal class CFoo {}
+",
+                TestValidationMode.AllowCompileErrors, // Invalid syntaxes around CoClass
+                GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

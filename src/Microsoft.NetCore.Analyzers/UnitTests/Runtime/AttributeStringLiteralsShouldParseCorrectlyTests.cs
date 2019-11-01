@@ -4,11 +4,17 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class AttributeStringLiteralsShouldParseCorrectlyTests : DiagnosticAnalyzerTestBase
     {
+        public AttributeStringLiteralsShouldParseCorrectlyTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AttributeStringLiteralsShouldParseCorrectlyAnalyzer();
@@ -22,7 +28,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public void CA2243_BadAttributeStringLiterals_CSharp()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyCSharp(@"
 using System;
 
@@ -67,7 +72,6 @@ CA2243CSharpDefaultResultAt(31, 6, "BadAttributeStringLiterals.MyLiteralsAttribu
         [Fact]
         public void CA2243_BadGuids_CSharp()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyCSharp(@"
 using System;
 
@@ -145,7 +149,6 @@ CA2243CSharpEmptyResultAt(39, 2, "GuidAttribute", "ThisIsAGuid", "Guid"));
         [Fact]
         public void CA2243_MiscSymbolsWithBadGuid_CSharp()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyCSharp(@"
 using System;
 
@@ -287,7 +290,6 @@ public static class ClassWithExceptionForUri
         [Fact]
         public void CA2243_BadAttributeStringLiterals_Basic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 
@@ -362,7 +364,6 @@ CA2243BasicDefaultResultAt(12, 28, "BadAttributeStringLiterals.MyLiteralsAttribu
         [Fact]
         public void CA2243_BadGuids_Basic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 
@@ -433,7 +434,6 @@ CA2243BasicEmptyResultAt(32, 2, "GuidAttribute", "ThisIsAGuid", "Guid"));
         [Fact]
         public void CA2243_MiscSymbolsWithBadGuid_Basic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetFramework.CSharp.Analyzers;
@@ -18,12 +19,68 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     {
         private static DiagnosticResult GetCA3076LoadCSharpResultAt(int line, int column, string name)
         {
-            return new DiagnosticResult(CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage, name));
+            return new DiagnosticResult(CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage, name));
         }
 
         private static DiagnosticResult GetCA3076LoadBasicResultAt(int line, int column, string name)
         {
-            return new DiagnosticResult(BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage, name));
+            return new DiagnosticResult(BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage, name));
+        }
+
+        [Fact]
+        public async Task Issue2752()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings As New XsltSettings(False, False)
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public async Task Issue2752_WorkAround()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings As New XsltSettings()
+        internalSettings.EnableDocumentFunction = False
+        internalSettings.EnableScript = False
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public async Task Issue2752_WorkAround2()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings = New XsltSettings(False, False)
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
         }
 
         [Fact]

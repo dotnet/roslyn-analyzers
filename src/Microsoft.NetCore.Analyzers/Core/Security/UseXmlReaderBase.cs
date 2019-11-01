@@ -1,20 +1,28 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     public abstract class UseXmlReaderBase : DiagnosticAnalyzer
     {
+        private static readonly LocalizableString s_Message = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.UseXmlReaderMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
+
+        private static readonly LocalizableString s_Description = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.UseXmlReaderDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
+
         /// <summary>
         /// Metadata name of the type which is recommended to use method take XmlReader as parameter.
         /// </summary>
@@ -29,6 +37,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        protected static LocalizableString Description => s_Description;
+
+        protected static LocalizableString Message => s_Message;
+
         public override void Initialize(AnalysisContext context)
         {
             Debug.Assert(TypeMetadataName != null);
@@ -42,19 +54,16 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var compilation = compilationStartAnalysisContext.Compilation;
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             TypeMetadataName,
                             out INamedTypeSymbol xmlSchemaTypeSymbol))
                 {
                     return;
                 }
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
-                            WellKnownTypeNames.SystemXmlXmlReader,
-                            out INamedTypeSymbol xmlReaderTypeSymbol);
+                INamedTypeSymbol xmlReaderTypeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {

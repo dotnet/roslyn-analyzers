@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -387,6 +387,16 @@ End Structure
                 GetBasicOverrideEqualsDiagnostic(2, 18, "A"));
         }
 
+        [Fact, WorkItem(2324, "https://github.com/dotnet/roslyn-analyzers/issues/2324")]
+        public void CSharp_RefStruct_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public ref struct A
+{
+    public int X;
+}", parseOptions: new CSharpParseOptions(LanguageVersion.CSharp8));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer();
@@ -399,22 +409,22 @@ End Structure
 
         private static DiagnosticResult GetCSharpOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetCSharpOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
         private static DiagnosticResult GetBasicOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetBasicOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
         private static DiagnosticResult GetExpectedDiagnostic(int line, int column, string typeName, string messageFormat)

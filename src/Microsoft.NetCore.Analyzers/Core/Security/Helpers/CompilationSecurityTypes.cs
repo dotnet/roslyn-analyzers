@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Security.Helpers
@@ -22,17 +24,17 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
 
         public CompilationSecurityTypes(Compilation compilation)
         {
-            MD5 = SecurityTypes.MD5(compilation);
-            SHA1 = SecurityTypes.SHA1(compilation);
-            HMACSHA1 = SecurityTypes.HMACSHA1(compilation);
-            DES = SecurityTypes.DES(compilation);
-            DSA = SecurityTypes.DSA(compilation);
-            DSASignatureFormatter = SecurityTypes.DSASignatureFormatter(compilation);
-            HMACMD5 = SecurityTypes.HMACMD5(compilation);
-            RC2 = SecurityTypes.RC2(compilation);
-            TripleDES = SecurityTypes.TripleDES(compilation);
-            RIPEMD160 = SecurityTypes.RIPEMD160(compilation);
-            HMACRIPEMD160 = SecurityTypes.HMACRIPEMD160(compilation);
+            MD5 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyMD5);
+            SHA1 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySHA1);
+            HMACSHA1 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHMACSHA1);
+            DES = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyDES);
+            DSA = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyDSA);
+            DSASignatureFormatter = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyDSASignatureFormatter);
+            HMACMD5 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHMACMD5);
+            RC2 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyRC2);
+            TripleDES = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyTripleDES);
+            RIPEMD160 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyRIPEMD160);
+            HMACRIPEMD160 = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHMACRIPEMD160);
         }
     }
 }

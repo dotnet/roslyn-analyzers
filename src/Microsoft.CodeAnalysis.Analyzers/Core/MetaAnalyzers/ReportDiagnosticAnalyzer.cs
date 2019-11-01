@@ -39,61 +39,61 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         {
             Compilation compilation = compilationContext.Compilation;
 
-            INamedTypeSymbol compilationEndAnalysisContext = compilation.GetTypeByMetadataName(CompilationEndAnalysisContextFullName);
+            INamedTypeSymbol compilationEndAnalysisContext = compilation.GetOrCreateTypeByMetadataName(CompilationEndAnalysisContextFullName);
             if (compilationEndAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol codeBlockAnalysisContext = compilation.GetTypeByMetadataName(CodeBlockAnalysisContextFullName);
+            INamedTypeSymbol codeBlockAnalysisContext = compilation.GetOrCreateTypeByMetadataName(CodeBlockAnalysisContextFullName);
             if (codeBlockAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationBlockAnalysisContext = compilation.GetTypeByMetadataName(OperationBlockAnalysisContextFullName);
+            INamedTypeSymbol operationBlockAnalysisContext = compilation.GetOrCreateTypeByMetadataName(OperationBlockAnalysisContextFullName);
             if (operationBlockAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationAnalysisContext = compilation.GetTypeByMetadataName(OperationAnalysisContextFullName);
+            INamedTypeSymbol operationAnalysisContext = compilation.GetOrCreateTypeByMetadataName(OperationAnalysisContextFullName);
             if (operationAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol semanticModelAnalysisContext = compilation.GetTypeByMetadataName(SemanticModelAnalysisContextFullName);
+            INamedTypeSymbol semanticModelAnalysisContext = compilation.GetOrCreateTypeByMetadataName(SemanticModelAnalysisContextFullName);
             if (semanticModelAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol symbolAnalysisContext = compilation.GetTypeByMetadataName(SymbolAnalysisContextFullName);
+            INamedTypeSymbol symbolAnalysisContext = compilation.GetOrCreateTypeByMetadataName(SymbolAnalysisContextFullName);
             if (symbolAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol syntaxNodeAnalysisContext = compilation.GetTypeByMetadataName(SyntaxNodeAnalysisContextFullName);
+            INamedTypeSymbol syntaxNodeAnalysisContext = compilation.GetOrCreateTypeByMetadataName(SyntaxNodeAnalysisContextFullName);
             if (syntaxNodeAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol syntaxTreeAnalysisContext = compilation.GetTypeByMetadataName(SyntaxTreeAnalysisContextFullName);
+            INamedTypeSymbol syntaxTreeAnalysisContext = compilation.GetOrCreateTypeByMetadataName(SyntaxTreeAnalysisContextFullName);
             if (syntaxTreeAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol diagnosticType = compilation.GetTypeByMetadataName(DiagnosticFullName);
+            INamedTypeSymbol diagnosticType = compilation.GetOrCreateTypeByMetadataName(DiagnosticFullName);
             if (diagnosticType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol diagnosticDescriptorType = compilation.GetTypeByMetadataName(DiagnosticDescriptorFullName);
+            INamedTypeSymbol diagnosticDescriptorType = compilation.GetOrCreateTypeByMetadataName(DiagnosticDescriptorFullName);
             if (diagnosticDescriptorType == null)
             {
                 return null;
@@ -204,7 +204,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 }
 
                 IEnumerable<SyntaxNode> arguments = GetArgumentExpressions(invocation);
-                if (arguments.Count() == 1)
+                if (arguments.HasExactly(1))
                 {
                     SyntaxNode argument = arguments.First();
                     ITypeSymbol type = semanticModel.GetTypeInfo(argument, symbolContext.CancellationToken).ConvertedType;

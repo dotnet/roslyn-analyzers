@@ -1,9 +1,16 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.CollectionsShouldImplementGenericInterfaceAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpCollectionsShouldImplementGenericInterfaceFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.CollectionsShouldImplementGenericInterfaceAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicCollectionsShouldImplementGenericInterfaceFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -19,14 +26,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return new CollectionsShouldImplementGenericInterfaceAnalyzer();
         }
 
-        private static readonly string CA1010Message = MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
+        private static readonly string CA1010Message = MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
 
         private DiagnosticResult GetCA1010CSharpResultAt(int line, int column, string typeName, string interfaceName)
         {
             return GetCSharpResultAt(line,
                                      column,
                                      CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
+                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
         }
 
         private DiagnosticResult GetCA1010BasicResultAt(int line, int column, string typeName, string interfaceName)
@@ -34,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return GetBasicResultAt(line,
                                      column,
                                      CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
+                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
         }
 
         [Fact]

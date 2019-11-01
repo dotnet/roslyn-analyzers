@@ -29,7 +29,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.0.26201" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="16.0.28729" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.CodeQuality.Analyzers\Setup\Microsoft.CodeQuality.Analyzers.Setup.csproj">
@@ -46,12 +46,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Microsoft.NetCore.Analyzers\Setup\Microsoft.NetCore.Analyzers.Setup.csproj">
       <Name>Microsoft.NetCore.Analyzers.Setup</Name>
-      <VSIXSubPath>Vsixes</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>VSIXContainerProjectOutputGroup</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Text.Analyzers\Setup\Text.Analyzers.Setup.csproj">
-      <Name>Text.Analyzers.Setup</Name>
       <VSIXSubPath>Vsixes</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>VSIXContainerProjectOutputGroup</IncludeOutputGroupsInVSIX>

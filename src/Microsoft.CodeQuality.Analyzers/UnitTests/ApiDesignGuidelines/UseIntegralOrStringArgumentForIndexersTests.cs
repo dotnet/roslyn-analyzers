@@ -206,12 +206,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
         {
-            return GetCSharpResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
+            return GetCSharpResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
         }
 
         private static DiagnosticResult CreateBasicResult(int line, int col)
         {
-            return GetBasicResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
+            return GetBasicResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
         }
     }
 }

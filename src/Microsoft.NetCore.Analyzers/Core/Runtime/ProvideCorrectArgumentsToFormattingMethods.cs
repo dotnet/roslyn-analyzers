@@ -19,10 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2241";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
-                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod);
+                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod, operationContext);
                     if (info == null || invocation.Arguments.Length <= info.FormatStringIndex)
                     {
                         // not a target method
@@ -323,25 +323,33 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 ImmutableDictionary<IMethodSymbol, Info>.Builder builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
 
-                INamedTypeSymbol console = WellKnownTypes.Console(compilation);
+                INamedTypeSymbol console = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 AddStringFormatMap(builder, console, "Write");
                 AddStringFormatMap(builder, console, "WriteLine");
 
-                INamedTypeSymbol @string = WellKnownTypes.String(compilation);
+                INamedTypeSymbol @string = compilation.GetSpecialType(SpecialType.System_String);
                 AddStringFormatMap(builder, @string, "Format");
 
                 _map = builder.ToImmutable();
 
                 String = @string;
-                Object = WellKnownTypes.Object(compilation);
+                Object = compilation.GetSpecialType(SpecialType.System_Object);
             }
 
             public INamedTypeSymbol String { get; }
             public INamedTypeSymbol Object { get; }
 
-            public Info TryGet(IMethodSymbol method)
+            public Info TryGet(IMethodSymbol method, OperationAnalysisContext context)
             {
                 if (_map.TryGetValue(method, out Info info))
+                {
+                    return info;
+                }
+
+                // Check if this the underlying method is user configured string formatting method.
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Compilation, context.CancellationToken);
+                if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
+                    TryGetFormatInfo(method, out info))
                 {
                     return info;
                 }
@@ -358,16 +366,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 foreach (IMethodSymbol method in type.GetMembers(methodName).OfType<IMethodSymbol>())
                 {
-                    int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
-                    if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                    if (TryGetFormatInfo(method, out var formatInfo))
                     {
-                        // no valid format string
-                        continue;
+                        builder.Add(method, formatInfo);
                     }
-
-                    int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
-                    builder.Add(method, new Info(formatIndex, expectedArguments));
                 }
+            }
+
+            private static bool TryGetFormatInfo(IMethodSymbol method, out Info formatInfo)
+            {
+                formatInfo = default;
+
+                int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
+                if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                {
+                    // no valid format string
+                    return false;
+                }
+
+                int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
+                formatInfo = new Info(formatIndex, expectedArguments);
+                return true;
             }
 
             private static int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)

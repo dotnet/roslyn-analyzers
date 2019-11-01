@@ -1,17 +1,17 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1024: Use properties where appropriate
-    /// 
+    ///
     /// Cause:
     /// A public or protected method has a name that starts with Get, takes no parameters, and returns a value that is not an array.
     /// </summary>
@@ -19,9 +19,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class UsePropertiesWhereAppropriateAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1024";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          s_localizableTitle,
@@ -59,12 +59,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // A few additional checks to reduce the noise for this diagnostic:
                 // Ensure that the method is non-generic, non-virtual/override, has no overloads and doesn't have special names: 'GetHashCode' or 'GetEnumerator'.
                 // Also avoid generating this diagnostic if the method body has any invocation expressions.
+                // Also avoid implicit interface implementation (explicit are handled through the member accessibility)
                 if (methodSymbol.IsGenericMethod ||
                     methodSymbol.IsVirtual ||
                     methodSymbol.IsOverride ||
                     methodSymbol.ContainingType.GetMembers(methodSymbol.Name).Length > 1 ||
                     methodSymbol.Name == GetHashCodeName ||
-                    methodSymbol.Name == GetEnumeratorName)
+                    methodSymbol.Name == GetEnumeratorName ||
+                    methodSymbol.IsImplementationOfAnyImplicitInterfaceMember())
                 {
                     return;
                 }

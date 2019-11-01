@@ -1,8 +1,9 @@
 <Project>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    
+
     <VersionPrefix>3.0.0</VersionPrefix>
+    <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
@@ -19,14 +20,16 @@
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>3.0.0</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.0-beta1.final</MicrosoftCodeAnalysisFXCopAnalyersVersion>
-    <MicrosoftCodeAnalysisAnalyersVersion>2.9.0-beta1.final</MicrosoftCodeAnalysisAnalyersVersion>
-    <CodeStyleAnalyersVersion>2.11.0-beta2-63603-03</CodeStyleAnalyersVersion>
+    <MicrosoftNetCompilersVersion>3.4.0-beta2-final</MicrosoftNetCompilersVersion>
+    <DogfoodAnalyzersVersion>3.0.0-beta2.19529.2+e119d9cf</DogfoodAnalyzersVersion>
+    <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.3.0-beta2-19376-02</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1.19211.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1.19264.1</MicrosoftCodeAnalysisTestingVersion>
 
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>

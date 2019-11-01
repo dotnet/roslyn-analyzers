@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -22,13 +23,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         private static string GetCSharpCode_EnumWithFlagsAttributes(string code, bool hasFlags)
         {
             string stringToReplace = hasFlags ? "[System.Flags]" : "";
-            return string.Format(code, stringToReplace);
+            return string.Format(CultureInfo.CurrentCulture, code, stringToReplace);
         }
 
         private static string GetBasicCode_EnumWithFlagsAttributes(string code, bool hasFlags)
         {
             string stringToReplace = hasFlags ? "<System.Flags>" : "";
-            return string.Format(code, stringToReplace);
+            return string.Format(CultureInfo.CurrentCulture, code, stringToReplace);
         }
 
         [Fact]
@@ -571,22 +572,22 @@ End Enum
 
         private static DiagnosticResult GetCA1027CSharpResultAt(int line, int column, string enumTypeName)
         {
-            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
         }
 
         private static DiagnosticResult GetCA1027BasicResultAt(int line, int column, string enumTypeName)
         {
-            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
         }
 
         private static DiagnosticResult GetCA2217CSharpResultAt(int line, int column, string enumTypeName, string missingValuesString)
         {
-            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+            return GetCSharpResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
         }
 
         private static DiagnosticResult GetCA2217BasicResultAt(int line, int column, string enumTypeName, string missingValuesString)
         {
-            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+            return GetBasicResultAt(line, column, EnumWithFlagsAttributeAnalyzer.RuleIdDoNotMarkEnumsWithFlags, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations;
@@ -36,11 +35,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                 }
             }
 
-            public override int GetHashCode()
-            {
-                return HashUtilities.Combine(_hazardousParameterUsageBuilderOpt.GetHashCodeOrDefault(), base.GetHashCode());
-            }
-
             public ImmutableDictionary<IParameterSymbol, SyntaxNode> HazardousParameterUsages
             {
                 get
@@ -59,8 +53,25 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
 
             protected override void ResetCurrentAnalysisData() => ResetAnalysisData(CurrentAnalysisData);
 
-            private bool IsTrackedLocation(AbstractLocation location) =>
-                location.SymbolOpt is IParameterSymbol parameter && parameter.Type.IsReferenceType && parameter.ContainingSymbol == OwningSymbol;
+            private bool IsTrackedLocation(AbstractLocation location)
+            {
+                return CurrentAnalysisData.ContainsKey(location) ||
+                    location.SymbolOpt is IParameterSymbol parameter &&
+                    parameter.Type.IsReferenceType &&
+                    Equals(parameter.ContainingSymbol, GetBottomOfStackOwningSymbol());
+
+                ISymbol GetBottomOfStackOwningSymbol()
+                {
+                    if (DataFlowAnalysisContext.InterproceduralAnalysisDataOpt == null)
+                    {
+                        return OwningSymbol;
+                    }
+
+                    return DataFlowAnalysisContext.InterproceduralAnalysisDataOpt.MethodsBeingAnalyzed
+                        .Single(m => m.InterproceduralAnalysisDataOpt == null)
+                        .OwningSymbol;
+                }
+            }
 
             private bool IsNotOrMaybeValidatedLocation(AbstractLocation location) =>
                 CurrentAnalysisData.TryGetValue(location, out var value) &&
@@ -78,7 +89,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
 
             protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, ParameterValidationAbstractValue assignedValue, bool mayBeAssignment = false)
             {
-                // We are only tracking default parameter locations.
+                // If we are assigning to parameter, mark it as validated on this path.
+                if (target is IParameterReferenceOperation)
+                {
+                    MarkValidatedLocations(target);
+                }
             }
 
             protected override void SetAbstractValueForTupleElementAssignment(AnalysisEntity tupleElementEntity, IOperation assignedValueOperation, ParameterValidationAbstractValue assignedValue)
@@ -119,6 +134,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                 }
             }
 
+            private void MarkValidatedLocations(IOperation operation)
+                => SetAbstractValue(GetNotValidatedLocations(operation), ParameterValidationAbstractValue.Validated);
+
             private IEnumerable<AbstractLocation> GetNotValidatedLocations(IOperation operation)
             {
                 var pointsToLocation = GetPointsToAbstractValue(operation);
@@ -132,19 +150,16 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                     return false;
                 }
 
-                switch (operation.Parent)
+                return operation.Parent switch
                 {
-                    case IMemberReferenceOperation memberReference:
-                        return memberReference.Instance == operation;
+                    IMemberReferenceOperation memberReference => memberReference.Instance == operation,
 
-                    case IArrayElementReferenceOperation arrayElementReference:
-                        return arrayElementReference.ArrayReference == operation;
+                    IArrayElementReferenceOperation arrayElementReference => arrayElementReference.ArrayReference == operation,
 
-                    case IInvocationOperation invocation:
-                        return invocation.Instance == operation;
-                }
+                    IInvocationOperation invocation => invocation.Instance == operation,
 
-                return false;
+                    _ => false,
+                };
             }
 
             private void HandlePotentiallyHazardousOperation(IOperation operation, IEnumerable<AbstractLocation> nonValidatedLocations)
@@ -255,38 +270,35 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
             {
                 Debug.Assert(!targetMethod.IsLambdaOrLocalFunctionOrDelegate());
 
-                if (targetMethod.ContainingType.SpecialType == SpecialType.System_String)
+                if (targetMethod.IsArgumentNullCheckMethod())
                 {
-                    if (targetMethod.IsStatic &&
-                        targetMethod.Name.StartsWith("IsNull", StringComparison.Ordinal) &&
-                        targetMethod.Parameters.Length == 1 &&
-                        arguments.Length == 1)
+                    if (arguments.Length == 1)
                     {
-                        // string.IsNullOrXXX check.
-                        SetAbstractValue(GetNotValidatedLocations(arguments[0]), ParameterValidationAbstractValue.Validated);
+                        // "static bool SomeType.IsNullXXX(obj)" check.
+                        MarkValidatedLocations(arguments[0]);
                     }
                 }
                 else if (targetMethod.Parameters.Length > 0 &&
                          arguments.Length > 0 &&
-                         WellKnownTypeProvider.Exception != null &&
-                         targetMethod.ContainingType.DerivesFrom(WellKnownTypeProvider.Exception))
+                         ExceptionNamedType != null &&
+                         targetMethod.ContainingType.DerivesFrom(ExceptionNamedType))
                 {
                     // FxCop compat: special cases handled by FxCop.
                     //  1. First argument of type System.Runtime.Serialization.SerializationInfo to System.Exception.GetObjectData or its override is validated.
                     //  2. First argument of type System.Runtime.Serialization.SerializationInfo to constructor of System.Exception or its subtype is validated.
-                    if (targetMethod.Parameters[0].Type == WellKnownTypeProvider.SerializationInfo)
+                    if (Equals(targetMethod.Parameters[0].Type, SerializationInfoNamedType))
                     {
                         switch (targetMethod.MethodKind)
                         {
                             case MethodKind.Ordinary:
                                 if (targetMethod.Name.Equals("GetObjectData", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    SetAbstractValue(GetNotValidatedLocations(arguments[0]), ParameterValidationAbstractValue.Validated);
+                                    MarkValidatedLocations(arguments[0]);
                                 }
                                 break;
 
                             case MethodKind.Constructor:
-                                SetAbstractValue(GetNotValidatedLocations(arguments[0]), ParameterValidationAbstractValue.Validated);
+                                MarkValidatedLocations(arguments[0]);
                                 break;
                         }
                     }
@@ -316,6 +328,22 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                         }
                     }
                 }
+
+
+                // Mark arguments passed to parameters of null check validation methods as validated.
+                // Also mark arguments passed to parameters with ValidatedNotNullAttribute as validated.
+                var isNullCheckValidationMethod = DataFlowAnalysisContext.IsNullCheckValidationMethod(targetMethod.OriginalDefinition);
+                foreach (var argument in arguments)
+                {
+                    var notValidatedLocations = GetNotValidatedLocations(argument);
+                    if (notValidatedLocations.Any())
+                    {
+                        if (isNullCheckValidationMethod || HasValidatedNotNullAttribute(argument.Parameter))
+                        {
+                            MarkValidatedLocations(argument);
+                        }
+                    }
+                }
             }
 
             private void ProcessLambdaOrLocalFunctionInvocation(IMethodSymbol targetMethod, IOperation invocation)
@@ -336,11 +364,78 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                             var syntaxNode = kvp.Value;
                             if (!_hazardousParameterUsageBuilderOpt.ContainsKey(parameter))
                             {
-                                HandleHazardousOperation(syntaxNode, notValidatedLocations.Where(l => l.SymbolOpt == parameter));
+                                HandleHazardousOperation(syntaxNode, notValidatedLocations.Where(l => Equals(l.SymbolOpt, parameter)));
                             }
                         }
                     }
                 }
+            }
+
+            public override ParameterValidationAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            {
+                var value = base.VisitBinaryOperatorCore(operation, argument);
+
+                // Mark a location as validated on paths where we know it is non-null.
+                //     if (x != null)
+                //     {
+                //         // Validated on this path
+                //     }
+
+                // if (x != null)
+                // {
+                //      // This code path
+                // }
+                var isNullNotEqualsOnWhenTrue = FlowBranchConditionKind == ControlFlowConditionKind.WhenTrue &&
+                    (operation.OperatorKind == BinaryOperatorKind.NotEquals || operation.OperatorKind == BinaryOperatorKind.ObjectValueNotEquals);
+
+                // if (x == null) { ... }
+                // else
+                // {
+                //      // This code path
+                // }
+                var isNullEqualsOnWhenFalse = FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse &&
+                    (operation.OperatorKind == BinaryOperatorKind.Equals || operation.OperatorKind == BinaryOperatorKind.ObjectValueEquals);
+
+                if (isNullNotEqualsOnWhenTrue || isNullEqualsOnWhenFalse)
+                {
+                    if (GetNullAbstractValue(operation.RightOperand) == NullAbstractValue.Null)
+                    {
+                        // if (x != null)
+                        MarkValidatedLocations(operation.LeftOperand);
+                    }
+                    else if (GetNullAbstractValue(operation.LeftOperand) == NullAbstractValue.Null)
+                    {
+                        // if (null != x)
+                        MarkValidatedLocations(operation.RightOperand);
+                    }
+                }
+
+                return value;
+            }
+
+            public override ParameterValidationAbstractValue VisitIsNull(IIsNullOperation operation, object argument)
+            {
+                var value = base.VisitIsNull(operation, argument);
+
+                // Mark a location as validated on paths where user has performed an IsNull check.
+                // See comments in VisitBinaryOperatorCore override above for further details.
+                MarkValidatedLocations(operation.Operand);
+
+                return value;
+            }
+
+            public override ParameterValidationAbstractValue VisitIsType(IIsTypeOperation operation, object argument)
+            {
+                var value = base.VisitIsType(operation, argument);
+
+                // Mark a location as validated on paths where user has performed an IsType check, for example 'x is object'.
+                // See comments in VisitBinaryOperatorCore override above for further details.
+                if (FlowBranchConditionKind == ControlFlowConditionKind.WhenTrue)
+                {
+                    MarkValidatedLocations(operation.ValueOperand);
+                }
+
+                return value;
             }
 
             #endregion

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
@@ -139,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol diagnosticDescriptorType = compilationContext.Compilation.GetTypeByMetadataName(DiagnosticAnalyzerCorrectnessAnalyzer.DiagnosticDescriptorFullName);
+                INamedTypeSymbol diagnosticDescriptorType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(DiagnosticAnalyzerCorrectnessAnalyzer.DiagnosticDescriptorFullName);
                 if (diagnosticDescriptorType == null)
                 {
                     return;
@@ -226,7 +227,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static void AnalyzeTitle(OperationAnalysisContext operationAnalysisContext, IObjectCreationOperation objectCreation)
         {
-            IParameterSymbol title = objectCreation.Constructor.Parameters.Where(p => p.Name == "title").FirstOrDefault();
+            IParameterSymbol title = objectCreation.Constructor.Parameters.FirstOrDefault(p => p.Name == "title");
             if (title != null &&
                 title.Type != null &&
                 title.Type.SpecialType == SpecialType.System_String)
@@ -322,8 +323,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     {
                         ruleId = (string)argument.Value.ConstantValue.Value;
                         var location = argument.Value.Syntax.GetLocation();
-
-                        string GetAnalyzerName(INamedTypeSymbol a) => a.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        static string GetAnalyzerName(INamedTypeSymbol a) => a.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
                         // Factory methods to track declaration locations for every analyzer rule ID.
                         ConcurrentBag<Location> AddLocationFactory(string analyzerName)
@@ -367,7 +367,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             Debug.Assert(additionalTextOpt != null);
 
                             var foundMatch = false;
-                            bool ShouldValidateRange((string prefix, int start, int end) range)
+                            static bool ShouldValidateRange((string prefix, int start, int end) range)
                                 => range.start >= 0 && range.end >= 0;
 
                             // Check if ID matches any one of the required ranges.
@@ -576,7 +576,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     string arg2 = Path.GetFileName(additionalText.Path);
                     LinePositionSpan linePositionSpan = lines.GetLinePositionSpan(line.Span);
                     Location location = Location.Create(additionalText.Path, line.Span, linePositionSpan);
-                    invalidFileDiagnostics = invalidFileDiagnostics ?? new List<Diagnostic>();
+                    invalidFileDiagnostics ??= new List<Diagnostic>();
                     var diagnostic = Diagnostic.Create(AnalyzerCategoryAndIdRangeFileInvalidRule, location, arg1, arg2);
                     invalidFileDiagnostics.Add(diagnostic);
                 }

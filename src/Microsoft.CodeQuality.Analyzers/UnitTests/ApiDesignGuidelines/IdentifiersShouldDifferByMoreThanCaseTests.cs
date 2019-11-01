@@ -1,6 +1,7 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Globalization;
 using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -367,7 +368,7 @@ namespace N
         #region Helper Methods
 
         private const string RuleName = IdentifiersShouldDifferByMoreThanCaseAnalyzer.RuleId;
-        private static readonly string s_message = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage;
+        private static readonly string s_message = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage;
 
         private const string Namespace = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Namespace;
         private const string Type = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Type;
@@ -386,17 +387,17 @@ namespace N
 
         private static DiagnosticResult GetCA1708CSharpResult(string typeName, string objectName)
         {
-            return GetGlobalResult(RuleName, string.Format(s_message, typeName, objectName));
+            return GetGlobalResult(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
         }
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, int line, int column)
         {
-            return GetCSharpResultAt(line, column, RuleName, string.Format(s_message, typeName, objectName));
+            return GetCSharpResultAt(line, column, RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
         }
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, params string[] locations)
         {
-            return GetCSharpResultAt(RuleName, string.Format(s_message, typeName, objectName), locations);
+            return GetCSharpResultAt(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName), locations);
         }
 
         #endregion

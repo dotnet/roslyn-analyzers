@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -34,13 +35,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableInterface;
+            string title = MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableInterface;
             context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await ImplementIDisposable(context.Document, declaration, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),
-                                    diagnostic);
+                                    context.Diagnostics);
         }
 
         private static async Task<Document> ImplementIDisposable(Document document, SyntaxNode declaration, CancellationToken cancellationToken)
@@ -50,7 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SemanticModel model = editor.SemanticModel;
 
             // Add the interface to the baselist.
-            SyntaxNode interfaceType = generator.TypeExpression(WellKnownTypes.IDisposable(model.Compilation));
+            SyntaxNode interfaceType = generator.TypeExpression(model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable));
             editor.AddInterfaceType(declaration, interfaceType);
 
             // Find a Dispose method. If one exists make that implement IDisposable, else generate a new method.
@@ -64,7 +63,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
             else
             {
-                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(WellKnownTypes.NotImplementedException(model.Compilation)));
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException)));
                 SyntaxNode member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.Dispose, statements: new[] { throwStatement });
                 member = generator.AsPublicInterfaceImplementation(member, interfaceType);
                 editor.AddMember(declaration, member);

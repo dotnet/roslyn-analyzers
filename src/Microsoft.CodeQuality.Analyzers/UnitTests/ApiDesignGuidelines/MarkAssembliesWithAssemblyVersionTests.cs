@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -6,6 +6,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithAttributesDiagnosticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpMarkAssembliesWithAssemblyVersionFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithAttributesDiagnosticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicMarkAssembliesWithAssemblyVersionFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -152,7 +158,31 @@ using System.Reflection;
 ");
         }
 
+        [Fact, WorkItem(2143, "https://github.com/dotnet/roslyn-analyzers/issues/2143")]
+        public void CA1016CSharpTestWithRazorCompiledItemAttribute()
+        {
+            VerifyCSharp(
+@"using System;
+
+[assembly:Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute((Type)null, null, null)]
+
+namespace Microsoft.AspNetCore.Razor.Hosting
+{
+    public class RazorCompiledItemAttribute : Attribute
+    {
+        public RazorCompiledItemAttribute(Type type, string kind, string identifier)
+        {
+        }
+    }
+}
+
+public class C
+{
+}
+");
+        }
+
         private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult(MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
-            .WithMessageFormat(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage);
+            .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage);
     }
 }

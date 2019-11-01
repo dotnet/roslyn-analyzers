@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -15,6 +16,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Roslyn.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test.Utilities
 {
@@ -44,6 +46,18 @@ namespace Test.Utilities
 
         protected const TestValidationMode DefaultTestValidationMode = TestValidationMode.AllowCompileWarnings;
 
+        public DiagnosticAnalyzerTestBase(ITestOutputHelper output)
+        {
+            this.Output = output;
+        }
+
+        public DiagnosticAnalyzerTestBase()
+            : this(null)
+        {
+        }
+
+        protected ITestOutputHelper Output { get; }
+
         /// <summary>
         /// Return the C# diagnostic analyzer to get analyzer diagnostics.
         /// This may return null when used in context of verifying a code fix for compiler diagnostics.
@@ -61,8 +75,6 @@ namespace Test.Utilities
         private const string EditorConfigEnableCopyAnalysis = "dotnet_code_quality.copy_analysis = true";
         protected FileAndSource GetEditorConfigToEnableCopyAnalysis() => GetEditorConfigAdditionalFile(EditorConfigEnableCopyAnalysis);
 
-        protected bool PrintActualDiagnosticsOnFailure { get; set; }
-
         // It is assumed to be of the format, Get<RuleId>CSharpResultAt(line: {0}, column: {1}, message: {2})
         private string ExpectedDiagnosticsAssertionTemplate { get; set; }
 
@@ -73,7 +85,7 @@ namespace Test.Utilities
 
         protected static DiagnosticResult GetGlobalResult(DiagnosticDescriptor rule, params string[] messageArguments)
         {
-            return new DiagnosticResult(rule).WithMessage(string.Format(rule.MessageFormat.ToString(), messageArguments));
+            return new DiagnosticResult(rule).WithMessage(string.Format(CultureInfo.CurrentCulture, rule.MessageFormat.ToString(CultureInfo.CurrentCulture), messageArguments));
         }
 
         protected static DiagnosticResult GetBasicResultAt(int line, int column, string id, string message)
@@ -166,22 +178,22 @@ namespace Test.Utilities
 
         protected void VerifyCSharpUnsafeCode(string source, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, true, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, true, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string source, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string source, CompilationOptions compilationOptions = null, ParseOptions parseOptions = null, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string source, TestValidationMode validationMode, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string source, ReferenceFlags referenceFlags, params DiagnosticResult[] expected)
@@ -196,17 +208,23 @@ namespace Test.Utilities
 
         protected void VerifyCSharp(string[] sources, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string[] sources, ReferenceFlags referenceFlags, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, referenceFlags, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, referenceFlags, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
+        }
+
+        protected void VerifyCSharp(string[] sources, FileAndSource additionalFile, ReferenceFlags referenceFlags, params DiagnosticResult[] expected)
+        {
+            var additionalFiles = new[] { GetAdditionalTextFile(additionalFile.FilePath, additionalFile.Source) };
+            Verify(sources.ToFileAndSource(), LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, referenceFlags, compilationOptions: null, parseOptions: null, additionalFiles: additionalFiles, expected: expected);
         }
 
         protected void VerifyCSharp(FileAndSource[] sources, params DiagnosticResult[] expected)
         {
-            Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyCSharp(string source, FileAndSource additionalText, params DiagnosticResult[] expected)
@@ -220,24 +238,34 @@ namespace Test.Utilities
             Verify(source, LanguageNames.CSharp, GetBasicDiagnosticAnalyzer(), additionalFiles, compilationOptions, parseOptions, expected);
         }
 
+        protected void VerifyCSharpAcrossTwoAssemblies(string dependencySource, string source, params DiagnosticResult[] expected)
+        {
+            VerifyAcrossTwoAssemblies(dependencySource, source, LanguageNames.CSharp, additionalFileOpt: null, expected);
+        }
+
+        protected void VerifyCSharpAcrossTwoAssemblies(string dependencySource, string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            VerifyAcrossTwoAssemblies(dependencySource, source, LanguageNames.CSharp, additionalFile, expected);
+        }
+
         protected void VerifyBasic(string source, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string source, CompilationOptions compilationOptions = null, ParseOptions parseOptions = null, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string source, TestValidationMode validationMode, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string source, TestValidationMode validationMode, CompilationOptions compilationOptions = null, ParseOptions parseOptions = null, params DiagnosticResult[] expected)
         {
-            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, expected: expected);
+            Verify(new[] { source }.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), validationMode, false, ReferenceFlags.None, compilationOptions, parseOptions, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string source, ReferenceFlags referenceFlags, params DiagnosticResult[] expected)
@@ -252,17 +280,17 @@ namespace Test.Utilities
 
         protected void VerifyBasic(string[] sources, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string[] sources, ReferenceFlags referenceFlags, params DiagnosticResult[] expected)
         {
-            Verify(sources.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, referenceFlags, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources.ToFileAndSource(), LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, referenceFlags, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(FileAndSource[] sources, params DiagnosticResult[] expected)
         {
-            Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, expected: expected);
+            Verify(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), DefaultTestValidationMode, false, ReferenceFlags.None, compilationOptions: null, parseOptions: null, additionalFiles: null, expected: expected);
         }
 
         protected void VerifyBasic(string source, FileAndSource additionalText, params DiagnosticResult[] expected)
@@ -276,22 +304,58 @@ namespace Test.Utilities
             Verify(source, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), additionalFiles, compilationOptions, parseOptions, expected);
         }
 
+        protected void VerifyBasicAcrossTwoAssemblies(string dependencySource, string source, params DiagnosticResult[] expected)
+        {
+            VerifyAcrossTwoAssemblies(dependencySource, source, LanguageNames.VisualBasic, additionalFileOpt: null, expected);
+        }
+
+        protected void VerifyBasicAcrossTwoAssemblies(string dependencySource, string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            VerifyAcrossTwoAssemblies(dependencySource, source, LanguageNames.VisualBasic, additionalFile, expected);
+        }
+
         protected void Verify(string source, string language, DiagnosticAnalyzer analyzer, IEnumerable<TestAdditionalDocument> additionalFiles, CompilationOptions compilationOptions, ParseOptions parseOptions, params DiagnosticResult[] expected)
         {
             var diagnostics = GetSortedDiagnostics(new[] { source }.ToFileAndSource(), language, analyzer, compilationOptions, parseOptions, additionalFiles: additionalFiles);
-            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
+            diagnostics.Verify(analyzer, this.Output, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
         }
 
         private void Verify(string source, string language, DiagnosticAnalyzer analyzer, ReferenceFlags referenceFlags, TestValidationMode validationMode, CompilationOptions compilationOptions, ParseOptions parseOptions, params DiagnosticResult[] expected)
         {
             var diagnostics = GetSortedDiagnostics(new[] { source }.ToFileAndSource(), language, analyzer, compilationOptions, parseOptions, referenceFlags: referenceFlags, validationMode: validationMode);
-            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
+            diagnostics.Verify(analyzer, this.Output, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
         }
 
-        private void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, TestValidationMode validationMode, bool allowUnsafeCode, ReferenceFlags referenceFlags, CompilationOptions compilationOptions, ParseOptions parseOptions, params DiagnosticResult[] expected)
+        private void Verify(FileAndSource[] sources, string language, DiagnosticAnalyzer analyzer, TestValidationMode validationMode, bool allowUnsafeCode, ReferenceFlags referenceFlags, CompilationOptions compilationOptions, ParseOptions parseOptions, IEnumerable<TestAdditionalDocument> additionalFiles, params DiagnosticResult[] expected)
         {
-            var diagnostics = GetSortedDiagnostics(sources, language, analyzer, compilationOptions, parseOptions, validationMode, referenceFlags: referenceFlags, allowUnsafeCode: allowUnsafeCode);
-            diagnostics.Verify(analyzer, PrintActualDiagnosticsOnFailure, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
+            var diagnostics = GetSortedDiagnostics(sources, language, analyzer, compilationOptions, parseOptions, validationMode, referenceFlags: referenceFlags, allowUnsafeCode: allowUnsafeCode, additionalFiles: additionalFiles);
+            diagnostics.Verify(analyzer, this.Output, ExpectedDiagnosticsAssertionTemplate, GetDefaultPath(language), expected);
+        }
+
+        private void VerifyAcrossTwoAssemblies(string dependencySource, string source, string language, FileAndSource? additionalFileOpt, params DiagnosticResult[] expected)
+        {
+            VerifyAcrossTwoAssemblies(dependencySource, source, language, language, additionalFileOpt, expected);
+        }
+
+        protected void VerifyAcrossTwoAssemblies(string dependencySource, string source, string dependencyLanguage, string language, FileAndSource? additionalFileOpt, params DiagnosticResult[] expected)
+        {
+            Debug.Assert(language == LanguageNames.CSharp || language == LanguageNames.VisualBasic);
+
+            var dependencyProject = CreateProject(new[] { dependencySource }, language: dependencyLanguage, referenceFlags: ReferenceFlags.RemoveCodeAnalysis, projectName: "DependencyProject");
+            var project =
+                CreateProject(new[] { source }, language: language, referenceFlags: ReferenceFlags.RemoveCodeAnalysis, addToSolution: dependencyProject.Solution)
+                    .AddProjectReference(new ProjectReference(dependencyProject.Id));
+
+            IEnumerable<TestAdditionalDocument> additionalFiles = null;
+            if (additionalFileOpt.HasValue)
+            {
+                var additionalFile = GetAdditionalTextFile(additionalFileOpt.Value.FilePath, additionalFileOpt.Value.Source);
+                additionalFiles = new[] { additionalFile };
+                project = project.AddAdditionalDocument(additionalFileOpt.Value.FilePath, additionalFileOpt.Value.Source).Project;
+            }
+
+            var analyzer = language == LanguageNames.CSharp ? GetCSharpDiagnosticAnalyzer() : GetBasicDiagnosticAnalyzer();
+            GetSortedDiagnostics(analyzer, project.Documents.ToArray(), additionalFiles: additionalFiles).Verify(analyzer, GetDefaultPath(language), expected);
         }
 
         protected static string GetDefaultPath(string language) =>
@@ -340,9 +404,9 @@ namespace Test.Utilities
             return CreateProject(sources.ToFileAndSource(), language, referenceFlags, allowUnsafeCode: allowUnsafeCode).Documents.ToArray();
         }
 
-        protected static Project CreateProject(string[] sources, string language = LanguageNames.CSharp, ReferenceFlags referenceFlags = ReferenceFlags.None, Solution addToSolution = null)
+        protected static Project CreateProject(string[] sources, string language = LanguageNames.CSharp, ReferenceFlags referenceFlags = ReferenceFlags.None, Solution addToSolution = null, string projectName = TestProjectName)
         {
-            return CreateProject(sources.ToFileAndSource(), language, referenceFlags, addToSolution);
+            return CreateProject(sources.ToFileAndSource(), language, referenceFlags, addToSolution, projectName);
         }
 
         private static Project CreateProject(
@@ -384,6 +448,7 @@ namespace Test.Utilities
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemDirectoryServices)
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemXaml)
                 .AddMetadataReference(projectId, AdditionalMetadataReferences.PresentationFramework)
+                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWebExtensions)
                 .WithProjectCompilationOptions(projectId, options)
                 .WithProjectParseOptions(projectId, parseOptions)
                 .GetProject(projectId);
@@ -391,7 +456,7 @@ namespace Test.Utilities
             // Enable Flow-Analysis feature on the project
             parseOptions = project.ParseOptions.WithFeatures(
                 project.ParseOptions.Features.Concat(
-                    SpecializedCollections.SingletonEnumerable(KeyValuePairUtil.Create("flow-analysis", "true"))));
+                    new[] { new KeyValuePair<string, string>("flow-analysis", "true") }));
             project = project.WithParseOptions(parseOptions);
 
             if ((referenceFlags & ReferenceFlags.RemoveCodeAnalysis) != ReferenceFlags.RemoveCodeAnalysis)
@@ -457,11 +522,12 @@ namespace Test.Utilities
             }
 
             var analyzerOptions = additionalFiles != null ? new AnalyzerOptions(additionalFiles.ToImmutableArray<AdditionalText>()) : null;
-            DiagnosticBag diagnostics = DiagnosticBag.GetInstance();
+            List<Diagnostic> diagnostics = new List<Diagnostic>();
             foreach (Project project in projects)
             {
                 Compilation compilation = project.GetCompilationAsync().Result;
                 compilation = EnableAnalyzer(analyzerOpt, compilation);
+                List<MetadataReference> l = compilation.References.ToList();
 
                 ImmutableArray<Diagnostic> diags = compilation.GetAnalyzerDiagnostics(new[] { analyzerOpt }, validationMode, analyzerOptions);
                 if (spans == null)
@@ -498,7 +564,6 @@ namespace Test.Utilities
             }
 
             Diagnostic[] results = diagnostics.AsEnumerable().OrderBy(d => d.Location.SourceSpan.Start).ToArray();
-            diagnostics.Free();
             return results;
         }
 
@@ -602,8 +667,8 @@ namespace Test.Utilities
                     .WithSpecificDiagnosticOptions(
                         analyzer
                             .SupportedDiagnostics
-                            .Select(x => KeyValuePairUtil.Create(x.Id, ReportDiagnostic.Default))
-                            .ToImmutableDictionaryOrEmpty()));
+                            .Select(x => new KeyValuePair<string, ReportDiagnostic>(x.Id, ReportDiagnostic.Default))
+                            .ToImmutableDictionary()));
         }
 
         protected static FileAndSource GetEditorConfigAdditionalFile(string source)

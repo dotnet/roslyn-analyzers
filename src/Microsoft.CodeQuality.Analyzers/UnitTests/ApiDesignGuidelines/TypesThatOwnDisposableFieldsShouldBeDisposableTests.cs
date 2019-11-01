@@ -1,5 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
@@ -96,7 +99,7 @@ using System.IO;
     {
         public void Create()
         {
-            var obj = new NoDisposeClass() { newFile = new FileStream(""data.txt"", FileMode.Append) }; 
+            var obj = new NoDisposeClass() { newFile = new FileStream(""data.txt"", FileMode.Append) };
         }
     }
 ");
@@ -153,7 +156,7 @@ public class NoDisposeClass
         newFile = new FileStream(""data.txt"", FileMode.Append);
     }
 }
-   
+
 [|public class Foo
 {
 }
@@ -213,6 +216,40 @@ namespace ClassLibrary1
 }
 ",
             GetCA1001CSharpResultAt(7, 18, "Class1", "_disp1"));
+        }
+
+        [Fact, WorkItem(1562, "https://github.com/dotnet/roslyn-analyzers/issues/1562")]
+        public void CA1001CSharpTestWithIAsyncDisposable()
+        {
+            VerifyCSharp(@"
+namespace System
+{
+    public class ValueTask {}
+
+    public interface IAsyncDisposable
+    {
+        ValueTask DisposeAsync();
+    }
+
+    public sealed class Stream : System.IDisposable, IAsyncDisposable
+    {
+        public ValueTask DisposeAsync() => new ValueTask();
+        public void Dispose() {}
+    }
+}
+
+namespace ClassLibrary1
+{
+    using System;
+
+    public class Class1 : IAsyncDisposable
+    {
+        private readonly Stream _disposableMember = new Stream();
+
+        public ValueTask DisposeAsync() => _disposableMember.DisposeAsync();
+    }
+}
+");
         }
 
         [Fact]
@@ -430,13 +467,13 @@ End Namespace
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
         {
             return GetCSharpResultAt(line, column, CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
         }
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
         {
             return GetBasicResultAt(line, column, BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
         }
     }
 }

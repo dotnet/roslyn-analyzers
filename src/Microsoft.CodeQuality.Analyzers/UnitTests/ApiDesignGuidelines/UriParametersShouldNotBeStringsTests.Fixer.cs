@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsAnalyzer,
@@ -14,28 +11,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class UriParametersShouldNotBeStringsFixerTests : CodeFixTestBase
+    public class UriParametersShouldNotBeStringsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UriParametersShouldNotBeStringsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UriParametersShouldNotBeStringsAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new UriParametersShouldNotBeStringsFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UriParametersShouldNotBeStringsFixer();
-        }
-
         [Fact]
         public async Task CA1054WarningWithUrl()
         {
@@ -66,33 +43,17 @@ public class A
         }
 
         [Fact]
-        public void CA1054MultipleWarningWithUrl()
+        public async Task CA1054MultipleWarningWithUrl()
         {
             var code = @"
 using System;
 
 public class A
 {
-    public static void Method(string url, string url2) { }
+    public static void Method(string [|url|], string [|url2|]) { }
 }
 ";
-            var fixSingle = @"
-using System;
-
-public class A
-{
-    public static void Method(string url, string url2) { }
-
-    public static void Method(Uri url, string url2)
-    {
-        throw new NotImplementedException();
-    }
-}
-";
-
-            VerifyCSharpFix(code, fixSingle, onlyFixFirstFixableDiagnostic: true);
-
-            var fixAllSequentially = @"
+            var fix = @"
 using System;
 
 public class A
@@ -116,11 +77,17 @@ public class A
 }
 ";
 
-            VerifyCSharpFix(code, fixAllSequentially, onlyFixFirstFixableDiagnostic: false);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fix } },
+                NumberOfIncrementalIterations = 3,
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1054MultipleWarningWithUrlWithOverload()
+        public async Task CA1054MultipleWarningWithUrlWithOverload()
         {
             // Following original FxCop implementation. but this seems strange.
             var code = @"
@@ -128,7 +95,7 @@ using System;
 
 public class A
 {
-    public static void Method(string url, string url2) { }
+    public static void Method(string [|url|], string [|url2|]) { }
     public static void Method(Uri url, Uri url2) { }
 }
 ";
@@ -151,7 +118,13 @@ public class A
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fix } },
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]

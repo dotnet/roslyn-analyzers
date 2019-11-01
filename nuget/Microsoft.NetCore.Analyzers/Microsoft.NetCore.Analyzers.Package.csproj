@@ -6,7 +6,7 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.NetCore.Analyzers</NuspecPackageId>
-    <Description>Analyzers for .NetCore APIs</Description>
+    <Description>Microsoft recommended .NetCore API usage rules implemented as analyzers using the .NET Compiler Platform ("Roslyn"). This package is included as a part of "Microsoft.CodeAnalysis.FxCopAnalyzers" NuGet package and does not need to be installed separately.</Description>
     <Summary>Microsoft .NetCore API Analyzers</Summary>
     <ReleaseNotes>Microsoft .NetCore API Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>

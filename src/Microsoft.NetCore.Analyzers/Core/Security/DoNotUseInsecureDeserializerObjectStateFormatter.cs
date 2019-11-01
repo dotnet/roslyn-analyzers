@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -15,14 +15,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseInsecureDeserializerObjectStateFormatter : DoNotUseInsecureDeserializerMethodsBase
     {
-        // TODO paulming: Help link URLs.
         internal static DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2315",
-                nameof(MicrosoftNetCoreSecurityResources.ObjectStateFormatterMethodUsedTitle),
-                nameof(MicrosoftNetCoreSecurityResources.ObjectStateFormatterMethodUsedMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.ObjectStateFormatterMethodUsedTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.ObjectStateFormatterMethodUsedMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter");
 
         protected override string DeserializerTypeMetadataName => WellKnownTypeNames.SystemWebUIObjectStateFormatter;
 

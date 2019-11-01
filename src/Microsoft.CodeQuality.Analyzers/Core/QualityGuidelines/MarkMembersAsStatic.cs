@@ -20,10 +20,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         internal const string RuleId = "CA1822";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.MarkMembersAsStaticTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.MarkMembersAsStaticMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.MarkMembersAsStaticDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -37,7 +37,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1026 // Enable concurrent execution
         {
             // TODO: Consider making this analyzer thread-safe.
             //analysisContext.EnableConcurrentExecution();
@@ -91,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {
-                        // Methods referenced by other non static methods 
+                        // Methods referenced by other non static methods
                         // and methods containing only NotImplementedException should not considered for marking them as static
                         if (!isInstanceReferenced && !blockEndContext.IsMethodNotImplementedOrSupported())
                         {
@@ -164,7 +166,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
-            if (methodSymbol.GetAttributes().Any(attribute => skippedAttributes.Contains(attribute.AttributeClass)))
+            if (methodSymbol.GetAttributes().Any(attribute => skippedAttributes.Any(attr => attribute.AttributeClass.Inherits(attr))))
             {
                 return false;
             }
@@ -190,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static bool IsEventArgs(ITypeSymbol type, Compilation compilation)
         {
-            if (type.DerivesFrom(WellKnownTypes.EventArgs(compilation)))
+            if (type.DerivesFrom(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs)))
             {
                 return true;
             }
@@ -210,7 +212,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var comVisibleAttribute = WellKnownTypes.ComVisibleAttribute(compilation);
+            var comVisibleAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
             if (comVisibleAttribute == null)
             {
                 return false;
@@ -233,32 +235,31 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 if (symbol != null)
                 {
-                    builder = builder ?? ImmutableArray.CreateBuilder<INamedTypeSymbol>();
+                    builder ??= ImmutableArray.CreateBuilder<INamedTypeSymbol>();
                     builder.Add(symbol);
                 }
             }
 
-            Add(WellKnownTypes.WebMethodAttribute(compilation));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebServicesWebMethodAttribute));
 
             // MSTest attributes
-            Add(WellKnownTypes.TestInitializeAttribute(compilation));
-            Add(WellKnownTypes.TestMethodAttribute(compilation));
-            Add(WellKnownTypes.DataTestMethodAttribute(compilation));
-            Add(WellKnownTypes.TestCleanupAttribute(compilation));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestInitializeAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestMethodAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingDataTestMethodAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestCleanupAttribute));
 
             // XUnit attributes
-            Add(WellKnownTypes.XunitFact(compilation));
-            Add(WellKnownTypes.XunitTheory(compilation));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitFactAttribute));
 
             // NUnit Attributes
-            Add(WellKnownTypes.NunitSetUp(compilation));
-            Add(WellKnownTypes.NunitOneTimeSetUp(compilation));
-            Add(WellKnownTypes.NunitOneTimeTearDown(compilation));
-            Add(WellKnownTypes.NunitTest(compilation));
-            Add(WellKnownTypes.NunitTestCase(compilation));
-            Add(WellKnownTypes.NunitTestCaseSource(compilation));
-            Add(WellKnownTypes.NunitTheory(compilation));
-            Add(WellKnownTypes.NunitTearDown(compilation));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkSetUpAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeSetUpAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeTearDownAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseSourceAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTheoryAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTearDownAttribute));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }

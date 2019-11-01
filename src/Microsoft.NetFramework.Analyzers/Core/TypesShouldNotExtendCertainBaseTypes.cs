@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -57,7 +58,7 @@ namespace Microsoft.NetFramework.Analyzers
         private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
             ImmutableHashSet<INamedTypeSymbol> badBaseTypes = s_badBaseTypesToMessage.Keys
-                                .Select(bt => context.Compilation.GetTypeByMetadataName(bt))
+                                .Select(bt => context.Compilation.GetOrCreateTypeByMetadataName(bt))
                                 .Where(bt => bt != null)
                                 .ToImmutableHashSet();
 
@@ -73,7 +74,7 @@ namespace Microsoft.NetFramework.Analyzers
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
-                            string message = string.Format(s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
+                            string message = string.Format(CultureInfo.CurrentCulture, s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
                             Diagnostic diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
                             saContext.ReportDiagnostic(diagnostic);
                         }

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetFramework.CSharp.Analyzers;
@@ -18,12 +19,12 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     {
         private static DiagnosticResult GetCA3076LoadInsecureConstructedCSharpResultAt(int line, int column, string name)
         {
-            return new DiagnosticResult(CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
+            return new DiagnosticResult(CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
         }
 
         private static DiagnosticResult GetCA3076LoadInsecureConstructedBasicResultAt(int line, int column, string name)
         {
-            return new DiagnosticResult(BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
+            return new DiagnosticResult(BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
         }
 
         [Fact]
@@ -1070,7 +1071,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(16, 17, "Run")
+                GetCA3076LoadCSharpResultAt(16, 17, "TestMethod")
             );
 
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -1093,7 +1094,7 @@ End Function)
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(12, 13, "Run")
+                GetCA3076LoadBasicResultAt(12, 13, "TestMethod")
             );
         }
 

@@ -1,9 +1,16 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithComVisibleFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -117,12 +124,12 @@ internal class C
 
         private static DiagnosticResult GetExposeIndividualTypesResult()
         {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
+            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
         }
 
         private static DiagnosticResult GetAddComVisibleFalseResult()
         {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
+            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
         }
     }
 }

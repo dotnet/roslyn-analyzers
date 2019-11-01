@@ -6888,7 +6888,7 @@ class Test
         }}
     }}
 }}
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -6924,7 +6924,7 @@ Module Test
             Dim c As Command = New Command1(param, param)
         End If
     End Sub
-End Module");
+End Module", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
@@ -7030,7 +7030,7 @@ class Test
         }}
     }}
 }}
-",
+", GetEditorConfigToEnableCopyAnalysis(),
             // Test0.cs(142,25): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(142, 25, "Command1.Command1(string cmd, string parameter2)", "M1"),
             // Test0.cs(157,25): warning CA2100: Review if the query string passed to 'Command3.Command3(string cmd, string parameter2)' in 'M1', accepts any user input.
@@ -7128,7 +7128,7 @@ Module Test
             Dim c As Command = New Command7(param, param)
         End If
     End Sub
-End Module",
+End Module", GetEditorConfigToEnableCopyAnalysis(),
             // Test0.vb(177,32): warning CA2100: Review if the query string passed to 'Sub Command1.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
             GetBasicResultAt(177, 32, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"),
             // Test0.vb(190,32): warning CA2100: Review if the query string passed to 'Sub Command3.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
@@ -8311,7 +8311,7 @@ class Test
         Command c = new Command1(param, param);
     }}    
 }}
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -8350,7 +8350,7 @@ Module Test
         System.Diagnostics.Contracts.Contract.Assert(param = """")
         Dim c As Command = New Command1(param, param)
     End Sub
-End Module");
+End Module", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]

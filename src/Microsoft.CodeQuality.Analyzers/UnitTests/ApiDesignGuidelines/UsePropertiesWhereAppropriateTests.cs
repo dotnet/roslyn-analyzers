@@ -1,9 +1,16 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UsePropertiesWhereAppropriateAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpUsePropertiesWhereAppropriateFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UsePropertiesWhereAppropriateAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicUsePropertiesWhereAppropriateFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -403,16 +410,54 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
+        public void CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public interface IFoo
+{
+    object GetContent();
+}
+
+public class Foo : IFoo
+{
+    object IFoo.GetContent()
+    {
+        return null;
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
+        public void CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public interface IFoo
+{
+    object GetContent();
+}
+
+public class Foo : IFoo
+{
+    public object GetContent()
+    {
+        return null;
+    }
+}
+");
+        }
+
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {
             return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
         {
             return GetBasicResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
     }
 }

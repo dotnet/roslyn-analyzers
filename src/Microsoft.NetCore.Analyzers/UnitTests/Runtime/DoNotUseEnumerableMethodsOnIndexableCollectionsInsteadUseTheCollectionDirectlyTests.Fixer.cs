@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer>;
+    Microsoft.NetCore.Analyzers.Runtime.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer,
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer>;
+    Microsoft.NetCore.Analyzers.Runtime.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -66,6 +66,54 @@ class C
         }
 
         [Fact]
+        public async Task CA1826FixEnumerableFirstExtensionCallBasic()
+        {
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = [|list.First()|]
+        Dim f2 = [|GetList().First()|]
+        Dim f3 = [|matrix(0).First()|]
+        Console.WriteLine([|list.First()|])
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+", @"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = list(0)
+        Dim f2 = GetList()(0)
+        Dim f3 = matrix(0)(0)
+        Console.WriteLine(list(0))
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+");
+        }
+
+        [Fact]
         public async Task CA1826FixEnumerableFirstStaticCallCSharp()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -114,6 +162,54 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
+");
+        }
+
+        [Fact]
+        public async Task CA1826FixEnumerableFirstStaticCallBasic()
+        {
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = [|Enumerable.First(list)|]
+        Dim f2 = [|Enumerable.First(GetList())|]
+        Dim f3 = [|Enumerable.First(matrix(0))|]
+        Console.WriteLine([|Enumerable.First(list)|])
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+", @"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = list(0)
+        Dim f2 = GetList()(0)
+        Dim f3 = matrix(0)(0)
+        Console.WriteLine(list(0))
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
 ");
         }
 

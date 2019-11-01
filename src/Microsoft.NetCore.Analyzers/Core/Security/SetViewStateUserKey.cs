@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,17 +15,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5368";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKey),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKey),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKeyMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKeyDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: false,    // https://github.com/dotnet/roslyn-analyzers/issues/2258
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -50,21 +50,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var compilation = compilationStartAnalysisContext.Compilation;
-                var pageTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUIPage);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (pageTypeSymbol == null)
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUIPage, out var pageTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs, out var eventArgsTypeSymbol))
                 {
                     return;
                 }
-
-                var eventArgsTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
-
-                if (eventArgsTypeSymbol == null)
-                {
-                    return;
-                }
-
-                var objectTypeSymbol = WellKnownTypes.Object(compilation);
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
@@ -81,8 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                                                     !s.IsStatic));
                         var setViewStateUserKeyInPage_Init = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "Page_Init" &&
                                                                                                                         s.Parameters.Length == 2 &&
-                                                                                                                        objectTypeSymbol != null &&
-                                                                                                                        s.Parameters[0].Type.Equals(objectTypeSymbol) &&
+                                                                                                                        s.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
                                                                                                                         s.Parameters[1].Type.Equals(eventArgsTypeSymbol) &&
                                                                                                                         s.ReturnType.SpecialType == SpecialType.System_Void));
 
@@ -102,13 +93,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     return methodSymbol?.GetTopmostOperationBlock(compilation)
                                         .Descendants()
-                                        .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                        .Any(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
                                                     simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
                                                     propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
                                                     propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
-                                                    propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
-                                                    instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
-                                        .Count() > 0;
+                                                    (propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
+                                                    instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance ||
+                                                    propertyReferenceOperation.Instance is IPropertyReferenceOperation propertyReferenceOperation2 &&
+                                                    propertyReferenceOperation2.Property.IsVirtual &&
+                                                    propertyReferenceOperation2.Instance is IInstanceReferenceOperation instanceReferenceOperation2 &&
+                                                    instanceReferenceOperation2.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance))
+                                        ?? false;
                 }
             });
         }

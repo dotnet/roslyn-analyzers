@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -13,22 +13,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class SpecifyIFormatProviderTests : DiagnosticAnalyzerTestBase
+    public class SpecifyIFormatProviderTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SpecifyIFormatProviderAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SpecifyIFormatProviderAnalyzer();
-        }
-
         [Fact]
-        public void CA1305_StringReturningStringFormatOverloads_CSharp()
+        public async Task CA1305_StringReturningStringFormatOverloads_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -70,9 +60,9 @@ GetIFormatProviderAlternateStringRuleCSharpResultAt(25, 16, "string.Format(strin
         }
 
         [Fact]
-        public void CA1305_StringReturningUserMethodOverloads_CSharp()
+        public async Task CA1305_StringReturningUserMethodOverloads_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -136,9 +126,9 @@ GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "IFormatProviderOverl
         }
 
         [Fact]
-        public void CA1305_StringReturningNoDiagnostics_CSharp()
+        public async Task CA1305_StringReturningNoDiagnostics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -210,9 +200,9 @@ public class DerivedClass : IFormatProvider
         }
 
         [Fact]
-        public void CA1305_NonStringReturningStringFormatOverloads_CSharp()
+        public async Task CA1305_NonStringReturningStringFormatOverloads_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -264,9 +254,9 @@ GetIFormatProviderAlternateRuleCSharpResultAt(12, 9, "IFormatProviderOverloads.T
         }
 
         [Fact]
-        public void CA1305_NonStringReturningStringFormatOverloads_TargetMethodNoGenerics_CSharp()
+        public async Task CA1305_NonStringReturningStringFormatOverloads_TargetMethodNoGenerics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public static class IFormatProviderStringTest
@@ -302,9 +292,9 @@ GetIFormatProviderAlternateRuleCSharpResultAt(8, 9, "IFormatProviderOverloads.Ta
         }
 
         [Fact]
-        public void CA1305_StringReturningUICultureIFormatProvider_CSharp()
+        public async Task CA1305_StringReturningUICultureIFormatProvider_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -359,9 +349,9 @@ GetIFormatProviderUICultureStringRuleCSharpResultAt(13, 9, "UICultureAsIFormatPr
         }
 
         [Fact]
-        public void CA1305_NonStringReturningUICultureIFormatProvider_CSharp()
+        public async Task CA1305_NonStringReturningUICultureIFormatProvider_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -415,9 +405,9 @@ GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProvider
 
 
         [Fact]
-        public void CA1305_AcceptNullForIFormatProvider_CSharp()
+        public async Task CA1305_AcceptNullForIFormatProvider_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -440,9 +430,9 @@ internal static class IFormatProviderOverloads
         }
 
         [Fact]
-        public void CA1305_DoesNotRecommendObsoleteOverload_CSharp()
+        public async Task CA1305_DoesNotRecommendObsoleteOverload_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -471,9 +461,9 @@ internal static class IFormatProviderOverloads
         }
 
         [Fact]
-        public void CA1305_RuleException_NoDiagnostics_CSharp()
+        public async Task CA1305_RuleException_NoDiagnostics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 using System.Threading;
@@ -494,9 +484,9 @@ public static class IFormatProviderStringTest
         }
 
         [Fact]
-        public void CA1305_StringReturningStringFormatOverloads_VisualBasic()
+        public async Task CA1305_StringReturningStringFormatOverloads_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -536,9 +526,9 @@ GetIFormatProviderAlternateStringRuleBasicResultAt(23, 16, "String.Format(String
         }
 
         [Fact]
-        public void CA1305_StringReturningUserMethodOverloads_VisualBasic()
+        public async Task CA1305_StringReturningUserMethodOverloads_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -596,9 +586,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1305_StringReturningNoDiagnostics_VisualBasic()
+        public async Task CA1305_StringReturningNoDiagnostics_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -646,9 +636,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1305_NonStringReturningStringFormatOverloads_VisualBasic()
+        public async Task CA1305_NonStringReturningStringFormatOverloads_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -698,9 +688,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1305_StringReturningUICultureIFormatProvider_VisualBasic()
+        public async Task CA1305_StringReturningUICultureIFormatProvider_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -754,9 +744,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1305_NonStringReturningUICultureIFormatProvider_VisualBasic()
+        public async Task CA1305_NonStringReturningUICultureIFormatProvider_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -808,9 +798,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1305_NonStringReturningComputerInfoInstalledUICultureIFormatProvider_VisualBasic()
+        public async Task CA1305_NonStringReturningComputerInfoInstalledUICultureIFormatProvider_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -837,9 +827,9 @@ GetIFormatProviderUICultureRuleBasicResultAt(12, 9, "UICultureAsIFormatProviderR
         }
 
         [Fact]
-        public void CA1305_RuleException_NoDiagnostics_VisualBasic()
+        public async Task CA1305_RuleException_NoDiagnostics_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -861,9 +851,9 @@ End Class");
 
         [Fact]
         [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
-        public void CA1305_BoolToString_NoDiagnostics()
+        public async Task CA1305_BoolToString_NoDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Foo
 {
     public string Bar(bool b1, System.Boolean b2)
@@ -872,7 +862,7 @@ public class Foo
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Foo
     Public Function Bar(ByVal b As Boolean) As String
         Return b.ToString()
@@ -883,9 +873,9 @@ End Class
 
         [Fact]
         [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
-        public void CA1305_CharToString_NoDiagnostics()
+        public async Task CA1305_CharToString_NoDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Foo
 {
     public string Bar(char c1, System.Char c2)
@@ -894,7 +884,7 @@ public class Foo
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Foo
     Public Function Bar(ByVal c As Char) As String
         Return c.ToString()
@@ -905,9 +895,9 @@ End Class
 
         [Fact]
         [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
-        public void CA1305_StringToString_NoDiagnostics()
+        public async Task CA1305_StringToString_NoDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Foo
 {
     public string Bar(string s1, System.String s2)
@@ -916,7 +906,7 @@ public class Foo
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Foo
     Public Function Bar(ByVal s As String) As String
         Return s.ToString()
@@ -927,42 +917,58 @@ End Class
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderAlternateRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderUICultureRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.UICultureRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderAlternateRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureStringRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
 
         private DiagnosticResult GetIFormatProviderUICultureRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
-            return GetBasicResultAt(line, column, SpecifyIFormatProviderAnalyzer.UICultureRule, arg1, arg2, arg3);
+            return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.UICultureRule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
         }
     }
 }

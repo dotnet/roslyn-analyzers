@@ -1,16 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.NestedTypesShouldNotBeVisibleAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.NestedTypesShouldNotBeVisibleAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class NestedTypesShouldNotBeVisibleTests : DiagnosticAnalyzerTestBase
+    public class NestedTypesShouldNotBeVisibleTests
     {
         [Fact]
-        public void CSharpDiagnosticPublicNestedClass()
+        public async Task CSharpDiagnosticPublicNestedClass()
         {
             var code = @"
 public class Outer
@@ -20,11 +26,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(4, 18, "Inner"));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpCA1034ResultAt(4, 18, "Inner"));
         }
 
         [Fact]
-        public void BasicDiagnosticPublicNestedClass()
+        public async Task BasicDiagnosticPublicNestedClass()
         {
             var code = @"
 Public Class Outer
@@ -32,11 +38,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(3, 18, "Inner"));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicCA1034ResultAt(3, 18, "Inner"));
         }
 
         [Fact]
-        public void CSharpDiagnosticPublicNestedStruct()
+        public async Task CSharpDiagnosticPublicNestedStruct()
         {
             var code = @"
 public class Outer
@@ -46,11 +52,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(4, 19, "Inner"));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpCA1034ResultAt(4, 19, "Inner"));
         }
 
         [Fact]
-        public void BasicDiagnosticPublicNestedStructure()
+        public async Task BasicDiagnosticPublicNestedStructure()
         {
             var code = @"
 Public Class Outer
@@ -58,11 +64,11 @@ Public Class Outer
     End Structure
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(3, 22, "Inner"));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicCA1034ResultAt(3, 22, "Inner"));
         }
 
         [Fact]
-        public void CSharpNoDiagnosticPublicNestedEnum()
+        public async Task CSharpNoDiagnosticPublicNestedEnum()
         {
             var code = @"
 public class Outer
@@ -73,11 +79,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticPublicNestedEnum()
+        public async Task BasicNoDiagnosticPublicNestedEnum()
         {
             var code = @"
 Public Class Outer
@@ -86,11 +92,11 @@ Public Class Outer
     End Enum
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicDiagnosticPublicTypeNestedInModule()
+        public async Task BasicDiagnosticPublicTypeNestedInModule()
         {
             var code = @"
 Public Module Outer
@@ -98,11 +104,11 @@ Public Module Outer
     End Class
 End Module
 ";
-            VerifyBasic(code, GetBasicCA1034ModuleResultAt(3, 18, "Inner"));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicCA1034ModuleResultAt(3, 18, "Inner"));
         }
 
         [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
-        public void CSharpDiagnosticPublicNestedDelegate()
+        public async Task CSharpDiagnosticPublicNestedDelegate()
         {
             var code = @"
 public class Outer
@@ -110,22 +116,22 @@ public class Outer
     public delegate void Inner();
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
-        public void BasicDiagnosticPublicNestedDelegate()
+        public async Task BasicDiagnosticPublicNestedDelegate()
         {
             var code = @"
 Public Class Outer
     Delegate Sub Inner()
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticPrivateNestedType()
+        public async Task CSharpNoDiagnosticPrivateNestedType()
         {
             var code = @"
 public class Outer
@@ -135,11 +141,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticPrivateNestedType()
+        public async Task BasicNoDiagnosticPrivateNestedType()
         {
             var code = @"
 Public Class Outer
@@ -147,11 +153,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticProtectedNestedType()
+        public async Task CSharpNoDiagnosticProtectedNestedType()
         {
             var code = @"
 public class Outer
@@ -161,11 +167,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticProtectedNestedType()
+        public async Task BasicNoDiagnosticProtectedNestedType()
         {
             var code = @"
 Public Class Outer
@@ -173,11 +179,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticInternalNestedType()
+        public async Task CSharpNoDiagnosticInternalNestedType()
         {
             var code = @"
 public class Outer
@@ -187,11 +193,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticFriendNestedType()
+        public async Task BasicNoDiagnosticFriendNestedType()
         {
             var code = @"
 Public Class Outer
@@ -199,11 +205,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticProtectedOrInternalNestedType()
+        public async Task CSharpNoDiagnosticProtectedOrInternalNestedType()
         {
             var code = @"
 public class Outer
@@ -213,11 +219,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticProtectedOrFriendNestedType()
+        public async Task BasicNoDiagnosticProtectedOrFriendNestedType()
         {
             var code = @"
 Public Class Outer
@@ -225,11 +231,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticNonPublicTypeNestedInModule()
+        public async Task BasicNoDiagnosticNonPublicTypeNestedInModule()
         {
             var code = @"
 Public Module Outer
@@ -237,11 +243,11 @@ Public Module Outer
     End Class
 End Module
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticPublicNestedEnumerator()
+        public async Task CSharpNoDiagnosticPublicNestedEnumerator()
         {
             var code = @"
 using System.Collections;
@@ -256,11 +262,11 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticPublicTypeNestedInInternalType()
+        public async Task CSharpNoDiagnosticPublicTypeNestedInInternalType()
         {
             var code = @"
 internal class Outer
@@ -270,11 +276,11 @@ internal class Outer
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticPublicTypeNestedInFriendType()
+        public async Task BasicNoDiagnosticPublicTypeNestedInFriendType()
         {
             var code = @"
 Friend Class Outer
@@ -282,11 +288,11 @@ Friend Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticPublicNestedEnumerator()
+        public async Task BasicNoDiagnosticPublicNestedEnumerator()
         {
             var code = @"
 Imports System
@@ -311,11 +317,11 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpNoDiagnosticDataSetSpecialCases()
+        public async Task CSharpNoDiagnosticDataSetSpecialCases()
         {
             var code = @"
 using System.Data;
@@ -334,11 +340,11 @@ public class MyDataSet : DataSet
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicNoDiagnosticDataSetSpecialCases()
+        public async Task BasicNoDiagnosticDataSetSpecialCases()
         {
             var code = @"
 Imports System.Data
@@ -359,11 +365,11 @@ Public Class MyDataSet
     End Class
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpDiagnosticDataSetWithOtherNestedClass()
+        public async Task CSharpDiagnosticDataSetWithOtherNestedClass()
         {
             var code = @"
 using System.Data;
@@ -386,11 +392,11 @@ public class MyDataSet : DataSet
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(17, 18, "Inner"));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpCA1034ResultAt(17, 18, "Inner"));
         }
 
         [Fact]
-        public void BasicDiagnosticDataSetWithOtherNestedClass()
+        public async Task BasicDiagnosticDataSetWithOtherNestedClass()
         {
             var code = @"
 Imports System.Data
@@ -414,11 +420,11 @@ Public Class MyDataSet
     End Class
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(19, 18, "Inner"));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicCA1034ResultAt(19, 18, "Inner"));
         }
 
         [Fact]
-        public void CSharpDiagnosticNestedDataClassesWithinOtherClass()
+        public async Task CSharpDiagnosticNestedDataClassesWithinOtherClass()
         {
             var code = @"
 using System.Data;
@@ -437,13 +443,13 @@ public class Outer
     }
 }
 ";
-            VerifyCSharp(code,
+            await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpCA1034ResultAt(6, 18, "MyDataTable"),
                 GetCSharpCA1034ResultAt(10, 18, "MyDataRow"));
         }
 
         [Fact]
-        public void BasicDiagnosticNestedDataClassesWithinOtherClass()
+        public async Task BasicDiagnosticNestedDataClassesWithinOtherClass()
         {
             var code = @"
 Imports System.Data
@@ -462,34 +468,24 @@ Public Class Outer
     End Class
 End Class
 ";
-            VerifyBasic(code,
+            await VerifyVB.VerifyAnalyzerAsync(code,
                 GetBasicCA1034ResultAt(5, 18, "MyDataTable"),
                 GetBasicCA1034ResultAt(9, 18, "MyDataRow"));
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new NestedTypesShouldNotBeVisibleAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new NestedTypesShouldNotBeVisibleAnalyzer();
-        }
-
         private DiagnosticResult GetCSharpCA1034ResultAt(int line, int column, string nestedTypeName)
-        {
-            return GetCSharpResultAt(line, column, NestedTypesShouldNotBeVisibleAnalyzer.DefaultRule, nestedTypeName);
-        }
+            => new DiagnosticResult(NestedTypesShouldNotBeVisibleAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithArguments(nestedTypeName);
 
         private DiagnosticResult GetBasicCA1034ResultAt(int line, int column, string nestedTypeName)
-        {
-            return GetBasicResultAt(line, column, NestedTypesShouldNotBeVisibleAnalyzer.DefaultRule, nestedTypeName);
-        }
+            => new DiagnosticResult(NestedTypesShouldNotBeVisibleAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithArguments(nestedTypeName);
 
         private DiagnosticResult GetBasicCA1034ModuleResultAt(int line, int column, string nestedTypeName)
-        {
-            return GetBasicResultAt(line, column, NestedTypesShouldNotBeVisibleAnalyzer.VisualBasicModuleRule, nestedTypeName);
-        }
+            => new DiagnosticResult(NestedTypesShouldNotBeVisibleAnalyzer.VisualBasicModuleRule)
+                .WithLocation(line, column)
+                .WithArguments(nestedTypeName);
     }
 }

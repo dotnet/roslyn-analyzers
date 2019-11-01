@@ -1,29 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
 using Xunit;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideEqualsOnOverloadingOperatorEqualsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class OverrideEqualsOnOverloadingOperatorEqualsTests : DiagnosticAnalyzerTestBase
+    public class OverrideEqualsOnOverloadingOperatorEqualsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            throw new NotSupportedException("CA2224 is not applied to C# since it already reports CS0660");
-        }
-
         [Fact]
-        public void Good_Class_Operator()
+        public async Task Good_Class_Operator()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Shared Operator =(a As C, b As C)
         Return True
@@ -40,17 +33,17 @@ End Class");
         }
 
         [Fact]
-        public void Good_Class_NoOperator()
+        public async Task Good_Class_NoOperator()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class");
         }
 
         [Fact]
-        public void Good_Structure_Operator()
+        public async Task Good_Structure_Operator()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Structure C
     Public Shared Operator =(a As C, b As C)
         Return True
@@ -67,17 +60,17 @@ End Structure");
         }
 
         [Fact]
-        public void Good_Structure_NoOperator()
+        public async Task Good_Structure_NoOperator()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Structure C
 End Structure");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7305")]
-        public void Ignored_Interace()
+        public async Task Ignored_Interace()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interace I
     Public Shared Operator =(a As I, b As I)
         Return True
@@ -86,18 +79,18 @@ End Interface");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7305")]
-        public void Ignored_TopLevel()
+        public async Task Ignored_TopLevel()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Shared Operator =(a As I, b As I)
     Return True
 End Operator");
         }
 
         [Fact]
-        public void Bad_Class()
+        public async Task Bad_Class()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Shared Operator =(a As C, b As C)
         Return True
@@ -112,9 +105,9 @@ End Class",
         }
 
         [Fact]
-        public void Bad_Structure()
+        public async Task Bad_Structure()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Structure C
     Public Shared Operator =(a As C, b As C)
         Return True
@@ -129,9 +122,9 @@ End Structure",
         }
 
         [Fact]
-        public void Bad_NotOverride()
+        public async Task Bad_NotOverride()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Shared Operator =(a As C, b As C)
         Return True
@@ -150,9 +143,9 @@ End Class",
         }
 
         [Fact]
-        public void Bad_FalseOverride()
+        public async Task Bad_FalseOverride()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Base
     Public Overridable Shadows Function Equals(o As Object) As Boolean
         Return True
@@ -175,5 +168,9 @@ End Class",
             // Test0.vb(8,7): warning CA2224: Override Equals on overloading operator equals
             GetBasicResultAt(8, 7, BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer.Rule));
         }
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column);
     }
 }

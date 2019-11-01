@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.SpecifyCultureInfoAnalyzer,
@@ -12,22 +13,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class SpecifyCultureInfoTests : DiagnosticAnalyzerTestBase
+    public class SpecifyCultureInfoTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SpecifyCultureInfoAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SpecifyCultureInfoAnalyzer();
-        }
-
         [Fact]
-        public void CA1304_PlainString_CSharp()
+        public async Task CA1304_PlainString_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -42,9 +33,9 @@ public class CultureInfoTestClass0
         }
 
         [Fact]
-        public void CA1304_VariableStringInsideDifferentContainingSymbols_CSharp()
+        public async Task CA1304_VariableStringInsideDifferentContainingSymbols_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -85,9 +76,9 @@ public class CultureInfoTestClass1
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsFirstArgument_CSharp()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsFirstArgument_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -112,9 +103,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsFirstAndSecondArgument_CSharp()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsFirstAndSecondArgument_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -139,9 +130,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsFirstArgument_RefKindRef_CSharp()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsFirstArgument_RefKindRef_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -166,9 +157,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsLastArgument_CSharp()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsLastArgument_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -198,9 +189,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsLastArgument_RefKindOut_CSharp()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsLastArgument_RefKindOut_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -226,9 +217,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasJustCultureInfo_CSharp()
+        public async Task CA1304_MethodOverloadHasJustCultureInfo_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -253,9 +244,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_DoesNotRecommendObsoleteOverload_CSharp()
+        public async Task CA1304_DoesNotRecommendObsoleteOverload_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -280,9 +271,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_TargetMethodIsGenericsAndNonGenerics_CSharp()
+        public async Task CA1304_TargetMethodIsGenericsAndNonGenerics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -314,9 +305,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadIncludeNonCandidates_CSharp()
+        public async Task CA1304_MethodOverloadIncludeNonCandidates_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -344,9 +335,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_MethodOverloadWithJustCultureInfoAsExtraParameter_CSharp()
+        public async Task CA1304_MethodOverloadWithJustCultureInfoAsExtraParameter_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -371,9 +362,9 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
-        public void CA1304_NoDiagnostics_CSharp()
+        public async Task CA1304_NoDiagnostics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -442,9 +433,9 @@ public class DerivedCultureInfo : CultureInfo
         }
 
         [Fact]
-        public void CA1304_PlainString_VisualBasic()
+        public async Task CA1304_PlainString_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -457,9 +448,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_VariableStringInsideDifferentContainingSymbols_VisualBasic()
+        public async Task CA1304_VariableStringInsideDifferentContainingSymbols_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -491,9 +482,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsFirstArgument_VisualBasic()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsFirstArgument_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -514,9 +505,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasCultureInfoAsLastArgument_VisualBasic()
+        public async Task CA1304_MethodOverloadHasCultureInfoAsLastArgument_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -541,9 +532,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_MethodOverloadHasJustCultureInfo_VisualBasic()
+        public async Task CA1304_MethodOverloadHasJustCultureInfo_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -564,9 +555,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_MethodOverloadIncludeNonCandidates_VisualBasic()
+        public async Task CA1304_MethodOverloadIncludeNonCandidates_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -590,9 +581,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_MethodOverloadWithJustCultureInfoAsExtraParameter_VisualBasic()
+        public async Task CA1304_MethodOverloadWithJustCultureInfoAsExtraParameter_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -613,9 +604,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1304_NoDiagnostics_VisualBasic()
+        public async Task CA1304_NoDiagnostics_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -661,5 +652,15 @@ Public Class DerivedCultureInfo
     End Sub
 End Class");
         }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, string arg1, string arg2, string arg3) =>
+            new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
+
+        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, string arg1, string arg2, string arg3) =>
+            new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2, arg3);
     }
 }

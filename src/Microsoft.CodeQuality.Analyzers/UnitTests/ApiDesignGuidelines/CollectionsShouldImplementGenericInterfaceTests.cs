@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -14,49 +14,33 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CollectionsShouldImplementGenericInterfaceTests : DiagnosticAnalyzerTestBase
+    public class CollectionsShouldImplementGenericInterfaceTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new CollectionsShouldImplementGenericInterfaceAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CollectionsShouldImplementGenericInterfaceAnalyzer();
-        }
-
         private static readonly string CA1010Message = MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
 
         private DiagnosticResult GetCA1010CSharpResultAt(int line, int column, string typeName, string interfaceName)
-        {
-            return GetCSharpResultAt(line,
-                                     column,
-                                     CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
-        }
+            => new DiagnosticResult(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
 
         private DiagnosticResult GetCA1010BasicResultAt(int line, int column, string typeName, string interfaceName)
-        {
-            return GetBasicResultAt(line,
-                                     column,
-                                     CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
-        }
+            => new DiagnosticResult(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
 
         [Fact]
-        public void Test_WithCollectionBase()
+        public async Task Test_WithCollectionBase()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections;
 
 public class TestClass : CollectionBase { }",
                 GetCA1010CSharpResultAt(4, 14, "TestClass", "IList"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
 
-Public Class TestClass 
+Public Class TestClass
     Inherits CollectionBase
 End Class
 ",
@@ -64,26 +48,26 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void Test_WithCollectionBase_Internal()
+        public async Task Test_WithCollectionBase_Internal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections;
 
 internal class TestClass : CollectionBase { }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
 
-Friend Class TestClass 
+Friend Class TestClass
     Inherits CollectionBase
 End Class
 ");
         }
 
         [Fact]
-        public void Test_WithCollection()
+        public async Task Test_WithCollection()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -99,7 +83,7 @@ public class TestClass : ICollection
 ",
                 GetCA1010CSharpResultAt(5, 14, "TestClass", "ICollection"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 
@@ -123,9 +107,9 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void Test_WithCollection_Internal()
+        public async Task Test_WithCollection_Internal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -140,7 +124,7 @@ internal class TestClass : ICollection
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 
@@ -163,9 +147,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithEnumerable()
+        public async Task Test_WithEnumerable()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -176,7 +160,7 @@ public class TestClass : IEnumerable
 ",
                 GetCA1010CSharpResultAt(5, 14, "TestClass", "IEnumerable"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 
@@ -192,9 +176,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithList()
+        public async Task Test_WithList()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -225,7 +209,7 @@ public class TestClass : IList
 ",
                 GetCA1010CSharpResultAt(5, 14, "TestClass", "IList"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 
@@ -288,9 +272,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithGenericCollection()
+        public async Task Test_WithGenericCollection()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -310,7 +294,7 @@ public class TestClass : ICollection<int>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -353,9 +337,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithGenericEnumerable()
+        public async Task Test_WithGenericEnumerable()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -367,7 +351,7 @@ public class TestClass : IEnumerable<int>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -387,9 +371,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithGenericList()
+        public async Task Test_WithGenericList()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -418,7 +402,7 @@ public class TestClass : IList<int>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -482,9 +466,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithCollectionBaseAndGenerics()
+        public async Task Test_WithCollectionBaseAndGenerics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -515,7 +499,7 @@ public class TestClass : CollectionBase, ICollection<int>, IEnumerable<int>, ILi
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -578,9 +562,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithCollectionAndGenericCollection()
+        public async Task Test_WithCollectionAndGenericCollection()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -612,7 +596,7 @@ public class TestClass : ICollection, ICollection<int>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -664,9 +648,9 @@ End Class
         }
 
         [Fact]
-        public void Test_WithBaseAndDerivedClassFailureCase()
+        public async Task Test_WithBaseAndDerivedClassFailureCase()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -687,7 +671,7 @@ public class IntCollection : BaseClass
                 GetCA1010CSharpResultAt(5, 14, "BaseClass", "ICollection"),
                 GetCA1010CSharpResultAt(15, 14, "IntCollection", "ICollection"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 
@@ -716,9 +700,9 @@ End Class
         }
 
         [Fact]
-        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBase()
+        public async Task Test_InheritsCollectionBaseAndReadOnlyCollectionBase()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections;
 
 public class C : CollectionBase { }
@@ -728,7 +712,7 @@ public class R : ReadOnlyCollectionBase { }
                 GetCA1010CSharpResultAt(4, 14, "C", "IList"),
                 GetCA1010CSharpResultAt(6, 14, "R", "ICollection"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
 
 Public Class C
@@ -744,9 +728,9 @@ End Class
         }
 
         [Fact]
-        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBase_DoesFullyImplementGenerics()
+        public async Task Test_InheritsCollectionBaseAndReadOnlyCollectionBase_DoesFullyImplementGenerics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -793,7 +777,7 @@ public class R : ReadOnlyCollectionBase, IEnumerable<int>
                 GetCA1010CSharpResultAt(6, 14, "C", "IList"),
                 GetCA1010CSharpResultAt(37, 14, "R", "ICollection"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -854,9 +838,9 @@ End Class
 
 
         [Fact]
-        public void Test_InheritsCollectionBaseAndReadOnlyCollectionBaseAndGenericIEnumerable_NoDiagnostic()
+        public async Task Test_InheritsCollectionBaseAndReadOnlyCollectionBaseAndGenericIEnumerable_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections;
 using System.Collections.Generic;
 
@@ -877,7 +861,7 @@ class R : ReadOnlyCollectionBase, IEnumerable<int>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
 Imports System.Collections.Generic
 

@@ -1,14 +1,20 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class AvoidUnusedPrivateFieldsTests : DiagnosticAnalyzerTestBase
+    public class AvoidUnusedPrivateFieldsTests
     {
         private const string CSharpMEFAttributesDefinition = @"
 namespace System.ComponentModel.Composition
@@ -39,20 +45,10 @@ Namespace System.Composition
 End Namespace
 ";
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new AvoidUnusedPrivateFieldsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AvoidUnusedPrivateFieldsAnalyzer();
-        }
-
         [Fact]
-        public void CA1823_CSharp_AttributeUsage_NoDiagnostic()
+        public async Task CA1823_CSharp_AttributeUsage_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Obsolete(Message)]
 public class Class
 {
@@ -62,9 +58,9 @@ public class Class
         }
 
         [Fact]
-        public void CA1823_CSharp_InterpolatedStringUsage_NoDiagnostic()
+        public async Task CA1823_CSharp_InterpolatedStringUsage_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
 {
     private const string Message = ""Test"";
@@ -74,9 +70,9 @@ public class Class
         }
 
         [Fact]
-        public void CA1823_CSharp_CollectionInitializerUsage_NoDiagnostic()
+        public async Task CA1823_CSharp_CollectionInitializerUsage_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
 
 public class Class
@@ -88,9 +84,9 @@ public class Class
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_FieldOffsetAttribute_NoDiagnostic()
+        public async Task CA1823_CSharp_FieldOffsetAttribute_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 public class Class
 {
@@ -101,22 +97,22 @@ public class Class
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_FieldOffsetAttributeError_NoDiagnostic()
+        public async Task CA1823_CSharp_FieldOffsetAttributeError_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 public class Class
 {
     [System.Runtime.InteropServices.FieldOffsetAttribute]
     private int fieldWithFieldOffsetAttribute;
 }
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
+        public async Task CA1823_CSharp_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 class Class1
 {
@@ -133,9 +129,9 @@ class Class2
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
+        public async Task CA1823_CSharp_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)]
 class Class
 {
@@ -143,27 +139,27 @@ class Class
 }
 ",
     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
+        public async Task CA1823_CSharp_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 class Class
 {
     private int field;
 }
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_CSharp_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
+        public async Task CA1823_CSharp_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 [System.Runtime.InteropServices.StructLayout]
 class Class1
 {
@@ -175,17 +171,17 @@ class Class2
 {
     private int field;
 }
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"),
+    GetCA1823CSharpResultAt(5, 17, "field"),
     // Test0.cs(11,17): warning CA1823: Unused field 'field'.
-    GetCSharpResultAt(11, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823CSharpResultAt(11, 17, "field"));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_CSharp_MEFAttributes_NoDiagnostic()
+        public async Task CA1823_CSharp_MEFAttributes_NoDiagnostic()
         {
-            VerifyCSharp(CSharpMEFAttributesDefinition + @"
+            await VerifyCS.VerifyAnalyzerAsync(CSharpMEFAttributesDefinition + @"
 public class Class
 {
     [System.Composition.ExportAttribute]
@@ -198,9 +194,9 @@ public class Class
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_CSharp_MEFAttributesError_NoDiagnostic()
+        public async Task CA1823_CSharp_MEFAttributesError_NoDiagnostic()
         {
-            VerifyCSharp(CSharpMEFAttributesDefinition + @"
+            await VerifyCS.VerifyAnalyzerAsync(CSharpMEFAttributesDefinition + @"
 public class Class
 {
     [System.Composition.ExportAttribute(0)]
@@ -209,13 +205,13 @@ public class Class
     [System.ComponentModel.Composition.ExportAttribute(0)]
     private int fieldWithMefV2ExportAttribute;
 }
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_CSharp_MEFAttributesUndefined_Diagnostic()
+        public async Task CA1823_CSharp_MEFAttributesUndefined_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
 {
     [System.Composition.ExportAttribute]
@@ -224,17 +220,17 @@ public class Class
     [System.ComponentModel.Composition.ExportAttribute]
     private int fieldWithMefV2ExportAttribute;
 }
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
     // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
-    GetCSharpResultAt(5, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV1ExportAttribute"),
+    GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
     // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-    GetCSharpResultAt(8, 17, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV2ExportAttribute"));
+    GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"));
         }
 
         [Fact]
-        public void CA1823_CSharp_SimpleUsages_DiagnosticCases()
+        public async Task CA1823_CSharp_SimpleUsages_DiagnosticCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
 {
     private string fileName = ""data.txt"";
@@ -257,9 +253,9 @@ public class Class
         }
 
         [Fact]
-        public void CA1823_VisualBasic_DiagnosticCases()
+        public async Task CA1823_VisualBasic_DiagnosticCases()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Private fileName As String
     Private Used1 As Integer = 10
@@ -284,9 +280,9 @@ End Class
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_FieldOffsetAttribute_NoDiagnostic()
+        public async Task CA1823_VisualBasic_FieldOffsetAttribute_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
 Public Class [Class]
     <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
@@ -296,21 +292,21 @@ End Class
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_FieldOffsetAttributeError_NoDiagnostic()
+        public async Task CA1823_VisualBasic_FieldOffsetAttributeError_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
 Public Class [Class]
     <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
     Private fieldWithFieldOffsetAttribute As Integer
 End Class
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
+        public async Task CA1823_VisualBasic_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)> _
 Public Class Class1
     Private field As Integer
@@ -325,35 +321,35 @@ End Class
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
+        public async Task CA1823_VisualBasic_StructLayoutAttribute_LayoutKindAuto_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)> _
 Public Class [Class]
     Private field As Integer
 End Class
 ",
     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823BasicResultAt(4, 13, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
+        public async Task CA1823_VisualBasic_StructLayoutAttribute_LayoutKindExplicit_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
 Public Class [Class]
     Private field As Integer
 End Class
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823BasicResultAt(4, 13, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
-        public void CA1823_VisualBasic_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
+        public async Task CA1823_VisualBasic_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 <System.Runtime.InteropServices.StructLayout> _
 Public Class Class1
     Private field As Integer
@@ -363,17 +359,17 @@ End Class
 Public Class Class2
     Private field As Integer
 End Class
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"),
+    GetCA1823BasicResultAt(4, 13, "field"),
     // Test0.vb(9,13): warning CA1823: Unused field 'field'.
-    GetBasicResultAt(9, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "field"));
+    GetCA1823BasicResultAt(9, 13, "field"));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_VisualBasic_MEFAttributes_NoDiagnostic()
+        public async Task CA1823_VisualBasic_MEFAttributes_NoDiagnostic()
         {
-            VerifyBasic(BasicMEFAttributesDefinition + @"
+            await VerifyVB.VerifyAnalyzerAsync(BasicMEFAttributesDefinition + @"
 Public Class [Class]
     <System.Composition.ExportAttribute> _
     Private fieldWithMefV1ExportAttribute As Integer
@@ -385,9 +381,9 @@ End Class
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_VisualBasic_MEFAttributesError_NoDiagnostic()
+        public async Task CA1823_VisualBasic_MEFAttributesError_NoDiagnostic()
         {
-            VerifyBasic(BasicMEFAttributesDefinition + @"
+            await VerifyVB.VerifyAnalyzerAsync(BasicMEFAttributesDefinition + @"
 Public Class [Class]
     <System.Composition.ExportAttribute(0)> _
     Private fieldWithMefV1ExportAttribute As Integer
@@ -395,13 +391,13 @@ Public Class [Class]
     <System.ComponentModel.Composition.ExportAttribute(0)> _
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
-        public void CA1823_VisualBasic_MEFAttributesUndefined_Diagnostic()
+        public async Task CA1823_VisualBasic_MEFAttributesUndefined_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class [Class]
     <System.Composition.ExportAttribute> _
     Private fieldWithMefV1ExportAttribute As Integer
@@ -409,21 +405,21 @@ Public Class [Class]
     <System.ComponentModel.Composition.ExportAttribute> _
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
-", TestValidationMode.AllowCompileErrors,
+", CompilerDiagnostics.None,
         // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
-        GetBasicResultAt(4, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV1ExportAttribute"),
+        GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
         // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-        GetBasicResultAt(7, 13, AvoidUnusedPrivateFieldsAnalyzer.Rule, "fieldWithMefV2ExportAttribute"));
+        GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"));
         }
 
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)
-        {
-            return GetCSharpResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
-        }
+            => new DiagnosticResult(AvoidUnusedPrivateFieldsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
 
         private static DiagnosticResult GetCA1823BasicResultAt(int line, int column, string fieldName)
-        {
-            return GetBasicResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
-        }
+            => new DiagnosticResult(AvoidUnusedPrivateFieldsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
     }
 }

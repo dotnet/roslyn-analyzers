@@ -1,70 +1,56 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OperatorOverloadsHaveNamedAlternatesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OperatorOverloadsHaveNamedAlternatesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OperatorOverloadsHaveNamedAlternatesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OperatorOverloadsHaveNamedAlternatesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class OperatorOverloadsHaveNamedAlternatesTests : DiagnosticAnalyzerTestBase
+    public class OperatorOverloadsHaveNamedAlternatesTests
     {
         #region Boilerplate
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new OperatorOverloadsHaveNamedAlternatesAnalyzer();
-        }
-
         private static DiagnosticResult GetCA2225CSharpDefaultResultAt(int line, int column, string alternateName, string operatorName)
-        {
-            // Provide a method named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
-            return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName));
 
         private static DiagnosticResult GetCA2225CSharpPropertyResultAt(int line, int column, string alternateName, string operatorName)
-        {
-            // Provide a property named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty, alternateName, operatorName);
-            return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.PropertyRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty, alternateName, operatorName));
 
         private static DiagnosticResult GetCA2225CSharpMultipleResultAt(int line, int column, string alternateName1, string alternateName2, string operatorName)
-        {
-            // Provide a method named '{0}' or '{1}' as an alternate for operator {2}
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple, alternateName1, alternateName2, operatorName);
-            return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.MultipleRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple, alternateName1, alternateName2, operatorName));
 
         private static DiagnosticResult GetCA2225CSharpVisibilityResultAt(int line, int column, string alternateName, string operatorName)
-        {
-            // Mark {0} as public because it is a friendly alternate for operator {1}.
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility, alternateName, operatorName);
-            return GetCSharpResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.VisibilityRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility, alternateName, operatorName));
 
         private static DiagnosticResult GetCA2225BasicDefaultResultAt(int line, int column, string alternateName, string operatorName)
-        {
-            // Provide a method named '{0}' as a friendly alternate for operator {1}.
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName);
-            return GetBasicResultAt(line, column, OperatorOverloadsHaveNamedAlternatesAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName));
 
         #endregion
 
         #region C# tests
 
         [Fact]
-        public void HasAlternateMethod_CSharp()
+        public async Task HasAlternateMethod_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator +(C left, C right) { return new C(); }
@@ -74,9 +60,9 @@ public class C
         }
 
         [Fact]
-        public void HasMultipleAlternatePrimary_CSharp()
+        public async Task HasMultipleAlternatePrimary_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator %(C left, C right) { return new C(); }
@@ -86,9 +72,9 @@ public class C
         }
 
         [Fact]
-        public void HasMultipleAlternateSecondary_CSharp()
+        public async Task HasMultipleAlternateSecondary_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator %(C left, C right) { return new C(); }
@@ -98,9 +84,9 @@ public class C
         }
 
         [Fact]
-        public void HasAppropriateConversionAlternate_CSharp()
+        public async Task HasAppropriateConversionAlternate_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static implicit operator int(C item) { return 0; }
@@ -110,9 +96,9 @@ public class C
         }
 
         [Fact, WorkItem(1717, "https://github.com/dotnet/roslyn-analyzers/issues/1717")]
-        public void HasAppropriateConversionAlternate02_CSharp()
+        public async Task HasAppropriateConversionAlternate02_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Bar
 {	
 	public int i {get; set;}
@@ -134,9 +120,9 @@ public class Foo
         }
 
         [Fact]
-        public void MissingAlternateMethod_CSharp()
+        public async Task MissingAlternateMethod_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator +(C left, C right) { return new C(); }
@@ -146,9 +132,9 @@ public class C
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void MissingAlternateMethod_CSharp_Internal()
+        public async Task MissingAlternateMethod_CSharp_Internal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     public static C operator +(C left, C right) { return new C(); }
@@ -165,9 +151,9 @@ public class C2
         }
 
         [Fact]
-        public void MissingAlternateProperty_CSharp()
+        public async Task MissingAlternateProperty_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static bool operator true(C item) { return true; }
@@ -178,9 +164,9 @@ public class C
         }
 
         [Fact]
-        public void MissingMultipleAlternates_CSharp()
+        public async Task MissingMultipleAlternates_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator %(C left, C right) { return new C(); }
@@ -190,9 +176,9 @@ public class C
         }
 
         [Fact]
-        public void ImproperAlternateMethodVisibility_CSharp()
+        public async Task ImproperAlternateMethodVisibility_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static C operator +(C left, C right) { return new C(); }
@@ -203,9 +189,9 @@ public class C
         }
 
         [Fact]
-        public void ImproperAlternatePropertyVisibility_CSharp()
+        public async Task ImproperAlternatePropertyVisibility_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public static bool operator true(C item) { return true; }
@@ -217,9 +203,9 @@ public class C
         }
 
         [Fact]
-        public void StructHasAlternateMethod_CSharp()
+        public async Task StructHasAlternateMethod_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 struct C
 {
     public static C operator +(C left, C right) { return new C(); }
@@ -237,9 +223,9 @@ struct C
         #region VB tests
 
         [Fact]
-        public void HasAlternateMethod_VisualBasic()
+        public async Task HasAlternateMethod_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
@@ -252,9 +238,9 @@ End Class
         }
 
         [Fact]
-        public void MissingAlternateMethod_VisualBasic()
+        public async Task MissingAlternateMethod_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
@@ -265,9 +251,9 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void MissingAlternateMethod_VisualBasic_Internal()
+        public async Task MissingAlternateMethod_VisualBasic_Internal()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()
@@ -285,9 +271,9 @@ End Class
         }
 
         [Fact]
-        public void StructHasAlternateMethod_VisualBasic()
+        public async Task StructHasAlternateMethod_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure C
     Public Shared Operator +(left As C, right As C) As C
         Return New C()

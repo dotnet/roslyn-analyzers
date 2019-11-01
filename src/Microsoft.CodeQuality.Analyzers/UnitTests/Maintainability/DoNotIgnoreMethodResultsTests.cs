@@ -3,22 +3,29 @@
 using System;
 using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.DoNotIgnoreMethodResultsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.DoNotIgnoreMethodResultsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class DoNotIgnoreMethodResultsTests : DiagnosticAnalyzerTestBase
+    public class DoNotIgnoreMethodResultsTests
     {
         #region Unit tests for no analyzer diagnostic
 
         [Fact]
         [WorkItem(462, "https://github.com/dotnet/roslyn-analyzers/issues/462")]
-        public void UsedInvocationResult()
+        public async Task UsedInvocationResult()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
@@ -45,7 +52,7 @@ public class C
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Public Class C
@@ -73,9 +80,15 @@ End Class
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
         [Fact]
-        public void ExpectedExceptionLastLine()
+        public async Task ExpectedExceptionLastLine()
         {
-            VerifyCSharp(new[] { @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 public class Test
@@ -85,9 +98,18 @@ public class Test
     {
         new Test();
     }
-}", MSTestAttributes.CSharp });
+}", MSTestAttributes.CSharp
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { @"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 Imports System.Globalization
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
@@ -99,7 +121,10 @@ Class C
         Dim sample As String = ""Sample""
         sample.ToLower(CultureInfo.InvariantCulture)
     End Sub
-End Class", MSTestAttributes.VisualBasic });
+End Class", MSTestAttributes.VisualBasic
+                    }
+                }
+            }.RunAsync();
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
@@ -109,9 +134,15 @@ End Class", MSTestAttributes.VisualBasic });
         [InlineData("NUnit.Framework", "Catch", "", false)]
         [InlineData("NUnit.Framework", "DoesNotThrow", "", false)]
         [Theory]
-        public void UnitTestingThrows(string @namespace, string method, string generic, bool useXunit)
+        public async Task UnitTestingThrows(string @namespace, string method, string generic, bool useXunit)
         {
-            VerifyCSharp(new[] { $@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 using {@namespace};
 
@@ -121,9 +152,18 @@ public class Test
     {{
         Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(() => {{ new Test(); }});
     }}
-}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { $@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Imports System
 Imports System.Globalization
 Imports {@namespace}
@@ -135,7 +175,10 @@ Class C
                                         sample.ToLower(CultureInfo.InvariantCulture)
                                     End Sub)
     End Sub
-End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
+                    }
+                }
+            }.RunAsync();
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
@@ -145,9 +188,15 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
         [InlineData("NUnit.Framework", "CatchAsync", "", false)]
         [InlineData("NUnit.Framework", "DoesNotThrowAsync", "", false)]
         [Theory]
-        public void UnitTestingThrowsAsync(string @namespace, string method, string generic, bool useXunit)
+        public async Task UnitTestingThrowsAsync(string @namespace, string method, string generic, bool useXunit)
         {
-            VerifyCSharp(new[] { $@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 using System.Threading.Tasks;
 using {@namespace};
@@ -158,9 +207,18 @@ public class Test
     {{
         Assert.{method}{(generic.Length == 0 ? string.Empty : $"<{generic}>")}(async () => {{ new Test(); }});
     }}
-}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp });
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { $@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Imports System
 Imports System.Globalization
 Imports {@namespace}
@@ -172,7 +230,10 @@ Class C
                                         sample.ToLower(CultureInfo.InvariantCulture)
                                     End Function)
     End Sub
-End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
+                    }
+                }
+            }.RunAsync();
         }
 
         #endregion
@@ -181,9 +242,9 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic });
 
         [Fact]
         [WorkItem(462, "https://github.com/dotnet/roslyn-analyzers/issues/462")]
-        public void UnusedStringCreation()
+        public async Task UnusedStringCreation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -200,7 +261,7 @@ class C
 ",
     GetCSharpStringCreationResultAt(11, 9, "DoesNotAssignStringToVariable", "ToLower"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -218,9 +279,9 @@ End Class
 
         [Fact]
         [WorkItem(462, "https://github.com/dotnet/roslyn-analyzers/issues/462")]
-        public void UnusedObjectCreation()
+        public async Task UnusedObjectCreation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -235,7 +296,7 @@ class C
     GetCSharpObjectCreationResultAt(9, 9, "DoesNotAssignObjectToVariable", "C"));
 
             // Following code produces syntax error for VB, so no object creation diagnostic.
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -244,14 +305,14 @@ Class C
         New C() ' error BC30035: Syntax error
     End Sub
 End Class
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact]
         [WorkItem(462, "https://github.com/dotnet/roslyn-analyzers/issues/462")]
-        public void UnusedTryParseResult()
+        public async Task UnusedTryParseResult()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
@@ -265,7 +326,7 @@ public class C
 ",
     GetCSharpTryParseResultAt(9, 9, "M", "TryParse"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Public Class C
@@ -280,9 +341,9 @@ End Class
 
         [Fact]
         [WorkItem(462, "https://github.com/dotnet/roslyn-analyzers/issues/462")]
-        public void UnusedPInvokeResult()
+        public async Task UnusedPInvokeResult()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
@@ -299,7 +360,7 @@ public class C
 ",
     GetCSharpHResultOrErrorCodeResultAt(9, 9, "M", "NativeMethod"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Public Class C
@@ -317,9 +378,9 @@ End Class
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/746")]
         [WorkItem(746, "https://github.com/dotnet/roslyn-analyzers/issues/746")]
-        public void UnusedComImportPreserveSig()
+        public async Task UnusedComImportPreserveSig()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
@@ -340,7 +401,7 @@ public interface IComClass
 ",
     GetCSharpHResultOrErrorCodeResultAt(8, 9, "M", "NativeMethod"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Public Class C
@@ -361,9 +422,9 @@ End Interface
 
         [Fact]
         [WorkItem(1164, "https://github.com/dotnet/roslyn-analyzers/issues/1164")]
-        public void UnusedPureMethodTriggersError()
+        public async Task UnusedPureMethodTriggersError()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics.Contracts;
 
 class C
@@ -378,7 +439,7 @@ class C
 }",
     GetCSharpPureMethodResultAt(11, 9, "DoesNotUseResult", "Returns1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Diagnostics.Contracts
 
 Module Module1
@@ -403,9 +464,15 @@ End Module
         [InlineData("NUnit.Framework", "Catch", "", false)]
         [InlineData("NUnit.Framework", "DoesNotThrow", "", false)]
         [Theory]
-        public void UnitTestingThrows_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
+        public async Task UnitTestingThrows_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
         {
-            VerifyCSharp(new[] { $@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 using {@namespace};
 
@@ -418,10 +485,22 @@ public class Test
             return;
         }});
     }}
-}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
-                GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test")
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { $@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Imports System
 Imports System.Globalization
 Imports {@namespace}
@@ -434,8 +513,14 @@ Class C
                                         Return
                                     End Sub)
     End Sub
-End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
-                GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower")
+                }
+            }.RunAsync();
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
@@ -445,9 +530,15 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
         [InlineData("NUnit.Framework", "CatchAsync", "", false)]
         [InlineData("NUnit.Framework", "DoesNotThrowAsync", "", false)]
         [Theory]
-        public void UnitTestingThrowsAsync_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
+        public async Task UnitTestingThrowsAsync_NotLastLineStillDiagnostic(string @namespace, string method, string generic, bool useXunit)
         {
-            VerifyCSharp(new[] { $@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 using {@namespace};
 
@@ -460,10 +551,22 @@ public class Test
             return;
         }});
     }}
-}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp },
-                GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"));
+}}", useXunit ? XunitApis.CSharp : NUnitApis.CSharp
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test")
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { $@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Imports System
 Imports System.Globalization
 Imports {@namespace}
@@ -476,15 +579,27 @@ Class C
                                         Return
                                     End Function)
     End Sub
-End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic },
-                GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"));
+End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower")
+                }
+            }.RunAsync();
         }
 
         [WorkItem(1369, "https://github.com/dotnet/roslyn-analyzers/issues/1369")]
         [Fact]
-        public void ExpectedException_NotLastLineDiagnostic()
+        public async Task ExpectedException_NotLastLineDiagnostic()
         {
-            VerifyCSharp(new[] { @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 public class Test
@@ -495,10 +610,22 @@ public class Test
         new Test();
         return;
     }
-}", MSTestAttributes.CSharp },
-                GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test"));
+}", MSTestAttributes.CSharp
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test")
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] { @"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 Imports System.Globalization
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
@@ -511,77 +638,64 @@ Class C
         sample.ToLower(CultureInfo.InvariantCulture)
         Return
     End Sub
-End Class", MSTestAttributes.VisualBasic },
-                GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower"));
+End Class", MSTestAttributes.VisualBasic
+                    }
+                },
+                ExpectedDiagnostics =
+                {
+                    GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower")
+                }
+            }.RunAsync();
         }
 
         #endregion
 
         #region Helpers
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotIgnoreMethodResultsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotIgnoreMethodResultsAnalyzer();
-        }
-
         private static DiagnosticResult GetCSharpStringCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName);
-            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetBasicStringCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName);
-            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetCSharpObjectCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation, containingMethodName, invokedMethodName);
-            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.ObjectCreationRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetCSharpTryParseResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName);
-            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetBasicTryParseResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName);
-            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetCSharpHResultOrErrorCodeResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName);
-            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetBasicHResultOrErrorCodeResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName);
-            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetCSharpPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName);
-            return GetCSharpResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName));
 
         private static DiagnosticResult GetBasicPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName);
-            return GetBasicResultAt(line, column, DoNotIgnoreMethodResultsAnalyzer.RuleId, message);
-        }
+            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName));
 
         #endregion
     }

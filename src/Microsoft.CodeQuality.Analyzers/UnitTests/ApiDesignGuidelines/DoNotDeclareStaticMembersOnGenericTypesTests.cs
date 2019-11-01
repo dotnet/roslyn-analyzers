@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -430,13 +429,9 @@ public abstract class TestObject<T2> : IEquatable<TestObject<T2>>, IComparable<T
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyCS.Diagnostic().WithLocation(line, column);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(DoNotDeclareStaticMembersOnGenericTypesAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyVB.Diagnostic().WithLocation(line, column);
     }
 }

@@ -2,9 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 
 using Xunit;
@@ -238,7 +236,11 @@ End Class");
 }",
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }
@@ -254,9 +256,13 @@ End Class");
     End Sub
 End Class",
                 SolutionTransforms =
+                {
+                    (solution, projectId) =>
                     {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new VisualBasicCompilationOptions(OutputKind.ConsoleApplication))
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
                     }
+                }
             }.RunAsync();
         }
 
@@ -272,7 +278,11 @@ End Class",
 }",
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }
@@ -290,7 +300,11 @@ End Class",
 End Class",
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new VisualBasicCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }
@@ -309,7 +323,11 @@ internal static class C
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp7_1,
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }
@@ -328,7 +346,11 @@ internal static class C
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp7_1,
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }
@@ -368,7 +390,11 @@ End Class",
                 CompilerDiagnostics = CompilerDiagnostics.None, // No Main method
                 SolutionTransforms =
                 {
-                    (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new VisualBasicCompilationOptions(OutputKind.ConsoleApplication))
+                    (solution, projectId) =>
+                    {
+                      var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                      return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                    }
                 }
             }.RunAsync();
         }

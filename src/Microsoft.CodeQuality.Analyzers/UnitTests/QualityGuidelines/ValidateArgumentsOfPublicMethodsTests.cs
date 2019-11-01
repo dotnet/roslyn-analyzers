@@ -3660,7 +3660,11 @@ namespace Blah
         {
             await new VerifyCS.Test
             {
-                TestCode = @"
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 using System.Xml.Linq;
  namespace Blah
@@ -3747,10 +3751,9 @@ using System.Xml.Linq;
             return part.Definition.Name + ""-"" + (versioned ? ""VersionInfoset"" : ""Infoset"");
         }
     }
-}",
-                SolutionTransforms =
-                {
-                    (solution, projectId) => solution.AddMetadataReference(projectId, AdditionalMetadataReferences.SystemXmlLinq)
+}"
+                    },
+                    AdditionalReferences = {  AdditionalMetadataReferences.SystemXmlLinq }
                 },
                 ExpectedDiagnostics =
                 {
@@ -3890,7 +3893,11 @@ public class C2
         {
             await new VerifyCS.Test
             {
-                TestCode = @"
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 using System.IO;
 using System.Threading;
@@ -4051,10 +4058,9 @@ public class Class1
         }
         return true;
     }
-}",
-                SolutionTransforms =
-                {
-                    (solution, projectId) => solution.AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWeb)
+}"
+                    },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
                 },
                 ExpectedDiagnostics =
                 {
@@ -5393,7 +5399,11 @@ public enum Kind
         {
             await new VerifyCS.Test
             {
-                TestCode = @"
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System.IO;
 using System.Web;
 
@@ -5452,10 +5462,9 @@ namespace MyComments
         }
     }
 }
-",
-                SolutionTransforms =
-                {
-                    (solution, projectId) => solution.AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWeb)
+"
+                    },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
                 }
             }.RunAsync();
         }

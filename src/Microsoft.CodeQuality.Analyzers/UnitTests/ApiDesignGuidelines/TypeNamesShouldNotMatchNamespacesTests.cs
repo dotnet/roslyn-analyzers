@@ -84,14 +84,16 @@ internal class Outer2
         {
             await new VerifyCS.Test
             {
-                TestCode = @"
+                TestState =
+                {
+                    Sources =
+                    { @"
 public class Sdk
 {
 }
 ",
-                SolutionTransforms =
-                {
-                    (solution, projectId) => solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location))
+                    },
+                    AdditionalReferences =  { MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location) }
                 },
                 ExpectedDiagnostics =
                 {
@@ -280,12 +282,15 @@ End Class
         {
             await new VerifyVB.Test
             {
-                TestCode = @"
-Public Class Sdk
-End Class",
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) => solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location))
+                    Sources =
+                    {
+                        @"
+Public Class Sdk
+End Class"
+                    },
+                    AdditionalReferences = { MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location) }
                 },
                 ExpectedDiagnostics =
                 {

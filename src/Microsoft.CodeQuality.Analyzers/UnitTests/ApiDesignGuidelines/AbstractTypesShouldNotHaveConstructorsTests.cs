@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -181,16 +180,14 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
-        internal static readonly string CA1012Message = MicrosoftCodeQualityAnalyzersResources.AbstractTypesShouldNotHaveConstructorsMessage;
-
         private static DiagnosticResult GetCA1012CSharpResultAt(int line, int column, string objectName)
             => new DiagnosticResult(AbstractTypesShouldNotHaveConstructorsAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1012Message, objectName));
+                .WithArguments(objectName);
 
         private static DiagnosticResult GetCA1012BasicResultAt(int line, int column, string objectName)
             => new DiagnosticResult(AbstractTypesShouldNotHaveConstructorsAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1012Message, objectName));
+                .WithArguments(objectName);
     }
 }

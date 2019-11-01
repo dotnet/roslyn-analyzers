@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">Bir simgeye ve aynı deyimdeki üyesine (alan/özellik) atama önerilmez. Üye erişiminin bu deyimde simgenin atamadan önceki eski değerini kullanması veya bu deyimdeki yeni değeri kullanmasının amaçlandığı belirlenemiyor. Daha net olması için atamaları ayrı ifadelere bölmeniz faydalı olabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">'{0}' sembolü ve '{1}' üyesi aynı deyimde atandı. İstenmeyen bir nesnenin üyesini atıyor olabilirsiniz.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">Sembol ve üyesi aynı deyimde atanıyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -54,12 +54,12 @@
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">System.Exception veya System.SystemException gibi genel bir ifade bir catch ifadesinde yakalandı ya da genel bir catch clause is used. General exceptions should not be caught.</target>
+        <target state="translated">System.Exception veya System.SystemException gibi genel bir ifade veya izin verilmeyen bir özel durum türü bir catch ifadesinde yakalandı ya da genel bir catch ifadesi kullanıldı. Genel özel durumlar yakalanmamalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">Daha belirli bir özel durum türünü yakalamak için '{0}' öğesini değiştirin veya özel durumu yeniden oluşturun.</target>
+        <target state="translated">Daha belirli bir izin verilen özel durum türünü yakalamak için '{0}' öğesini değiştirin veya özel durumu yeniden oluşturun.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1849,12 +1849,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <target state="translated">'{0}' alanı 'readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <target state="translated">'{0}' alanı 'readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

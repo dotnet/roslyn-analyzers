@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">Die Zuweisung zu einem Symbol und dem zugehörigen Member (Feld/Eigenschaft) in derselben Anweisung wird nicht empfohlen. In diesem Fall bleibt unklar, ob beim Memberzugriff der alte Wert des Symbols vor der Zuweisung oder der neue Wert aus der Zuweisung in dieser Anweisung verwendet werden soll. Aus Gründen der Übersichtlichkeit sollten die Zuweisungen in separate Anweisungen aufgeteilt werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">Das Symbol "{0}" und der zugehörige Member "{1}" werden beide in derselben Anweisung zugewiesen. Damit riskieren Sie, dass der Member eines unbeabsichtigten Objekts zugewiesen wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">Das Symbol und der zugehörige Member werden in der gleichen Anweisung zugewiesen.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -54,12 +54,12 @@
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">Eine allgemeine Ausnahme wie "System.Exception" oder "System.SystemException" wurde durch eine catch-Anweisung abgefangen, oder es wird eine Klausel verwendet, um Ausnahmen generell abzufangen. Allgemeine Ausnahmen sollten jedoch nicht abgefangen werden.</target>
+        <target state="translated">Eine allgemeine Ausnahme wie "System.Exception" oder "System.SystemException" oder ein unzulässiger Ausnahmetyp wurde durch eine catch-Anweisung abgefangen, oder es wird eine Klausel verwendet, um Ausnahmen generell abzufangen. Allgemeine und unzulässige Ausnahmen sollten jedoch nicht abgefangen werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">Ändern Sie "{0}", um spezifischere Ausnahmetypen abzufangen, oder lösen Sie die Ausnahme erneut aus.</target>
+        <target state="translated">Ändern Sie "{0}", um spezifischere zulässige Ausnahmetypen abzufangen, oder lösen Sie die Ausnahme erneut aus.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">Async-Lambdas nicht als "Void" zurückgebende Delegattypen übergeben</target>
+        <target state="translated">Async-Lambdafunktionen nicht als "Void" zurückgebende Delegattypen übergeben</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription">
@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">Async-Lambdas nicht als "Void" zurückgebende Delegattypen übergeben</target>
+        <target state="translated">Async-Lambdafunktionen nicht als "Void" zurückgebende Delegattypen übergeben</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">Async-Lambdas nicht als "Void" zurückgebende Delegattypen speichern</target>
+        <target state="translated">Async-Lambdafunktionen nicht als "Void" zurückgebende Delegattypen speichern</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription">
@@ -109,7 +109,7 @@
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">Async-Lambdas nicht als "Void" zurückgebende Delegattypen speichern</target>
+        <target state="translated">Async-Lambdafunktionen nicht als "Void" zurückgebende Delegattypen speichern</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
@@ -1704,7 +1704,7 @@
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesDescription">
         <source>An instance method declares a parameter or a local variable whose name matches an instance field of the declaring type, leading to errors.</source>
-        <target state="translated">Eine Instanzenmethode deklariert einen Parameter oder eine lokale Variable, deren Name mit einem Instanzenfeld des deklarierenden Typs übereinstimmt. Dies führt zu Fehlern.</target>
+        <target state="translated">Eine Instanzmethode deklariert einen Parameter oder eine lokale Variable, deren Name mit einem Instanzfeld des deklarierenden Typs übereinstimmt. Dies führt zu Fehlern.</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesMessageLocal">
@@ -1729,7 +1729,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
         <source>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</source>
-        <target state="translated">Der Parameter "{0}" der Methode "{1}" wird niemals verwendet. Entfernen Sie den Parameter, oder verwenden Sie ihn im Methodentext.</target>
+        <target state="translated">Der Parameter "{0}" der Methode "{1}" wird niemals verwendet. Entfernen Sie den Parameter, oder verwenden Sie ihn im Methodenkörper.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
@@ -1849,12 +1849,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">Das Feld "{0}" wird als "static readonly" deklariert, wird jedoch mit einem konstanten Wert initialisiert. Markieren Sie dieses Feld stattdessen als "const".</target>
+        <target state="translated">Das Feld "{0}" wurde als "readonly" deklariert, wird jedoch mit einem konstanten Wert initialisiert. Markieren Sie dieses Feld stattdessen als "const".</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">Das Feld "{0}" wird als "static readonly" deklariert, wird jedoch mit einer leeren Zeichenfolge ("") initialisiert. Markieren Sie dieses Feld stattdessen als "const".</target>
+        <target state="translated">Das Feld "{0}" wurde als "readonly" deklariert, wird jedoch mit einer leeren Zeichenfolge ("") initialisiert. Markieren Sie dieses Feld stattdessen als "const".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

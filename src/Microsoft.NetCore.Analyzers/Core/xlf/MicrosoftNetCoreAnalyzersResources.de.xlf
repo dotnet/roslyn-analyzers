@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="BinaryFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer BinaryFormatter</source>
-        <target state="translated">Nicht den unsicheren BinaryFormatter zur Deserialisierung verwenden</target>
+        <target state="translated">Nicht den unsicheren BinaryFormatter-Deserialisierer verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">
@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
         <source>HttpClients should enable certificate revocation list checks</source>
-        <target state="new">HttpClients should enable certificate revocation list checks</target>
+        <target state="translated">HttpClients muss die Überprüfungen der Zertifikatsperrliste aktivieren.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheckMessage">
         <source>HttpClient is created without enabling CheckCertificateRevocationList</source>
-        <target state="new">HttpClient is created without enabling CheckCertificateRevocationList</target>
+        <target state="translated">HttpClient wird ohne Aktivieren von CheckCertificateRevocationList erstellt.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
@@ -179,12 +179,12 @@
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
         <source>Do not use CreateEncryptor with non-default IV</source>
-        <target state="new">Do not use CreateEncryptor with non-default IV</target>
+        <target state="translated">CreateEncryptor nicht mit Nicht-Standard-Initialisierungsvektoren verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
         <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
-        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
+        <target state="translated">Die symmetrische Verschlüsselung verwendet einen nicht standardmäßigen Initialisierungsvektor, der potenziell wiederholbar sein könnte.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
@@ -414,7 +414,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
         <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="new">Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</target>
+        <target state="translated">Die Verwendung von HttpClient ohne Bereitstellen eines plattformspezifischen Handlers (WinHttpHandler, CurlHandler oder HttpClientHandler), bei dem die CheckCertificateRevocationList-Eigenschaft auf TRUE festgelegt ist, ermöglicht, dass gesperrte Zertifikate vom HttpClient als gültig akzeptiert werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
@@ -424,7 +424,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
         <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
-        <target state="translated">Durch die Überprüfung von HTTP-Headern wird die Codierung der Wagenrücklauf- und Zeilenumbruchzeichen (\r und \n) ermöglicht, die im Antwortheader enthalten sind. Durch diese Codierung können Angriffe durch Einschleusung von Befehlen vermieden werden, bei denen eine Anwendung ausgenutzt wird, die nicht vertrauenswürdige, im Header enthaltene Daten zurückgibt.</target>
+        <target state="translated">Durch die Überprüfung von HTTP-Headern wird die Codierung der Wagenrücklauf- und Zeilenvorschubzeichen (\r und \n) ermöglicht, die im Antwortheader enthalten sind. Durch diese Codierung können Angriffe durch Einschleusung von Befehlen vermieden werden, bei denen eine Anwendung ausgenutzt wird, die nicht vertrauenswürdige, im Header enthaltene Daten zurückgibt.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
@@ -474,32 +474,32 @@
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
         <source>Do not hard-code certificate</source>
-        <target state="new">Do not hard-code certificate</target>
+        <target state="translated">Keine Hartcodierung von Zertifikaten</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificateDescription">
         <source>Hard-coded certificates in source code are vulnerable to being exploited.</source>
-        <target state="new">Hard-coded certificates in source code are vulnerable to being exploited.</target>
+        <target state="translated">Hartcodierte Zertifikate im Quellcode sind anfällig für Exploits.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificateMessage">
         <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</source>
-        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko ermittelt. "{0}" in Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
         <source>Do not hard-code encryption key</source>
-        <target state="needs-review-translation">Verschlüsselungsschlüssel nicht hartcodieren</target>
+        <target state="translated">Keine Hartcodierung von Verschlüsselungsschlüsseln</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
         <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
-        <target state="needs-review-translation">Die .Key-Eigenschaft von SymmetricAlgorithm oder der rgbKey-Parameter einer Methode darf niemals ein hartcodierter Wert sein.</target>
+        <target state="translated">Die .Key-Eigenschaft von SymmetricAlgorithm oder der rgbKey-Parameter einer Methode darf niemals ein hartcodierter Wert sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
         <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
-        <target state="needs-review-translation">Es wurde ein potenzielles Sicherheitsrisiko gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" erweitert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -619,37 +619,37 @@
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
+        <target state="translated">Bei nicht leeren Sammlungen listen CountAsync() und LongCountAsync() die gesamte Sequenz auf, während AnyAsync() beim ersten Element oder bei dem ersten Element, das eine Bedingung erfüllt, beendet wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
         <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where AnyAsync() could be used instead to improve performance.</target>
+        <target state="translated">{0}() wird verwendet, obwohl AnyAsync() stattdessen verwendet werden kann, um die Leistung zu verbessern.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
         <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="new">Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</target>
+        <target state="translated">CountAsync() oder LongCountAsync() nicht verwenden, wenn AnyAsync() verwendet werden kann</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
         <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <target state="translated">Bei nicht leeren Sammlungen listen Count() und LongCount() die gesamte Sequenz auf, während Any() beim ersten Element oder bei dem ersten Element, das eine Bedingung erfüllt, beendet wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
         <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where Any() could be used instead to improve performance.</target>
+        <target state="translated">{0}() wird verwendet, obwohl Any() stattdessen verwendet werden kann, um die Leistung zu verbessern.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
         <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
+        <target state="translated">Count() oder LongCount() nicht verwenden, wenn Any() verwendet werden kann</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
         <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
-        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</target>
+        <target state="translated">Für die symmetrische Verschlüsselung muss immer ein nicht wiederholbarer Initialisierungsvektor verwendet werden, um Wörterbuchangriffe zu verhindern.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -704,7 +704,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
         <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.</source>
-        <target state="needs-review-translation">Bei Verwendung eines kryptografisch schwachen Pseudozufallszahlen-Generators kann ein Angreifer möglicherweise vorhersagen, welcher sicherheitsrelevante Wert generiert wird. Verwenden Sie einen kryptografisch starken Zufallszahlen-Generator, wenn ein nicht vorhersehbarer Wert erforderlich ist, oder stellen Sie sicher, dass schwache Pseudozufallszahlen nicht auf sicherheitsrelevante Weise verwendet werden.</target>
+        <target state="translated">Bei Verwendung eines kryptografisch schwachen Pseudozufallszahlen-Generators kann ein Angreifer möglicherweise vorhersagen, welcher sicherheitsrelevante Wert generiert wird. Verwenden Sie einen kryptografisch starken Zufallszahlen-Generator, wenn ein nicht vorhersehbarer Wert erforderlich ist, oder stellen Sie sicher, dass schwache Pseudozufallszahlen nicht auf sicherheitsrelevante Weise verwendet werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
@@ -939,7 +939,7 @@
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">Da {0} mit OnSerializing, OnSerialized, OnDeserializing oder OnDeserialized markiert ist, nehmen Sie eine Änderung von static (Shared in Visual Basic) in eine Instanzenmethode vor.</target>
+        <target state="translated">Da {0} mit OnSerializing, OnSerialized, OnDeserializing oder OnDeserialized markiert ist, nehmen Sie eine Änderung von static (Shared in Visual Basic) in eine Instanzmethode vor.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
@@ -1084,7 +1084,7 @@
       </trans-unit>
       <trans-unit id="LosFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer LosFormatter</source>
-        <target state="translated">Nicht den unsicheren LosFormatter zur Deserialisierung verwenden</target>
+        <target state="translated">Nicht den unsicheren LosFormatter-Deserialisierer verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
@@ -1154,12 +1154,12 @@
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheck">
         <source>Ensure HttpClient certificate revocation list check is not disabled</source>
-        <target state="new">Ensure HttpClient certificate revocation list check is not disabled</target>
+        <target state="translated">Stellen Sie sicher, dass die Überprüfung der HttpClient-Zertifikatsperrliste nicht deaktiviert ist.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheckMessage">
         <source>HttpClient may be created without enabling CheckCertificateRevocationList</source>
-        <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
+        <target state="translated">HttpClient wird möglicherweise ohne Aktivieren von CheckCertificateRevocationList erstellt.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -1174,12 +1174,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
         <source>Use CreateEncryptor with the default IV </source>
-        <target state="new">Use CreateEncryptor with the default IV </target>
+        <target state="translated">CreateEncryptor mit Standard-Initialisierungsvektoren verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
         <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
-        <target state="new">The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
+        <target state="translated">In der Verschlüsselung wird ein nicht standardmäßiger Initialisierungsvektor verwendet, der potenziell wiederholbar sein kann. Stellen Sie sicher, dass ein Standard-Initialisierungsvektor verwendet wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
@@ -1249,7 +1249,7 @@
       </trans-unit>
       <trans-unit id="NetDataContractSerializerMethodUsedTitle">
         <source>Do not use insecure deserializer NetDataContractSerializer</source>
-        <target state="translated">Nicht den unsicheren NetDataContractSerializer zur Deserialisierung verwenden</target>
+        <target state="translated">Nicht den unsicheren NetDataContractSerializer-Deserialisierer verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="NormalizeStringsToUppercaseDescription">
@@ -1274,7 +1274,7 @@
       </trans-unit>
       <trans-unit id="ObjectStateFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer ObjectStateFormatter</source>
-        <target state="translated">Nicht den unsicheren ObjectStateFormatter zur Deserialisierung verwenden</target>
+        <target state="translated">Nicht den unsicheren ObjectStateFormatter-Deserialisierer verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="PInvokeDeclarationsShouldBePortableDescription">
@@ -1369,7 +1369,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
         <source>Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch DLL-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer DLL-Einschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesTitle">
@@ -1379,7 +1379,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesMessage">
         <source>Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Dateipfadeinschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer Dateipfadeinschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesTitle">
@@ -1399,7 +1399,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesMessage">
         <source>Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch LDAP-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer LDAP-Einschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesTitle">
@@ -1409,7 +1409,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesMessage">
         <source>Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch offene Umleitung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer offenen Umleitung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesTitle">
@@ -1419,7 +1419,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
         <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Prozessbefehlseinschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer Prozessbefehlseinschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1429,7 +1429,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesMessage">
         <source>Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Einschleusung regulärer Ausdrücke gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer Einschleusung regulärer Ausdrücke ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesTitle">
@@ -1439,7 +1439,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
         <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Einschleusung von SQL-Befehlen gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer Einschleusung von SQL-Befehlen ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XAML-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer XAML-Einschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesTitle">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesMessage">
         <source>Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XML-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer XML-Einschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
@@ -1469,7 +1469,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
         <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XPath-Einschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko einer XPath-Einschleusung ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
         <source>Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XSS (Cross-Site Scripting) gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" erweitert.</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch XSS (Cross-Site Scripting) ermittelt. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verfälscht.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesTitle">
@@ -1744,17 +1744,17 @@
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
         <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
-        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <target state="translated">Enumerable.Count() listet möglicherweise die Sequenz auf, während es sich bei einer Length/Count-Eigenschaft um Direktzugriff handelt.</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
         <source>Use the "{0}" property instead of Enumerable.Count().</source>
-        <target state="new">Use the "{0}" property instead of Enumerable.Count().</target>
+        <target state="translated">Verwenden Sie die Eigenschaft "{0}" anstelle von Enumerable.Count().</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
         <source>Use Length/Count property instead of Count() when available</source>
-        <target state="new">Use Length/Count property instead of Count() when available</target>
+        <target state="translated">Length/Count-Eigenschaft anstelle von Count() verwenden, wenn verfügbar</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">

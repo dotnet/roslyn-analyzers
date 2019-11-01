@@ -351,13 +351,9 @@ End Class", GetBasicResultAt(3, 22));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyCS.Diagnostic().WithLocation(line, column);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(DoNotDeclareVisibleInstanceFieldsAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyVB.Diagnostic().WithLocation(line, column);
     }
 }

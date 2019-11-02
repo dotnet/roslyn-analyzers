@@ -8,7 +8,7 @@ using VerifyCS = Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests.
     Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CallSiteImplicitAllocationAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace Microsoft.CodeAnalysisPerformanceSensitiveAnalyzers.UnitTests
+namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests
 {
     public class CallSiteImplicitAllocationAnalyzerTests
     {
@@ -27,8 +27,8 @@ public class MyClass
 
         Params();
         Params(1, 2);
-        Params(new [] { 1, 2}); // explicit, so no warning
-        ParamsWithObjects(new [] { 1, 2}); // explicit, but converted to objects, so stil la warning?!
+        Params(new [] { 1, 2 }); // explicit, so no warning
+        ParamsWithObjects(new [] { 1, 2 }); // explicit, but converted to object[]
 
         // Only 4 args and above use the params overload of String.Format
         var test = String.Format(""Testing {0}, {1}, {2}, {3}"", 1, ""blah"", 2.0m, 'c');

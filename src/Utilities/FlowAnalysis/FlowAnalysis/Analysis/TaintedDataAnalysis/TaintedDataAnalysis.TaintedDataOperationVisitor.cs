@@ -222,7 +222,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     originalOperation,
                     defaultValue);
 
-                ProcessByteArrayArgument(visitedArguments);
+                ProcessArrayArgument(visitedArguments);
                 IEnumerable<IArgumentOperation> taintedArguments = GetTaintedArguments(visitedArguments);
                 if (taintedArguments.Any())
                 {
@@ -650,7 +650,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// Set arguments of array type as tainted when there's <see cref="SourceInfo"/> taint all kinds of array.
             /// </summary>
             /// <param name="arguments">All argument operations</param>
-            private void ProcessByteArrayArgument(ImmutableArray<IArgumentOperation> arguments)
+            private void ProcessArrayArgument(ImmutableArray<IArgumentOperation> arguments)
             {
                 foreach (IArgumentOperation argument in arguments)
                 {

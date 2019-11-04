@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1039,14 +1038,14 @@ public class C
         #region Helpers
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
-            => new DiagnosticResult(ReviewUnusedParametersAnalyzer.Rule)
+            => VerifyCS.Diagnostic(ReviewUnusedParametersAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName));
+                .WithArguments(parameterName, methodName);
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
-            => new DiagnosticResult(ReviewUnusedParametersAnalyzer.Rule)
+            => VerifyVB.Diagnostic(ReviewUnusedParametersAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName));
+                .WithArguments(parameterName, methodName);
 
         #endregion
     }

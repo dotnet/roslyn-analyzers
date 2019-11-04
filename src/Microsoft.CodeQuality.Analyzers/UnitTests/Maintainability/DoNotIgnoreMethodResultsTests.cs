@@ -1,8 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -653,49 +650,49 @@ End Class", MSTestAttributes.VisualBasic
         #region Helpers
 
         private static DiagnosticResult GetCSharpStringCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetBasicStringCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
+            => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.StringCreationRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetCSharpObjectCreationResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.ObjectCreationRule)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.ObjectCreationRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetCSharpTryParseResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetBasicTryParseResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
+            => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.TryParseRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetCSharpHResultOrErrorCodeResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetBasicHResultOrErrorCodeResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
+            => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.HResultOrErrorCodeRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetCSharpPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         private static DiagnosticResult GetBasicPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
-            => new DiagnosticResult(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
+            => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod, containingMethodName, invokedMethodName));
+                .WithArguments(containingMethodName, invokedMethodName);
 
         #endregion
     }

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -337,14 +336,14 @@ End Class
         #region Helpers
 
         private static DiagnosticResult GetCA1032CSharpMissingConstructorResultAt(int line, int column, string typeName, string constructor)
-            => new DiagnosticResult(ImplementStandardExceptionConstructorsAnalyzer.MissingConstructorRule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor));
+                .WithArguments(typeName, constructor);
 
         private static DiagnosticResult GetCA1032BasicMissingConstructorResultAt(int line, int column, string typeName, string constructor)
-            => new DiagnosticResult(ImplementStandardExceptionConstructorsAnalyzer.MissingConstructorRule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor));
+                .WithArguments(typeName, constructor);
 
         #endregion
     }

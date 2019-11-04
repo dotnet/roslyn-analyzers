@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -453,9 +452,9 @@ public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityC
         #region Helpers
 
         private static DiagnosticResult GetCA1720CSharpResultAt(int line, int column, string identifierName)
-            => new DiagnosticResult(IdentifiersShouldNotContainTypeNames.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage, identifierName));
+                .WithArguments(identifierName);
 
         #endregion
     }

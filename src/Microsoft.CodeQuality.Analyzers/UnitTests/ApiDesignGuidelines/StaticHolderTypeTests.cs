@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -19,14 +18,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         #region Verifiers
 
         private static DiagnosticResult CSharpResult(int line, int column, string objectName)
-            => new DiagnosticResult(StaticHolderTypesAnalyzer.Rule)
+            => VerifyCS.Diagnostic(StaticHolderTypesAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
+                .WithArguments(objectName);
 
         private static DiagnosticResult BasicResult(int line, int column, string objectName)
-            => new DiagnosticResult(StaticHolderTypesAnalyzer.Rule)
+            => VerifyVB.Diagnostic(StaticHolderTypesAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
+                .WithArguments(objectName);
 
         #endregion
 

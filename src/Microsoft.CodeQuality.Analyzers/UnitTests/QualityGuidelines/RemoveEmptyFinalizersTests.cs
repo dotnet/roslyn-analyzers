@@ -456,7 +456,8 @@ public class C1
     }
 }
 ",
-                CompilerDiagnostics.None);
+                new DiagnosticResult("CS0103", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(6, 9),
+                new DiagnosticResult("CS1002", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(6, 10));
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
@@ -469,7 +470,8 @@ public class C1
     => ;
 }
 ",
-                CompilerDiagnostics.None);
+                new DiagnosticResult("CS8057", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 5),
+                new DiagnosticResult("CS1525", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(5, 8));
         }
 
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
@@ -482,7 +484,7 @@ Public Class Class1
     End Sub
 End Class
 ",
-                CompilerDiagnostics.None);
+                new DiagnosticResult("BC30451", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 9));
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]

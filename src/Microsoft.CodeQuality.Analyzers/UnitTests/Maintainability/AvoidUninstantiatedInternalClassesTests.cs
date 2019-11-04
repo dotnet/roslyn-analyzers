@@ -384,10 +384,13 @@ End Class",
             {
                 TestCode =
 @"Friend Class C
-    Private Shared Sub mAiN()
+    Private Shared Sub mAiN() ' error BC30737: No accessible 'Main' method with an appropriate signature was found in 'TestProject'.
     End Sub
 End Class",
-                CompilerDiagnostics = CompilerDiagnostics.None, // No Main method
+                ExpectedDiagnostics =
+                {
+                    new DiagnosticResult("BC30737", DiagnosticSeverity.Error)
+                },
                 SolutionTransforms =
                 {
                     (solution, projectId) =>
@@ -1328,21 +1331,23 @@ internal class CFoo {}
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
-[CoClass]
+[CoClass]  // Test0.cs(4,2): error CS7036: There is no argument given that corresponds to the required formal parameter 'coClass' of 'CoClassAttribute.CoClassAttribute(Type)'
 internal interface IFoo1 {}
 
-[CoClass(CFoo)]
+[CoClass(CFoo)]  // Test0.cs(7,10): error CS0119: 'CFoo' is a type, which is not valid in the given context
 internal interface IFoo2 {}
 
-[CoClass(typeof(CFoo), null)]
+[CoClass(typeof(CFoo), null)]   // Test0.cs(10,2): error CS1729: 'CoClassAttribute' does not contain a constructor that takes 2 arguments
 internal interface IFoo3 {}
 
 [CoClass(typeof(IFoo3))] // This isn't a class-type
 internal interface IFoo4 {}
 
-internal class CFoo {}
+internal class CFoo {}  // Test0.cs(16,16): warning CA1812: CFoo is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).
 ",
-                CompilerDiagnostics.None, // Invalid syntaxes around CoClass
+                new DiagnosticResult("CS7036", DiagnosticSeverity.Error).WithLocation(4, 2),
+                new DiagnosticResult("CS0119", DiagnosticSeverity.Error).WithLocation(7, 10),
+                new DiagnosticResult("CS1729", DiagnosticSeverity.Error).WithLocation(10, 2),
                 GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
         }
 

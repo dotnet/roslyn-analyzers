@@ -302,7 +302,8 @@ Class C
         New C() ' error BC30035: Syntax error
     End Sub
 End Class
-", CompilerDiagnostics.None);
+",
+                new DiagnosticResult("BC30035", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 9));
         }
 
         [Fact]

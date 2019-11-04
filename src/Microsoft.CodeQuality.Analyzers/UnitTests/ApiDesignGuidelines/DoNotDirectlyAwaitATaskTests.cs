@@ -114,7 +114,7 @@ public class C
         SomeAwaitable s = null;
         await s;
 
-        await; // No Argument
+        await; // Test0.cs(16,14): error CS1525: Invalid expression term ';'
     }
 }
 
@@ -139,7 +139,8 @@ public class SomeAwaiter : INotifyCompletion
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code,
+                new DiagnosticResult("CS1525", DiagnosticSeverity.Error).WithLocation(16, 14));
         }
 
         [Fact]
@@ -158,7 +159,7 @@ Public Class C
         Dim s As SomeAwaitable = Nothing
         Await s
 
-        Await 'No Argument
+        Await ' Test0.vb(14) : error BC30201: Expression expected.
     End Function
 End Class
 
@@ -183,7 +184,8 @@ Public Class SomeAwaiter
     End Sub
 End Class
 ";
-            await VerifyVB.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyVB.VerifyAnalyzerAsync(code,
+                new DiagnosticResult("BC30201", DiagnosticSeverity.Error).WithLocation(14, 15));
         }
 
         [Fact]

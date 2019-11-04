@@ -904,7 +904,7 @@ class C
     {
     }
 }
-", CompilerDiagnostics.None,
+",
           // Test0.cs(6,18): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
           GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
           // Test0.cs(10,39): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
@@ -921,6 +921,8 @@ class C
           GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
           // Test0.cs(30,47): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
           GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
+          // Test0.cs(34,44): error CS0246: The type or namespace name 'UndefinedType' could not be found (are you missing a using directive or an assembly reference?)
+          new DiagnosticResult("CS0246", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(34, 44),
           // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
           GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
         }
@@ -955,7 +957,7 @@ Class C
     Public Sub UnusedErrorTypeParamMethod(param1 As UndefinedType) ' error BC30002: Type 'UndefinedType' is not defined.
     End Sub
 End Class
-", CompilerDiagnostics.None,
+",
       // Test0.vb(3,20): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(3, 20, "param", ".ctor"),
       // Test0.vb(6,34): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
@@ -973,7 +975,9 @@ End Class
       // Test0.vb(21,44): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
+      GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"),
+      // Test0.vb(24) : error BC30002: Type 'UndefinedType' is not defined.
+      new DiagnosticResult("BC30002", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(24, 53));
         }
 
         [Fact]

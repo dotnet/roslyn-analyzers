@@ -277,7 +277,7 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
 {
-    public S Field;
+    public S Field;         // error CS0523: Struct member 'S.Field' of type 'S' causes a cycle in the struct layout
 }
 
 public class Test
@@ -285,10 +285,12 @@ public class Test
     public void Method()
     {
         S a, b;
-        a.Field = a = b;
+        a.Field = a = b;    // error CS0165: Use of unassigned local variable 'b'
     }
 }
-", CompilerDiagnostics.None);
+",
+                new DiagnosticResult("CS0523", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 14),
+                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 23));
         }
 
         [Fact]
@@ -297,7 +299,7 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
 {
-    public S Property { get; set; }
+    public S Property { get; set; }     // error CS0523: Struct member 'S.Property' of type 'S' causes a cycle in the struct layout
 }
 
 public class Test
@@ -305,10 +307,16 @@ public class Test
     public void Method()
     {
         S a, b;
-        a.Property = c = a = b;
+        a.Property = c = a = b;     // error CS0165: Use of unassigned local variable 'a'
+                                    // error CS0103: The name 'c' does not exist in the current context
+                                    // error CS0165: Use of unassigned local variable 'b'
     }
 }
-", CompilerDiagnostics.None);
+",
+                new DiagnosticResult("CS0523", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 14),
+                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 9),
+                new DiagnosticResult("CS0103", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 22),
+                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 30));
         }
 
         [Fact]

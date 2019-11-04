@@ -96,13 +96,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 taintedMethodsNeedsPointsToAnalysis: null,
                 taintedMethodsNeedsValueContentAnalysis: null,
                 taintArray: TaintArrayKind.Constant);
-            builder.AddSourceInfo(
-                WellKnownTypeNames.SystemChar,
-                isInterface: false,
-                taintedProperties: null,
-                taintedMethodsNeedsPointsToAnalysis: null,
-                taintedMethodsNeedsValueContentAnalysis: null,
-                taintArray: TaintArrayKind.Constant);
 
             SourceInfos = builder.ToImmutableAndFree();
         }

@@ -64,7 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="context">The context.</param>
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable) is INamedTypeSymbol enumerableType)
+            if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable) is INamedTypeSymbol enumerableType)
             {
                 var operationActionsContext = new OperationActionsContext(
                     context.Compilation,
@@ -101,9 +101,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
-                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetVisibleTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
+                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
                 _iCollectionCountProperty = new Lazy<IPropertySymbol>(ResolveICollectionCountProperty, true);
-                _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1), true);
+                _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1), true);
             }
 
             /// <summary>
@@ -140,7 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 IPropertySymbol countProperty = null;
 
-                if (Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection) is INamedTypeSymbol iCollectionType)
+                if (Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection) is INamedTypeSymbol iCollectionType)
                 {
                     foreach (var member in iCollectionType.GetMembers())
                     {

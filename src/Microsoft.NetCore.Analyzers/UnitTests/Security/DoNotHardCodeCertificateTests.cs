@@ -117,27 +117,6 @@ class TestClass
         }
 
         [Fact]
-        public void Test_Source_ASCIIEncodingGetBytes_WithCharArrayAndInt32AndInt32AndByteArrayAndInt32Parameters_WithConstantCharArray_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System.IO;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
-
-class TestClass
-{
-    public void TestMethod(byte[] bytes, string path)
-    {
-        char[] chars = new char[] {'1', '2', '3'};
-        new ASCIIEncoding().GetBytes(chars, 0, 3, bytes, 0);
-        File.WriteAllBytes(path, bytes);
-        new X509Certificate(path);
-    }
-}",
-            GetCSharpResultAt(13, 9, 10, 24, "X509Certificate.X509Certificate(string fileName)", "void TestClass.TestMethod(byte[] bytes, string path)", "char[]", "void TestClass.TestMethod(byte[] bytes, string path)"));
-        }
-
-        [Fact]
         public void Test_Sink_X509Certificate_WithStringAndSecureStringAndX509KeyStorageFlagsParameters_Diagnostic()
         {
             VerifyCSharp(@"
@@ -292,6 +271,25 @@ class TestClass
             GetCSharpResultAt(11, 9, 9, 24, "X509Certificate.X509Certificate(byte[] rawData, string password)", "void TestClass.TestMethod(string path, string password)", "byte[]", "void TestClass.TestMethod(string path, string password)"));
         }
 
+        [Fact]
+        public void Test_X509Certificates2_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(string path)
+    {
+        byte[] bytes = new byte[] {1, 2, 3};
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate2(path);
+    }
+}",
+            GetCSharpResultAt(11, 9, 9, 24, "X509Certificate2.X509Certificate2(string fileName)", "void TestClass.TestMethod(string path)", "byte[]", "void TestClass.TestMethod(string path)"));
+        }
+
         // For now, we didn't take serialization into consideration.
         [Fact]
         public void Test_Sink_X509Certificate_WithSerializationInfoAndStreamingContextParameters_NoDiagnostic()
@@ -341,6 +339,44 @@ class TestClass
     public void TestMethod(string s, string path)
     {
         byte[] bytes = Convert.FromBase64String(s);
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate(path);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_X509Certificate2_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(byte[] bytes, string path)
+    {
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate2(path);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_Source_ASCIIEncodingGetBytes_WithCharArrayAndInt32AndInt32AndByteArrayAndInt32Parameters_WithConstantCharArray_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Text;
+
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(byte[] bytes, string path)
+    {
+        char[] chars = new char[] {'1', '2', '3'};
+        new ASCIIEncoding().GetBytes(chars, 0, 3, bytes, 0);
         File.WriteAllBytes(path, bytes);
         new X509Certificate(path);
     }

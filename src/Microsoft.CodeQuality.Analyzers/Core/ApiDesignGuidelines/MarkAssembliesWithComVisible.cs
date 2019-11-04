@@ -53,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (AssemblyHasPublicTypes(context.Compilation.Assembly))
             {
-                INamedTypeSymbol comVisibleAttributeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
+                INamedTypeSymbol comVisibleAttributeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
                 if (comVisibleAttributeSymbol == null)
                 {
                     return;

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -58,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     INamedTypeSymbol deserializerTypeSymbol =
-                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(this.DeserializerTypeMetadataName);
+                        compilationStartAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(this.DeserializerTypeMetadataName);
                     if (deserializerTypeSymbol == null)
                     {
                         return;

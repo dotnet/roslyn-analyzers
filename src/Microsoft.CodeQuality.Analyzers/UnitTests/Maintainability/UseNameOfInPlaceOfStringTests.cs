@@ -127,7 +127,9 @@ class C
     {
         throw new ArgumentNullException(
     }
-}", CompilerDiagnostics.None);
+}",
+                new DiagnosticResult("CS1002", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 41),
+                new DiagnosticResult("CS1026", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 41));
         }
 
         [Fact]
@@ -139,9 +141,9 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(""test"", ""test2"", ""test3"");
+        throw new ArgumentNullException(""test"", ""test2"");
     }
-}", CompilerDiagnostics.None);
+}");
         }
 
         [Fact]

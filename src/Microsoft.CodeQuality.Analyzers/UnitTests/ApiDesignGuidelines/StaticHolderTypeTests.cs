@@ -718,7 +718,9 @@ public class C26 :
 {
     public static void Foo() { }
 }
-", CompilerDiagnostics.None);
+",
+                // Test0.cs(2,19): error CS1031: Type expected
+                new DiagnosticResult("CS1031", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(2, 19));
         }
 
         [Fact]
@@ -730,7 +732,9 @@ Public Class B26
 	Public Shared Sub Foo()
 	End Sub
 End Class
-", CompilerDiagnostics.None);
+",
+                // Test0.vb(3) : error BC30182: Type expected.
+                new DiagnosticResult("BC30182", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(3, 10));
         }
 
         [Fact]
@@ -740,7 +744,9 @@ End Class
 public class C27 :
 {
 }
-", CompilerDiagnostics.None);
+",
+                // Test0.cs(2,19): error CS1031: Type expected
+                new DiagnosticResult("CS1031", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(2, 19));
         }
 
         [Fact]
@@ -750,7 +756,9 @@ public class C27 :
 Public Class B27
 	Inherits
 End Class
-", CompilerDiagnostics.None);
+",
+                // Test0.vb(3) : error BC30182: Type expected.
+                new DiagnosticResult("BC30182", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(3, 10));
         }
 
         [Fact]

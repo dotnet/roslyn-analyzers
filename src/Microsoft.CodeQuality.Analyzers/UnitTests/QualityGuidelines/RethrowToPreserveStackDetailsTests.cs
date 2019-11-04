@@ -421,7 +421,9 @@ class Program
         }
     }
 }
-", CompilerDiagnostics.None);
+",
+            new DiagnosticResult("CS0160", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(18, 20),
+            new DiagnosticResult("CS0103", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(26, 27));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -444,7 +446,8 @@ Class Program
         End Try
     End Sub
 End Class
-", CompilerDiagnostics.None);
+",
+            new DiagnosticResult("BC30451", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(14, 27));
         }
 
         [Fact]

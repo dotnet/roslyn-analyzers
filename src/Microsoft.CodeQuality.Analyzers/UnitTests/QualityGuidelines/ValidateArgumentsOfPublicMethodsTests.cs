@@ -3658,13 +3658,7 @@ namespace Blah
         [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]
         public async Task PointsToDataFlowOperationVisitor_VisitInstanceReference_Assert()
         {
-            await new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Linq;
  namespace Blah
@@ -3751,16 +3745,9 @@ using System.Xml.Linq;
             return part.Definition.Name + ""-"" + (versioned ? ""VersionInfoset"" : ""Infoset"");
         }
     }
-}"
-                    },
-                    AdditionalReferences = {  AdditionalMetadataReferences.SystemXmlLinq }
-                },
-                ExpectedDiagnostics =
-                {
-                    // Test0.cs(77,21): warning CA1062: In externally visible method 'void Idk<TContent>.ExportInfo(TContent part, ContentContext context)', validate parameter 'context' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-                    GetCSharpResultAt(77, 21, "void Idk<TContent>.ExportInfo(TContent part, ContentContext context)", "context")
-                }
-            }.RunAsync();
+}",
+                // Test0.cs(77,21): warning CA1062: In externally visible method 'void Idk<TContent>.ExportInfo(TContent part, ContentContext context)', validate parameter 'context' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                GetCSharpResultAt(77, 21, "void Idk<TContent>.ExportInfo(TContent part, ContentContext context)", "context"));
         }
 
         [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]

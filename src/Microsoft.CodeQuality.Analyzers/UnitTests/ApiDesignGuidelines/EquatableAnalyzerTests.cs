@@ -218,7 +218,7 @@ class C : IEquatable<C>
                 new DiagnosticResult("CS1001", DiagnosticSeverity.Error).WithLocation(6, 25));
         }
 
-    [Fact]
+        [Fact]
         public async Task NoDiagnosticForClassWithIEquatableImplementationWithWrongReturnTypeAndNoEqualsOverride()
         {
             var code = @"

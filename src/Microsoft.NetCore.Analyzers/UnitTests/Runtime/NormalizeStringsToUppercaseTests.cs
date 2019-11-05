@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.NormalizeStringsToUppercaseAnalyzer,
@@ -14,24 +12,14 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class NormalizeStringsToUppercaseTests : DiagnosticAnalyzerTestBase
+    public class NormalizeStringsToUppercaseTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new NormalizeStringsToUppercaseAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new NormalizeStringsToUppercaseAnalyzer();
-        }
-
         #region No Diagnostic Tests
 
         [Fact]
-        public void NoDiagnostic_ToUpperCases()
+        public async Task NoDiagnostic_ToUpperCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -65,7 +53,7 @@ public class NormalizeStringsTesterClass
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -95,9 +83,9 @@ End Class
         }
 
         [Fact]
-        public void NoDiagnostic_ToLowerCases()
+        public async Task NoDiagnostic_ToLowerCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -131,7 +119,7 @@ public class NormalizeStringsTesterClass
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -161,9 +149,9 @@ End Class
         }
 
         [Fact]
-        public void NoDiagnostic_ToUpperInvariantCases()
+        public async Task NoDiagnostic_ToUpperInvariantCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -176,7 +164,7 @@ public class NormalizeStringsTesterClass
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -193,9 +181,9 @@ End Class
         #region Diagnostic Tests
 
         [Fact]
-        public void Diagnostic_ToLowerCases()
+        public async Task Diagnostic_ToLowerCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -209,7 +197,7 @@ public class NormalizeStringsTesterClass
 ",
             GetCSharpDefaultResultAt(9, 27, "TestMethod", "ToLower", "ToUpperInvariant"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -223,9 +211,9 @@ End Class
         }
 
         [Fact]
-        public void Diagnostic_ToLowerInvariantCases()
+        public async Task Diagnostic_ToLowerInvariantCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Globalization;
 
@@ -239,7 +227,7 @@ public class NormalizeStringsTesterClass
 ",
             GetCSharpDefaultResultAt(9, 27, "TestMethod", "ToLowerInvariant", "ToUpperInvariant"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Globalization
 
@@ -257,18 +245,14 @@ End Class
         #region Helpers
 
         private static DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
-        {
-            // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentUICulture), containingMethod, invokedMethod, suggestedMethod);
-            return GetCSharpResultAt(line, column, NormalizeStringsToUppercaseAnalyzer.RuleId, message);
-        }
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         private static DiagnosticResult GetBasicDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
-        {
-            // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentUICulture), containingMethod, invokedMethod, suggestedMethod);
-            return GetBasicResultAt(line, column, NormalizeStringsToUppercaseAnalyzer.RuleId, message);
-        }
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         #endregion
     }

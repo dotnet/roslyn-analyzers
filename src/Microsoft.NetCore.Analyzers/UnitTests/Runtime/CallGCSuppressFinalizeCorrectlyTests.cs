@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.CallGCSuppressFinalizeCorrectlyAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpCallGCSuppressFinalizeCorrectlyFixer>;
@@ -15,40 +13,25 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class CallGCSuppressFinalizeCorrectlyTests : DiagnosticAnalyzerTestBase
+    public class CallGCSuppressFinalizeCorrectlyTests
     {
         private const string GCSuppressFinalizeMethodSignature_CSharp = "GC.SuppressFinalize(object)";
         private const string GCSuppressFinalizeMethodSignature_Basic = "GC.SuppressFinalize(Object)";
 
         private static DiagnosticResult GetCA1816CSharpResultAt(int line, int column, DiagnosticDescriptor rule, string containingMethodName, string gcSuppressFinalizeMethodName)
-        {
-            return GetCSharpResultAt(line, column, rule, containingMethodName, gcSuppressFinalizeMethodName);
-        }
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(containingMethodName, gcSuppressFinalizeMethodName);
 
         private static DiagnosticResult GetCA1816BasicResultAt(int line, int column, DiagnosticDescriptor rule, string containingMethodName, string gcSuppressFinalizeMethodName)
-        {
-            return GetBasicResultAt(line, column, rule, containingMethodName, gcSuppressFinalizeMethodName);
-        }
-
-        public CallGCSuppressFinalizeCorrectlyTests(ITestOutputHelper output)
-            : base(output)
-        {
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new CallGCSuppressFinalizeCorrectlyAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CallGCSuppressFinalizeCorrectlyAnalyzer();
-        }
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(containingMethodName, gcSuppressFinalizeMethodName);
 
         #region NoDiagnosticCases
 
         [Fact]
-        public void DisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task DisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -68,11 +51,11 @@ public class DisposableWithoutFinalizer : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void DisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task DisposableWithoutFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -90,11 +73,11 @@ Public Class DisposableWithoutFinalizer
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void DisposableWithFinalizer_CSharp_NoDiagnostic()
+        public async Task DisposableWithFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -119,11 +102,11 @@ public class DisposableWithFinalizer : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void DisposableWithFinalizer_Basic_NoDiagnostic()
+        public async Task DisposableWithFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -149,11 +132,11 @@ Public Class DisposableWithFinalizer
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
 
             var code = @"
@@ -174,11 +157,11 @@ public sealed class SealedDisposableWithoutFinalizer : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -196,11 +179,11 @@ Public NotInheritable Class SealedDisposableWithoutFinalizer
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithFinalizer_CSharp_NoDiagnostic()
+        public async Task SealedDisposableWithFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -225,11 +208,11 @@ public sealed class SealedDisposableWithFinalizer : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithFinalizer_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -255,11 +238,11 @@ Public NotInheritable Class SealedDisposableWithFinalizer
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void InternalDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task InternalDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -279,11 +262,11 @@ internal class InternalDisposableWithoutFinalizer : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void InternalDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task InternalDisposableWithoutFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -301,11 +284,11 @@ Friend Class InternalDisposableWithoutFinalizer
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void PrivateDisposableWithoutFinalizer_CSharp_NoDiagnostic()
+        public async Task PrivateDisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -328,11 +311,11 @@ public static class NestedClassHolder
         }
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void PrivateDisposableWithoutFinalizer_Basic_NoDiagnostic()
+        public async Task PrivateDisposableWithoutFinalizer_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -354,11 +337,11 @@ Public NotInheritable Class NestedClassHolder
 		End Sub
 	End Class
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_CSharp_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -377,11 +360,11 @@ public sealed class SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFin
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_Basic_NoDiagnostic()
+        public async Task SealedDisposableWithoutFinalizerAndWithoutCallingSuppressFinalize_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -398,11 +381,11 @@ Public NotInheritable Class SealedDisposableWithoutFinalizerAndWithoutCallingSup
 		Console.WriteLine(disposing)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void DisposableStruct_CSharp_NoDiagnostic()
+        public async Task DisposableStruct_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -421,11 +404,11 @@ public struct DisposableStruct : IDisposable
         Console.WriteLine(disposing);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void DisposableStruct_Basic_NoDiagnostic()
+        public async Task DisposableStruct_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -442,11 +425,11 @@ Public Structure DisposableStruct
 		Console.WriteLine(disposing)
 	End Sub
 End Structure";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableCallingGCSuppressFinalizeInConstructor_CSharp_NoDiagnostic()
+        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_CSharp_NoDiagnostic()
         {
             var code = @"
 using System;
@@ -461,11 +444,11 @@ public sealed class SealedDisposableCallingGCSuppressFinalizeInConstructor : Com
         GC.SuppressFinalize(this);
     }
 }";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void SealedDisposableCallingGCSuppressFinalizeInConstructor_Basic_NoDiagnostic()
+        public async Task SealedDisposableCallingGCSuppressFinalizeInConstructor_Basic_NoDiagnostic()
         {
             var code = @"
 Imports System
@@ -479,11 +462,11 @@ Public NotInheritable Class SealedDisposableCallingGCSuppressFinalizeInConstruct
 		GC.SuppressFinalize(Me)
 	End Sub
 End Class";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void Disposable_ImplementedExplicitly_NoDiagnostic()
+        public async Task Disposable_ImplementedExplicitly_NoDiagnostic()
         {
             var csharpCode = @"
 using System;
@@ -500,7 +483,7 @@ public class ImplementsDisposableExplicitly : IDisposable
     {
     }
 }";
-            VerifyCSharp(csharpCode);
+            await VerifyCS.VerifyAnalyzerAsync(csharpCode);
 
             var vbCode = @"
 Imports System
@@ -516,7 +499,7 @@ Public Class C
     Public Sub Dispose(disposing As Boolean)
     End Sub
 End Class";
-            VerifyBasic(vbCode);
+            await VerifyVB.VerifyAnalyzerAsync(vbCode);
         }
 
         #endregion
@@ -524,7 +507,7 @@ End Class";
         #region DiagnosticCases
 
         [Fact]
-        public void SealedDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task SealedDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -561,11 +544,11 @@ using System.ComponentModel;
                 containingMethodName: "SealedDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void SealedDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task SealedDisposableWithFinalizer_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -603,11 +586,11 @@ End Class";
                 containingMethodName: "SealedDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task DisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -639,11 +622,11 @@ public class DisposableWithFinalizer : IDisposable
                 containingMethodName: "DisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithFinalizer_Basic_Diagnostic()
+        public async Task DisposableWithFinalizer_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -677,11 +660,11 @@ End Class";
                 containingMethodName: "DisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void InternalDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task InternalDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -713,11 +696,11 @@ internal class InternalDisposableWithFinalizer : IDisposable
                 containingMethodName: "InternalDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void InternalDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task InternalDisposableWithFinalizer_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -751,11 +734,11 @@ End Class";
                 containingMethodName: "InternalDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void PrivateDisposableWithFinalizer_CSharp_Diagnostic()
+        public async Task PrivateDisposableWithFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -790,11 +773,11 @@ public static class NestedClassHolder
                 containingMethodName: "NestedClassHolder.PrivateDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void PrivateDisposableWithFinalizer_Basic_Diagnostic()
+        public async Task PrivateDisposableWithFinalizer_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -832,11 +815,11 @@ End Class";
                 containingMethodName: "NestedClassHolder.PrivateDisposableWithFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithoutFinalizer_CSharp_Diagnostic()
+        public async Task DisposableWithoutFinalizer_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -863,11 +846,11 @@ public class DisposableWithoutFinalizer : IDisposable
                 containingMethodName: "DisposableWithoutFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableWithoutFinalizer_Basic_Diagnostic()
+        public async Task DisposableWithoutFinalizer_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -893,11 +876,11 @@ End Class";
                 containingMethodName: "DisposableWithoutFinalizer.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableComponent_CSharp_Diagnostic()
+        public async Task DisposableComponent_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -918,11 +901,11 @@ public class DisposableComponent : Component, IDisposable
                 containingMethodName: "DisposableComponent.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableComponent_Basic_Diagnostic()
+        public async Task DisposableComponent_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -947,11 +930,11 @@ End Class";
                 containingMethodName: "DisposableComponent.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void NotADisposableClass_CSharp_Diagnostic()
+        public async Task NotADisposableClass_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -971,11 +954,11 @@ public class NotADisposableClass
                 containingMethodName: "NotADisposableClass.NotADisposableClass()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void NotADisposableClass_Basic_Diagnostic()
+        public async Task NotADisposableClass_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -994,11 +977,11 @@ End Class";
                 containingMethodName: "NotADisposableClass.New()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_CSharp_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -1056,11 +1039,11 @@ public class DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces : IDispo
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose(bool)",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_Basic_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -1114,11 +1097,11 @@ End Class";
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeInTheWrongPlaces.Dispose(Boolean)",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult1, diagnosticResult2, diagnosticResult3, diagnosticResult4);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_CSharp_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_CSharp_Diagnostic()
         {
             var code = @"
 using System;
@@ -1151,11 +1134,11 @@ public class DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments : I
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_CSharp);
 
-            VerifyCSharp(code, diagnosticResult);
+            await VerifyCS.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         [Fact]
-        public void DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_Basic_Diagnostic()
+        public async Task DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments_Basic_Diagnostic()
         {
             var code = @"
 Imports System
@@ -1184,7 +1167,7 @@ End Class";
                 containingMethodName: "DisposableClassThatCallsGCSuppressFinalizeWithTheWrongArguments.Dispose()",
                 gcSuppressFinalizeMethodName: GCSuppressFinalizeMethodSignature_Basic);
 
-            VerifyBasic(code, diagnosticResult);
+            await VerifyVB.VerifyAnalyzerAsync(code, diagnosticResult);
         }
 
         #endregion

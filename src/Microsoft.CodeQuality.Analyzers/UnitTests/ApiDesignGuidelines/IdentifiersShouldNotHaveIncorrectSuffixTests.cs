@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldNotHaveIncorrectSuffixAnalyzer,
@@ -12,12 +13,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class IdentifiersShouldNotHaveIncorrectSuffixTests : DiagnosticAnalyzerTestBase
+    public class IdentifiersShouldNotHaveIncorrectSuffixTests
     {
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromAttribute()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromAttribute()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadAttribute {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -27,9 +28,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromAttribute()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromAttribute()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadAttribute
 End Class",
                 GetBasicResultAt(
@@ -40,9 +41,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromAttribute()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromAttribute()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 
 public class MyAttribute : Attribute {}
@@ -50,9 +51,9 @@ public class MyOtherAttribute : MyAttribute {}");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromAttribute()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromAttribute()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 
 Public Class MyAttribute
@@ -65,9 +66,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromEventArgs()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromEventArgs()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
                 "public class MyBadEventArgs {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -77,9 +78,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromEventArgs()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromEventArgs()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadEventArgs
 End Class",
                 GetBasicResultAt(
@@ -90,9 +91,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromEventArgs()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromEventArgs()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 
 public class MyEventArgs : EventArgs {}
@@ -100,9 +101,9 @@ public class MyOtherEventArgs : MyEventArgs {}");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromEventArgs()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromEventArgs()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 
 Public Class MyEventArgs
@@ -117,9 +118,9 @@ End Class");
         // There's no need for a test case where the type is derived from EventHandler
         // or EventHandler<T>, because they're sealed.
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithEventHandler()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithEventHandler()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadEventHandler {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -129,9 +130,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithEventHandler()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithEventHandler()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadEventHandler
 End Class",
                 GetBasicResultAt(
@@ -142,9 +143,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromException()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromException()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadException {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -154,9 +155,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromException()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromException()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadException
 End Class",
                 GetBasicResultAt(
@@ -167,9 +168,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromException()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromException()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 
 public class MyException : Exception {}
@@ -177,9 +178,9 @@ public class MyOtherException : MyException {}");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromException()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromException()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 
 Public Class MyException
@@ -192,9 +193,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromIPermission()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromIPermission()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadPermission {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -204,9 +205,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromIPermission()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromIPermission()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadPermission
 End Class",
                 GetBasicResultAt(
@@ -217,9 +218,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromIPermission()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromIPermission()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Security;
 
 public class MyPermission : IPermission
@@ -237,9 +238,9 @@ public class MyOtherPermission : MyPermission {}");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromIPermission()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromIPermission()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Security
 
 Public Class MyPermission
@@ -278,9 +279,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromStream()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromStream()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadStream {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -290,9 +291,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromStream()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromStream()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadStream
 End Class",
                 GetBasicResultAt(
@@ -303,9 +304,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromStream()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromStream()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.IO;
 
 public class MyStream : Stream
@@ -342,9 +343,9 @@ public class MyOtherStream : MyStream { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromStream()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromStream()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.IO
 
 Public Class MyStream
@@ -409,9 +410,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithDelegate()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithDelegate()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public delegate void MyBadDelegate();",
                 GetCSharpResultAt(
                     1, 22,
@@ -421,9 +422,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithDelegate()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithDelegate()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Delegate Sub MyBadDelegate()",
                 GetBasicResultAt(
                     1, 21,
@@ -433,9 +434,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithEnum()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithEnum()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public enum MyBadEnum { X }",
                 GetCSharpResultAt(
                     1, 13,
@@ -445,9 +446,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithEnum()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithEnum()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Enum MyBadEnum
     X
 End Enum",
@@ -459,9 +460,9 @@ End Enum",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithImpl()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithImpl()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClassImpl {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -472,9 +473,9 @@ End Enum",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithImpl()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithImpl()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyClassImpl
 End Class",
                 GetBasicResultAt(
@@ -486,32 +487,32 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeNamingRulesAreCaseSensitiveEvenInVB()
+        public async Task CA1711_Basic_NoDiagnostic_TypeNamingRulesAreCaseSensitiveEvenInVB()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyClassimpl
 End Class");
         }
 
         [Fact]
-        public void CSharp_No_Diagnostic_MisnamedTypeIsInternal()
+        public async Task CSharp_No_Diagnostic_MisnamedTypeIsInternal()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"internal class MyClassImpl {}");
         }
 
         [Fact]
-        public void Basic_No_Diagnostic_MisnamedTypeIsInternal()
+        public async Task Basic_No_Diagnostic_MisnamedTypeIsInternal()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Friend Class MyClassImpl
 End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MisnamedTypeIsNestedPublic()
+        public async Task CA1711_CSharp_Diagnostic_MisnamedTypeIsNestedPublic()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public class MyNestedClassImpl {}
@@ -525,9 +526,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MisnamedTypeIsNestedPublic()
+        public async Task CA1711_Basic_Diagnostic_MisnamedTypeIsNestedPublic()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public Class MyNestedClassImpl
     End Class
@@ -541,9 +542,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MisnamedTypeIsNestedProtected()
+        public async Task CA1711_CSharp_Diagnostic_MisnamedTypeIsNestedProtected()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     protected class MyNestedClassImpl {}
@@ -557,9 +558,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MisnamedTypeIsNestedProtected()
+        public async Task CA1711_Basic_Diagnostic_MisnamedTypeIsNestedProtected()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Protected Class MyNestedClassImpl
     End Class
@@ -573,9 +574,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_MisnamedTypeIsNestedPrivate()
+        public async Task CA1711_CSharp_NoDiagnostic_MisnamedTypeIsNestedPrivate()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     private class MyNestedClassImpl {}
@@ -583,9 +584,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_MisnamedTypeIsNestedPrivate()
+        public async Task CA1711_Basic_NoDiagnostic_MisnamedTypeIsNestedPrivate()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Private Class MyNestedClassImpl
     End Class
@@ -593,9 +594,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromDictionary()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadDictionary {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -605,9 +606,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromDictionary()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadDictionary
 End Class",
                 GetBasicResultAt(
@@ -618,9 +619,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsIReadOnlyDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsIReadOnlyDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 using System.Collections.Generic;
 
@@ -630,7 +631,7 @@ public class MyReadOnlyDictionary : IReadOnlyDictionary<string, int>
     public int Count => 0;
     public IEnumerable<string> Keys => new string[0];
     public IEnumerable<int> Values => new int[0];
-    
+
     public bool ContainsKey(string key) { return false; }
     public IEnumerator<KeyValuePair<string, int>> GetEnumerator() { return null; }
     IEnumerator IEnumerable.GetEnumerator() { return null; }
@@ -644,9 +645,9 @@ public class MyReadOnlyDictionary : IReadOnlyDictionary<string, int>
         }
 
         [Fact]
-        public void CA1711_BasicNoDiagnostic_TypeImplementsIReadOnlyDictionary()
+        public async Task CA1711_BasicNoDiagnostic_TypeImplementsIReadOnlyDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 Imports System.Collections.Generic
 
@@ -697,9 +698,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsGenericIDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsGenericIDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -760,9 +761,9 @@ public class MyGenericDictionary : IDictionary<string, string>
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeImplementsGenericIDictionary()
+        public async Task CA1711_Basic_NoDiagnostic_TypeImplementsGenericIDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 Imports System.Collections.Generic
 
@@ -844,9 +845,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Collections;
 using System.Runtime.Serialization;
@@ -891,9 +892,9 @@ public class MyNonGenericDictionary : IDictionary
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericIDictionary()
+        public async Task CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericIDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Collections
 Imports System.Runtime.Serialization
@@ -981,9 +982,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -999,9 +1000,9 @@ public class MyGenericDictionary<K, V> : Dictionary<K, V>
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericDictionary()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Collections.Generic
 Imports System.Runtime.Serialization
@@ -1016,9 +1017,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromPartiallyInstantiatedGenericDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromPartiallyInstantiatedGenericDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -1034,9 +1035,9 @@ public class MyStringDictionary<V> : Dictionary<string, V>
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromPartiallyInstantiatedGenericDictionary()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromPartiallyInstantiatedGenericDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Collections.Generic
 Imports System.Runtime.Serialization
@@ -1051,9 +1052,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromFullyInstantiatedGenericDictionary()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromFullyInstantiatedGenericDictionary()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -1069,9 +1070,9 @@ public class MyStringToIntDictionary : Dictionary<string, int>
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromFullyInstantiatedGenericDictionary()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromFullyInstantiatedGenericDictionary()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Collections.Generic
 Imports System.Runtime.Serialization
@@ -1086,9 +1087,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromCollection()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromCollection()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadCollection {}",
                 GetCSharpResultAt(
                     1, 14,
@@ -1098,9 +1099,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromCollection()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromCollection()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadCollection
 End Class",
                 GetBasicResultAt(
@@ -1111,9 +1112,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericICollection()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericICollection()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 
 public class MyNonGenericCollection : ICollection
@@ -1131,9 +1132,9 @@ public class MyNonGenericCollection : ICollection
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericICollection()
+        public async Task CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericICollection()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 
 Public Class MyNonGenericCollection
@@ -1168,9 +1169,9 @@ End Class
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIEnumerable()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsNonGenericIEnumerable()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 
 public class MyEnumerableCollection : IEnumerable
@@ -1183,9 +1184,9 @@ public class MyEnumerableCollection : IEnumerable
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericIEnumerable()
+        public async Task CA1711_Basic_NoDiagnostic_TypeImplementsNonGenericIEnumerable()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 
 Public Class MyEnumerableCollection
@@ -1198,9 +1199,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 using System.Collections.Generic;
 
@@ -1237,9 +1238,9 @@ public class MyIntCollection : ICollection<int>
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
+        public async Task CA1711_Basic_NoDiagnostic_TypeImplementsInstantiatedGenericICollection()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 Imports System.Collections.Generic
 
@@ -1286,18 +1287,18 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromNonGenericQueue()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromNonGenericQueue()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 
 public class MyNonGenericQueue : Queue { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromNonGenericQueue()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromNonGenericQueue()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 
 Public Class MyNonGenericQueue
@@ -1306,18 +1307,18 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericQueue()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericQueue()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections.Generic;
 
 public class MyGenericQueue<T> : Queue<T> { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericQueue()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericQueue()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections.Generic
 
 Public Class MyGenericQueue(Of T)
@@ -1326,18 +1327,18 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromInstantiatedGenericQueue()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromInstantiatedGenericQueue()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections.Generic;
 
 public class MyIntQueue : Queue<int> { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromInstantiatedGenericQueue()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromInstantiatedGenericQueue()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections.Generic
 
 Public Class MyIntQueue
@@ -1346,9 +1347,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromQueue()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromQueue()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadQueue { }",
                 GetCSharpResultAt(
                     1, 14,
@@ -1359,9 +1360,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromQueue()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromQueue()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadQueue
 End Class",
                 GetBasicResultAt(
@@ -1373,18 +1374,18 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromNonGenericStack()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromNonGenericStack()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections;
 
 public class MyNonGenericStack : Stack { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromNonGenericStack()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromNonGenericStack()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections
 
 Public Class MyNonGenericStack
@@ -1393,18 +1394,18 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericStack()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromGenericStack()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections.Generic;
 
 public class MyGenericStack<T> : Stack<T> { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericStack()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromGenericStack()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections.Generic
 
 Public Class MyGenericStack(Of T)
@@ -1413,18 +1414,18 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromInstantiatedGenericStack()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeDerivesFromInstantiatedGenericStack()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System.Collections.Generic;
 
 public class MyIntStack : Stack<int> { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeDerivesFromInstantiatedGenericStack()
+        public async Task CA1711_Basic_NoDiagnostic_TypeDerivesFromInstantiatedGenericStack()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System.Collections.Generic
 
 Public Class MyIntStack
@@ -1433,9 +1434,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromStack()
+        public async Task CA1711_CSharp_Diagnostic_TypeDoesNotDeriveFromStack()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBadStack { }",
                 GetCSharpResultAt(
                     1, 14,
@@ -1446,9 +1447,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromStack()
+        public async Task CA1711_Basic_Diagnostic_TypeDoesNotDeriveFromStack()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBadStack
 End Class",
                 GetBasicResultAt(
@@ -1462,9 +1463,9 @@ End Class",
         // MSDN says that DataSet and DataTable can be called "Collection",
         // but FxCop disagrees.
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDerivesFromDataSet()
+        public async Task CA1711_CSharp_Diagnostic_TypeDerivesFromDataSet()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Data;
 
@@ -1478,9 +1479,9 @@ public class MyBadDataSetCollection : DataSet { }",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDerivesFromDataSet()
+        public async Task CA1711_Basic_Diagnostic_TypeDerivesFromDataSet()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Data
 
@@ -1496,9 +1497,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeDerivesFromDataTable()
+        public async Task CA1711_CSharp_Diagnostic_TypeDerivesFromDataTable()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 using System.Data;
 
@@ -1512,9 +1513,9 @@ public class MyBadDataTableCollection : DataTable { }",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeDerivesFromDataTable()
+        public async Task CA1711_Basic_Diagnostic_TypeDerivesFromDataTable()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 Imports System.Data
 
@@ -1530,9 +1531,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithEx()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClassEx { }",
                 GetCSharpResultAt(
                     1, 14,
@@ -1542,9 +1543,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithEx()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyClassEx
 End Class",
                 GetBasicResultAt(
@@ -1555,24 +1556,24 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_TypeNameNameIsEx()
+        public async Task CA1711_CSharp_NoDiagnostic_TypeNameNameIsEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class Ex { }");
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_TypeNameNameIsEx()
+        public async Task CA1711_Basic_NoDiagnostic_TypeNameNameIsEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class Ex
 End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_TypeNameEndsWithNew()
+        public async Task CA1711_CSharp_Diagnostic_TypeNameEndsWithNew()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClassNew { }",
 
                 GetCSharpResultAt(
@@ -1583,9 +1584,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_TypeNameEndsWithNew()
+        public async Task CA1711_Basic_Diagnostic_TypeNameEndsWithNew()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyClassNew
 End Class",
                 GetBasicResultAt(
@@ -1596,9 +1597,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_MethodNameEndsWithNew()
+        public async Task CA1711_CSharp_NoDiagnostic_MethodNameEndsWithNew()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public void MyMethodNew() { }
@@ -1606,9 +1607,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_MethodNameEndsWithNew()
+        public async Task CA1711_Basic_NoDiagnostic_MethodNameEndsWithNew()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public Sub MyMethodNew()
     End Sub
@@ -1616,9 +1617,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInSameClass()
+        public async Task CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInSameClass()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBaseClass
 {
     public void MyMethod() { }
@@ -1632,9 +1633,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInSameClass()
+        public async Task CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInSameClass()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBaseClass
     Public Sub MyMethod()
     End Sub
@@ -1650,9 +1651,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
+        public async Task CA1711_CSharp_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBaseClass
 {
     public void MyMethod() { }
@@ -1674,9 +1675,9 @@ public class MyClass : MyDerivedClass
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
+        public async Task CA1711_Basic_Diagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInAncestorClass()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBaseClass
     Public Sub MyMethod()
     End Sub
@@ -1700,9 +1701,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_MethodNameEndingWithNewImplementsInterfaceMethod()
+        public async Task CA1711_CSharp_NoDiagnostic_MethodNameEndingWithNewImplementsInterfaceMethod()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public interface MyBaseInterface
 {
     void MyMethodNew();
@@ -1719,9 +1720,9 @@ public class MyClass : MyDerivedInterface
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInImplementedInterface()
+        public async Task CA1711_Basic_NoDiagnostic_MethodNameEndsWithNewAndMethodNameWithoutNewExistsInImplementedInterface()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Interface MyBaseInterface
     Sub MyMethodNew()
 End Interface
@@ -1738,9 +1739,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithEx()
+        public async Task CA1711_CSharp_Diagnostic_MethodNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public void MyMethodEx() { }
@@ -1754,9 +1755,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithEx()
+        public async Task CA1711_Basic_Diagnostic_MethodNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public Sub MyMethodEx()
     End Sub
@@ -1769,9 +1770,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_PrivateMethodNameEndsWithEx()
+        public async Task CA1711_CSharp_NoDiagnostic_PrivateMethodNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     private void MyMethodEx() { }
@@ -1779,9 +1780,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_PrivateMethodNameEndsWithEx()
+        public async Task CA1711_Basic_NoDiagnostic_PrivateMethodNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Private Sub MyMethodEx()
     End Sub
@@ -1789,9 +1790,9 @@ End Class");
         }
 
         [Fact]
-        public void CA1711_CSharp_NoDiagnostic_OverriddenMethodNameEndsWithEx()
+        public async Task CA1711_CSharp_NoDiagnostic_OverriddenMethodNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyBaseClass
 {
     public virtual void MyMethodEx() { }
@@ -1810,9 +1811,9 @@ public class MyClass : MyBaseClass
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
+        public async Task CA1711_CSharp_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public interface MyBaseInterface
 {
     void MyMethodEx();
@@ -1835,9 +1836,9 @@ public class MyClass : MyDerivedInterface
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
+        public async Task CA1711_Basic_Diagnostic_MethodNameEndingWithExImplementsInterfaceMethod()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Interface MyBaseInterface
     Sub MyMethodEx()
 End Interface
@@ -1861,9 +1862,9 @@ End Class",
 
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_MethodNameEndsWithImpl()
+        public async Task CA1711_CSharp_Diagnostic_MethodNameEndsWithImpl()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public void MyMethodImpl() { }
@@ -1877,9 +1878,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_MethodNameEndsWithImpl()
+        public async Task CA1711_Basic_Diagnostic_MethodNameEndsWithImpl()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public Sub MyMethodImpl()
     End Sub
@@ -1893,9 +1894,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_NoDiagnostic_OverriddenMethodNameEndsWithEx()
+        public async Task CA1711_Basic_NoDiagnostic_OverriddenMethodNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class MyBaseClass
     Public Overridable Sub MyMethodEx()
     End Sub
@@ -1916,9 +1917,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_EventNameEndsWithEx()
+        public async Task CA1711_CSharp_Diagnostic_EventNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"using System;
 
 public class MyClass
@@ -1934,9 +1935,9 @@ public class MyClass
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_EventNameEndsWithEx()
+        public async Task CA1711_Basic_Diagnostic_EventNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Imports System
 
 Public Class [MyClass]
@@ -1951,9 +1952,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_PropertyNameEndsWithEx()
+        public async Task CA1711_CSharp_Diagnostic_PropertyNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public int MyPropertyEx { get; set; }
@@ -1966,9 +1967,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_PropertyNameEndsWithEx()
+        public async Task CA1711_Basic_Diagnostic_PropertyNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public Property MyPropertyEx As Integer
         Get
@@ -1986,9 +1987,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_CSharp_Diagnostic_FieldNameEndsWithEx()
+        public async Task CA1711_CSharp_Diagnostic_FieldNameEndsWithEx()
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
 @"public class MyClass
 {
     public int MyFieldEx;
@@ -2001,9 +2002,9 @@ End Class",
         }
 
         [Fact]
-        public void CA1711_Basic_Diagnostic_FieldNameEndsWithEx()
+        public async Task CA1711_Basic_Diagnostic_FieldNameEndsWithEx()
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
 @"Public Class [MyClass]
     Public MyFieldEx As Integer
 End Class",
@@ -2014,14 +2015,14 @@ End Class",
                     "MyFieldEx"));
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotHaveIncorrectSuffixAnalyzer();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotHaveIncorrectSuffixAnalyzer();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

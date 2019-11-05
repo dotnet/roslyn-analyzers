@@ -1,28 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UseIntegralOrStringArgumentForIndexersAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UseIntegralOrStringArgumentForIndexersAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class UseIntegralOrStringArgumentForIndexersTests : DiagnosticAnalyzerTestBase
+    public class UseIntegralOrStringArgumentForIndexersTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseIntegralOrStringArgumentForIndexersAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseIntegralOrStringArgumentForIndexersAnalyzer();
-        }
-
         [Fact]
-        public void TestBasicUseIntegralOrStringArgumentForIndexersWarning1()
+        public async Task TestBasicUseIntegralOrStringArgumentForIndexersWarning1()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
     Imports System
 
     Public Class Months
@@ -37,9 +33,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
+        public async Task TestBasicUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
     Imports System
 
     Friend Class Months
@@ -63,9 +59,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
+        public async Task TestBasicUseIntegralOrStringArgumentForIndexersNoWarning1()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
     Public Class Months
         Private month() As String = {""Jan"", ""Feb"", ""...""}
         Default ReadOnly Property Item(index As String) As String
@@ -78,9 +74,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestCSharpUseIntegralOrStringArgumentForIndexersWarning1()
+        public async Task TestCSharpUseIntegralOrStringArgumentForIndexersWarning1()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     public class Months
     {
         string[] month = new string[] {""Jan"", ""Feb"", ""...""};
@@ -95,9 +91,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
+        public async Task TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning_Internal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     internal class Months
     {
         string[] month = new string[] {""Jan"", ""Feb"", ""...""};
@@ -124,9 +120,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning1()
+        public async Task TestCSharpUseIntegralOrStringArgumentForIndexersNoWarning1()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     public class Months
     {
         string[] month = new string[] {""Jan"", ""Feb"", ""...""};
@@ -141,9 +137,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestCSharpGenericIndexer()
+        public async Task TestCSharpGenericIndexer()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     public class Months<T>
     {
         public string this[T index]
@@ -157,9 +153,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestBasicGenericIndexer()
+        public async Task TestBasicGenericIndexer()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
     Public Class Months(Of T)
         Default Public ReadOnly Property Item(index As T)
             Get
@@ -170,9 +166,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestCSharpEnumIndexer()
+        public async Task TestCSharpEnumIndexer()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     public class Months<T>
     {
         public enum Foo { }
@@ -188,9 +184,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void TestBasicEnumIndexer()
+        public async Task TestBasicEnumIndexer()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
     Public Class Months(Of T)
         Public Enum Foo
             Val1
@@ -205,13 +201,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
-        {
-            return GetCSharpResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
-        }
+            => new DiagnosticResult(UseIntegralOrStringArgumentForIndexersAnalyzer.Rule)
+                .WithLocation(line, col)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
 
         private static DiagnosticResult CreateBasicResult(int line, int col)
-        {
-            return GetBasicResultAt(line, col, UseIntegralOrStringArgumentForIndexersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
-        }
+            => new DiagnosticResult(UseIntegralOrStringArgumentForIndexersAnalyzer.Rule)
+                .WithLocation(line, col)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.UseIntegralOrStringArgumentForIndexersMessage);
     }
 }

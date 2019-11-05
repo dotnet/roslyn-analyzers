@@ -15,8 +15,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class CollectionsShouldImplementGenericInterfaceTests
     {
-        private static readonly string CA1010Message = MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
-
         private DiagnosticResult GetCA1010CSharpResultAt(int line, int column, string typeName, string interfaceName)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)

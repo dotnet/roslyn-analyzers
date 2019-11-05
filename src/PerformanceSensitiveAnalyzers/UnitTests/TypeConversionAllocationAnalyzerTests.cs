@@ -950,5 +950,28 @@ class Foo<T>
 
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
+
+        [Fact]
+        public async void TypeConversionAllocation_StringConcatenationOfValueType_NoWarning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+struct Bar {}
+
+class Foo
+{
+    [PerformanceSensitive(""uri"")]
+    void A()
+    {
+        string x = ""foo"" + 1;
+        
+        Bar bar = new Bar();
+        string y = ""foo"" + bar;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
     }
 }

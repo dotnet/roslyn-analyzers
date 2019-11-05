@@ -94,6 +94,12 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
             {
                 if (conversion.Operand.Type?.IsValueType == true && conversion.OperatorMethod == null)
                 {
+                    // No boxing occurs for the special case of string concatenation.
+                    if (conversion.Parent is IBinaryOperation binaryOperation && binaryOperation.Type?.SpecialType == SpecialType.System_String)
+                    {
+                        return;
+                    }
+
                     context.ReportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, conversion.Operand.Syntax.GetLocation(), EmptyMessageArgs));
                 }
                 else if (conversion.Operand.Type?.TypeKind == TypeKind.TypeParameter && !conversion.Operand.Type.IsReferenceType && conversion.OperatorMethod == null)

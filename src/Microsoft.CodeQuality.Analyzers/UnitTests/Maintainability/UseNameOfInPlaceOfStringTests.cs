@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -617,13 +616,13 @@ namespace ConsoleApp14
         #endregion
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
-            => new DiagnosticResult(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
+            => VerifyVB.Diagnostic(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name));
+                .WithArguments(name);
 
         private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
-            => new DiagnosticResult(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
+            => VerifyCS.Diagnostic(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name));
+                .WithArguments(name);
     }
 }

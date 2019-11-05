@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -109,15 +108,11 @@ internal class C
         }
 
         private static DiagnosticResult GetExposeIndividualTypesResult()
-        {
-            return new DiagnosticResult(MarkAssembliesWithComVisibleAnalyzer.RuleA)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
-        }
+            => VerifyCS.Diagnostic(MarkAssembliesWithComVisibleAnalyzer.RuleA)
+                .WithArguments("TestProject");
 
         private static DiagnosticResult GetAddComVisibleFalseResult()
-        {
-            return new DiagnosticResult(MarkAssembliesWithComVisibleAnalyzer.RuleB)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
-        }
+            => VerifyCS.Diagnostic(MarkAssembliesWithComVisibleAnalyzer.RuleB)
+                .WithArguments("TestProject");
     }
 }

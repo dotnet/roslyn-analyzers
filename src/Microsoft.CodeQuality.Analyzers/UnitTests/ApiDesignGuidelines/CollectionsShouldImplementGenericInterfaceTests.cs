@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -16,17 +15,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class CollectionsShouldImplementGenericInterfaceTests
     {
-        private static readonly string CA1010Message = MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage;
-
         private DiagnosticResult GetCA1010CSharpResultAt(int line, int column, string typeName, string interfaceName)
-            => new DiagnosticResult(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
+                .WithArguments(typeName, interfaceName, $"{interfaceName}<T>");
 
         private DiagnosticResult GetCA1010BasicResultAt(int line, int column, string typeName, string interfaceName)
-            => new DiagnosticResult(CollectionsShouldImplementGenericInterfaceAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
+                .WithArguments(typeName, interfaceName, $"{interfaceName}(Of T)");
 
         [Fact]
         public async Task Test_WithCollectionBase()

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -401,9 +400,9 @@ End Class
         }
 
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
-        public void CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
+        public async Task CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
         {
-            VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IFoo
 {
     object GetContent();
@@ -420,9 +419,9 @@ public class Foo : IFoo
         }
 
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
-        public void CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
+        public async Task CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
         {
-            VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IFoo
 {
     object GetContent();
@@ -439,13 +438,13 @@ public class Foo : IFoo
         }
 
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
-            => new DiagnosticResult(UsePropertiesWhereAppropriateAnalyzer.Rule)
+            => VerifyCS.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                .WithArguments(methodName);
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
-            => new DiagnosticResult(UsePropertiesWhereAppropriateAnalyzer.Rule)
+            => VerifyVB.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                .WithArguments(methodName);
     }
 }

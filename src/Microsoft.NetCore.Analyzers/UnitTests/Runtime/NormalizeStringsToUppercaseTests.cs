@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -246,22 +245,14 @@ End Class
         #region Helpers
 
         private static DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
-        {
-            // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(CultureInfo.CurrentCulture, NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentCulture), containingMethod, invokedMethod, suggestedMethod);
-            return new DiagnosticResult(NormalizeStringsToUppercaseAnalyzer.ToUpperRule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         private static DiagnosticResult GetBasicDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
-        {
-            // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(CultureInfo.CurrentCulture, NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentCulture), containingMethod, invokedMethod, suggestedMethod);
-            return new DiagnosticResult(NormalizeStringsToUppercaseAnalyzer.ToUpperRule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(containingMethod, invokedMethod, suggestedMethod);
 
         #endregion
     }

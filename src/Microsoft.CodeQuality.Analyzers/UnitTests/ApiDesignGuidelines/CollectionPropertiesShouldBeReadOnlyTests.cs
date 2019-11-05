@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -17,14 +16,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class CollectionPropertiesShouldBeReadOnlyTests
     {
         private DiagnosticResult GetBasicResultAt(int line, int column, string propertyName)
-            => new DiagnosticResult(CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+                .WithArguments(propertyName);
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string propertyName)
-            => new DiagnosticResult(CollectionPropertiesShouldBeReadOnlyAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+                .WithArguments(propertyName);
 
         [Fact]
         public async Task CSharp_CA2227_Test()

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -133,7 +132,7 @@ End Class");
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public const string field = ""X""; 
+    public const string field = ""X"";
 }");
         }
 
@@ -147,13 +146,9 @@ End Class");
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
-            => new DiagnosticResult(NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyCS.Diagnostic().WithLocation(line, column);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
-            => new DiagnosticResult(NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
+            => VerifyVB.Diagnostic().WithLocation(line, column);
     }
 }

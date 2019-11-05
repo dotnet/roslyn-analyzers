@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -413,13 +412,13 @@ End Class
         }
 
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)
-            => new DiagnosticResult(AvoidUnusedPrivateFieldsAnalyzer.Rule)
+            => VerifyCS.Diagnostic(AvoidUnusedPrivateFieldsAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+                .WithArguments(fieldName);
 
         private static DiagnosticResult GetCA1823BasicResultAt(int line, int column, string fieldName)
-            => new DiagnosticResult(AvoidUnusedPrivateFieldsAnalyzer.Rule)
+            => VerifyVB.Diagnostic(AvoidUnusedPrivateFieldsAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+                .WithArguments(fieldName);
     }
 }

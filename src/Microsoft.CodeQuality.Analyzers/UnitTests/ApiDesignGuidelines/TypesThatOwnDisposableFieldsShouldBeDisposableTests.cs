@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -470,13 +469,13 @@ End Namespace
         }
 
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
-            => new DiagnosticResult(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
+            => VerifyCS.Diagnostic(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                .WithArguments(objectName, disposableFields);
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
-            => new DiagnosticResult(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
+            => VerifyVB.Diagnostic(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                .WithArguments(objectName, disposableFields);
     }
 }

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -19,29 +18,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         #region Boilerplate
 
         private static DiagnosticResult GetCA2225CSharpDefaultResultAt(int line, int column, string alternateName, string operatorName)
-            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
+            => VerifyCS.Diagnostic(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName));
+                .WithArguments(alternateName, operatorName);
 
         private static DiagnosticResult GetCA2225CSharpPropertyResultAt(int line, int column, string alternateName, string operatorName)
-            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.PropertyRule)
+            => VerifyCS.Diagnostic(OperatorOverloadsHaveNamedAlternatesAnalyzer.PropertyRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageProperty, alternateName, operatorName));
+                .WithArguments(alternateName, operatorName);
 
         private static DiagnosticResult GetCA2225CSharpMultipleResultAt(int line, int column, string alternateName1, string alternateName2, string operatorName)
-            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.MultipleRule)
+            => VerifyCS.Diagnostic(OperatorOverloadsHaveNamedAlternatesAnalyzer.MultipleRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageMultiple, alternateName1, alternateName2, operatorName));
+                .WithArguments(alternateName1, alternateName2, operatorName);
 
         private static DiagnosticResult GetCA2225CSharpVisibilityResultAt(int line, int column, string alternateName, string operatorName)
-            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.VisibilityRule)
+            => VerifyCS.Diagnostic(OperatorOverloadsHaveNamedAlternatesAnalyzer.VisibilityRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageVisibility, alternateName, operatorName));
+                .WithArguments(alternateName, operatorName);
 
         private static DiagnosticResult GetCA2225BasicDefaultResultAt(int line, int column, string alternateName, string operatorName)
-            => new DiagnosticResult(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
+            => VerifyVB.Diagnostic(OperatorOverloadsHaveNamedAlternatesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesMessageDefault, alternateName, operatorName));
+                .WithArguments(alternateName, operatorName);
 
         #endregion
 

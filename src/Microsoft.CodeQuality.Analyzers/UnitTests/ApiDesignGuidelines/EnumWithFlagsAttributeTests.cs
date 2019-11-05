@@ -578,23 +578,23 @@ End Enum
         }
 
         private static DiagnosticResult GetCA1027CSharpResultAt(int line, int column, string enumTypeName)
-            => new DiagnosticResult(EnumWithFlagsAttributeAnalyzer.Rule1027)
+            => VerifyCS.Diagnostic(EnumWithFlagsAttributeAnalyzer.Rule1027)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+                .WithArguments(enumTypeName);
 
         private static DiagnosticResult GetCA1027BasicResultAt(int line, int column, string enumTypeName)
-            => new DiagnosticResult(EnumWithFlagsAttributeAnalyzer.Rule1027)
+            => VerifyVB.Diagnostic(EnumWithFlagsAttributeAnalyzer.Rule1027)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsMessage, enumTypeName));
+                .WithArguments(enumTypeName);
 
         private static DiagnosticResult GetCA2217CSharpResultAt(int line, int column, string enumTypeName, string missingValuesString)
-            => new DiagnosticResult(EnumWithFlagsAttributeAnalyzer.Rule2217)
+            => VerifyCS.Diagnostic(EnumWithFlagsAttributeAnalyzer.Rule2217)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+                .WithArguments(enumTypeName, missingValuesString);
 
         private static DiagnosticResult GetCA2217BasicResultAt(int line, int column, string enumTypeName, string missingValuesString)
-            => new DiagnosticResult(EnumWithFlagsAttributeAnalyzer.Rule2217)
+            => VerifyVB.Diagnostic(EnumWithFlagsAttributeAnalyzer.Rule2217)
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsMessage, enumTypeName, missingValuesString));
+                .WithArguments(enumTypeName, missingValuesString);
     }
 }

@@ -211,7 +211,10 @@ public class Class
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
         public async Task CA1823_CSharp_MEFAttributesUndefined_Diagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default,
+                TestCode = @"
 public class Class
 {
     [System.Composition.ExportAttribute]
@@ -220,11 +223,16 @@ public class Class
     [System.ComponentModel.Composition.ExportAttribute]
     private int fieldWithMefV2ExportAttribute;
 }
-", CompilerDiagnostics.None,
-    // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
-    GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
-    // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-    GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"));
+",
+                CompilerDiagnostics = CompilerDiagnostics.None,
+                ExpectedDiagnostics =
+                {
+                    // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
+                    GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
+                    // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
+                    GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"),
+                },
+            }.RunAsync();
         }
 
         [Fact]
@@ -397,7 +405,10 @@ End Class
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
         public async Task CA1823_VisualBasic_MEFAttributesUndefined_Diagnostic()
         {
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Default,
+                TestCode = @"
 Public Class [Class]
     <System.Composition.ExportAttribute> _
     Private fieldWithMefV1ExportAttribute As Integer
@@ -405,11 +416,16 @@ Public Class [Class]
     <System.ComponentModel.Composition.ExportAttribute> _
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
-", CompilerDiagnostics.None,
-        // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
-        GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
-        // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-        GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"));
+",
+                CompilerDiagnostics = CompilerDiagnostics.None,
+                ExpectedDiagnostics =
+                {
+                    // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
+                    GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
+                    // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
+                    GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"),
+                },
+            }.RunAsync();
         }
 
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)

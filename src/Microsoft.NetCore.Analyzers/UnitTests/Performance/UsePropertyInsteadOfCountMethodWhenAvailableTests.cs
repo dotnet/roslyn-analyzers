@@ -51,7 +51,6 @@ public static class C
 " ,
                     },
                 },
-                IncludeImmutableCollectionsReference = true,
             }.RunAsync();
 
         [Fact]
@@ -98,7 +97,6 @@ End Module
 " ,
                     },
                 },
-                IncludeImmutableCollectionsReference = true,
             }.RunAsync();
 
         [Theory]

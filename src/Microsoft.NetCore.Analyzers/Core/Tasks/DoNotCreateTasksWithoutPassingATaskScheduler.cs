@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -42,9 +43,9 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 // Check if TPL is available before actually doing the searches
-                var taskType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
-                var taskFactoryType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskFactory);
-                var taskSchedulerType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskScheduler);
+                var taskType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+                var taskFactoryType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskFactory);
+                var taskSchedulerType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskScheduler);
                 if (taskType == null || taskFactoryType == null || taskSchedulerType == null)
                 {
                     return;

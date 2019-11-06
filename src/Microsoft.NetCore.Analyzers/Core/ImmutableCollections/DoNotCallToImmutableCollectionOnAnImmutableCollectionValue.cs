@@ -55,24 +55,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var immutableArraySymbol = compilation.GetTypeByMetadataName(ImmutableArrayMetadataName);
-                if (immutableArraySymbol is null)
-                {
-                    var systemNamespace = compilation.GlobalNamespace.GetMembers(nameof(System)).OfType<INamespaceSymbol>().FirstOrDefault();
-                    var systemCollectionsNamespace = systemNamespace?.GetMembers(nameof(System.Collections)).OfType<INamespaceSymbol>().FirstOrDefault();
-                    var systemCollectionsImmutableNamespace = systemCollectionsNamespace?.GetMembers(nameof(System.Collections.Immutable)).OfType<INamespaceSymbol>().FirstOrDefault();
-                    if (systemCollectionsImmutableNamespace is null)
-                    {
-                        return;
-                    }
-
-                    var immutableArrayTypes = systemCollectionsImmutableNamespace.GetMembers(nameof(ImmutableArray)).OfType<INamedTypeSymbol>().Where(type => type.MetadataName == typeof(ImmutableArray<>).Name).ToArray();
-                    var localSymbol = immutableArrayTypes.FirstOrDefault(type => type.ContainingAssembly.Equals(compilation.Assembly));
-                    var publicSymbol = immutableArrayTypes.FirstOrDefault(type => type.DeclaredAccessibility == Accessibility.Public);
-                    var fallbackSymbol = immutableArrayTypes.FirstOrDefault();
-                    immutableArraySymbol = localSymbol ?? publicSymbol ?? fallbackSymbol;
-                }
-
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+                var immutableArraySymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(ImmutableArrayMetadataName);
                 if (immutableArraySymbol is null)
                 {
                     return;

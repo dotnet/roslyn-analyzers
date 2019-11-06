@@ -58,9 +58,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     Compilation compilation = compilationStartContext.Compilation;
 
                     INamedTypeSymbol enumeratorType = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
-                    INamedTypeSymbol dataSetType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
-                    INamedTypeSymbol dataTableType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
-                    INamedTypeSymbol dataRowType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
+                    INamedTypeSymbol dataSetType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+                    INamedTypeSymbol dataTableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+                    INamedTypeSymbol dataRowType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
 
                     compilationStartContext.RegisterSymbolAction(
                         symbolAnalysisContext =>

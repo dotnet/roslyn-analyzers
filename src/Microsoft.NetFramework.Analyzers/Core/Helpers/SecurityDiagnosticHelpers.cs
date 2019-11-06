@@ -226,7 +226,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             {
                 return null;
             }
-            INamedTypeSymbol typeSymbol = compilation.GetTypeByMetadataName(typeName);
+            INamedTypeSymbol typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
             return typeSymbol?.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
         }
 

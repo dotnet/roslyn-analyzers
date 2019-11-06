@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
-                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
+                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
+                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
 
                 compilationContext.RegisterOperationBlockStartAction(context =>
                 {

@@ -66,6 +66,30 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void XmlSchemaReadDocSample1_Solution()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Xml;
+using System.Xml.Schema;
+
+class TestClass
+{
+    public XmlSchema Test
+    {
+        get
+        {
+            var src = """";
+            TextReader tr = new StreamReader(src);
+            XmlReader reader = XmlReader.Create(tr, new XmlReaderSettings() { XmlResolver = null });
+            XmlSchema schema = XmlSchema.Read(reader , null);
+            return schema;
+        }
+    }
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new UseXmlReaderForSchemaRead();

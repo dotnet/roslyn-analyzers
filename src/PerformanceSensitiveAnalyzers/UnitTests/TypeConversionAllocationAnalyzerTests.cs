@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers;
 using Test.Utilities;
@@ -972,6 +974,38 @@ class Foo
     }
 }";
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
+        [Fact]
+        public async void TypeConversionAllocation_LambdaReturnConversion_Warning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo
+{
+    [PerformanceSensitive(""uri"")]
+    void A()
+    {
+        B(() => false);
+    }
+
+    void B(Func<object> callback)
+    { 
+    }
+}";
+            var expectedMessage = string.Format(CultureInfo.InvariantCulture, (string)TypeConversionAllocationAnalyzer.LambdaReturnConversionRule.MessageFormat, "bool", "object");
+            var expectedLambdaDiagnostic = RuleWithMessage(TypeConversionAllocationAnalyzer.LambdaReturnConversionRule, expectedMessage);
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(10, 11),
+                VerifyCS.Diagnostic(expectedLambdaDiagnostic).WithLocation(10, 17));
+        }
+
+        private static DiagnosticDescriptor RuleWithMessage(DiagnosticDescriptor d, string message)
+        {
+            return new DiagnosticDescriptor(d.Id, d.Title, message, d.Category, d.DefaultSeverity, d.IsEnabledByDefault, d.Description, d.HelpLinkUri, d.CustomTags.ToArray());
         }
     }
 }

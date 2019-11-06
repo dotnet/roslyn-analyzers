@@ -141,6 +141,12 @@
   <data name="LambaOrAnonymousMethodInGenericMethodRuleTitle" xml:space="preserve">
     <value>Lambda or anonymous method in a generic method allocates a delegate instance</value>
   </data>
+  <data name="LambdaReturnConversionRuleMessage" xml:space="preserve">
+    <value>Returning a {0} from an anonymous function with a return type of {1} will cause boxing when the function is called.</value>
+  </data>
+  <data name="LambdaReturnConversionRuleTitle" xml:space="preserve">
+    <value>Return of value type causes boxing allocation</value>
+  </data>
   <data name="MethodGroupAllocationRuleMessage" xml:space="preserve">
     <value>This will allocate a delegate instance</value>
   </data>

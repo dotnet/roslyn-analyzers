@@ -16,6 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
         public const string DelegateOnStructInstanceRuleId = "HAA0602";
         public const string MethodGroupAllocationRuleId = "HAA0603";
         // HeapAnalyzerReadonlyMethodGroupAllocationRule [sic] is retired and should not be reused
+        public const string LambdaReturnConversionRuleId = "HAA0604";
 
         private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleTitle = new LocalizableResourceString(nameof(AnalyzersResources.ValueTypeToReferenceTypeConversionRuleTitle), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
         private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleMessage = new LocalizableResourceString(nameof(AnalyzersResources.ValueTypeToReferenceTypeConversionRuleMessage), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
@@ -25,6 +26,9 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
 
         private static readonly LocalizableString s_localizableMethodGroupAllocationRuleTitle = new LocalizableResourceString(nameof(AnalyzersResources.MethodGroupAllocationRuleTitle), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
         private static readonly LocalizableString s_localizableMethodGroupAllocationRuleMessage = new LocalizableResourceString(nameof(AnalyzersResources.MethodGroupAllocationRuleMessage), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
+
+        private static readonly LocalizableString s_localizableLambdaReturnConversionRuleTitle = new LocalizableResourceString(nameof(AnalyzersResources.LambdaReturnConversionRuleTitle), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
+        private static readonly LocalizableString s_localizableLambdaReturnConversionRuleMessage = new LocalizableResourceString(nameof(AnalyzersResources.LambdaReturnConversionRuleMessage), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
 
         internal static DiagnosticDescriptor ValueTypeToReferenceTypeConversionRule = new DiagnosticDescriptor(
             ValueTypeToReferenceTypeConversionRuleId,
@@ -50,12 +54,21 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
+        internal static DiagnosticDescriptor LambdaReturnConversionRule = new DiagnosticDescriptor(
+            LambdaReturnConversionRuleId,
+            s_localizableLambdaReturnConversionRuleTitle,
+            s_localizableLambdaReturnConversionRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             ValueTypeToReferenceTypeConversionRule,
             MethodGroupAllocationRule,
-            DelegateOnStructInstanceRule);
+            DelegateOnStructInstanceRule,
+            LambdaReturnConversionRule);
 
         protected override ImmutableArray<OperationKind> Operations => ImmutableArray.Create(
             OperationKind.Conversion,
@@ -98,6 +111,19 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                     if (conversion.Parent is IBinaryOperation binaryOperation && binaryOperation.Type?.SpecialType == SpecialType.System_String)
                     {
                         return;
+                    }
+
+                    var parent = conversion.Parent;
+                    while (parent != null)
+                    {
+                        if (parent is IAnonymousFunctionOperation)
+                        {
+                            string[] messageArgs = { conversion.Operand.Type.ToDisplayString(), conversion.Type.ToDisplayString() };
+                            context.ReportDiagnostic(Diagnostic.Create(LambdaReturnConversionRule, conversion.Operand.Syntax.GetLocation(), messageArgs));
+                            return;
+                        }
+
+                        parent = parent.Parent;
                     }
 
                     context.ReportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, conversion.Operand.Syntax.GetLocation(), EmptyMessageArgs));

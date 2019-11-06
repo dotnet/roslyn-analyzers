@@ -42,6 +42,16 @@
         <target state="translated">Лямбда-выражение или анонимный метод в универсальном методе выделяет экземпляр делегата</target>
         <note />
       </trans-unit>
+      <trans-unit id="LambdaReturnConversionRuleMessage">
+        <source>Returning a {0} from an anonymous function with a return type of {1} will cause boxing when the function is called.</source>
+        <target state="new">Returning a {0} from an anonymous function with a return type of {1} will cause boxing when the function is called.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LambdaReturnConversionRuleTitle">
+        <source>Return of value type causes boxing allocation</source>
+        <target state="new">Return of value type causes boxing allocation</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MethodGroupAllocationRuleMessage">
         <source>This will allocate a delegate instance</source>
         <target state="translated">Эта операция выделит экземпляр делегата</target>

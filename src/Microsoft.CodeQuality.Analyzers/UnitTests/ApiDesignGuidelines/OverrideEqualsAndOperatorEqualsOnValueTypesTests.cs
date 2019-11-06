@@ -370,7 +370,7 @@ Public Structure A
 End Structure
 ",
                 GetBasicOverrideEqualsDiagnostic(2, 18, "A"),
-                new DiagnosticResult("BC30284", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(3, 41));
+                DiagnosticResult.CompilerError("BC30284").WithLocation(3, 41));
         }
 
         [Fact]

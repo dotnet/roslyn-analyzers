@@ -199,7 +199,7 @@ class Derived : IFace
     }
 }",
             // Test0.cs(7,17): error CS0535: 'Derived' does not implement interface member 'IFace.Method(string)'
-            new DiagnosticResult("CS0535", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 17));
+            DiagnosticResult.CompilerError("CS0535").WithLocation(7, 17));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Interface IFace
@@ -213,9 +213,9 @@ Class Derived
     End Sub
 End Class",
                 // Test0.vb(7) : error BC30149: Class 'Derived' must implement 'Sub Method(input As String)' for interface 'IFace'.
-                new DiagnosticResult("BC30149", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 16),
+                DiagnosticResult.CompilerError("BC30149").WithLocation(7, 16),
                 // Test0.vb(9) : error BC30401: 'Method' cannot implement 'Method' because there is no matching sub on interface 'IFace'.
-                new DiagnosticResult("BC30401", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(9, 51));
+                DiagnosticResult.CompilerError("BC30401").WithLocation(9, 51));
         }
 
         [Fact]
@@ -234,9 +234,9 @@ class Derived : Base
     }
 }",
             // Test0.cs(4,25): error CS0501: 'Base.Method(string)' must declare a body because it is not marked abstract, extern, or partial
-            new DiagnosticResult("CS0501", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 25),
+            DiagnosticResult.CompilerError("CS0501").WithLocation(4, 25),
             // Test0.cs(9,26): error CS0115: 'Derived.Method(object)': no suitable method found to override
-            new DiagnosticResult("CS0115", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(9, 26));
+            DiagnosticResult.CompilerError("CS0115").WithLocation(9, 26));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Class Base
@@ -251,7 +251,7 @@ Class Derived
     End Sub
 End Class",
                 // Test0.vb(10) : error BC30284: sub 'Method' cannot be declared 'Overrides' because it does not override a sub in a base class.
-                new DiagnosticResult("BC30284", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(10, 26));
+                DiagnosticResult.CompilerError("BC30284").WithLocation(10, 26));
         }
 
 
@@ -271,9 +271,9 @@ class Derived : Base
     }
 }",
             // Test0.cs(7,7): error CS0534: 'Derived' does not implement inherited abstract member 'Base.Method(string)'
-            new DiagnosticResult("CS0534", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 7),
+            DiagnosticResult.CompilerError("CS0534").WithLocation(7, 7),
             // Test0.cs(9,26): error CS0115: 'Derived.Method(object)': no suitable method found to override
-            new DiagnosticResult("CS0115", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(9, 26));
+            DiagnosticResult.CompilerError("CS0115").WithLocation(9, 26));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class Base
@@ -288,11 +288,11 @@ Class Derived
     End Sub
 End Class",
                 // Test0.vb(4) : error BC30429: 'End Sub' must be preceded by a matching 'Sub'.
-                new DiagnosticResult("BC30429", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 5),
+                DiagnosticResult.CompilerError("BC30429").WithLocation(4, 5),
                 // Test0.vb(7) : error BC30610: Class 'Derived' must either be declared 'MustInherit' or override the following inherited 'MustOverride' member(s):
-                new DiagnosticResult("BC30610", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 7),
+                DiagnosticResult.CompilerError("BC30610").WithLocation(7, 7),
                 // Test0.vb(10) : error BC30284: sub 'Method' cannot be declared 'Overrides' because it does not override a sub in a base class.
-                new DiagnosticResult("BC30284", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(10, 26));
+                DiagnosticResult.CompilerError("BC30284").WithLocation(10, 26));
         }
 
         [Fact]

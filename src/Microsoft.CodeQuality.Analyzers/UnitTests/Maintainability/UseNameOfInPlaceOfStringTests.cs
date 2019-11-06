@@ -128,8 +128,8 @@ class C
         throw new ArgumentNullException(
     }
 }",
-                new DiagnosticResult("CS1002", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 41),
-                new DiagnosticResult("CS1026", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 41));
+                DiagnosticResult.CompilerError("CS1002").WithLocation(7, 41),
+                DiagnosticResult.CompilerError("CS1026").WithLocation(7, 41));
         }
 
         [Fact]

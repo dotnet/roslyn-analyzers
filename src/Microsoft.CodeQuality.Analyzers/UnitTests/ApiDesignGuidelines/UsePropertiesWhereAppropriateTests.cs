@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -345,7 +344,7 @@ End Class
                 // Test0.vb(3,21): warning CA1024: Use properties where appropriate
                 GetCA1024BasicResultAt(3, 21, "GetSomethingWithUnboundInvocation"),
                 // Test0.vb(4) : error BC30451: 'Console' is not declared. It may be inaccessible due to its protection level.
-                new DiagnosticResult("BC30451", DiagnosticSeverity.Error).WithLocation(4, 9));
+                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 9));
         }
 
         [Fact]

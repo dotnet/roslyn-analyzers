@@ -289,8 +289,8 @@ public class Test
     }
 }
 ",
-                new DiagnosticResult("CS0523", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 14),
-                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 23));
+                DiagnosticResult.CompilerError("CS0523").WithLocation(4, 14),
+                DiagnosticResult.CompilerError("CS0165").WithLocation(12, 23));
         }
 
         [Fact]
@@ -313,10 +313,10 @@ public class Test
     }
 }
 ",
-                new DiagnosticResult("CS0523", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(4, 14),
-                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 9),
-                new DiagnosticResult("CS0103", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 22),
-                new DiagnosticResult("CS0165", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(12, 30));
+                DiagnosticResult.CompilerError("CS0523").WithLocation(4, 14),
+                DiagnosticResult.CompilerError("CS0165").WithLocation(12, 9),
+                DiagnosticResult.CompilerError("CS0103").WithLocation(12, 22),
+                DiagnosticResult.CompilerError("CS0165").WithLocation(12, 30));
         }
 
         [Fact]

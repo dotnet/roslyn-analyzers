@@ -977,6 +977,27 @@ class Foo
         }
 
         [Fact]
+        public async Task TypeConversionAllocation_LambdasAndAnonymousMethod_NoHAA0603()
+        {
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string s = ""foo"";
+        Func<object, string> func1 = o => s;
+        Func<object, string> func2 = delegate(object o) { return s; };
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
+        [Fact]
         public async void TypeConversionAllocation_LambdaReturnConversion_Warning()
         {
             const string sampleProgram = @"
@@ -999,7 +1020,6 @@ class Foo
             var expectedLambdaDiagnostic = RuleWithMessage(TypeConversionAllocationAnalyzer.LambdaReturnConversionRule, expectedMessage);
 
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
-                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(10, 11),
                 VerifyCS.Diagnostic(expectedLambdaDiagnostic).WithLocation(10, 17));
         }
 

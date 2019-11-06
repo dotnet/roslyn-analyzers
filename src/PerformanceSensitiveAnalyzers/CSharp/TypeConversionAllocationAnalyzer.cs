@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
         {
             if (context.Operation is IDelegateCreationOperation delegateCreation)
             {
-                if (delegateCreation.IsImplicit)
+                if (delegateCreation.IsImplicit && delegateCreation.Target.Kind != OperationKind.AnonymousFunction)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, context.Operation.Syntax.GetLocation(), EmptyMessageArgs));
                 }

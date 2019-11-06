@@ -19,7 +19,6 @@
     <CodecovVersion>1.0.3</CodecovVersion>
 
     <!-- Roslyn -->
-
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>3.4.0-beta2-final</MicrosoftNetCompilersVersion>
     <DogfoodAnalyzersVersion>3.0.0-beta2.19529.2+e119d9cf</DogfoodAnalyzersVersion>

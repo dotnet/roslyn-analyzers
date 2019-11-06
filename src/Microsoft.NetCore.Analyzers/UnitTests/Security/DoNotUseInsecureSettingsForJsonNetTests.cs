@@ -69,7 +69,6 @@ Imports Newtonsoft.Json
 
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As Location
 End Class
 
@@ -99,7 +98,7 @@ Public Class ExampleClass
     End Function
 End Class
 ",
-                GetBasicResultAt(32, 16, DefinitelyRule));
+                GetBasicResultAt(31, 16, DefinitelyRule));
         }
 
         [Fact]
@@ -135,7 +134,6 @@ public class BookRecordSerializationBinder : ISerializationBinder
 public class BookRecord
 {
     public string Title { get; set; }
-    public string Author { get; set; }
     public object Location { get; set; }
 }
 
@@ -199,7 +197,6 @@ End Class
 
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As Location
 End Class
 
@@ -265,7 +262,6 @@ public class BookRecordSerializationBinder : ISerializationBinder
 public class BookRecord
 {
     public string Title { get; set; }
-    public string Author { get; set; }
     public object Location { get; set; }
 }
 
@@ -286,20 +282,23 @@ public class WarehouseLocation : Location
     public byte Shelf { get; set; }
 }
 
+public static class Binders
+{
+    public static ISerializationBinder BookRecord = new BookRecordSerializationBinder();
+}
+
 public class ExampleClass
 {
-    public ISerializationBinder SerializationBinder { get; set; }
-
     public BookRecord DeserializeBookRecord(string s)
     {
         JsonSerializerSettings settings = new JsonSerializerSettings();
         settings.TypeNameHandling = TypeNameHandling.Auto;
-        settings.SerializationBinder = this.SerializationBinder;
+        settings.SerializationBinder = Binders.BookRecord;
         return JsonConvert.DeserializeObject<BookRecord>(s, settings);    // CA2328 -- settings might be null
     }
 }
 ",
-                GetCSharpResultAt(61, 16, MaybeRule));
+                GetCSharpResultAt(63, 16, MaybeRule));
         }
 
         [Fact]
@@ -332,7 +331,6 @@ End Class
 
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As Location
 End Class
 
@@ -354,18 +352,163 @@ Public Class WarehouseLocation
     Public Property Shelf As Byte
 End Class
 
-Public Class ExampleClass
-    Public Property SerializationBinder As ISerializationBinder
+Public Class Binders
+    Public Shared Property BookRecord As ISerializationBinder = New BookRecordSerializationBinder()
+End Class
 
+Public Class ExampleClass
     Public Function DeserializeBookRecord(s As String) As BookRecord
         Dim settings As JsonSerializerSettings = New JsonSerializerSettings()
         settings.TypeNameHandling = TypeNameHandling.Auto
-        settings.SerializationBinder = Me.SerializationBinder
+        settings.SerializationBinder = Binders.BookRecord
         Return JsonConvert.DeserializeObject(Of BookRecord)(s, settings)   ' CA2328 -- settings might be Nothing
     End Function
 End Class
 ",
-                GetBasicResultAt(57, 16, MaybeRule));
+                GetBasicResultAt(58, 16, MaybeRule));
+        }
+
+        [Fact]
+        public void DocSample2_CSharp_Solution()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+public class BookRecordSerializationBinder : ISerializationBinder
+{
+    // To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    private static readonly DefaultSerializationBinder Binder = new DefaultSerializationBinder();
+
+    public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+    {
+        Binder.BindToName(serializedType, out assemblyName, out typeName);
+    }
+
+    public Type BindToType(string assemblyName, string typeName)
+    {
+        // If the type isn't expected, then stop deserialization.
+        if (typeName != ""BookRecord"" && typeName != ""AisleLocation"" && typeName != ""WarehouseLocation"")
+        {
+            return null;
+        }
+
+        return Binder.BindToType(assemblyName, typeName);
+    }
+}
+
+public class BookRecord
+{
+    public string Title { get; set; }
+    public object Location { get; set; }
+}
+
+public abstract class Location
+{
+    public string StoreId { get; set; }
+}
+
+public class AisleLocation : Location
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class WarehouseLocation : Location
+{
+    public string Bay { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public static class Binders
+{
+    public static ISerializationBinder BookRecord = new BookRecordSerializationBinder();
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(string s)
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        settings.TypeNameHandling = TypeNameHandling.Auto;
+
+        // Ensure that SerializationBinder is non-null before deserializing
+        settings.SerializationBinder = Binders.BookRecord ?? throw new Exception(""Expected non-null"");
+
+        return JsonConvert.DeserializeObject<BookRecord>(s, settings);
+    }
+}
+");
+        }
+
+        [Fact]
+        public void DocSample2_VB_Solution()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports System
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Serialization
+
+Public Class BookRecordSerializationBinder
+    Implements ISerializationBinder
+
+    ' To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    Private Shared ReadOnly Property Binder As New DefaultSerializationBinder()
+
+    Public Sub BindToName(serializedType As Type, ByRef assemblyName As String, ByRef typeName As String) Implements ISerializationBinder.BindToName
+        Binder.BindToName(serializedType, assemblyName, typeName)
+    End Sub
+
+    Public Function BindToType(assemblyName As String, typeName As String) As Type Implements ISerializationBinder.BindToType
+        ' If the type isn't expected, then stop deserialization.
+        If typeName <> ""BookRecord"" AndAlso typeName <> ""AisleLocation"" AndAlso typeName <> ""WarehouseLocation"" Then
+            Return Nothing
+        End If
+
+        Return Binder.BindToType(assemblyName, typeName)
+    End Function
+End Class
+
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Location As Location
+End Class
+
+Public MustInherit Class Location
+    Public Property StoreId As String
+End Class
+
+Public Class AisleLocation
+    Inherits Location
+
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class WarehouseLocation
+    Inherits Location
+
+    Public Property Bay As String
+    Public Property Shelf As Byte
+End Class
+
+Public Class Binders
+    Public Shared Property BookRecord As ISerializationBinder = New BookRecordSerializationBinder()
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(s As String) As BookRecord
+        Dim settings As JsonSerializerSettings = New JsonSerializerSettings()
+        settings.TypeNameHandling = TypeNameHandling.Auto
+
+        ' Ensure that SerializationBinder is non-null before deserializing
+        settings.SerializationBinder = If(Binders.BookRecord, New Exception(""Expected non-null""))
+
+        Return JsonConvert.DeserializeObject(Of BookRecord)(s, settings)
+    End Function
+End Class
+");
         }
 
         [Fact]

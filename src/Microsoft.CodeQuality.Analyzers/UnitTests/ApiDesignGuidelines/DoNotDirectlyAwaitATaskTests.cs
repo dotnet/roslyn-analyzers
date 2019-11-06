@@ -140,7 +140,7 @@ public class SomeAwaiter : INotifyCompletion
 }
 ";
             await VerifyCS.VerifyAnalyzerAsync(code,
-                new DiagnosticResult("CS1525", DiagnosticSeverity.Error).WithLocation(16, 14));
+                DiagnosticResult.CompilerError("CS1525").WithLocation(16, 14));
         }
 
         [Fact]
@@ -185,7 +185,7 @@ Public Class SomeAwaiter
 End Class
 ";
             await VerifyVB.VerifyAnalyzerAsync(code,
-                new DiagnosticResult("BC30201", DiagnosticSeverity.Error).WithLocation(14, 15));
+                DiagnosticResult.CompilerError("BC30201").WithLocation(14, 15));
         }
 
         [Fact]

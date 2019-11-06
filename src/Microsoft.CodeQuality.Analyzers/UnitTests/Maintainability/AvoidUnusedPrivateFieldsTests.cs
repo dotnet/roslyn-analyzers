@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -108,9 +107,9 @@ public class Class
 }
 ",
                 // Test0.cs(5,6): error CS7036: There is no argument given that corresponds to the required formal parameter 'offset' of 'FieldOffsetAttribute.FieldOffsetAttribute(int)'
-                new DiagnosticResult("CS7036", DiagnosticSeverity.Error).WithLocation(5, 6),
+                DiagnosticResult.CompilerError("CS7036").WithLocation(5, 6),
                 // Test0.cs(6,17): error CS0625: 'Class.fieldWithFieldOffsetAttribute': instance field in types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute
-                new DiagnosticResult("CS0625", DiagnosticSeverity.Error).WithLocation(6, 17));
+                DiagnosticResult.CompilerError("CS0625").WithLocation(6, 17));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -159,7 +158,7 @@ class Class
     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
     GetCA1823CSharpResultAt(5, 17, "field"),
     // Test0.cs(5,17): error CS0625: 'Class.field': instance field in types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute
-    new DiagnosticResult("CS0625", DiagnosticSeverity.Error).WithLocation(5, 17));
+    DiagnosticResult.CompilerError("CS0625").WithLocation(5, 17));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -179,7 +178,7 @@ class Class2
 }
 ",
     // Test0.cs(2,2): error CS1729: 'StructLayoutAttribute' does not contain a constructor that takes 0 arguments
-    new DiagnosticResult("CS1729", DiagnosticSeverity.Error).WithLocation(2, 2),
+    DiagnosticResult.CompilerError("CS1729").WithLocation(2, 2),
     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
     GetCA1823CSharpResultAt(5, 17, "field"),
     // Test0.cs(11,17): warning CA1823: Unused field 'field'.
@@ -215,9 +214,9 @@ public class Class
 }
 ",
                  // Test0.cs(18,6): error CS1729: 'ExportAttribute' does not contain a constructor that takes 1 arguments
-                 new DiagnosticResult("CS1729", DiagnosticSeverity.Error).WithLocation(18, 6),
+                 DiagnosticResult.CompilerError("CS1729").WithLocation(18, 6),
                  // Test0.cs(21,6): error CS1729: 'ExportAttribute' does not contain a constructor that takes 1 arguments
-                 new DiagnosticResult("CS1729", DiagnosticSeverity.Error).WithLocation(21, 6));
+                 DiagnosticResult.CompilerError("CS1729").WithLocation(21, 6));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -239,11 +238,11 @@ public class Class
                 ExpectedDiagnostics =
                 {
                     // Test0.cs(4,13): error CS0234: The type or namespace name 'Composition' does not exist in the namespace 'System' (are you missing an assembly reference?)
-                    new DiagnosticResult("CS0234", DiagnosticSeverity.Error).WithLocation(4, 13),
+                    DiagnosticResult.CompilerError("CS0234").WithLocation(4, 13),
                     // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
                     // Test0.cs(7,28): error CS0234: The type or namespace name 'Composition' does not exist in the namespace 'System.ComponentModel' (are you missing an assembly reference?)
-                    new DiagnosticResult("CS0234", DiagnosticSeverity.Error).WithLocation(7, 28),
+                    DiagnosticResult.CompilerError("CS0234").WithLocation(7, 28),
                     // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute")
                 },
@@ -384,11 +383,11 @@ Public Class Class2
 End Class
 ",
     // Test0.vb(2) : error BC30516: Overload resolution failed because no accessible 'New' accepts this number of arguments.
-    new DiagnosticResult("BC30516", DiagnosticSeverity.Error).WithLocation(2, 33),
+    DiagnosticResult.CompilerError("BC30516").WithLocation(2, 33),
     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
     GetCA1823BasicResultAt(4, 13, "field"),
     // Test0.vb(7) : error BC30519: Overload resolution failed because no accessible 'New' can be called without a narrowing conversion:
-    new DiagnosticResult("BC30519", DiagnosticSeverity.Error).WithLocation(7, 33),
+    DiagnosticResult.CompilerError("BC30519").WithLocation(7, 33),
     // Test0.vb(9,13): warning CA1823: Unused field 'field'.
     GetCA1823BasicResultAt(9, 13, "field"));
         }
@@ -420,9 +419,9 @@ Public Class [Class]
 End Class
 ",
                 // Test0.vb(15) : error BC30057: Too many arguments to 'Public Sub New()'.
-                new DiagnosticResult("BC30057", DiagnosticSeverity.Error).WithLocation(15, 41),
+                DiagnosticResult.CompilerError("BC30057").WithLocation(15, 41),
                 // Test0.vb(18) : error BC30057: Too many arguments to 'Public Sub New()'.
-                new DiagnosticResult("BC30057", DiagnosticSeverity.Error).WithLocation(18, 56));
+                DiagnosticResult.CompilerError("BC30057").WithLocation(18, 56));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -444,11 +443,11 @@ End Class
                 ExpectedDiagnostics =
                 {
                     // Test0.vb(3) : error BC30002: Type 'System.Composition.ExportAttribute' is not defined.
-                    new DiagnosticResult("BC30002", DiagnosticSeverity.Error).WithLocation(3, 6),
+                    DiagnosticResult.CompilerError("BC30002").WithLocation(3, 6),
                     // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
                     // Test0.vb(6) : error BC30002: Type 'System.ComponentModel.Composition.ExportAttribute' is not defined.
-                    new DiagnosticResult("BC30002", DiagnosticSeverity.Error).WithLocation(6, 6),
+                    DiagnosticResult.CompilerError("BC30002").WithLocation(6, 6),
                     // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute")
                 },

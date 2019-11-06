@@ -389,7 +389,7 @@ End Class",
 End Class",
                 ExpectedDiagnostics =
                 {
-                    new DiagnosticResult("BC30737", DiagnosticSeverity.Error)
+                    DiagnosticResult.CompilerError("BC30737")
                 },
                 SolutionTransforms =
                 {
@@ -1345,9 +1345,9 @@ internal interface IFoo4 {}
 
 internal class CFoo {}  // Test0.cs(16,16): warning CA1812: CFoo is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).
 ",
-                new DiagnosticResult("CS7036", DiagnosticSeverity.Error).WithLocation(4, 2),
-                new DiagnosticResult("CS0119", DiagnosticSeverity.Error).WithLocation(7, 10),
-                new DiagnosticResult("CS1729", DiagnosticSeverity.Error).WithLocation(10, 2),
+                DiagnosticResult.CompilerError("CS7036").WithLocation(4, 2),
+                DiagnosticResult.CompilerError("CS0119").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS1729").WithLocation(10, 2),
                 GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
         }
 

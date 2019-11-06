@@ -23,7 +23,7 @@ public class A
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
 // Test0.cs(4,32): error CS0216: The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32));
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -36,7 +36,7 @@ public class A
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="),
 // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32));
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -63,13 +63,13 @@ public class B
 
 ",
                 // Test0.cs(4,32): error CS0216: The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
                 // Test0.cs(11,36): error CS0216: The operator 'B.C.operator ==(B.C, B.C)' requires a matching operator '!=' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(11, 36),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36),
                 // Test0.cs(16,38): error CS0216: The operator 'B.D.operator ==(B.D, B.D)' requires a matching operator '!=' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(16, 38),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38),
                 // Test0.cs(16,38): error CS0558: User-defined operator 'B.D.operator ==(B.D, B.D)' must be declared static and public
-                new DiagnosticResult("CS0558", DiagnosticSeverity.Error).WithLocation(16, 38));
+                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -95,13 +95,13 @@ public class B
 }
 ",
                 // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
                 // Test0.cs(11,36): error CS0216: The operator 'B.C.operator !=(B.C, B.C)' requires a matching operator '==' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(11, 36),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36),
                 // Test0.cs(16,38): error CS0216: The operator 'B.D.operator !=(B.D, B.D)' requires a matching operator '==' to also be defined
-                new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(16, 38),
+                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38),
                 // Test0.cs(16,38): error CS0558: User-defined operator 'B.D.operator !=(B.D, B.D)' must be declared static and public
-                new DiagnosticResult("CS0558", DiagnosticSeverity.Error).WithLocation(16, 38));
+                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38));
         }
 
         [Fact]
@@ -125,7 +125,7 @@ public class A
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<", ">"),
 // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32));
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -149,7 +149,7 @@ public class A
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<=", ">="),
 // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32));
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -174,10 +174,10 @@ public class A
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
 // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(4, 32),
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
 GetCSharpResultAt(5, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="),
 // Test0.cs(5,32): error CS0216: The operator 'A.operator !=(A, string)' requires a matching operator '==' to also be defined
-new DiagnosticResult("CS0216", DiagnosticSeverity.Error).WithLocation(5, 32));
+DiagnosticResult.CompilerError("CS0216").WithLocation(5, 32));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

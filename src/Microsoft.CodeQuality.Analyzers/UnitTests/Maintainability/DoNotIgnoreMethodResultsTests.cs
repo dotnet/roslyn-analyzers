@@ -303,7 +303,7 @@ Class C
     End Sub
 End Class
 ",
-                new DiagnosticResult("BC30035", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(7, 9));
+                DiagnosticResult.CompilerError("BC30035").WithLocation(7, 9));
         }
 
         [Fact]

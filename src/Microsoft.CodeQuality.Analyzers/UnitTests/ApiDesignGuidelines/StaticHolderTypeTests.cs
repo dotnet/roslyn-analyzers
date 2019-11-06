@@ -720,7 +720,7 @@ public class C26 :
 }
 ",
                 // Test0.cs(2,19): error CS1031: Type expected
-                new DiagnosticResult("CS1031", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(2, 19));
+                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19));
         }
 
         [Fact]
@@ -734,7 +734,7 @@ Public Class B26
 End Class
 ",
                 // Test0.vb(3) : error BC30182: Type expected.
-                new DiagnosticResult("BC30182", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(3, 10));
+                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10));
         }
 
         [Fact]
@@ -746,7 +746,7 @@ public class C27 :
 }
 ",
                 // Test0.cs(2,19): error CS1031: Type expected
-                new DiagnosticResult("CS1031", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(2, 19));
+                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19));
         }
 
         [Fact]
@@ -758,7 +758,7 @@ Public Class B27
 End Class
 ",
                 // Test0.vb(3) : error BC30182: Type expected.
-                new DiagnosticResult("BC30182", CodeAnalysis.DiagnosticSeverity.Error).WithLocation(3, 10));
+                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10));
         }
 
         [Fact]

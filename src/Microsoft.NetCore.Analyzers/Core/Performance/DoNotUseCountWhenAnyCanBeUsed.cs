@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -278,7 +279,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
-                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
+                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string?>(StringComparer.Ordinal);
                     propertiesBuilder.Add(OperationKey, operationKey);
                     propertiesBuilder.Add(ShouldNegateKey, null);
                     if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
@@ -288,7 +289,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         invocationOperation.Syntax.CreateDiagnostic(
                             rule: this._rule,
                             properties: properties,
-                            args: methodName));
+                            args: methodName!));
                 }
             }
 
@@ -317,7 +318,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
-                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
+                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string?>(StringComparer.Ordinal);
                     propertiesBuilder.Add(OperationKey, operationKey);
                     if (shouldNegate) propertiesBuilder.Add(ShouldNegateKey, null);
                     if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
@@ -354,7 +355,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             ///
             /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)
+            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string? methodName)
             {
                 if (!TryGetZeroOrOneConstant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
                 {
@@ -372,7 +373,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="invocationOperation">The invocation operation.</param>
             /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, out string methodName)
+            private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, [NotNullWhen(returnValue: true)] out string? methodName)
             {
                 if (!TryGetZeroOrOneConstant(invocationOperation.Instance, out var constant) || constant != 0)
                 {
@@ -391,7 +392,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
+            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, [NotNullWhen(returnValue: true)] out string? methodName, out bool shouldNegate)
             {
                 methodName = null;
                 shouldNegate = false;
@@ -448,7 +449,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
+            private bool IsRightCountComparison(IBinaryOperation binaryOperation, [NotNullWhen(returnValue: true)] out string? methodName, out bool shouldNegate)
             {
                 methodName = null;
                 shouldNegate = false;
@@ -582,7 +583,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />;
             /// <see langword="false" /> otherwise.</returns>
-            private bool IsCountMethodInvocation(IOperation operation, out string methodName)
+            private bool IsCountMethodInvocation(IOperation operation, [NotNullWhen(returnValue: true)] out string? methodName)
             {
                 methodName = null;
 

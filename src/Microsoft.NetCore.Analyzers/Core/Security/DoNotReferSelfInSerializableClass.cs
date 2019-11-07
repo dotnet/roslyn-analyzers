@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            DrawGraph(symbolAnalysisContext.Symbol as ITypeSymbol);
+                            DrawGraph((ITypeSymbol)symbolAnalysisContext.Symbol);
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -131,9 +131,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
 
                         if (point.IsInSource() &&
-                            point.HasAttribute(serializableAttributeTypeSymbol))
+                            point.HasAttribute(serializableAttributeTypeSymbol!))
                         {
-                            var fieldPoints = point.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
+                            var fieldPoints = point.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute!) &&
                                                                                                         !s.IsStatic);
 
                             foreach (var fieldPoint in fieldPoints)

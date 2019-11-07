@@ -6,7 +6,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
@@ -41,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.NewtonsoftJsonTypeNameHandling,
-                            out INamedTypeSymbol typeNameHandlingSymbol))
+                            out INamedTypeSymbol? typeNameHandlingSymbol))
                     {
                         return;
                     }
@@ -94,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     bool IsOtherThanNone(IFieldReferenceOperation fieldReferenceOperation)
                     {
-                        if (!typeNameHandlingSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
+                        if (!typeNameHandlingSymbol!.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             return false;
                         }

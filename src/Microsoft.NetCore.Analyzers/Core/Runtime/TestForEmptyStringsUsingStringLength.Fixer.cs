@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            FixResolution resolution = TryGetFixResolution(binaryExpressionSyntax, model);
+            FixResolution? resolution = TryGetFixResolution(binaryExpressionSyntax, model);
 
             if (resolution != null)
             {
@@ -55,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private FixResolution TryGetFixResolution(SyntaxNode binaryExpressionSyntax, SemanticModel model)
+        private FixResolution? TryGetFixResolution(SyntaxNode binaryExpressionSyntax, SemanticModel model)
         {
             bool isEqualsOperator = IsEqualsOperator(binaryExpressionSyntax);
             SyntaxNode leftOperand = GetLeftOperand(binaryExpressionSyntax);

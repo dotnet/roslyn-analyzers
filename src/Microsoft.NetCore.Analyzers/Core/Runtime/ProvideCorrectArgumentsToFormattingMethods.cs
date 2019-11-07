@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -49,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
-                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod, operationContext);
+                    StringFormatInfo.Info? info = formatInfo.TryGet(invocation.TargetMethod, operationContext);
                     if (info == null || invocation.Arguments.Length <= info.FormatStringIndex)
                     {
                         // not a target method
@@ -97,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var elementType = arrayCreation.GetElementType();
                     if (elementType == null ||
                         !object.Equals(elementType, formatInfo.Object) ||
-                        arrayCreation.DimensionSizes.Length != 1)
+                        arrayCreation!.DimensionSizes.Length != 1)
                     {
                         // wrong format
                         return;
@@ -323,7 +324,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 ImmutableDictionary<IMethodSymbol, Info>.Builder builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
 
-                INamedTypeSymbol console = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
+                INamedTypeSymbol? console = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 AddStringFormatMap(builder, console, "Write");
                 AddStringFormatMap(builder, console, "WriteLine");
 
@@ -339,9 +340,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public INamedTypeSymbol String { get; }
             public INamedTypeSymbol Object { get; }
 
-            public Info TryGet(IMethodSymbol method, OperationAnalysisContext context)
+            public Info? TryGet(IMethodSymbol method, OperationAnalysisContext context)
             {
-                if (_map.TryGetValue(method, out Info info))
+                if (_map.TryGetValue(method, out Info? info))
                 {
                     return info;
                 }
@@ -357,7 +358,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return null;
             }
 
-            private static void AddStringFormatMap(ImmutableDictionary<IMethodSymbol, Info>.Builder builder, INamedTypeSymbol type, string methodName)
+            private static void AddStringFormatMap(ImmutableDictionary<IMethodSymbol, Info>.Builder builder, INamedTypeSymbol? type, string methodName)
             {
                 if (type == null)
                 {
@@ -373,7 +374,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            private static bool TryGetFormatInfo(IMethodSymbol method, out Info formatInfo)
+            private static bool TryGetFormatInfo(IMethodSymbol method, [NotNullWhen(returnValue: true)] out Info? formatInfo)
             {
                 formatInfo = default;
 

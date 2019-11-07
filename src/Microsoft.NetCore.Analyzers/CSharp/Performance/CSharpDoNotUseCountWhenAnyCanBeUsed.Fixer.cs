@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,21 +27,25 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         /// <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        protected override bool TryGetFixer(SyntaxNode node, string operation, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments)
+        protected override bool TryGetFixer(
+            SyntaxNode node,
+            string operation,
+            bool isAsync,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
+            [NotNullWhen(returnValue: true)] out IEnumerable<SyntaxNode>? arguments)
         {
             switch (operation)
             {
                 case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationEqualsInstance:
                     {
                         if (node is InvocationExpressionSyntax invocation &&
-                            invocation.Expression is MemberAccessExpressionSyntax member)
-                        {
-                            GetExpressionAndInvocationArguments(
+                            invocation.Expression is MemberAccessExpressionSyntax member &&
+                            TryGetExpressionAndInvocationArguments(
                                 sourceExpression: member.Expression,
                                 isAsync: isAsync,
                                 expression: out expression,
-                                arguments: out arguments);
-
+                                arguments: out arguments))
+                        {
                             return true;
                         }
 
@@ -49,14 +54,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationEqualsArgument:
                     {
                         if (node is InvocationExpressionSyntax invocation &&
-                            invocation.ArgumentList.Arguments.Count == 1)
-                        {
-                            GetExpressionAndInvocationArguments(
+                            invocation.ArgumentList.Arguments.Count == 1 &&
+                            TryGetExpressionAndInvocationArguments(
                                 sourceExpression: invocation.ArgumentList.Arguments[0].Expression,
                                 isAsync: isAsync,
                                 expression: out expression,
-                                arguments: out arguments);
-
+                                arguments: out arguments))
+                        {
                             return true;
                         }
 
@@ -64,14 +68,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     }
                 case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationBinaryLeft:
                     {
-                        if (node is BinaryExpressionSyntax binary)
-                        {
-                            GetExpressionAndInvocationArguments(
+                        if (node is BinaryExpressionSyntax binary &&
+                            TryGetExpressionAndInvocationArguments(
                                 sourceExpression: binary.Left,
                                 isAsync: isAsync,
                                 expression: out expression,
-                                arguments: out arguments);
-
+                                arguments: out arguments))
+                        {
                             return true;
                         }
 
@@ -79,14 +82,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     }
                 case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationBinaryRight:
                     {
-                        if (node is BinaryExpressionSyntax binary)
-                        {
-                            GetExpressionAndInvocationArguments(
+                        if (node is BinaryExpressionSyntax binary &&
+                            TryGetExpressionAndInvocationArguments(
                                 sourceExpression: binary.Right,
                                 isAsync: isAsync,
                                 expression: out expression,
-                                arguments: out arguments);
-
+                                arguments: out arguments))
+                        {
                             return true;
                         }
 
@@ -99,14 +101,18 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             return false;
         }
 
-        private static void GetExpressionAndInvocationArguments(ExpressionSyntax sourceExpression, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments)
+        private static bool TryGetExpressionAndInvocationArguments(
+            ExpressionSyntax sourceExpression,
+            bool isAsync,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
+            [NotNullWhen(returnValue: true)] out IEnumerable<SyntaxNode>? arguments)
         {
             while (sourceExpression is ParenthesizedExpressionSyntax parenthesizedExpression)
             {
                 sourceExpression = parenthesizedExpression.Expression;
             }
 
-            InvocationExpressionSyntax invocationExpression = null;
+            InvocationExpressionSyntax? invocationExpression = null;
 
             if (isAsync)
             {
@@ -124,11 +130,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             {
                 expression = default;
                 arguments = default;
-                return;
+                return false;
             }
 
             expression = ((MemberAccessExpressionSyntax)invocationExpression.Expression).Expression;
             arguments = invocationExpression.ArgumentList.ChildNodes();
+            return true;
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Analyzer.Utilities.PooledObjects;
@@ -70,7 +69,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             Debug.Assert(!String.IsNullOrWhiteSpace(this.DeserializerTypeMetadataName));
             Debug.Assert(!String.IsNullOrWhiteSpace(this.SerializationBinderPropertyMetadataName));
-            Debug.Assert(cachedDeserializationMethodNames != null);
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
             Debug.Assert(this.BinderDefinitelyNotSetDescriptor != null);
             Debug.Assert(this.BinderMaybeNotSetDescriptor != null);
@@ -98,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             this.DeserializerTypeMetadataName,
-                            out INamedTypeSymbol deserializerTypeSymbol))
+                            out INamedTypeSymbol? deserializerTypeSymbol))
                     {
                         return;
                     }
@@ -112,9 +110,9 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
                             if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderDefinitelyNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                    BinderDefinitelyNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
                                 owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderMaybeNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                                    BinderMaybeNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -171,7 +169,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
                             try
                             {
                                 lock (rootOperationsNeedingAnalysis)
@@ -208,11 +206,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     switch (kvp.Value)
                                     {
                                         case HazardousUsageEvaluationResult.Flagged:
-                                            descriptor = this.BinderDefinitelyNotSetDescriptor;
+                                            descriptor = this.BinderDefinitelyNotSetDescriptor!;
                                             break;
 
                                         case HazardousUsageEvaluationResult.MaybeFlagged:
-                                            descriptor = this.BinderMaybeNotSetDescriptor;
+                                            descriptor = this.BinderMaybeNotSetDescriptor!;
                                             break;
 
                                         default:

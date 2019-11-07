@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     // typeSymbol: The symbol of the type to be analyzed
                     // relatedFieldSymbol: When relatedFieldSymbol is null, traverse all descendants of typeSymbol to
                     //     find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field
-                    void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol, IFieldSymbol relatedFieldSymbol)
+                    void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol, IFieldSymbol? relatedFieldSymbol)
                     {
                         if (typeSymbol is IPointerTypeSymbol pointerTypeSymbol)
                         {
@@ -94,7 +94,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                             if (pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Struct ||
                                 pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Pointer)
                             {
+#pragma warning disable CS8604 // Possible null reference argument.
                                 pointerFields.TryAdd(relatedFieldSymbol, true);
+#pragma warning restore CS8604 // Possible null reference argument.
                             }
                         }
                         else if (typeSymbol is INamedTypeSymbol namedTypeSymbol)

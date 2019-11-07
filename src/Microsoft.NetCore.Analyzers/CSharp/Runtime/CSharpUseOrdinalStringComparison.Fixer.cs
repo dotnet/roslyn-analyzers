@@ -47,11 +47,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
         protected override async Task<Document> FixIdentifierName(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken)
         {
-            InvocationExpressionSyntax invokeParent = identifier?.Parent?.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            InvocationExpressionSyntax? invokeParent = identifier?.Parent?.FirstAncestorOrSelf<InvocationExpressionSyntax>();
             if (invokeParent != null)
             {
                 SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                if (model.GetSymbolInfo((IdentifierNameSyntax)identifier, cancellationToken).Symbol is IMethodSymbol methodSymbol && CanAddStringComparison(methodSymbol, model))
+                if (model.GetSymbolInfo((IdentifierNameSyntax)identifier!, cancellationToken).Symbol is IMethodSymbol methodSymbol && CanAddStringComparison(methodSymbol, model))
                 {
                     // append a new StringComparison.Ordinal argument
                     SyntaxNode newArg = generator.Argument(CreateOrdinalMemberAccess(generator, model))

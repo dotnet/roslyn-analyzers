@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Only if it is, register the syntax node action provided by the derived implementations.
             context.RegisterCompilationStartAction(ctx =>
             {
-                INamedTypeSymbol typeSymbol = ctx.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
+                INamedTypeSymbol? typeSymbol = ctx.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
@@ -102,6 +102,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (elementType.TypeKind != TypeKind.Pointer)
                     {
                         var arrayType = context.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
+                        if (arrayType == null)
+                        {
+                            return;
+                        }
+
                         IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
                         var constructed = emptyMethod.Construct(elementType);
 
@@ -123,7 +128,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            ISymbol targetSymbol = null;
+            ISymbol? targetSymbol = null;
             var arguments = ImmutableArray<IArgumentOperation>.Empty;
             if (parent is IInvocationOperation invocation)
             {
@@ -163,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return lastArgument != null && lastArgument.Value.Syntax == arrayCreationExpression.Syntax && AreEquivalentZeroLengthArrayCreations(arrayCreationExpression, lastArgument.Value as IArrayCreationOperation);
         }
 
-        private static bool AreEquivalentZeroLengthArrayCreations(IArrayCreationOperation first, IArrayCreationOperation second)
+        private static bool AreEquivalentZeroLengthArrayCreations(IArrayCreationOperation? first, IArrayCreationOperation? second)
         {
             if (first == null || second == null)
             {

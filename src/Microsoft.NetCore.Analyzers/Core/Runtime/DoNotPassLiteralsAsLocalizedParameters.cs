@@ -53,9 +53,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol localizableStateAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelLocalizableAttribute);
-                INamedTypeSymbol conditionalAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
-                INamedTypeSymbol systemConsoleSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
+                INamedTypeSymbol? localizableStateAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelLocalizableAttribute);
+                INamedTypeSymbol? conditionalAttributeSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
+                INamedTypeSymbol? systemConsoleSymbol = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 ImmutableHashSet<INamedTypeSymbol> typesToIgnore = GetTypesToIgnore(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
@@ -67,13 +67,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var lazyValueContentResult = new Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>>(
+                    var lazyValueContentResult = new Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>?>(
                         valueFactory: ComputeValueContentAnalysisResult, isThreadSafe: false);
 
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
                         var argument = (IArgumentOperation)operationContext.Operation;
-                        IMethodSymbol targetMethod = null;
+                        IMethodSymbol? targetMethod = null;
                         switch (argument.Parent)
                         {
                             case IInvocationOperation invocation:
@@ -108,10 +108,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
 
                     // Local functions
-                    bool ShouldAnalyze(ISymbol symbol)
+                    bool ShouldAnalyze(ISymbol? symbol)
                         => symbol != null && !symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
 
-                    void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
+                    void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol? containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
                         if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
                             lazyValueContentResult.Value != null)
@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     return;
                                 }
 
-                                var stringLiteralValues = stringContentValue.LiteralValues.Select(l => (string)l);
+                                var stringLiteralValues = stringContentValue.LiteralValues.Select(l => (string?)l);
 
                                 // FxCop compat: Do not fire if the literal value came from a default parameter value
                                 if (stringContentValue.LiteralValues.Count == 1 &&
@@ -144,14 +144,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
 
                                 // FxCop compat: Filter out xml string literals.
-                                var filteredStrings = stringLiteralValues.Where(literal => !LooksLikeXmlTag(literal));
+                                var filteredStrings = stringLiteralValues.Where(literal => literal != null && !LooksLikeXmlTag(literal));
                                 if (filteredStrings.Any())
                                 {
                                     // Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".
                                     var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                                     var arg2 = parameter.Name;
                                     var arg3 = parameter.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                    var arg4 = FormatLiteralValues(filteredStrings);
+                                    var arg4 = FormatLiteralValues(filteredStrings!);
                                     var diagnostic = operation.CreateDiagnostic(Rule, arg1, arg2, arg3, arg4);
                                     reportDiagnostic(diagnostic);
                                 }
@@ -159,7 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
 
-                    DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue> ComputeValueContentAnalysisResult()
+                    DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>? ComputeValueContentAnalysisResult()
                     {
                         var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
                         if (cfg != null)
@@ -214,10 +214,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool ShouldBeLocalized(
             IParameterSymbol parameterSymbol,
-            IPropertySymbol containingPropertySymbolOpt,
-            INamedTypeSymbol localizableStateAttributeSymbol,
-            INamedTypeSymbol conditionalAttributeSymbol,
-            INamedTypeSymbol systemConsoleSymbol,
+            IPropertySymbol? containingPropertySymbolOpt,
+            INamedTypeSymbol? localizableStateAttributeSymbol,
+            INamedTypeSymbol? conditionalAttributeSymbol,
+            INamedTypeSymbol? systemConsoleSymbol,
             ImmutableHashSet<INamedTypeSymbol> typesToIgnore)
         {
             Debug.Assert(parameterSymbol.ContainingSymbol.Kind == SymbolKind.Method);
@@ -290,7 +290,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static LocalizableAttributeState GetLocalizableAttributeState(ISymbol symbol, INamedTypeSymbol localizableAttributeTypeSymbol)
         {
-            Debug.Assert(localizableAttributeTypeSymbol != null);
             if (symbol == null)
             {
                 return LocalizableAttributeState.Undefined;
@@ -308,8 +307,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static LocalizableAttributeState GetLocalizableAttributeStateCore(ImmutableArray<AttributeData> attributeList, INamedTypeSymbol localizableAttributeTypeSymbol)
         {
-            Debug.Assert(localizableAttributeTypeSymbol != null);
-
             var localizableAttribute = attributeList.FirstOrDefault(attr => localizableAttributeTypeSymbol.Equals(attr.AttributeClass));
             if (localizableAttribute != null &&
                 localizableAttribute.AttributeConstructor.Parameters.Length == 1 &&
@@ -360,10 +357,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// <summary>
         /// Returns true if any character in literalValues is not a control character
         /// </summary>
-        private static bool LiteralValuesHaveNonControlCharacters(IEnumerable<string> literalValues)
+        private static bool LiteralValuesHaveNonControlCharacters(IEnumerable<string?> literalValues)
         {
-            foreach (string literal in literalValues)
+            foreach (string? literal in literalValues)
             {
+                if (literal == null)
+                {
+                    continue;
+                }
+
                 foreach (char ch in literal)
                 {
                     if (!char.IsControl(ch))

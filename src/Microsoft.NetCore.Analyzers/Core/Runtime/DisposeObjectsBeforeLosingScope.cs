@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (trackExceptionPaths)
                             {
                                 // Compute diagnostics for undisposed objects at handled exception exit paths.
-                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult.ExceptionPathsExitBlockOutputOpt.Data;
+                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult!.ExceptionPathsExitBlockOutputOpt!.Data;
                                 ComputeDiagnostics(disposeDataAtHandledExceptionPaths,
                                     notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                     disposeAnalysisKind, isDisposeDataForExceptionPaths: true);
@@ -197,7 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     bool CanBeDisposable(ITypeSymbol type)
                         => type.SpecialType == SpecialType.System_Object ||
-                            type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            type.DerivesFrom(disposeAnalysisHelper!.IDisposable) ||
                             type.TypeKind == TypeKind.Delegate;
                 }
             });
@@ -224,7 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var isNotDisposed = disposeValue.Kind == DisposeAbstractValueKind.NotDisposed ||
                     (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
-                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph) && !location.GetTopOfCreationCallStackOrCreation().IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph)));
+                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph) && location.GetTopOfCreationCallStackOrCreation()?.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph) != true));
                 var isMayBeNotDisposed = !isNotDisposed && (disposeValue.Kind == DisposeAbstractValueKind.MaybeDisposed || disposeValue.Kind == DisposeAbstractValueKind.NotDisposedOrEscaped);
 
                 if (isNotDisposed ||

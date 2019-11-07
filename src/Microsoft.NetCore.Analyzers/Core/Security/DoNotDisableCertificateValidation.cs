@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     case OperationKind.AnonymousFunction:
                                         if (!IsCertificateValidationFunction(
-                                            (delegateCreationOperation.Target as IAnonymousFunctionOperation).Symbol,
+                                            ((IAnonymousFunctionOperation)delegateCreationOperation.Target).Symbol,
                                             obj,
                                             x509Certificate,
                                             x509Chain,

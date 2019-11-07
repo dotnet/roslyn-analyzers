@@ -28,14 +28,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            ISymbol symbol = model.GetDeclaredSymbol(node, context.CancellationToken);
 
-            if (symbol == null)
+            if (!(model.GetDeclaredSymbol(node, context.CancellationToken) is INamedTypeSymbol symbol))
             {
                 return;
             }
 
-            INamedTypeSymbol notImplementedExceptionType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
+            INamedTypeSymbol? notImplementedExceptionType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             if (notImplementedExceptionType == null)
             {
                 return;
@@ -54,16 +53,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             else if (symbol.Kind == SymbolKind.Method)
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
-                     async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false),
+                     async ct => await SetAccessibility(context.Document, (IMethodSymbol)symbol, ct).ConfigureAwait(false),
                      equivalenceKey: title),
                 context.Diagnostics);
             }
         }
 
-        private static async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
+        private static async Task<Document> GenerateConstructor(Document document, SyntaxNode node, INamedTypeSymbol typeSymbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
-            var typeSymbol = symbol as INamedTypeSymbol;
 
             await editor.EditOneDeclarationAsync(typeSymbol, node.GetLocation(), (docEditor, declaration) =>
             {
@@ -85,10 +83,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return editor.GetChangedDocuments().First();
         }
 
-        private static async Task<Document> SetAccessibility(Document document, ISymbol symbol, CancellationToken cancellationToken)
+        private static async Task<Document> SetAccessibility(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
-            var methodSymbol = symbol as IMethodSymbol;
 
             // This would be constructor and can have only one definition.
             Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.HasExactly(1));

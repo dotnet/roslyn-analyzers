@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
-                        (object o) => o is bool booleanValue && booleanValue == false),
+                        (object? o) => o is bool booleanValue && booleanValue == false),
                 CheckCertificateRevocationListIndex),
             new PropertyMapper(
                 "ServerCertificateCustomValidationCallback",
@@ -120,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClient, out INamedTypeSymbol httpClientTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClient, out INamedTypeSymbol? httpClientTypeSymbol))
                     {
                         return;
                     }
@@ -175,7 +175,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
 
                             try
                             {

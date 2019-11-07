@@ -84,7 +84,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var objectType = csaContext.Compilation.GetSpecialType(SpecialType.System_Object);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
-                var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
+                if (objectType == null || stringType == null)
+                {
+                    return;
+                }
+
+                var stringFormatMembers = stringType.GetMembers("Format").OfType<IMethodSymbol>();
 
                 var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                          GetParameterInfo(stringType),
@@ -140,6 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     #region "IFormatProviderAlternateStringRule Only"
                     if (stringType != null && cultureInfoType != null &&
+                        stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter != null &&
                         (targetMethod.Equals(stringFormatMemberWithStringAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectObjectAndObjectParameter) ||
@@ -160,7 +166,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
 
-                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
+                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType!.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
                     if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();

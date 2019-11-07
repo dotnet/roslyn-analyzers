@@ -97,7 +97,7 @@ public class Sdk
                 },
                 ExpectedDiagnostics =
                 {
-                    CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk")
+                    CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"),
                 }
             }.RunAsync();
         }
@@ -294,7 +294,7 @@ End Class"
                 },
                 ExpectedDiagnostics =
                 {
-                    BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk")
+                    BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"),
                 }
             }.RunAsync();
         }

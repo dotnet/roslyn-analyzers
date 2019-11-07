@@ -236,7 +236,7 @@ public class Class
                     GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
                     DiagnosticResult.CompilerError("CS0234").WithLocation(7, 28).WithMessage("The type or namespace name 'Composition' does not exist in the namespace 'System.ComponentModel' (are you missing an assembly reference?)"),
                     // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-                    GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute")
+                    GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();
         }
@@ -436,7 +436,7 @@ End Class
                     GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
                     DiagnosticResult.CompilerError("BC30002").WithLocation(6, 6).WithMessage("Type 'System.ComponentModel.Composition.ExportAttribute' is not defined."),
                     // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
-                    GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute")
+                    GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();
         }

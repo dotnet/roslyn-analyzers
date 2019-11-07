@@ -439,7 +439,6 @@ Public Class [Class]
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
 ",
-                CompilerDiagnostics = CompilerDiagnostics.None,
                 ExpectedDiagnostics =
                 {
                     // Test0.vb(3) : error BC30002: Type 'System.Composition.ExportAttribute' is not defined.

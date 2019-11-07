@@ -997,6 +997,27 @@ public class MyClass
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
+
+        [Fact]
+        public async Task TypeConversionAllocation_StringCharConcatenation_NoWarning()
+        {
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string x = """";
+        x += 'x';
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
         [Fact]
         public async void TypeConversionAllocation_LambdaReturnConversion_Warning()
         {

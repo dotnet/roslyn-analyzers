@@ -1019,6 +1019,43 @@ public class MyClass
         }
 
         [Fact]
+        public async Task TypeConversionAllocation_BoxingExtensionMethodReceiver_Warning()
+        {
+            var sampleProgram =
+@"using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Roslyn.Utilities;
+
+public struct A : IEnumerable<int>
+{
+    public IEnumerator<int> GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        A a = new A();
+        int i = a.Last();
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(26, 17));
+        }
+
+        [Fact]
         public async void TypeConversionAllocation_LambdaReturnConversion_Warning()
         {
             const string sampleProgram = @"

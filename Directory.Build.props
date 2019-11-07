@@ -13,7 +13,7 @@
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
 
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
-    <Nullable Condition="'$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
+    <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

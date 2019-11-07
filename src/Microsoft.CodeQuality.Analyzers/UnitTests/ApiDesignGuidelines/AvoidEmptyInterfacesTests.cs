@@ -161,7 +161,7 @@ public class C
                 },
                 ExpectedDiagnostics =
                 {
-                    CreateCSharpResult(4, 16 + accessibility.Length)
+                    CreateCSharpResult(4, 16 + accessibility.Length),
                 }
             }.RunAsync();
         }
@@ -209,7 +209,7 @@ End Class"
                 },
                 ExpectedDiagnostics =
                 {
-                    CreateBasicResult(3, 16 + accessibility.Length)
+                    CreateBasicResult(3, 16 + accessibility.Length),
                 }
             }.RunAsync();
         }

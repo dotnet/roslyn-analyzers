@@ -389,7 +389,7 @@ End Class",
 End Class",
                 ExpectedDiagnostics =
                 {
-                    DiagnosticResult.CompilerError("BC30737").WithMessage("No accessible 'Main' method with an appropriate signature was found in 'TestProject'.")
+                    DiagnosticResult.CompilerError("BC30737").WithMessage("No accessible 'Main' method with an appropriate signature was found in 'TestProject'."),
                 },
                 SolutionTransforms =
                 {

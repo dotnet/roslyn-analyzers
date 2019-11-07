@@ -267,7 +267,7 @@ class C
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp6,
                 ExpectedDiagnostics =
                 {
-                    GetCSharpNameofResultAt(7, 41, "x")
+                    GetCSharpNameofResultAt(7, 41, "x"),
                 }
             }.RunAsync();
         }
@@ -307,7 +307,7 @@ End Module",
                 LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic14,
                 ExpectedDiagnostics =
                 {
-                    GetBasicNameofResultAt(6, 41, "s")
+                    GetBasicNameofResultAt(6, 41, "s"),
                 }
             }.RunAsync();
         }

@@ -488,7 +488,7 @@ public class Test
                 },
                 ExpectedDiagnostics =
                 {
-                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test")
+                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"),
                 }
             }.RunAsync();
 
@@ -516,7 +516,7 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
                 },
                 ExpectedDiagnostics =
                 {
-                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower")
+                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"),
                 }
             }.RunAsync();
         }
@@ -554,7 +554,7 @@ public class Test
                 },
                 ExpectedDiagnostics =
                 {
-                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test")
+                    GetCSharpObjectCreationResultAt(10, 13, "ThrowsException", "Test"),
                 }
             }.RunAsync();
 
@@ -582,7 +582,7 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
                 },
                 ExpectedDiagnostics =
                 {
-                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower")
+                    GetBasicStringCreationResultAt(10, 41, "ThrowsException", "ToLower"),
                 }
             }.RunAsync();
         }
@@ -613,7 +613,7 @@ public class Test
                 },
                 ExpectedDiagnostics =
                 {
-                    GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test")
+                    GetCSharpObjectCreationResultAt(9, 9, "ThrowsException", "Test"),
                 }
             }.RunAsync();
 
@@ -641,7 +641,7 @@ End Class", MSTestAttributes.VisualBasic
                 },
                 ExpectedDiagnostics =
                 {
-                    GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower")
+                    GetBasicStringCreationResultAt(11, 9, "ThrowsException", "ToLower"),
                 }
             }.RunAsync();
         }

@@ -719,8 +719,7 @@ public class C26 :
     public static void Foo() { }
 }
 ",
-                // Test0.cs(2,19): error CS1031: Type expected
-                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19));
+                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19).WithMessage("Type expected"));
         }
 
         [Fact]
@@ -733,8 +732,7 @@ Public Class B26
 	End Sub
 End Class
 ",
-                // Test0.vb(3) : error BC30182: Type expected.
-                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10));
+                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10).WithMessage("Type expected."));
         }
 
         [Fact]
@@ -745,8 +743,7 @@ public class C27 :
 {
 }
 ",
-                // Test0.cs(2,19): error CS1031: Type expected
-                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19));
+                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19).WithMessage("Type expected"));
         }
 
         [Fact]
@@ -757,8 +754,7 @@ Public Class B27
 	Inherits
 End Class
 ",
-                // Test0.vb(3) : error BC30182: Type expected.
-                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10));
+                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10).WithMessage("Type expected."));
         }
 
         [Fact]

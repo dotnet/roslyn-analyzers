@@ -456,8 +456,8 @@ public class C1
     }
 }
 ",
-                DiagnosticResult.CompilerError("CS0103").WithLocation(6, 9),
-                DiagnosticResult.CompilerError("CS1002").WithLocation(6, 10));
+                DiagnosticResult.CompilerError("CS0103").WithLocation(6, 9).WithMessage("The name 'a' does not exist in the current context"),
+                DiagnosticResult.CompilerError("CS1002").WithLocation(6, 10).WithMessage("; expected"));
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
@@ -470,8 +470,8 @@ public class C1
     => ;
 }
 ",
-                DiagnosticResult.CompilerError("CS8057").WithLocation(4, 5),
-                DiagnosticResult.CompilerError("CS1525").WithLocation(5, 8));
+                DiagnosticResult.CompilerError("CS8057").WithLocation(4, 5).WithMessage("Block bodies and expression bodies cannot both be provided."),
+                DiagnosticResult.CompilerError("CS1525").WithLocation(5, 8).WithMessage("Invalid expression term ';'"));
         }
 
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
@@ -484,7 +484,7 @@ Public Class Class1
     End Sub
 End Class
 ",
-                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 9));
+                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 9).WithMessage("'a' is not declared. It may be inaccessible due to its protection level."));
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]

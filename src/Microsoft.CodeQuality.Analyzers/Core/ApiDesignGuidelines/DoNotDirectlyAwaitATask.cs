@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -48,8 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
-                if (taskTypes.Any(t => t == null))
+                if (!TryGetTaskTypes(context.Compilation, out ImmutableArray<INamedTypeSymbol> taskTypes))
                 {
                     return;
                 }
@@ -78,22 +78,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
         {
-            IAwaitOperation awaitExpression = context.Operation as IAwaitOperation;
+            var awaitExpression = (IAwaitOperation)context.Operation;
 
             // Get the type of the expression being awaited and check it's a task type.
-            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Operation?.Type;
+            ITypeSymbol? typeOfAwaitedExpression = awaitExpression.Operation.Type;
             if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
             {
                 context.ReportDiagnostic(awaitExpression.Operation.Syntax.CreateDiagnostic(Rule));
             }
         }
 
-        private static ImmutableArray<INamedTypeSymbol> GetTaskTypes(Compilation compilation)
+        private static bool TryGetTaskTypes(Compilation compilation, [NotNullWhen(returnValue: true)] out ImmutableArray<INamedTypeSymbol> taskTypes)
         {
-            INamedTypeSymbol taskType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
-            INamedTypeSymbol taskOfTType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
+            INamedTypeSymbol? taskType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            INamedTypeSymbol? taskOfTType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
 
-            return ImmutableArray.Create(taskType, taskOfTType);
+            if (taskType == null || taskOfTType == null)
+            {
+                taskTypes = default;
+                return false;
+            }
+
+            taskTypes = ImmutableArray.Create(taskType, taskOfTType);
+            return true;
         }
     }
 }

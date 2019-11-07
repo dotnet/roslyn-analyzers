@@ -169,9 +169,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 case SymbolKind.Property:
                     return false;
                 case SymbolKind.Method:
-                    var methodSymbol = methodDeclarationSymbol as IMethodSymbol;
+                    var methodSymbol = (IMethodSymbol)methodDeclarationSymbol;
                     // Should not remove parameter for a conversion operator.
-                    return (methodSymbol.MethodKind != MethodKind.Conversion);
+                    return methodSymbol.MethodKind != MethodKind.Conversion;
                 default:
                     return true;
             }

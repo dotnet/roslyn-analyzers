@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
+                    INamedTypeSymbol? eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                     if (eventArgs == null)
                     {
                         return;
@@ -95,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     bool IsEventArgsParameter(IParameterSymbol parameter)
                     {
                         var type = parameter.Type;
-                        if (IsAssignableTo(context.Compilation, type, eventArgs))
+                        if (IsAssignableTo(context.Compilation, type, eventArgs!))
                         {
                             return true;
                         }
@@ -111,8 +111,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     bool IsValidNonGenericEventHandler(IMethodSymbol delegateInvokeMethod)
                     {
-                        Debug.Assert(delegateInvokeMethod != null);
-
                         return delegateInvokeMethod.ReturnsVoid &&
                             delegateInvokeMethod.Parameters.Length == 2 &&
                             delegateInvokeMethod.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
@@ -133,7 +131,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }, SymbolKind.NamedType);
 
-                    INamedTypeSymbol comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
+                    INamedTypeSymbol? comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
                         eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));

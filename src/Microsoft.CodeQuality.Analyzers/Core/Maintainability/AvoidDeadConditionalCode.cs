@@ -88,12 +88,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
                                     out var copyAnalysisResultOpt, out var pointsToAnalysisResult);
-                            if (valueContentAnalysisResult == null)
+                            if (valueContentAnalysisResult == null ||
+                                pointsToAnalysisResult == null)
                             {
                                 continue;
                             }
-
-                            Debug.Assert(pointsToAnalysisResult != null);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {
@@ -173,7 +172,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     binaryOperation.IsComparisonOperator() ||
                                     operation.Type?.SpecialType == SpecialType.System_Boolean)
                                 {
-                                    PredicateValueKind predicateKind = pointsToAnalysisResult.GetPredicateKind(operation);
+                                    PredicateValueKind predicateKind = pointsToAnalysisResult!.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
                                     {
                                         return predicateKind;
@@ -188,7 +187,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         }
                                     }
 
-                                    predicateKind = valueContentAnalysisResult.GetPredicateKind(operation);
+                                    predicateKind = valueContentAnalysisResult!.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
                                     {
                                         return predicateKind;

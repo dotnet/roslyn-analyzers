@@ -15,10 +15,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpMarkMembersAsStaticFixer : MarkMembersAsStaticFixer
     {
-        protected override IEnumerable<SyntaxNode> GetTypeArguments(SyntaxNode node)
+        protected override IEnumerable<SyntaxNode>? GetTypeArguments(SyntaxNode node)
             => (node as GenericNameSyntax)?.TypeArgumentList.Arguments;
 
-        protected override SyntaxNode GetExpressionOfInvocation(SyntaxNode invocation)
+        protected override SyntaxNode? GetExpressionOfInvocation(SyntaxNode invocation)
             => (invocation as InvocationExpressionSyntax)?.Expression;
     }
 }

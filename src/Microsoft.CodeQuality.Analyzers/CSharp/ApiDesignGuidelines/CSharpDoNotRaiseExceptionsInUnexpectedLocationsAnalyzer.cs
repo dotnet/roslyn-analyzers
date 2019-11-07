@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer
     {
-        protected override bool IsAssignableTo(ITypeSymbol fromSymbol, ITypeSymbol toSymbol, Compilation compilation)
+        protected override bool IsAssignableTo(ITypeSymbol? fromSymbol, ITypeSymbol? toSymbol, Compilation compilation)
         {
             return fromSymbol != null &&
                 toSymbol != null &&

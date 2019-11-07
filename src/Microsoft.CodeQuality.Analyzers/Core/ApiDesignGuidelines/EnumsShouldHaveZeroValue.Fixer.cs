@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol flagsAttributeType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
+            INamedTypeSymbol? flagsAttributeType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
             if (flagsAttributeType == null)
             {
                 return;
@@ -38,7 +37,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 SyntaxNode node = root.FindNode(context.Span);
 
                 ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
-                Debug.Assert(declaredSymbol != null);
+                if (declaredSymbol == null)
+                {
+                    continue;
+                }
+
                 string title;
 
                 foreach (string customTag in diagnostic.Descriptor.CustomTags)
@@ -72,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        public override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider? GetFixAllProvider()
         {
             // No trivial way to FixAll diagnostics for this code fix.
             return null;

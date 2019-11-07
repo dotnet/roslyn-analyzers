@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Get named type symbols for targetted exception types
             ImmutableHashSet<INamedTypeSymbol> exceptionTypes = s_exceptionTypeNames
                 .Select(name => csContext.Compilation.GetOrCreateTypeByMetadataName(name))
-                .Where(t => t != null)
+                .WhereNotNull()
                 .ToImmutableHashSet();
 
             if (!exceptionTypes.IsEmpty)

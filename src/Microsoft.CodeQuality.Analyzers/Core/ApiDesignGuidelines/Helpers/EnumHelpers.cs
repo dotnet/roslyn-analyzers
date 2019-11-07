@@ -60,7 +60,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers
 
         internal static bool TryGetEnumMemberValues(INamedTypeSymbol enumType, out IList<ulong> values)
         {
-            Debug.Assert(enumType != null);
             Debug.Assert(enumType.TypeKind == TypeKind.Enum);
 
             values = new List<ulong>();

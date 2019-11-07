@@ -32,10 +32,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var diagnostics = context.Diagnostics;
             var diagnosticSpan = context.Span;
+
             // getInnerModeNodeForTie = true so we are replacing the string literal node and not the whole argument node
             var nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+            if (nodeToReplace == null)
+            {
+                return;
+            }
 
-            Debug.Assert(nodeToReplace != null);
             var stringText = nodeToReplace.FindToken(diagnosticSpan.Start).ValueText;
             context.RegisterCodeFix(CodeAction.Create(
                     MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringTitle,

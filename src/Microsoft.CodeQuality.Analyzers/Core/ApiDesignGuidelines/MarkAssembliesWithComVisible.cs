@@ -53,13 +53,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (AssemblyHasPublicTypes(context.Compilation.Assembly))
             {
-                INamedTypeSymbol comVisibleAttributeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
+                INamedTypeSymbol? comVisibleAttributeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
                 if (comVisibleAttributeSymbol == null)
                 {
                     return;
                 }
 
-                AttributeData attributeInstance = context.Compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisibleAttributeSymbol));
+                AttributeData? attributeInstance = context.Compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisibleAttributeSymbol));
 
                 if (attributeInstance != null)
                 {

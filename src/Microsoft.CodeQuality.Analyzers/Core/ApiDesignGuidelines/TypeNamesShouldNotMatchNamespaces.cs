@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
         private static readonly object s_lock = new object();
-        private static ImmutableDictionary<string, string> s_wellKnownSystemNamespaceTable;
+        private static ImmutableDictionary<string, string>? s_wellKnownSystemNamespaceTable;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -95,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
-                                if (s_wellKnownSystemNamespaceTable.ContainsKey(symbolName))
+                                if (s_wellKnownSystemNamespaceTable!.ContainsKey(symbolName))
                                 {
                                     compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, s_wellKnownSystemNamespaceTable[symbolName]));
                                 }

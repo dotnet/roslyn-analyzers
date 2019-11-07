@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol uriType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
+            INamedTypeSymbol? uriType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
             if (uriType == null)
             {
                 return;

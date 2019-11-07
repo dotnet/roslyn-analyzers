@@ -32,12 +32,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
-            if (semanticModel != null && generator != null)
-            {
-                string title = MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
-                context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
-            }
+            SyntaxGenerator generator = context.Document.Project.LanguageServices.GetService<SyntaxGenerator>();
+
+            string title = MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+            context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
         }
 
         private static async Task<Document> Fix(CodeFixContext context, SyntaxNode root, SyntaxGenerator generator, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -72,7 +70,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     else
                     {
                         // add a method
-                        ExpectedMethodSignature expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
+                        ExpectedMethodSignature? expectedSignature = GetExpectedMethodSignature(operatorOverloadSymbol, semanticModel.Compilation);
+                        if (expectedSignature == null)
+                        {
+                            return context.Document;
+                        }
 
                         if (expectedSignature.Name == "CompareTo" && operatorOverloadSymbol.ContainingType.TypeKind == TypeKind.Class)
                         {
@@ -114,12 +116,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private static ExpectedMethodSignature GetExpectedMethodSignature(IMethodSymbol operatorOverloadSymbol, Compilation compilation)
+        private static ExpectedMethodSignature? GetExpectedMethodSignature(IMethodSymbol operatorOverloadSymbol, Compilation compilation)
         {
             var containingType = (ITypeSymbol)operatorOverloadSymbol.ContainingType;
             ITypeSymbol returnType = operatorOverloadSymbol.ReturnType;
-            ITypeSymbol parameterType = operatorOverloadSymbol.Parameters.FirstOrDefault()?.Type;
-            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType, parameterType).AlternateMethod1;
+            ITypeSymbol? parameterType = operatorOverloadSymbol.Parameters.FirstOrDefault()?.Type;
+            string? expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType, parameterType)?.AlternateMethod1;
+            if (expectedName == null)
+            {
+                return null;
+            }
+
             switch (operatorOverloadSymbol.Name)
             {
                 case "op_GreaterThan":

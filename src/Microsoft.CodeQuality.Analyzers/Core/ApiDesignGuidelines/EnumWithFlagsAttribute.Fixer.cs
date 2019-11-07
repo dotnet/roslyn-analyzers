@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol flagsAttributeType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
+            INamedTypeSymbol? flagsAttributeType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
             if (flagsAttributeType == null)
             {
                 return;
@@ -70,8 +70,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static SyntaxNode RemoveFlagsAttribute(SyntaxGenerator generator, SemanticModel model, SyntaxNode enumTypeSyntax, INamedTypeSymbol flagsAttributeType, CancellationToken cancellationToken)
         {
-            var enumType = model.GetDeclaredSymbol(enumTypeSyntax, cancellationToken) as INamedTypeSymbol;
-            Debug.Assert(enumType != null);
+            if (!(model.GetDeclaredSymbol(enumTypeSyntax, cancellationToken) is INamedTypeSymbol enumType))
+            {
+                return enumTypeSyntax;
+            }
 
             AttributeData flagsAttribute = enumType.GetAttributes().First(a => Equals(a.AttributeClass, flagsAttributeType));
             SyntaxNode attributeNode = flagsAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken);

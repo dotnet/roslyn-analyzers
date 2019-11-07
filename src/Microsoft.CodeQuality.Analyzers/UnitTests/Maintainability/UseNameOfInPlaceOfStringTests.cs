@@ -128,8 +128,8 @@ class C
         throw new ArgumentNullException(
     }
 }",
-                DiagnosticResult.CompilerError("CS1002").WithLocation(7, 41),
-                DiagnosticResult.CompilerError("CS1026").WithLocation(7, 41));
+                DiagnosticResult.CompilerError("CS1002").WithLocation(7, 41).WithMessage("; expected"),
+                DiagnosticResult.CompilerError("CS1026").WithLocation(7, 41).WithMessage(") expected"));
         }
 
         [Fact]

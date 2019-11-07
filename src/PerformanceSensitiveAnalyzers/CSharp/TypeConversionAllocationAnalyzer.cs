@@ -108,9 +108,16 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                 if (conversion.Operand.Type?.IsValueType == true && conversion.OperatorMethod == null)
                 {
                     // No boxing occurs for the special case of string concatenation.
-                    if (conversion.Parent is IBinaryOperation binaryOperation && binaryOperation.Type?.SpecialType == SpecialType.System_String)
+                    if (conversion.Parent.Type?.SpecialType == SpecialType.System_String)
                     {
-                        return;
+                        if (conversion.Parent is IBinaryOperation)
+                        {
+                            return;
+                        }
+                        if (conversion.Parent is ICompoundAssignmentOperation)
+                        {
+                            return;
+                        }
                     }
 
                     var parent = conversion.Parent;

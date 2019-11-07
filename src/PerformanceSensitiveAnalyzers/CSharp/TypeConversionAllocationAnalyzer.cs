@@ -125,7 +125,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                     {
                         if (parent is IAnonymousFunctionOperation)
                         {
-                            string[] messageArgs = { conversion.Operand.Type.ToDisplayString(), conversion.Type.ToDisplayString() };
+                            string[] messageArgs = { conversion.Operand.Type.Name, conversion.Type.Name };
                             context.ReportDiagnostic(Diagnostic.Create(LambdaReturnConversionRule, conversion.Operand.Syntax.GetLocation(), messageArgs));
                             return;
                         }

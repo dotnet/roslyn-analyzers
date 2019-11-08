@@ -15,8 +15,9 @@
     <!-- Toolset -->
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
-    <OpenCoverVersion>4.6.519</OpenCoverVersion>
-    <CodecovVersion>1.0.3</CodecovVersion>
+    <CodecovVersion>1.9.0</CodecovVersion>
+    <CoverletVersion>2.7.0</CoverletVersion>
+    <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>

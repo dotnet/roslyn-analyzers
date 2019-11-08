@@ -13,4 +13,48 @@
        <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
+
+  <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Coverage)' == 'true'">
+    <CollectCoverage>true</CollectCoverage>
+    <SingleHit>true</SingleHit>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>$(ArtifactsDir)coverage\$(MSBuildProjectName)_$(TargetFramework)_$(_TestArchitecture).coverage</CoverletOutput>
+    <Include></Include>
+    <Exclude></Exclude>
+    <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
+    <ExcludeByFile></ExcludeByFile>
+  </PropertyGroup>
+
+  <Target Name="InstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true'">
+    <Coverlet.MSbuild.Tasks.InstrumentationTask
+      Condition="'$(CollectCoverage)' == 'true'"
+      Path="$(TargetPath)"
+      Include="$(Include)"
+      IncludeDirectory="$(IncludeDirectory)"
+      Exclude="$(Exclude)"
+      ExcludeByFile="$(ExcludeByFile)"
+      ExcludeByAttribute="$(ExcludeByAttribute)"
+      IncludeTestAssembly="$(IncludeTestAssembly)"
+      SingleHit="$(SingleHit)"
+      MergeWith="$(MergeWith)"
+      UseSourceLink="$(UseSourceLink)" >
+      <Output TaskParameter="InstrumenterState" PropertyName="InstrumenterState"/>
+    </Coverlet.MSbuild.Tasks.InstrumentationTask>
+  </Target>
+
+  <Target Name="GenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true'">
+    <Coverlet.MSbuild.Tasks.CoverageResultTask
+      Condition="'$(CollectCoverage)' == 'true'"
+      Output="$(CoverletOutput)"
+      OutputFormat="$(CoverletOutputFormat)"
+      Threshold="$(Threshold)"
+      ThresholdType="$(ThresholdType)"
+      ThresholdStat="$(ThresholdStat)"
+      InstrumenterState="$(InstrumenterState)"/>
+  </Target>
 </Project>

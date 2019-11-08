@@ -51,10 +51,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockOperation)context.Operation;
-                    ITypeSymbol? type = lockStatement.LockedValue?.Type;
-                    if (type != null && TypeHasWeakIdentity(type, compilation))
+                    if (lockStatement.LockedValue?.Type is ITypeSymbol type &&
+                        TypeHasWeakIdentity(type, compilation))
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue!.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
                     }
                 },
                 OperationKind.Lock);

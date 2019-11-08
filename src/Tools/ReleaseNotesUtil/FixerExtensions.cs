@@ -80,8 +80,7 @@ namespace ReleaseNotesUtil
             // {
             //     return Task.CompletedTask;
             // }
-            byte[]? methodBodyIL = method?.GetMethodBody()?.GetILAsByteArray();
-            if (methodBodyIL != null
+            if (method?.GetMethodBody()?.GetILAsByteArray() is { } methodBodyIL
                 && methodBodyIL.Length == 6
                 && methodBodyIL[0] == 0x28    // call <method>
                 && methodBodyIL[5] == 0x2a)   // ret
@@ -92,7 +91,7 @@ namespace ReleaseNotesUtil
                 }
 
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
-                MethodBase calledMethod = method!.Module.ResolveMethod(metadataToken);
+                MethodBase calledMethod = method.Module.ResolveMethod(metadataToken);
                 if (calledMethod != null
                     && calledMethod.DeclaringType.FullName == "System.Threading.Tasks.Task"
                     && calledMethod.Name == "get_CompletedTask")

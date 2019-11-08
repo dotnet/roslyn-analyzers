@@ -30,16 +30,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = context.Document.Project.LanguageServices.GetService<SyntaxGenerator>();
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
+            if (node == null)
+            {
+                return;
+            }
 
             string title = MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
-            context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
+            context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, ct), equivalenceKey: title), context.Diagnostics.First());
         }
 
-        private static async Task<Document> Fix(CodeFixContext context, SyntaxNode root, SyntaxGenerator generator, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static async Task<Document> Fix(CodeFixContext context, CancellationToken cancellationToken)
         {
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var generator = SyntaxGenerator.GetGenerator(context.Document);
+
             SyntaxNode node = root.FindNode(context.Span);
             Diagnostic diagnostic = context.Diagnostics.First();
             switch (diagnostic.Properties[OperatorOverloadsHaveNamedAlternatesAnalyzer.DiagnosticKindText])

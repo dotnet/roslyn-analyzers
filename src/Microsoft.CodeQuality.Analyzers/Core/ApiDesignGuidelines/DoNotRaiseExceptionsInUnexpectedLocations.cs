@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -110,7 +111,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        protected abstract bool IsAssignableTo(ITypeSymbol? fromSymbol, ITypeSymbol? toSymbol, Compilation compilation);
+        protected abstract bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation);
 
         /// <summary>
         /// This object describes a class of methods where exception throwing statements should be analyzed.
@@ -136,14 +140,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// List of exception types which are allowed to be thrown inside this category of method.
             /// This list will be empty if no exceptions are allowed.
             /// </summary>
-            public ImmutableHashSet<ITypeSymbol?> AllowedExceptions { get; }
+            public ImmutableHashSet<ITypeSymbol> AllowedExceptions { get; }
 
             public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol?[] allowedExceptionTypes)
             {
                 _matchFunction = matchFunction;
                 _analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
                 this.Rule = rule;
-                AllowedExceptions = allowedExceptionTypes.ToImmutableHashSet();
+                AllowedExceptions = allowedExceptionTypes.WhereNotNull().ToImmutableHashSet();
             }
 
             /// <summary>

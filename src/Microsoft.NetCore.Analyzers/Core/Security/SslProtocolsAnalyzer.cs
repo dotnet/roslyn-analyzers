@@ -123,8 +123,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     break;
 
                                 case IVariableInitializerOperation variableInitializerOperation:
-                                    if (variableInitializerOperation.Value != null
-                                        && !sslProtocolsSymbol.Equals(variableInitializerOperation.Value.Type))
+                                    if (variableInitializerOperation.Value == null
+                                        || !sslProtocolsSymbol.Equals(variableInitializerOperation.Value.Type))
                                     {
                                         return;
                                     }
@@ -213,7 +213,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                         out bool isDeprecatedProtocol,
                         out bool isHardcodedOkayProtocol)
                     {
-                        if (sslProtocolsSymbol!.Equals(fieldReferenceOperation.Field.ContainingType))
+                        RoslynDebug.Assert(sslProtocolsSymbol != null);
+
+                        if (sslProtocolsSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             if (HardcodedSslProtocolsMetadataNames.Contains(fieldReferenceOperation.Field.Name))
                             {

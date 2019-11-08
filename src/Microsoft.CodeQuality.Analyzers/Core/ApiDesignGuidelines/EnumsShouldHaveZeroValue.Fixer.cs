@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(context.Span);
 
-                ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
+                ISymbol? declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
                 if (declaredSymbol == null)
                 {
                     continue;

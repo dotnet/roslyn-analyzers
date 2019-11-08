@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -67,13 +68,13 @@ namespace ReleaseNotesUtil
             RuleFileContent newContent = ReadRuleFileContent(newRulesJsonPath);
 
             // If we have the latest rules, we can backfill missing help link URLs.
-            if (!string.IsNullOrWhiteSpace(latestRulesJsonPath))
+            if (!RoslynString.IsNullOrWhiteSpace(latestRulesJsonPath))
             {
-                RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath!);
+                RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
                 Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
                 foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
                 {
-                    if (string.IsNullOrWhiteSpace(rule.HelpLink)
+                    if (RoslynString.IsNullOrWhiteSpace(rule.HelpLink)
                         && latestRulesById.TryGetValue(rule.Id, out RuleInfo latestRule))
                     {
                         rule.HelpLink = latestRule.HelpLink;

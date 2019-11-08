@@ -49,6 +49,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly object s_lock = new object();
         private static ImmutableDictionary<string, string>? s_wellKnownSystemNamespaceTable;
 
+        private static ImmutableDictionary<string, string> WellKnownSystemNamespaceTable
+        {
+            get
+            {
+                InitializeWellKnownSystemNamespaceTable();
+                RoslynDebug.Assert(s_wellKnownSystemNamespaceTable != null);
+                return s_wellKnownSystemNamespaceTable;
+            }
+        }
+
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
@@ -91,13 +101,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             var namespaceComponentToNamespaceNameDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                             UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
-                            InitializeWellKnownSystemNamespaceTable();
                             foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
-                                if (s_wellKnownSystemNamespaceTable!.ContainsKey(symbolName))
+                                if (WellKnownSystemNamespaceTable.ContainsKey(symbolName))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, s_wellKnownSystemNamespaceTable[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, WellKnownSystemNamespaceTable[symbolName]));
                                 }
                                 else if (namespaceComponentToNamespaceNameDictionary.ContainsKey(symbolName))
                                 {

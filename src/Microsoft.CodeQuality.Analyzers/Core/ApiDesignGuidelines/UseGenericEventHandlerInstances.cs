@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -66,7 +67,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
-        protected abstract bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol);
+        protected abstract bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -94,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     bool IsEventArgsParameter(IParameterSymbol parameter)
                     {
                         var type = parameter.Type;
-                        if (IsAssignableTo(context.Compilation, type, eventArgs!))
+                        if (IsAssignableTo(type, eventArgs, context.Compilation))
                         {
                             return true;
                         }

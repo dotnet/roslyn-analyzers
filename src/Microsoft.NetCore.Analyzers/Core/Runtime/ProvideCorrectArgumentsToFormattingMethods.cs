@@ -94,11 +94,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var arrayCreation = paramsArgument.Value as IArrayCreationOperation;
-                    var elementType = arrayCreation.GetElementType();
-                    if (elementType == null ||
+                    if (!(paramsArgument.Value is IArrayCreationOperation arrayCreation) ||
+                        !(arrayCreation.GetElementType() is ITypeSymbol elementType) ||
                         !object.Equals(elementType, formatInfo.Object) ||
-                        arrayCreation!.DimensionSizes.Length != 1)
+                        arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format
                         return;

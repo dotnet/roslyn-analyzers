@@ -168,8 +168,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 operationBlockStartContext.Options, Rule, trackInstanceFields: true, trackExceptionPaths: false, cancellationToken: operationBlockStartContext.CancellationToken,
                                 disposeAnalysisResult: out var disposeAnalysisResult, pointsToAnalysisResult: out var pointsToAnalysisResult))
                             {
+                                RoslynDebug.Assert(disposeAnalysisResult.TrackedInstanceFieldPointsToMap != null);
+
                                 BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
-                                foreach (var fieldWithPointsToValue in disposeAnalysisResult!.TrackedInstanceFieldPointsToMap!)
+                                foreach (var fieldWithPointsToValue in disposeAnalysisResult.TrackedInstanceFieldPointsToMap)
                                 {
                                     IFieldSymbol field = fieldWithPointsToValue.Key;
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;

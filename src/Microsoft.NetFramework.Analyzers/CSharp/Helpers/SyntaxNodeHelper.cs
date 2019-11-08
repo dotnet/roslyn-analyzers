@@ -6,6 +6,7 @@ using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
 {
@@ -293,7 +294,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return node.DescendantNodesAndSelf().OfType<MemberAccessExpressionSyntax>();
         }
 
-        public override bool IsObjectCreationExpressionUnderFieldDeclaration(SyntaxNode? node)
+        public override bool IsObjectCreationExpressionUnderFieldDeclaration([NotNullWhen(returnValue: true)] SyntaxNode? node)
         {
             return node != null &&
                    node.Kind() == SyntaxKind.ObjectCreationExpression &&
@@ -304,7 +305,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
         {
             if (IsObjectCreationExpressionUnderFieldDeclaration(node))
             {
-                return node!.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
+                return node.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().FirstOrDefault();
             }
             else
             {

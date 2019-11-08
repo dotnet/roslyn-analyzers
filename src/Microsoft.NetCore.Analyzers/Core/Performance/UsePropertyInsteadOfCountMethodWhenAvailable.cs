@@ -194,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                if (isCollectionOfTInterface(invocationTarget))
+                if (isCollectionOfTInterface(invocationTarget, ICollectionOfTType))
                 {
                     return true;
                 }
@@ -209,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     foreach (var @interface in invocationTarget.AllInterfaces)
                     {
                         if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                            isCollectionOfTInterface(originalInterfaceDefinition))
+                            isCollectionOfTInterface(originalInterfaceDefinition, ICollectionOfTType))
                         {
                             return true;
                         }
@@ -220,7 +220,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     foreach (var @interface in invocationTarget.AllInterfaces)
                     {
                         if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                            isCollectionOfTInterface(originalInterfaceDefinition))
+                            isCollectionOfTInterface(originalInterfaceDefinition, ICollectionOfTType))
                         {
                             if (invocationTarget.FindImplementationForInterfaceMember(@interface.GetMembers(CountPropertyName)[0]) is IPropertySymbol propertyImplementation &&
                                 !propertyImplementation.ExplicitInterfaceImplementations.Any())
@@ -233,8 +233,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 return false;
 
-                bool isCollectionOfTInterface(ITypeSymbol type)
-                    => this.ICollectionOfTType!.Equals(type.OriginalDefinition);
+                static bool isCollectionOfTInterface(ITypeSymbol type, ITypeSymbol iCollectionOfTType)
+                    => iCollectionOfTType.Equals(type.OriginalDefinition);
             }
 
             /// <summary>

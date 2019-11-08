@@ -144,14 +144,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
 
                                 // FxCop compat: Filter out xml string literals.
-                                var filteredStrings = stringLiteralValues.Where(literal => literal != null && !LooksLikeXmlTag(literal));
+                                IEnumerable<string> filteredStrings = stringLiteralValues.Where(literal => literal != null && !LooksLikeXmlTag(literal))!;
                                 if (filteredStrings.Any())
                                 {
                                     // Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".
                                     var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                                     var arg2 = parameter.Name;
                                     var arg3 = parameter.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                    var arg4 = FormatLiteralValues(filteredStrings!);
+                                    var arg4 = FormatLiteralValues(filteredStrings);
                                     var diagnostic = operation.CreateDiagnostic(Rule, arg1, arg2, arg3, arg4);
                                     reportDiagnostic(diagnostic);
                                 }

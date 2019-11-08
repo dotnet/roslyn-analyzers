@@ -22,7 +22,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 syntaxNode = syntaxNode.Parent;
             }
 
-            var field = syntaxNode as FieldDeclarationSyntax;
+            var field = (FieldDeclarationSyntax?)syntaxNode;
 
             // Multiple declarators are not supported, as one of them may not be constant.
             return field?.Declaration.Variables.Count > 1 ? null : field;

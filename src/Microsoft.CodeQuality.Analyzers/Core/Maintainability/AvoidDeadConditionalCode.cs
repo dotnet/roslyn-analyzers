@@ -167,12 +167,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                              operation.Kind == OperationKind.Invocation ||
                                              operation.Kind == OperationKind.IsNull ||
                                              operation.Kind == OperationKind.IsPattern);
+                                RoslynDebug.Assert(pointsToAnalysisResult != null);
+                                RoslynDebug.Assert(valueContentAnalysisResult != null);
 
                                 if (operation is IBinaryOperation binaryOperation &&
                                     binaryOperation.IsComparisonOperator() ||
                                     operation.Type?.SpecialType == SpecialType.System_Boolean)
                                 {
-                                    PredicateValueKind predicateKind = pointsToAnalysisResult!.GetPredicateKind(operation);
+                                    PredicateValueKind predicateKind = pointsToAnalysisResult.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
                                     {
                                         return predicateKind;
@@ -187,7 +189,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         }
                                     }
 
-                                    predicateKind = valueContentAnalysisResult!.GetPredicateKind(operation);
+                                    predicateKind = valueContentAnalysisResult.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
                                     {
                                         return predicateKind;

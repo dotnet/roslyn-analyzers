@@ -139,18 +139,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static string GetNeededComparisonOperators(INamedTypeSymbol symbol)
         {
-            bool first = true;
             StringBuilder? sb = null;
             void Append(string @operator)
             {
-                if (first)
+                if (sb == null)
                 {
                     sb = new StringBuilder();
-                    first = false;
                 }
                 else
                 {
-                    sb!.Append(", ");
+                    sb.Append(", ");
                 }
 
                 sb.Append(@operator);

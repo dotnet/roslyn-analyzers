@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -168,12 +167,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            Debug.Assert(missingInterface != null && implementedInterface != null);
+            RoslynDebug.Assert(missingInterface != null && implementedInterface != null);
             context.ReportDiagnostic(Diagnostic.Create(Rule,
                                                        namedTypeSymbol.Locations.First(),
                                                        namedTypeSymbol.Name,
-                                                       implementedInterface!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                       missingInterface!.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                                       implementedInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                       missingInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
         }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types

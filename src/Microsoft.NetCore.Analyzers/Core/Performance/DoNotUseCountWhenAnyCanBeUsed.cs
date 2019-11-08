@@ -289,7 +289,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         invocationOperation.Syntax.CreateDiagnostic(
                             rule: this._rule,
                             properties: properties,
-                            args: methodName!));
+                            args: methodName));
                 }
             }
 
@@ -355,7 +355,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             ///
             /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string? methodName)
+            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, [NotNullWhen(returnValue: true)] out string? methodName)
             {
                 if (!TryGetZeroOrOneConstant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
                 {

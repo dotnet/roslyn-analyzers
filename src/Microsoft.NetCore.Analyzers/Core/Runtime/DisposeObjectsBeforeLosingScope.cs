@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (trackExceptionPaths)
                             {
                                 // Compute diagnostics for undisposed objects at handled exception exit paths.
-                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult!.ExceptionPathsExitBlockOutputOpt!.Data;
+                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult.ExceptionPathsExitBlockOutputOpt!.Data;
                                 ComputeDiagnostics(disposeDataAtHandledExceptionPaths,
                                     notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                     disposeAnalysisKind, isDisposeDataForExceptionPaths: true);

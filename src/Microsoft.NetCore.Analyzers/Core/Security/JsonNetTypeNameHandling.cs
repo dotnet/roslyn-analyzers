@@ -93,7 +93,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     bool IsOtherThanNone(IFieldReferenceOperation fieldReferenceOperation)
                     {
-                        if (!typeNameHandlingSymbol!.Equals(fieldReferenceOperation.Field.ContainingType))
+                        RoslynDebug.Assert(typeNameHandlingSymbol != null);
+                        if (!typeNameHandlingSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             return false;
                         }

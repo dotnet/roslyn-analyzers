@@ -187,7 +187,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                         out bool isDeprecatedProtocol,
                         out bool isHardCodedOkayProtocol)
                     {
-                        if (securityProtocolTypeTypeSymbol!.Equals(fieldReferenceOperation.Field.ContainingType))
+                        RoslynDebug.Assert(securityProtocolTypeTypeSymbol != null);
+
+                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
                             {
@@ -217,10 +219,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     bool IsAndEqualsServicePointManagerAssignment(ICompoundAssignmentOperation compoundAssignmentOperation)
                     {
+                        RoslynDebug.Assert(servicePointManagerTypeSymbol != null);
+
                         return compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And
                             && compoundAssignmentOperation.Target is IPropertyReferenceOperation targetPropertyReference
                             && targetPropertyReference.Instance == null
-                            && servicePointManagerTypeSymbol!.Equals(targetPropertyReference.Property.ContainingType)
+                            && servicePointManagerTypeSymbol.Equals(targetPropertyReference.Property.ContainingType)
                             && targetPropertyReference.Property.MetadataName == "SecurityProtocol";
                     }
                 });

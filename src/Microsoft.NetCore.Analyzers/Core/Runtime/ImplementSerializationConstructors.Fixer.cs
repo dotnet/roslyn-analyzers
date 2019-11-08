@@ -28,8 +28,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            ISymbol symbol = model.GetDeclaredSymbol(node, context.CancellationToken);
 
-            if (!(model.GetDeclaredSymbol(node, context.CancellationToken) is INamedTypeSymbol symbol))
+            if (symbol == null)
             {
                 return;
             }
@@ -45,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (symbol.Kind == SymbolKind.NamedType)
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
-                     async ct => await GenerateConstructor(context.Document, node, symbol, notImplementedExceptionType, ct).ConfigureAwait(false),
+                     async ct => await GenerateConstructor(context.Document, node, (INamedTypeSymbol)symbol, notImplementedExceptionType, ct).ConfigureAwait(false),
                      equivalenceKey: title),
                 context.Diagnostics);
             }

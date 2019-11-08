@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             Debug.Assert(invocationNode.IsKind(SyntaxKind.InvocationExpression));
 
-            var invocation = invocationNode as InvocationExpressionSyntax;
+            var invocation = (InvocationExpressionSyntax)invocationNode;
             if (invocation.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
             {
                 return ((MemberAccessExpressionSyntax)invocation.Expression).Name.GetLocation();

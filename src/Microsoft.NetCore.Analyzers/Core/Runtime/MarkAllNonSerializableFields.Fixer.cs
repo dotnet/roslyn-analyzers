@@ -20,13 +20,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SerializationRulesDiagnosticAnalyzer.RuleCA2235Id);
 
-        protected abstract SyntaxNode GetFieldDeclarationNode(SyntaxNode node);
+        protected abstract SyntaxNode? GetFieldDeclarationNode(SyntaxNode node);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
-            SyntaxNode fieldNode = GetFieldDeclarationNode(node);
+            SyntaxNode? fieldNode = GetFieldDeclarationNode(node);
             if (fieldNode == null)
             {
                 return;

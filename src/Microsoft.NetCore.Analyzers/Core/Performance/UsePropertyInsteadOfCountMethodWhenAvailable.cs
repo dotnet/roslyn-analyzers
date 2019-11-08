@@ -291,7 +291,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
             /// <returns>The <see cref="ITypeSymbol"/> of the receiver of the extension method.</returns>
-            protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
+            protected abstract ITypeSymbol? GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
 
             /// <summary>
             /// Gets the replacement property.

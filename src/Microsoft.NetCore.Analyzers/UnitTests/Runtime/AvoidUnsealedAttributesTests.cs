@@ -1,30 +1,25 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public partial class AvoidUnsealedAttributeTests : DiagnosticAnalyzerTestBase
+    public class AvoidUnsealedAttributeTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new AvoidUnsealedAttributesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AvoidUnsealedAttributesAnalyzer();
-        }
-
         #region Diagnostic Tests
 
         [Fact]
-        public void CA1813CSharpDiagnosticProviderTestFired()
+        public async Task CA1813CSharpDiagnosticProviderTestFired()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class C
@@ -38,14 +33,14 @@ public class C
     }
 }
 ",
-            GetCA1813CSharpResultAt(6, 18),
-            GetCA1813CSharpResultAt(10, 19));
+            GetCSharpResultAt(6, 18),
+            GetCSharpResultAt(10, 19));
         }
 
         [Fact]
-        public void CA1813CSharpDiagnosticProviderTestFiredWithScope()
+        public async Task CA1813CSharpDiagnosticProviderTestFiredWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [|public class AttributeClass: Attribute
@@ -59,13 +54,13 @@ public class Outer
     }
 }
 ",
-            GetCA1813CSharpResultAt(4, 14));
+            GetCSharpResultAt(4, 14));
         }
 
         [Fact]
-        public void CA1813CSharpDiagnosticProviderTestNotFired()
+        public async Task CA1813CSharpDiagnosticProviderTestNotFired()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public sealed class AttributeClass: Attribute
@@ -78,9 +73,9 @@ public sealed class AttributeClass: Attribute
         }
 
         [Fact]
-        public void CA1813VisualBasicDiagnosticProviderTestFired()
+        public async Task CA1813VisualBasicDiagnosticProviderTestFired()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class AttributeClass
@@ -93,14 +88,14 @@ Public Class Outer
     End Class
 End Class
 ",
-            GetCA1813BasicResultAt(4, 14),
-            GetCA1813BasicResultAt(9, 19));
+            GetBasicResultAt(4, 14),
+            GetBasicResultAt(9, 19));
         }
 
         [Fact]
-        public void CA1813VisualBasicDiagnosticProviderTestFiredwithScope()
+        public async Task CA1813VisualBasicDiagnosticProviderTestFiredwithScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class AttributeClass
@@ -113,13 +108,13 @@ Public Class Outer
     End Class|]
 End Class
 ",
-            GetCA1813BasicResultAt(9, 19));
+            GetBasicResultAt(9, 19));
         }
 
         [Fact]
-        public void CA1813VisualBasicDiagnosticProviderTestNotFired()
+        public async Task CA1813VisualBasicDiagnosticProviderTestNotFired()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public NotInheritable Class AttributeClass
@@ -135,14 +130,12 @@ End Class
 
         #endregion
 
-        private static DiagnosticResult GetCA1813CSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.AvoidUnsealedAttributesMessage);
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column)
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column);
 
-        private static DiagnosticResult GetCA1813BasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, AvoidUnsealedAttributesAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.AvoidUnsealedAttributesMessage);
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

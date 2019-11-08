@@ -1,26 +1,28 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseSecureCookiesASPNetCore,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseSecureCookiesASPNetCoreTests : DiagnosticAnalyzerTestBase
+    public class UseSecureCookiesASPNetCoreTests
     {
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, ASPNetCoreApis.CSharp }.ToFileAndSource(),
-                expected);
-        }
-
         [Fact]
-        public void TestHasWrongSecurePropertyAssignmentDiagnostic()
+        public async Task TestHasWrongSecurePropertyAssignmentDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -34,13 +36,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestHasWrongSecurePropertyAssignmentMaybeChangedRightDiagnostic()
+        public async Task TestHasWrongSecurePropertyAssignmentMaybeChangedRightDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -62,13 +76,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestHasRightSecurePropertyAssignmentMaybeChangedWrongDiagnostic()
+        public async Task TestHasRightSecurePropertyAssignmentMaybeChangedWrongDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -90,13 +116,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestAssignSecurePropertyAnUnassignedVariableMaybeChangedWrongDiagnostic()
+        public async Task TestAssignSecurePropertyAnUnassignedVariableMaybeChangedWrongDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -118,13 +156,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestAssignSecurePropertyAnUnassignedVariableMaybeChangedRightDiagnostic()
+        public async Task TestAssignSecurePropertyAnUnassignedVariableMaybeChangedRightDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -146,13 +196,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestAssignSecurePropertyAnAssignedVariableMaybeChangedDiagnostic()
+        public async Task TestAssignSecurePropertyAnAssignedVariableMaybeChangedDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -175,13 +237,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(21, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(21, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestHasWrongSecurePropertyInitializerDiagnostic()
+        public async Task TestHasWrongSecurePropertyInitializerDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -194,13 +268,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestWithoutSecurePropertyAssignmentDiagnostic()
+        public async Task TestWithoutSecurePropertyAssignmentDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -213,13 +299,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestParamterLengthLessThan3TrueDiagnostic()
+        public async Task TestParamterLengthLessThan3TrueDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -231,13 +329,25 @@ class TestClass
         responseCookies.Append(key, value);
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestGetCookieOptionsFromOtherMethodInterproceduralDiagnostic()
+        public async Task TestGetCookieOptionsFromOtherMethodInterproceduralDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -257,13 +367,25 @@ class TestClass
         return cookieOptions;
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestPassCookieOptionsAsParameterInterproceduralDiagnostic()
+        public async Task TestPassCookieOptionsAsParameterInterproceduralDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -282,13 +404,25 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(17, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(17, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestHasRightSecurePropertyAssignmentNoDiagnostic()
+        public async Task TestHasRightSecurePropertyAssignmentNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -301,13 +435,22 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}");
+}"
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestHasRightSecurePropertyInitializerNoDiagnostic()
+        public async Task TestHasRightSecurePropertyInitializerNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ASPNetCoreApis.CSharp, @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -319,17 +462,14 @@ class TestClass
         var responseCookies = new ResponseCookies();
         responseCookies.Append(key, value, cookieOptions);
     }
-}");
+}"
+                    }
+                }
+            }.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseSecureCookiesASPNetCore();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseSecureCookiesASPNetCore();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+           => VerifyCS.Diagnostic(rule)
+               .WithLocation(line, column);
     }
 }

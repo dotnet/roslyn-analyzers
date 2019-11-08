@@ -1,19 +1,26 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureCryptographicAlgorithmsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureCryptographicAlgorithmsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseInsecureCryptographicAlgorithmsTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseInsecureCryptographicAlgorithmsTests
     {
-        #region CA5350 
+        #region CA5350
 
         [Fact]
-        public void CA5350UseMD5CreateInMethodDeclaration()
+        public async Task CA5350UseMD5CreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -28,7 +35,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -40,9 +47,9 @@ End Module",
         }
         //NO VB
         [Fact]
-        public void CA5350UseMD5CreateInPropertyDeclaration()
+        public async Task CA5350UseMD5CreateInPropertyDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -55,9 +62,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5350UseMD5CreateInGetDeclaration()
+        public async Task CA5350UseMD5CreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -71,7 +78,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetAlg", "MD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -86,9 +93,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseMD5CreateInFieldDeclaration()
+        public async Task CA5350UseMD5CreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -99,7 +106,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Alg", "MD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -110,9 +117,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseMD5CreateInLambdaExpression()
+        public async Task CA5350UseMD5CreateInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -127,7 +134,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
@@ -143,9 +150,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseMD5CreateInAnonymousMethodExpression()
+        public async Task CA5350UseMD5CreateInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -157,7 +164,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "d", "MD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -169,9 +176,14 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350CreateObjectFromMD5DerivedClass()
+        public async Task CA5350CreateObjectFromMD5DerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 using System.Security.Cryptography;
@@ -210,11 +222,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
+}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
-//Test0
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 @"
 Imports System.Security.Cryptography
 
@@ -245,19 +267,24 @@ Namespace TestNamespace
 			Throw New System.NotImplementedException()
 		End Function
 	End Class
-End Namespace"},
-
-                GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
+End Namespace"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5")
+                    }
+                }
+            }.RunAsync();
         }
 
         #endregion
 
-        #region CA5354  
+        #region CA5354
 
         [Fact]
-        public void CA5354UseSHA1CreateInMethodDeclaration()
+        public async Task CA5354UseSHA1CreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -272,7 +299,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -284,9 +311,9 @@ End Module",
         }
         //NO VB
         [Fact]
-        public void CA5354UseSHA1CreateInPropertyDeclaration()
+        public async Task CA5354UseSHA1CreateInPropertyDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -299,9 +326,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5354UseSHA1CreateInGetDeclaration()
+        public async Task CA5354UseSHA1CreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -315,7 +342,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -330,9 +357,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5354UseSHA1CreateInFieldDeclaration()
+        public async Task CA5354UseSHA1CreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -343,7 +370,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Alg", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -354,9 +381,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5354UseSHA1CreateInLambdaExpression()
+        public async Task CA5354UseSHA1CreateInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -371,7 +398,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
@@ -387,9 +414,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5354UseSHA1CreateInAnonymousMethodExpression()
+        public async Task CA5354UseSHA1CreateInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -401,7 +428,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "d", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -413,9 +440,14 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5354CreateObjectFromSHA1DerivedClass()
+        public async Task CA5354CreateObjectFromSHA1DerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 using System.Security.Cryptography;
@@ -454,10 +486,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+}"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 Imports System.Security.Cryptography
@@ -487,14 +530,20 @@ Namespace TestNamespace
 			Throw New System.NotImplementedException()
 		End Function
 	End Class
-End Namespace" },
-                GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+End Namespace"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5354UseSHA1CryptoServiceProviderInMethodDeclaration()
+        public async Task CA5354UseSHA1CryptoServiceProviderInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -509,7 +558,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -521,9 +570,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInMethodDeclaration()
+        public async Task CA5354CreateHMACSHA1ObjectInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -538,7 +587,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -550,9 +599,9 @@ End Module",
         }
         //No VB
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInPropertyDeclaration()
+        public async Task CA5354CreateHMACSHA1ObjectInPropertyDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -565,9 +614,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInGetDeclaration()
+        public async Task CA5354CreateHMACSHA1ObjectInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -581,7 +630,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "HMACSHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -596,9 +645,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInFieldDeclaration()
+        public async Task CA5354CreateHMACSHA1ObjectInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -609,7 +658,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 27, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Alg", "HMACSHA1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -620,9 +669,9 @@ End Namespace",
         }
         //No VB
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInLambdaExpression()
+        public async Task CA5354CreateHMACSHA1ObjectInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -639,9 +688,9 @@ namespace TestNamespace
         }
         //No VB
         [Fact]
-        public void CA5354CreateHMACSHA1ObjectInAnonymousMethodExpression()
+        public async Task CA5354CreateHMACSHA1ObjectInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -655,9 +704,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5354CreateObjectFromHMACSHA1DerivedClass()
+        public async Task CA5354CreateObjectFromHMACSHA1DerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 using System.Security.Cryptography;
@@ -696,10 +750,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
+}"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 Imports System.Security.Cryptography
@@ -731,15 +796,21 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace
-" },
-                GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
+"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1")
+                    }
+                }
+            }.RunAsync();
         }
-        #endregion 
+        #endregion
 
         [Fact]
-        public void CA5350UseHMACMD5CreateInMethodDeclaration()
+        public async Task CA5350UseHMACMD5CreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -754,7 +825,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Namespace TestNamespace
@@ -768,9 +839,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350CreateObjectFromHMACMD5DerivedClass()
+        public async Task CA5350CreateObjectFromHMACMD5DerivedClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -787,7 +858,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(12, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyHMACMD5
@@ -804,9 +875,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseHMACMD5CreateInGetDeclaration()
+        public async Task CA5350UseHMACMD5CreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -820,7 +891,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetHMACMD5", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -835,9 +906,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseHMACMD5InFieldDeclaration()
+        public async Task CA5350UseHMACMD5InFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -848,7 +919,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateMd5", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -859,9 +930,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350UseHMACMD5InLambdaExpression()
+        public async Task CA5350UseHMACMD5InLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -876,7 +947,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 
@@ -891,9 +962,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5350UseHMACMD5InAnonymousMethodExpression()
+        public async Task CA5350UseHMACMD5InAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -905,7 +976,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "d", "HMACMD5"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass 
@@ -916,9 +987,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5351UseDESCreateInMethodDeclaration()
+        public async Task CA5351UseDESCreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -933,7 +1004,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -945,9 +1016,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5351UseDESCreateInGetDeclaration()
+        public async Task CA5351UseDESCreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -961,7 +1032,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -977,9 +1048,9 @@ End Namespace
         }
 
         [Fact]
-        public void CA5351UseDESCreateInFieldDeclaration()
+        public async Task CA5351UseDESCreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -990,7 +1061,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateDES", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1001,9 +1072,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5351UseDESCreateInLambdaExpression()
+        public async Task CA5351UseDESCreateInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1018,7 +1089,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Imports System.Threading.Tasks
 Namespace TestNamespace
@@ -1034,9 +1105,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5351UseDESCreateInAnonymousMethodExpression()
+        public async Task CA5351UseDESCreateInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1048,7 +1119,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "d", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1060,9 +1131,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5351UseDESCryptoServiceProviderCreateInMethodDeclaration()
+        public async Task CA5351UseDESCryptoServiceProviderCreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1077,7 +1148,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1090,9 +1161,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5351UseDESCryptoServiceProviderCreateInGetDeclaration()
+        public async Task CA5351UseDESCryptoServiceProviderCreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1106,7 +1177,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1121,9 +1192,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5351UseDESCryptoServiceProviderCreateInFieldDeclaration()
+        public async Task CA5351UseDESCryptoServiceProviderCreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1134,7 +1205,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateDES", "DES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1143,11 +1214,11 @@ Namespace TestNamespace
 End Namespace",
                 GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateDES", "DES"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5351UseDESCryptoServiceProviderInLambdaExpression()
+        public async Task CA5351UseDESCryptoServiceProviderInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1162,11 +1233,11 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5351UseDESCryptoServiceProviderInAnonymousMethodExpression()
+        public async Task CA5351UseDESCryptoServiceProviderInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1180,9 +1251,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5351CreateObjectFromDESDerivedClass()
+        public async Task CA5351CreateObjectFromDESDerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 using System.Security.Cryptography;
@@ -1227,11 +1303,22 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-                GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+}"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -1267,15 +1354,21 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace
-" },
-                GetBasicResultAt(6, 15, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-                GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 15, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5352UseRC2CryptoServiceProviderInMethodDeclaration()
+        public async Task CA5352UseRC2CryptoServiceProviderInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1290,7 +1383,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -1302,9 +1395,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5352UseRC2CryptoServiceProviderInGetDeclaration()
+        public async Task CA5352UseRC2CryptoServiceProviderInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1318,7 +1411,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetRC2", "RC2"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1333,9 +1426,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5352UseRC2CryptoServiceProviderInFieldDeclaration()
+        public async Task CA5352UseRC2CryptoServiceProviderInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1346,7 +1439,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateRC2", "RC2"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1356,11 +1449,11 @@ End Namespace
 ",
                 GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "privateRC2", "RC2"));
         }
-        //No VB            
+        //No VB
         [Fact]
-        public void CA5352UseRC2CryptoServiceProviderInLambdaExpression()
+        public async Task CA5352UseRC2CryptoServiceProviderInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1375,11 +1468,11 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5352UseRC2CryptoServiceProviderInAnonymousMethodExpression()
+        public async Task CA5352UseRC2CryptoServiceProviderInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1393,9 +1486,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5352CreateObjectFromRC2DerivedClass()
+        public async Task CA5352CreateObjectFromRC2DerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 using System.Security.Cryptography;
@@ -1439,10 +1537,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+}"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
 @"
 Imports System.Security.Cryptography
@@ -1477,14 +1586,20 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace
-" },
-                GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+"
+},
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5353TripleDESCreateInMethodDeclaration()
+        public async Task CA5353TripleDESCreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1493,13 +1608,13 @@ namespace TestNamespace
     {
         private static void TestMethod()
         {
-            var tripleDES = TripleDES.Create(""TripleDES"");  
+            var tripleDES = TripleDES.Create(""TripleDES"");
         }
     }
 }",
                 GetCSharpResultAt(10, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1512,9 +1627,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5353TripleDESCreateInGetDeclaration()
+        public async Task CA5353TripleDESCreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1528,7 +1643,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetTripleDES", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1543,9 +1658,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5353TripleDESCreateInFieldDeclaration()
+        public async Task CA5353TripleDESCreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1556,7 +1671,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 32, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateDES", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1567,9 +1682,9 @@ End Namespace",
         }
         //No VB
         [Fact]
-        public void CA5353TripleDESCreateInLambdaExpression()
+        public async Task CA5353TripleDESCreateInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1586,9 +1701,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5353TripleDESCreateInAnonymousMethodExpression()
+        public async Task CA5353TripleDESCreateInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1600,7 +1715,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "d", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1612,9 +1727,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5353TripleDESCryptoServiceProviderInMethodDeclaration()
+        public async Task CA5353TripleDESCryptoServiceProviderInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1629,7 +1744,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 56, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -1641,9 +1756,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5353TripleDESCryptoServiceProviderInGetDeclaration()
+        public async Task CA5353TripleDESCryptoServiceProviderInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1657,7 +1772,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetDES", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1672,9 +1787,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5353TripleDESCryptoServiceProviderInFieldDeclaration()
+        public async Task CA5353TripleDESCryptoServiceProviderInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1685,7 +1800,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 53, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateDES", "TripleDES"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1694,11 +1809,11 @@ Namespace TestNamespace
 End Namespace",
                 GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateDES", "TripleDES"));
         }
-        //No VB       
+        //No VB
         [Fact]
-        public void CA5353TripleDESCryptoServiceProviderInLambdaExpression()
+        public async Task CA5353TripleDESCryptoServiceProviderInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1713,11 +1828,11 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5353TripleDESCryptoServiceProviderInAnonymousMethodExpression()
+        public async Task CA5353TripleDESCryptoServiceProviderInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1731,9 +1846,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5353CreateObjectFromTripleDESDerivedClass()
+        public async Task CA5353CreateObjectFromTripleDESDerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 using System.Security.Cryptography;
@@ -1778,11 +1898,22 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-                GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -1820,15 +1951,21 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace
-" },
-                GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-                GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5350RIPEMD160ManagedInMethodDeclaration()
+        public async Task CA5350RIPEMD160ManagedInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1843,7 +1980,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -1855,9 +1992,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5350RIPEMD160ManagedInGetDeclaration()
+        public async Task CA5350RIPEMD160ManagedInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1871,7 +2008,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -1886,9 +2023,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350RIPEMD160ManagedInFieldDeclaration()
+        public async Task CA5350RIPEMD160ManagedInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1899,7 +2036,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateRIPEMD160", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1909,11 +2046,11 @@ End Namespace
 ",
                 GetBasicResultAt(5, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateRIPEMD160", "RIPEMD160"));
         }
-        //No VB               
+        //No VB
         [Fact]
-        public void CA5350RIPEMD160ManagedInLambdaExpression()
+        public async Task CA5350RIPEMD160ManagedInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -1928,11 +2065,11 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5350RIPEMD160ManagedInAnonymousMethodExpression()
+        public async Task CA5350RIPEMD160ManagedInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1946,9 +2083,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5350RIPEMD160CreateInMethodDeclaration()
+        public async Task CA5350RIPEMD160CreateInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -1963,7 +2100,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -1976,9 +2113,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350RIPEMD160CreateInGetDeclaration()
+        public async Task CA5350RIPEMD160CreateInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -1992,7 +2129,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -2007,9 +2144,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350RIPEMD160CreateInFieldDeclaration()
+        public async Task CA5350RIPEMD160CreateInFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2020,7 +2157,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 38, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateRIPEMD160", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -2029,11 +2166,11 @@ Namespace TestNamespace
 End Namespace",
                 GetBasicResultAt(5, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateRIPEMD160", "RIPEMD160"));
         }
-        //No VB                
+        //No VB
         [Fact]
-        public void CA5350RIPEMD160CreateInLambdaExpression()
+        public async Task CA5350RIPEMD160CreateInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -2050,9 +2187,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5350RIPEMD160CreateInAnonymousMethodExpression()
+        public async Task CA5350RIPEMD160CreateInAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2064,7 +2201,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "d", "RIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
     Class TestClass
@@ -2076,9 +2213,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350HMACRIPEMD160InMethodDeclaration()
+        public async Task CA5350HMACRIPEMD160InMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -2093,7 +2230,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -2106,9 +2243,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350HMACRIPEMD160InGetDeclaration()
+        public async Task CA5350HMACRIPEMD160InGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2122,7 +2259,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetHMARIPEMD160", "HMACRIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -2137,9 +2274,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5350HMACRIPEMD160InFieldDeclaration()
+        public async Task CA5350HMACRIPEMD160InFieldDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2150,7 +2287,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateHMARIPEMD160", "HMACRIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -2159,11 +2296,11 @@ Namespace TestNamespace
 End Namespace",
                 GetBasicResultAt(5, 34, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "privateHMARIPEMD160", "HMACRIPEMD160"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5350HMACRIPEMD160InLambdaExpression()
+        public async Task CA5350HMACRIPEMD160InLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -2178,11 +2315,11 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5350HMACRIPEMD160InAnonymousMethodExpression()
+        public async Task CA5350HMACRIPEMD160InAnonymousMethodExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2196,9 +2333,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5350CreateObjectFromRIPEMD160DerivedClass()
+        public async Task CA5350CreateObjectFromRIPEMD160DerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 using System.Security.Cryptography;
@@ -2237,10 +2379,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -2271,14 +2424,25 @@ Namespace TestNamespace
 			Throw New NotImplementedException()
 		End Function
 	End Class
-End Namespace" },
-                GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+End Namespace"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5350CreateObjectFromRIPEMD160ManagedDerivedClass()
+        public async Task CA5350CreateObjectFromRIPEMD160ManagedDerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 using System.Security.Cryptography;
@@ -2317,10 +2481,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+}"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -2351,14 +2526,20 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace
-" },
-                GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5350CreateObjectFromHMACRIPEMD160DerivedClass()
+        public async Task CA5350CreateObjectFromHMACRIPEMD160DerivedClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -2375,7 +2556,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(12, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class MyHMACRIPEMD160
@@ -2392,9 +2573,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5356DSACreateSignatureInMethodDeclaration()
+        public async Task CA5356DSACreateSignatureInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -2409,7 +2590,7 @@ namespace TestNamespace
 }",
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -2422,9 +2603,9 @@ End Module",
         }
 
         [Fact]
-        public void CA5356UseDSACreateSignatureInGetDeclaration()
+        public async Task CA5356UseDSACreateSignatureInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -2441,7 +2622,7 @@ class TestClass
 }",
                 GetCSharpResultAt(12, 20, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Class TestClass
@@ -2457,9 +2638,9 @@ End Class",
         }
 
         [Fact]
-        public void CA5356DSASignatureFormatterInMethodDeclaration()
+        public async Task CA5356DSASignatureFormatterInMethodDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -2476,7 +2657,7 @@ namespace TestNamespace
                 GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"),
                 GetCSharpResultAt(11, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Namespace TestNamespace
@@ -2492,9 +2673,9 @@ End Namespace",
         }
 
         [Fact]
-        public void CA5356UseDSACreateSignatureFormatterInGetDeclaration()
+        public async Task CA5356UseDSACreateSignatureFormatterInGetDeclaration()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -2513,7 +2694,7 @@ class TestClass
                 GetCSharpResultAt(12, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"),
                 GetCSharpResultAt(13, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Class TestClass
 	Private dsa1 As DSA = Nothing
@@ -2533,9 +2714,14 @@ End Class",
         }
 
         [Fact]
-        public void CA5356CreateSignatureFromDSADerivedClass()
+        public async Task CA5356CreateSignatureFromDSADerivedClass()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
                 //Test0
                 @"
 using System.Security.Cryptography;
@@ -2596,10 +2782,21 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" },
-                GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+}"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA")
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -2647,14 +2844,20 @@ Namespace TestNamespace
 			Throw New NotImplementedException()
 		End Function
 	End Class
-End Namespace" },
-                GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+End Namespace"
+                },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA")
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA5357RijndaelManagedInMethodDeclarationShouldNotGenerateDiagnostics()
+        public async Task CA5357RijndaelManagedInMethodDeclarationShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 namespace TestNamespace
@@ -2669,7 +2872,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Module TestClass
@@ -2681,9 +2884,9 @@ End Module"
         }
 
         [Fact]
-        public void CA5357RijndaelManagedInGetDeclarationShouldNotGenerateDiagnostics()
+        public async Task CA5357RijndaelManagedInGetDeclarationShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2697,7 +2900,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass1
@@ -2712,9 +2915,9 @@ End Namespace"
         }
 
         [Fact]
-        public void CA5357RijndaelManagedInFieldDeclarationShouldNotGenerateDiagnostics()
+        public async Task CA5357RijndaelManagedInFieldDeclarationShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2725,7 +2928,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 Namespace TestNamespace
 	Class TestClass
@@ -2734,11 +2937,11 @@ Namespace TestNamespace
 End Namespace"
             );
         }
-        //No VB                    
+        //No VB
         [Fact]
-        public void CA5357RijndaelManagedInLambdaExpressionShouldNotGenerateDiagnostics()
+        public async Task CA5357RijndaelManagedInLambdaExpressionShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 namespace TestNamespace
@@ -2753,11 +2956,11 @@ namespace TestNamespace
 }"
             );
         }
-        //No VB        
+        //No VB
         [Fact]
-        public void CA5357RijndaelManagedInAnonymousMethodExpressionShouldNotGenerateDiagnostics()
+        public async Task CA5357RijndaelManagedInAnonymousMethodExpressionShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 namespace TestNamespace
 {
@@ -2771,9 +2974,14 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void CA5357CreateObjectFromRijndaelDerivedClassShouldNotGenerateDiagnostics()
+        public async Task CA5357CreateObjectFromRijndaelDerivedClassShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(new[] {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 using System.Security.Cryptography;
@@ -2817,10 +3025,17 @@ namespace TestNamespace
             throw new NotImplementedException();
         }
     }
-}" }
-            );
+}"
+                    }
+                }
+            }.RunAsync();
 
-            VerifyBasic(new[] {
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
 //Test0
                 @"
 Imports System.Security.Cryptography
@@ -2854,18 +3069,20 @@ Namespace TestNamespace
 			Throw New NotImplementedException()
 		End Sub
 	End Class
-End Namespace" }
-            );
+End Namespace"
+                    }
+                }
+            }.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureCryptographicAlgorithmsAnalyzer();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureCryptographicAlgorithmsAnalyzer();
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyVB.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

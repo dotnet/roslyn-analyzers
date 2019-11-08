@@ -1,19 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSetSwitch,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSetSwitch,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests
     {
         [Fact]
-        public void DocSample1_CSharp_Violation()
+        public async Task DocSample1_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class ExampleClass
@@ -24,13 +29,13 @@ public class ExampleClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void DocSample1_VB_Violation()
+        public async Task DocSample1_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class ExampleClass
@@ -39,13 +44,13 @@ Public Class ExampleClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true)
     End Sub
 End Class",
-            GetBasicResultAt(7, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetBasicResultAt(7, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution()
+        public async Task DocSample1_CSharp_Solution()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class ExampleClass
@@ -58,9 +63,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution()
+        public async Task DocSample1_VB_Solution()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class ExampleClass
@@ -71,9 +76,9 @@ End Class");
         }
 
         [Fact]
-        public void TestBoolDiagnostic()
+        public async Task TestBoolDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -83,13 +88,13 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void TestEquationDiagnostic()
+        public async Task TestEquationDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -99,13 +104,13 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 + 2 == 3);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void TestConditionalOperatorDiagnostic()
+        public async Task TestConditionalOperatorDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -115,13 +120,13 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 == 1 ? true : false);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void TestWithConstantSwitchNameDiagnostic()
+        public async Task TestWithConstantSwitchNameDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -132,13 +137,13 @@ class TestClass
         AppContext.SetSwitch(constSwitchName, true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void TestBoolNoDiagnostic()
+        public async Task TestBoolNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -151,9 +156,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestEquationNoDiagnostic()
+        public async Task TestEquationNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -166,9 +171,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConditionalOperatorNoDiagnostic()
+        public async Task TestConditionalOperatorNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -181,9 +186,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSwitchNameNullNoDiagnostic()
+        public async Task TestSwitchNameNullNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -197,9 +202,9 @@ class TestClass
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
-        public void TestSwitchNameVariableNoDiagnostic()
+        public async Task TestSwitchNameVariableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -210,14 +215,14 @@ class TestClass
         AppContext.SetSwitch(switchName, true);
     }
 }",
-                GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+                GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         //Ideally, we would generate a diagnostic in this case.
         [Fact]
-        public void TestBoolParseNoDiagnostic()
+        public async Task TestBoolParseNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -234,18 +239,15 @@ class TestClass
         [InlineData("dotnet_code_quality.excluded_symbol_names = ExampleMethod")]
         [InlineData("dotnet_code_quality.CA5378.excluded_symbol_names = ExampleMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = ExampleMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var test = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch")
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class ExampleClass
@@ -255,17 +257,28 @@ public class ExampleClass
         // CA5378 violation
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                test.ExpectedDiagnostics.Add(GetCSharpResultAt(9, 9, "SetSwitch"));
+            }
+
+            await test.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

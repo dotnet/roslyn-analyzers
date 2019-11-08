@@ -1,22 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableHTTPHeaderChecking,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableHTTPHeaderCheckingTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableHTTPHeaderCheckingTests
     {
         [Fact]
-        public void TestLiteralDiagnostic()
+        public async Task TestLiteralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -28,13 +26,13 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = false;
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(10, 9));
         }
 
         [Fact]
-        public void TestConstantDiagnostic()
+        public async Task TestConstantDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -47,13 +45,13 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = flag;
     }
 }",
-            GetCSharpResultAt(11, 9, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestPropertyInitializerDiagnostic()
+        public async Task TestPropertyInitializerDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -67,14 +65,14 @@ class TestClass
         };
     }
 }",
-            GetCSharpResultAt(11, 13, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(11, 13));
         }
 
         //Ideally, we would generate a diagnostic in this case.
         [Fact]
-        public void TestVariableNoDiagnostic()
+        public async Task TestVariableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -90,9 +88,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLiteralNoDiagnostic()
+        public async Task TestLiteralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -107,9 +105,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstantNoDiagnostic()
+        public async Task TestConstantNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -125,9 +123,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestPropertyInitializerNoDiagnostic()
+        public async Task TestPropertyInitializerNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -143,14 +141,8 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotDisableHTTPHeaderChecking();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotDisableHTTPHeaderChecking();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
     }
 }

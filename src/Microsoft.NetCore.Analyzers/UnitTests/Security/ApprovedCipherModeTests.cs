@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.ApprovedCipherModeAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.ApprovedCipherModeAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class ApprovedCipherModeTests : DiagnosticAnalyzerTestBase
+    public class ApprovedCipherModeTests
     {
         [Fact]
-        public void TestECBMode()
+        public async Task TestECBMode()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -22,9 +28,9 @@ class TestClass {
         rijn.Mode  = CipherMode.ECB;
     }
 }",
-            GetCSharpResultAt(9, 22, ApprovedCipherModeAnalyzer.Rule, "ECB"));
+            GetCSharpResultAt(9, 22, "ECB"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Public Module SecurityCenter
@@ -33,13 +39,13 @@ Public Module SecurityCenter
         encripter.Mode = CipherMode.ECB
     End Sub
 End Module",
-            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "ECB"));
+            GetBasicResultAt(7, 26, "ECB"));
         }
 
         [Fact]
-        public void TestOFBMode()
+        public async Task TestOFBMode()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -50,9 +56,9 @@ class TestClass {
         rijn.Mode  = CipherMode.OFB;
     }
 }",
-            GetCSharpResultAt(9, 22, ApprovedCipherModeAnalyzer.Rule, "OFB"));
+            GetCSharpResultAt(9, 22, "OFB"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Public Module SecurityCenter
@@ -61,13 +67,13 @@ Public Module SecurityCenter
         encripter.Mode = CipherMode.OFB
     End Sub
 End Module",
-            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "OFB"));
+            GetBasicResultAt(7, 26, "OFB"));
         }
 
         [Fact]
-        public void TestCFBMode()
+        public async Task TestCFBMode()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -78,9 +84,9 @@ class TestClass {
         rijn.Mode  = CipherMode.CFB;;
     }
 }",
-            GetCSharpResultAt(9, 22, ApprovedCipherModeAnalyzer.Rule, "CFB"));
+            GetCSharpResultAt(9, 22, "CFB"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Public Module SecurityCenter
@@ -89,13 +95,13 @@ Public Module SecurityCenter
         encripter.Mode = CipherMode.CFB
     End Sub
 End Module",
-            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "CFB"));
+            GetBasicResultAt(7, 26, "CFB"));
         }
 
         [Fact]
-        public void TestCBCMode()
+        public async Task TestCBCMode()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -108,7 +114,7 @@ class TestClass {
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Public Module SecurityCenter
@@ -121,9 +127,9 @@ End Module"
         }
 
         [Fact]
-        public void TestCTSMode()
+        public async Task TestCTSMode()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -136,7 +142,7 @@ class TestClass {
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Security.Cryptography
 
 Public Module SecurityCenter
@@ -148,14 +154,14 @@ End Module"
             );
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new ApprovedCipherModeAnalyzer();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new ApprovedCipherModeAnalyzer();
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

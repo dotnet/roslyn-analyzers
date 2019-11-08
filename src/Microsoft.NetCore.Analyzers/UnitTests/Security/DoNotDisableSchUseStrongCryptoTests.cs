@@ -1,14 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSetSwitch,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSetSwitch,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
@@ -47,9 +49,9 @@ End Class",
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution()
+        public async Task DocSample1_CSharp_Solution()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class ExampleClass
@@ -62,9 +64,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution()
+        public async Task DocSample1_VB_Solution()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class ExampleClass
@@ -107,9 +109,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConditionalOperatorDiagnostic()
+        public async Task TestConditionalOperatorDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -119,7 +121,7 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 == 1 ? true : false);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
@@ -140,9 +142,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestBoolNoDiagnostic()
+        public async Task TestBoolNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -155,9 +157,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestEquationNoDiagnostic()
+        public async Task TestEquationNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -170,9 +172,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConditionalOperatorNoDiagnostic()
+        public async Task TestConditionalOperatorNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -185,9 +187,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSwitchNameNullNoDiagnostic()
+        public async Task TestSwitchNameNullNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -219,9 +221,9 @@ class TestClass
 
         //Ideally, we would generate a diagnostic in this case.
         [Fact]
-        public void TestBoolParseNoDiagnostic()
+        public async Task TestBoolParseNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -238,18 +240,15 @@ class TestClass
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.CA5361.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var test = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch")
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System;
 
 class TestClass
@@ -258,8 +257,29 @@ class TestClass
     {
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}",
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                test.ExpectedDiagnostics.Add(GetCSharpResultAt(8, 9, "SetSwitch"));
+            }
+
+            await test.RunAsync();
         }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic(DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic(DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseRSAWithSufficientKeySize,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseRSAWithSufficientKeySizeTests : DiagnosticAnalyzerTestBase
+    public class UseRSAWithSufficientKeySizeTests
     {
         [Fact]
-        public void Issue2697()
+        public async Task Issue2697()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -26,9 +29,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateObjectOfRSADerivedClassWithInt32ParameterDiagnostic()
+        public async Task TestCreateObjectOfRSADerivedClassWithInt32ParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -38,13 +41,13 @@ class TestClass
         var rsaCng = new RSACng(1024);
     }
 }",
-            GetCSharpResultAt(8, 22, UseRSAWithSufficientKeySize.Rule, "RSACng"));
+            GetCSharpResultAt(8, 22, "RSACng"));
         }
 
         [Fact]
-        public void TestConstantDiagnostic()
+        public async Task TestConstantDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -55,13 +58,13 @@ class TestClass
         var rsaCng = new RSACng(keySize);
     }
 }",
-            GetCSharpResultAt(9, 22, UseRSAWithSufficientKeySize.Rule, "RSACng"));
+            GetCSharpResultAt(9, 22, "RSACng"));
         }
 
         [Fact]
-        public void TestCreateWithoutParameterDiagnostic()
+        public async Task TestCreateWithoutParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -71,13 +74,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create();
     }
 }",
-            GetCSharpResultAt(8, 35, UseRSAWithSufficientKeySize.Rule, "RSA"));
+            GetCSharpResultAt(8, 35, "RSA"));
         }
 
         [Fact]
-        public void TestCreateWithRSAArgDiagnostic()
+        public async Task TestCreateWithRSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -87,13 +90,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""RSA"");
     }
 }",
-            GetCSharpResultAt(8, 35, UseRSAWithSufficientKeySize.Rule, "RSA"));
+            GetCSharpResultAt(8, 35, "RSA"));
         }
 
         [Fact]
-        public void TestCreateWithSystemSecurityCryptographyRSAArgDiagnostic()
+        public async Task TestCreateWithSystemSecurityCryptographyRSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -103,13 +106,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""System.Security.Cryptography.RSA"");
     }
 }",
-            GetCSharpResultAt(8, 35, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.RSA"));
+            GetCSharpResultAt(8, 35, "System.Security.Cryptography.RSA"));
         }
 
         [Fact]
-        public void TestCreateWithSystemSecurityCryptographyAsymmetricAlgorithmArgDiagnostic()
+        public async Task TestCreateWithSystemSecurityCryptographyAsymmetricAlgorithmArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -119,13 +122,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""System.Security.Cryptography.AsymmetricAlgorithm"");
     }
 }",
-            GetCSharpResultAt(8, 35, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.AsymmetricAlgorithm"));
+            GetCSharpResultAt(8, 35, "System.Security.Cryptography.AsymmetricAlgorithm"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAArgDiagnostic()
+        public async Task TestCreateFromNameWithRSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -135,13 +138,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""RSA"");
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "RSA"));
+            GetCSharpResultAt(8, 28, "RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyRSAArgDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyRSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -151,13 +154,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.RSA"");
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.RSA"));
+            GetCSharpResultAt(8, 28, "System.Security.Cryptography.RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmArgDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -167,13 +170,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.AsymmetricAlgorithm"");
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.AsymmetricAlgorithm"));
+            GetCSharpResultAt(8, 28, "System.Security.Cryptography.AsymmetricAlgorithm"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAAndKeySize1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithRSAAndKeySize1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -183,13 +186,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""RSA"", 1024);
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "RSA"));
+            GetCSharpResultAt(8, 28, "RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyRSAAndKeySize1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyRSAAndKeySize1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -199,13 +202,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.RSA"", 1024);
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.RSA"));
+            GetCSharpResultAt(8, 28, "System.Security.Cryptography.RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndKeySize1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndKeySize1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -215,13 +218,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.AsymmetricAlgorithm"", 1024);
     }
 }",
-            GetCSharpResultAt(8, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.AsymmetricAlgorithm"));
+            GetCSharpResultAt(8, 28, "System.Security.Cryptography.AsymmetricAlgorithm"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAAndObjectArray1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithRSAAndObjectArray1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -232,13 +235,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""RSA"", new Object[]{1024});
     }
 }",
-            GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "RSA"));
+            GetCSharpResultAt(9, 28, "RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyRSAAndObjectArray1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyRSAAndObjectArray1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -249,13 +252,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.RSA"", new Object[]{1024});
     }
 }",
-            GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.RSA"));
+            GetCSharpResultAt(9, 28, "System.Security.Cryptography.RSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndObjectArray1024ArgsDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndObjectArray1024ArgsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -266,13 +269,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.AsymmetricAlgorithm"", new Object[]{1024});
     }
 }",
-            GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "System.Security.Cryptography.AsymmetricAlgorithm"));
+            GetCSharpResultAt(9, 28, "System.Security.Cryptography.AsymmetricAlgorithm"));
         }
 
         [Fact]
-        public void TestCaseSensitiveDiagnostic()
+        public async Task TestCaseSensitiveDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -283,13 +286,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""system.security.cryptography.asymmetricalgorithm"", new Object[]{1024});
     }
 }",
-            GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "system.security.cryptography.asymmetricalgorithm"));
+            GetCSharpResultAt(9, 28, "system.security.cryptography.asymmetricalgorithm"));
         }
 
         [Fact]
-        public void TestReturnObjectOfRSADerivedClassNoDiagnostic()
+        public async Task TestReturnObjectOfRSADerivedClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -302,9 +305,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateObjectOfRSADerivedClassWithInt32ParameterNoDiagnostic()
+        public async Task TestCreateObjectOfRSADerivedClassWithInt32ParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -317,9 +320,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateObjectOfRSADerivedClassWithoutParameterNoDiagnostic()
+        public async Task TestCreateObjectOfRSADerivedClassWithoutParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -332,14 +335,14 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateObjectOfRSADerivedClassWithCngKeyParameterNoDiagnostic()
+        public async Task TestCreateObjectOfRSADerivedClassWithCngKeyParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(CngKey key)
+    public async Task TestMethod(CngKey key)
     {
         var rsaCng = new RSACng(key);
     }
@@ -347,14 +350,14 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateObjectOfRSADerivedClassWithInt32ParameterUnassignedKeySizeDiagnostic()
+        public async Task TestCreateObjectOfRSADerivedClassWithInt32ParameterUnassignedKeySizeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(int keySize)
+    public async Task TestMethod(int keySize)
     {
         var rsaCng = new RSACng(keySize);
     }
@@ -362,9 +365,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateWithECDsaArgNoDiagnostic()
+        public async Task TestCreateWithECDsaArgNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -377,9 +380,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithECDsaArgNoDiagnostic()
+        public async Task TestCreateFromNameWithECDsaArgNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -392,9 +395,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithECDsaAndKeySize1024ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithECDsaAndKeySize1024ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -407,9 +410,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAAndKeySize2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithRSAAndKeySize2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -422,14 +425,14 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAAndKeySizeArgsUnassignedKeySizeNoDiagnostic()
+        public async Task TestCreateFromNameWithRSAAndKeySizeArgsUnassignedKeySizeNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(int keySize)
+    public async Task TestMethod(int keySize)
     {
         var cryptoConfig = CryptoConfig.CreateFromName(""RSA"", keySize);
     }
@@ -437,9 +440,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyRSAAndKeySize2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyRSAAndKeySize2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -452,9 +455,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndKeySize2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndKeySize2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -467,9 +470,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithECDsaAndObjectArray1024ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithECDsaAndObjectArray1024ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -483,9 +486,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithRSAAndObjectArray2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithRSAAndObjectArray2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -499,9 +502,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyRSAAndObjectArray2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyRSAAndObjectArray2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -515,9 +518,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndObjectArray2048ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyAsymmetricAlgorithmAndObjectArray2048ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -531,28 +534,23 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnVoidNoDiagnostic()
+        public async Task TestReturnVoidNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(RSA rsa)
+    public async Task TestMethod(RSA rsa)
     {
         return;
     }
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseRSAWithSufficientKeySize();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseRSAWithSufficientKeySize();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

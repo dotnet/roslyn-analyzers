@@ -1,12 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableCertificateValidation,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableCertificateValidation,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
@@ -246,9 +250,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLambdaNoDiagnostic()
+        public async Task TestLambdaNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -261,9 +265,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLambdaWithLiteralValueNoDiagnostic()
+        public async Task TestLambdaWithLiteralValueNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -276,9 +280,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestAnonymousMethodNoDiagnostic()
+        public async Task TestAnonymousMethodNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -291,9 +295,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationLocalFunctionNoDiagnostic()
+        public async Task TestDelegateCreationLocalFunctionNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -322,9 +326,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationNoDiagnostic()
+        public async Task TestDelegateCreationNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -350,7 +354,7 @@ class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Net.Security
 Imports System.Security.Cryptography.X509Certificates
@@ -371,9 +375,9 @@ End Module");
         }
 
         [Fact]
-        public void TestDelegateCreationNoDiagnostic2()
+        public async Task TestDelegateCreationNoDiagnostic2()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -396,9 +400,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationNormalMethodWithLambdaNoDiagnostic()
+        public async Task TestDelegateCreationNormalMethodWithLambdaNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -419,9 +423,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationFromLocalFromLocalNoDiagnostic()
+        public async Task TestDelegateCreationFromLocalFromLocalNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -456,7 +460,7 @@ class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Net.Security
 Imports System.Security.Cryptography.X509Certificates
@@ -477,9 +481,9 @@ End Module");
         }
 
         [Fact]
-        public void TestDelegateCreationFromLocalFromLocal2NoDiagnostic()
+        public async Task TestDelegateCreationFromLocalFromLocal2NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -522,6 +526,14 @@ class TestClass
     }
 }");
         }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
+
+        private DiagnosticResult GetBasicResultAt(int line, int column)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

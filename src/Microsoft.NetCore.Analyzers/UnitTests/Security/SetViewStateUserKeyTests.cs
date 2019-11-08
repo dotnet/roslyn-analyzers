@@ -1,22 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKey,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.SetViewStateUserKey,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class SetViewStateUserKeyTests : DiagnosticAnalyzerTestBase
+    public class SetViewStateUserKeyTests
     {
         [Fact]
-        public void TestSubclassWithoutOnInitMethodDiagnostic()
+        public async Task TestSubclassWithoutOnInitMethodDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -27,9 +28,9 @@ class TestClass : Page
         ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Web.UI
 
@@ -39,13 +40,13 @@ class TestClass
         ViewStateUserKey = ""ViewStateUserKey""
     End Sub
 End Class",
-            GetBasicResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetBasicResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestOverrideModifierWithoutSettingViewStateUserKeyDiagnostic()
+        public async Task TestOverrideModifierWithoutSettingViewStateUserKeyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -55,9 +56,9 @@ class TestClass : Page
     {
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Web.UI
 
@@ -66,13 +67,13 @@ class TestClass
     protected Sub OnInit (ByVal e As EventArgs)
     End Sub
 End Class",
-            GetBasicResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetBasicResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestNewModifierWithoutSettingViewStateUserKeyDiagnostic()
+        public async Task TestNewModifierWithoutSettingViewStateUserKeyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -82,13 +83,13 @@ class TestClass : Page
     {
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestNoModifierWithoutSettingViewStateUserKeyDiagnostic()
+        public async Task TestNoModifierWithoutSettingViewStateUserKeyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -98,13 +99,13 @@ class TestClass : Page
     {
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestOverloadOnInitWithSettingViewStateUserKeyDiagnostic()
+        public async Task TestOverloadOnInitWithSettingViewStateUserKeyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -115,13 +116,13 @@ class TestClass : Page
         ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestStaticMethodWithSettingViewStateUserKeyDiagnostic()
+        public async Task TestStaticMethodWithSettingViewStateUserKeyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -133,13 +134,13 @@ class TestClass : Page
         testClass.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestSubclassWithSettingPropertyOfLocalObjectDiagnostic()
+        public async Task TestSubclassWithSettingPropertyOfLocalObjectDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -151,13 +152,13 @@ class TestClass : Page
         testClass.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestSubclassWithSettingPropertyOfWrongClassDiagnostic()
+        public async Task TestSubclassWithSettingPropertyOfWrongClassDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -175,13 +176,13 @@ class TestClass : Page
         _field.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(10, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(10, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestSubclassWithSettingWrongPropertyDiagnostic()
+        public async Task TestSubclassWithSettingWrongPropertyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -194,13 +195,13 @@ class TestClass : Page
         ViewStateUserKey = 123;
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestSettingPropertyOfLocalObjectInPage_InitDiagnostic()
+        public async Task TestSettingPropertyOfLocalObjectInPage_InitDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -212,13 +213,13 @@ class TestClass : Page
         testClass.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TesthSettingPropertyOfWrongClassInPage_InitDiagnostic()
+        public async Task TesthSettingPropertyOfWrongClassInPage_InitDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -236,13 +237,13 @@ class TestClass : Page
         _field.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(10, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(10, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestWithSettingWrongPropertyInPage_InitDiagnostic()
+        public async Task TestWithSettingWrongPropertyInPage_InitDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -255,13 +256,13 @@ class TestClass : Page
         ViewStateUserKey = 123;
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestInPage_InitWithObjectParameterDiagnostic()
+        public async Task TestInPage_InitWithObjectParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -272,13 +273,13 @@ class TestClass : Page
         ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestInPage_InitWithStringReturnTypeDiagnostic()
+        public async Task TestInPage_InitWithStringReturnTypeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -290,13 +291,13 @@ class TestClass : Page
         return ViewStateUserKey;
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestNeitherOnInitNorInPage_InitNoDiagnostic()
+        public async Task TestNeitherOnInitNorInPage_InitNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -310,13 +311,13 @@ class TestClass : Page
     {
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestNewPageDiagnostic()
+        public async Task TestNewPageDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -329,13 +330,13 @@ class TestClass : Page
         Page.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestOverridePageDiagnostic()
+        public async Task TestOverridePageDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -348,13 +349,13 @@ class TestClass : Page
         Page.ViewStateUserKey = ""ViewStateUserKey"";
     }
 }",
-            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+            GetCSharpResultAt(5, 7, "TestClass"));
         }
 
         [Fact]
-        public void TestSubclassWithSettingViewStateUserKeyNoDiagnostic()
+        public async Task TestSubclassWithSettingViewStateUserKeyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -368,9 +369,9 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestNewModifierNoDiagnostic()
+        public async Task TestNewModifierNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -384,9 +385,9 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestWithoutModifierNoDiagnostic()
+        public async Task TestWithoutModifierNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -400,9 +401,9 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestOrdinaryClassWithSettingViewStateUserKeyNoDiagnostic()
+        public async Task TestOrdinaryClassWithSettingViewStateUserKeyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -417,9 +418,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSettingViewStateUserKeyInPage_InitNoDiagnostic()
+        public async Task TestSettingViewStateUserKeyInPage_InitNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -433,9 +434,9 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestBothOnInitAndInPage_InitNoDiagnostic()
+        public async Task TestBothOnInitAndInPage_InitNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -454,9 +455,9 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestNotAPage_NoDiagnostic()
+        public async Task TestNotAPage_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -475,9 +476,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestInterface_NoDiagnostic()
+        public async Task TestInterface_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -492,9 +493,9 @@ interface ITestInterface
         }
 
         [Fact]
-        public void TestSettingViewStateUserKeyOfPageNoDiagnostic()
+        public async Task TestSettingViewStateUserKeyOfPageNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Web.UI;
 
@@ -507,14 +508,14 @@ class TestClass : Page
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SetViewStateUserKey();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SetViewStateUserKey();
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

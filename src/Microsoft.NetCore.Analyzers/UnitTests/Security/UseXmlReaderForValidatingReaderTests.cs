@@ -1,77 +1,70 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForValidatingReader,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseXmlReaderForValidatingReaderTests : DiagnosticAnalyzerTestBase
+    public class UseXmlReaderForValidatingReaderTests
     {
         [Fact]
-        public void TestStreamAndXmlNodeTypeAndXmlParseContextParametersDiagnostic()
+        public async Task TestStreamAndXmlNodeTypeAndXmlParseContextParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
 
 class TestClass
 {
-    public void TestMethod(Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
+    public async Task TestMethod(Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
     {
         var obj = new XmlValidatingReader(xmlFragment, fragType, context);
     }
 }",
-            GetCSharpResultAt(10, 19, UseXmlReaderForValidatingReader.RealRule, "XmlValidatingReader", "XmlValidatingReader"));
+            GetCSharpResultAt(10, 19, "XmlValidatingReader", "XmlValidatingReader"));
         }
 
         [Fact]
-        public void TestStringAndXmlNodeTypeAndXmlParseContextParametersDiagnostic()
+        public async Task TestStringAndXmlNodeTypeAndXmlParseContextParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
 class TestClass
 {
-    public void TestMethod(string xmlFragment, XmlNodeType fragType, XmlParserContext context)
+    public async Task TestMethod(string xmlFragment, XmlNodeType fragType, XmlParserContext context)
     {
         var obj = new XmlValidatingReader(xmlFragment, fragType, context);
     }
 }",
-            GetCSharpResultAt(9, 19, UseXmlReaderForValidatingReader.RealRule, "XmlValidatingReader", "XmlValidatingReader"));
+            GetCSharpResultAt(9, 19, "XmlValidatingReader", "XmlValidatingReader"));
         }
 
         [Fact]
-        public void TestXmlReaderParameterNoDiagnostic()
+        public async Task TestXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
 class TestClass
 {
-    public void TestMethod(XmlReader xmlReader)
+    public async Task TestMethod(XmlReader xmlReader)
     {
         var obj = new XmlValidatingReader(xmlReader);
     }
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForValidatingReader();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForValidatingReader();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

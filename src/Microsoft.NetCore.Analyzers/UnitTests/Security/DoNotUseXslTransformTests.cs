@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseXslTransform,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseXslTransformTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseXslTransformTests
     {
         [Fact]
-        public void TestConstructXslTransformDiagnostic()
+        public async Task TestConstructXslTransformDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Xsl;
 
@@ -22,13 +25,13 @@ class TestClass
         new XslTransform();
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseXslTransform.Rule));
+            GetCSharpResultAt(9, 9));
         }
 
         [Fact]
-        public void TestConstructNormalClassNoDiagnostic()
+        public async Task TestConstructNormalClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Xsl;
 
@@ -42,29 +45,23 @@ class TestClass
         }
 
         [Fact]
-        public void TestInvokeMethodOfXslTransformNoDiagnostic()
+        public async Task TestInvokeMethodOfXslTransformNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Xsl;
 
 class TestClass
 {
-    public void TestMethod(XslTransform xslTransform)
+    public async Task TestMethod(XslTransform xslTransform)
     {
         xslTransform.Load(""url"");
     }
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseXslTransform();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseXslTransform();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
     }
 }

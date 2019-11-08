@@ -1,53 +1,59 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForDeserialize,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForDeserialize,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseXmlReaderForDeserializeTests : DiagnosticAnalyzerTestBase
+    public class UseXmlReaderForDeserializeTests
     {
         [Fact]
-        public void TestDeserializeWithStreamParameterDiagnostic()
+        public async Task TestDeserializeWithStreamParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(Stream stream)
+    public async Task TestMethod(Stream stream)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(stream);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
+            GetCSharpResultAt(10, 9, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
-        public void TestDeserializeWithTextReaderParameterDiagnostic()
+        public async Task TestDeserializeWithTextReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(TextReader textReader)
+    public async Task TestMethod(TextReader textReader)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(textReader);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
+            GetCSharpResultAt(10, 9, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
-        public void TestBaseClassInvokesDeserializeWithXmlSerializationReaderParameterDiagnostic()
+        public async Task TestBaseClassInvokesDeserializeWithXmlSerializationReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.Serialization;
@@ -59,9 +65,9 @@ class TestClass : XmlSerializer
         return base.Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(10, 16, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
+            GetCSharpResultAt(10, 16, "XmlSerializer", "Deserialize"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -72,13 +78,13 @@ Class TestClass
         Deserialize = MyBase.Deserialize(xmlSerializationReader)
     End Function
 End Class",
-            GetBasicResultAt(9, 23, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
+            GetBasicResultAt(9, 23, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
-        public void TesDerivedClassInvokesDeserializeWithXmlSerializationReaderParameterDiagnostic()
+        public async Task TesDerivedClassInvokesDeserializeWithXmlSerializationReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.Serialization;
@@ -90,14 +96,14 @@ class TestClass : XmlSerializer
         return new TestClass();
     }
 
-    public void TestMethod(XmlSerializationReader xmlSerializationReader)
+    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(15, 9, UseXmlReaderForDeserialize.RealRule, "TestClass", "Deserialize"));
+            GetCSharpResultAt(15, 9, "TestClass", "Deserialize"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -112,13 +118,13 @@ Class TestClass
         Deserialize(xmlSerializationReader)
     End Sub
 End Class",
-            GetBasicResultAt(13, 9, UseXmlReaderForDeserialize.RealRule, "TestClass", "Deserialize"));
+            GetBasicResultAt(13, 9, "TestClass", "Deserialize"));
         }
 
         [Fact]
-        public void TestWithTwoLevelsOfInheritanceAndOverridesDiagnostic()
+        public async Task TestWithTwoLevelsOfInheritanceAndOverridesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.Serialization;
@@ -138,18 +144,18 @@ class SubTestClass : TestClass
         return new TestClass();
     }
 
-    public void TestMethod(XmlSerializationReader xmlSerializationReader)
+    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(23, 9, UseXmlReaderForDeserialize.RealRule, "SubTestClass", "Deserialize"));
+            GetCSharpResultAt(23, 9, "SubTestClass", "Deserialize"));
         }
 
         [Fact]
-        public void TestDeserializeWithXmlReaderParameterNoDiagnostic()
+        public async Task TestDeserializeWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
@@ -157,7 +163,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(XmlReader xmlReader)
+    public async Task TestMethod(XmlReader xmlReader)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader);
     }
@@ -165,9 +171,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDeserializeWithXmlReaderAndStringParametersNoDiagnostic()
+        public async Task TestDeserializeWithXmlReaderAndStringParametersNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
@@ -175,7 +181,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(XmlReader xmlReader, string str)
+    public async Task TestMethod(XmlReader xmlReader, string str)
     {
         var xmlSerializer = new XmlSerializer(typeof(TestClass));
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, str);
@@ -184,9 +190,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDeserializeWithXmlReaderAndXmlDeserializationEventsParametersNoDiagnostic()
+        public async Task TestDeserializeWithXmlReaderAndXmlDeserializationEventsParametersNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
@@ -194,7 +200,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(XmlReader xmlReader, XmlDeserializationEvents xmlDeserializationEvents)
+    public async Task TestMethod(XmlReader xmlReader, XmlDeserializationEvents xmlDeserializationEvents)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, xmlDeserializationEvents);
     }
@@ -202,9 +208,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDeserializeWithXmlReaderAndStringAndXmlDeserializationEventsParametersNoDiagnostic()
+        public async Task TestDeserializeWithXmlReaderAndStringAndXmlDeserializationEventsParametersNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
@@ -212,7 +218,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public void TestMethod(XmlReader xmlReader, string str, XmlDeserializationEvents xmlDeserializationEvents)
+    public async Task TestMethod(XmlReader xmlReader, string str, XmlDeserializationEvents xmlDeserializationEvents)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, str, xmlDeserializationEvents);
     }
@@ -220,9 +226,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDerivedFromANormalClassNoDiagnostic()
+        public async Task TestDerivedFromANormalClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -244,7 +250,7 @@ class SubTestClass : TestClass
         return new SubTestClass();
     }
 
-    public void TestMethod(XmlSerializationReader xmlSerializationReader)
+    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
@@ -252,9 +258,9 @@ class SubTestClass : TestClass
         }
 
         [Fact]
-        public void TestNormalClassReadXmlWithXmlReaderParameterNoDiagnostic()
+        public async Task TestNormalClassReadXmlWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -268,21 +274,21 @@ class TestClass
         return new TestClass();
     }
 
-    public void TestMethod(XmlSerializationReader xmlSerializationReader)
+    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         new TestClass().Deserialize(xmlSerializationReader);
     }
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForDeserialize();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForDeserialize();
-        }
+        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

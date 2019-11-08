@@ -1,23 +1,28 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseCreateEncryptorWithNonDefaultIV,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PropertySetAnalysis)]
-    public class DoNotUseCreateEncryptorWithNonDefaultIVTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseCreateEncryptorWithNonDefaultIVTests
     {
         [Fact]
-        public void Test_CreateEncryptorWithoutParameter_NonDefaultIV_Diagnostic()
+        public async Task Test_CreateEncryptorWithoutParameter_NonDefaultIV_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(byte[] rgbIV)
+    public async Task TestMethod(byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         aesCng.IV = rgbIV;
@@ -28,9 +33,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_CreateEncryptorWithoutParameter_NonDefaultIV_DefinitelyNotNull_Diagnostic()
+        public async Task Test_CreateEncryptorWithoutParameter_NonDefaultIV_DefinitelyNotNull_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -47,15 +52,15 @@ class TestClass
         }
 
         [Fact]
-        public void Test_CreateEncryptorWithoutParameter_MaybeNonDefaultIV_MaybeDiagnostic()
+        public async Task Test_CreateEncryptorWithoutParameter_MaybeNonDefaultIV_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(byte[] rgbIV)
+    public async Task TestMethod(byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         Random r = new Random();
@@ -72,14 +77,14 @@ class TestClass
         }
 
         [Fact]
-        public void Test_CreateEncryptorWithByteArrayAndByteArrayParameters_DefinitelyDiagnostic()
+        public async Task Test_CreateEncryptorWithByteArrayAndByteArrayParameters_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(byte[] rgbKey, byte[] rgbIV)
+    public async Task TestMethod(byte[] rgbKey, byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         aesCng.CreateEncryptor(rgbKey, rgbIV);
@@ -88,9 +93,9 @@ class TestClass
             GetCSharpResultAt(9, 9, DoNotUseCreateEncryptorWithNonDefaultIV.DefinitelyUseCreateEncryptorWithNonDefaultIVRule, "CreateEncryptor"));
         }
         [Fact]
-        public void Test_CreateEncryptorWithoutParameter_DefaultIV_NoDiagnostic()
+        public async Task Test_CreateEncryptorWithoutParameter_DefaultIV_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -103,14 +108,9 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseCreateEncryptorWithNonDefaultIV();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseCreateEncryptorWithNonDefaultIV();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

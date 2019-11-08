@@ -61,7 +61,7 @@ namespace ReleaseNotesUtil
             string oldRulesJsonPath,
             string newRulesJsonPath,
             string outputPath,
-            string latestRulesJsonPath = null)
+            string? latestRulesJsonPath = null)
         {
             RuleFileContent oldContent = ReadRuleFileContent(oldRulesJsonPath);
             RuleFileContent newContent = ReadRuleFileContent(newRulesJsonPath);
@@ -69,7 +69,7 @@ namespace ReleaseNotesUtil
             // If we have the latest rules, we can backfill missing help link URLs.
             if (!string.IsNullOrWhiteSpace(latestRulesJsonPath))
             {
-                RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
+                RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath!);
                 Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
                 foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
                 {
@@ -124,7 +124,7 @@ namespace ReleaseNotesUtil
             IEnumerable<RuleInfo> sortedRules = rules.OrderBy(r => r, CategoryThenIdComparer.Instance);
 
             sb.AppendLine(heading);
-            string previousCategory = null;
+            string? previousCategory = null;
             foreach (RuleInfo rule in sortedRules)
             {
                 if (rule.Category != previousCategory)
@@ -147,7 +147,7 @@ namespace ReleaseNotesUtil
             IEnumerable<RuleInfo> sortedRules = rules.OrderBy(r => r, CategoryThenIdComparer.Instance);
 
             sb.AppendLine(heading);
-            string previousCategory = null;
+            string? previousCategory = null;
             foreach (RuleInfo rule in sortedRules)
             {
                 if (rule.Category != previousCategory)

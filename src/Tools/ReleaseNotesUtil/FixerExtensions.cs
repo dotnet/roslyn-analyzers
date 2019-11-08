@@ -23,7 +23,7 @@ namespace ReleaseNotesUtil
                 return ImmutableArray<CodeFixProvider>.Empty;
             }
 
-            ImmutableArray<CodeFixProvider>.Builder builder = null;
+            ImmutableArray<CodeFixProvider>.Builder? builder = null;
 
             try
             {
@@ -67,8 +67,8 @@ namespace ReleaseNotesUtil
         private static bool HasImplementation(CodeFixProvider fixer)
         {
             MethodInfo method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
-            AsyncStateMachineAttribute stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
-            MethodInfo moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
+            AsyncStateMachineAttribute? stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
+            MethodInfo? moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
             if (moveNextMethod != null)
             {
                 MethodBody body = moveNextMethod.GetMethodBody();
@@ -80,7 +80,7 @@ namespace ReleaseNotesUtil
             // {
             //     return Task.CompletedTask;
             // }
-            byte[] methodBodyIL = method?.GetMethodBody()?.GetILAsByteArray();
+            byte[]? methodBodyIL = method?.GetMethodBody()?.GetILAsByteArray();
             if (methodBodyIL != null
                 && methodBodyIL.Length == 6
                 && methodBodyIL[0] == 0x28    // call <method>
@@ -92,7 +92,7 @@ namespace ReleaseNotesUtil
                 }
 
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
-                MethodBase calledMethod = method.Module.ResolveMethod(metadataToken);
+                MethodBase calledMethod = method!.Module.ResolveMethod(metadataToken);
                 if (calledMethod != null
                     && calledMethod.DeclaringType.FullName == "System.Threading.Tasks.Task"
                     && calledMethod.Name == "get_CompletedTask")

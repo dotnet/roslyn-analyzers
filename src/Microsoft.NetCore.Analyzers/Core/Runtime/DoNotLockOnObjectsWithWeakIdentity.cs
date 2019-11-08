@@ -47,27 +47,50 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                Compilation compilation = compilationStartContext.Compilation;
+                var compilation = compilationStartContext.Compilation;
+
+                compilationStartContext.RegisterOperationAction(
+                    context => ReportOnWeakIdentityObject(((ILockOperation)context.Operation).LockedValue, context),
+                    OperationKind.Lock);
+
                 compilationStartContext.RegisterOperationAction(context =>
                 {
-                    var lockStatement = (ILockOperation)context.Operation;
+                    var invocationOperation = (IInvocationOperation)context.Operation;
+                    var method = invocationOperation.TargetMethod;
 
-                    if (lockStatement.LockedValue is IInstanceReferenceOperation instanceReference &&
-                        instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                    if ((method.Name != "Enter" && method.Name != "TryEnter") ||
+                        invocationOperation.Arguments.Length == 0)
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, lockStatement.LockedValue.Syntax.ToString()));
+                        return;
                     }
-                    else
+
+                    var monitorType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor);
+                    if (monitorType != null &&
+                        method.ContainingType.Equals(monitorType) &&
+                        invocationOperation.Arguments[0]?.Value is IConversionOperation conversionOperation)
                     {
-                        ITypeSymbol type = lockStatement.LockedValue?.Type;
-                        if (type != null && TypeHasWeakIdentity(type, compilation))
-                        {
-                            context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
-                        }
+                        ReportOnWeakIdentityObject(conversionOperation?.Operand, context);
                     }
                 },
-                OperationKind.Lock);
+                OperationKind.Invocation);
             });
+        }
+
+        private static void ReportOnWeakIdentityObject(IOperation operation, OperationAnalysisContext context)
+        {
+            if (operation is IInstanceReferenceOperation instanceReference &&
+                instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+            {
+                context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule, operation.Syntax.ToString()));
+            }
+            else
+            {
+                var type = operation?.Type;
+                if (type != null && TypeHasWeakIdentity(type, context.Compilation))
+                {
+                    context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                }
+            }
         }
 
         private static bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)

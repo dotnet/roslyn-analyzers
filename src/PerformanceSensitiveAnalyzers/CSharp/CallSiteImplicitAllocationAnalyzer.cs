@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers;
 
 namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class CallSiteImplicitAllocationAnalyzer : AbstractAllocationAnalyzer
     {
         public const string ParamsParameterRuleId = "HAA0101";
@@ -61,12 +61,12 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                 }
             }
 
-            if (invocation.Arguments.Length > 0)
+            for (int i = invocation.Arguments.Length - 1; i >= 0; i--)
             {
-                var lastArgument = invocation.Arguments[invocation.Arguments.Length - 1];
-                if (lastArgument.ArgumentKind == ArgumentKind.ParamArray && lastArgument.IsImplicit)
+                if (invocation.Arguments[i].ArgumentKind == ArgumentKind.ParamArray && invocation.Arguments[i].IsImplicit)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(ParamsParameterRule, invocation.Syntax.GetLocation(), EmptyMessageArgs));
+                    return;
                 }
             }
         }

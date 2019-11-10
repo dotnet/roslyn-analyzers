@@ -149,5 +149,97 @@ public class MyClass
                 // Test0.cs(12,9): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
                 VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule).WithLocation(12, 9));
         }
+
+        [Fact]
+        public async Task CallSiteImplicitAllocation_ObjectParamsCalledWithStringArray_NoWarning()
+        {
+            var sampleProgram = @"
+using System.IO;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string[] args = new [] { ""foo"", ""bar""};
+        string formatted = string.Format(""{0} {1}"", args);
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
+        [Fact]
+        public async Task CallSiteImplicitAllocation_CallingConstructorWithParams_Warning()
+        {
+            var sampleProgram = @"
+using System.IO;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public MyClass()
+        : this(""foo"", ""bar"")
+    {
+    }
+
+    public MyClass(params object[] args)
+    {
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(9, 9));
+        }
+
+        [Fact]
+        public async Task CallSiteImplicitAllocation_NamedParamsParameter_Warning()
+        {
+            var sampleProgram = @"
+using System.IO;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        A(args: """");
+    }
+
+    public void A(string x = """", params object[] args)
+    {
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(10, 9));
+        }
+
+        [Fact]
+        public async Task CallSiteImplicitAllocation_ParamsWithValueTuple_Warning()
+        {
+            var sampleProgram = @"
+using System.IO;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        A((""1"", 1), (""2"", 2));
+    }
+
+    public void A(params (string x, int y)[] args)
+    {
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(10, 9));
+        }
     }
 }

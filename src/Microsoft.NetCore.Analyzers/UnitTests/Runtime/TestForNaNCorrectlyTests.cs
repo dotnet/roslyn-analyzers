@@ -250,7 +250,8 @@ public class A
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code);
+            await VerifyCS.VerifyAnalyzerAsync(code,
+                DiagnosticResult.CompilerError("CS0117").WithLocation(6, 27).WithMessage("'float' does not contain a definition for 'NbN'"));
         }
 
         [Fact]
@@ -263,7 +264,8 @@ Public Class A
     End Function
 End Class
 ";
-            await VerifyVB.VerifyAnalyzerAsync(code);
+            await VerifyVB.VerifyAnalyzerAsync(code,
+                DiagnosticResult.CompilerError("BC30456").WithLocation(4, 27).WithMessage("'NbN' is not a member of 'Single'."));
         }
 
         [Fact]

@@ -342,7 +342,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(CngKey key)
+    public void TestMethod(CngKey key)
     {
         var rsaCng = new RSACng(key);
     }
@@ -357,7 +357,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(int keySize)
+    public void TestMethod(int keySize)
     {
         var rsaCng = new RSACng(keySize);
     }
@@ -432,7 +432,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(int keySize)
+    public void TestMethod(int keySize)
     {
         var cryptoConfig = CryptoConfig.CreateFromName(""RSA"", keySize);
     }
@@ -541,7 +541,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(RSA rsa)
+    public void TestMethod(RSA rsa)
     {
         return;
     }

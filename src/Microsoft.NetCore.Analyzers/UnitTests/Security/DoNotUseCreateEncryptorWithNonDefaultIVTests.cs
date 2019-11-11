@@ -22,7 +22,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] rgbIV)
+    public void TestMethod(byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         aesCng.IV = rgbIV;
@@ -60,7 +60,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] rgbIV)
+    public void TestMethod(byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         Random r = new Random();
@@ -84,7 +84,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] rgbKey, byte[] rgbIV)
+    public void TestMethod(byte[] rgbKey, byte[] rgbIV)
     {
         var aesCng  = new AesCng();
         aesCng.CreateEncryptor(rgbKey, rgbIV);

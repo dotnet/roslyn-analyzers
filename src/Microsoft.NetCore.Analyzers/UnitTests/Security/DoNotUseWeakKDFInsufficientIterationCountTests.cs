@@ -22,7 +22,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -39,7 +39,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100;
@@ -58,7 +58,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var iterations = 100;
         Random r = new Random();
@@ -84,7 +84,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100;
@@ -109,7 +109,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100;
@@ -132,7 +132,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = GetRfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -157,7 +157,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, int saltSize, int cb)
+    public void TestMethod(string password, int saltSize, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltSize);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -174,7 +174,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, 100);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -191,7 +191,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int cb)
+    public void TestMethod(byte[] password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, 100);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -208,7 +208,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, int saltSize, int cb)
+    public void TestMethod(string password, int saltSize, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltSize, 100);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -225,7 +225,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, HashAlgorithmName hashAlgorithm, int cb)
+    public void TestMethod(byte[] password, byte[] salt, HashAlgorithmName hashAlgorithm, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, 100, hashAlgorithm);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -242,7 +242,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, HashAlgorithmName hashAlgorithm, int cb)
+    public void TestMethod(string password, byte[] salt, HashAlgorithmName hashAlgorithm, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, 100, hashAlgorithm);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -259,7 +259,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, int saltSize, HashAlgorithmName hashAlgorithm, int cb)
+    public void TestMethod(string password, int saltSize, HashAlgorithmName hashAlgorithm, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltSize, 100, hashAlgorithm);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -276,7 +276,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100000;
@@ -293,7 +293,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100000;
@@ -315,7 +315,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = GetRfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -339,7 +339,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, int cb)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -355,7 +355,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, int cb)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, 100000);
         rfc2898DeriveBytes.GetBytes(cb);
@@ -382,7 +382,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
         rfc2898DeriveBytes.IterationCount = 100;

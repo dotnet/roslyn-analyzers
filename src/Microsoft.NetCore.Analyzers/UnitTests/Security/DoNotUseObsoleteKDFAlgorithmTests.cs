@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(PasswordDeriveBytes passwordDeriveBytes)
+    public void TestMethod(PasswordDeriveBytes passwordDeriveBytes)
     {
         passwordDeriveBytes.GetBytes(1);
     }
@@ -44,7 +44,7 @@ class DerivedClass : PasswordDeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
         derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
@@ -61,7 +61,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
         rfc2898DeriveBytes.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
@@ -85,7 +85,7 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
         derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
@@ -102,7 +102,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes)
+    public void TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes)
     {
         rfc2898DeriveBytes.GetBytes(1);
     }
@@ -118,7 +118,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt)
+    public void TestMethod(string password, byte[] salt)
     {
         new Rfc2898DeriveBytes(password, salt);
     }
@@ -134,7 +134,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt)
+    public void TestMethod(string password, byte[] salt)
     {
         new PasswordDeriveBytes(password, salt);
     }
@@ -162,7 +162,7 @@ class DerivedClass : PasswordDeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt, int cb)
+    public void TestMethod(string password, byte[] salt, int cb)
     {
         new DerivedClass(password, salt).GetBytes(cb);
     }

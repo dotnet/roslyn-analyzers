@@ -67,7 +67,7 @@ using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
-    public async Task TestMethod(StoreName storeName)
+    public void TestMethod(StoreName storeName)
     {
         Random r = new Random();
 
@@ -202,7 +202,7 @@ class TestClass
         TestMethod2(x509Store); 
     }
 
-    public async Task TestMethod2(X509Store x509Store)
+    public void TestMethod2(X509Store x509Store)
     {
         x509Store.Add(new X509Certificate2());
     }
@@ -320,7 +320,7 @@ using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
-    public async Task TestMethod(StoreName storeName)
+    public void TestMethod(StoreName storeName)
     {
         var x509Store = new X509Store(storeName);
         x509Store.Add(new X509Certificate2());
@@ -337,7 +337,7 @@ using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
-    public async Task TestMethod(StoreName storeName)
+    public void TestMethod(StoreName storeName)
     {
         Random r = new Random();
 
@@ -367,7 +367,7 @@ class TestClass
         TestMethod2(x509Store); 
     }
 
-    public async Task TestMethod2(X509Store x509Store)
+    public void TestMethod2(X509Store x509Store)
     {
         x509Store.Add(new X509Certificate2());
     }

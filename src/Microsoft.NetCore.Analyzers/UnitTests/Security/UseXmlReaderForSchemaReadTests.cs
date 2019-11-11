@@ -21,7 +21,7 @@ using System.Xml.Schema;
 
 class TestClass
 {
-    public async Task TestMethod(Stream stream, ValidationEventHandler validationEventHandler)
+    public void TestMethod(Stream stream, ValidationEventHandler validationEventHandler)
     {
         XmlSchema.Read(stream, validationEventHandler);
     }
@@ -39,7 +39,7 @@ using System.Xml.Schema;
 
 class TestClass
 {
-    public async Task TestMethod(TextReader reader, ValidationEventHandler validationEventHandler)
+    public void TestMethod(TextReader reader, ValidationEventHandler validationEventHandler)
     {
         XmlSchema.Read(reader, validationEventHandler);
     }
@@ -57,7 +57,7 @@ using System.Xml.Schema;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader reader, ValidationEventHandler validationEventHandler)
+    public void TestMethod(XmlReader reader, ValidationEventHandler validationEventHandler)
     {
         XmlSchema.Read(reader, validationEventHandler);
     }

@@ -22,7 +22,7 @@ using System;
 
 class TestClass
 {
-    public async Task TestMethod(Random random)
+    public void TestMethod(Random random)
     {
         var sensitiveVariable = random.Next();
     }
@@ -49,7 +49,7 @@ using System;
 
 class TestClass
 {
-    public async Task TestMethod(Random random)
+    public void TestMethod(Random random)
     {
         var sensitiveVariable = random.NextDouble();
     }
@@ -76,7 +76,7 @@ using System;
 
 class TestClass
 {
-    public async Task TestMethod(Random random)
+    public void TestMethod(Random random)
     {
         var hashCode = random.GetHashCode();
     }

@@ -21,7 +21,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(Stream stream)
+    public void TestMethod(Stream stream)
     {
         var obj = new XPathDocument(stream);
     }
@@ -38,7 +38,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(string uri)
+    public void TestMethod(string uri)
     {
         var obj = new XPathDocument(uri);
     }
@@ -56,7 +56,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(string uri, XmlSpace space)
+    public void TestMethod(string uri, XmlSpace space)
     {
         var obj = new XPathDocument(uri, space);
     }
@@ -74,7 +74,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(TextReader reader)
+    public void TestMethod(TextReader reader)
     {
         var obj = new XPathDocument(reader);
     }
@@ -92,7 +92,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader reader)
+    public void TestMethod(XmlReader reader)
     {
         var obj = new XPathDocument(reader);
     }
@@ -109,7 +109,7 @@ using System.Xml.XPath;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader reader, XmlSpace space)
+    public void TestMethod(XmlReader reader, XmlSpace space)
     {
         var obj = new XPathDocument(reader, space);
     }

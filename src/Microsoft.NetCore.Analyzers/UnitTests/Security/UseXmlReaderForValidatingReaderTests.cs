@@ -21,7 +21,7 @@ using System.Xml;
 
 class TestClass
 {
-    public async Task TestMethod(Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
+    public void TestMethod(Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
     {
         var obj = new XmlValidatingReader(xmlFragment, fragType, context);
     }
@@ -38,7 +38,7 @@ using System.Xml;
 
 class TestClass
 {
-    public async Task TestMethod(string xmlFragment, XmlNodeType fragType, XmlParserContext context)
+    public void TestMethod(string xmlFragment, XmlNodeType fragType, XmlParserContext context)
     {
         var obj = new XmlValidatingReader(xmlFragment, fragType, context);
     }
@@ -55,7 +55,7 @@ using System.Xml;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader xmlReader)
+    public void TestMethod(XmlReader xmlReader)
     {
         var obj = new XmlValidatingReader(xmlReader);
     }

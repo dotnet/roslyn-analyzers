@@ -1327,7 +1327,7 @@ public class TestGenericClass<T>
 {
     private T memberInGeneric;
 
-    public async Task TestGenericMethod()
+    public void TestGenericMethod()
     {
         var path = ""C:\\"";
         var bytes = new byte[] {0x20, 0x20, 0x20};
@@ -1366,7 +1366,7 @@ interface TestInterface
 [Serializable()]
 public class TestInterfaceImplement : TestInterface
 {
-    public async Task TestInterfaceMethod()
+    public void TestInterfaceMethod()
     {
         var path = ""C:\\"";
         var bytes = new byte[] {0x20, 0x20, 0x20};
@@ -2347,7 +2347,7 @@ public class TestGenericClass<T>
 {
     private T memberInGeneric;
 
-    public async Task TestGenericMethod()
+    public void TestGenericMethod()
     {
     }
 }
@@ -2401,7 +2401,7 @@ interface TestInterface
 [Serializable()]
 public class TestInterfaceImplement : TestInterface
 {
-    public async Task TestInterfaceMethod()
+    public void TestInterfaceMethod()
     {
         var path = ""C:\\"";
         var bytes = new byte[] {0x20, 0x20, 0x20};

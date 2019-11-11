@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -35,7 +35,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -54,7 +54,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -75,7 +75,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -94,7 +94,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -115,7 +115,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -134,7 +134,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -155,7 +155,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -174,7 +174,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -195,7 +195,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -214,7 +214,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -236,7 +236,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -255,7 +255,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -267,7 +267,7 @@ class TestClass
         var responseCookies = new ResponseCookies();
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -286,7 +286,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -298,7 +298,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -317,7 +317,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -328,7 +328,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -347,7 +347,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -366,7 +366,7 @@ class TestClass
 
         return cookieOptions;
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -385,7 +385,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -403,7 +403,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}",
+}", ASPNetCoreApis.CSharp,
                     },
                     ExpectedDiagnostics =
                     {
@@ -422,7 +422,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -435,7 +435,7 @@ class TestClass
         var responseCookies = new ResponseCookies(); 
         responseCookies.Append(key, value, cookieOptions);
     }
-}"
+}", ASPNetCoreApis.CSharp,
                     }
                 }
             }.RunAsync();
@@ -450,7 +450,7 @@ class TestClass
                 {
                     Sources =
                     {
-                        ASPNetCoreApis.CSharp, @"
+                        @"
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 
@@ -462,7 +462,7 @@ class TestClass
         var responseCookies = new ResponseCookies();
         responseCookies.Append(key, value, cookieOptions);
     }
-}"
+}",  ASPNetCoreApis.CSharp,
                     }
                 }
             }.RunAsync();

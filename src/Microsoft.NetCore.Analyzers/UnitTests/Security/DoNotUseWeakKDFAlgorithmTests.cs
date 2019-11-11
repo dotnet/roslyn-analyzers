@@ -19,7 +19,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.MD5);
     }
@@ -35,7 +35,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA1);
     }
@@ -51,7 +51,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(string password, byte[] salt)
+    public void TestMethod(string password, byte[] salt)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
     }
@@ -74,7 +74,7 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var derivedClass = new DerivedClass(password, salt, iterations, HashAlgorithmName.MD5);
     }
@@ -99,7 +99,7 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var derivedClass = new DerivedClass(password, salt, iterations, HashAlgorithmName.MD5);
         derivedClass.HashAlgorithm = HashAlgorithmName.SHA256;
@@ -120,7 +120,7 @@ class TestClass
     {
     }
 
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var subClass = new TestClass(password, salt, iterations, HashAlgorithmName.MD5);
     }
@@ -135,7 +135,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256);
     }
@@ -157,7 +157,7 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var derivedClass = new DerivedClass(password, salt, iterations, HashAlgorithmName.SHA256);
     }
@@ -181,7 +181,7 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public async Task TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
+    public void TestMethod(byte[] password, byte[] salt, int iterations, HashAlgorithmName hashAlgorithm)
     {
         var derivedClass = new DerivedClass(password, salt, iterations, HashAlgorithmName.SHA256);
         derivedClass.HashAlgorithm = HashAlgorithmName.MD5;

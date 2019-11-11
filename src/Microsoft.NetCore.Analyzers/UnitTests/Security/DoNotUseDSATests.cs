@@ -35,7 +35,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(CngKey key)
+    public void TestMethod(CngKey key)
     {
         var dsaCng = new DSACng(key);
     }
@@ -67,7 +67,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(int keySize)
+    public void TestMethod(int keySize)
     {
         var dsaCng = new DSACng(keySize);
     }
@@ -240,7 +240,7 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public async Task TestMethod(DSA dsa)
+    public void TestMethod(DSA dsa)
     { 
         return;
     }

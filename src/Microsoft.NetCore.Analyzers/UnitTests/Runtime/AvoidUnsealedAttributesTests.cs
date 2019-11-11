@@ -43,18 +43,17 @@ public class C
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-[|public class AttributeClass: Attribute
+public class [|AttributeClass|]: Attribute
 {
-}|]
+}
 
 public class Outer
 {
-    private class AttributeClass2: Attribute
+    private class [|AttributeClass2|]: Attribute
     {
     }
 }
-",
-            GetCSharpResultAt(4, 14));
+");
         }
 
         [Fact]
@@ -98,17 +97,16 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-Public Class AttributeClass
+Public Class [|AttributeClass|]
     Inherits Attribute
 End Class
 
 Public Class Outer
-    [|Private Class AttributeClass2
+    Private Class [|AttributeClass2|]
         Inherits Attribute
-    End Class|]
+    End Class
 End Class
-",
-            GetBasicResultAt(9, 19));
+");
         }
 
         [Fact]

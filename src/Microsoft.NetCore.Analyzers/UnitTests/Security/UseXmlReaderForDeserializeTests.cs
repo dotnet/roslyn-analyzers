@@ -24,7 +24,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(Stream stream)
+    public void TestMethod(Stream stream)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(stream);
     }
@@ -42,7 +42,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(TextReader textReader)
+    public void TestMethod(TextReader textReader)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(textReader);
     }
@@ -96,7 +96,7 @@ class TestClass : XmlSerializer
         return new TestClass();
     }
 
-    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
+    public void TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
@@ -144,7 +144,7 @@ class SubTestClass : TestClass
         return new TestClass();
     }
 
-    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
+    public void TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
@@ -163,7 +163,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader xmlReader)
+    public void TestMethod(XmlReader xmlReader)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader);
     }
@@ -181,7 +181,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader xmlReader, string str)
+    public void TestMethod(XmlReader xmlReader, string str)
     {
         var xmlSerializer = new XmlSerializer(typeof(TestClass));
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, str);
@@ -200,7 +200,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader xmlReader, XmlDeserializationEvents xmlDeserializationEvents)
+    public void TestMethod(XmlReader xmlReader, XmlDeserializationEvents xmlDeserializationEvents)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, xmlDeserializationEvents);
     }
@@ -218,7 +218,7 @@ using System.Xml.Serialization;
 
 class TestClass
 {
-    public async Task TestMethod(XmlReader xmlReader, string str, XmlDeserializationEvents xmlDeserializationEvents)
+    public void TestMethod(XmlReader xmlReader, string str, XmlDeserializationEvents xmlDeserializationEvents)
     {
         new XmlSerializer(typeof(TestClass)).Deserialize(xmlReader, str, xmlDeserializationEvents);
     }
@@ -250,7 +250,7 @@ class SubTestClass : TestClass
         return new SubTestClass();
     }
 
-    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
+    public void TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         Deserialize(xmlSerializationReader);
     }
@@ -274,7 +274,7 @@ class TestClass
         return new TestClass();
     }
 
-    public async Task TestMethod(XmlSerializationReader xmlSerializationReader)
+    public void TestMethod(XmlSerializationReader xmlSerializationReader)
     {
         new TestClass().Deserialize(xmlSerializationReader);
     }

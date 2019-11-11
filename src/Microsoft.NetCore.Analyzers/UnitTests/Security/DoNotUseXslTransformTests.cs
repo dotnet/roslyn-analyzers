@@ -53,7 +53,7 @@ using System.Xml.Xsl;
 
 class TestClass
 {
-    public async Task TestMethod(XslTransform xslTransform)
+    public void TestMethod(XslTransform xslTransform)
     {
         xslTransform.Load(""url"");
     }

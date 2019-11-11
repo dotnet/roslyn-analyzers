@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -379,6 +380,56 @@ class TestClass
         new ASCIIEncoding().GetBytes(chars, 0, 3, bytes, 0);
         File.WriteAllBytes(path, bytes);
         new X509Certificate(path);
+    }
+}");
+        }
+
+        // Didn't find out what causes NRE.
+        [Fact, WorkItem(3012, "https://github.com/dotnet/roslyn-analyzers/issues/3012")]
+        public void Test_ExampleCodeFromTheIssue_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+using System.IO;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.RegularExpressions;
+
+class Constants
+{
+    public static Regex UnhashedNameIdRegex = new Regex(@""^[a-zA-Z0-9]\d{2}[a-zA-Z0-9](-\d{3}){2}[A-Za-z0-9]$"");
+}
+
+class TestClass
+{
+    public static string Calculate(string unhashedNameId)
+    {
+        if (string.IsNullOrWhiteSpace(unhashedNameId))
+        {
+            throw new ArgumentNullException(nameof(unhashedNameId), $""{ nameof(unhashedNameId)} must not be null, empty or whitespace."");
+        }
+
+        if (!Constants.UnhashedNameIdRegex.IsMatch(unhashedNameId))
+        {
+            throw new ArgumentException($""{ nameof(unhashedNameId)} does not match '{Constants.UnhashedNameIdRegex}'."", nameof(unhashedNameId));
+        }
+
+        using (var sha = new SHA256Managed())
+        {
+            byte[] textData = Encoding.UTF8.GetBytes(unhashedNameId);
+            byte[] crypto = sha.ComputeHash(textData);
+
+            var nameId = new StringBuilder();
+            foreach (byte hash in crypto)
+            {
+                nameId.Append(hash.ToString(""x2"", CultureInfo.InvariantCulture));
+            }
+
+            return nameId.ToString();
+        }
     }
 }");
         }

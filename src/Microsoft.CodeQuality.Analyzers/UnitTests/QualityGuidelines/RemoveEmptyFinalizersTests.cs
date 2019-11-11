@@ -517,13 +517,11 @@ public class SomeTestClass : IDisposable
         }
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
-            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
-            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

@@ -170,22 +170,22 @@ End Class
         }
 
         private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(UseLiteralsWhereAppropriateAnalyzer.DefaultRule)
+            => VerifyCS.Diagnostic(UseLiteralsWhereAppropriateAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
         private DiagnosticResult GetCSharpEmptyStringResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule)
+            => VerifyCS.Diagnostic(UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
         private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(UseLiteralsWhereAppropriateAnalyzer.DefaultRule)
+            => VerifyVB.Diagnostic(UseLiteralsWhereAppropriateAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
         private DiagnosticResult GetBasicEmptyStringResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule)
+            => VerifyVB.Diagnostic(UseLiteralsWhereAppropriateAnalyzer.EmptyStringRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
     }

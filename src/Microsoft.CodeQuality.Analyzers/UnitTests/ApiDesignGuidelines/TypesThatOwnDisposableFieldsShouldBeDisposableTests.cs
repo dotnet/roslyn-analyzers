@@ -469,12 +469,12 @@ End Namespace
         }
 
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
-            => VerifyCS.Diagnostic(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(objectName, disposableFields);
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
-            => VerifyVB.Diagnostic(CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(objectName, disposableFields);
     }

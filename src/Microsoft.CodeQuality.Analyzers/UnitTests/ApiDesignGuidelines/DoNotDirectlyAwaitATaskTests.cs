@@ -425,13 +425,11 @@ public class C
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDirectlyAwaitATaskAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
 
         private DiagnosticResult GetBasicResultAt(int line, int column)
-            => new DiagnosticResult(DoNotDirectlyAwaitATaskAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

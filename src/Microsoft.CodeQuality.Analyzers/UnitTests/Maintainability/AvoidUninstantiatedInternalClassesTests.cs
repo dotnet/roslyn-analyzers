@@ -23,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(
 @"internal class C { }
 ",
-                GetCSharpResultAt(1, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetCSharpResultAt(1, 16, "C"));
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
             await VerifyVB.VerifyAnalyzerAsync(
 @"Friend Class C
 End Class",
-                GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetBasicResultAt(1, 14, "C"));
         }
 
         [Fact]
@@ -97,7 +97,7 @@ End Class");
 {
     internal class D { }
 }",
-                GetCSharpResultAt(3, 20, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
+                GetCSharpResultAt(3, 20, "C.D"));
         }
 
         [Fact]
@@ -108,7 +108,7 @@ End Class");
     Friend Class D
     End Class
 End Class",
-                GetBasicResultAt(2, 18, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
+                GetBasicResultAt(2, 18, "C.D"));
         }
 
         [Fact]
@@ -363,7 +363,7 @@ internal static class C
 {
     private void Main() {}
 }",
-                GetCSharpResultAt(1, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetCSharpResultAt(1, 16, "C"));
         }
 
         [Fact]
@@ -374,7 +374,7 @@ internal static class C
     Private Sub Main()
     End Sub
 End Class",
-                GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetBasicResultAt(1, 14, "C"));
         }
 
         [Fact]
@@ -412,7 +412,7 @@ End Class",
 {
     internal class C { }
 }",
-                GetCSharpResultAt(3, 20, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetCSharpResultAt(3, 20, "C"));
         }
 
         [Fact]
@@ -423,7 +423,7 @@ End Class",
     Friend Class C
     End Class
 End Namespace",
-                GetBasicResultAt(2, 18, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
+                GetBasicResultAt(2, 18, "C"));
         }
 
         [Fact]
@@ -437,7 +437,7 @@ End Namespace",
         internal class D { }
     }
 }",
-                GetCSharpResultAt(5, 24, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
+                GetCSharpResultAt(5, 24, "C.D"));
         }
 
         [Fact]
@@ -450,7 +450,7 @@ End Namespace",
         End Class
     End Class
 End Namespace",
-                GetBasicResultAt(3, 22, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C.D"));
+                GetBasicResultAt(3, 22, "C.D"));
         }
 
         [Fact]
@@ -717,7 +717,6 @@ End Class");
 }",
                 GetCSharpResultAt(
                     3, 20,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C.C2"));
         }
 
@@ -731,7 +730,6 @@ End Class");
 End Class",
                 GetBasicResultAt(
                     2, 18,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C.C2"));
         }
 
@@ -748,7 +746,6 @@ End Class",
 }",
                 GetCSharpResultAt(
                     1, 16,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C"));
         }
 
@@ -764,7 +761,6 @@ End Class",
 End Class",
                 GetBasicResultAt(
                     1, 14,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "C"));
         }
 
@@ -868,7 +864,6 @@ End Module");
 
                 GetCSharpResultAt(
                     1, 23,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "S"));
         }
 
@@ -1208,11 +1203,9 @@ internal class Program
 }",
                 GetCSharpResultAt(
                     4, 16,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "InstantiatedType"),
                 GetCSharpResultAt(
                     8, 16,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "Factory<T>"));
         }
 
@@ -1235,11 +1228,9 @@ Module Library
 End Module",
                 GetBasicResultAt(
                     5, 18,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "Library.InstantiatedType"),
                 GetBasicResultAt(
                     8, 18,
-                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
                     "Library.Factory(Of T)"));
         }
 
@@ -1348,16 +1339,16 @@ internal class CFoo {}  // Test0.cs(16,16): warning CA1812: CFoo is an internal 
                 DiagnosticResult.CompilerError("CS7036").WithLocation(4, 2).WithMessage("There is no argument given that corresponds to the required formal parameter 'coClass' of 'CoClassAttribute.CoClassAttribute(Type)'"),
                 DiagnosticResult.CompilerError("CS0119").WithLocation(7, 10).WithMessage("'CFoo' is a type, which is not valid in the given context"),
                 DiagnosticResult.CompilerError("CS1729").WithLocation(10, 2).WithMessage("'CoClassAttribute' does not contain a constructor that takes 2 arguments"),
-                GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
+                GetCSharpResultAt(16, 16, "CFoo"));
         }
 
-        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-            => new DiagnosticResult(rule)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(arguments);
 
-        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-            => new DiagnosticResult(rule)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(arguments);
     }

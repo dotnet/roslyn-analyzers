@@ -187,12 +187,12 @@ End Class
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(ProvideObsoleteAttributeMessageAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
         private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(ProvideObsoleteAttributeMessageAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
     }

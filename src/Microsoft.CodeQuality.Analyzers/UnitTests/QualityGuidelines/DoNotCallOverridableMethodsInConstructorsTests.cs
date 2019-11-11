@@ -424,13 +424,11 @@ End Class
         }
 
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
-            => new DiagnosticResult(DoNotCallOverridableMethodsInConstructorsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
 
         private static DiagnosticResult GetCA2214BasicResultAt(int line, int column)
-            => new DiagnosticResult(DoNotCallOverridableMethodsInConstructorsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

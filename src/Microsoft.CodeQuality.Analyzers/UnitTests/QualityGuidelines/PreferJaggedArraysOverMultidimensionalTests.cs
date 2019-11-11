@@ -214,43 +214,33 @@ End Class
         }
 
         private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
+            => VerifyCS.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
-        }
 
         private DiagnosticResult GetCSharpReturnResultAt(int line, int column, string symbolName, string typeName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
+            => VerifyCS.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName, typeName);
-        }
+
         private DiagnosticResult GetCSharpBodyResultAt(int line, int column, string symbolName, string typeName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
+            => VerifyCS.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName, typeName);
-        }
 
         private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
+            => VerifyVB.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
-        }
 
         private DiagnosticResult GetBasicReturnResultAt(int line, int column, string symbolName, string typeName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
+            => VerifyVB.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName, typeName);
-        }
+
         private DiagnosticResult GetBasicBodyResultAt(int line, int column, string symbolName, string typeName)
-        {
-            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
+            => VerifyVB.Diagnostic(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName, typeName);
-        }
     }
 }

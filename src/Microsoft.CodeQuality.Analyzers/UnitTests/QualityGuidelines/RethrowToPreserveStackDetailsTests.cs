@@ -512,13 +512,11 @@ End Class
         }
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
-            => new DiagnosticResult(RethrowToPreserveStackDetailsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
 
         private static DiagnosticResult GetCA2200CSharpResultAt(int line, int column)
-            => new DiagnosticResult(RethrowToPreserveStackDetailsAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
     }
 }

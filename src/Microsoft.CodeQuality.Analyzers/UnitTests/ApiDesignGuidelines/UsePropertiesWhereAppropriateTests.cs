@@ -441,12 +441,12 @@ public class Foo : IFoo
         }
 
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
-            => VerifyCS.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodName);
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
-            => VerifyVB.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodName);
     }

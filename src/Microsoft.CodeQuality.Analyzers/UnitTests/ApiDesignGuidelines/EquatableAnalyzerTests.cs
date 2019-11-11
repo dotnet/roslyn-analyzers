@@ -420,7 +420,7 @@ public ref struct S
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, string message)
-            => new DiagnosticResult(rule)
+            => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithMessage(message);
     }

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -1308,35 +1307,23 @@ public class DerivedClass<T> : BaseClass<T>
         }
 
         private static DiagnosticResult GetCA1036CSharpOperatorsResultAt(int line, int column, string typeName, string operators)
-        {
-            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
-            return new DiagnosticResult(OverrideMethodsOnComparableTypesAnalyzer.RuleOperator)
+            => VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleOperator)
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(typeName, operators);
 
         private static DiagnosticResult GetCA1036BasicOperatorsResultAt(int line, int column, string typeName, string operators)
-        {
-            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
-            return new DiagnosticResult(OverrideMethodsOnComparableTypesAnalyzer.RuleOperator)
+            => VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleOperator)
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(typeName, operators);
 
         private static DiagnosticResult GetCA1036CSharpBothResultAt(int line, int column, string typeName, string operators)
-        {
-            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
-            return new DiagnosticResult(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth)
+            => VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth)
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(typeName, operators);
 
         private static DiagnosticResult GetCA1036BasicBothResultAt(int line, int column, string typeName, string operators)
-        {
-            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
-            return new DiagnosticResult(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth)
+            => VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth)
                 .WithLocation(line, column)
-                .WithMessage(message);
-        }
+                .WithArguments(typeName, operators);
     }
 }

@@ -328,7 +328,7 @@ class C
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(AvoidDuplicateElementInitialization.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
     }

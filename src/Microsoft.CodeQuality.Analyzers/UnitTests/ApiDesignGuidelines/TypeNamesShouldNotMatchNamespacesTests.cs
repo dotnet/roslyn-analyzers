@@ -17,22 +17,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class TypeNamesShouldNotMatchNamespacesTests
     {
         private static DiagnosticResult CSharpDefaultResultAt(int line, int column, string typeName, string namespaceName)
-            => new DiagnosticResult(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
+            => VerifyCS.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult CSharpSystemResultAt(int line, int column, string typeName, string namespaceName)
-            => new DiagnosticResult(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
+            => VerifyCS.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
                 .WithLocation(line, column)
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult BasicDefaultResultAt(int line, int column, string typeName, string namespaceName)
-            => new DiagnosticResult(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
+            => VerifyVB.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult BasicSystemResultAt(int line, int column, string typeName, string namespaceName)
-            => new DiagnosticResult(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
+            => VerifyVB.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
                 .WithLocation(line, column)
                 .WithArguments(typeName, namespaceName);
 

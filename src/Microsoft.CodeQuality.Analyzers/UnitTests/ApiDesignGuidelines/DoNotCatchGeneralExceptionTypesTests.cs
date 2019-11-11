@@ -744,12 +744,12 @@ End Class"
         }
 
         private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)
-            => VerifyCS.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(signature);
 
         private static DiagnosticResult GetCA1031BasicResultAt(int line, int column, string signature)
-            => VerifyVB.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(signature);
     }

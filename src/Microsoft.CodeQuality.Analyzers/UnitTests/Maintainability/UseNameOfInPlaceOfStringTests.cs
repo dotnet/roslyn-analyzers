@@ -618,12 +618,12 @@ namespace ConsoleApp14
         #endregion
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
-            => VerifyVB.Diagnostic(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(name);
 
         private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
-            => VerifyCS.Diagnostic(UseNameofInPlaceOfStringAnalyzer.RuleWithSuggestion)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(name);
     }

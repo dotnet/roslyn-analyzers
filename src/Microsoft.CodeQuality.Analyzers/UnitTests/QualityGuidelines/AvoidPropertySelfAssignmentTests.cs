@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidPropertySelfAssignment,
@@ -404,12 +403,12 @@ End Class
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(AvoidPropertySelfAssignment.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
         private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
-            => new DiagnosticResult(AvoidPropertySelfAssignment.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
     }

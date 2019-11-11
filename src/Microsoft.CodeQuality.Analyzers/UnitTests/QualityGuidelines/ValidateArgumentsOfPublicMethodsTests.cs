@@ -26,12 +26,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ValidateArgumentsOfPublicMethods();
 
         private static new DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
-            => new DiagnosticResult(ValidateArgumentsOfPublicMethods.Rule)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodSignature, parameterName);
 
         private static new DiagnosticResult GetBasicResultAt(int line, int column, string methodSignature, string parameterName)
-            => new DiagnosticResult(ValidateArgumentsOfPublicMethods.Rule)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodSignature, parameterName);
 

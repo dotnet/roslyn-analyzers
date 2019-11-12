@@ -122,27 +122,24 @@ public class Class2
         public async Task CA1821CSharpTestRemoveEmptyFinalizersWithScope()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-[|
 public class Class1
 {
 	// Violation occurs because the finalizer is empty.
-	~Class1()
+	~[|Class1|]()
 	{
 	}
 }
-|]
 
 public class Class2
 {
 	// Violation occurs because the finalizer is empty.
-	~Class2()
+	~[|Class2|]()
 	{
         //// Comments here
 	}
 }
 
-",
-                GetCA1821CSharpResultAt(6, 3));
+");
         }
 
         [Fact]
@@ -346,26 +343,25 @@ Imports System.Diagnostics
 
 Public Class Class1
     '  Violation occurs because the finalizer is empty.
-    Protected Overrides Sub Finalize()
+    Protected Overrides Sub [|Finalize|]()
 
     End Sub
 End Class
 
-[|Public Class Class2
+Public Class Class2
     '  Violation occurs because the finalizer is empty.
-    Protected Overrides Sub Finalize()
+    Protected Overrides Sub [|Finalize|]()
         ' Comments
     End Sub
-End Class|]
+End Class
 
 Public Class Class3
     '  Violation occurs because Debug.Fail is a conditional method.
-    Protected Overrides Sub Finalize()
+    Protected Overrides Sub [|Finalize|]()
         Debug.Fail(""Finalizer called!"")
     End Sub
 End Class
-",
-                GetCA1821BasicResultAt(13, 29));
+");
         }
 
         [Fact]

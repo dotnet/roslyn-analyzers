@@ -201,7 +201,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
 
-    [|public class A : IComparable
+    public class {|CA1036:A|} : IComparable
     {    
         public override int GetHashCode()
         {
@@ -247,7 +247,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             return true;
         }
-    }|]
+    }
 
     public class B : IComparable
     {    
@@ -813,7 +813,7 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-[|Public Class A : Implements IComparable
+Public Class {|CA1036:A|} : Implements IComparable
 
     Public Overrides Function GetHashCode() As Integer
         Return 1234
@@ -851,7 +851,7 @@ Imports System
         Return True
     End Operator
 
-End Class|]
+End Class
 
 Public Structure B : Implements IComparable
 

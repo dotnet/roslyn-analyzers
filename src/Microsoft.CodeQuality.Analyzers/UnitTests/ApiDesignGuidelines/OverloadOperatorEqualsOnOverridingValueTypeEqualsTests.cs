@@ -92,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
 
-    public struct A
+    public struct [|A|]
     {
         public override bool Equals(Object obj)
         {
@@ -100,14 +100,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
     }
 
-    [|// value type without overriding Equals
+    // value type without overriding Equals
     public struct B
     {    
         public new bool Equals(Object obj)
         {
             return true;
         }
-    }|]
+    }
 ");
         }
 
@@ -238,13 +238,13 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-[|Public Class A
+Public Class A
     Public Overloads Overrides Function Equals(obj As Object) As Boolean
         Return True
     End Function
-End Class|]
+End Class
 
-Public Structure B
+Public Structure [|B|]
     Public Overloads Overrides Function Equals(obj As Object) As Boolean
         Return True
     End Function

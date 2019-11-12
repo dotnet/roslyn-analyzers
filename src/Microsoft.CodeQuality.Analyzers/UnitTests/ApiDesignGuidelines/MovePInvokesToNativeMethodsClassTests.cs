@@ -111,25 +111,24 @@ class BazClass
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
-class FooClass
+class [|FooClass|]
 {
     [DllImport(""user32.dll"")]
     private static extern void Foo();
 }
 
-[|class BarClass
-{
-    [DllImport(""user32.dll"")]
-    private static extern void Foo();
-}|]
-
-class BazClass
+class [|BarClass|]
 {
     [DllImport(""user32.dll"")]
     private static extern void Foo();
 }
-",
-            CSharpResult(10, 7));
+
+class [|BazClass|]
+{
+    [DllImport(""user32.dll"")]
+    private static extern void Foo();
+}
+");
         }
 
         [Fact]
@@ -167,25 +166,24 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
-Class FooClass
+Class [|FooClass|]
     <DllImport(""user32.dll"")>
     Private Shared Sub Foo()
     End Sub
 End Class
 
-[|Class BarClass
-    <DllImport(""user32.dll"")>
-    Private Shared Sub Foo()
-    End Sub
-End Class|]
-
-Class BazClass
+Class [|BarClass|]
     <DllImport(""user32.dll"")>
     Private Shared Sub Foo()
     End Sub
 End Class
-",
-            BasicResult(10, 7));
+
+Class [|BazClass|]
+    <DllImport(""user32.dll"")>
+    Private Shared Sub Foo()
+    End Sub
+End Class
+");
         }
 
         [Fact]

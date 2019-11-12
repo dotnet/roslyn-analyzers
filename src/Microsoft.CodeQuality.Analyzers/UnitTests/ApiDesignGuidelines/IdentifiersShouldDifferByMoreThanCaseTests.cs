@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -368,9 +367,6 @@ namespace N
 
         #region Helper Methods
 
-        private const string RuleName = IdentifiersShouldDifferByMoreThanCaseAnalyzer.RuleId;
-        private static readonly string s_message = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage;
-
         private const string Namespace = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Namespace;
         private const string Type = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Type;
         private const string Member = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Member;
@@ -387,22 +383,21 @@ namespace N
         }
 
         private static DiagnosticResult GetCA1708CSharpResult(string typeName, string objectName)
-            => VerifyCS.Diagnostic(RuleName)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
+            => VerifyCS.Diagnostic()
+                .WithArguments(typeName, objectName);
 
         private static DiagnosticResult GetGlobalCA1708CSharpResult(string typeName, string objectName)
-            => VerifyCS.Diagnostic(RuleName)
-                .WithNoLocation()
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
+            => VerifyCS.Diagnostic()
+                .WithArguments(typeName, objectName);
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, int line, int column)
-            => VerifyCS.Diagnostic(RuleName)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
+                .WithArguments(typeName, objectName);
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, params string[] locations)
-            => VerifyCS.Diagnostic(RuleName)
-                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
+            => VerifyCS.Diagnostic()
+                .WithArguments(typeName, objectName);
 
         #endregion
     }

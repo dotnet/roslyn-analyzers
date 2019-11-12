@@ -1966,12 +1966,12 @@ Public Class B
 
 End Class
 
-[|Public Class C
+Public Class [|C|]
     Inherits B
 
     Public Overrides Sub Dispose()
     End Sub
-End Class|]
+End Class
 ",
             GetCA1063BasicDisposeOverrideResultAt(25, 26, "C", "Dispose"));
         }
@@ -2007,13 +2007,13 @@ Public Class B
     End Sub
 End Class
     
-[|Public Class C
+Public Class [|C|]
     Inherits B
 
     Public Overrides Sub Dispose()
         Dispose(True)
     End Sub
-End Class|]
+End Class
 ",
             GetCA1063BasicDisposeOverrideResultAt(32, 26, "C", "Dispose"));
         }
@@ -2050,7 +2050,7 @@ Public Class B
     End Sub
 End Class
     
-[|Public Class C
+Public Class [|C|]
     Inherits B
 
     Public Overrides Sub Dispose()
@@ -2060,7 +2060,7 @@ End Class
     Public Overrides Sub D()
         Dispose()
     End Sub
-End Class|]
+End Class
 ",
             GetCA1063BasicDisposeOverrideResultAt(33, 26, "C", "Dispose"),
             GetCA1063BasicDisposeOverrideResultAt(37, 26, "C", "D"));
@@ -2919,32 +2919,32 @@ End Class
         private static DiagnosticResult GetCA1063CSharpDisposeSignatureResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeSignatureRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{ typeName}.{ disposeMethod}");
 
         private static DiagnosticResult GetCA1063BasicDisposeSignatureResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeSignatureRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{ typeName}.{ disposeMethod}");
 
         private static DiagnosticResult GetCA1063CSharpRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.RenameDisposeRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{ typeName}.{ disposeMethod}");
 
         private static DiagnosticResult GetCA1063BasicRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.RenameDisposeRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063CSharpDisposeOverrideResultAt(int line, int column, string typeName, string method)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeOverrideRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, method);
+                .WithArguments($"{ typeName}.{method}");
 
         private static DiagnosticResult GetCA1063BasicDisposeOverrideResultAt(int line, int column, string typeName, string method)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeOverrideRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, method);
+                .WithArguments($"{ typeName}.{method}");
 
         private static DiagnosticResult GetCA1063CSharpFinalizeOverrideResultAt(int line, int column, string typeName, string baseTypeName)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.FinalizeOverrideRule)
@@ -2969,32 +2969,32 @@ End Class
         private static DiagnosticResult GetCA1063CSharpDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeBoolSignatureRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063BasicDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeBoolSignatureRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063CSharpDisposeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeImplementationRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063BasicDisposeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.DisposeImplementationRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063CSharpFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyCS.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.FinalizeImplementationRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         private static DiagnosticResult GetCA1063BasicFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
             => VerifyVB.Diagnostic(ImplementIDisposableCorrectlyAnalyzer.FinalizeImplementationRule)
                 .WithLocation(line, column)
-                .WithArguments(typeName, disposeMethod);
+                .WithArguments($"{typeName}.{disposeMethod}");
 
         #endregion
     }

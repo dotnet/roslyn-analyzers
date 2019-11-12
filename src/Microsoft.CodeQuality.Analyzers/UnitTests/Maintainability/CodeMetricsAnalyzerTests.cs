@@ -681,7 +681,7 @@ CA 1501: 10
 
         private static DiagnosticResult GetCA1509ExpectedDiagnostic(int line, int column, string entry, string additionalFile)
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.InvalidEntryInCodeMetricsConfigFileRule)
-                .WithLocation(line, column)
+                .WithLocation(additionalFile, line, column)
                 .WithArguments(entry, additionalFile);
 
         private const string AdditionalFileName = "CodeMetricsConfig.txt";

@@ -235,14 +235,14 @@ class Program
         }
         catch (ArithmeticException e)
         {
-            throw e;
+            [|throw e;|]
         }
     }
 
-    [|void ThrowException()
+    void ThrowException()
     {
         throw new ArithmeticException();
-    }|]
+    }
 }
 ");
         }
@@ -258,10 +258,10 @@ Class Program
         Try
             Throw New ArithmeticException()
         Catch e As ArithmeticException
+            [|Throw e|]
+        Catch e As Exception
             Throw e
-        [|Catch e As Exception
-            Throw e
-        End Try|]
+        End Try
     End Sub
 End Class
 ",

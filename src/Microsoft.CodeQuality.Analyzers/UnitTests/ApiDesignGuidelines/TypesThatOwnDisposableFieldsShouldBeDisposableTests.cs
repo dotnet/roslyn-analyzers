@@ -117,7 +117,7 @@ using System.IO;
 using System.IO;
 
     // This class violates the rule.
-    [|public class NoDisposeClass
+    public class [|NoDisposeClass|]
     {
         FileStream newFile;
 
@@ -125,9 +125,8 @@ using System.IO;
         {
             newFile = new FileStream(""data.txt"", FileMode.Append);
         }
-    }|]
-",
-            GetCA1001CSharpResultAt(5, 18, "NoDisposeClass", "newFile"));
+    }
+");
         }
 
         [Fact]
@@ -138,7 +137,7 @@ using System;
 using System.IO;
 
 // This class violates the rule.
-public class NoDisposeClass
+public class [|NoDisposeClass|]
 {
     FileStream newFile;
 
@@ -148,10 +147,9 @@ public class NoDisposeClass
     }
 }
 
-[|public class Foo
+public class Foo
 {
 }
-|]
 ");
         }
 
@@ -362,7 +360,7 @@ Imports System.IO
    Imports System.IO
 
    ' This class violates the rule.
-   [|Public Class NoDisposeMethod
+   Public Class [|NoDisposeMethod|]
 
       Dim newFile As FileStream
 
@@ -370,9 +368,8 @@ Imports System.IO
          newFile = New FileStream("""", FileMode.Append)
       End Sub
 
-   End Class|]
-",
-            GetCA1001BasicResultAt(5, 17, "NoDisposeMethod", "newFile"));
+   End Class
+");
         }
 
         [Fact]
@@ -382,7 +379,7 @@ Imports System.IO
    Imports System.IO
 
    ' This class violates the rule.
-   Public Class NoDisposeMethod
+   Public Class [|NoDisposeMethod|]
 
       Dim newFile As FileStream
 
@@ -392,10 +389,8 @@ Imports System.IO
 
    End Class
 
-   [|
    Public Class Foo
    End Class
-   |]
 ");
         }
 

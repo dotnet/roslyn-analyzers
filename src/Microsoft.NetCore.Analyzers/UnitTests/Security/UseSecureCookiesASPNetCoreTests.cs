@@ -39,7 +39,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -79,7 +79,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -119,7 +119,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -159,7 +159,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -199,7 +199,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -240,7 +240,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(21, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(21, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -271,7 +271,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -302,7 +302,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -332,7 +332,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -370,7 +370,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();
@@ -407,7 +407,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(17, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
+                        GetCSharpResultAt(17, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule),
                     }
                 }
             }.RunAsync();

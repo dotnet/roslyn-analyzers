@@ -7016,7 +7016,7 @@ class Test
                         // Test0.cs(87,18): warning CA2000: Use recommended dispose pattern to ensure that object created by 'new FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
                         GetCSharpMayBeNotDisposedResultAt(87, 18, "new FileStream(filePath + filePath, fileMode)"),
                         // Test0.cs(92,30): warning CA2000: Use recommended dispose pattern to ensure that object created by 'new ResourceReader(stream)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(92, 30, "new ResourceReader(stream)")
+                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(92, 30, "new ResourceReader(stream)"),
                     }
                 }
             }.RunAsync();
@@ -7126,7 +7126,7 @@ End Class
                         // Test0.vb(66,18): warning CA2000: Use recommended dispose pattern to ensure that object created by 'New FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
                         GetBasicMayBeNotDisposedResultAt(66, 18, "New FileStream(filePath + filePath, fileMode)"),
                         // Test0.vb(70,30): warning CA2000: Use recommended dispose pattern to ensure that object created by 'New ResourceReader(stream)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(70, 30, "New ResourceReader(stream)")
+                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(70, 30, "New ResourceReader(stream)"),
                     }
                 }
             }.RunAsync();
@@ -8998,7 +8998,7 @@ public class Test
                         // Test0.cs(40,21): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
                         GetCSharpResultAt(40, 21, "new A(2)"),
                         // Test0.cs(49,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A(3)' before all references to it are out of scope.
-                        GetCSharpResultAt(49, 17, "new A(3)")
+                        GetCSharpResultAt(49, 17, "new A(3)"),
                     }
                 },
                 LanguageVersion = CSharpLanguageVersion.CSharp7_3
@@ -11506,7 +11506,7 @@ namespace ConsoleApp1
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(18,21): warning CA2000: Call System.IDisposable.Dispose on object created by 'File.Open(fileName, FileMode.Open)' before all references to it are out of scope.
-                        GetCSharpResultAt(18, 21, "File.Open(fileName, FileMode.Open)")
+                        GetCSharpResultAt(18, 21, "File.Open(fileName, FileMode.Open)"),
                     }
                 },
                 LanguageVersion = CSharpLanguageVersion.CSharp8
@@ -11547,7 +11547,7 @@ namespace ConsoleApp1
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(17,19): warning CA2000: Call System.IDisposable.Dispose on object created by 'File.Open(fileName, FileMode.Open)' before all references to it are out of scope.
-                        GetCSharpResultAt(17, 19, "File.Open(fileName, FileMode.Open)")
+                        GetCSharpResultAt(17, 19, "File.Open(fileName, FileMode.Open)"),
                     }
                 },
                 LanguageVersion = CSharpLanguageVersion.CSharp8

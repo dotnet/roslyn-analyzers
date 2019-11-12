@@ -226,7 +226,7 @@ namespace TestNamespace
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5")
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"),
                     }
                 }
             }.RunAsync();
@@ -271,7 +271,7 @@ End Namespace"
                     },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5")
+                        GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"),
                     }
                 }
             }.RunAsync();
@@ -490,7 +490,7 @@ namespace TestNamespace
 },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1")
+                        GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"),
                     }
                 }
             }.RunAsync();
@@ -534,7 +534,7 @@ End Namespace"
                     },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1")
+                        GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"),
                     }
                 }
             }.RunAsync();
@@ -754,7 +754,7 @@ namespace TestNamespace
 },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1")
+                        GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"),
                     }
                 }
             }.RunAsync();
@@ -800,7 +800,7 @@ End Namespace
 },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1")
+                        GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"),
                     }
                 }
             }.RunAsync();
@@ -1308,7 +1308,7 @@ namespace TestNamespace
                     ExpectedDiagnostics =
                     {
                         GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES")
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
                     }
                 }
             }.RunAsync();
@@ -1359,7 +1359,7 @@ End Namespace
                     ExpectedDiagnostics =
                     {
                         GetBasicResultAt(6, 15, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES")
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
                     }
                 }
             }.RunAsync();
@@ -1541,7 +1541,7 @@ namespace TestNamespace
 },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2")
+                        GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"),
                     }
                 }
             }.RunAsync();
@@ -1590,7 +1590,7 @@ End Namespace
 },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2")
+                        GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"),
                     }
                 }
             }.RunAsync();
@@ -1903,7 +1903,7 @@ namespace TestNamespace
                     ExpectedDiagnostics =
                     {
                         GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES")
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
                     }
                 }
             }.RunAsync();
@@ -1956,7 +1956,7 @@ End Namespace
                     ExpectedDiagnostics =
                     {
                         GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES")
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
                     }
                 }
             }.RunAsync();
@@ -2383,7 +2383,7 @@ namespace TestNamespace
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"),
                     }
                 }
             }.RunAsync();
@@ -2428,7 +2428,7 @@ End Namespace"
                 },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"),
                     }
                 }
             }.RunAsync();
@@ -2485,7 +2485,7 @@ namespace TestNamespace
                 },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                        GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"),
                     }
                 }
             }.RunAsync();
@@ -2530,7 +2530,7 @@ End Namespace
                 },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160")
+                        GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"),
                     }
                 }
             }.RunAsync();
@@ -2786,7 +2786,7 @@ namespace TestNamespace
                 },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA")
+                        GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"),
                     }
                 }
             }.RunAsync();
@@ -2848,7 +2848,7 @@ End Namespace"
                 },
                     ExpectedDiagnostics =
                     {
-                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA")
+                        GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"),
                     }
                 }
             }.RunAsync();

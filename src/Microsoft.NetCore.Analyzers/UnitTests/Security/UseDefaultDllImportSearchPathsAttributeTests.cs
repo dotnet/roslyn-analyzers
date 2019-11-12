@@ -281,7 +281,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory")
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"),
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 }
@@ -316,7 +316,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "System32")
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "System32"),
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 }
@@ -351,7 +351,7 @@ class TestClass
                     },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UserDirectories")
+                        GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UserDirectories"),
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 }

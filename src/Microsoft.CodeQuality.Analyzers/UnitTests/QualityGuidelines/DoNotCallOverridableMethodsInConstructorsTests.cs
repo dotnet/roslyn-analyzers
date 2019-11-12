@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -16,18 +14,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public partial class DoNotCallOverridableMethodsInConstructorsTests : DiagnosticAnalyzerTestBase
+    public class DoNotCallOverridableMethodsInConstructorsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCallOverridableMethodsInConstructorsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCallOverridableMethodsInConstructorsAnalyzer();
-        }
-
         [Fact]
         public async Task CA2214VirtualMethodCSharp()
         {
@@ -46,17 +34,17 @@ class C
         }
 
         [Fact]
-        public void CA2214VirtualMethodCSharpWithScope()
+        public async Task CA2214VirtualMethodCSharpWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     C()
     {
-        Foo();
+        [|Foo()|];
     }
 
-    [|protected virtual void Foo() { }|]
+    protected virtual void Foo() { }
 }
 ");
         }
@@ -77,15 +65,15 @@ End Class
         }
 
         [Fact]
-        public void CA2214VirtualMethodBasicwithScope()
+        public async Task CA2214VirtualMethodBasicwithScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Sub New()
-        Foo()
+        [|Foo()|]
     End Sub
-    [|Overridable Sub Foo()
-    End Sub|]
+    Overridable Sub Foo()
+    End Sub
 End Class
 ");
         }
@@ -237,9 +225,15 @@ End Class
         }
 
         [Fact]
-        public void CA2214SpecialInheritanceCSharp()
+        public async Task CA2214SpecialInheritanceCSharp()
         {
-            var source = @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 abstract class C : System.Web.UI.Control
 {
     C()
@@ -286,18 +280,27 @@ abstract class F : System.ComponentModel.Component
 
     protected abstract void Foo();
 }
-";
-            Document document = CreateDocument(source, LanguageNames.CSharp);
-            Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
-            project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
-            DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.CSharp));
+"
+                    },
+                    AdditionalReferences =
+                    {
+                        MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location),
+                        MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location),
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA2214SpecialInheritanceBasic()
+        public async Task CA2214SpecialInheritanceBasic()
         {
-            var source = @"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 MustInherit Class C
     Inherits System.Web.UI.Control
     Public Sub New()
@@ -337,12 +340,15 @@ MustInherit Class F
     End Sub
     MustOverride Sub Foo()
 End Class
-";
-            Document document = CreateDocument(source, LanguageNames.VisualBasic);
-            Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
-            project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
-            DiagnosticAnalyzer analyzer = GetBasicDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.VisualBasic));
+"
+                    },
+                    AdditionalReferences =
+                    {
+                        MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location),
+                        MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location),
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]

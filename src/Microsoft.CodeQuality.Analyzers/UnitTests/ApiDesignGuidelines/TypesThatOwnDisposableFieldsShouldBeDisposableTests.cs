@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -16,18 +13,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzerTests : DiagnosticAnalyzerTestBase
+    public class TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
-        }
-
         [Fact]
         public async Task CA1001CSharpTestWithNoDisposableType()
         {
@@ -124,9 +111,9 @@ using System.IO;
         }
 
         [Fact]
-        public void CA1001CSharpTestWithNoDisposeMethodInScope()
+        public async Task CA1001CSharpTestWithNoDisposeMethodInScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 
     // This class violates the rule.
@@ -144,9 +131,9 @@ using System.IO;
         }
 
         [Fact]
-        public void CA1001CSharpScopedTestWithNoDisposeMethodOutOfScope()
+        public async Task CA1001CSharpScopedTestWithNoDisposeMethodOutOfScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -369,9 +356,9 @@ Imports System.IO
         }
 
         [Fact]
-        public void CA1001BasicTestWithNoDisposeMethodInScope()
+        public async Task CA1001BasicTestWithNoDisposeMethodInScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
    Imports System.IO
 
    ' This class violates the rule.
@@ -389,9 +376,9 @@ Imports System.IO
         }
 
         [Fact]
-        public void CA1001BasicTestWithNoDisposeMethodOutOfScope()
+        public async Task CA1001BasicTestWithNoDisposeMethodOutOfScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
    Imports System.IO
 
    ' This class violates the rule.

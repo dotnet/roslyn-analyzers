@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -16,18 +13,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public partial class RethrowToPreserveStackDetailsTests : DiagnosticAnalyzerTestBase
+    public partial class RethrowToPreserveStackDetailsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicRethrowToPreserveStackDetailsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpRethrowToPreserveStackDetailsAnalyzer();
-        }
-
         [Fact]
         public async Task CA2200_NoDiagnosticsForRethrow()
         {
@@ -233,9 +220,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
+        public async Task CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -261,9 +248,9 @@ class Program
         }
 
         [Fact]
-        public void CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScope()
+        public async Task CA2200_SingleDiagnosticForThrowCaughtExceptionInSpecificScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()

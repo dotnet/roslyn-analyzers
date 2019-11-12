@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -14,18 +13,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class OverrideMethodsOnComparableTypesTests : DiagnosticAnalyzerTestBase
+    public partial class OverrideMethodsOnComparableTypesTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new OverrideMethodsOnComparableTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new OverrideMethodsOnComparableTypesAnalyzer();
-        }
-
         [Fact]
         public async Task CA1036ClassNoWarningCSharp()
         {
@@ -207,9 +196,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA1036ClassWrongEqualsCSharpwithScope()
+        public async Task CA1036ClassWrongEqualsCSharpwithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
 
     [|public class A : IComparable
@@ -819,9 +808,9 @@ End Class
         }
 
         [Fact]
-        public void CA1036StructWrongEqualsBasicWithScope()
+        public async Task CA1036StructWrongEqualsBasicWithScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 [|Public Class A : Implements IComparable

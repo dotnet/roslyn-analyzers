@@ -1,17 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSerializeTypeWithPointerFields,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotSerializeTypeWithPointerFieldsTests : DiagnosticAnalyzerTestBase
+    public class DoNotSerializeTypeWithPointerFieldsTests
     {
         [Fact]
         public void TestChildPointerToStructureDiagnostic()
@@ -29,7 +26,7 @@ unsafe class TestClassA
 struct TestStructB
 {
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, "pointer"));
         }
 
         [Fact]
@@ -43,7 +40,7 @@ unsafe class TestClassA
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(7, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 18, "pointer"));
         }
 
         [Fact]
@@ -57,7 +54,7 @@ unsafe class TestClassA
 {
     private bool* pointer;
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
@@ -71,7 +68,7 @@ unsafe class TestClassA
 {
     private int** pointer;
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
@@ -85,7 +82,7 @@ unsafe class TestClassA
 {
     private int** pointer { get; set; }
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
@@ -99,7 +96,7 @@ unsafe class TestClassA
 {
     private int*[] pointers;
 }",
-            GetCSharpResultAt(7, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
+            GetCSharpResultAt(7, 20, "pointers"));
         }
 
         [Fact]
@@ -119,7 +116,7 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(13, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 18, "pointer"));
         }
 
         [Fact]
@@ -140,7 +137,7 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(14, 18, "pointer"));
         }
 
         [Fact]
@@ -161,7 +158,7 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(14, 18, "pointer"));
         }
 
         [Fact]
@@ -181,7 +178,7 @@ unsafe class TestClassB
 {
     public int* pointer;
 }",
-            GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 17, "pointer"));
         }
 
         [Fact]
@@ -201,7 +198,7 @@ unsafe class TestClassB
 {
     private int*[] pointers;
 }",
-            GetCSharpResultAt(13, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
+            GetCSharpResultAt(13, 20, "pointers"));
         }
 
         [Fact]
@@ -221,8 +218,8 @@ unsafe struct TestStructB
 {
     public int* pointer2;
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 26, "pointer1"),
+            GetCSharpResultAt(13, 17, "pointer2"));
         }
 
         [Fact]
@@ -238,8 +235,8 @@ unsafe class TestClassA
     
     private int* pointer2;
 }",
-            GetCSharpResultAt(7, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(9, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 18, "pointer1"),
+            GetCSharpResultAt(9, 18, "pointer2"));
         }
 
         [Fact]
@@ -253,7 +250,7 @@ unsafe struct TestStructA
 {
     private TestStructA* pointer;
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, "pointer"));
         }
 
         [Fact]
@@ -273,7 +270,7 @@ unsafe struct TestStructB
 {
     public TestStructB* pointer;
 }",
-            GetCSharpResultAt(13, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 25, "pointer"));
         }
 
         [Fact]
@@ -298,8 +295,8 @@ unsafe class TestClassC : TestClassA
 {
     private int* pointer2;
 }",
-            GetCSharpResultAt(7, 28, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(18, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 28, "pointer1"),
+            GetCSharpResultAt(18, 18, "pointer2"));
         }
 
         [Fact]
@@ -315,7 +312,7 @@ unsafe class TestClassA<T>
 
     private int* pointer;
 }",
-            GetCSharpResultAt(9, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(9, 18, "pointer"));
         }
 
         [Fact]
@@ -383,14 +380,14 @@ unsafe class TestClassA
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        private void VerifyCSharpUnsafeCode(string code, params DiagnosticResult[] expected)
         {
-            return new DoNotSerializeTypeWithPointerFields();
+            // TODO: Amaury - Fix this code
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotSerializeTypeWithPointerFields();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

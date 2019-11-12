@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MovePInvokesToNativeMethodsClassAnalyzer,
@@ -14,19 +12,9 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class MovePInvokesToNativeMethodsClassTests : DiagnosticAnalyzerTestBase
+    public class MovePInvokesToNativeMethodsClassTests
     {
         #region Verifiers
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new MovePInvokesToNativeMethodsClassAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MovePInvokesToNativeMethodsClassAnalyzer();
-        }
 
         private static DiagnosticResult CSharpResult(int line, int column)
             => VerifyCS.Diagnostic().WithLocation(line, column);
@@ -118,9 +106,9 @@ class BazClass
         }
 
         [Fact]
-        public void CA1060ImproperlyNamedClassCSharpWithScope()
+        public async Task CA1060ImproperlyNamedClassCSharpWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 class FooClass
@@ -174,9 +162,9 @@ End Class
         }
 
         [Fact]
-        public void CA1060ImproperlyNamedClassBasicWithScope()
+        public async Task CA1060ImproperlyNamedClassBasicWithScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Class FooClass

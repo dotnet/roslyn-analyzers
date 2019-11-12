@@ -1,14 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseSharedAccessProtocolHttpsOnly,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseSharedAccessProtocolHttpsOnlyTests : DiagnosticAnalyzerTestBase
+    public class UseSharedAccessProtocolHttpsOnlyTests
     {
         private const string MicrosoftWindowsAzureStorageCSharpSourceCode = @"
 using System;
@@ -69,26 +71,41 @@ namespace Microsoft.WindowsAzure.Storage
     }
 }";
 
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
-                expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, MicrosoftWindowsAzureStorageCSharpSourceCode  }
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
-        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependencies(string source, string editorConfigText, params DiagnosticResult[] expected)
         {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode },
-                additionalFile,
-                ReferenceFlags.None,
-                expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, MicrosoftWindowsAzureStorageCSharpSourceCode  },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -102,13 +119,13 @@ class TestClass
         cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
     }
 }",
-            GetCSharpResultAt(12, 9, UseSharedAccessProtocolHttpsOnly.Rule));
+            GetCSharpResultAt(12, 9));
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -123,9 +140,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -142,9 +159,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -160,9 +177,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -181,9 +198,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -195,9 +212,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using Microsoft.WindowsAzure;
 
@@ -222,18 +239,18 @@ class TestClass
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality." + UseSharedAccessProtocolHttpsOnly.DiagnosticId + ".excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
             {
                 expected = new DiagnosticResult[]
                 {
-                    GetCSharpResultAt(12, 9, UseSharedAccessProtocolHttpsOnly.Rule)
+                    GetCSharpResultAt(12, 9)
                 };
             }
 
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -246,17 +263,11 @@ class TestClass
         var protocols = SharedAccessProtocol.HttpsOrHttp;
         cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}", editorConfigText, expected);
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseSharedAccessProtocolHttpsOnly();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseSharedAccessProtocolHttpsOnly();
-        }
+        private DiagnosticResult GetCSharpResultAt(int line, int column)
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column);
     }
 }

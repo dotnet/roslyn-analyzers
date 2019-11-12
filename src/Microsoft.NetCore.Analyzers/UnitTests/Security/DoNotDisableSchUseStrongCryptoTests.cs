@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -14,12 +13,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableSchUseStrongCryptoTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableSchUseStrongCryptoTests
     {
         [Fact]
-        public void DocSample1_CSharp_Violation()
+        public async Task DocSample1_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class ExampleClass
@@ -30,13 +29,13 @@ public class ExampleClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void DocSample1_VB_Violation()
+        public async Task DocSample1_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class ExampleClass
@@ -45,7 +44,7 @@ Public Class ExampleClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true)
     End Sub
 End Class",
-            GetBasicResultAt(7, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetBasicResultAt(7, 9, "SetSwitch"));
         }
 
         [Fact]
@@ -77,9 +76,9 @@ End Class");
         }
 
         [Fact]
-        public void TestBoolDiagnostic()
+        public async Task TestBoolDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -89,13 +88,13 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
-        public void TestEquationDiagnostic()
+        public async Task TestEquationDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -105,7 +104,7 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 + 2 == 3);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, "SetSwitch"));
         }
 
         [Fact]
@@ -125,9 +124,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestWithConstantSwitchNameDiagnostic()
+        public async Task TestWithConstantSwitchNameDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -138,7 +137,7 @@ class TestClass
         AppContext.SetSwitch(constSwitchName, true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         [Fact]
@@ -203,9 +202,9 @@ class TestClass
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
-        public void TestSwitchNameVariableNoDiagnostic()
+        public async Task TestSwitchNameVariableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -216,7 +215,7 @@ class TestClass
         AppContext.SetSwitch(switchName, true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, "SetSwitch"));
         }
 
         //Ideally, we would generate a diagnostic in this case.
@@ -280,15 +279,5 @@ class TestClass
             => VerifyVB.Diagnostic(DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
-        }
     }
 }

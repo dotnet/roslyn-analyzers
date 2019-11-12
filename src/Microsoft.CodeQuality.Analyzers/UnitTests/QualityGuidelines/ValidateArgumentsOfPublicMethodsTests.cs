@@ -2,7 +2,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -20,17 +19,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
-    public partial class ValidateArgumentsOfPublicMethodsTests : DiagnosticAnalyzerTestBase
+    public partial class ValidateArgumentsOfPublicMethodsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new ValidateArgumentsOfPublicMethods();
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ValidateArgumentsOfPublicMethods();
-
-        private static new DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodSignature, parameterName);
 
-        private static new DiagnosticResult GetBasicResultAt(int line, int column, string methodSignature, string parameterName)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string methodSignature, string parameterName)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(methodSignature, parameterName);
@@ -793,9 +789,15 @@ End Class",
         }
 
         [Fact]
-        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
+        public async Task ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
         {
-            VerifyCSharp(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     public int X;
@@ -855,9 +857,19 @@ public class Test
         var z = c.X;
     }
 }
-", GetEditorConfigToEnableCopyAnalysis());
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                }
+            }.RunAsync();
 
-            VerifyBasic(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class C
     Public X As Integer
 End Class
@@ -908,7 +920,11 @@ Public Class Test
         Dim z = c.X
     End Sub
 
-End Class", GetEditorConfigToEnableCopyAnalysis());
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                }
+            }.RunAsync();
         }
 
         [Fact]
@@ -1256,9 +1272,15 @@ End Class");
         }
 
         [Fact]
-        public void ContractCheck_NoDiagnostic_CopyAnalysis()
+        public async Task ContractCheck_NoDiagnostic_CopyAnalysis()
         {
-            VerifyCSharp(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     public int X;
@@ -1301,9 +1323,19 @@ public class Test
         var z = c.X;
     }
 }
-", GetEditorConfigToEnableCopyAnalysis());
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                }
+            }.RunAsync();
 
-            VerifyBasic(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class C
 
     Public X As Integer
@@ -1341,7 +1373,11 @@ Public Class Test
         Dim z = c.X
     End Sub
 End Class
-", GetEditorConfigToEnableCopyAnalysis());
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                }
+            }.RunAsync();
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]

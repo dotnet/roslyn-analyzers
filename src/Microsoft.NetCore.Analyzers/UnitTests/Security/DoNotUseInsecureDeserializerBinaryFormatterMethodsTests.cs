@@ -181,7 +181,7 @@ namespace Blah
 }");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
             => VerifyCS.Diagnostic(DoNotUseInsecureDeserializerBinaryFormatterMethods.RealMethodUsedDescriptor)
                 .WithLocation(line, column)
                 .WithArguments(arguments);

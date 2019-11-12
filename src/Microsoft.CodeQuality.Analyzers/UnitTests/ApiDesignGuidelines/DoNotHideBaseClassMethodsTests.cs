@@ -487,12 +487,12 @@ End Class
 ");
         }
 
-        private DiagnosticResult GetCA1061CSharpResultAt(int line, int column, string derivedMethod, string baseMethod)
+        private static DiagnosticResult GetCA1061CSharpResultAt(int line, int column, string derivedMethod, string baseMethod)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(derivedMethod, baseMethod);
 
-        private DiagnosticResult GetCA1061BasicResultAt(int line, int column, string derivedMethod, string baseMethod)
+        private static DiagnosticResult GetCA1061BasicResultAt(int line, int column, string derivedMethod, string baseMethod)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(derivedMethod, baseMethod);

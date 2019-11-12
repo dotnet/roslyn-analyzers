@@ -665,28 +665,28 @@ End Class
         }
         #endregion
 
-        private DiagnosticResult GetCSharpPropertyResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetCSharpPropertyResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetCSharpResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.PropertyGetterRule, methodName, exceptionName);
         }
-        private DiagnosticResult GetCSharpAllowedExceptionsResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetCSharpAllowedExceptionsResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetCSharpResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.HasAllowedExceptionsRule, methodName, exceptionName);
         }
-        private DiagnosticResult GetCSharpNoExceptionsResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetCSharpNoExceptionsResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetCSharpResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.NoAllowedExceptionsRule, methodName, exceptionName);
         }
 
-        private DiagnosticResult GetBasicPropertyResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetBasicPropertyResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetBasicResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.PropertyGetterRule, methodName, exceptionName);
         }
-        private DiagnosticResult GetBasicAllowedExceptionsResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetBasicAllowedExceptionsResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetBasicResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.HasAllowedExceptionsRule, methodName, exceptionName);
         }
-        private DiagnosticResult GetBasicNoExceptionsResultAt(int line, int column, string methodName, string exceptionName)
+        private static DiagnosticResult GetBasicNoExceptionsResultAt(int line, int column, string methodName, string exceptionName)
         {
             return GetBasicResultAt(line, column, DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer.NoAllowedExceptionsRule, methodName, exceptionName);
         }

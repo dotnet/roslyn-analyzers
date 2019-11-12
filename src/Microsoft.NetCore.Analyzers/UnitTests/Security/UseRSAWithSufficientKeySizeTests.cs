@@ -548,7 +548,7 @@ class TestClass
 }");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(arguments);

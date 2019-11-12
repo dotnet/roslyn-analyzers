@@ -20,7 +20,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXml"));
         }
 
-        private DiagnosticResult GetCA3075DataTableReadXmlBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DataTableReadXmlBasicResultAt(int line, int column)
         {
             return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXml"));
         }

@@ -635,12 +635,12 @@ End Class
             }.RunAsync();
         }
 
-        private DiagnosticResult GetCA1715CSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetCA1715CSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
                .WithArguments(arguments);
 
-        private DiagnosticResult GetCA1715BasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetCA1715BasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
            => VerifyVB.Diagnostic(rule)
                .WithLocation(line, column)
                .WithArguments(arguments);

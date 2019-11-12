@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class UseAutoValidateAntiforgeryTokenTests
     {
-        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
                .WithArguments(arguments);

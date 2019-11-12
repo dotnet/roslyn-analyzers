@@ -15,12 +15,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class DisposeMethodsShouldCallBaseClassDisposeTests
     {
-        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
            => VerifyCS.Diagnostic()
                .WithLocation(line, column)
                .WithArguments(arguments);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(arguments);

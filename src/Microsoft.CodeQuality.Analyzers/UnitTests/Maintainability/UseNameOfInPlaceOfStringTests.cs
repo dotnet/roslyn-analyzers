@@ -617,12 +617,12 @@ namespace ConsoleApp14
 
         #endregion
 
-        private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
+        private static DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(name);
 
-        private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
+        private static DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(name);

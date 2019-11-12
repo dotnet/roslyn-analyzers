@@ -23,32 +23,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     public partial class DisposeObjectsBeforeLosingScopeTests
     {
-        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
                .WithArguments(arguments);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedRule, allocationText);
-        private DiagnosticResult GetCSharpMayBeNotDisposedResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetCSharpMayBeNotDisposedResultAt(int line, int column, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedRule, allocationText);
-        private DiagnosticResult GetCSharpNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetCSharpNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedOnExceptionPathsRule, allocationText);
-        private DiagnosticResult GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedOnExceptionPathsRule, allocationText);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string allocationText) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedRule, allocationText);
-        private DiagnosticResult GetBasicMayBeNotDisposedResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetBasicMayBeNotDisposedResultAt(int line, int column, string allocationText) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedRule, allocationText);
-        private DiagnosticResult GetBasicNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetBasicNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedOnExceptionPathsRule, allocationText);
-        private DiagnosticResult GetBasicMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
+        private static DiagnosticResult GetBasicMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string allocationText) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedOnExceptionPathsRule, allocationText);
 
         private string GetEditorConfigContentToDisableInterproceduralAnalysis(DisposeAnalysisKind disposeAnalysisKind)

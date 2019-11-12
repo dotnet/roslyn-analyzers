@@ -266,7 +266,7 @@ class TestClass
 }", editorConfigText, expected);
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
            => VerifyCS.Diagnostic()
                .WithLocation(line, column);
     }

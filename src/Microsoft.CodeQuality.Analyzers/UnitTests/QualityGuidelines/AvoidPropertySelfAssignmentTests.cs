@@ -402,12 +402,12 @@ End Class
 ");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);

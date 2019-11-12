@@ -468,7 +468,7 @@ class TestClass
             }.RunAsync();
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column);
     }

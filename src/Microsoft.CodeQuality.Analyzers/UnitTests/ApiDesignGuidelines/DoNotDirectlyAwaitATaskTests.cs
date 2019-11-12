@@ -422,11 +422,11 @@ public class C
             await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(11, 19));
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column)
+        private static DiagnosticResult GetBasicResultAt(int line, int column)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
     }

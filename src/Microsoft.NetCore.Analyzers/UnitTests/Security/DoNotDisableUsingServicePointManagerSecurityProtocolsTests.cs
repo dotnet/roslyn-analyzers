@@ -271,12 +271,12 @@ public class ExampleClass
             await test.RunAsync();
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
             => VerifyCS.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
             => VerifyVB.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);

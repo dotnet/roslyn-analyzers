@@ -15,12 +15,12 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column)
         {
             return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "LoadXml"));
         }
 
-        private DiagnosticResult GetCA3075LoadXmlBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075LoadXmlBasicResultAt(int line, int column)
         {
             return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "LoadXml"));
         }

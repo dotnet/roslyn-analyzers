@@ -536,12 +536,12 @@ class TestClass
 }");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
             => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);

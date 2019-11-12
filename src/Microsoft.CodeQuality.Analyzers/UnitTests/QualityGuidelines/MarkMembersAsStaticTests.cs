@@ -700,12 +700,12 @@ class C
             DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(symbolName);

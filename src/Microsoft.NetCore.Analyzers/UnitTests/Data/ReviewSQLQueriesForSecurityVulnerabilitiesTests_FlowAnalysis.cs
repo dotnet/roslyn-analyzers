@@ -16,12 +16,12 @@ namespace Microsoft.NetCore.Analyzers.Data.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
     public class ReviewSQLQueriesForSecurityVulnerabilitiesTests_FlowAnalysis : ReviewSQLQueriesForSecurityVulnerabilitiesTests
     {
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(invokedSymbol, containingMethod);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
                 .WithArguments(invokedSymbol, containingMethod);

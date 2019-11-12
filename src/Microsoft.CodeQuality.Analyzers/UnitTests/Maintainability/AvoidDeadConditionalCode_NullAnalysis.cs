@@ -16,22 +16,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
     public partial class AvoidDeadConditionalCodeTests
     {
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string condition, string reason)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string condition, string reason)
             => VerifyCS.Diagnostic(AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule)
                 .WithLocation(line, column)
                 .WithArguments(condition, reason);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string condition, string reason)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string condition, string reason)
             => VerifyVB.Diagnostic(AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule)
                 .WithLocation(line, column)
                 .WithArguments(condition, reason);
 
-        private DiagnosticResult GetCSharpNeverNullResultAt(int line, int column, string condition, string reason)
+        private static DiagnosticResult GetCSharpNeverNullResultAt(int line, int column, string condition, string reason)
             => VerifyCS.Diagnostic(AvoidDeadConditionalCode.NeverNullRule)
                 .WithLocation(line, column)
                 .WithArguments(condition, reason);
 
-        private DiagnosticResult GetBasicNeverNullResultAt(int line, int column, string condition, string reason)
+        private static DiagnosticResult GetBasicNeverNullResultAt(int line, int column, string condition, string reason)
             => VerifyVB.Diagnostic(AvoidDeadConditionalCode.NeverNullRule)
                 .WithLocation(line, column)
                 .WithArguments(condition, reason);

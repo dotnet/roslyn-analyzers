@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
+    <!-- https://github.com/tonerdo/coverlet/issues/363 -->
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+
     <CollectCoverage>true</CollectCoverage>
     <SingleHit>true</SingleHit>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>

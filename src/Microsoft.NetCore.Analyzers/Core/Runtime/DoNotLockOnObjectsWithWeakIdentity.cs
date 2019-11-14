@@ -64,12 +64,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var monitorType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor);
-                    if (monitorType != null &&
+                    if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor, out var monitorType) &&
                         method.ContainingType.Equals(monitorType) &&
-                        invocationOperation.Arguments[0]?.Value is IConversionOperation conversionOperation)
+                        invocationOperation.Arguments[0].Value is IConversionOperation conversionOperation)
                     {
-                        ReportOnWeakIdentityObject(conversionOperation?.Operand, context);
+                        ReportOnWeakIdentityObject(conversionOperation.Operand, context);
                     }
                 },
                 OperationKind.Invocation);
@@ -81,14 +80,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (operation is IInstanceReferenceOperation instanceReference &&
                 instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
             {
-                context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule, operation.Syntax.ToString()));
+                context.ReportDiagnostic(operation.CreateDiagnostic(Rule, operation.Syntax.ToString()));
             }
             else
             {
-                var type = operation?.Type;
-                if (type != null && TypeHasWeakIdentity(type, context.Compilation))
+                if (operation.Type is ITypeSymbol type && TypeHasWeakIdentity(type, context.Compilation))
                 {
-                    context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(Rule, type.ToDisplayString()));
                 }
             }
         }

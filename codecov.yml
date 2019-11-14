@@ -11,4 +11,4 @@ coverage:
     - "eng/src/::src/"
 
 comment:
-  layout: "diff, flags, files, footer"
+  layout: "diff"

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -136,7 +137,7 @@ namespace Microsoft.NetFramework.Analyzers
             /// <param name="attributeData">The .NET attribute to check.</param>
             /// <param name="symbol">The type of .NET attribute to compare.</param>
             /// <returns>True if .NET attribute's type matches the specified type, false otherwise.</returns>
-            private static bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol? symbol)
+            private static bool IsAttributeClass(AttributeData attributeData, [NotNullWhen(returnValue: true)] INamedTypeSymbol? symbol)
             {
                 return symbol != null && Equals(attributeData.AttributeClass, symbol);
             }

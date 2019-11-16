@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
-                        (object? o) => o is bool booleanValue && booleanValue == false),
+                        (object? o) => o is false),
                 CheckCertificateRevocationListIndex),
             new PropertyMapper(
                 "ServerCertificateCustomValidationCallback",

@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+// TODO(dotpaul): Enable nullable analysis.
+#nullable disable
+
 using System.Collections.Immutable;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 using Analyzer.Utilities;
@@ -106,8 +109,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             INamedTypeSymbol type = method.ContainingType;
-                            DiagnosticDescriptor? rule = null;
-                            string? algorithmName = null;
+                            DiagnosticDescriptor rule = null;
+                            string algorithmName = null;
 
                             if (type.DerivesFrom(cryptTypes.MD5))
                             {
@@ -136,9 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                                 algorithmName = cryptTypes.DSA.Name;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                             }
                             else if (type.DerivesFrom(cryptTypes.HMACMD5))
                             {

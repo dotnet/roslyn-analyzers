@@ -134,10 +134,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
-                    if (targetMethod.IsGenericMethod || targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() ||
-                        (targetMethod.ContainingType != null &&
-                         (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
-                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType))))
+                    if (targetMethod.IsGenericMethod || targetMethod.ContainingType.IsErrorType() ||
+                        (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
+                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)))
                     {
                         return;
                     }
@@ -166,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
 
-                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType!.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
+                    IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
                     if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();

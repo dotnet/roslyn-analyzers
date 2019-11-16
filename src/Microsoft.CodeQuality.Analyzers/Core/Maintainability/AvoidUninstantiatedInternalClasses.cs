@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
                 var internalsVisibleToAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
-                if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
+                if (compilation.Assembly.HasAttribute(internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
@@ -198,16 +198,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 });
             });
-        }
-
-        private static bool AssemblyExposesInternals(
-            Compilation compilation,
-            INamedTypeSymbol? internalsVisibleToAttributeSymbol)
-        {
-            ISymbol assemblySymbol = compilation.Assembly;
-            var attributes = assemblySymbol.GetAttributes();
-            return internalsVisibleToAttributeSymbol == null ||
-                attributes.Any(attr => attr.AttributeClass.Equals(internalsVisibleToAttributeSymbol));
         }
 
         private bool HasInstantiatedNestedType(INamedTypeSymbol type, IEnumerable<INamedTypeSymbol> instantiatedTypes)

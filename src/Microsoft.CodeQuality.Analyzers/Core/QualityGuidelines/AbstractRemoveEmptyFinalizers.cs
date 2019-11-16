@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         }
 
         protected static bool InvocationIsConditional(IMethodSymbol methodSymbol, INamedTypeSymbol? conditionalAttributeSymbol) =>
-            conditionalAttributeSymbol != null && methodSymbol.GetAttributes().Any(n => n.AttributeClass.Equals(conditionalAttributeSymbol));
+            methodSymbol.HasAttribute(conditionalAttributeSymbol);
 
         protected abstract bool IsEmptyFinalizer(SyntaxNode methodBody, CodeBlockAnalysisContext analysisContext);
     }

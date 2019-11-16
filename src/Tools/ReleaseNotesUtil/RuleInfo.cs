@@ -23,6 +23,7 @@ namespace ReleaseNotesUtil
             HelpLink = helpLink;
         }
 
+        // TODO(dotpaul): Remove the below suppression.
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public RuleInfo()
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

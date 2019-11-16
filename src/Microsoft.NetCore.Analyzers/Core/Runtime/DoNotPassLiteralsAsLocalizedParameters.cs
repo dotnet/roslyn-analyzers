@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     return;
                                 }
 
-                                var stringLiteralValues = stringContentValue.LiteralValues.Select(l => (string?)l);
+                                var stringLiteralValues = stringContentValue.LiteralValues.Cast<string?>();
 
                                 // FxCop compat: Do not fire if the literal value came from a default parameter value
                                 if (stringContentValue.LiteralValues.Count == 1 &&

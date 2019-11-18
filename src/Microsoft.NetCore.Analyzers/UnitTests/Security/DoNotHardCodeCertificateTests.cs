@@ -448,7 +448,7 @@ public class TestClass
 }");
         }
 
-    protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotHardCodeCertificate();
         }

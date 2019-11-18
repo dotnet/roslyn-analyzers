@@ -434,7 +434,21 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        [Fact]
+        public void Test_NullCfg_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class TestClass
+{
+    public static string ContentName => ""Satya"";
+
+    public static readonly byte[] ByteArray = Convert.FromBase64String(""Some strings."");
+}");
+        }
+
+    protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotHardCodeCertificate();
         }

@@ -2,7 +2,6 @@
 
 using System.Globalization;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -15,18 +14,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class EnumWithFlagsAttributeTests : DiagnosticAnalyzerTestBase
+    public class EnumWithFlagsAttributeTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new EnumWithFlagsAttributeAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EnumWithFlagsAttributeAnalyzer();
-        }
-
         private static string GetCSharpCode_EnumWithFlagsAttributes(string code, bool hasFlags)
         {
             string stringToReplace = hasFlags ? "[System.Flags]" : "";
@@ -105,7 +94,7 @@ internal class OuterClass
         }
 
         [Fact]
-        public void CSharp_EnumWithFlagsAttributes_SimpleCaseWithScope()
+        public async Task CSharp_EnumWithFlagsAttributes_SimpleCaseWithScope()
         {
             var code = @"{0}
 public enum SimpleFlagsEnumClass
@@ -117,18 +106,18 @@ public enum SimpleFlagsEnumClass
 }}
 
 {0}
-[|public enum HexFlagsEnumClass
+public enum {{|CA1027:HexFlagsEnumClass|}}
 {{
     One = 0x1,
     Two = 0x2,
     Four = 0x4,
     All = 0x7
-}}|]";
+}}";
 
             // Verify CA1027: Mark enums with FlagsAttribute
             string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
-            VerifyCSharp(codeWithoutFlags,
-                GetCA1027CSharpResultAt(11, 13, "HexFlagsEnumClass"));
+            await VerifyCS.VerifyAnalyzerAsync(codeWithoutFlags,
+                GetCA1027CSharpResultAt(2, 13, "HexFlagsEnumClass"));
         }
 
         [Fact]
@@ -192,7 +181,7 @@ End Class";
         }
 
         [Fact]
-        public void VisualBasic_EnumWithFlagsAttributes_SimpleCaseWithScope()
+        public async Task VisualBasic_EnumWithFlagsAttributes_SimpleCaseWithScope()
         {
             var code = @"{0}
 Public Enum SimpleFlagsEnumClass
@@ -203,17 +192,17 @@ Public Enum SimpleFlagsEnumClass
 End Enum
 
 {0}
-[|Public Enum HexFlagsEnumClass
+Public Enum {{|CA1027:HexFlagsEnumClass|}}
     One = &H1
     Two = &H2
     Four = &H4
     All = &H7
-End Enum|]";
+End Enum";
 
             // Verify CA1027: Mark enums with FlagsAttribute
             string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
-            VerifyBasic(codeWithoutFlags,
-                GetCA1027BasicResultAt(10, 13, "HexFlagsEnumClass"));
+            await VerifyVB.VerifyAnalyzerAsync(codeWithoutFlags,
+                GetCA1027BasicResultAt(2, 13, "HexFlagsEnumClass"));
         }
 
         [Fact]

@@ -52,6 +52,16 @@
         <target state="translated">Имена асинхронных методов должны заканчиваться на Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessage">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Общее исключение, такое как System.Exception, System.SystemException или недопустимый тип исключения, перехватывается в выражении catch либо используется общее выражение catch. Общие и недопустимые исключения не должны перехватываться.</target>

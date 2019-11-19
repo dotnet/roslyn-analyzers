@@ -1343,4 +1343,10 @@
   <data name="AssigningSymbolAndItsMemberInSameStatementTitle" xml:space="preserve">
     <value>Assigning symbol and its member in the same statement.</value>
   </data>
+  <data name="AvoidInfiniteRecursionMessage" xml:space="preserve">
+    <value>This call is leading to an infinite recursion.</value>
+  </data>
+  <data name="AvoidInfiniteRecursionTitle" xml:space="preserve">
+    <value>Avoid infinite recursion</value>
+  </data>
 </root>

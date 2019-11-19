@@ -52,6 +52,16 @@
         <target state="translated">I nomi di metodi asincroni devono terminare con Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessage">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">In un'istruzione catch è stato rilevato un tipo di eccezione non consentito o un'eccezione generale, come System.Exception o System.SystemException, oppure viene usata una clausola catch generale. Le eccezioni generali e non consentite non dovrebbero essere rilevate.</target>

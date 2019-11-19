@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -38,6 +39,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         var assignmentOperation = (IAssignmentOperation)operationContext.Operation;
 
                         if (assignmentOperation.Target is IPropertyReferenceOperation operationTarget &&
+                            operationTarget.Instance is IInstanceReferenceOperation targetInstanceReference &&
+                            targetInstanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance &&
+                            assignmentOperation.GetAncestor<ILocalFunctionOperation>(OperationKind.LocalFunction) == null &&
+                            assignmentOperation.GetAncestor<IAnonymousFunctionOperation>(OperationKind.AnonymousFunction) == null &&
                             operationTarget.Member.Equals(methodSymbol.AssociatedSymbol))
                         {
                             operationContext.ReportDiagnostic(Diagnostic.Create(Rule, assignmentOperation.Syntax.GetLocation(), operationTarget.Property.Name));

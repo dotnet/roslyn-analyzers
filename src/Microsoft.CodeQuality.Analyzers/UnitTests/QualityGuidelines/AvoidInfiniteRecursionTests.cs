@@ -37,8 +37,7 @@ Public Class A
             Me.Abc = value
         End Set
     End Property
-End Class
-",
+End Class",
                 GetBasicResultAt(5, 13, "Abc"));
         }
 
@@ -74,8 +73,7 @@ Public Class A
             End If
         End Set
     End Property
-End Class
-",
+End Class",
                 GetBasicResultAt(5, 13, "Abc"),
                 GetBasicResultAt(8, 17, "Abc"));
         }
@@ -99,15 +97,14 @@ public class A
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class A
-    Private abc As Integer
+    Private abcField As Integer
 
     Public WriteOnly Property Abc As Integer
         Set(ByVal value As Integer)
-            Me.abc = value
+            Me.abcField = value
         End Set
     End Property
-End Class
-");
+End Class");
         }
 
         [Fact]
@@ -136,8 +133,78 @@ Public Class A
             Me.Foo = value
         End Set
     End Property
-End Class
-");
+End Class");
+        }
+
+        [Fact]
+        public async Task PropertySetterRecursionInLambda_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public int Abc
+    {
+        set
+        {
+            Action act = () => this.Abc = value;
+            act(); // This is a valid case where we would want to report but the action could be defined somewhere else or used somewhere else.
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task PropertySetterRecursionInLocalFunction_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public int Abc
+    {
+        set
+        {
+            Foo();
+
+            void Foo() // This is a valid case where we would want to report but the local func could be defined somewhere else or used somewhere else.
+            {
+                this.Abc = value;
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task PropertySetterNoRecursionNotOnThis_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class A
+{
+    private A _field;
+
+    public int Abc
+    {
+        set
+        {
+            _field.Abc = value;
+        }
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class A
+    Private _field As A
+
+    Public WriteOnly Property Abc As Integer
+        Set(ByVal value As Integer)
+            _field.Abc = value
+        End Set
+    End Property
+End Class");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

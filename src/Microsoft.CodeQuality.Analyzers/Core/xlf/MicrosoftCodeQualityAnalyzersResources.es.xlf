@@ -53,8 +53,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidInfiniteRecursionMessage">
-        <source>Avoid infinite recursion</source>
-        <target state="new">Avoid infinite recursion</target>
+        <source>This call is leading to an infinite recursion.</source>
+        <target state="new">This call is leading to an infinite recursion.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidInfiniteRecursionTitle">

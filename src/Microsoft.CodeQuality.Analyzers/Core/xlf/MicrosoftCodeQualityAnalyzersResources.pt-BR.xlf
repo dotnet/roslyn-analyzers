@@ -52,9 +52,14 @@
         <target state="translated">Os nomes de método assíncrono devem terminar em Async</target>
         <note />
       </trans-unit>
-      <trans-unit id="AvoidInfiniteRecursionMessage">
-        <source>This call is leading to an infinite recursion.</source>
-        <target state="new">This call is leading to an infinite recursion.</target>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidInfiniteRecursionTitle">

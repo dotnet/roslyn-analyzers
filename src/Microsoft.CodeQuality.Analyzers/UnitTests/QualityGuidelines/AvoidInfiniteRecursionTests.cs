@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidInfiniteRecursion,
@@ -28,7 +30,7 @@ public class A
         }
     }
 }",
-                GetCSharpResultAt(8, 13, "Abc"));
+                GetCSharpResultAt(8, 13, AvoidInfiniteRecursion.Rule, "Abc"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class A
@@ -38,11 +40,11 @@ Public Class A
         End Set
     End Property
 End Class",
-                GetBasicResultAt(5, 13, "Abc"));
+                GetBasicResultAt(5, 13, AvoidInfiniteRecursion.Rule, "Abc"));
         }
 
         [Fact]
-        public async Task PropertySetterMultipleRecursion_Diagnostic()
+        public async Task PropertySetterRecursionWithinIf_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
@@ -51,7 +53,6 @@ public class A
     {
         set
         {
-            this.Abc = value;
             if (value > 42)
             {
                 Abc = value;
@@ -59,23 +60,51 @@ public class A
         }
     }
 }",
-                GetCSharpResultAt(8, 13, "Abc"),
-                GetCSharpResultAt(11, 17, "Abc"));
+                GetCSharpResultAt(10, 17, AvoidInfiniteRecursion.MaybeRule, "Abc"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class A
     Public WriteOnly Property Abc As Integer
         Set(ByVal value As Integer)
-            Me.Abc = value
-
             If value > 42 Then
                 Abc = value
             End If
         End Set
     End Property
 End Class",
-                GetBasicResultAt(5, 13, "Abc"),
-                GetBasicResultAt(8, 17, "Abc"));
+                GetBasicResultAt(6, 17, AvoidInfiniteRecursion.MaybeRule, "Abc"));
+        }
+
+        [Fact]
+        public async Task PropertySetterRecursionWithinIf_FalsePositive_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class A
+{
+    public int Abc
+    {
+        set
+        {
+            if (false)
+            {
+                Abc = value;
+            }
+        }
+    }
+}",
+                GetCSharpResultAt(10, 17, AvoidInfiniteRecursion.MaybeRule, "Abc"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class A
+    Public WriteOnly Property Abc As Integer
+        Set(ByVal value As Integer)
+            If false Then
+                Abc = value
+            End If
+        End Set
+    End Property
+End Class",
+                GetBasicResultAt(6, 17, AvoidInfiniteRecursion.MaybeRule, "Abc"));
         }
 
         [Fact]
@@ -137,7 +166,7 @@ End Class");
         }
 
         [Fact]
-        public async Task PropertySetterRecursionInLambda_NoDiagnostic()
+        public async Task PropertySetterRecursionInLambda_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -149,14 +178,107 @@ public class A
         set
         {
             Action act = () => this.Abc = value;
-            act(); // This is a valid case where we would want to report but the action could be defined somewhere else or used somewhere else.
+            act();
         }
     }
-}");
+}",
+                GetCSharpResultAt(10, 32, AvoidInfiniteRecursion.MaybeRule, "Abc"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Public WriteOnly Property Abc As Integer
+        Set(ByVal value As Integer)
+            Dim act As Action = Sub()
+                                    Me.Abc = value
+                                End Sub
+            act()
+        End Set
+    End Property
+End Class",
+                GetBasicResultAt(8, 37, AvoidInfiniteRecursion.MaybeRule, "Abc"));
         }
 
         [Fact]
-        public async Task PropertySetterRecursionInLocalFunction_NoDiagnostic()
+        public async Task PropertySetterRecursionInLambda_FalsePositive_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public int Abc
+    {
+        set
+        {
+            Action act = () => this.Abc = value; // dead code - the action isn't called
+        }
+    }
+}",
+                GetCSharpResultAt(10, 32, AvoidInfiniteRecursion.MaybeRule, "Abc"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Public WriteOnly Property Abc As Integer
+        Set(ByVal value As Integer)
+            Dim act As Action = Sub()
+                                    Me.Abc = value ' dead code - the action isn't called
+                                End Sub
+        End Set
+    End Property
+End Class",
+                GetBasicResultAt(8, 37, AvoidInfiniteRecursion.MaybeRule, "Abc"));
+        }
+
+        [Fact]
+        public async Task PropertySetterRecursionInLambda_FalseNegative_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    private Action<int> act;
+
+    public A()
+    {
+        act = i => this.Abc = i;
+    }
+
+    public int Abc
+    {
+        set
+        {
+            act(value); // this will cause an infinite loop
+        }
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class A
+    Private act As Action(Of Integer)
+
+    Public Sub New()
+        act = Sub(i)
+                Me.Abc = i
+              End Sub
+    End Sub
+
+    Public WriteOnly Property Abc As Integer
+        Set(ByVal value As Integer)
+            act(value)
+        End Set
+    End Property
+End Class");
+        }
+
+        [Fact]
+        public async Task PropertySetterRecursionInLocalFunction_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -169,13 +291,14 @@ public class A
         {
             Foo();
 
-            void Foo() // This is a valid case where we would want to report but the local func could be defined somewhere else or used somewhere else.
+            void Foo()
             {
                 this.Abc = value;
             }
         }
     }
-}");
+}",
+                GetCSharpResultAt(14, 17, AvoidInfiniteRecursion.MaybeRule, "Abc"));
         }
 
         [Fact]
@@ -207,13 +330,13 @@ Public Class A
 End Class");
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-                => VerifyCS.Diagnostic()
-                    .WithLocation(line, column)
-                    .WithArguments(symbolName);
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, string symbolName)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName);
 
-        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
-            => VerifyVB.Diagnostic()
+        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, string symbolName)
+            => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithArguments(symbolName);
     }

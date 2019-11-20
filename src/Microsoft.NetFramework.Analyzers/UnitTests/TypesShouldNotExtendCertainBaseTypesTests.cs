@@ -347,13 +347,13 @@ End Class
         private static DiagnosticResult GetCSharpCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return VerifyCS.Diagnostic(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return VerifyVB.Diagnostic(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)

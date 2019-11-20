@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft. All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserialization,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotCallDangerousMethodsInDeserialization,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotCallDangerousMethodsInDeserializationTests : DiagnosticAnalyzerTestBase
+    public class DoNotCallDangerousMethodsInDeserializationTests
     {
         [Fact]
-        public void TestOnDeserializingDiagnostic()
+        public async Task TestOnDeserializingDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -28,9 +34,9 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -47,13 +53,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializedDiagnostic()
+        public async Task TestOnDeserializedDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -70,9 +76,9 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -89,13 +95,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnMultiAttributesDiagnostic()
+        public async Task TestOnMultiAttributesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -113,9 +119,9 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(13, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(13, 19, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -133,13 +139,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(13, 13, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializedMediateInvocationDiagnostic()
+        public async Task TestOnDeserializedMediateInvocationDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -157,16 +163,16 @@ public class TestClass
         byte[] bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(""C:\\"", bytes);
     }
-    
+
     private void TestMethod()
     {
         byte[] bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -189,13 +195,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializedMultiMediateInvocationsDiagnostic()
+        public async Task TestOnDeserializedMultiMediateInvocationsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -225,9 +231,9 @@ public class TestClass
         }
     }
 }",
-            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -255,13 +261,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializationImplicitlyDiagnostic()
+        public async Task TestOnDeserializationImplicitlyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -280,13 +286,13 @@ public class TestClass : IDeserializationCallback
         File.WriteAllBytes(path, bytes);
     }
 }",
-            GetCSharpResultAt(13, 17, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(13, 17, "TestClass", "OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializationWriteAllBytesDiagnostic()
+        public async Task TestOnDeserializationWriteAllBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -305,9 +311,9 @@ public class TestClass : IDeserializationCallback
         File.WriteAllBytes(path, bytes);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -324,13 +330,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializationExplictlyImplemented", "WriteAllBytes"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserializationExplictlyImplemented", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializationWriteAllLinesDiagnostic()
+        public async Task TestOnDeserializationWriteAllLinesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -349,9 +355,9 @@ public class TestClass : IDeserializationCallback
         File.WriteAllLines(path, strings, Encoding.ASCII);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllLines"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllLines"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -371,13 +377,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllLines"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "WriteAllLines"));
         }
 
         [Fact]
-        public void TestOnDeserializationWriteAllTextDiagnostic()
+        public async Task TestOnDeserializationWriteAllTextDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -396,9 +402,9 @@ public class TestClass : IDeserializationCallback
         File.WriteAllText(path, contents);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllText"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllText"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -418,13 +424,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllText"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "WriteAllText"));
         }
 
         [Fact]
-        public void TestOnDeserializationCopyDiagnostic()
+        public async Task TestOnDeserializationCopyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -443,9 +449,9 @@ public class TestClass : IDeserializationCallback
         File.Copy(sourceFileName, destFileName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Copy"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Copy"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -465,13 +471,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Copy"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Copy"));
         }
 
         [Fact]
-        public void TestOnDeserializationMoveDiagnostic()
+        public async Task TestOnDeserializationMoveDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -490,9 +496,9 @@ public class TestClass : IDeserializationCallback
         File.Move(sourceFileName, destFileName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Move"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Move"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -513,13 +519,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Move"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Move"));
         }
 
         [Fact]
-        public void TestOnDeserializationAppendAllLinesDiagnostic()
+        public async Task TestOnDeserializationAppendAllLinesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -538,9 +544,9 @@ public class TestClass : IDeserializationCallback
         File.AppendAllLines(path, strings);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllLines"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllLines"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -559,13 +565,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendAllLines"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "AppendAllLines"));
         }
 
         [Fact]
-        public void TestOnDeserializationAppendAllTextDiagnostic()
+        public async Task TestOnDeserializationAppendAllTextDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -584,9 +590,9 @@ public class TestClass : IDeserializationCallback
         File.AppendAllText(path, contents);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllText"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllText"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -605,13 +611,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendAllText"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "AppendAllText"));
         }
 
         [Fact]
-        public void TestOnDeserializationAppendTextDiagnostic()
+        public async Task TestOnDeserializationAppendTextDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -629,9 +635,9 @@ public class TestClass : IDeserializationCallback
         File.AppendText(path);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendText"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendText"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -649,13 +655,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendText"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "AppendText"));
         }
 
         [Fact]
-        public void TestOnDeserializationDeleteDiagnostic()
+        public async Task TestOnDeserializationDeleteDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -673,9 +679,9 @@ public class TestClass : IDeserializationCallback
         File.Delete(path);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -693,13 +699,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Delete"));
         }
 
         [Fact]
-        public void TestOnDeserializationDeleteOfDirectoryDiagnostic()
+        public async Task TestOnDeserializationDeleteOfDirectoryDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -717,9 +723,9 @@ public class TestClass : IDeserializationCallback
         Directory.Delete(path);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -737,13 +743,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Delete"));
         }
 
         [Fact]
-        public void TestOnDeserializationDeleteOfFileInfoDiagnostic()
+        public async Task TestOnDeserializationDeleteOfFileInfoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -760,9 +766,9 @@ public class TestClass : IDeserializationCallback
         new FileInfo(""fileName"").Delete();
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -779,13 +785,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Delete"));
         }
 
         [Fact]
-        public void TestOnDeserializationDeleteOfDirectoryInfoDiagnostic()
+        public async Task TestOnDeserializationDeleteOfDirectoryInfoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -802,9 +808,9 @@ public class TestClass : IDeserializationCallback
         new DirectoryInfo(""path"").Delete();
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -821,13 +827,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+            GetBasicResultAt(12, 20, "TestClass", "OnDeserialization", "Delete"));
         }
 
         [Fact]
-        public void TestOnDeserializationDeleteOfLogStoreDiagnostic()
+        public async Task TestOnDeserializationDeleteOfLogStoreDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.IO.Log;
@@ -860,9 +866,9 @@ public class TestClass : IDeserializationCallback
         LogStore.Delete(path);
     }
 }",
-            GetCSharpResultAt(28, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+            GetCSharpResultAt(28, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.IO.Log
@@ -892,13 +898,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(24, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+            GetBasicResultAt(24, 20, "TestClass", "OnDeserialization", "Delete"));
         }
 
         [Fact]
-        public void TestOnDeserializationGetLoadedModulesDiagnostic()
+        public async Task TestOnDeserializationGetLoadedModulesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -916,9 +922,9 @@ public class TestClass : IDeserializationCallback
         var modules = assem.GetLoadedModules();
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "GetLoadedModules"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "GetLoadedModules"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -936,13 +942,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "GetLoadedModules"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "GetLoadedModules"));
         }
 
         [Fact]
-        public void TestOnDeserializationLoadDiagnostic()
+        public async Task TestOnDeserializationLoadDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -962,9 +968,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.Load(an);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Load"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Load"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -985,13 +991,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Load"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "Load"));
         }
 
         [Fact]
-        public void TestOnDeserializationLoadFileDiagnostic()
+        public async Task TestOnDeserializationLoadFileDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1009,9 +1015,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.LoadFile(fileName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFile"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFile"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1030,13 +1036,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadFile"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "LoadFile"));
         }
 
         [Fact]
-        public void TestOnDeserializationLoadFromDiagnostic()
+        public async Task TestOnDeserializationLoadFromDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1054,9 +1060,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.LoadFrom(assemblyName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFrom"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFrom"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1075,13 +1081,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadFrom"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "LoadFrom"));
         }
 
         [Fact]
-        public void TestOnDeserializationLoadModuleDiagnostic()
+        public async Task TestOnDeserializationLoadModuleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1101,9 +1107,9 @@ public class TestClass : IDeserializationCallback
         var module = assem.LoadModule(moduleName, rawModule);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadModule"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadModule"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1124,13 +1130,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadModule"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "LoadModule"));
         }
 
         [Fact]
-        public void TestOnDeserializationLoadWithPartialNameDiagnostic()
+        public async Task TestOnDeserializationLoadWithPartialNameDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1148,9 +1154,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.LoadWithPartialName(partialName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadWithPartialName"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadWithPartialName"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1169,13 +1175,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadWithPartialName"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "LoadWithPartialName"));
         }
 
         [Fact]
-        public void TestOnDeserializationReflectionOnlyLoadDiagnostic()
+        public async Task TestOnDeserializationReflectionOnlyLoadDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1193,9 +1199,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.ReflectionOnlyLoad(rawAssembly);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoad"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoad"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1213,13 +1219,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "ReflectionOnlyLoad"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "ReflectionOnlyLoad"));
         }
 
         [Fact]
-        public void TestOnDeserializationReflectionOnlyLoadFromDiagnostic()
+        public async Task TestOnDeserializationReflectionOnlyLoadFromDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1237,9 +1243,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.ReflectionOnlyLoadFrom(assemblyName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoadFrom"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoadFrom"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1258,13 +1264,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "ReflectionOnlyLoadFrom"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "ReflectionOnlyLoadFrom"));
         }
 
         [Fact]
-        public void TestOnDeserializationUnsafeLoadFromDiagnostic()
+        public async Task TestOnDeserializationUnsafeLoadFromDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1282,9 +1288,9 @@ public class TestClass : IDeserializationCallback
         var assem = Assembly.UnsafeLoadFrom(assemblyName);
     }
 }",
-            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "UnsafeLoadFrom"));
+            GetCSharpResultAt(13, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "UnsafeLoadFrom"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Reflection
@@ -1303,13 +1309,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "UnsafeLoadFrom"));
+            GetBasicResultAt(13, 20, "TestClass", "OnDeserialization", "UnsafeLoadFrom"));
         }
 
         [Fact]
-        public void TestUsingGenericwithTypeSpecifiedDiagnostic()
+        public async Task TestUsingGenericwithTypeSpecifiedDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1330,22 +1336,22 @@ public class TestGenericClass<T>
 }
 
 [Serializable()]
-public class TestClass : IDeserializationCallback 
+public class TestClass : IDeserializationCallback
 {
     private TestGenericClass<int> member;
 
-    void IDeserializationCallback.OnDeserialization(Object sender) 
+    void IDeserializationCallback.OnDeserialization(Object sender)
     {
         member.TestGenericMethod();
     }
 }",
-            GetCSharpResultAt(26, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(26, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestUsingInterfaceDiagnostic()
+        public async Task TestUsingInterfaceDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1369,22 +1375,22 @@ public class TestInterfaceImplement : TestInterface
 }
 
 [Serializable()]
-public class TestClass : IDeserializationCallback 
+public class TestClass : IDeserializationCallback
 {
     private TestInterfaceImplement member;
 
-    void IDeserializationCallback.OnDeserialization(Object sender) 
+    void IDeserializationCallback.OnDeserialization(Object sender)
     {
         member.TestInterfaceMethod();
     }
 }",
-            GetCSharpResultAt(29, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(29, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestStaticDelegateFieldDiagnostic()
+        public async Task TestStaticDelegateFieldDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1405,20 +1411,20 @@ public class TestAnotherClass
 }
 
 [Serializable()]
-public class TestClass : IDeserializationCallback 
+public class TestClass : IDeserializationCallback
 {
-    void IDeserializationCallback.OnDeserialization(Object sender) 
+    void IDeserializationCallback.OnDeserialization(Object sender)
     {
         TestAnotherClass.staticDelegateField();
     }
 }",
-            GetCSharpResultAt(24, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(24, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestDelegateFieldDiagnostic()
+        public async Task TestDelegateFieldDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1448,13 +1454,13 @@ public class TestClass : IDeserializationCallback
         testAnotherClass.delegateField();
     }
 }",
-            GetCSharpResultAt(19, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(19, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestUsingAbstractClassDiagnostic()
+        public async Task TestUsingAbstractClassDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Reflection;
@@ -1478,22 +1484,22 @@ public class TestDerivedClass : TestAbstractClass
 }
 
 [Serializable()]
-public class TestClass : IDeserializationCallback 
+public class TestClass : IDeserializationCallback
 {
     private TestDerivedClass member;
 
-    void IDeserializationCallback.OnDeserialization(Object sender) 
+    void IDeserializationCallback.OnDeserialization(Object sender)
     {
         member.TestAbstractMethod();
     }
 }",
-            GetCSharpResultAt(29, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+            GetCSharpResultAt(29, 35, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestFinalizeDiagnostic()
+        public async Task TestFinalizeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1509,9 +1515,9 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(11, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetCSharpResultAt(11, 6, "TestClass", "Finalize", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1527,13 +1533,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(11, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetBasicResultAt(11, 33, "TestClass", "Finalize", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestDisposeDiagnostic()
+        public async Task TestDisposeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -1572,10 +1578,10 @@ public class TestClass : IDisposable
         Dispose(false);
     }
 }",
-            GetCSharpResultAt(13, 17, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"),
-            GetCSharpResultAt(35, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetCSharpResultAt(13, 17, "TestClass", "Dispose", "WriteAllBytes"),
+            GetCSharpResultAt(35, 6, "TestClass", "Finalize", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1607,14 +1613,14 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(23, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"),
-            GetBasicResultAt(28, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetBasicResultAt(23, 20, "TestClass", "Dispose", "WriteAllBytes"),
+            GetBasicResultAt(28, 33, "TestClass", "Finalize", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestFinalizeWhenSubClassWithSerializableDiagnostic()
+        public async Task TestFinalizeWhenSubClassWithSerializableDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1640,9 +1646,9 @@ public class SubTestClass : TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(21, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "SubTestClass", "Finalize", "WriteAllBytes"));
+            GetCSharpResultAt(21, 6, "SubTestClass", "Finalize", "WriteAllBytes"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1667,13 +1673,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(20, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "SubTestClass", "Finalize", "WriteAllBytes"));
+            GetBasicResultAt(20, 33, "SubTestClass", "Finalize", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializingNoDiagnostic()
+        public async Task TestOnDeserializingNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.Serialization;
 
@@ -1694,7 +1700,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 
@@ -1716,9 +1722,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnDeserializedNoDiagnostic()
+        public async Task TestOnDeserializedNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.Serialization;
 
@@ -1739,7 +1745,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 
@@ -1761,9 +1767,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnDeserializationNoDiagnostic()
+        public async Task TestOnDeserializationNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1784,7 +1790,7 @@ public class TestClass : IDeserializationCallback
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 
@@ -1806,9 +1812,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnDeserializingWithoutSerializableNoDiagnostic()
+        public async Task TestOnDeserializingWithoutSerializableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1825,7 +1831,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1844,9 +1850,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnDeserializationWithoutSerializableNoDiagnostic()
+        public async Task TestOnDeserializationWithoutSerializableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1862,7 +1868,7 @@ public class TestClass : IDeserializationCallback
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1881,9 +1887,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnDeserializationWithoutIDeserializationCallbackNoDiagnostic()
+        public async Task TestOnDeserializationWithoutIDeserializationCallbackNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1902,9 +1908,9 @@ public class TestClass
         }
 
         [Fact]
-        public void TestOnDeserializedWithEmptyMethodBodyNoDiagnostic()
+        public async Task TestOnDeserializedWithEmptyMethodBodyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.Serialization;
 
@@ -1919,7 +1925,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1937,9 +1943,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestWithoutOnDeserializingAttributesNoDiagnostic()
+        public async Task TestWithoutOnDeserializingAttributesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1956,7 +1962,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -1975,9 +1981,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestOnSerializedNoDiagnostic()
+        public async Task TestOnSerializedNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1995,7 +2001,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2014,9 +2020,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestFinalizeNoDiagnostic()
+        public async Task TestFinalizeNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2037,7 +2043,7 @@ public class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2059,9 +2065,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestFinalizeWhenSubClassWithoutSerializableNoDiagnostic()
+        public async Task TestFinalizeWhenSubClassWithoutSerializableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2087,7 +2093,7 @@ public class SubTestClass : TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2114,9 +2120,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestDisposeNoDiagnostic()
+        public async Task TestDisposeNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2156,7 +2162,7 @@ public class TestClass : IDisposable
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2192,9 +2198,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestDisposeWithoutSerializableNoDiagnostic()
+        public async Task TestDisposeWithoutSerializableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2209,27 +2215,27 @@ public class TestClass : IDisposable
         byte[] bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(""C:\\"", bytes);
         Dispose(true);
-        GC.SuppressFinalize(this);           
+        GC.SuppressFinalize(this);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposed)
         {
-            return; 
+            return;
         }
-      
-        if (disposing) 
+
+        if (disposing)
         {
             byte[] bytes = new byte[] {0x20, 0x20, 0x20};
             File.WriteAllBytes(""C:\\"", bytes);
         }
-      
+
         disposed = true;
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2243,8 +2249,8 @@ Namespace TestNamespace
         Sub Dispose() Implements IDisposable.Dispose
             Dim bytes(9) As Byte
             File.WriteAllBytes(""C:\\"", bytes)
-            Dispose(True)  
-            GC.SuppressFinalize(Me) 
+            Dispose(True)
+            GC.SuppressFinalize(Me)
         End Sub
 
         Protected Overridable Sub Dispose(ByVal disposing As Boolean)
@@ -2261,9 +2267,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestDisposeNotImplementIDisposableNoDiagnostic()
+        public async Task TestDisposeNotImplementIDisposableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2278,27 +2284,27 @@ public class TestClass
         byte[] bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(""C:\\"", bytes);
         Dispose(true);
-        GC.SuppressFinalize(this);           
+        GC.SuppressFinalize(this);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposed)
         {
-            return; 
+            return;
         }
-      
-        if (disposing) 
+
+        if (disposing)
         {
             byte[] bytes = new byte[] {0x20, 0x20, 0x20};
             File.WriteAllBytes(""C:\\"", bytes);
         }
-      
+
         disposed = true;
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -2311,8 +2317,8 @@ Namespace TestNamespace
         Sub Dispose()
             Dim bytes(9) As Byte
             File.WriteAllBytes(""C:\\"", bytes)
-            Dispose(True)  
-            GC.SuppressFinalize(Me) 
+            Dispose(True)
+            GC.SuppressFinalize(Me)
         End Sub
 
         Protected Overridable Sub Dispose(ByVal disposing As Boolean)
@@ -2329,9 +2335,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TestUsingGenericwithTypeSpecifiedNoDiagnostic()
+        public async Task TestUsingGenericwithTypeSpecifiedNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2380,9 +2386,9 @@ public class TestClass : IDisposable
         }
 
         [Fact]
-        public void TestUsingInterfaceNoDiagnostic()
+        public async Task TestUsingInterfaceNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2412,20 +2418,20 @@ public class TestClass : IDisposable
     public void Dispose()
     {
         Dispose(true);
-        GC.SuppressFinalize(this);           
+        GC.SuppressFinalize(this);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposed)
         {
-            return; 
+            return;
         }
-      
-        if (disposing) 
+
+        if (disposing)
         {
         }
-      
+
         disposed = true;
     }
 
@@ -2437,9 +2443,9 @@ public class TestClass : IDisposable
         }
 
         [Fact]
-        public void TestUsingAbstractClassNoDiagnostic()
+        public async Task TestUsingAbstractClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -2469,20 +2475,20 @@ public class TestClass : IDisposable
     public void Dispose()
     {
         Dispose(true);
-        GC.SuppressFinalize(this);           
+        GC.SuppressFinalize(this);
     }
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposed)
         {
-            return; 
+            return;
         }
-      
-        if (disposing) 
+
+        if (disposing)
         {
         }
-      
+
         disposed = true;
     }
 
@@ -2493,14 +2499,14 @@ public class TestClass : IDisposable
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCallDangerousMethodsInDeserialization();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCallDangerousMethodsInDeserialization();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

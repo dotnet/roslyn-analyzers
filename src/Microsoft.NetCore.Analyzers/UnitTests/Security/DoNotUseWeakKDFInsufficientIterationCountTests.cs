@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseWeakKDFInsufficientIterationCount,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseWeakKDFInsufficientIterationCountTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseWeakKDFInsufficientIterationCountTests
     {
         private const int SufficientIterationCount = 100000;
 
         [Fact]
-        public void TestConstructorWithStringAndByteArrayParametersDiagnostic()
+        public async Task TestConstructorWithStringAndByteArrayParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -26,13 +28,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestAssignIterationCountDiagnostic()
+        public async Task TestAssignIterationCountDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -44,13 +46,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestAssignIterationsParameterMaybeChangedDiagnostic()
+        public async Task TestAssignIterationsParameterMaybeChangedDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -70,13 +72,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestAssignIterationCountPropertyMaybeChangedDiagnostic()
+        public async Task TestAssignIterationCountPropertyMaybeChangedDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -96,13 +98,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestPassRfc2898DeriveBytesAsParameterInterproceduralDiagnostic()
+        public async Task TestPassRfc2898DeriveBytesAsParameterInterproceduralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -119,13 +121,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(15, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(15, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestReturnRfc2898DeriveBytesInterproceduralDiagnostic()
+        public async Task TestReturnRfc2898DeriveBytesInterproceduralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -144,13 +146,13 @@ class TestClass
         return rfc2898DeriveBytes;
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithStringAndIntParametersDiagnostic()
+        public async Task TestConstructorWithStringAndIntParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -161,13 +163,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithStringAndByteArrayAndIntParametersDiagnostic()
+        public async Task TestConstructorWithStringAndByteArrayAndIntParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -178,13 +180,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithByteArrayAndByteArrayAndIntParametersLowIterationsDiagnostic()
+        public async Task TestConstructorWithByteArrayAndByteArrayAndIntParametersLowIterationsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -195,13 +197,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithStringAndIntAndIntParametersDiagnostic()
+        public async Task TestConstructorWithStringAndIntAndIntParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -212,13 +214,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithByteArrayAndByteArrayAndIntAndHashAlgorithmNameParametersDiagnostic()
+        public async Task TestConstructorWithByteArrayAndByteArrayAndIntAndHashAlgorithmNameParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -229,13 +231,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithStringAndByteArrayAndIntAndHashAlgorithmNameParametersDiagnostic()
+        public async Task TestConstructorWithStringAndByteArrayAndIntAndHashAlgorithmNameParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -246,13 +248,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestConstructorWithStringAndIntAndIntAndHashAlgorithmNameParametersDiagnostic()
+        public async Task TestConstructorWithStringAndIntAndIntAndHashAlgorithmNameParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -263,13 +265,13 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
         }
 
         [Fact]
-        public void TestAssignIterationCountNoDiagnostic()
+        public async Task TestAssignIterationCountNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -284,9 +286,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestPassRfc2898DeriveBytesAsParameterInterproceduralNoDiagnostic()
+        public async Task TestPassRfc2898DeriveBytesAsParameterInterproceduralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -306,9 +308,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnRfc2898DeriveBytesInterproceduralNoDiagnostic()
+        public async Task TestReturnRfc2898DeriveBytesInterproceduralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -330,9 +332,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithByteArrayAndByteArrayAndIntParametersUnassignedIterationsNoDiagnostic()
+        public async Task TestConstructorWithByteArrayAndByteArrayAndIntParametersUnassignedIterationsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -346,9 +348,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithByteArrayAndByteArrayAndIntParametersHighIterationsNoDiagnostic()
+        public async Task TestConstructorWithByteArrayAndByteArrayAndIntParametersHighIterationsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -367,18 +369,15 @@ class TestClass
         [InlineData(@"dotnet_code_quality.CA5387.excluded_symbol_names = TestMethod
                       dotnet_code_quality.CA5388.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var test = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount)
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System.Security.Cryptography;
 
 class TestClass
@@ -389,17 +388,24 @@ class TestClass
         rfc2898DeriveBytes.IterationCount = 100;
         rfc2898DeriveBytes.GetBytes(cb);
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}"
+
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                test.ExpectedDiagnostics.Add(GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            }
+
+            await test.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseWeakKDFInsufficientIterationCount();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseWeakKDFInsufficientIterationCount();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(SufficientIterationCount);
     }
 }

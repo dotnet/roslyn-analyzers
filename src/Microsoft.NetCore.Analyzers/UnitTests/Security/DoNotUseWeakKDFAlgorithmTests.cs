@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseWeakKDFAlgorithm,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseWeakKDFAlgorithmTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseWeakKDFAlgorithmTests
     {
         [Fact]
-        public void TestMD5Diagnostic()
+        public async Task TestMD5Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -21,13 +24,13 @@ class TestClass
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.MD5);
     }
 }",
-            GetCSharpResultAt(8, 34, DoNotUseWeakKDFAlgorithm.Rule, "Rfc2898DeriveBytes"));
+            GetCSharpResultAt(8, 34, "Rfc2898DeriveBytes"));
         }
 
         [Fact]
-        public void TestSHA1Diagnostic()
+        public async Task TestSHA1Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -37,13 +40,13 @@ class TestClass
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA1);
     }
 }",
-            GetCSharpResultAt(8, 34, DoNotUseWeakKDFAlgorithm.Rule, "Rfc2898DeriveBytes"));
+            GetCSharpResultAt(8, 34, "Rfc2898DeriveBytes"));
         }
 
         [Fact]
-        public void TestNoHashAlgorithmNameDiagnostic()
+        public async Task TestNoHashAlgorithmNameDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -53,13 +56,13 @@ class TestClass
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
     }
 }",
-            GetCSharpResultAt(8, 34, DoNotUseWeakKDFAlgorithm.Rule, "Rfc2898DeriveBytes"));
+            GetCSharpResultAt(8, 34, "Rfc2898DeriveBytes"));
         }
 
         [Fact]
-        public void TestDerivedClassOfRfc2898DeriveBytesDiagnostic()
+        public async Task TestDerivedClassOfRfc2898DeriveBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class DerivedClass : Rfc2898DeriveBytes
@@ -76,13 +79,13 @@ class TestClass
         var derivedClass = new DerivedClass(password, salt, iterations, HashAlgorithmName.MD5);
     }
 }",
-            GetCSharpResultAt(15, 28, DoNotUseWeakKDFAlgorithm.Rule, "DerivedClass"));
+            GetCSharpResultAt(15, 28, "DerivedClass"));
         }
 
         [Fact]
-        public void TestDerivedClassOfRfc2898DeriveBytesNewPropertyDiagnostic()
+        public async Task TestDerivedClassOfRfc2898DeriveBytesNewPropertyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class DerivedClass : Rfc2898DeriveBytes
@@ -102,13 +105,13 @@ class TestClass
         derivedClass.HashAlgorithm = HashAlgorithmName.SHA256;
     }
 }",
-            GetCSharpResultAt(17, 28, DoNotUseWeakKDFAlgorithm.Rule, "DerivedClass"));
+            GetCSharpResultAt(17, 28, "DerivedClass"));
         }
 
         [Fact]
-        public void TestNormalClassNoDiagnostic()
+        public async Task TestNormalClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -125,9 +128,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSHA256NoDiagnostic()
+        public async Task TestSHA256NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -140,9 +143,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDerivedClassOfRfc2898DeriveBytesNoDiagnostic()
+        public async Task TestDerivedClassOfRfc2898DeriveBytesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class DerivedClass : Rfc2898DeriveBytes
@@ -162,9 +165,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDerivedClassOfRfc2898DeriveBytesNewPropertyNoDiagnostic()
+        public async Task TestDerivedClassOfRfc2898DeriveBytesNewPropertyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class DerivedClass : Rfc2898DeriveBytes
@@ -186,14 +189,9 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseWeakKDFAlgorithm();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseWeakKDFAlgorithm();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

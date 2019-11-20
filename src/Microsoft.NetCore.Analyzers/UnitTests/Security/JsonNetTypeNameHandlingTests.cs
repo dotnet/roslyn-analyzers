@@ -1,32 +1,27 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.JsonNetTypeNameHandling,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.JsonNetTypeNameHandling,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class JsonNetTypeNameHandlingTests : DiagnosticAnalyzerTestBase
+    public class JsonNetTypeNameHandlingTests
     {
         private static readonly DiagnosticDescriptor Rule = JsonNetTypeNameHandling.Rule;
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new JsonNetTypeNameHandling();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new JsonNetTypeNameHandling();
-        }
-
         [Fact]
-        public void DocSample1_CSharp_Violation_Diagnostic()
+        public async Task DocSample1_CSharp_Violation_Diagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using Newtonsoft.Json;
 
 public class ExampleClass
@@ -43,9 +38,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Violation_Diagnostic()
+        public async Task DocSample1_VB_Violation_Diagnostic()
         {
-            this.VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNet(@"
 Imports Newtonsoft.Json
 
 Public Class ExampleClass
@@ -60,9 +55,9 @@ End Class",
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution_NoDiagnostic()
+        public async Task DocSample1_CSharp_Solution_NoDiagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using Newtonsoft.Json;
 
 public class ExampleClass
@@ -79,9 +74,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution_NoDiagnostic()
+        public async Task DocSample1_VB_Solution_NoDiagnostic()
         {
-            this.VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNet(@"
 Imports Newtonsoft.Json
 
 Public Class ExampleClass
@@ -96,9 +91,9 @@ End Class");
         }
 
         [Fact]
-        public void Reference_TypeNameHandling_None_NoDiagnostic()
+        public async Task Reference_TypeNameHandling_None_NoDiagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -112,9 +107,9 @@ class Blah
         }
 
         [Fact]
-        public void Reference_TypeNameHandling_All_Diagnostic()
+        public async Task Reference_TypeNameHandling_All_Diagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -129,9 +124,9 @@ class Blah
         }
 
         [Fact]
-        public void Reference_AttributeTargets_All_NoDiagnostic()
+        public async Task Reference_AttributeTargets_All_NoDiagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -145,9 +140,9 @@ class Blah
         }
 
         [Fact]
-        public void Assign_TypeNameHandling_Objects_Diagnostic()
+        public async Task Assign_TypeNameHandling_Objects_Diagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -162,9 +157,9 @@ class Blah
         }
 
         [Fact]
-        public void Assign_TypeNameHandling_1_Or_Arrays_Diagnostic()
+        public async Task Assign_TypeNameHandling_1_Or_Arrays_Diagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -179,9 +174,9 @@ class Blah
         }
 
         [Fact]
-        public void Assign_TypeNameHandling_0_NoDiagnostic()
+        public async Task Assign_TypeNameHandling_0_NoDiagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -195,9 +190,9 @@ class Blah
         }
 
         [Fact]
-        public void Assign_TypeNameHandling_None_NoDiagnostic()
+        public async Task Assign_TypeNameHandling_None_NoDiagnostic()
         {
-            this.VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
@@ -210,14 +205,44 @@ class Blah
 }");
         }
 
-        private void VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
         {
-            this.VerifyCSharpAcrossTwoAssemblies(NewtonsoftJsonNetApis.CSharp, source, expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalProjects = { new CSharpProjectState("NewtonsoftJsonNetApis") { Sources = { NewtonsoftJsonNetApis.CSharp } } }
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
-        private void VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
         {
-            this.VerifyBasicAcrossTwoAssemblies(NewtonsoftJsonNetApis.VisualBasic, source, expected);
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalProjects = { new VisualBasicProjectState("NewtonsoftJsonNetApis") { Sources = { NewtonsoftJsonNetApis.VisualBasic } } }
+                }
+            };
+
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+
+            await vbTest.RunAsync();
         }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+           => VerifyCS.Diagnostic(rule)
+               .WithLocation(line, column);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule)
+           => VerifyVB.Diagnostic(rule)
+               .WithLocation(line, column);
     }
 }

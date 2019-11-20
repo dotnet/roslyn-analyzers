@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseDSA,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseDSATests : DiagnosticAnalyzerTestBase
+    public class DoNotUseDSATests
     {
         [Fact]
-        public void TestCreateObjectOfDSADerivedClassWithoutParameterDiagnostic()
+        public async Task TestCreateObjectOfDSADerivedClassWithoutParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -21,13 +24,13 @@ class TestClass
         var dsaCng = new DSACng();
     }
 }",
-            GetCSharpResultAt(8, 22, DoNotUseDSA.Rule, "DSACng"));
+            GetCSharpResultAt(8, 22, "DSACng"));
         }
 
         [Fact]
-        public void TestCreateObjectOfDSADerivedClassWithCngKeyParameterDiagnostic()
+        public async Task TestCreateObjectOfDSADerivedClassWithCngKeyParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -37,13 +40,13 @@ class TestClass
         var dsaCng = new DSACng(key);
     }
 }",
-            GetCSharpResultAt(8, 22, DoNotUseDSA.Rule, "DSACng"));
+            GetCSharpResultAt(8, 22, "DSACng"));
         }
 
         [Fact]
-        public void TestCreateObjectOfDSADerivedClassWithInt32ParameterAssignedKeySizeDiagnostic()
+        public async Task TestCreateObjectOfDSADerivedClassWithInt32ParameterAssignedKeySizeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -53,13 +56,13 @@ class TestClass
         var dsaCng = new DSACng(2048);
     }
 }",
-            GetCSharpResultAt(8, 22, DoNotUseDSA.Rule, "DSACng"));
+            GetCSharpResultAt(8, 22, "DSACng"));
         }
 
         [Fact]
-        public void TestCreateObjectOfDSADerivedClassWithInt32ParameterUnassignedKeySizeDiagnostic()
+        public async Task TestCreateObjectOfDSADerivedClassWithInt32ParameterUnassignedKeySizeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -69,13 +72,13 @@ class TestClass
         var dsaCng = new DSACng(keySize);
     }
 }",
-            GetCSharpResultAt(8, 22, DoNotUseDSA.Rule, "DSACng"));
+            GetCSharpResultAt(8, 22, "DSACng"));
         }
 
         [Fact]
-        public void TestReturnObjectOfDSADerivedClassDiagnostic()
+        public async Task TestReturnObjectOfDSADerivedClassDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -85,13 +88,13 @@ class TestClass
         return dsa;
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotUseDSA.Rule, "DSA"));
+            GetCSharpResultAt(8, 9, "DSA"));
         }
 
         [Fact]
-        public void TestReturnObjectOfDSADerivedClassLocalFunctionDiagnostic()
+        public async Task TestReturnObjectOfDSADerivedClassLocalFunctionDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -101,13 +104,13 @@ class TestClass
         DSA GetDSA(DSA dsa) => dsa;
     }
 }",
-            GetCSharpResultAt(8, 32, DoNotUseDSA.Rule, "DSA"));
+            GetCSharpResultAt(8, 32, "DSA"));
         }
 
         [Fact]
-        public void TestCreateWithDSAArgDiagnostic()
+        public async Task TestCreateWithDSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -117,13 +120,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""DSA"");
     }
 }",
-            GetCSharpResultAt(8, 35, DoNotUseDSA.Rule, "DSA"));
+            GetCSharpResultAt(8, 35, "DSA"));
         }
 
         [Fact]
-        public void TestCaseSensitiveDiagnostic()
+        public async Task TestCaseSensitiveDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -133,13 +136,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""dSa"");
     }
 }",
-            GetCSharpResultAt(8, 35, DoNotUseDSA.Rule, "dSa"));
+            GetCSharpResultAt(8, 35, "dSa"));
         }
 
         [Fact]
-        public void TestCreateWithSystemSecurityCryptographyDSAArgDiagnostic()
+        public async Task TestCreateWithSystemSecurityCryptographyDSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -149,13 +152,13 @@ class TestClass
         var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""System.Security.Cryptography.DSA"");
     }
 }",
-            GetCSharpResultAt(8, 35, DoNotUseDSA.Rule, "System.Security.Cryptography.DSA"));
+            GetCSharpResultAt(8, 35, "System.Security.Cryptography.DSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithDSAArgDiagnostic()
+        public async Task TestCreateFromNameWithDSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -165,13 +168,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""DSA"");
     }
 }",
-            GetCSharpResultAt(8, 28, DoNotUseDSA.Rule, "DSA"));
+            GetCSharpResultAt(8, 28, "DSA"));
         }
 
         [Fact]
-        public void TestCreateFromNameWithSystemSecurityCryptographyDSAArgDiagnostic()
+        public async Task TestCreateFromNameWithSystemSecurityCryptographyDSAArgDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -181,13 +184,13 @@ class TestClass
         var cryptoConfig = CryptoConfig.CreateFromName(""System.Security.Cryptography.DSA"");
     }
 }",
-            GetCSharpResultAt(8, 28, DoNotUseDSA.Rule, "System.Security.Cryptography.DSA"));
+            GetCSharpResultAt(8, 28, "System.Security.Cryptography.DSA"));
         }
 
         [Fact]
-        public void TestCreateWithECDsaArgNoDiagnostic()
+        public async Task TestCreateWithECDsaArgNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -200,9 +203,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithECDsaArgNoDiagnostic()
+        public async Task TestCreateFromNameWithECDsaArgNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -215,9 +218,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateFromNameWithECDsaAndKeySize1024ArgsNoDiagnostic()
+        public async Task TestCreateFromNameWithECDsaAndKeySize1024ArgsNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -230,9 +233,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnVoidNoDiagnostic()
+        public async Task TestReturnVoidNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography;
 
 class TestClass
@@ -244,14 +247,9 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseDSA();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseDSA();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

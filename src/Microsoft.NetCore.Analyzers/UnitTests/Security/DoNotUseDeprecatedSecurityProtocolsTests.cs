@@ -2,11 +2,16 @@
 
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using Xunit.Abstractions;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocols,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocols,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
@@ -33,17 +38,12 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
     }
 
-    public class DoNotUseDeprecatedSecurityProtocolsTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseDeprecatedSecurityProtocolsTests
     {
-        public DoNotUseDeprecatedSecurityProtocolsTests(ITestOutputHelper output)
-            : base(output)
-        {
-        }
-
         [Fact]
-        public void DocSample1_CSharp_Violation()
+        public async Task DocSample1_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -60,9 +60,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Violation()
+        public async Task DocSample1_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Net
 
@@ -78,9 +78,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample2_CSharp_Violation()
+        public async Task DocSample2_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -96,9 +96,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample2_VB_Violation()
+        public async Task DocSample2_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Net
 
@@ -113,9 +113,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution()
+        public async Task DocSample1_CSharp_Solution()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -130,9 +130,9 @@ public class TestClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution()
+        public async Task DocSample1_VB_Solution()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Net
 
@@ -146,9 +146,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample3_CSharp_Violation()
+        public async Task DocSample3_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -164,9 +164,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample3_VB_Violation()
+        public async Task DocSample3_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Net
 
@@ -181,9 +181,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample4_CSharp_Violation()
+        public async Task DocSample4_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -199,9 +199,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample4_VB_Violation()
+        public async Task DocSample4_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Net
 
@@ -216,9 +216,9 @@ End Class
         }
 
         [Fact]
-        public void TestUseSsl3Diagnostic()
+        public async Task TestUseSsl3Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -233,9 +233,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTlsDiagnostic()
+        public async Task TestUseTlsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -250,9 +250,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTls11Diagnostic()
+        public async Task TestUseTls11Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -267,9 +267,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseSystemDefaultNoDiagnostic()
+        public async Task TestUseSystemDefaultNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -283,9 +283,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTls12Diagnostic()
+        public async Task TestUseTls12Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -300,9 +300,9 @@ class TestClass
         }
 
         [FactUnlessTls13Unavailable]
-        public void TestUseTls13Diagnostic()
+        public async Task TestUseTls13Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -317,9 +317,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTls12OrdTls11Diagnostic()
+        public async Task TestUseTls12OrdTls11Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -335,9 +335,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse192CompoundAssignmentDiagnostic()
+        public async Task TestUse192CompoundAssignmentDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -352,10 +352,10 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse384SimpleAssignmentDiagnostic()
+        public async Task TestUse384SimpleAssignmentDiagnostic()
         {
             // 384 = SchProtocols.Tls11Server | SchProtocols.Tls10Client
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -370,9 +370,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse768SimpleAssignmentOrExpressionDiagnostic()
+        public async Task TestUse768SimpleAssignmentOrExpressionDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -387,9 +387,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse12288SimpleAssignmentOrExpressionDiagnostic()
+        public async Task TestUse12288SimpleAssignmentOrExpressionDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -404,9 +404,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTls12OrTls11Or192Diagnostic()
+        public async Task TestUseTls12OrTls11Or192Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -422,9 +422,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUseTls12Or192Diagnostic()
+        public async Task TestUseTls12Or192Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -435,14 +435,14 @@ class TestClass
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)192;
     }
 }",
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"),
-                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "3264"));
+                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocols.DeprecatedRule).WithSpan(9, 48, 9, 102).WithArguments("3264"),
+                VerifyCS.Diagnostic(DoNotUseDeprecatedSecurityProtocols.HardCodedRule).WithSpan(9, 48, 9, 74).WithArguments("Tls12"));
         }
 
         [Fact]
-        public void TestUse768DeconstructionAssignmentNoDiagnostic()
+        public async Task TestUse768DeconstructionAssignmentNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -458,9 +458,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse24Plus24SimpleAssignmentDiagnostic()
+        public async Task TestUse24Plus24SimpleAssignmentDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -475,9 +475,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse768NotSecurityProtocolTypeNoDiagnostic()
+        public async Task TestUse768NotSecurityProtocolTypeNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -491,9 +491,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestMaskOutUnsafeOnServicePointManagerNoDiagnostic()
+        public async Task TestMaskOutUnsafeOnServicePointManagerNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -507,9 +507,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestMaskOutUnsafeOnVariableDiagnostic()
+        public async Task TestMaskOutUnsafeOnVariableDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net;
 
@@ -527,14 +527,14 @@ class TestClass
                 GetCSharpResultAt(10, 71, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseDeprecatedSecurityProtocols();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+           => VerifyCS.Diagnostic(rule)
+               .WithLocation(line, column)
+               .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseDeprecatedSecurityProtocols();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+           => VerifyVB.Diagnostic(rule)
+               .WithLocation(line, column)
+               .WithArguments(arguments);
     }
 }

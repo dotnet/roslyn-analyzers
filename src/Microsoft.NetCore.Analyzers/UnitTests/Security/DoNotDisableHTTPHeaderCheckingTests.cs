@@ -1,22 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableHTTPHeaderChecking,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableHTTPHeaderCheckingTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableHTTPHeaderCheckingTests
     {
         [Fact]
-        public void TestLiteralDiagnostic()
+        public async Task TestLiteralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -28,13 +27,13 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = false;
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(10, 9));
         }
 
         [Fact]
-        public void TestConstantDiagnostic()
+        public async Task TestConstantDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -47,13 +46,13 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = flag;
     }
 }",
-            GetCSharpResultAt(11, 9, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestPropertyInitializerDiagnostic()
+        public async Task TestPropertyInitializerDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -67,14 +66,14 @@ class TestClass
         };
     }
 }",
-            GetCSharpResultAt(11, 13, DoNotDisableHTTPHeaderChecking.Rule));
+            GetCSharpResultAt(11, 13));
         }
 
         //Ideally, we would generate a diagnostic in this case.
         [Fact]
-        public void TestVariableNoDiagnostic()
+        public async Task TestVariableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -90,9 +89,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLiteralNoDiagnostic()
+        public async Task TestLiteralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -107,9 +106,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstantNoDiagnostic()
+        public async Task TestConstantNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -125,9 +124,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestPropertyInitializerNoDiagnostic()
+        public async Task TestPropertyInitializerNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.Web.Configuration;
 
@@ -143,14 +142,24 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)
         {
-            return new DoNotDisableHTTPHeaderChecking();
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                },
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotDisableHTTPHeaderChecking();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
     }
 }

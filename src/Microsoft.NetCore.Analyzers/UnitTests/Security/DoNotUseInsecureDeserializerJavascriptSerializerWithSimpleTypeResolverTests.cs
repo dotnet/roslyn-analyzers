@@ -1,34 +1,26 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PropertySetAnalysis)]
-    public class DoNotUseInsecureDeserializerJavascriptSerializerWithSimpleTypeResolverTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseInsecureDeserializerJavascriptSerializerWithSimpleTypeResolverTests
     {
         private static readonly DiagnosticDescriptor DefinitelyRule = DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver.DefinitelyWithSimpleTypeResolver;
         private static readonly DiagnosticDescriptor MaybeRule = DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver.MaybeWithSimpleTypeResolver;
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver();
-        }
-
         [Fact]
-        public void Deserialize_Generic_DefinitelyDiagnostic()
+        public async Task Deserialize_Generic_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -47,9 +39,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_DefinitelyDiagnostic()
+        public async Task Deserialize_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -68,9 +60,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_DefinitelyDiagnostic()
+        public async Task DeserializeObject_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -89,9 +81,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_AnyPath_DefinitelyDiagnostic()
+        public async Task DeserializeObject_AnyPath_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -114,9 +106,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_FromArgument_MaybeDiagnostic()
+        public async Task Deserialize_FromArgument_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -134,9 +126,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_TypeResolver_Unknown_MaybeDiagnostic()
+        public async Task Deserialize_TypeResolver_Unknown_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -156,9 +148,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_TypeResolver_UnknownNotNull_MaybeDiagnostic()
+        public async Task Deserialize_TypeResolver_UnknownNotNull_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -179,9 +171,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_TypeResolver_UnknownNull_NoDiagnostic()
+        public async Task Deserialize_TypeResolver_UnknownNull_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -201,9 +193,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_FromField_MaybeDiagnostic()
+        public async Task Deserialize_FromField_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -223,9 +215,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_FromStaticField_MaybeDiagnostic()
+        public async Task Deserialize_FromStaticField_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -245,9 +237,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_NoTypeResolver_NoDiagnostic()
+        public async Task Deserialize_NoTypeResolver_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -264,9 +256,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_CustomTypeResolver_NoDiagnostic()
+        public async Task Deserialize_CustomTypeResolver_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -297,9 +289,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_FromLocalFunction_DefinitelyDiagnostic()
+        public async Task DeserializeObject_FromLocalFunction_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -319,9 +311,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_SimpleTypeResolverFromParameter_DefinitelyDiagnostic()
+        public async Task DeserializeObject_SimpleTypeResolverFromParameter_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -341,9 +333,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_JavaScriptTypeResolverFromParameter_MaybeDiagnostic()
+        public async Task DeserializeObject_JavaScriptTypeResolverFromParameter_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -363,9 +355,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
+        public async Task DeserializeObject_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -386,9 +378,9 @@ namespace Blah
 
 
         [Fact]
-        public void Deserialize_InLocalFunction_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
+        public async Task Deserialize_InLocalFunction_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -411,9 +403,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_InLambda_DefinitelyDiagnostic()
+        public async Task DeserializeObject_InLambda_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -435,9 +427,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_InLambda_CustomTypeResolver_NoDiagnostic()
+        public async Task DeserializeObject_InLambda_CustomTypeResolver_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -471,9 +463,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_InOtherMethod_DefinitelyDiagnostic()
+        public async Task DeserializeObject_InOtherMethod_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -499,9 +491,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_InOtherMethodThrice_DefinitelyDiagnostic()
+        public async Task DeserializeObject_InOtherMethodThrice_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -530,9 +522,9 @@ namespace Blah
         }
 
         [Fact]
-        public void DeserializeObject_InOtherMethod_OnceDefinitely_OnceMaybe_DefinitelyDiagnostic()
+        public async Task DeserializeObject_InOtherMethod_OnceDefinitely_OnceMaybe_DefinitelyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -563,9 +555,9 @@ namespace Blah
 
 
         [Fact]
-        public void DeserializeObject_InOtherMethod_CustomTypeResolver_MaybeDiagnostic()
+        public async Task DeserializeObject_InOtherMethod_CustomTypeResolver_MaybeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -609,18 +601,15 @@ namespace Blah
         [InlineData(@"dotnet_code_quality.CA2321.excluded_symbol_names = D
                       dotnet_code_quality.CA2322.excluded_symbol_names = D")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = D")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var test = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(12, 20, DefinitelyRule, "T JavaScriptSerializer.Deserialize<T>(string input)")
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -634,7 +623,41 @@ namespace Blah
             return s.Deserialize<T>(str);
         }
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}"
+
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebExtensions }
+                },
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                test.ExpectedDiagnostics.Add(GetCSharpResultAt(12, 20, DefinitelyRule, "T JavaScriptSerializer.Deserialize<T>(string input)"));
+            }
+
+            await test.RunAsync();
         }
+
+        private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebExtensions }
+                },
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
+        }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

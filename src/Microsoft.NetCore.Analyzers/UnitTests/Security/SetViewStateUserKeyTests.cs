@@ -517,7 +517,7 @@ class TestClass : Page
                 TestState =
                 {
                     Sources = { source, SystemWebUI.CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference }
                 }
             };
 
@@ -533,7 +533,7 @@ class TestClass : Page
                 TestState =
                 {
                     Sources = { source, SystemWebUI.VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference }
                 }
             };
 

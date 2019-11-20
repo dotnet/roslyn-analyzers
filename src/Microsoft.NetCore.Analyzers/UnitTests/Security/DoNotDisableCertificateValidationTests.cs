@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
@@ -199,7 +201,20 @@ class TestClass
                 TestState =
                 {
                     Sources = { source2 },
-                    AdditionalProjects = { new CSharpProjectState("AcceptAllCertificationsProject") { Sources = { source1 } } }
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("AcceptAllCertifications", "AcceptAllCertifications", LanguageNames.CSharp)
+                            .AddDocument("AcceptAllCertifications.cs", source1).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
                 }
             }.RunAsync();
         }
@@ -256,7 +271,20 @@ class TestClass
                 TestState =
                 {
                     Sources = { source2 },
-                    AdditionalProjects = { new CSharpProjectState("AcceptAllCertificationsProject") { Sources = { source1 } } }
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("AcceptAllCertifications", "AcceptAllCertifications", LanguageNames.CSharp)
+                            .AddDocument("AcceptAllCertifications.cs", source1).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
                 }
             }.RunAsync();
         }

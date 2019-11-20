@@ -1632,7 +1632,7 @@ End Class");
                 TestState =
                 {
                     Sources = { source, SystemWebUI.CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb },
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference },
                     ExpectedDiagnostics =
                     {
                         GetCSharpResultAt(102, 21, "string Command.CommandText", "Page_Load")

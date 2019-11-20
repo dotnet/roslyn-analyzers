@@ -149,7 +149,7 @@ class TestClass
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference }
                 },
             };
 

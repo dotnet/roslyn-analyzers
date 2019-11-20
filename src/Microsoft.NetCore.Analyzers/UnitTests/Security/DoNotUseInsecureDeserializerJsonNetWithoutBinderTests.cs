@@ -2,7 +2,9 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
@@ -730,8 +732,21 @@ class Blah
     }
 }"
                     },
-                    AdditionalProjects = { new CSharpProjectState("NewtonsoftJsonNetApis") { Sources = { NewtonsoftJsonNetApis.CSharp } } },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("NewtonsoftJsonNetApis", "NewtonsoftJsonNetApis", LanguageNames.CSharp)
+                            .AddDocument("NewtonsoftJsonNetApis.cs", NewtonsoftJsonNetApis.CSharp).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
                 }
             };
 
@@ -752,7 +767,20 @@ class Blah
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalProjects = { new CSharpProjectState("NewtonsoftJsonNetApis") { Sources = { NewtonsoftJsonNetApis.CSharp } } }
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("NewtonsoftJsonNetApis", "NewtonsoftJsonNetApis", LanguageNames.CSharp)
+                            .AddDocument("NewtonsoftJsonNetApis.cs", NewtonsoftJsonNetApis.CSharp).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
                 }
             };
 
@@ -768,7 +796,20 @@ class Blah
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalProjects = { new VisualBasicProjectState("NewtonsoftJsonNetApis") { Sources = { NewtonsoftJsonNetApis.VisualBasic } } }
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("NewtonsoftJsonNetApis", "NewtonsoftJsonNetApis", LanguageNames.VisualBasic)
+                            .AddDocument("NewtonsoftJsonNetApis.vb", NewtonsoftJsonNetApis.VisualBasic).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
                 }
             };
 

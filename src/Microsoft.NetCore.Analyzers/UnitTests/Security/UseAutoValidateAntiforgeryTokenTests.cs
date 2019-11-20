@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
@@ -377,9 +378,22 @@ class TestClass : ControllerBase
     }
 }",
                     },
-                    AdditionalProjects = { new CSharpProjectState("ASPNetCoreApis") { Sources = { ASPNetCoreApis.CSharp } } },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("ASPNetCoreApis", "ASPNetCoreApis", LanguageNames.CSharp)
+                            .AddDocument("ASPNetCoreApis.cs", ASPNetCoreApis.CSharp).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
+                }
             };
 
             csharpTest.ExpectedDiagnostics.Add(
@@ -1435,9 +1449,22 @@ class TestClass : ControllerBase
     }
 }"
                     },
-                    AdditionalProjects = { new CSharpProjectState("ASPNetCoreApis") { Sources = { ASPNetCoreApis.CSharp } } },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("ASPNetCoreApis", "ASPNetCoreApis", LanguageNames.CSharp)
+                            .AddDocument("ASPNetCoreApis.cs", ASPNetCoreApis.CSharp).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
+                }
             }.RunAsync();
         }
     }

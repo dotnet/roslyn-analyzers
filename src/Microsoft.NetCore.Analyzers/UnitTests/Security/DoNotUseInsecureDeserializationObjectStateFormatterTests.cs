@@ -164,7 +164,7 @@ namespace Blah
                 TestState =
                 {
                     Sources = { source, SystemWebUI.CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference }
                 }
             };
 
@@ -180,7 +180,7 @@ namespace Blah
                 TestState =
                 {
                     Sources = { source, SystemWebUI.VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemWeb }
+                    AdditionalReferences = { AdditionalMetadataReferences.SystemWebReference }
                 }
             };
 

@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Data.ReviewSqlQueriesForSecurityVulnerabilities,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Data.ReviewSqlQueriesForSecurityVulnerabilities,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 

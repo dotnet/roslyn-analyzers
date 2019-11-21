@@ -8,10 +8,10 @@ using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureSettingsForJsonNet,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureSettingsForJsonNet,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 

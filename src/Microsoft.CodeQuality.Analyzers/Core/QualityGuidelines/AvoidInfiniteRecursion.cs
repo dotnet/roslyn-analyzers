@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -65,10 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         ancestor.Kind != OperationKind.LocalFunction &&
                         ancestor.Kind != OperationKind.Conditional);
 
-                    operationContext.ReportDiagnostic(
-                        Diagnostic.Create(
-                            ancestor != null ? MaybeRule : Rule,
-                            assignmentOperation.Syntax.GetLocation(), operationTarget.Property.Name));
+                    assignmentOperation.CreateDiagnostic(ancestor != null ? MaybeRule : Rule, operationTarget.Property.Name);
                 }, OperationKind.SimpleAssignment);
             });
         }

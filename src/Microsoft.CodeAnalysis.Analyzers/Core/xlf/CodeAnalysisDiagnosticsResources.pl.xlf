@@ -208,8 +208,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseComparerInSymbolCollectionsMessage">
-        <source>When creating collections or using methods that accept IEquailityComparer one should be provided</source>
-        <target state="new">When creating collections or using methods that accept IEquailityComparer one should be provided</target>
+        <source>When creating collections or using methods that accept IEqualityComparer one should be provided</source>
+        <target state="new">When creating collections or using methods that accept IEqualityComparer one should be provided</target>
         <note />
       </trans-unit>
       <trans-unit id="UseComparerInSymbolCollectionsTitle">

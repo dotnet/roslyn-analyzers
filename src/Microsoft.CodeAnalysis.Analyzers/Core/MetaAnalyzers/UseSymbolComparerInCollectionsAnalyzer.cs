@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static void RequireInvocationHasAnyComparerArgument(in OperationAnalysisContext context, IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)
         {
-            if (invocationOperation.Arguments.Any(comparerType.IsTypeSymbol))
+            if (invocationOperation.Arguments.Any(o => IsTypeSymbol(comparerType, o)))
             {
                 return;
             }
@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static void RequireInvocationHasAnyComparerArgument(in OperationAnalysisContext context, IObjectCreationOperation objectCreationOperation, INamedTypeSymbol comparerType)
         {
-            if (objectCreationOperation.Arguments.Any(comparerType.IsTypeSymbol))
+            if (objectCreationOperation.Arguments.Any(o => IsTypeSymbol(comparerType, o)))
             {
                 return;
             }
@@ -184,20 +184,60 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static bool FirstTypeArgumentIsSymbolType(IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
             => methodToCheck.TypeArguments.Any() &&
-               symbolType.IsTypeSymbol(methodToCheck.TypeArguments.First());
+               IsTypeSymbol(symbolType, methodToCheck.TypeArguments.First());
 
         private static bool IndexedTypeArgumentIsSymbolType(int index, IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
             => methodToCheck.TypeArguments.Any() &&
                methodToCheck.TypeArguments.Count() > index &&
-               symbolType.IsTypeSymbol(methodToCheck.TypeArguments.ElementAt(index));
+               IsTypeSymbol(symbolType, methodToCheck.TypeArguments.ElementAt(index));
 
 
         private static bool InvocationContainsEqualityComparerArgument(IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)
-            => invocationOperation.Arguments.Any(comparerType.IsTypeSymbol);
+            => invocationOperation.Arguments.Any(o => IsTypeSymbol(comparerType, o));
 
         private static bool FirstTypeArgumentIsSymbolType(INamedTypeSymbol typeToCheck, INamedTypeSymbol symbolType)
             => typeToCheck.TypeArguments.Any() &&
-               symbolType.IsTypeSymbol(typeToCheck.TypeArguments.First());
+               IsTypeSymbol(symbolType, typeToCheck.TypeArguments.First());
+
+        private static bool IsTypeSymbol(INamedTypeSymbol namedTypeSymbol, ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol == null)
+            {
+                return false;
+            }
+
+            if (typeSymbol.Equals(namedTypeSymbol))
+            {
+                return true;
+            }
+
+            if (typeSymbol.AllInterfaces.Contains(namedTypeSymbol))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsTypeSymbol(INamedTypeSymbol namedTypeSymbol, IOperation operation)
+        {
+            if (operation.Type is object && IsTypeSymbol(namedTypeSymbol, operation.Type))
+            {
+                return true;
+            }
+
+            if (operation is IConversionOperation conversion)
+            {
+                return IsTypeSymbol(namedTypeSymbol, conversion.Operand);
+            }
+
+            if (operation is IArgumentOperation argumentOperation)
+            {
+                return IsTypeSymbol(namedTypeSymbol, argumentOperation.Value);
+            }
+
+            return false;
+        }
 
     }
 }

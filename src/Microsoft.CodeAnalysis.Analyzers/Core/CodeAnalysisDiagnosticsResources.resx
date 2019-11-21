@@ -378,7 +378,7 @@
     <value>Use a comparer in symbol collections</value>
   </data>
   <data name="UseComparerInSymbolCollectionsMessage" xml:space="preserve">
-    <value>When creating collections or using methods that accept IEquailityComparer one should be provided</value>
+    <value>When creating collections or using methods that accept IEqualityComparer one should be provided</value>
   </data>
   <data name="UseComparerInSymbolCollectionsDescription" xml:space="preserve">
     <value>Default comparison of ISymbol can result in incorrect behavior. It is advised that an IEqualityComparer is used.</value>

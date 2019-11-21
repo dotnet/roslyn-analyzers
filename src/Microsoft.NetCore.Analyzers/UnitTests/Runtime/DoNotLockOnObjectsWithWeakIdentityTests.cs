@@ -1,9 +1,17 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DoNotLockOnObjectsWithWeakIdentityAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DoNotLockOnObjectsWithWeakIdentityAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -263,16 +271,136 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             GetCA2002BasicResultAt(18, 30, "System.ExecutionEngineException"));
         }
 
+        [Fact]
+        [WorkItem(2744, "https://github.com/dotnet/roslyn-analyzers/issues/2744")]
+        public async Task CA2002_MonitorEnter_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Threading;
+
+public class C
+{
+    public void Foo()
+    {
+        Monitor.Enter(this);
+        Monitor.Enter(""test1"");
+
+        bool b = true;
+        Monitor.Enter(this, ref b);
+        Monitor.Enter(""test1"", ref b);
+    }
+}",
+                GetCA2002CSharpResultAt(8, 23, "C"),
+                GetCA2002CSharpResultAt(9, 23, "C"),
+                GetCA2002CSharpResultAt(12, 23, "C"),
+                GetCA2002CSharpResultAt(13, 23, "C"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+
+Public Class C
+    Public Sub Foo()
+        Monitor.Enter(Me)
+        Monitor.Enter(""test1"")
+
+        Dim b As Boolean = True
+        Monitor.Enter(Me, b)
+        Monitor.Enter(""test1"", b)
+    End Sub
+End Class
+",
+                GetCA2002BasicResultAt(6, 23, "C"),
+                GetCA2002BasicResultAt(7, 23, "C"),
+                GetCA2002BasicResultAt(10, 23, "C"),
+                GetCA2002BasicResultAt(11, 23, "C"));
+        }
+
+        [Fact]
+        [WorkItem(2744, "https://github.com/dotnet/roslyn-analyzers/issues/2744")]
+        public async Task CA2002_MonitorTryEnter_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Threading;
+
+public class C
+{
+    public void Foo()
+    {
+        Monitor.TryEnter(this);
+        Monitor.TryEnter(""test1"");
+
+        Monitor.TryEnter(this, 42);
+        Monitor.TryEnter(""test1"", 42);
+
+        Monitor.TryEnter(this, TimeSpan.FromMilliseconds(42));
+        Monitor.TryEnter(""test1"", TimeSpan.FromMilliseconds(42));
+
+        bool b = true;
+        Monitor.TryEnter(this, ref b);
+        Monitor.TryEnter(""test1"", ref b);
+
+        Monitor.TryEnter(this, 42, ref b);
+        Monitor.TryEnter(""test1"", 42, ref b);
+    }
+}",
+                GetCA2002CSharpResultAt(9, 26, "C"),
+                GetCA2002CSharpResultAt(10, 26, "C"),
+                GetCA2002CSharpResultAt(12, 26, "C"),
+                GetCA2002CSharpResultAt(13, 26, "C"),
+                GetCA2002CSharpResultAt(15, 26, "C"),
+                GetCA2002CSharpResultAt(16, 26, "C"),
+                GetCA2002CSharpResultAt(19, 26, "C"),
+                GetCA2002CSharpResultAt(20, 26, "C"),
+                GetCA2002CSharpResultAt(22, 26, "C"),
+                GetCA2002CSharpResultAt(23, 26, "C"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Threading
+
+Public Class C
+    Public Sub Foo()
+        Monitor.TryEnter(Me)
+        Monitor.TryEnter(""test1"")
+
+        Monitor.TryEnter(Me, 42)
+        Monitor.TryEnter(""test1"", 42)
+
+        Monitor.TryEnter(Me, TimeSpan.FromMilliseconds(42))
+        Monitor.TryEnter(""test1"", TimeSpan.FromMilliseconds(42))
+
+        Dim b As Boolean = True
+        Monitor.TryEnter(Me, b)
+        Monitor.TryEnter(""test1"", b)
+
+        Monitor.TryEnter(Me, 42, b)
+        Monitor.TryEnter(""test1"", 42, b)
+    End Sub
+End Class
+",
+                GetCA2002BasicResultAt(7, 26, "C"),
+                GetCA2002BasicResultAt(8, 26, "C"),
+                GetCA2002BasicResultAt(10, 26, "C"),
+                GetCA2002BasicResultAt(11, 26, "C"),
+                GetCA2002BasicResultAt(13, 26, "C"),
+                GetCA2002BasicResultAt(14, 26, "C"),
+                GetCA2002BasicResultAt(17, 26, "C"),
+                GetCA2002BasicResultAt(18, 26, "C"),
+                GetCA2002BasicResultAt(20, 26, "C"),
+                GetCA2002BasicResultAt(21, 26, "C"));
+        }
+
         private const string CA2002RuleName = "CA2002";
 
         private DiagnosticResult GetCA2002CSharpResultAt(int line, int column, string typeName)
         {
-            return GetCSharpResultAt(line, column, CA2002RuleName, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
+            return GetCSharpResultAt(line, column, CA2002RuleName, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
         }
 
         private DiagnosticResult GetCA2002BasicResultAt(int line, int column, string typeName)
         {
-            return GetBasicResultAt(line, column, CA2002RuleName, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
+            return GetBasicResultAt(line, column, CA2002RuleName, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
         }
     }
 }

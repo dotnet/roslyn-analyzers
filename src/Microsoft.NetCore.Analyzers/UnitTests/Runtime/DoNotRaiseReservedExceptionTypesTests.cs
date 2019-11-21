@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
@@ -106,22 +107,22 @@ End Namespace",
 
         private DiagnosticResult GetTooGenericCSharpResultAt(int line, int column, string callee)
         {
-            return GetCSharpResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
+            return GetCSharpResultAt(line, column, RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
         }
 
         private DiagnosticResult GetReservedCSharpResultAt(int line, int column, string callee)
         {
-            return GetCSharpResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
+            return GetCSharpResultAt(line, column, RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
         }
 
         private DiagnosticResult GetTooGenericBasicResultAt(int line, int column, string callee)
         {
-            return GetBasicResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
+            return GetBasicResultAt(line, column, RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
         }
 
         private DiagnosticResult GetReservedBasicResultAt(int line, int column, string callee)
         {
-            return GetBasicResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
+            return GetBasicResultAt(line, column, RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

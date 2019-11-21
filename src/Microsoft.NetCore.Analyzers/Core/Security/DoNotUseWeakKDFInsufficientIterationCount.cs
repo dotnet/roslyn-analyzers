@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -95,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (constructorMethod.Parameters[2].Name == "iterations" &&
                                     constructorMethod.Parameters[2].Type.SpecialType == SpecialType.System_Int32)
                                 {
-                                    kind = PropertySetCallbacks.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < sufficientIterationCount);
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o, CultureInfo.InvariantCulture) < sufficientIterationCount);
                                 }
                             }
 
@@ -106,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             "IterationCount",
                             (ValueContentAbstractValue valueContentAbstractValue) =>
                             {
-                                return PropertySetCallbacks.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < sufficientIterationCount);
+                                return PropertySetCallbacks.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o, CultureInfo.InvariantCulture) < sufficientIterationCount);
                             }));
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 

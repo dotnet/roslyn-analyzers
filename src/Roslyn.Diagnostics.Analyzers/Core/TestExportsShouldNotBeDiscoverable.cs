@@ -28,7 +28,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.TestExportsShouldNotBeDiscoverableRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: false,
             description: s_localizableDescription,
@@ -44,10 +44,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var exportAttributeV1 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
-                var exportAttributeV2 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
-                var inheritedExportAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);
-                var attributeUsageAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
+                var exportAttributeV1 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var exportAttributeV2 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var inheritedExportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);
+                var attributeUsageAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
 
                 if (exportAttributeV1 is null && exportAttributeV2 is null)
                 {

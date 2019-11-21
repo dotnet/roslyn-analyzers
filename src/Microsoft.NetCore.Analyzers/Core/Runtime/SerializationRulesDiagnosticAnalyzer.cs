@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -97,37 +98,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol iserializableTypeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationISerializable);
+                    INamedTypeSymbol iserializableTypeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationISerializable);
                     if (iserializableTypeSymbol == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol serializationInfoTypeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo);
+                    INamedTypeSymbol serializationInfoTypeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo);
                     if (serializationInfoTypeSymbol == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol streamingContextTypeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext);
+                    INamedTypeSymbol streamingContextTypeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext);
                     if (streamingContextTypeSymbol == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol serializableAttributeTypeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
+                    INamedTypeSymbol serializableAttributeTypeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol nonSerializedAttributeTypeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
+                    INamedTypeSymbol nonSerializedAttributeTypeSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
                     if (nonSerializedAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var isNetStandardAssembly = context.Compilation.ReferencedAssemblyNames.Any(identity => string.Equals(identity.Name, "netstandard", StringComparison.OrdinalIgnoreCase));
+                    var systemObjectSymbol = context.Compilation.GetSpecialType(SpecialType.System_Object);
+                    var isNetStandardAssembly = systemObjectSymbol.ContainingAssembly.Name != "mscorlib";
 
                     var symbolAnalyzer = new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol, isNetStandardAssembly);
                     context.RegisterSymbolAction(symbolAnalyzer.AnalyzeSymbol, SymbolKind.NamedType);
@@ -196,7 +198,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (serializationCtor == null)
                         {
                             context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleCA2229,
-                                string.Format(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
+                                string.Format(CultureInfo.CurrentCulture,
+                                    MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
                                     namedTypeSymbol.Name)));
                         }
                         else
@@ -207,7 +210,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 serializationCtor.DeclaredAccessibility != Accessibility.Private)
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
-                                    string.Format(
+                                    string.Format(CultureInfo.CurrentCulture,
                                         MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate,
                                         namedTypeSymbol.Name)));
                             }
@@ -216,7 +219,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 serializationCtor.DeclaredAccessibility != Accessibility.Protected)
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
-                                    string.Format(
+                                    string.Format(CultureInfo.CurrentCulture,
                                         MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily,
                                         namedTypeSymbol.Name)));
                             }

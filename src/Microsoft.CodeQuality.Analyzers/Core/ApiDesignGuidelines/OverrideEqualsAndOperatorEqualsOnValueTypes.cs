@@ -54,8 +54,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var iEnumerator = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerator);
-                var genericIEnumerator = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerator1);
+                var iEnumerator = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerator);
+                var genericIEnumerator = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerator1);
 
                 compilationStartContext.RegisterSymbolAction(context =>
                 {
@@ -66,10 +66,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     //  2. Do not fire for enumerators.
                     //  3. Do not fire for value types without members.
                     //  4. Externally visible types by default.
+                    //  5. Do not fire for ref struct.
                     // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                     // will always have identical configured visibility.
                     if (!namedType.IsValueType ||
                         namedType.TypeKind == TypeKind.Enum ||
+                        (namedType.TypeKind == TypeKind.Struct && namedType.IsRefLikeType) ||
                         !namedType.MatchesConfiguredVisibility(context.Options, EqualsRule, context.CancellationToken) ||
                         !namedType.GetMembers().Any(m => !m.IsConstructor()))
                     {

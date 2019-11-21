@@ -8,6 +8,8 @@
     <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
     <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <TargetFrameworksForPackage>$(TargetFrameworks)</TargetFrameworksForPackage>
+    <TargetFrameworksForPackage Condition="'$(TargetFrameworksForPackage)' == ''">$(TargetFramework)</TargetFrameworksForPackage>
   </PropertyGroup>
 
   <!-- 
@@ -100,6 +102,6 @@
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>
 
-    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)"' />
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)"' />
   </Target>
 </Project>

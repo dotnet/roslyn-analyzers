@@ -23,7 +23,7 @@ namespace Roslyn.Diagnostics.Analyzers
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RoslynDiagnosticIds.MissingSharedAttributeRuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.RoslyDiagnosticsReliability,
+                                                                             DiagnosticCategory.RoslynDiagnosticsReliability,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
@@ -39,8 +39,8 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var exportAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
-                var attributeUsageAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
+                var exportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var attributeUsageAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
 
                 if (exportAttribute == null)
                 {

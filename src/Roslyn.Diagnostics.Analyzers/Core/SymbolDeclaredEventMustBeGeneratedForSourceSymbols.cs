@@ -24,7 +24,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.SymbolDeclaredEventRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Error,
             isEnabledByDefault: false,
             description: s_localizableDescription,
@@ -41,7 +41,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol symbolType = compilationContext.Compilation.GetTypeByMetadataName(s_fullNameOfSymbol);
+                INamedTypeSymbol symbolType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(s_fullNameOfSymbol);
                 if (symbolType != null)
                 {
                     CompilationAnalyzer compilationAnalyzer = GetCompilationAnalyzer(compilationContext.Compilation, symbolType);

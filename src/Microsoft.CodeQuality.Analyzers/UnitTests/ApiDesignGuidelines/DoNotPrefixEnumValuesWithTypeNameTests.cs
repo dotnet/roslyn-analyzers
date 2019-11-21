@@ -1,28 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotPrefixEnumValuesWithTypeNameAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotPrefixEnumValuesWithTypeNameAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
 {
-    public class DoNotPrefixEnumValuesWithTypeNameTests : DiagnosticAnalyzerTestBase
+    public class DoNotPrefixEnumValuesWithTypeNameTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotPrefixEnumValuesWithTypeNameAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotPrefixEnumValuesWithTypeNameAnalyzer();
-        }
-
         [Fact]
-        public void CSharp_NoDiagnostic_NoPrefix()
+        public async Task CSharp_NoDiagnostic_NoPrefix()
         {
-            VerifyCSharp(@" 
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 { 
                     enum State
@@ -35,9 +31,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_NoPrefix()
+        public async Task Basic_NoDiagnostic_NoPrefix()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Class A
                     Private Enum State
                         Ok = 0
@@ -48,9 +44,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
         }
 
         [Fact]
-        public void CSharp_Diagnostic_EachValuePrefixed()
+        public async Task CSharp_Diagnostic_EachValuePrefixed()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 {
                     enum State
@@ -60,15 +56,15 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateUnknown = 2
                     };
                 }",
-                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetCSharpResultAt(7, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetCSharpResultAt(8, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, "State"),
+                GetCSharpResultAt(7, 25, "State"),
+                GetCSharpResultAt(8, 25, "State"));
         }
 
         [Fact]
-        public void Basic_Diagnostic_EachValuePrefixed()
+        public async Task Basic_Diagnostic_EachValuePrefixed()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Class A
                     Private Enum State
                         StateOk = 0
@@ -77,15 +73,15 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                     End Enum
                 End Class
                 ",
-                GetBasicResultAt(4, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetBasicResultAt(5, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetBasicResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetBasicResultAt(4, 25, "State"),
+                GetBasicResultAt(5, 25, "State"),
+                GetBasicResultAt(6, 25, "State"));
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_HalfOfValuesPrefixed()
+        public async Task CSharp_NoDiagnostic_HalfOfValuesPrefixed()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 {
                     enum State
@@ -99,9 +95,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
         }
 
         [Fact]
-        public void CSharp_Diagnostic_ThreeOfFourValuesPrefixed()
+        public async Task CSharp_Diagnostic_ThreeOfFourValuesPrefixed()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 {
                     enum State
@@ -112,15 +108,15 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         Invalid = 3
                     };
                 }",
-                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetCSharpResultAt(7, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
-                GetCSharpResultAt(8, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, "State"),
+                GetCSharpResultAt(7, 25, "State"),
+                GetCSharpResultAt(8, 25, "State"));
         }
 
         [Fact]
-        public void CSharp_Diagnostic_PrefixCaseDiffers()
+        public async Task CSharp_Diagnostic_PrefixCaseDiffers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 {
                     enum State
@@ -128,13 +124,13 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         stateOk = 0
                     };
                 }",
-                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, "State"));
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_EmptyEnum()
+        public async Task CSharp_NoDiagnostic_EmptyEnum()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 class A
                 {
                     enum State
@@ -142,5 +138,15 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                     };
                 }");
         }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => new DiagnosticResult(DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => new DiagnosticResult(DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

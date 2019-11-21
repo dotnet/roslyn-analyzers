@@ -58,12 +58,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
-                   INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
-                   INamedTypeSymbol iEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
-                   INamedTypeSymbol genericIEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
-                   INamedTypeSymbol iListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList);
-                   INamedTypeSymbol genericIListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
+                   INamedTypeSymbol iCollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                   INamedTypeSymbol genericICollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                   INamedTypeSymbol iEnumerableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
+                   INamedTypeSymbol genericIEnumerableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                   INamedTypeSymbol iListType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList);
+                   INamedTypeSymbol genericIListType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&

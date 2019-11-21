@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.PreferJaggedArraysOverMultidimensionalAnalyzer,
@@ -13,22 +12,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public class PreferJaggedArraysOverMultidimensionalTests : DiagnosticAnalyzerTestBase
+    public class PreferJaggedArraysOverMultidimensionalTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new PreferJaggedArraysOverMultidimensionalAnalyzer();
-        }
-
         [Fact]
-        public void CSharpSimpleMembers()
+        public async Task CSharpSimpleMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     public int[,] MultidimensionalArrayField;
@@ -70,9 +59,9 @@ public interface IInterface
         }
 
         [Fact]
-        public void BasicSimpleMembers()
+        public async Task BasicSimpleMembers()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Public MultidimensionalArrayField As Integer(,)
 
@@ -112,9 +101,9 @@ End Interface
         }
 
         [Fact]
-        public void CSharpNoDiagostics()
+        public async Task CSharpNoDiagostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     public int[][] JaggedArrayField;
@@ -135,9 +124,9 @@ public class Class1
         }
 
         [Fact]
-        public void BasicNoDiangnostics()
+        public async Task BasicNoDiangnostics()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Public JaggedArrayField As Integer()()
 
@@ -158,9 +147,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpOverridenMembers()
+        public async Task CSharpOverridenMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     public virtual int[,] MultidimensionalArrayProperty
@@ -192,9 +181,9 @@ public class Class2 : Class1
         }
 
         [Fact]
-        public void BasicOverriddenMembers()
+        public async Task BasicOverriddenMembers()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Public Overridable ReadOnly Property MultidimensionalArrayProperty As Integer(,)
         Get
@@ -226,30 +215,42 @@ End Class
 
         private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetCSharpResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule, symbolName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName);
         }
 
         private DiagnosticResult GetCSharpReturnResultAt(int line, int column, string symbolName, string typeName)
         {
-            return GetCSharpResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule, symbolName, typeName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName, typeName);
         }
         private DiagnosticResult GetCSharpBodyResultAt(int line, int column, string symbolName, string typeName)
         {
-            return GetCSharpResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule, symbolName, typeName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName, typeName);
         }
 
         private DiagnosticResult GetBasicDefaultResultAt(int line, int column, string symbolName)
         {
-            return GetBasicResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule, symbolName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName);
         }
 
         private DiagnosticResult GetBasicReturnResultAt(int line, int column, string symbolName, string typeName)
         {
-            return GetBasicResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule, symbolName, typeName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.ReturnRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName, typeName);
         }
         private DiagnosticResult GetBasicBodyResultAt(int line, int column, string symbolName, string typeName)
         {
-            return GetBasicResultAt(line, column, PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule, symbolName, typeName);
+            return new DiagnosticResult(PreferJaggedArraysOverMultidimensionalAnalyzer.BodyRule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName, typeName);
         }
     }
 }

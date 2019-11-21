@@ -47,27 +47,48 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                Compilation compilation = compilationStartContext.Compilation;
+                var compilation = compilationStartContext.Compilation;
+
+                compilationStartContext.RegisterOperationAction(
+                    context => ReportOnWeakIdentityObject(((ILockOperation)context.Operation).LockedValue, context),
+                    OperationKind.Lock);
+
                 compilationStartContext.RegisterOperationAction(context =>
                 {
-                    var lockStatement = (ILockOperation)context.Operation;
+                    var invocationOperation = (IInvocationOperation)context.Operation;
+                    var method = invocationOperation.TargetMethod;
 
-                    if (lockStatement.LockedValue is IInstanceReferenceOperation instanceReference &&
-                        instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                    if ((method.Name != "Enter" && method.Name != "TryEnter") ||
+                        invocationOperation.Arguments.Length == 0)
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, lockStatement.LockedValue.Syntax.ToString()));
+                        return;
                     }
-                    else
+
+                    if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor, out var monitorType) &&
+                        method.ContainingType.Equals(monitorType) &&
+                        invocationOperation.Arguments[0].Value is IConversionOperation conversionOperation)
                     {
-                        ITypeSymbol type = lockStatement.LockedValue?.Type;
-                        if (type != null && TypeHasWeakIdentity(type, compilation))
-                        {
-                            context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
-                        }
+                        ReportOnWeakIdentityObject(conversionOperation.Operand, context);
                     }
                 },
-                OperationKind.Lock);
+                OperationKind.Invocation);
             });
+        }
+
+        private static void ReportOnWeakIdentityObject(IOperation operation, OperationAnalysisContext context)
+        {
+            if (operation is IInstanceReferenceOperation instanceReference &&
+                instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+            {
+                context.ReportDiagnostic(operation.CreateDiagnostic(Rule, operation.Syntax.ToString()));
+            }
+            else
+            {
+                if (operation.Type is ITypeSymbol type && TypeHasWeakIdentity(type, context.Compilation))
+                {
+                    context.ReportDiagnostic(operation.CreateDiagnostic(Rule, type.ToDisplayString()));
+                }
+            }
         }
 
         private static bool TypeHasWeakIdentity(ITypeSymbol type, Compilation compilation)
@@ -78,13 +99,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return type is IArrayTypeSymbol arrayType && IsPrimitiveType(arrayType.ElementType);
                 case TypeKind.Class:
                 case TypeKind.TypeParameter:
-                    INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
-                    INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
-                    INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
-                    INamedTypeSymbol stackOverflowExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
-                    INamedTypeSymbol memberInfoTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
-                    INamedTypeSymbol parameterInfoTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
-                    INamedTypeSymbol threadTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
+                    INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
+                    INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
+                    INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
+                    INamedTypeSymbol stackOverflowExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
+                    INamedTypeSymbol memberInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
+                    INamedTypeSymbol parameterInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
+                    INamedTypeSymbol threadTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
                     return
                         type.SpecialType == SpecialType.System_String ||
                         type.Equals(executionEngineExceptionTypeSymbol) ||

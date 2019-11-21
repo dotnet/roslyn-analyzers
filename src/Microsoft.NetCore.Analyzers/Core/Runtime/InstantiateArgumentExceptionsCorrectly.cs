@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Globalization;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -45,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext =>
                 {
                     Compilation compilation = compilationContext.Compilation;
-                    ITypeSymbol argumentExceptionType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemArgumentException);
+                    ITypeSymbol argumentExceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException);
 
                     if (argumentExceptionType == null)
                     {
@@ -135,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ReportDiagnostic(
                 context.Operation.Syntax.CreateDiagnostic(
                     Descriptor,
-                    string.Format(format.ToString(), args)));
+                    string.Format(CultureInfo.CurrentCulture, format.ToString(CultureInfo.CurrentCulture), args)));
         }
 
         private static bool IsMessage(IParameterSymbol parameter)

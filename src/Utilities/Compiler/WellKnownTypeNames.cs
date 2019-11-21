@@ -326,6 +326,7 @@ namespace Analyzer.Utilities
         public const string SystemSecurityCryptographyX509CertificatesX509Store = "System.Security.Cryptography.X509Certificates.X509Store";
         public const string SystemSecurityCryptographyX509CertificatesStoreName = "System.Security.Cryptography.X509Certificates.StoreName";
         public const string SystemSecurityCryptographyX509CertificatesX509Certificate = "System.Security.Cryptography.X509Certificates.X509Certificate";
+        public const string SystemSecurityCryptographyX509CertificatesX509Certificate2 = "System.Security.Cryptography.X509Certificates.X509Certificate2";
         public const string SystemSecurityCryptographyRSA = "System.Security.Cryptography.RSA";
         public const string SystemSecurityCryptographyDSA = "System.Security.Cryptography.DSA";
         public const string SystemSecurityCryptographyAsymmetricAlgorithm = "System.Security.Cryptography.AsymmetricAlgorithm";
@@ -448,5 +449,8 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisCSharpCSharpCompilation = "Microsoft.CodeAnalysis.CSharp.CSharpCompilation";
         public const string MicrosoftCodeAnalysisSymbolEqualityComparer = "Microsoft.CodeAnalysis.SymbolEqualityComparer";
         public const string MicrosoftCodeAnalysisISymbol = "Microsoft.CodeAnalysis.ISymbol";
+        public const string SystemIAsyncDisposable = "System.IAsyncDisposable";
+        public const string SystemRuntimeInteropServicesCoClassAttribute = "System.Runtime.InteropServices.CoClassAttribute";
+        public const string SystemIProgress1 = "System.IProgress`1";
     }
 }

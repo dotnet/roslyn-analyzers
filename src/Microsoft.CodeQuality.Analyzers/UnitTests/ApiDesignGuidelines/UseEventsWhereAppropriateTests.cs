@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -12,25 +14,15 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class UseEventsWhereAppropriateTests : DiagnosticAnalyzerTestBase
+    public class UseEventsWhereAppropriateTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseEventsWhereAppropriateAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseEventsWhereAppropriateAnalyzer();
-        }
-
         #region No Diagnostic Tests
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void NoDiagnostic_NamingCases()
+        public async Task NoDiagnostic_NamingCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class EventsClass1
@@ -57,7 +49,7 @@ public class EventsClass1
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class EventsClass1
@@ -86,9 +78,9 @@ End Class
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void NoDiagnostic_InterfaceMemberImplementation()
+        public async Task NoDiagnostic_InterfaceMemberImplementation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class InterfaceImplementation : I
@@ -116,7 +108,7 @@ public interface I
 #pragma warning restore CA1030
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class InterfaceImplementation
@@ -144,9 +136,9 @@ End Interface
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void NoDiagnostic_UnflaggedMethodKinds()
+        public async Task NoDiagnostic_UnflaggedMethodKinds()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class FireOnSomethingDerivedClass : BaseClass
@@ -201,7 +193,7 @@ public abstract class BaseClass
 #pragma warning restore CA1030
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class FireOnSomethingDerivedClass
@@ -255,9 +247,9 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void NoDiagnostic_FlaggedMethodKinds_NotExternallyVisible()
+        public async Task NoDiagnostic_FlaggedMethodKinds_NotExternallyVisible()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 internal interface InterfaceWithViolations
@@ -304,7 +296,7 @@ public abstract class ClassWithViolations
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Interface InterfaceWithViolations
     ' Interface methods.
     Sub FireOnSomething_InterfaceMethod1()
@@ -349,9 +341,9 @@ End Class
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void Diagnostic_FlaggedMethodKinds()
+        public async Task Diagnostic_FlaggedMethodKinds()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public interface InterfaceWithViolations
@@ -403,7 +395,7 @@ public abstract class ClassWithViolations
       // Test0.cs(33,26): warning CA1030: Consider making 'RemoveOnSomething_AbstractMethod' an event.
       GetCSharpResultAt(33, 26, UseEventsWhereAppropriateAnalyzer.Rule, "RemoveOnSomething_AbstractMethod"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface InterfaceWithViolations
 	' Interface methods - Rule fires.
 	Sub FireOnSomething_InterfaceMethod1()
@@ -452,9 +444,9 @@ End Class
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void Diagnostic_PascalCasedMethodNames()
+        public async Task Diagnostic_PascalCasedMethodNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class EventsClassPascalCased
 {
     public void Fire() { }
@@ -491,7 +483,7 @@ public class EventsClassPascalCased
       // Test0.cs(18,17): warning CA1030: Consider making 'Remove_OnFileEvent' an event.
       GetCSharpResultAt(18, 17, UseEventsWhereAppropriateAnalyzer.Rule, "Remove_OnFileEvent"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class EventsClassPascalCased
 	Public Sub Fire()
 	End Sub
@@ -539,9 +531,9 @@ End Class
 
         [WorkItem(380, "https://github.com/dotnet/roslyn-analyzers/issues/380")]
         [Fact]
-        public void Diagnostic_LowerCaseMethodNames()
+        public async Task Diagnostic_LowerCaseMethodNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class EventsClassLowercase
 {
     public void fire() { }
@@ -578,7 +570,7 @@ public class EventsClassLowercase
       // Test0.cs(18,17): warning CA1030: Consider making 'remove_onFileEvent' an event.
       GetCSharpResultAt(18, 17, UseEventsWhereAppropriateAnalyzer.Rule, "remove_onFileEvent"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class EventsClassLowercase
 	Public Sub fire()
 	End Sub
@@ -625,5 +617,15 @@ End Class
         }
 
         #endregion
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

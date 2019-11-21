@@ -464,8 +464,7 @@ class TestClass {{
     object Method(IEnumerable<{symbolType}> e) {{
         return e.ToDictionary(
                 s => s,
-                s => s
-, SymbolEqualityComparer.Default);
+                s => s, SymbolEqualityComparer.Default);
     }}
 }}
 ";

@@ -34,18 +34,18 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             context.RegisterCompilationStartAction(context =>
             {
                 var compilation = context.Compilation;
-                var symbolType = compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisISymbol);
+                var symbolType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisISymbol);
                 if (symbolType is null)
                 {
                     return;
                 }
 
-                var genericComparerType = compilation.GetTypeByMetadataName(typeof(IEqualityComparer<>).FullName);
+                var genericComparerType = compilation.GetOrCreateTypeByMetadataName(typeof(IEqualityComparer<>).FullName);
                 var comparerType = genericComparerType?.Construct(symbolType);
                 if (comparerType == null)
                 {
@@ -68,79 +68,78 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             var invocationOperation = (IInvocationOperation)context.Operation;
             var targetMethod = invocationOperation.TargetMethod;
 
-            switch (targetMethod.ContainingSymbol.Name)
+            var compilation = context.Compilation;
+
+            var immutableDictionarySymbol = compilation.GetOrCreateTypeByMetadataName("System.Collections.Immutable.ImmutableDictionary");
+            if (targetMethod.ContainingSymbol.Equals(immutableDictionarySymbol))
             {
-                case nameof(ImmutableDictionary):
-                    {
-                        switch (targetMethod.Name)
+                switch (targetMethod.Name)
+                {
+                    case nameof(ImmutableDictionary.Create):
+                    case nameof(ImmutableDictionary.CreateBuilder):
+                    case nameof(ImmutableDictionary.ToImmutableDictionary):
                         {
-                            case nameof(ImmutableDictionary.Create):
-                            case nameof(ImmutableDictionary.CreateBuilder):
-                            case nameof(ImmutableDictionary.ToImmutableDictionary):
-                                {
-                                    // Create, CreateBuilder, and ToImmutableDictionary are static methods on ImmutableDictionary
-                                    // with the type argument on the method signature instead 
-                                    // of the containing type
-                                    if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
-                                    {
-                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
-                                    }
-                                }
-                                break;
+                            // Create, CreateBuilder, and ToImmutableDictionary are static methods on ImmutableDictionary
+                            // with the type argument on the method signature instead 
+                            // of the containing type
+                            if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
+                            {
+                                RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
+            }
 
-                case nameof(Enumerable):
-                    {
-                        switch (targetMethod.Name)
+            var enumerableSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
+            if (targetMethod.ContainingSymbol.Equals(enumerableSymbol))
+            {
+                switch (targetMethod.Name)
+                {
+                    case nameof(Enumerable.Contains):
+                    case nameof(Enumerable.Distinct):
+                    case nameof(Enumerable.Intersect):
+                    case nameof(Enumerable.SequenceEqual):
+                    case "ToHashSet":
+                    case nameof(Enumerable.Union):
                         {
-                            case nameof(Enumerable.Contains):
-                            case nameof(Enumerable.Distinct):
-                            case nameof(Enumerable.Intersect):
-                            case nameof(Enumerable.SequenceEqual):
-                            case "ToHashSet":
-                            case nameof(Enumerable.Union):
-                                {
-                                    // All of these methods only have a single type argument and accept an equality comparer
-                                    if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
-                                    {
-                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
-                                    }
-                                }
-                                break;
-
-                            case nameof(Enumerable.GroupBy):
-                            case nameof(Enumerable.ToDictionary):
-                            case nameof(Enumerable.ToLookup):
-                                {
-                                    // GroupBy<TSource, TKey, TElement, TResult> 
-                                    // ToDictionary<TSource, TKey,  TElement>
-                                    // 
-                                    // Only need to use comparer if TKey is ISymbol
-                                    if (IndexedTypeArgumentIsSymbolType(1, targetMethod, symbolType))
-                                    {
-                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
-                                    }
-                                }
-                                break;
-
-                            case nameof(Enumerable.GroupJoin):
-                            case nameof(Enumerable.Join):
-                                {
-                                    // GroupJoin<TOuter, TInner, TKey, TResult>
-                                    // Join<TOuter, TInner, TKey, TResult>
-                                    //
-                                    // Only need to use comparer if TKey is ISymbol
-                                    if (IndexedTypeArgumentIsSymbolType(2, targetMethod, symbolType))
-                                    {
-                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
-                                    }
-                                }
-                                break;
+                            // All of these methods only have a single type argument and accept an equality comparer
+                            if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
+                            {
+                                RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                            }
                         }
-                    }
-                    break;
+                        break;
+
+                    case nameof(Enumerable.GroupBy):
+                    case nameof(Enumerable.ToDictionary):
+                    case nameof(Enumerable.ToLookup):
+                        {
+                            // GroupBy<TSource, TKey, TElement, TResult> 
+                            // ToDictionary<TSource, TKey,  TElement>
+                            // 
+                            // Only need to use comparer if TKey is ISymbol
+                            if (IndexedTypeArgumentIsSymbolType(1, targetMethod, symbolType))
+                            {
+                                RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                            }
+                        }
+                        break;
+
+                    case nameof(Enumerable.GroupJoin):
+                    case nameof(Enumerable.Join):
+                        {
+                            // GroupJoin<TOuter, TInner, TKey, TResult>
+                            // Join<TOuter, TInner, TKey, TResult>
+                            //
+                            // Only need to use comparer if TKey is ISymbol
+                            if (IndexedTypeArgumentIsSymbolType(2, targetMethod, symbolType))
+                            {
+                                RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                            }
+                        }
+                        break;
+                }
             }
         }
 

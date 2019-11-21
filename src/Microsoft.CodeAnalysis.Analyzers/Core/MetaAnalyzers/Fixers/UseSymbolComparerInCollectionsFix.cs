@@ -43,27 +43,22 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var expression = root.FindNode(sourceSpan, getInnermostNodeForTie: true);
-            var rawOperation = semanticModel.GetOperation(expression, cancellationToken);
 
-            return rawOperation switch
+            return expression switch
             {
-                IInvocationOperation invocationOperation => await OnInvocationOperation(document, invocationOperation, cancellationToken).ConfigureAwait(false),
-                IObjectCreationOperation objectCreationOperation => await OnObjectCreationOperation(document, objectCreationOperation, cancellationToken).ConfigureAwait(false),
+                InvocationExpressionSyntax invocationSyntax => await OnInvocationOperationAsync(document, invocationSyntax, cancellationToken).ConfigureAwait(false),
+                ObjectCreationExpressionSyntax objectCreationSyntax => await OnObjectCreationOperationAsync(document, objectCreationSyntax, cancellationToken).ConfigureAwait(false),
                 _ => document
             };
-
-
         }
 
-        private static async Task<Document> OnInvocationOperation(
+        private static async Task<Document> OnInvocationOperationAsync(
             Document document,
-            IInvocationOperation invocationOperation,
+            InvocationExpressionSyntax invocationSyntax,
             CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
-
-            var invocationSyntax = (InvocationExpressionSyntax)invocationOperation.Syntax;
 
             var newInvocation = invocationSyntax.WithArgumentList(
                 invocationSyntax.ArgumentList.AddArguments((ArgumentSyntax)generator.Argument(GetEqualityComparerDefault(generator))));
@@ -73,15 +68,13 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> OnObjectCreationOperation(
+        private static async Task<Document> OnObjectCreationOperationAsync(
             Document document,
-            IObjectCreationOperation objectCreationOperation,
+            ObjectCreationExpressionSyntax creationSyntax,
             CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
-
-            var creationSyntax = (ObjectCreationExpressionSyntax)objectCreationOperation.Syntax;
 
             var newCreation = creationSyntax.WithArgumentList(
                 creationSyntax.ArgumentList.AddArguments((ArgumentSyntax)generator.Argument(GetEqualityComparerDefault(generator))));

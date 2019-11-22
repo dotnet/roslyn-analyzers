@@ -166,7 +166,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateError = 1,
                         StateUnknown = 2,
                         StateInvalid = 3
-                    };
+                    }
                 }"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
@@ -194,8 +194,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateUnknown = 2
                         StateInvalid = 3
                     End Enum
-                End Class
-"
+                End Class"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
                     ExpectedDiagnostics =
@@ -235,7 +234,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         Error = 1,
                         Unknown = 2,
                         Invalid = 3
-                    };
+                    }
                 }"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
@@ -259,12 +258,11 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                 Class A
                     Enum State
                         StateOk = 0
-                        Error = 1
+                        [Error] = 1
                         Unknown = 2
                         Invalid = 3
                     End Enum
-                End Class
-"
+                End Class"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
                 }
@@ -304,7 +302,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateError = 1,
                         StateUnknown = 2,
                         Invalid = 3
-                    };
+                    }
                 }"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
@@ -338,8 +336,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateUnknown = 2
                         Invalid = 3
                     End Enum
-                End Class
-"
+                End Class"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) },
                 }

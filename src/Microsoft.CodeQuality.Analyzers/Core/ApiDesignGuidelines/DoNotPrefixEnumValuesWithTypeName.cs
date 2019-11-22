@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var prefixedValues = enumValues.Where(m => m.Name.StartsWith(symbol.Name, StringComparison.OrdinalIgnoreCase));
             int percentPrefixed = 100 * prefixedValues.Count() / enumValues.Count();
 
-            var triggerOption = context.Options.GetEnumValuesPrefixTriggerOption(Rule, context.CancellationToken);
+            var triggerOption = context.Options.GetEnumValuesPrefixTriggerOption(Rule, EnumValuesPrefixTrigger.Heuristic, context.CancellationToken);
 
             if (triggerOption == EnumValuesPrefixTrigger.AnyEnumValue ||
                 (triggerOption == EnumValuesPrefixTrigger.AllEnumValues && percentPrefixed == 100) ||

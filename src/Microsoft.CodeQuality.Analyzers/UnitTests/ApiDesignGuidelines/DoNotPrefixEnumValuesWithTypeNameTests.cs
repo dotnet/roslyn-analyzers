@@ -278,6 +278,87 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
             await vbTest.RunAsync();
         }
 
+        [Theory]
+        // No data
+        [InlineData("")]
+        // Invalid option
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = FOO")]
+        // Valid options
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AllEnumValues")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = Heuristic")]
+        public async Task ThreeOfFourValuesPrefixed_Diagnostic(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                class A
+                {
+                    enum State
+                    {
+                        StateOk = 0,
+                        StateError = 1,
+                        StateUnknown = 2,
+                        Invalid = 3
+                    };
+                }"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (!editorConfigText.EndsWith("AllEnumValues", StringComparison.OrdinalIgnoreCase))
+            {
+                csharpTest.ExpectedDiagnostics.AddRange(
+                    new[]
+                    {
+                        GetCSharpResultAt(6, 25, "State"),
+                        GetCSharpResultAt(7, 25, "State"),
+                        GetCSharpResultAt(8, 25, "State"),
+                    });
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                Class A
+                    Enum State
+                        StateOk = 0
+                        StateError = 1
+                        StateUnknown = 2
+                        Invalid = 3
+                    End Enum
+                End Class
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (!editorConfigText.EndsWith("AllEnumValues", StringComparison.OrdinalIgnoreCase))
+            {
+                vbTest.ExpectedDiagnostics.AddRange(
+                    new[]
+                    {
+                        GetBasicResultAt(4, 25, "State"),
+                        GetBasicResultAt(5, 25, "State"),
+                        GetBasicResultAt(6, 25, "State"),
+                    });
+            }
+
+            await vbTest.RunAsync();
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
             => new DiagnosticResult(DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule)
                 .WithLocation(line, column)

@@ -42,6 +42,16 @@
         <target state="translated">제네릭 메서드의 람다 또는 무명 메서드는 대리자 인스턴스를 할당합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="LambdaReturnConversionRuleMessage">
+        <source>Returning a {0} from an anonymous function with a return type of {1} will cause boxing when the function is called.</source>
+        <target state="new">Returning a {0} from an anonymous function with a return type of {1} will cause boxing when the function is called.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LambdaReturnConversionRuleTitle">
+        <source>Return of value type causes boxing allocation</source>
+        <target state="new">Return of value type causes boxing allocation</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MethodGroupAllocationRuleMessage">
         <source>This will allocate a delegate instance</source>
         <target state="translated">이렇게 하면 대리자 인스턴스가 할당됩니다.</target>

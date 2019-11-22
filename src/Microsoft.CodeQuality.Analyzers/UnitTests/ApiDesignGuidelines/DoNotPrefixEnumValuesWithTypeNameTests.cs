@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
@@ -137,6 +138,144 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                     {
                     };
                 }");
+        }
+
+        [Theory]
+        // No data
+        [InlineData("")]
+        // Invalid option
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = FOO")]
+        // Valid options
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AllEnumValues")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = Heuristic")]
+        public async Task AllValuesPrefixed_Diagnostic(string editorConfigText)
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                class A
+                {
+                    enum State
+                    {
+                        StateOk = 0,
+                        StateError = 1,
+                        StateUnknown = 2,
+                        StateInvalid = 3
+                    };
+                }"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(6, 25, "State"),
+                        GetCSharpResultAt(7, 25, "State"),
+                        GetCSharpResultAt(8, 25, "State"),
+                        GetCSharpResultAt(9, 25, "State"),
+                    }
+                }
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                Class A
+                    Enum State
+                        StateOk = 0
+                        StateError = 1
+                        StateUnknown = 2
+                        StateInvalid = 3
+                    End Enum
+                End Class
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    ExpectedDiagnostics =
+                    {
+                        GetBasicResultAt(4, 25, "State"),
+                        GetBasicResultAt(5, 25, "State"),
+                        GetBasicResultAt(6, 25, "State"),
+                        GetBasicResultAt(7, 25, "State"),
+                    }
+                }
+            }.RunAsync();
+        }
+
+        [Theory]
+        // No data
+        [InlineData("")]
+        // Invalid option
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = FOO")]
+        // Valid options
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = AllEnumValues")]
+        [InlineData("dotnet_code_quality.CA1712.enum_values_prefix_trigger = Heuristic")]
+        public async Task OneOfFourValuesPrefixed_Diagnostic(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                class A
+                {
+                    enum State
+                    {
+                        StateOk = 0,
+                        Error = 1,
+                        Unknown = 2,
+                        Invalid = 3
+                    };
+                }"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (editorConfigText.EndsWith("AnyEnumValue", StringComparison.OrdinalIgnoreCase))
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCSharpResultAt(6, 25, "State"));
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+                Class A
+                    Enum State
+                        StateOk = 0
+                        Error = 1
+                        Unknown = 2
+                        Invalid = 3
+                    End Enum
+                End Class
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (editorConfigText.EndsWith("AnyEnumValue", StringComparison.OrdinalIgnoreCase))
+            {
+                vbTest.ExpectedDiagnostics.Add(GetBasicResultAt(4, 25, "State"));
+            }
+
+            await vbTest.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)

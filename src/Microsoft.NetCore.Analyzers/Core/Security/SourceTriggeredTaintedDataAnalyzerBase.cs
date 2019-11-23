@@ -77,6 +77,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             ControlFlowGraph cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                            if (cfg == null)
+                            {
+                                return;
+                            }
+
                             WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
                             InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
                                                                     options,
@@ -115,12 +120,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
-                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
                                     if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
-                                            rootOperationsNeedingAnalysis.Add(rootOperation);
+                                            rootOperationsNeedingAnalysis.Add(propertyReferenceOperation.GetRoot());
                                         }
                                     }
                                 },
@@ -130,20 +134,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
-                                    if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
+                                    if (sourceInfoSymbolMap.IsSourceMethod(
+                                            invocationOperation.TargetMethod,
+                                            invocationOperation.Arguments,
+                                            pointsToFactory,
+                                            valueContentFactory,
+                                            out _))
                                     {
-                                        if (sourceInfoSymbolMap.IsSourceMethod(
-                                                invocationOperation.TargetMethod,
-                                                invocationOperation.Arguments,
-                                                pointsToFactory,
-                                                valueContentFactory,
-                                                out _))
+                                        lock (rootOperationsNeedingAnalysis)
                                         {
-                                            lock (rootOperationsNeedingAnalysis)
-                                            {
-                                                rootOperationsNeedingAnalysis.Add(rootOperation);
-                                            }
+                                            rootOperationsNeedingAnalysis.Add(invocationOperation.GetRoot());
                                         }
                                     }
                                 },
@@ -181,11 +181,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
-                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
-                                                {
-                                                    continue;
-                                                }
-
                                                 TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
                                                     cfg,
                                                     operationBlockAnalysisContext.Compilation,

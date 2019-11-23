@@ -76,23 +76,24 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
-                            ControlFlowGraph cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
-                            if (cfg == null)
-                            {
-                                return;
-                            }
-
                             WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
                             InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
                                                                     options,
                                                                     SupportedDiagnostics,
                                                                     defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                                                     cancellationToken: cancellationToken);
+                            Lazy<ControlFlowGraph> controlFlowGraphFactory = new Lazy<ControlFlowGraph>(
+                                () => operationBlockStartContext.OperationBlocks.GetControlFlowGraph());
                             Lazy<PointsToAnalysisResult> pointsToFactory = new Lazy<PointsToAnalysisResult>(
                                 () =>
                                 {
+                                    if (controlFlowGraphFactory.Value == null)
+                                    {
+                                        return null;
+                                    }
+
                                     return PointsToAnalysis.TryGetOrComputeResult(
-                                                                cfg,
+                                                                controlFlowGraphFactory.Value,
                                                                 owningSymbol,
                                                                 options,
                                                                 wellKnownTypeProvider,
@@ -102,8 +103,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                             Lazy<(PointsToAnalysisResult, ValueContentAnalysisResult)> valueContentFactory = new Lazy<(PointsToAnalysisResult, ValueContentAnalysisResult)>(
                                 () =>
                                 {
+                                    if (controlFlowGraphFactory.Value == null)
+                                    {
+                                        return (null, null);
+                                    }
+
                                     ValueContentAnalysisResult valuecontentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                                                    cfg,
+                                                                    controlFlowGraphFactory.Value,
                                                                     owningSymbol,
                                                                     options,
                                                                     wellKnownTypeProvider,
@@ -179,10 +185,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 return;
                                             }
 
+                                            if (controlFlowGraphFactory.Value == null)
+                                            {
+                                                return;
+                                            }
+
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
                                                 TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                                    cfg,
+                                                    controlFlowGraphFactory.Value,
                                                     operationBlockAnalysisContext.Compilation,
                                                     operationBlockAnalysisContext.OwningSymbol,
                                                     operationBlockAnalysisContext.Options,

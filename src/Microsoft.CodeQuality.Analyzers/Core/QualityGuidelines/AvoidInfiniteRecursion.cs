@@ -66,7 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         ancestor.Kind != OperationKind.LocalFunction &&
                         ancestor.Kind != OperationKind.Conditional);
 
-                    assignmentOperation.CreateDiagnostic(ancestor != null ? MaybeRule : Rule, operationTarget.Property.Name);
+                    operationContext.ReportDiagnostic(
+                        assignmentOperation.CreateDiagnostic(ancestor != null ? MaybeRule : Rule, operationTarget.Property.Name));
                 }, OperationKind.SimpleAssignment);
             });
         }

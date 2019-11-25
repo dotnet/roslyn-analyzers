@@ -76,18 +76,24 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
-                            ControlFlowGraph cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
                             WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
                             InterproceduralAnalysisConfiguration interproceduralAnalysisConfiguration = InterproceduralAnalysisConfiguration.Create(
                                                                     options,
                                                                     SupportedDiagnostics,
                                                                     defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                                                     cancellationToken: cancellationToken);
+                            Lazy<ControlFlowGraph> controlFlowGraphFactory = new Lazy<ControlFlowGraph>(
+                                () => operationBlockStartContext.OperationBlocks.GetControlFlowGraph());
                             Lazy<PointsToAnalysisResult> pointsToFactory = new Lazy<PointsToAnalysisResult>(
                                 () =>
                                 {
+                                    if (controlFlowGraphFactory.Value == null)
+                                    {
+                                        return null;
+                                    }
+
                                     return PointsToAnalysis.TryGetOrComputeResult(
-                                                                cfg,
+                                                                controlFlowGraphFactory.Value,
                                                                 owningSymbol,
                                                                 options,
                                                                 wellKnownTypeProvider,
@@ -97,8 +103,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                             Lazy<(PointsToAnalysisResult, ValueContentAnalysisResult)> valueContentFactory = new Lazy<(PointsToAnalysisResult, ValueContentAnalysisResult)>(
                                 () =>
                                 {
+                                    if (controlFlowGraphFactory.Value == null)
+                                    {
+                                        return (null, null);
+                                    }
+
                                     ValueContentAnalysisResult valuecontentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                                                    cfg,
+                                                                    controlFlowGraphFactory.Value,
                                                                     owningSymbol,
                                                                     options,
                                                                     wellKnownTypeProvider,
@@ -115,12 +126,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
-                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
                                     if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
-                                            rootOperationsNeedingAnalysis.Add(rootOperation);
+                                            rootOperationsNeedingAnalysis.Add(propertyReferenceOperation.GetRoot());
                                         }
                                     }
                                 },
@@ -130,20 +140,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
-                                    if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
+                                    if (sourceInfoSymbolMap.IsSourceMethod(
+                                            invocationOperation.TargetMethod,
+                                            invocationOperation.Arguments,
+                                            pointsToFactory,
+                                            valueContentFactory,
+                                            out _))
                                     {
-                                        if (sourceInfoSymbolMap.IsSourceMethod(
-                                                invocationOperation.TargetMethod,
-                                                invocationOperation.Arguments,
-                                                pointsToFactory,
-                                                valueContentFactory,
-                                                out _))
+                                        lock (rootOperationsNeedingAnalysis)
                                         {
-                                            lock (rootOperationsNeedingAnalysis)
-                                            {
-                                                rootOperationsNeedingAnalysis.Add(rootOperation);
-                                            }
+                                            rootOperationsNeedingAnalysis.Add(invocationOperation.GetRoot());
                                         }
                                     }
                                 },
@@ -179,15 +185,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 return;
                                             }
 
+                                            if (controlFlowGraphFactory.Value == null)
+                                            {
+                                                return;
+                                            }
+
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
-                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
-                                                {
-                                                    continue;
-                                                }
-
                                                 TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                                    cfg,
+                                                    controlFlowGraphFactory.Value,
                                                     operationBlockAnalysisContext.Compilation,
                                                     operationBlockAnalysisContext.OwningSymbol,
                                                     operationBlockAnalysisContext.Options,

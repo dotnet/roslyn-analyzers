@@ -185,7 +185,7 @@ class TestClass
         cryptoStream.Write(GetArray(byteArray), offset, count);
     }
 }",
-            GetCSharpResultAt(15, 9, 15, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(byte[] byteArray, int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] buffer", "void TestClass.TestMethod(byte[] byteArray, int offset, int count, Stream stream, CryptoStreamMode mode)"));
+            GetCSharpResultAt(15, 9, 15, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(byte[] byteArray, int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] TestClass.GetArray(byte[] byteArray)", "void TestClass.TestMethod(byte[] byteArray, int offset, int count, Stream stream, CryptoStreamMode mode)"));
         }
 
         [Fact]
@@ -203,7 +203,7 @@ class TestClass
         cryptoStream.Write(new byte[10], offset, count);
     }
 }",
-            GetCSharpResultAt(10, 9, 10, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] buffer", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+            GetCSharpResultAt(10, 9, 10, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[]", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
         }
 
         [Fact]
@@ -226,7 +226,7 @@ class TestClass
         cryptoStream.Write(GetArray(count), offset, count);
     }
 }",
-            GetCSharpResultAt(15, 9, 15, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] buffer", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+            GetCSharpResultAt(15, 9, 15, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] TestClass.GetArray(int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
         }
 
         [Fact]

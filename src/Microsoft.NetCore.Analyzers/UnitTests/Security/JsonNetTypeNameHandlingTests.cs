@@ -219,8 +219,8 @@ class Blah
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("NewtonsoftJsonNetApis", "NewtonsoftJsonNetApis", LanguageNames.CSharp)
-                            .AddDocument("NewtonsoftJsonNetApis.cs", NewtonsoftJsonNetApis.CSharp).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", NewtonsoftJsonNetApis.CSharp).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -248,8 +248,8 @@ class Blah
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("NewtonsoftJsonNetApis", "NewtonsoftJsonNetApis", LanguageNames.VisualBasic)
-                            .AddDocument("NewtonsoftJsonNetApis.vb", NewtonsoftJsonNetApis.VisualBasic).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.VisualBasic)
+                            .AddDocument("Dependency.vb", NewtonsoftJsonNetApis.VisualBasic).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

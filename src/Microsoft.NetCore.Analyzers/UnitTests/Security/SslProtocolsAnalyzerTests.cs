@@ -479,8 +479,8 @@ class TestClass
         SslProtocols protocols = SslProtocols.Tls12 | (SslProtocols)192;
     }
 }",
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls12"),
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.DeprecatedRule, "3264"));
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.DeprecatedRule).WithSpan(9, 34, 9, 52).WithArguments("3264"),
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.HardcodedRule).WithSpan(9, 34, 9, 52).WithArguments("Tls12"));
         }
 
         [Fact]

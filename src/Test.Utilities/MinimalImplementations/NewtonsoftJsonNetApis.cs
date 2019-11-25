@@ -5,11 +5,36 @@ namespace Test.Utilities.MinimalImplementations
     public static class NewtonsoftJsonNetApis
     {
         public const string CSharp = @"
+using System;
+using System.Runtime.Serialization;
+
+namespace Newtonsoft.Json.Serialization
+{
+    public interface ISerializationBinder
+    {
+	    Type BindToType(string assemblyName, string typeName);
+        void BindToName(Type serializedType, out string assemblyName, out string typeName);
+    }
+
+    public class DefaultSerializationBinder : ISerializationBinder
+    {
+	    public Type BindToType(string assemblyName, string typeName)
+        {
+            return null;
+        }
+
+        public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+        {
+            assemblyName = null;
+            typeName = null;
+        }
+    }
+}
+
 namespace Newtonsoft.Json
 {
-    using System;
     using System.IO;
-    using System.Runtime.Serialization;
+    using Newtonsoft.Json.Serialization;
 
     [Flags]
     public enum TypeNameHandling
@@ -157,31 +182,6 @@ namespace Newtonsoft.Json
     }
 }
 
-namespace Newtonsoft.Json.Serialization
-{
-    using System;
-
-    public interface ISerializationBinder
-    {
-	    Type BindToType(string assemblyName, string typeName);
-        void BindToName(Type serializedType, out string assemblyName, out string typeName);
-    }
-
-    public class DefaultSerializationBinder : ISerializationBinder
-    {
-	    public Type BindToType(string assemblyName, string typeName)
-        {
-            return null;
-        }
-
-        public void BindToName(Type serializedType, out string assemblyName, out string typeName)
-        {
-            assemblyName = null;
-            typeName = null;
-        }
-    }
-}
-
 public class MyISerializationBinder : Newtonsoft.Json.Serialization.ISerializationBinder
 {
     public Type BindToType(string assemblyName, string typeName)
@@ -197,12 +197,12 @@ public class MyISerializationBinder : Newtonsoft.Json.Serialization.ISerializati
 
 public class MyBinder : System.Runtime.Serialization.SerializationBinder
 {
-    public Type BindToType(string assemblyName, string typeName)
+    public override Type BindToType(string assemblyName, string typeName)
     {
         throw new NotImplementedException();
     }
 
-    public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+    public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
     {
         throw new NotImplementedException();
     }
@@ -213,6 +213,27 @@ public class MyBinder : System.Runtime.Serialization.SerializationBinder
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
+Imports System.Runtime.InteropServices
+
+Namespace Newtonsoft.Json.Serialization
+    Public Interface ISerializationBinder
+        Function BindToType(ByVal assemblyName As String, ByVal typeName As String) As Type
+        Sub BindToName(ByVal serializedType As Type, <Out> ByRef assemblyName As String, <Out> ByRef typeName As String)
+    End Interface
+
+    Public Class DefaultSerializationBinder
+        Implements ISerializationBinder
+
+        Public Function BindToType(ByVal assemblyName As String, ByVal typeName As String) As Type Implements ISerializationBinder.BindToType
+            Return Nothing
+        End Function
+
+        Public Sub BindToName(ByVal serializedType As Type, <Out> ByRef assemblyName As String, <Out> ByRef typeName As String) Implements ISerializationBinder.BindToName
+            assemblyName = Nothing
+            typeName = Nothing
+        End Sub
+    End Class
+End Namespace
 
 Namespace Newtonsoft.Json
     <Flags>
@@ -249,7 +270,7 @@ Namespace Newtonsoft.Json
             Return Nothing
         End Function
 
-        Public Shared CreateDefault() As JsonSerializer
+        Public Shared Function CreateDefault() As JsonSerializer
             Return Nothing
         End Function
 
@@ -265,11 +286,11 @@ Namespace Newtonsoft.Json
             Return Nothing
         End Function
 
-        Public Function Deserialize(Of T)(reader As JsonReader) As T
-            Return Default(T)
+        Public Function Deserialize(reader As JsonReader, objectType As Type) As Object
+            Return Nothing
         End Function
 
-        Public Function Deserialize(reader As JsonReader, objectType As Type) As Object
+        Public Function Deserialize(Of T)(reader As JsonReader) As T
             Return Nothing
         End Function
 
@@ -281,26 +302,6 @@ Namespace Newtonsoft.Json
     End Class
 
     Public Class JsonReader
-    End Class
-End Namespace
-
-Namespace Newtonsoft.Json.Serialization
-    Public Interface ISerializationBinder
-        Function BindToType(assemblyName As String, typeName As String) As Type
-        Sub BindToName(serializedType as Type, ByRef assemblyName As String, ByRef typeName As String)
-    End Interface
-
-    Public Class DefaultSerializationBinder
-        Implements ISerializationBinder
-        
-        Public Function BindToType(assemblyName As String, typeName As String) As Type
-            Return Nothing
-        End Function
-
-        Sub BindToName(serializedType as Type, <Out()> ByRef assemblyName As String, <Out()> ByRef typeName As String)
-            assemblyName = Nothing
-            typeName = Nothing
-        End Sub
     End Class
 End Namespace
 ";

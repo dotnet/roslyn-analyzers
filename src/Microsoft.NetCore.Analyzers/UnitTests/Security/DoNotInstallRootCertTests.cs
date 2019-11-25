@@ -437,8 +437,9 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }"
-                    }
-                },
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
             };
 
             if (editorConfigText.Length == 0)

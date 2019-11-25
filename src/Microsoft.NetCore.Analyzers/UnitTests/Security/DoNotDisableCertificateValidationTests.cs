@@ -206,8 +206,8 @@ class TestClass
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("AcceptAllCertifications", "AcceptAllCertifications", LanguageNames.CSharp)
-                            .AddDocument("AcceptAllCertifications.cs", source1).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", source1).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -276,8 +276,8 @@ class TestClass
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("AcceptAllCertifications", "AcceptAllCertifications", LanguageNames.CSharp)
-                            .AddDocument("AcceptAllCertifications.cs", source1).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", source1).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

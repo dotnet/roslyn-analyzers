@@ -384,8 +384,8 @@ class TestClass : ControllerBase
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("ASPNetCoreApis", "ASPNetCoreApis", LanguageNames.CSharp)
-                            .AddDocument("ASPNetCoreApis.cs", ASPNetCoreApis.CSharp).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", ASPNetCoreApis.CSharp).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -1455,8 +1455,8 @@ class TestClass : ControllerBase
                 {
                     (solution, projectId) =>
                     {
-                        var sideProject = solution.AddProject("ASPNetCoreApis", "ASPNetCoreApis", LanguageNames.CSharp)
-                            .AddDocument("ASPNetCoreApis.cs", ASPNetCoreApis.CSharp).Project
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", ASPNetCoreApis.CSharp).Project
                             .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
                             .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

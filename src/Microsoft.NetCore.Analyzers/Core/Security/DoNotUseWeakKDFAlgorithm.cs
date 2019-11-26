@@ -55,14 +55,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
-                    out INamedTypeSymbol rfc2898DeriveBytesTypeSymbol))
+                    out INamedTypeSymbol? rfc2898DeriveBytesTypeSymbol))
                 {
                     return;
                 }
 
                 wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyHashAlgorithmName,
-                    out INamedTypeSymbol hashAlgorithmNameTypeSymbol);
+                    out INamedTypeSymbol? hashAlgorithmNameTypeSymbol);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {

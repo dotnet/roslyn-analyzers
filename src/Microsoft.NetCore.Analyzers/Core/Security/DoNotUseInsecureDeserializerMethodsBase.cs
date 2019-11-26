@@ -45,10 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
 
-            Debug.Assert(this.DeserializerTypeMetadataName != null);
-            Debug.Assert(cachedDeserializationMethodNames != null);
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
-            Debug.Assert(this.MethodUsedDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -58,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    INamedTypeSymbol deserializerTypeSymbol =
+                    INamedTypeSymbol? deserializerTypeSymbol =
                         compilationStartAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(this.DeserializerTypeMetadataName);
                     if (deserializerTypeSymbol == null)
                     {

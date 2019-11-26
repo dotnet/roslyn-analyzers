@@ -166,8 +166,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static ulong GetMissingBitsInBinaryForm(IList<ulong> values)
         {
-            Debug.Assert(values != null);
-
             // all the powers of two that are individually represented
             ulong powersOfTwo = 0;
             bool foundNonPowerOfTwo = false;

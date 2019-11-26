@@ -41,9 +41,9 @@ namespace Microsoft.NetCore.Analyzers.Data
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol iDbCommandType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDbCommand);
-                INamedTypeSymbol iDataAdapterType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDataAdapter);
-                IPropertySymbol commandTextProperty = iDbCommandType?.GetMembers("CommandText").OfType<IPropertySymbol>().FirstOrDefault();
+                INamedTypeSymbol? iDbCommandType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDbCommand);
+                INamedTypeSymbol? iDataAdapterType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataIDataAdapter);
+                IPropertySymbol? commandTextProperty = iDbCommandType?.GetMembers("CommandText").OfType<IPropertySymbol>().FirstOrDefault();
 
                 if (iDbCommandType == null ||
                     iDataAdapterType == null ||

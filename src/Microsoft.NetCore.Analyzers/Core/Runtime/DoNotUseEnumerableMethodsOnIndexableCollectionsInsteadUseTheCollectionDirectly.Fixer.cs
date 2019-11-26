@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return Task.FromResult(document.WithSyntaxRoot(newRoot));
         }
 
-        private static SyntaxNode GetReplacementNode(string methodName, SyntaxGenerator generator, SyntaxNode collectionSyntax)
+        private static SyntaxNode? GetReplacementNode(string methodName, SyntaxGenerator generator, SyntaxNode collectionSyntax)
         {
             var collectionSyntaxNoTrailingTrivia = collectionSyntax.WithoutTrailingTrivia();
 

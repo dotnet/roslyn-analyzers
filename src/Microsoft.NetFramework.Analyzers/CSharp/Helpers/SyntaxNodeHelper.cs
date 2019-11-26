@@ -6,6 +6,7 @@ using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
 {
@@ -16,7 +17,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
         private CSharpSyntaxNodeHelper()
         { }
 
-        public override ITypeSymbol GetClassDeclarationTypeSymbol(SyntaxNode node, SemanticModel semanticModel)
+        public override ITypeSymbol? GetClassDeclarationTypeSymbol(SyntaxNode? node, SemanticModel semanticModel)
         {
             if (node == null)
             {
@@ -32,7 +33,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetAssignmentLeftNode(SyntaxNode node)
+        public override SyntaxNode? GetAssignmentLeftNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -53,7 +54,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetAssignmentRightNode(SyntaxNode node)
+        public override SyntaxNode? GetAssignmentRightNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -78,7 +79,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetMemberAccessExpressionNode(SyntaxNode node)
+        public override SyntaxNode? GetMemberAccessExpressionNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -94,7 +95,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetMemberAccessNameNode(SyntaxNode node)
+        public override SyntaxNode? GetMemberAccessNameNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -110,7 +111,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetInvocationExpressionNode(SyntaxNode node)
+        public override SyntaxNode? GetInvocationExpressionNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -126,7 +127,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return ((InvocationExpressionSyntax)node).Expression;
         }
 
-        public override SyntaxNode GetCallTargetNode(SyntaxNode node)
+        public override SyntaxNode? GetCallTargetNode(SyntaxNode? node)
         {
             if (node != null)
             {
@@ -145,7 +146,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override SyntaxNode GetDefaultValueForAnOptionalParameter(SyntaxNode declNode, int paramIndex)
+        public override SyntaxNode? GetDefaultValueForAnOptionalParameter(SyntaxNode? declNode, int paramIndex)
         {
             if (declNode is BaseMethodDeclarationSyntax methodDecl)
             {
@@ -162,11 +163,11 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        protected override IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode node, CallKinds callKind)
+        protected override IEnumerable<SyntaxNode> GetCallArgumentExpressionNodes(SyntaxNode? node, CallKinds callKind)
         {
             if (node != null)
             {
-                ArgumentListSyntax argList = null;
+                ArgumentListSyntax? argList = null;
                 SyntaxKind kind = node.Kind();
                 if ((kind == SyntaxKind.InvocationExpression) && ((callKind & CallKinds.Invocation) != 0))
                 {
@@ -187,7 +188,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return Enumerable.Empty<SyntaxNode>();
         }
 
-        public override IEnumerable<SyntaxNode> GetObjectInitializerExpressionNodes(SyntaxNode node)
+        public override IEnumerable<SyntaxNode> GetObjectInitializerExpressionNodes(SyntaxNode? node)
         {
             IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
@@ -210,7 +211,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return objectCreationNode.Initializer.Expressions;
         }
 
-        public override bool IsMethodInvocationNode(SyntaxNode node)
+        public override bool IsMethodInvocationNode(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -220,9 +221,9 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return kind == SyntaxKind.InvocationExpression || kind == SyntaxKind.ObjectCreationExpression;
         }
 
-        public override IMethodSymbol GetCalleeMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
+        public override IMethodSymbol? GetCalleeMethodSymbol(SyntaxNode? node, SemanticModel semanticModel)
         {
-            ISymbol symbol = GetReferencedSymbol(node, semanticModel);
+            ISymbol? symbol = GetReferencedSymbol(node, semanticModel);
 
             if (symbol != null && symbol.Kind == SymbolKind.Method)
             {
@@ -232,7 +233,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override IMethodSymbol GetCallerMethodSymbol(SyntaxNode node, SemanticModel semanticModel)
+        public override IMethodSymbol? GetCallerMethodSymbol(SyntaxNode? node, SemanticModel semanticModel)
         {
             if (node == null)
             {
@@ -254,7 +255,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return null;
         }
 
-        public override ITypeSymbol GetEnclosingTypeSymbol(SyntaxNode node, SemanticModel semanticModel)
+        public override ITypeSymbol? GetEnclosingTypeSymbol(SyntaxNode? node, SemanticModel semanticModel)
         {
             if (node == null)
             {
@@ -271,7 +272,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return semanticModel.GetDeclaredSymbol(declaration);
         }
 
-        public override IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode node)
+        public override IEnumerable<SyntaxNode> GetDescendantAssignmentExpressionNodes(SyntaxNode? node)
         {
             IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
@@ -282,7 +283,7 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return node.DescendantNodesAndSelf().OfType<AssignmentExpressionSyntax>();
         }
 
-        public override IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode node)
+        public override IEnumerable<SyntaxNode> GetDescendantMemberAccessExpressionNodes(SyntaxNode? node)
         {
             IEnumerable<SyntaxNode> empty = Enumerable.Empty<SyntaxNode>();
             if (node == null)
@@ -293,14 +294,14 @@ namespace Microsoft.NetFramework.CSharp.Analyzers.Helpers
             return node.DescendantNodesAndSelf().OfType<MemberAccessExpressionSyntax>();
         }
 
-        public override bool IsObjectCreationExpressionUnderFieldDeclaration(SyntaxNode node)
+        public override bool IsObjectCreationExpressionUnderFieldDeclaration([NotNullWhen(returnValue: true)] SyntaxNode? node)
         {
             return node != null &&
                    node.Kind() == SyntaxKind.ObjectCreationExpression &&
                    node.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().FirstOrDefault() != null;
         }
 
-        public override SyntaxNode GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode node)
+        public override SyntaxNode? GetVariableDeclaratorOfAFieldDeclarationNode(SyntaxNode? node)
         {
             if (IsObjectCreationExpressionUnderFieldDeclaration(node))
             {

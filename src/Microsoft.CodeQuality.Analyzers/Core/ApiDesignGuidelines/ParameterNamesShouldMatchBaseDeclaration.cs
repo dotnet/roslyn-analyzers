@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IMethodSymbol bestMatch = null;
+            IMethodSymbol? bestMatch = null;
             int bestMatchScore = -1;
 
             foreach (var originalDefinition in originalDefinitions)
@@ -106,6 +106,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         break;
                     }
                 }
+            }
+
+            if (bestMatch == null)
+            {
+                return;
             }
 
             for (int i = 0; i < methodSymbol.Parameters.Length; i++)

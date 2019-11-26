@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                                 WellKnownTypeNames.SystemWebMvcValidateInputAttribute,
-                                out INamedTypeSymbol validateInputAttributeTypeSymbol))
+                                out INamedTypeSymbol? validateInputAttributeTypeSymbol))
                     {
                         return;
                     }

@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             {
             }
 
-            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
+            protected override ITypeSymbol? GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
             {
                 var method = invocationOperation.TargetMethod;
 

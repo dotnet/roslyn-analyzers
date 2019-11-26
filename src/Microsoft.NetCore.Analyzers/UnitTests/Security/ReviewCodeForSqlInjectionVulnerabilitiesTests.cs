@@ -3066,5 +3066,197 @@ public class Class1
 }
 ");
         }
+
+        [Fact]
+        public void LotsOfAnalysisEntities_1()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web;
+
+namespace TestNamespace
+{
+    public class DataStructure
+    {
+        public string StringProperty { get; set; }
+    }
+
+    public class ExampleClass
+    {
+        public SqlCommand Something(HttpRequest request)
+        {
+            string name = request.Form[""product_name""];
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            if ((new Random()).Next(6) == 4) 
+            {
+                return null;
+            }
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            for (int i = 0; i < 3; i++)
+            {
+                new DataStructure()
+                {
+                    StringProperty = ""This is tainted: "" + name,
+                };
+            }
+
+            return null;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void LotsOfAnalysisEntities_2()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web;
+
+namespace TestNamespace
+{
+    public class DataStructure
+    {
+        public string StringProperty { get; set; }
+    }
+
+    public class ExampleClass
+    {
+        public SqlCommand Something(HttpRequest request)
+        {
+            string name = request.Form[""product_name""];
+
+            var d1 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d2 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d3 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d4 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d5 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d6 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            if ((new Random()).Next(6) == 4) 
+            {
+                return null;
+            }
+
+            var d7 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d8 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d9 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d10 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            var d11 = new DataStructure()
+            {
+                StringProperty = ""This is tainted: "" + name,
+            };
+
+            for (int i = 0; i < 3; i++)
+            {
+                var d12 = new DataStructure()
+                {
+                    StringProperty = ""This is tainted: "" + name,
+                };
+            }
+
+            return null;
+        }
+    }
+}");
+        }
     }
 }

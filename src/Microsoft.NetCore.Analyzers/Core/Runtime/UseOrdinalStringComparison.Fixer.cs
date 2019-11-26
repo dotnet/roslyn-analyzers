@@ -9,7 +9,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -51,32 +50,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         protected abstract bool IsInIdentifierNameContext(SyntaxNode node);
         protected abstract Task<Document> FixIdentifierName(Document document, SyntaxGenerator generator, SyntaxNode root, SyntaxNode identifier, CancellationToken cancellationToken);
 
-        internal SyntaxNode CreateEqualsExpression(SyntaxGenerator generator, SemanticModel model, SyntaxNode operand1, SyntaxNode operand2, bool isEquals)
-        {
-            INamedTypeSymbol stringType = model.Compilation.GetSpecialType(SpecialType.System_String);
-            SyntaxNode memberAccess = generator.MemberAccessExpression(
-                        generator.TypeExpressionForStaticMemberAccess(stringType),
-                        generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.EqualsMethodName));
-            SyntaxNode ordinal = CreateOrdinalMemberAccess(generator, model);
-            SyntaxNode invocation = generator.InvocationExpression(
-                memberAccess,
-                operand1,
-                operand2.WithoutTrailingTrivia(),
-                ordinal)
-                .WithAdditionalAnnotations(Formatter.Annotation);
-            if (!isEquals)
-            {
-                invocation = generator.LogicalNotExpression(invocation);
-            }
-
-            invocation = invocation.WithTrailingTrivia(operand2.GetTrailingTrivia());
-
-            return invocation;
-        }
-
         internal static SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
-            INamedTypeSymbol stringComparisonType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
+            INamedTypeSymbol stringComparisonType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison)!;
             return generator.MemberAccessExpression(
                 generator.TypeExpressionForStaticMemberAccess(stringComparisonType),
                 generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));

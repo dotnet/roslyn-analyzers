@@ -52,10 +52,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemSecurityCryptographyPasswordDeriveBytes,
-                            out INamedTypeSymbol passwordDeriveBytesTypeSymbol);
+                            out INamedTypeSymbol? passwordDeriveBytesTypeSymbol);
                 wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
-                            out INamedTypeSymbol rfc2898DeriveBytesTypeSymbol);
+                            out INamedTypeSymbol? rfc2898DeriveBytesTypeSymbol);
 
                 if (passwordDeriveBytesTypeSymbol == null && rfc2898DeriveBytesTypeSymbol == null)
                 {

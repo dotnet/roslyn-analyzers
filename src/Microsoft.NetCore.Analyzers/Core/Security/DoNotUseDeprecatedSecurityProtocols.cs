@@ -116,9 +116,9 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             // Find the topmost operation with a bad bit set, unless we find an operation that would've been
                             // flagged by the FieldReference callback above.
-                            IOperation foundDeprecatedOperation = null;
+                            IOperation? foundDeprecatedOperation = null;
                             bool foundDeprecatedReference = false;
-                            IOperation foundHardCodedOperation = null;
+                            IOperation? foundHardCodedOperation = null;
                             bool foundHardCodedReference = false;
                             foreach (IOperation childOperation in assignmentOperation.Value.DescendantsAndSelf())
                             {
@@ -187,6 +187,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         out bool isDeprecatedProtocol,
                         out bool isHardCodedOkayProtocol)
                     {
+                        RoslynDebug.Assert(securityProtocolTypeTypeSymbol != null);
+
                         if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
@@ -217,6 +219,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     bool IsAndEqualsServicePointManagerAssignment(ICompoundAssignmentOperation compoundAssignmentOperation)
                     {
+                        RoslynDebug.Assert(servicePointManagerTypeSymbol != null);
+
                         return compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And
                             && compoundAssignmentOperation.Target is IPropertyReferenceOperation targetPropertyReference
                             && targetPropertyReference.Instance == null

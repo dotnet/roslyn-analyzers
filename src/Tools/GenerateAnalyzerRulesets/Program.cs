@@ -49,7 +49,7 @@ namespace GenerateAnalyzerRulesets
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
-            var rulesMetadata = new SortedList<string, (string path, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)> rules)>();
+            var rulesMetadata = new SortedList<string, (string path, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[]? languages)> rules)>();
             foreach (string assembly in assemblyList)
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
@@ -63,7 +63,7 @@ namespace GenerateAnalyzerRulesets
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
 
-                var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
+                var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[]? languages)>());
 
                 foreach (var analyzer in analyzers)
                 {
@@ -156,8 +156,8 @@ namespace GenerateAnalyzerRulesets
                 string title,
                 string description,
                 RulesetKind rulesetKind,
-                string categoryOpt = null,
-                string customTagOpt = null)
+                string? categoryOpt = null,
+                string? customTagOpt = null)
             {
                 CreateRuleset(analyzerRulesetsDir, fileName + ".ruleset", title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById, analyzerPackageName);
                 CreateEditorconfig(analyzerEditorconfigsDir, fileName, title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById);
@@ -439,8 +439,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             string rulesetTitle,
             string rulesetDescription,
             RulesetKind rulesetKind,
-            string categoryOpt,
-            string customTagOpt,
+            string? categoryOpt,
+            string? customTagOpt,
             SortedList<string, DiagnosticDescriptor> sortedRulesById,
             string analyzerPackageName)
         {
@@ -503,8 +503,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             string editorconfigTitle,
             string editorconfigDescription,
             RulesetKind rulesetKind,
-            string categoryOpt,
-            string customTagOpt,
+            string? categoryOpt,
+            string? customTagOpt,
             SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             var text = GetRulesetOrEditorconfigText(
@@ -586,8 +586,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             Func<DiagnosticSeverity?, string> getSeverityString,
             string commentStart,
             string commentEnd,
-            string categoryOpt,
-            string customTagOpt,
+            string? categoryOpt,
+            string? customTagOpt,
             SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             Debug.Assert(categoryOpt == null || customTagOpt == null);

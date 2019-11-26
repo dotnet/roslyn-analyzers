@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
     /// CA2301: Do not increment or decrement year parameter in DateTime constructor.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class DoNotUseYearValueFromDifferentDateInDateConstructor : DiagnosticAnalyzer
+    public sealed class DoNotUseYearValueFromDifferentDatesInDateConstructor : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2271";
 

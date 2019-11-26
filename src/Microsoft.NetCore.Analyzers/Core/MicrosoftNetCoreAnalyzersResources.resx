@@ -1212,4 +1212,13 @@
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
     <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
   </data>
+  <data name="DoNotCallBeginInvokeOnDelegateDescription" xml:space="preserve">
+    <value>BeginInvoke method is not supported in .NET Core and throws NotSupportedException. BeginInvoke uses deprecated IAsyncResult pattern. Consider using Task.Run method.</value>
+  </data>
+  <data name="DoNotCallBeginInvokeOnDelegateMessage" xml:space="preserve">
+    <value>Do not call BeginInvoke on a delegate in .NET Core.</value>
+  </data>
+  <data name="DoNotCallBeginInvokeOnDelegateTitle" xml:space="preserve">
+    <value>Do not call BeginInvoke on a delegate in .NET Core.</value>
+  </data>
 </root>

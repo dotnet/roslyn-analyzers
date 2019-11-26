@@ -99,13 +99,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return type is IArrayTypeSymbol arrayType && IsPrimitiveType(arrayType.ElementType);
                 case TypeKind.Class:
                 case TypeKind.TypeParameter:
-                    INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
-                    INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
-                    INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
-                    INamedTypeSymbol stackOverflowExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
-                    INamedTypeSymbol memberInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
-                    INamedTypeSymbol parameterInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
-                    INamedTypeSymbol threadTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
+                    INamedTypeSymbol? marshalByRefObjectTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
+                    INamedTypeSymbol? executionEngineExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
+                    INamedTypeSymbol? outOfMemoryExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
+                    INamedTypeSymbol? stackOverflowExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
+                    INamedTypeSymbol? memberInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
+                    INamedTypeSymbol? parameterInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
+                    INamedTypeSymbol? threadTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
                     return
                         type.SpecialType == SpecialType.System_String ||
                         type.Equals(executionEngineExceptionTypeSymbol) ||

@@ -229,9 +229,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static ImmutableArray<INamedTypeSymbol> GetSkippedAttributes(Compilation compilation)
         {
-            ImmutableArray<INamedTypeSymbol>.Builder builder = null;
+            ImmutableArray<INamedTypeSymbol>.Builder? builder = null;
 
-            void Add(INamedTypeSymbol symbol)
+            void Add(INamedTypeSymbol? symbol)
             {
                 if (symbol != null)
                 {

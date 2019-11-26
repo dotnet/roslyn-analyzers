@@ -88,7 +88,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             WordParser parser = new WordParser(method.Name, WordParserOptions.SplitCompoundWords);
 
-            string word = parser.NextWord();
+            string? word = parser.NextWord();
 
             // Check for 'FireXXX', 'RaiseXXX'
             if (string.Equals(word, "fire", StringComparison.OrdinalIgnoreCase) ||

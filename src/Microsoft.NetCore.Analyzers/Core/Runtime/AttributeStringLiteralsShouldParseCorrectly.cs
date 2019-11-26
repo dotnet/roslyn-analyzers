@@ -88,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     case SymbolKind.NamedType:
                         {
-                            var namedType = symbol as INamedTypeSymbol;
+                            var namedType = (INamedTypeSymbol)symbol;
 
                             AnalyzeSymbols(saContext.ReportDiagnostic, namedType.TypeParameters);
 
@@ -102,7 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     case SymbolKind.Method:
                         {
-                            var methodSymbol = symbol as IMethodSymbol;
+                            var methodSymbol = (IMethodSymbol)symbol;
                             if (!methodSymbol.IsAccessorMethod())
                             {
                                 AnalyzeSymbols(saContext.ReportDiagnostic, methodSymbol.Parameters);
@@ -114,7 +114,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     case SymbolKind.Property:
                         {
-                            var propertySymbol = symbol as IPropertySymbol;
+                            var propertySymbol = (IPropertySymbol)symbol;
                             AnalyzeSymbols(saContext.ReportDiagnostic, propertySymbol.Parameters);
                             return;
                         }
@@ -228,7 +228,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static ValueValidator GetValueValidator(string name)
+        private static ValueValidator? GetValueValidator(string name)
         {
             foreach (var valueValidator in s_tokensToValueValidator)
             {
@@ -244,7 +244,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
     internal class ValueValidator
     {
-        private readonly string _ignoredName;
+        private readonly string? _ignoredName;
 
         public ImmutableArray<string> AcceptedTokens { get; }
         public string TypeName { get; }
@@ -255,7 +255,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return _ignoredName != null && string.Equals(_ignoredName, name, StringComparison.OrdinalIgnoreCase);
         }
 
-        public ValueValidator(ImmutableArray<string> acceptedTokens, string typeName, Func<string, bool> isValidValue, string ignoredName = null)
+        public ValueValidator(ImmutableArray<string> acceptedTokens, string typeName, Func<string, bool> isValidValue, string? ignoredName = null)
         {
             _ignoredName = ignoredName;
 

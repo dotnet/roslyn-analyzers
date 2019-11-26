@@ -38,8 +38,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
-                INamedTypeSymbol cancellationTokenType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
-                INamedTypeSymbol iprogressType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIProgress1);
+                INamedTypeSymbol? cancellationTokenType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
+                INamedTypeSymbol? iprogressType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIProgress1);
                 if (cancellationTokenType == null)
                 {
                     return;

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -67,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                INamedTypeSymbol exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
+                INamedTypeSymbol? exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
                 if (exceptionType == null)
                 {
                     return;
@@ -110,7 +111,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        protected abstract bool IsAssignableTo(ITypeSymbol fromSymbol, ITypeSymbol toSymbol, Compilation compilation);
+        protected abstract bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation);
 
         /// <summary>
         /// This object describes a class of methods where exception throwing statements should be analyzed.
@@ -138,12 +142,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// </summary>
             public ImmutableHashSet<ITypeSymbol> AllowedExceptions { get; }
 
-            public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol[] allowedExceptionTypes)
+            public MethodCategory(Func<IMethodSymbol, Compilation, bool> matchFunction, bool analyzeOnlyPublicMethods, DiagnosticDescriptor rule, params ITypeSymbol?[] allowedExceptionTypes)
             {
                 _matchFunction = matchFunction;
                 _analyzeOnlyPublicMethods = analyzeOnlyPublicMethods;
                 this.Rule = rule;
-                AllowedExceptions = allowedExceptionTypes.ToImmutableHashSet();
+                AllowedExceptions = allowedExceptionTypes.WhereNotNull().ToImmutableHashSet();
             }
 
             /// <summary>
@@ -251,7 +255,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
+                INamedTypeSymbol? iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -259,7 +263,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEquatable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
+                INamedTypeSymbol? iEquatable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -286,14 +290,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
+                INamedTypeSymbol? iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
 
 
-                INamedTypeSymbol iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
+                INamedTypeSymbol? iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;

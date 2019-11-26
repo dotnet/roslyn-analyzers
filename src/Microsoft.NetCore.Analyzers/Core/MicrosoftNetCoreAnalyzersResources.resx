@@ -1212,4 +1212,22 @@
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
     <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
   </data>
+  <data name="DoNotIncrementYearInDateTimeConstructorMessage" xml:space="preserve">
+    <value>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0}</value>
+  </data>
+  <data name="DoNotIncrementYearInDateTimeConstructorTitle" xml:space="preserve">
+    <value>Date constructor year parameter should be an unmodified expression</value>
+  </data>
+  <data name="DoNotIncrementYearInDateTimeIdentifierConstructorMessage" xml:space="preserve">
+    <value>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0} with assignment {1}</value>
+  </data>
+  <data name="DoNotIncrementYearInDateTimeIdentifierConstructorTitle" xml:space="preserve">
+    <value>Identifier used for date constructor year parameter should be an unmodified expression</value>
+  </data>
+  <data name="DoNotUseDatePartOverflowPatternMessage" xml:space="preserve">
+    <value>Using different date parameters in a date constructor can produce an invalid result (e.g. day from Feb 29, 2012 and month from Mar 1, 2013)</value>
+  </data>
+  <data name="DoNotUseDatePartOverflowPatternTitle" xml:space="preserve">
+    <value>Date constructor parameters should be from the same source</value>
+  </data>
 </root>

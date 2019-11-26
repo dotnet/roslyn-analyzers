@@ -502,6 +502,26 @@
         <target state="translated">找到了潜在安全漏洞，其中方法“{1}”中的“{0}”可能会受到方法“{3}”中“{2}”的硬编码密钥污染。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeConstructorMessage">
+        <source>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0}</source>
+        <target state="new">Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeConstructorTitle">
+        <source>Date constructor year parameter should be an unmodified expression</source>
+        <target state="new">Date constructor year parameter should be an unmodified expression</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeIdentifierConstructorMessage">
+        <source>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0} with assignment {1}</source>
+        <target state="new">Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0} with assignment {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeIdentifierConstructorTitle">
+        <source>Identifier used for date constructor year parameter should be an unmodified expression</source>
+        <target state="new">Identifier used for date constructor year parameter should be an unmodified expression</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
         <target state="translated">默认情况下，“受信任的根证书颁发机构”证书存储配置有一组符合 Microsoft 根证书程序的公共 CA。由于所有受信任的根 CA 都可为任意域颁发证书，因此攻击者可能会选择你自行安装的某个安全性较弱或可强迫的 CA 进行攻击；一个易受攻击、恶意或可强迫的 CA 就会降低整个系统的安全性。更糟糕的是，这些攻击者可能很难被察觉。</target>
@@ -650,6 +670,16 @@
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
         <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
         <target state="translated">对称加密应始终使用非可重复的初始化向量，以防止字典攻击。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDatePartOverflowPatternMessage">
+        <source>Using different date parameters in a date constructor can produce an invalid result (e.g. day from Feb 29, 2012 and month from Mar 1, 2013)</source>
+        <target state="new">Using different date parameters in a date constructor can produce an invalid result (e.g. day from Feb 29, 2012 and month from Mar 1, 2013)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDatePartOverflowPatternTitle">
+        <source>Date constructor parameters should be from the same source</source>
+        <target state="new">Date constructor parameters should be from the same source</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">

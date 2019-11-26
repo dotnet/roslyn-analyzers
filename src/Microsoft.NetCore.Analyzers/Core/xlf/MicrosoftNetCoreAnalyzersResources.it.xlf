@@ -502,6 +502,26 @@
         <target state="translated">È stata trovata una potenziale vulnerabilità di sicurezza in cui '{0}' nel metodo '{1}' può essere contaminato dalla chiave hardcoded di '{2}' nel metodo '{3}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeConstructorMessage">
+        <source>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0}</source>
+        <target state="new">Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeConstructorTitle">
+        <source>Date constructor year parameter should be an unmodified expression</source>
+        <target state="new">Date constructor year parameter should be an unmodified expression</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeIdentifierConstructorMessage">
+        <source>Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0} with assignment {1}</source>
+        <target state="new">Adding or subtracting years while keeping the existing month and day can produce an invalid result (e.g. Feb 29, 2012+1): {0} with assignment {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotIncrementYearInDateTimeIdentifierConstructorTitle">
+        <source>Identifier used for date constructor year parameter should be an unmodified expression</source>
+        <target state="new">Identifier used for date constructor year parameter should be an unmodified expression</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
         <target state="translated">Per impostazione predefinita, l'archivio certificati di Autorità di certificazione radice disponibile nell'elenco locale è configurato con un set di CA pubbliche che soddisfa i requisiti del programma Microsoft Root Certificate. Dal momento che tutte le CA radice attendibili possono rilasciare certificati per qualsiasi dominio, un utente malintenzionato può selezionare come destinazione di attacco una CA debole o coercibile installata dall'utente. Una CA vulnerabile, dannosa o coercibile compromette la sicurezza dell'intero sistema, senza contare che questi attacchi possono passare inosservati abbastanza facilmente.</target>
@@ -650,6 +670,16 @@
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
         <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
         <target state="translated">La crittografia simmetrica deve usare sempre un vettore di inizializzazione non ripetibile per impedire attacchi con dizionario.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDatePartOverflowPatternMessage">
+        <source>Using different date parameters in a date constructor can produce an invalid result (e.g. day from Feb 29, 2012 and month from Mar 1, 2013)</source>
+        <target state="new">Using different date parameters in a date constructor can produce an invalid result (e.g. day from Feb 29, 2012 and month from Mar 1, 2013)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDatePartOverflowPatternTitle">
+        <source>Date constructor parameters should be from the same source</source>
+        <target state="new">Date constructor parameters should be from the same source</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">

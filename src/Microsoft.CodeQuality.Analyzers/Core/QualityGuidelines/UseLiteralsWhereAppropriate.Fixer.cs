@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return editor.GetChangedDocument();
         }
 
-        protected abstract SyntaxNode GetFieldDeclaration(SyntaxNode syntaxNode);
+        protected abstract SyntaxNode? GetFieldDeclaration(SyntaxNode syntaxNode);
         protected abstract bool IsStaticKeyword(SyntaxToken syntaxToken);
         protected abstract bool IsReadonlyKeyword(SyntaxToken syntaxToken);
         protected abstract SyntaxToken GetConstKeywordToken();

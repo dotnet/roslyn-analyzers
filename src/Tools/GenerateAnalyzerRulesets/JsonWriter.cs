@@ -164,7 +164,7 @@ namespace Roslyn.Utilities
         //
         private static string EscapeString(string value)
         {
-            StringBuilder b = null;
+            StringBuilder? b = null;
 
             if (string.IsNullOrEmpty(value))
             {
@@ -196,15 +196,15 @@ namespace Roslyn.Utilities
                 switch (c)
                 {
                     case '\"':
-                        b.Append("\\\"");
+                        b!.Append("\\\"");
                         break;
                     case '\\':
-                        b.Append("\\\\");
+                        b!.Append("\\\\");
                         break;
                     default:
                         if (ShouldAppendAsUnicode(c))
                         {
-                            AppendCharAsUnicode(b, c);
+                            AppendCharAsUnicode(b!, c);
                         }
                         else
                         {

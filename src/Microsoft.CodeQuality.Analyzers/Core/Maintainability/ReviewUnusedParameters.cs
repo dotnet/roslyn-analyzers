@@ -50,19 +50,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
+                INamedTypeSymbol? eventsArgSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
 
                 // Ignore conditional methods (FxCop compat - One conditional will often call another conditional method as its only use of a parameter)
-                INamedTypeSymbol conditionalAttributeSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
+                INamedTypeSymbol? conditionalAttributeSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
 
                 // Ignore methods with special serialization attributes (FxCop compat - All serialization methods need to take 'StreamingContext')
-                INamedTypeSymbol onDeserializingAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute);
-                INamedTypeSymbol onDeserializedAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute);
-                INamedTypeSymbol onSerializingAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializingAttribute);
-                INamedTypeSymbol onSerializedAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializedAttribute);
-                INamedTypeSymbol obsoleteAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                INamedTypeSymbol? onDeserializingAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute);
+                INamedTypeSymbol? onDeserializedAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute);
+                INamedTypeSymbol? onSerializingAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializingAttribute);
+                INamedTypeSymbol? onSerializedAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializedAttribute);
+                INamedTypeSymbol? obsoleteAttribute = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
-                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
+                ImmutableHashSet<INamedTypeSymbol?> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
                     conditionalAttributeSymbol,
                     onDeserializedAttribute,
                     onDeserializingAttribute,
@@ -118,9 +118,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             IMethodSymbol method,
             OperationBlockStartAnalysisContext startOperationBlockContext,
             UnusedParameterDictionary unusedMethodParameters,
-            INamedTypeSymbol eventsArgSymbol,
+            INamedTypeSymbol? eventsArgSymbol,
             ISet<IMethodSymbol> methodsUsedAsDelegates,
-            ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore)
+            ImmutableHashSet<INamedTypeSymbol?> attributeSetForMethodsToIgnore)
         {
             // We only care about methods with parameters.
             if (method.Parameters.IsEmpty)

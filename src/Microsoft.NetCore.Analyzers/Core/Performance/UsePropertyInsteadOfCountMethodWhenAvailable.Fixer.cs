@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,7 +70,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="nameNode">The name node for the invocation node.</param>
         /// <returns><see langword="true"/> if a <paramref name="memberAccessNode" /> and <paramref name="nameNode"/> were found;
         /// <see langword="false" /> otherwise.</returns>
-        protected abstract bool TryGetExpression(SyntaxNode invocationNode, out SyntaxNode memberAccessNode, out SyntaxNode nameNode);
+        protected abstract bool TryGetExpression(
+            SyntaxNode invocationNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? memberAccessNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? nameNode);
 
         /// <summary>
         /// Implements the <see cref="CodeAction"/> for replacing the use of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> 

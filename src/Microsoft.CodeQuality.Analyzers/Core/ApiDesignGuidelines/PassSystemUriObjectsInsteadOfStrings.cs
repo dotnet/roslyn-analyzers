@@ -46,8 +46,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                INamedTypeSymbol @string = c.Compilation.GetSpecialType(SpecialType.System_String);
-                INamedTypeSymbol uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
+                INamedTypeSymbol? @string = c.Compilation.GetSpecialType(SpecialType.System_String);
+                INamedTypeSymbol? uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 if (@string == null || uri == null)
                 {
                     // we don't have required types
@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        protected abstract SyntaxNode GetInvocationExpression(SyntaxNode invocationNode);
+        protected abstract SyntaxNode? GetInvocationExpression(SyntaxNode invocationNode);
 
         private sealed class PerCompilationAnalyzer
         {
@@ -67,13 +67,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
-            private readonly Func<SyntaxNode, SyntaxNode> _expressionGetter;
+            private readonly Func<SyntaxNode, SyntaxNode?> _expressionGetter;
 
             public PerCompilationAnalyzer(
                 Compilation compilation,
                 INamedTypeSymbol @string,
                 INamedTypeSymbol uri,
-                Func<SyntaxNode, SyntaxNode> expressionGetter)
+                Func<SyntaxNode, SyntaxNode?> expressionGetter)
             {
                 _compilation = compilation;
                 _string = @string;

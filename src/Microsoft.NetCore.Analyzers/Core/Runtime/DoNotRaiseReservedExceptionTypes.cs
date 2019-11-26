@@ -108,10 +108,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static ImmutableHashSet<INamedTypeSymbol> CreateSymbolSet(Compilation compilation, IEnumerable<string> exceptionNames)
         {
-            HashSet<INamedTypeSymbol> set = null;
+            HashSet<INamedTypeSymbol>? set = null;
             foreach (string exp in exceptionNames)
             {
-                INamedTypeSymbol symbol = compilation.GetOrCreateTypeByMetadataName(exp);
+                INamedTypeSymbol? symbol = compilation.GetOrCreateTypeByMetadataName(exp);
                 if (symbol == null)
                 {
                     continue;

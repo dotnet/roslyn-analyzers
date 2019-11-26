@@ -10,17 +10,17 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
     {
         // Some of these types may only exist in .NET Framework and not in .NET Core, but that's okay, we'll look anyway.
 
-        public INamedTypeSymbol MD5 { get; private set; }
-        public INamedTypeSymbol SHA1 { get; private set; }
-        public INamedTypeSymbol HMACSHA1 { get; private set; }
-        public INamedTypeSymbol DES { get; private set; }
-        public INamedTypeSymbol DSA { get; private set; }
-        public INamedTypeSymbol DSASignatureFormatter { get; private set; }
-        public INamedTypeSymbol HMACMD5 { get; private set; }
-        public INamedTypeSymbol RC2 { get; private set; }
-        public INamedTypeSymbol TripleDES { get; private set; }
-        public INamedTypeSymbol RIPEMD160 { get; private set; }
-        public INamedTypeSymbol HMACRIPEMD160 { get; private set; }
+        public INamedTypeSymbol? MD5 { get; private set; }
+        public INamedTypeSymbol? SHA1 { get; private set; }
+        public INamedTypeSymbol? HMACSHA1 { get; private set; }
+        public INamedTypeSymbol? DES { get; private set; }
+        public INamedTypeSymbol? DSA { get; private set; }
+        public INamedTypeSymbol? DSASignatureFormatter { get; private set; }
+        public INamedTypeSymbol? HMACMD5 { get; private set; }
+        public INamedTypeSymbol? RC2 { get; private set; }
+        public INamedTypeSymbol? TripleDES { get; private set; }
+        public INamedTypeSymbol? RIPEMD160 { get; private set; }
+        public INamedTypeSymbol? HMACRIPEMD160 { get; private set; }
 
         public CompilationSecurityTypes(Compilation compilation)
         {

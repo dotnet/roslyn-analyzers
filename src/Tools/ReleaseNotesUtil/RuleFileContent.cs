@@ -7,6 +7,6 @@ namespace ReleaseNotesUtil
     internal class RuleFileContent
     {
         [DataMember]
-        public List<RuleInfo> Rules { get; set; }
+        public List<RuleInfo>? Rules { get; set; }
     }
 }

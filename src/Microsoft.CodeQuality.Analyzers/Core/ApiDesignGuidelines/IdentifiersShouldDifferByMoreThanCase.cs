@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            var namedTypeSymbol = context.Symbol as INamedTypeSymbol;
+            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
             // Do not descent into non-publicly visible types by default
             // Note: This is the behavior of FxCop, it might be more correct to descend into internal but not private
@@ -245,7 +245,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 typesWithName.Add(type);
             }
 
-            foreach (var (name, typesWithName) in typesByName)
+            foreach (var (_, typesWithName) in typesByName)
             {
                 if (typesWithName.Count > 1)
                 {
@@ -277,7 +277,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 namespacesWithName.Add(namespaceSym);
             }
 
-            foreach (var (name, namespacesWithName) in namespacesByName)
+            foreach (var (_, namespacesWithName) in namespacesByName)
             {
                 if (namespacesWithName.Count > 1)
                 {

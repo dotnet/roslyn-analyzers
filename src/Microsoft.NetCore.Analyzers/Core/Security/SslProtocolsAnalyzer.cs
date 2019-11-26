@@ -7,7 +7,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
@@ -56,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemSecurityAuthenticationSslProtocols,
-                            out INamedTypeSymbol sslProtocolsSymbol))
+                            out INamedTypeSymbol? sslProtocolsSymbol))
                     {
                         return;
                     }
@@ -91,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
-                            IOperation valueOperation;
+                            IOperation? valueOperation;
                             switch (operationAnalysisContext.Operation)
                             {
                                 case IAssignmentOperation assignmentOperation:
@@ -124,8 +123,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     break;
 
                                 case IVariableInitializerOperation variableInitializerOperation:
-                                    if (variableInitializerOperation.Value != null
-                                        && !sslProtocolsSymbol.Equals(variableInitializerOperation.Value.Type))
+                                    if (variableInitializerOperation.Value == null
+                                        || !sslProtocolsSymbol.Equals(variableInitializerOperation.Value.Type))
                                     {
                                         return;
                                     }
@@ -140,9 +139,9 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             // Find the topmost operation with a bad bit set, unless we find an operation that would've been
                             // flagged by the FieldReference callback above.
-                            IOperation foundDeprecatedOperation = null;
+                            IOperation? foundDeprecatedOperation = null;
                             bool foundDeprecatedReference = false;
-                            IOperation foundHardcodedOperation = null;
+                            IOperation? foundHardcodedOperation = null;
                             bool foundHardcodedReference = false;
                             foreach (IOperation childOperation in valueOperation.DescendantsAndSelf())
                             {
@@ -214,6 +213,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         out bool isDeprecatedProtocol,
                         out bool isHardcodedOkayProtocol)
                     {
+                        RoslynDebug.Assert(sslProtocolsSymbol != null);
+
                         if (sslProtocolsSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             if (HardcodedSslProtocolsMetadataNames.Contains(fieldReferenceOperation.Field.Name))

@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            DrawGraph(symbolAnalysisContext.Symbol as ITypeSymbol);
+                            DrawGraph((INamedTypeSymbol)symbolAnalysisContext.Symbol);
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(

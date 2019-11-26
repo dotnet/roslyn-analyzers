@@ -108,12 +108,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             internal WellKnownTypeProvider WellKnownTypeProvider => _wellKnownTypeProvider.Value;
 
             /// <summary>
-            /// Gets the type of the <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.
-            /// </summary>
-            /// <value>The <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.</value>
-            private INamedTypeSymbol? ICollectionOfTType => _iCollectionOfType.Value;
-
-            /// <summary>
             /// Gets the type of the <see cref="System.Collections.Generic.ICollection{TSource}"/> type.
             /// </summary>
             /// <value>The <see cref="System.Collections.Generic.ICollection{TSource}"/> type.</value>

@@ -230,6 +230,103 @@ class TestClass
         }
 
         [Fact]
+        public void Test_InterProcedural1_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public byte[] GetArray(int count)
+    {
+        return new byte[count];
+    }
+    
+    public void TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        cryptoStream.Write(GetArray(count), offset, count);
+    }
+}",
+            GetCSharpResultAt(15, 9, 15, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] TestClass.GetArray(int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+        }
+
+        [Fact]
+        public void Test_InterProcedural2_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public void TestMethod(byte[] bytes1, int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        DoDecryption(bytes1, cryptoStream);
+    }
+
+    public void DoDecryption(byte[] bytes2, CryptoStream cryptoStream)
+    {
+        cryptoStream.Write(bytes2, 0, bytes2.Length);
+    }
+}",
+            GetCSharpResultAt(15, 9, 13, 30, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.DoDecryption(byte[] bytes2, CryptoStream cryptoStream)", "byte[] bytes2", "void TestClass.DoDecryption(byte[] bytes2, CryptoStream cryptoStream)"));
+        }
+
+        [Fact]
+        public void Test_InterProcedural3_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public byte[] GetArray(int count)
+    {
+        var bytes = new byte[count];
+        HashAlgorithm sha = new SHA1CryptoServiceProvider();
+        sha.ComputeHash(bytes);
+        return bytes;
+    }
+    
+    public void TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        cryptoStream.Write(GetArray(count), offset, count);
+    }
+}",
+            GetCSharpResultAt(18, 9, 18, 28, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] TestClass.GetArray(int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+        }
+
+        [Fact]
+        public void Test_InterProcedural4_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public void TestMethod(byte[] bytes1, int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        HashAlgorithm sha = new SHA1CryptoServiceProvider();
+        byte[] result = sha.ComputeHash(bytes1);
+        DoDecryption(bytes1, cryptoStream);
+    }
+
+    public void DoDecryption(byte[] bytes2, CryptoStream cryptoStream)
+    {
+        cryptoStream.Write(bytes2, 0, bytes2.Length);
+    }
+}",
+            GetCSharpResultAt(17, 9, 15, 30, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.DoDecryption(byte[] bytes2, CryptoStream cryptoStream)", "byte[] bytes2", "void TestClass.DoDecryption(byte[] bytes2, CryptoStream cryptoStream)"));
+        }
+
+        [Fact]
         public void Test_ComputeHash_NoDiagnostic()
         {
             VerifyCSharp(@"

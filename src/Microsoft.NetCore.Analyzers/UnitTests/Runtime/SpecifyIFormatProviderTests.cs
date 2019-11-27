@@ -915,6 +915,240 @@ End Class
 ");
         }
 
+        [Fact]
+        public async Task CA1305_Parse_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo()
+    {
+        sbyte.Parse("""");
+        byte.Parse("""");
+        short.Parse("""");
+        ushort.Parse("""");
+        int.Parse("""");
+        uint.Parse("""");
+        long.Parse("""");
+        ulong.Parse("""");
+
+        char.Parse(""""); // no issue because no overload with format provider
+
+        float.Parse("""");
+        double.Parse("""");
+        decimal.Parse("""");
+    }
+}",
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(6, 9, "sbyte.Parse(string)", "Foo.Foo()", "sbyte.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(7, 9, "byte.Parse(string)", "Foo.Foo()", "byte.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(8, 9, "short.Parse(string)", "Foo.Foo()", "short.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(9, 9, "ushort.Parse(string)", "Foo.Foo()", "ushort.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 9, "int.Parse(string)", "Foo.Foo()", "int.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(11, 9, "uint.Parse(string)", "Foo.Foo()", "uint.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "long.Parse(string)", "Foo.Foo()", "long.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(13, 9, "ulong.Parse(string)", "Foo.Foo()", "ulong.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(17, 9, "float.Parse(string)", "Foo.Foo()", "float.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(18, 9, "double.Parse(string)", "Foo.Foo()", "double.Parse(string, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleCSharpResultAt(19, 9, "decimal.Parse(string)", "Foo.Foo()", "decimal.Parse(string, IFormatProvider)"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class Foo
+    Public Sub New()
+        SByte.Parse("""")
+        Byte.Parse("""")
+        Short.Parse("""")
+        UShort.Parse("""")
+        Integer.Parse("""")
+        UInteger.Parse("""")
+        Long.Parse("""")
+        ULong.Parse("""")
+
+        Char.Parse("""")
+
+        Single.Parse("""")
+        Double.Parse("""")
+        Decimal.Parse("""")
+    End Sub
+End Class",
+            GetIFormatProviderAlternateStringRuleBasicResultAt(4, 9, "SByte.Parse(String)", "Foo.New()", "SByte.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(5, 9, "Byte.Parse(String)", "Foo.New()", "Byte.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(6, 9, "Short.Parse(String)", "Foo.New()", "Short.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(7, 9, "UShort.Parse(String)", "Foo.New()", "UShort.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(8, 9, "Integer.Parse(String)", "Foo.New()", "Integer.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(9, 9, "UInteger.Parse(String)", "Foo.New()", "UInteger.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(10, 9, "Long.Parse(String)", "Foo.New()", "Long.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "ULong.Parse(String)", "Foo.New()", "ULong.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(15, 9, "Single.Parse(String)", "Foo.New()", "Single.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(16, 9, "Double.Parse(String)", "Foo.New()", "Double.Parse(String, IFormatProvider)"),
+            GetIFormatProviderAlternateStringRuleBasicResultAt(17, 9, "Decimal.Parse(String)", "Foo.New()", "Decimal.Parse(String, IFormatProvider)"));
+        }
+
+        [Theory]
+        // No data
+        [InlineData("")]
+        // Invalid option
+        [InlineData("dotnet_code_quality.CA1305.exclude_tryparse_methods = FOO")]
+        // Valid options
+        [InlineData("dotnet_code_quality.CA1305.exclude_tryparse_methods = true")]
+        [InlineData("dotnet_code_quality.CA1305.exclude_tryparse_methods = false")]
+        public async Task CA1305_TryParse(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+
+public class Foo
+{
+    public Foo()
+    {
+        sbyte.TryParse("""", out _);
+        byte.TryParse("""", out _);
+        short.TryParse("""", out _);
+        ushort.TryParse("""", out _);
+        int.TryParse("""", out _);
+        uint.TryParse("""", out _);
+        long.TryParse("""", out _);
+        ulong.TryParse("""", out _);
+
+        char.TryParse("""", out _); // no issue because no overload with format provider
+
+        float.TryParse("""", out _);
+        double.TryParse("""", out _);
+        decimal.TryParse("""", out _);
+
+        DateTime.TryParse("""", out _);
+        TimeSpan.TryParse("""", out _);
+
+        TryParse("""", out _);
+    }
+
+    public void TryParse(string s, out Foo f)
+    {
+        f = null;
+    }
+
+    public void TryParse(string s, IFormatProvider format, out Foo f)
+    {
+        f = null;
+    }
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (editorConfigText.EndsWith("false", System.StringComparison.OrdinalIgnoreCase))
+            {
+                csharpTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(8, 9, "sbyte.TryParse(string, out sbyte)", "Foo.Foo()", "sbyte.TryParse(string, NumberStyles, IFormatProvider, out sbyte)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(9, 9, "byte.TryParse(string, out byte)", "Foo.Foo()", "byte.TryParse(string, NumberStyles, IFormatProvider, out byte)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(10, 9, "short.TryParse(string, out short)", "Foo.Foo()", "short.TryParse(string, NumberStyles, IFormatProvider, out short)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(11, 9, "ushort.TryParse(string, out ushort)", "Foo.Foo()", "ushort.TryParse(string, NumberStyles, IFormatProvider, out ushort)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(12, 9, "int.TryParse(string, out int)", "Foo.Foo()", "int.TryParse(string, NumberStyles, IFormatProvider, out int)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(13, 9, "uint.TryParse(string, out uint)", "Foo.Foo()", "uint.TryParse(string, NumberStyles, IFormatProvider, out uint)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(14, 9, "long.TryParse(string, out long)", "Foo.Foo()", "long.TryParse(string, NumberStyles, IFormatProvider, out long)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(15, 9, "ulong.TryParse(string, out ulong)", "Foo.Foo()", "ulong.TryParse(string, NumberStyles, IFormatProvider, out ulong)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(19, 9, "float.TryParse(string, out float)", "Foo.Foo()", "float.TryParse(string, NumberStyles, IFormatProvider, out float)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(20, 9, "double.TryParse(string, out double)", "Foo.Foo()", "double.TryParse(string, NumberStyles, IFormatProvider, out double)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(21, 9, "decimal.TryParse(string, out decimal)", "Foo.Foo()", "decimal.TryParse(string, NumberStyles, IFormatProvider, out decimal)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(23, 9, "DateTime.TryParse(string, out DateTime)", "Foo.Foo()", "DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(24, 9, "TimeSpan.TryParse(string, out TimeSpan)", "Foo.Foo()", "TimeSpan.TryParse(string, IFormatProvider, out TimeSpan)"),
+                    GetIFormatProviderAlternateStringRuleCSharpResultAt(26, 9, "Foo.TryParse(string, out Foo)", "Foo.Foo()", "Foo.TryParse(string, IFormatProvider, out Foo)"),
+                });
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System
+
+Public Class Foo
+    Public Sub New()
+        Dim v1 As SByte
+        SByte.TryParse("""", v1)
+        Dim v2 As Byte
+        Byte.TryParse("""", v2)
+        Dim v3 As Short
+        Short.TryParse("""", v3)
+        Dim v4 As UShort
+        UShort.TryParse("""", v4)
+        Dim v5 As Integer
+        Integer.TryParse("""", v5)
+        Dim v6 As UInteger
+        UInteger.TryParse("""", v6)
+        Dim v7 As Long
+        Long.TryParse("""", v7)
+        Dim v8 As ULong
+        ULong.TryParse("""", v8)
+
+        Dim v9 As Char
+        Char.TryParse("""", v9)
+
+        Dim v10 As Single
+        Single.TryParse("""", v10)
+        Dim v11 As Double
+        Double.TryParse("""", v11)
+        Dim v12 As Decimal
+        Decimal.TryParse("""", v12)
+
+        Dim v13 As DateTime
+        DateTime.TryParse("""", v13)
+        Dim v14 As TimeSpan
+        TimeSpan.TryParse("""", v14)
+
+        Dim v15 As Foo
+        TryParse("""", v15)
+    End Sub
+
+    Public Sub TryParse(ByVal s As String, ByRef f As Foo)
+        f = Nothing
+    End Sub
+
+    Public Sub TryParse(ByVal s As String, ByVal format As IFormatProvider, ByRef f As Foo)
+        f = Nothing
+    End Sub
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                }
+            };
+
+            if (editorConfigText.EndsWith("false", System.StringComparison.OrdinalIgnoreCase))
+            {
+                vbTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(7, 9, "SByte.TryParse(String, ByRef SByte)", "Foo.New()", "SByte.TryParse(String, NumberStyles, IFormatProvider, ByRef SByte)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(9, 9, "Byte.TryParse(String, ByRef Byte)", "Foo.New()", "Byte.TryParse(String, NumberStyles, IFormatProvider, ByRef Byte)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(11, 9, "Short.TryParse(String, ByRef Short)", "Foo.New()", "Short.TryParse(String, NumberStyles, IFormatProvider, ByRef Short)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(13, 9, "UShort.TryParse(String, ByRef UShort)", "Foo.New()", "UShort.TryParse(String, NumberStyles, IFormatProvider, ByRef UShort)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(15, 9, "Integer.TryParse(String, ByRef Integer)", "Foo.New()", "Integer.TryParse(String, NumberStyles, IFormatProvider, ByRef Integer)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(17, 9, "UInteger.TryParse(String, ByRef UInteger)", "Foo.New()", "UInteger.TryParse(String, NumberStyles, IFormatProvider, ByRef UInteger)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(19, 9, "Long.TryParse(String, ByRef Long)", "Foo.New()", "Long.TryParse(String, NumberStyles, IFormatProvider, ByRef Long)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(21, 9, "ULong.TryParse(String, ByRef ULong)", "Foo.New()", "ULong.TryParse(String, NumberStyles, IFormatProvider, ByRef ULong)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(27, 9, "Single.TryParse(String, ByRef Single)", "Foo.New()", "Single.TryParse(String, NumberStyles, IFormatProvider, ByRef Single)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(29, 9, "Double.TryParse(String, ByRef Double)", "Foo.New()", "Double.TryParse(String, NumberStyles, IFormatProvider, ByRef Double)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(31, 9, "Decimal.TryParse(String, ByRef Decimal)", "Foo.New()", "Decimal.TryParse(String, NumberStyles, IFormatProvider, ByRef Decimal)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(34, 9, "Date.TryParse(String, ByRef Date)", "Foo.New()", "Date.TryParse(String, IFormatProvider, DateTimeStyles, ByRef Date)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(36, 9, "TimeSpan.TryParse(String, ByRef TimeSpan)", "Foo.New()", "TimeSpan.TryParse(String, IFormatProvider, ByRef TimeSpan)"),
+                    GetIFormatProviderAlternateStringRuleBasicResultAt(39, 9, "Foo.TryParse(String, ByRef Foo)", "Foo.New()", "Foo.TryParse(String, IFormatProvider, ByRef Foo)"),
+                });
+            }
+
+            await vbTest.RunAsync();
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
             return new DiagnosticResult(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)

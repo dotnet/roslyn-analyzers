@@ -409,3 +409,14 @@ Option Values:
 Default Value: `Heuristic`.
 
 Example: `dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue`
+
+### Specify IFormatProvider
+Option Name: `exclude_tryparse_methods`
+
+Configurable Rules: [CA1305](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1305)
+
+Option Values: `true` or `false`
+
+Default Value: `true`
+
+Example: `dotnet_code_quality.CA1305.exclude_tryparse_methods = false`

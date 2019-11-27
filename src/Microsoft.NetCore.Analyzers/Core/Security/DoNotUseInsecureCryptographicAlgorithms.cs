@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 // TODO(dotpaul): Enable nullable analysis.
-#nullable disable
+//#nullable disable
 
 using System.Collections.Immutable;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
@@ -109,8 +109,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             INamedTypeSymbol type = method.ContainingType;
-                            DiagnosticDescriptor rule = null;
-                            string algorithmName = null;
+                            DiagnosticDescriptor rule;
+                            string algorithmName;
 
                             if (type.DerivesFrom(cryptTypes.MD5))
                             {
@@ -139,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                algorithmName = cryptTypes.DSA.Name;
+                                algorithmName = "DSA";
                             }
                             else if (type.DerivesFrom(cryptTypes.HMACMD5))
                             {
@@ -166,16 +166,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 rule = DoNotUseWeakCryptographyRule;
                                 algorithmName = cryptTypes.HMACRIPEMD160.Name;
                             }
-
-                            if (rule != null)
+                            else
                             {
-                                operationAnalysisContext.ReportDiagnostic(
-                                    Diagnostic.Create(
-                                        rule,
-                                        operationAnalysisContext.Operation.Syntax.GetLocation(),
-                                        operationAnalysisContext.ContainingSymbol.Name,
-                                        algorithmName));
+                                return;
                             }
+
+                            operationAnalysisContext.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    rule,
+                                    operationAnalysisContext.Operation.Syntax.GetLocation(),
+                                    operationAnalysisContext.ContainingSymbol.Name,
+                                    algorithmName));
                         },
                         OperationKind.Invocation,
                         OperationKind.ObjectCreation);

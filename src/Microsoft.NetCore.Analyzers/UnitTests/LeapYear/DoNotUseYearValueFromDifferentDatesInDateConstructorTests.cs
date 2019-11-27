@@ -15,7 +15,15 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
         [Fact]
         public async Task NoDiagnosticCases()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"");
+            await VerifyCS.VerifyAnalyzerAsync(@"
+    using System;
+
+    namespace LeapYear.UnitTests
+    {
+        public class ClassName
+        {
+        }
+    }");
         }
 
         [Fact]

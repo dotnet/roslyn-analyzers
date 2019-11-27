@@ -82,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     }
 
                     // Perform analysis of all direct/indirect parameter usages in the method to get all non-validated usages that can cause a null dereference.
-                    ImmutableDictionary<IParameterSymbol, SyntaxNode> hazardousParameterUsages = null;
+                    ImmutableDictionary<IParameterSymbol, SyntaxNode>? hazardousParameterUsages = null;
                     foreach (var operationBlock in operationBlockContext.OperationBlocks)
                     {
                         if (operationBlock is IBlockOperation topmostBlock)

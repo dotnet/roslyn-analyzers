@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 context =>
                 {
-                    INamedTypeSymbol disposableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
+                    INamedTypeSymbol? disposableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
                     if (disposableType == null)
                     {
                         return;
@@ -140,7 +140,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    INamedTypeSymbol garbageCollectorType = context.Compilation.GetOrCreateTypeByMetadataName(GarbageCollectorTypeName);
+                    INamedTypeSymbol? garbageCollectorType = context.Compilation.GetOrCreateTypeByMetadataName(GarbageCollectorTypeName);
                     if (garbageCollectorType == null)
                     {
                         return;
@@ -197,7 +197,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
                         }
 
-                        IMethodSymbol disposeMethod = FindDisposeMethod(type);
+                        IMethodSymbol? disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
                             CheckDisposeSignatureRule(disposeMethod, type, context);
@@ -249,7 +249,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
-                            IMethodSymbol disposeMethod = FindDisposeMethod(type);
+                            IMethodSymbol? disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
                                 if (method.Equals(disposeMethod))
@@ -421,7 +421,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// Returns method that implements IDisposable.Dispose operation.
             /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
-            private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
+            private IMethodSymbol? FindDisposeMethod(INamedTypeSymbol type)
             {
                 if (type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) is IMethodSymbol disposeMethod && Equals(disposeMethod.ContainingType, type))
                 {
@@ -442,9 +442,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// <summary>
             /// Returns method defined in the nearest ancestor: void Dispose(bool)
             /// </summary>
-            private IMethodSymbol FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
+            private IMethodSymbol? FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
             {
-                IMethodSymbol method = null;
+                IMethodSymbol? method = null;
 
                 while (type != null && method == null && ImplementsDisposableInBaseType(type))
                 {

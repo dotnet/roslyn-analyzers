@@ -52,25 +52,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol dllImportType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute);
+                    INamedTypeSymbol? dllImportType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute);
                     if (dllImportType == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol marshalAsType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesMarshalAsAttribute);
+                    INamedTypeSymbol? marshalAsType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesMarshalAsAttribute);
                     if (marshalAsType == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol stringBuilderType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder);
+                    INamedTypeSymbol? stringBuilderType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder);
                     if (stringBuilderType == null)
                     {
                         return;
                     }
 
-                    INamedTypeSymbol unmanagedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesUnmanagedType);
+                    INamedTypeSymbol? unmanagedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesUnmanagedType);
                     if (unmanagedType == null)
                     {
                         return;

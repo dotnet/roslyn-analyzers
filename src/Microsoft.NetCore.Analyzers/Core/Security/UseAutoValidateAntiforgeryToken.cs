@@ -11,7 +11,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
@@ -130,8 +129,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                         {
-                            ISymbol calledSymbol = null;
-                            ConcurrentDictionary<ISymbol, bool> callers = null;
+                            ISymbol? calledSymbol = null;
+                            ConcurrentDictionary<ISymbol, bool>? callers = null;
 
                             switch (operationContext.Operation)
                             {

@@ -84,7 +84,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var objectType = csaContext.Compilation.GetSpecialType(SpecialType.System_Object);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
-                var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
+                if (objectType == null || stringType == null)
+                {
+                    return;
+                }
+
+                var stringFormatMembers = stringType.GetMembers("Format").OfType<IMethodSymbol>();
 
                 var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                          GetParameterInfo(stringType),
@@ -129,10 +134,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
-                    if (targetMethod.IsGenericMethod || targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() ||
-                        (targetMethod.ContainingType != null &&
-                         (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
-                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType))))
+                    if (targetMethod.IsGenericMethod || targetMethod.ContainingType.IsErrorType() ||
+                        (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
+                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)))
                     {
                         return;
                     }
@@ -140,6 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     #region "IFormatProviderAlternateStringRule Only"
                     if (stringType != null && cultureInfoType != null &&
+                        stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter != null &&
                         (targetMethod.Equals(stringFormatMemberWithStringAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectAndObjectParameter) ||
                          targetMethod.Equals(stringFormatMemberWithStringObjectObjectAndObjectParameter) ||

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,7 +10,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -69,7 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemSerializableAttribute,
-                        out INamedTypeSymbol serializableAttributeTypeSymbol))
+                        out INamedTypeSymbol? serializableAttributeTypeSymbol))
                     {
                         return;
                     }
@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             typeName,
-                            out INamedTypeSymbol typeSymbol))
+                            out INamedTypeSymbol? typeSymbol))
                         {
                             continue;
                         }
@@ -105,22 +105,22 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute,
-                        out INamedTypeSymbol onDeserializingAttributeTypeSymbol))
+                        out INamedTypeSymbol? onDeserializingAttributeTypeSymbol))
                     {
                         attributeTypeSymbolsBuilder.Add(onDeserializingAttributeTypeSymbol);
                     }
 
                     if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute,
-                        out INamedTypeSymbol onDeserializedAttributeTypeSymbol))
+                        out INamedTypeSymbol? onDeserializedAttributeTypeSymbol))
                     {
                         attributeTypeSymbolsBuilder.Add(onDeserializedAttributeTypeSymbol);
                     }
 
                     var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
 
-                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext, out INamedTypeSymbol streamingContextTypeSymbol) ||
-                        !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationIDeserializationCallback, out INamedTypeSymbol IDeserializationCallbackTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext, out INamedTypeSymbol? streamingContextTypeSymbol) ||
+                        !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationIDeserializationCallback, out INamedTypeSymbol? IDeserializationCallbackTypeSymbol))
                     {
                         return;
                     }
@@ -149,8 +149,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                             {
-                                ISymbol calledSymbol = null;
-                                ITypeSymbol possibleDelegateSymbol = null;
+                                ISymbol? calledSymbol = null;
+                                ITypeSymbol? possibleDelegateSymbol = null;
 
                                 switch (operationContext.Operation)
                                 {
@@ -174,6 +174,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
 
                                         break;
+
+                                    default:
+                                        throw new NotImplementedException();
                                 }
 
                                 calledMethods.TryAdd(calledSymbol, true);

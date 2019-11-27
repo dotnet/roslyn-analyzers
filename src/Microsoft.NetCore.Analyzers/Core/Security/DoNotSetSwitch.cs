@@ -129,6 +129,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext.CancellationToken),
                             out _,
                             out _);
+                        if (valueContentResult == null)
+                        {
+                            return;
+                        }
 
                         var switchNameValueContent = valueContentResult[
                             OperationKind.Argument,

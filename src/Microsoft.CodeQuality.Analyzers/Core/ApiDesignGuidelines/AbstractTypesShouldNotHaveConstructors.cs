@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            var symbol = context.Symbol as INamedTypeSymbol;
+            var symbol = (INamedTypeSymbol)context.Symbol;
             if (symbol.IsAbstract &&
                 symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {

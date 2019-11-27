@@ -121,7 +121,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private readonly SuppressFinalizeUsage _expectedUsage;
 
             private bool _suppressFinalizeCalled;
-            private SemanticModel _semanticModel;
 
             public SuppressFinalizeAnalyzer(IMethodSymbol methodSymbol, IMethodSymbol gcSuppressFinalizeMethodSymbol, Compilation compilation)
             {
@@ -139,11 +138,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     _suppressFinalizeCalled = true;
 
-                    if (_semanticModel == null)
-                    {
-                        _semanticModel = analysisContext.Compilation.GetSemanticModel(analysisContext.Operation.Syntax.SyntaxTree);
-                    }
-
                     // Check for GC.SuppressFinalize outside of IDisposable.Dispose()
                     if (_expectedUsage == SuppressFinalizeUsage.MustNotCall)
                     {
@@ -159,7 +153,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (!(_semanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax).Symbol is IParameterSymbol parameterSymbol) || !parameterSymbol.IsThis)
+                    if (!(invocationExpression.SemanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax).Symbol is IParameterSymbol parameterSymbol) || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(
                             NotPassedThisRule,

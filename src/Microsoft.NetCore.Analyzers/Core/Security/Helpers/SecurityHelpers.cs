@@ -29,8 +29,8 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             string titleResourceStringName,
             string messageResourceStringName,
             bool isEnabledByDefault,
-            string helpLinkUri,
-            string descriptionResourceStringName = null,
+            string? helpLinkUri,
+            string? descriptionResourceStringName = null,
             params string[] customTags)
         {
             return CreateDiagnosticDescriptor(
@@ -62,8 +62,8 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             string titleResourceStringName,
             string messageResourceStringName,
             bool isEnabledByDefault,
-            string helpLinkUri,
-            string descriptionResourceStringName = null,
+            string? helpLinkUri,
+            string? descriptionResourceStringName = null,
             params string[] customTags)
         {
             return new DiagnosticDescriptor(

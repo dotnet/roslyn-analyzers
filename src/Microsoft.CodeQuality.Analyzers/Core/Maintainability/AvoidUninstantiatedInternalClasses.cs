@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
-                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
+                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
+                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
 
                 var compilation = startContext.Compilation;
 
@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
                 var internalsVisibleToAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
-                if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
+                if (compilation.Assembly.HasAttribute(internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
@@ -200,16 +200,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        private static bool AssemblyExposesInternals(
-            Compilation compilation,
-            INamedTypeSymbol internalsVisibleToAttributeSymbol)
-        {
-            ISymbol assemblySymbol = compilation.Assembly;
-            var attributes = assemblySymbol.GetAttributes();
-            return attributes.Any(
-                attr => attr.AttributeClass.Equals(internalsVisibleToAttributeSymbol));
-        }
-
         private bool HasInstantiatedNestedType(INamedTypeSymbol type, IEnumerable<INamedTypeSymbol> instantiatedTypes)
         {
             // We don't care whether a private nested type is instantiated, because if it
@@ -235,13 +225,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         public static bool IsOkToBeUnused(
             INamedTypeSymbol type,
             Compilation compilation,
-            INamedTypeSymbol systemAttributeSymbol,
-            INamedTypeSymbol iConfigurationSectionHandlerSymbol,
-            INamedTypeSymbol configurationSectionSymbol,
-            INamedTypeSymbol safeHandleSymbol,
-            INamedTypeSymbol traceListenerSymbol,
-            INamedTypeSymbol mef1ExportAttributeSymbol,
-            INamedTypeSymbol mef2ExportAttributeSymbol)
+            INamedTypeSymbol? systemAttributeSymbol,
+            INamedTypeSymbol? iConfigurationSectionHandlerSymbol,
+            INamedTypeSymbol? configurationSectionSymbol,
+            INamedTypeSymbol? safeHandleSymbol,
+            INamedTypeSymbol? traceListenerSymbol,
+            INamedTypeSymbol? mef1ExportAttributeSymbol,
+            INamedTypeSymbol? mef2ExportAttributeSymbol)
         {
             if (type.TypeKind != TypeKind.Class || type.IsAbstract)
             {
@@ -299,8 +289,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         }
         public static bool IsMefExported(
             INamedTypeSymbol type,
-            INamedTypeSymbol mef1ExportAttributeSymbol,
-            INamedTypeSymbol mef2ExportAttributeSymbol)
+            INamedTypeSymbol? mef1ExportAttributeSymbol,
+            INamedTypeSymbol? mef2ExportAttributeSymbol)
         {
             return (mef1ExportAttributeSymbol != null && type.HasAttribute(mef1ExportAttributeSymbol))
                 || (mef2ExportAttributeSymbol != null && type.HasAttribute(mef2ExportAttributeSymbol));
@@ -330,7 +320,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 .Any(m => IsEntryPoint(m, taskSymbol, genericTaskSymbol));
         }
 
-        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
+        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol? taskSymbol, ITypeSymbol? genericTaskSymbol)
         {
             if (!method.IsStatic)
             {
@@ -355,7 +345,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return true;
         }
 
-        private static bool IsSupportedReturnType(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
+        private static bool IsSupportedReturnType(IMethodSymbol method, ITypeSymbol? taskSymbol, ITypeSymbol? genericTaskSymbol)
         {
             if (method.ReturnType.SpecialType == SpecialType.System_Int32)
             {

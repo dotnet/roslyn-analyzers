@@ -25,8 +25,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         private static readonly SyntaxAnnotation s_annotationForFixedDeclaration = new SyntaxAnnotation();
 
-        protected abstract IEnumerable<SyntaxNode> GetTypeArguments(SyntaxNode node);
-        protected abstract SyntaxNode GetExpressionOfInvocation(SyntaxNode invocation);
+        protected abstract IEnumerable<SyntaxNode>? GetTypeArguments(SyntaxNode node);
+        protected abstract SyntaxNode? GetExpressionOfInvocation(SyntaxNode invocation);
         protected virtual SyntaxNode GetSyntaxNodeToReplace(IMemberReferenceOperation memberReference)
             => memberReference.Syntax;
 
@@ -134,7 +134,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     }
 
                     var operation = semanticModel.GetOperationWalkingUpParentChain(referenceNode, cancellationToken);
-                    SyntaxNode nodeToReplaceOpt = null;
+                    SyntaxNode? nodeToReplaceOpt = null;
                     switch (operation)
                     {
                         case IMemberReferenceOperation memberReference:
@@ -213,7 +213,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            ISymbol GetSymbolForNodeToReplace(SyntaxNode nodeToReplace, SemanticModel semanticModel)
+            ISymbol? GetSymbolForNodeToReplace(SyntaxNode nodeToReplace, SemanticModel semanticModel)
             {
                 var symbolInfo = semanticModel.GetSymbolInfo(nodeToReplace, cancellationToken);
                 var symbolForNodeToReplace = symbolInfo.Symbol;

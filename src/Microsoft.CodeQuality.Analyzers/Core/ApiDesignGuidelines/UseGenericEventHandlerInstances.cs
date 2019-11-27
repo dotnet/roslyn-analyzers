@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -67,7 +67,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
-        protected abstract bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol);
+        protected abstract bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -77,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
+                    INamedTypeSymbol? eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                     if (eventArgs == null)
                     {
                         return;
@@ -95,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     bool IsEventArgsParameter(IParameterSymbol parameter)
                     {
                         var type = parameter.Type;
-                        if (IsAssignableTo(context.Compilation, type, eventArgs))
+                        if (IsAssignableTo(type, eventArgs, context.Compilation))
                         {
                             return true;
                         }
@@ -111,8 +114,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     bool IsValidNonGenericEventHandler(IMethodSymbol delegateInvokeMethod)
                     {
-                        Debug.Assert(delegateInvokeMethod != null);
-
                         return delegateInvokeMethod.ReturnsVoid &&
                             delegateInvokeMethod.Parameters.Length == 2 &&
                             delegateInvokeMethod.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
@@ -133,7 +134,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }, SymbolKind.NamedType);
 
-                    INamedTypeSymbol comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
+                    INamedTypeSymbol? comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
                         eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));

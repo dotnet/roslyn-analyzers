@@ -2717,9 +2717,9 @@ public class C
         [InlineData("struct", "class")]
         [InlineData("class", "struct")]
         [InlineData("class", "class")]
-        public void DataflowAcrossBranches(string typeTest, string typeA)
+        public async Task DataflowAcrossBranches(string typeTest, string typeA)
         {
-            VerifyCSharp($@"
+            await VerifyCS.VerifyAnalyzerAsync($@"
 using System;
 
 namespace TestNamespace

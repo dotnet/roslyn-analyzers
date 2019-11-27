@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = "CA2237 CodeFix provider"), Shared]
     public class CSharpMarkAllNonSerializableFieldsFixer : MarkAllNonSerializableFieldsFixer
     {
-        protected override SyntaxNode GetFieldDeclarationNode(SyntaxNode node)
+        protected override SyntaxNode? GetFieldDeclarationNode(SyntaxNode node)
         {
             SyntaxNode fieldNode = node;
             while (fieldNode != null && fieldNode.Kind() != SyntaxKind.FieldDeclaration)

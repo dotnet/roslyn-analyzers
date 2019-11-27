@@ -76,7 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Iterate through all declared types, including base
             foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
             {
-                Diagnostic diagnostic = null;
+                Diagnostic? diagnostic = null;
 
                 var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
                 foreach (var member in exposedMembers)

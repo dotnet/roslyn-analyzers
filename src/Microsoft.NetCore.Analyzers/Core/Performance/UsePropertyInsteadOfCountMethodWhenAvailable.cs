@@ -88,9 +88,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// </summary>
         protected sealed class OperationActionsContext
         {
-            private readonly Lazy<INamedTypeSymbol> _immutableArrayType;
-            private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
-            private readonly Lazy<INamedTypeSymbol> _iCollectionOfType;
+            private readonly Lazy<INamedTypeSymbol?> _immutableArrayType;
+            private readonly Lazy<IPropertySymbol?> _iCollectionCountProperty;
+            private readonly Lazy<INamedTypeSymbol?> _iCollectionOfType;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="OperationActionsContext"/> class.
@@ -101,9 +101,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
-                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
-                _iCollectionCountProperty = new Lazy<IPropertySymbol>(ResolveICollectionCountProperty, true);
-                _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1), true);
+                _immutableArrayType = new Lazy<INamedTypeSymbol?>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
+                _iCollectionCountProperty = new Lazy<IPropertySymbol?>(ResolveICollectionCountProperty, true);
+                _iCollectionOfType = new Lazy<INamedTypeSymbol?>(() => Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1), true);
             }
 
             /// <summary>
@@ -118,27 +118,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// Gets the <see cref="System.Collections.ICollection.Count"/> property.
             /// </summary>
             /// <value>The <see cref="System.Collections.ICollection.Count"/> property.</value>
-            private IPropertySymbol ICollectionCountProperty => _iCollectionCountProperty.Value;
+            private IPropertySymbol? ICollectionCountProperty => _iCollectionCountProperty.Value;
 
             /// <summary>
             /// Gets the type of the <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.
             /// </summary>
             /// <value>The <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.</value>
-            private INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
+            private INamedTypeSymbol? ICollectionOfTType => _iCollectionOfType.Value;
 
             /// <summary>
             /// Gets the type of the <see cref="System.Collections.Generic.ICollection{TSource}"/> type.
             /// </summary>
             /// <value>The <see cref="System.Collections.Generic.ICollection{TSource}"/> type.</value>
-            internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
+            internal INamedTypeSymbol? ImmutableArrayType => _immutableArrayType.Value;
 
             /// <summary>
             /// Gets the type of the <see cref="System.Collections.ICollection.Count"/> property, if one and only one exists.
             /// </summary>
             /// <returns>The <see cref="System.Collections.ICollection.Count"/> property.</returns>
-            private IPropertySymbol ResolveICollectionCountProperty()
+            private IPropertySymbol? ResolveICollectionCountProperty()
             {
-                IPropertySymbol countProperty = null;
+                IPropertySymbol? countProperty = null;
 
                 if (Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection) is INamedTypeSymbol iCollectionType)
                 {
@@ -194,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                if (isCollectionOfTInterface(invocationTarget))
+                if (isCollectionOfTInterface(invocationTarget, ICollectionOfTType))
                 {
                     return true;
                 }
@@ -209,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     foreach (var @interface in invocationTarget.AllInterfaces)
                     {
                         if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                            isCollectionOfTInterface(originalInterfaceDefinition))
+                            isCollectionOfTInterface(originalInterfaceDefinition, ICollectionOfTType))
                         {
                             return true;
                         }
@@ -220,7 +220,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     foreach (var @interface in invocationTarget.AllInterfaces)
                     {
                         if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                            isCollectionOfTInterface(originalInterfaceDefinition))
+                            isCollectionOfTInterface(originalInterfaceDefinition, ICollectionOfTType))
                         {
                             if (invocationTarget.FindImplementationForInterfaceMember(@interface.GetMembers(CountPropertyName)[0]) is IPropertySymbol propertyImplementation &&
                                 !propertyImplementation.ExplicitInterfaceImplementations.Any())
@@ -233,8 +233,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 return false;
 
-                bool isCollectionOfTInterface(ITypeSymbol type)
-                    => this.ICollectionOfTType.Equals(type.OriginalDefinition);
+                static bool isCollectionOfTInterface(ITypeSymbol type, ITypeSymbol iCollectionOfTType)
+                    => iCollectionOfTType.Equals(type.OriginalDefinition);
             }
 
             /// <summary>
@@ -291,14 +291,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
             /// <returns>The <see cref="ITypeSymbol"/> of the receiver of the extension method.</returns>
-            protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
+            protected abstract ITypeSymbol? GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
 
             /// <summary>
             /// Gets the replacement property.
             /// </summary>
             /// <param name="invocationTarget">The invocation target.</param>
             /// <returns>The name of the replacement property.</returns>
-            private string GetReplacementProperty(ITypeSymbol invocationTarget)
+            private string? GetReplacementProperty(ITypeSymbol invocationTarget)
             {
                 if ((invocationTarget.TypeKind == TypeKind.Array) || Context.IsImmutableArrayType(invocationTarget))
                 {

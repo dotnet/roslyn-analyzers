@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "2.9.8",
+        "version": "2.9.9",
         "language": "en-US"
       },
       "rules": {

@@ -83,7 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
-                        (object o) => o is int i && i != 0),   // None is 0, and anything other than None is flagged.
+                        (object? o) => o is int i && i != 0),   // None is 0, and anything other than None is flagged.
                 TypeNameHandlingIndex),
             new PropertyMapper(
                 "Binder",
@@ -116,7 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
-                            out INamedTypeSymbol jsonSerializerSymbol))
+                            out INamedTypeSymbol? jsonSerializerSymbol))
                     {
                         return;
                     }
@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
                             try
                             {
                                 lock (rootOperationsNeedingAnalysis)

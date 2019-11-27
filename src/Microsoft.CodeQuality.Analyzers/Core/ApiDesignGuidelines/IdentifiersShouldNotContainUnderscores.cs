@@ -136,7 +136,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     case SymbolKind.NamedType:
                         {
-                            var namedType = symbol as INamedTypeSymbol;
+                            var namedType = (INamedTypeSymbol)symbol;
                             AnalyzeTypeParameters(symbolAnalysisContext, namedType.TypeParameters);
 
                             if (namedType.TypeKind == TypeKind.Delegate &&
@@ -156,7 +156,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     case SymbolKind.Field:
                         {
-                            var fieldSymbol = symbol as IFieldSymbol;
+                            var fieldSymbol = (IFieldSymbol)symbol;
                             if (ContainsUnderScore(symbol.Name) && (fieldSymbol.IsConst || (fieldSymbol.IsStatic && fieldSymbol.IsReadOnly)))
                             {
                                 symbolAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(MemberRule, symbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));

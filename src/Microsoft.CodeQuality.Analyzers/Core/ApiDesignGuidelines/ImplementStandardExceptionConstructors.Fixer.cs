@@ -60,7 +60,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             CodeAnalysis.Text.TextSpan diagnosticSpan = diagnostics.First().Location.SourceSpan; // All the diagnostics are reported at the same location -- the name of the declared class -- so it doesn't matter which one we pick
             SyntaxNode node = root.FindNode(diagnosticSpan);
             SyntaxNode targetNode = editor.Generator.GetDeclaration(node, DeclarationKind.Class);
-            var typeSymbol = model.GetDeclaredSymbol(targetNode) as INamedTypeSymbol;
+            if (!(model.GetDeclaredSymbol(targetNode) is INamedTypeSymbol typeSymbol))
+            {
+                return document;
+            }
 
             foreach (Diagnostic diagnostic in diagnostics)
             {

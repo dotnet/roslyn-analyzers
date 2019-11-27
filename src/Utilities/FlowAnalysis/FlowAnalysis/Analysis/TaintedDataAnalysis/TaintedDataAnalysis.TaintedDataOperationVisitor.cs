@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -138,7 +139,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 analysisData.RemoveEntries(analysisEntity);
             }
 
-            public override TaintedDataAbstractValue DefaultVisit(IOperation operation, object argument)
+            public override TaintedDataAbstractValue DefaultVisit(IOperation operation, object? argument)
             {
                 // This handles most cases of tainted data flowing from child operations to parent operations.
                 // Examples:
@@ -146,7 +147,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 // - adding a tainted value to something makes the result tainted
                 // - instantiating an object with tainted data makes the new object tainted
 
-                List<TaintedDataAbstractValue> taintedValues = null;
+                List<TaintedDataAbstractValue>? taintedValues = null;
                 foreach (IOperation childOperation in operation.Children)
                 {
                     TaintedDataAbstractValue childValue = Visit(childOperation, argument);
@@ -187,7 +188,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     return TaintedDataAbstractValue.CreateTainted(propertyReferenceOperation.Member, propertyReferenceOperation.Syntax, this.OwningSymbol);
                 }
 
-                if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+                if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity? analysisEntity))
                 {
                     return this.CurrentAnalysisData.TryGetValue(analysisEntity, out TaintedDataAbstractValue value) ? value : defaultValue;
                 }
@@ -196,7 +197,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             }
 
             // So we can hook into constructor calls.
-            public override TaintedDataAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object argument)
+            public override TaintedDataAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object? argument)
             {
                 TaintedDataAbstractValue baseValue = base.VisitObjectCreation(operation, argument);
                 ProcessDataEnteringInvocationOrCreationSink(operation.Constructor, operation.Arguments, operation);
@@ -205,7 +206,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
             public override TaintedDataAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
                 IMethodSymbol method,
-                IOperation visitedInstance,
+                IOperation? visitedInstance,
                 ImmutableArray<IArgumentOperation> visitedArguments,
                 bool invokedAsDelegate,
                 IOperation originalOperation,
@@ -220,9 +221,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     originalOperation,
                     defaultValue);
                 ProcessDataEnteringInvocationOrCreationSink(method, visitedArguments, originalOperation);
-                PooledHashSet<string> taintedTargets = null;
-                PooledHashSet<(string, string)> taintedParameterPairs = null;
-                PooledHashSet<string> sanitizedArguments = null;
+                PooledHashSet<string>? taintedTargets = null;
+                PooledHashSet<(string, string)>? taintedParameterPairs = null;
+                PooledHashSet<string>? sanitizedArguments = null;
                 try
                 {
                     if (this.IsSanitizingMethod(method, out bool sanitizeReturn, out bool sanitizeInstance, out sanitizedArguments))
@@ -232,7 +233,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                             result = TaintedDataAbstractValue.NotTainted;
                         }
 
-                        if (sanitizeInstance)
+                        if (visitedInstance != null && sanitizeInstance)
                         {
                             result = TaintedDataAbstractValue.NotTainted;
                             CacheAbstractValueForBothOperationAndEntity(visitedInstance, result);
@@ -250,8 +251,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     else if (this.DataFlowAnalysisContext.SourceInfos.IsSourceMethod(
                         method,
                         visitedArguments,
-                        new Lazy<PointsToAnalysisResult>(() => DataFlowAnalysisContext.PointsToAnalysisResultOpt),
-                        new Lazy<(PointsToAnalysisResult, ValueContentAnalysisResult)>(() => (DataFlowAnalysisContext.PointsToAnalysisResultOpt, DataFlowAnalysisContext.ValueContentAnalysisResultOpt)),
+                        new Lazy<PointsToAnalysisResult?>(() => DataFlowAnalysisContext.PointsToAnalysisResultOpt),
+                        new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(() => (DataFlowAnalysisContext.PointsToAnalysisResultOpt, DataFlowAnalysisContext.ValueContentAnalysisResultOpt)),
                         out taintedTargets))
                     {
                         foreach (string taintedTarget in taintedTargets)
@@ -355,9 +356,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
             // So we can treat the array as tainted when it's passed to other object constructors.
             // See HttpRequest_Form_Array_List_Diagnostic and HttpRequest_Form_List_Diagnostic tests.
-            public override TaintedDataAbstractValue VisitArrayInitializer(IArrayInitializerOperation operation, object argument)
+            public override TaintedDataAbstractValue VisitArrayInitializer(IArrayInitializerOperation operation, object? argument)
             {
-                HashSet<SymbolAccess> sourceOrigins = null;
+                HashSet<SymbolAccess>? sourceOrigins = null;
                 TaintedDataAbstractValue baseAbstractValue = base.VisitArrayInitializer(operation, argument);
                 if (baseAbstractValue.Kind == TaintedDataAbstractValueKind.Tainted)
                 {
@@ -373,13 +374,13 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     taintedAbstractValues = taintedAbstractValues.Concat(baseAbstractValue);
                 }
 
-                TaintedDataAbstractValue result = null;
+                TaintedDataAbstractValue? result = null;
                 if (taintedAbstractValues.Any())
                 {
                     result = TaintedDataAbstractValue.MergeTainted(taintedAbstractValues);
                 }
 
-                IArrayCreationOperation arrayCreationOperation = operation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation);
+                IArrayCreationOperation? arrayCreationOperation = operation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation);
                 if (arrayCreationOperation?.Type is IArrayTypeSymbol arrayTypeSymbol
                     && this.DataFlowAnalysisContext.SourceInfos.IsSourceArray(arrayTypeSymbol, out TaintArrayKind taintArrayKind)
                     && taintArrayKind == TaintArrayKind.Constant
@@ -399,7 +400,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 }
             }
 
-            protected override TaintedDataAbstractValue VisitAssignmentOperation(IAssignmentOperation operation, object argument)
+            protected override TaintedDataAbstractValue VisitAssignmentOperation(IAssignmentOperation operation, object? argument)
             {
                 TaintedDataAbstractValue taintedDataAbstractValue = base.VisitAssignmentOperation(operation, argument);
                 ProcessAssignmentOperation(operation);
@@ -440,7 +441,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 IOperation originalOperation)
             {
                 CheckArgumentsForTaint(targetMethod, visitedArguments, originalOperation);
-                if (this.TryGetInterproceduralAnalysisResult(originalOperation, out TaintedDataAnalysisResult subResult)
+                if (this.TryGetInterproceduralAnalysisResult(originalOperation, out TaintedDataAnalysisResult? subResult)
                     && !subResult.TaintedDataSourceSinks.IsEmpty)
                 {
                     foreach (TaintedDataSourceSink sourceSink in subResult.TaintedDataSourceSinks)
@@ -463,7 +464,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             {
                 if (assignmentOperation.Target != null
                     && assignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation
-                    && this.IsPropertyASink(propertyReferenceOperation, out HashSet<SinkKind> sinkKinds))
+                    && this.IsPropertyASink(propertyReferenceOperation, out HashSet<SinkKind>? sinkKinds))
                 {
                     IOperation value = assignmentOperation.Value;
                     UpdateAbstractValueForArrayBeforeEnteringSinkForArray(assignmentOperation, value);
@@ -484,7 +485,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// </summary>
             /// <param name="method">Instance method being called.</param>
             /// <returns>True if the method returns tainted data, false otherwise.</returns>
-            private bool IsSanitizingMethod(IMethodSymbol method, out bool sanitizeReturn, out bool sanitizeInstance, out PooledHashSet<string> sanitizedArguments)
+            private bool IsSanitizingMethod(IMethodSymbol method, out bool sanitizeReturn, out bool sanitizeInstance, out PooledHashSet<string>? sanitizedArguments)
             {
                 sanitizeReturn = false;
                 sanitizeInstance = false;
@@ -515,7 +516,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                 sanitizedArguments = PooledHashSet<string>.GetInstance();
                             }
 
-                            sanitizedArguments.Union(sanitizingTargets.Item3);
+                            sanitizedArguments.Union(sanitizingTargets.SanitizedArguments);
                         }
                     }
                 }
@@ -530,7 +531,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// <param name="visitedArguments">Arguments to the method.</param>
             private void CheckArgumentsForTaint(IMethodSymbol method, ImmutableArray<IArgumentOperation> visitedArguments, IOperation originalOperation)
             {
-                IEnumerable<IArgumentOperation> taintedArguments = null;
+                IEnumerable<IArgumentOperation>? taintedArguments = null;
                 foreach (SinkInfo sinkInfo in this.DataFlowAnalysisContext.SinkInfos.GetInfosForType(method.ContainingType))
                 {
                     taintedArguments ??= GetTaintedArguments(visitedArguments);
@@ -565,7 +566,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// <param name="propertyReferenceOperation">Property to check if it's a sink.</param>
             /// <param name="sinkKinds">If the property is a sink, <see cref="HashSet{SinkInfo}"/> containing the kinds of sinks; null otherwise.</param>
             /// <returns>True if the property is a sink, false otherwise.</returns>
-            private bool IsPropertyASink(IPropertyReferenceOperation propertyReferenceOperation, out HashSet<SinkKind> sinkKinds)
+            private bool IsPropertyASink(IPropertyReferenceOperation propertyReferenceOperation, [NotNullWhen(returnValue: true)] out HashSet<SinkKind>? sinkKinds)
             {
                 Lazy<HashSet<SinkKind>> lazySinkKinds = new Lazy<HashSet<SinkKind>>(() => new HashSet<SinkKind>());
                 foreach (SinkInfo sinkInfo in this.DataFlowAnalysisContext.SinkInfos.GetInfosForType(propertyReferenceOperation.Member.ContainingType))
@@ -610,7 +611,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             private void CacheAbstractValueForBothOperationAndEntity(IOperation operation, TaintedDataAbstractValue value)
             {
                 CacheAbstractValue(operation, value);
-                if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity analysisEntity))
+                if (AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity? analysisEntity))
                 {
                     // Cause we don't save every array as tainted, there's could be a new sanitized array entity we need to save.
                     SetAbstractValueCore(CurrentAnalysisData, analysisEntity, value);
@@ -633,7 +634,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         && this.DataFlowAnalysisContext.SourceInfos.IsSourceArray(arrayTypeSymbol, out TaintArrayKind taintArrayKind)
                         && taintArrayKind == TaintArrayKind.All)
                     {
-                        if (AnalysisEntityFactory.TryCreate(value, out AnalysisEntity analysisEntity))
+                        if (AnalysisEntityFactory.TryCreate(value, out AnalysisEntity? analysisEntity))
                         {
                             if (!this.CurrentAnalysisData.TryGetValue(analysisEntity, out taintedDataAbstractValue))
                             {
@@ -644,7 +645,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         }
                         else
                         {
-                            ISymbol taintedSymbol = null;
+                            ISymbol? taintedSymbol = null;
                             switch (value)
                             {
                                 case IInvocationOperation invocationOperation:

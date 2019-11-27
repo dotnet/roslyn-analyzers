@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -77,7 +78,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="expression">If this method returns <see langword="true" />, contains the expression to be used to invoke <c>Any</c>.</param>
         /// <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
-        protected abstract bool TryGetFixer(SyntaxNode node, string operation, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments);
+        protected abstract bool TryGetFixer(
+            SyntaxNode node,
+            string operation,
+            bool isAsync,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
+            [NotNullWhen(returnValue: true)] out IEnumerable<SyntaxNode>? arguments);
 
         private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
         {

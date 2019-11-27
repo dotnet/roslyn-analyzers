@@ -6,7 +6,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
@@ -52,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                                 WellKnownTypeNames.SystemWebMvcValidateInputAttribute,
-                                out INamedTypeSymbol validateInputAttributeTypeSymbol))
+                                out INamedTypeSymbol? validateInputAttributeTypeSymbol))
                     {
                         return;
                     }

@@ -17,9 +17,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             SinkKind sinkKind,
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
-            IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParametersWithTaintedInstance = null)
+            IEnumerable<string>? sinkProperties,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParameters,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParametersWithTaintedInstance = null)
         {
             builder.AddSinkInfo(
                 fullTypeName,
@@ -38,9 +38,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             IEnumerable<SinkKind> sinkKinds,
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
-            IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParametersWithTaintedInstance = null)
+            IEnumerable<string>? sinkProperties,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParameters,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParametersWithTaintedInstance = null)
         {
             SinkInfo sinkInfo = new SinkInfo(
                 fullTypeName,
@@ -67,8 +67,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             this PooledHashSet<SourceInfo> builder,
             string fullTypeName,
             bool isInterface,
-            string[] taintedProperties,
-            IEnumerable<string> taintedMethods)
+            string[]? taintedProperties,
+            IEnumerable<string>? taintedMethods)
         {
             SourceInfo metadata = new SourceInfo(
                 fullTypeName,
@@ -108,10 +108,10 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         this PooledHashSet<SourceInfo> builder,
         string fullTypeName,
         bool isInterface,
-        string[] taintedProperties,
-        IEnumerable<(MethodMatcher methodMatcher, (PointsToCheck pointsToCheck, string taintedTarget)[] pointsToChecksAndTargets)> taintedMethodsNeedsPointsToAnalysis,
-        IEnumerable<(MethodMatcher methodMatcher, (ValueContentCheck valueContentCheck, string taintedTarget)[] valueContentChecksAndTargets)> taintedMethodsNeedsValueContentAnalysis,
-        IEnumerable<(MethodMatcher methodMatcher, (string str, string taintedTargets)[] valueContentChecksAndTargets)> transferMethods,
+        string[]? taintedProperties,
+        IEnumerable<(MethodMatcher methodMatcher, (PointsToCheck pointsToCheck, string taintedTarget)[] pointsToChecksAndTargets)>? taintedMethodsNeedsPointsToAnalysis,
+        IEnumerable<(MethodMatcher methodMatcher, (ValueContentCheck valueContentCheck, string taintedTarget)[] valueContentChecksAndTargets)>? taintedMethodsNeedsValueContentAnalysis,
+        IEnumerable<(MethodMatcher methodMatcher, (string str, string taintedTargets)[] valueContentChecksAndTargets)>? transferMethods,
         TaintArrayKind taintArray = TaintArrayKind.None)
         {
             SourceInfo metadata = new SourceInfo(
@@ -160,9 +160,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             this PooledHashSet<SourceInfo> builder,
             string fullTypeName,
             bool isInterface,
-            string[] taintedProperties,
-            IEnumerable<(MethodMatcher methodMatcher, PointsToCheck[] pointsToChecks)> taintedMethodsNeedsPointsToAnalysis,
-            IEnumerable<(MethodMatcher methodMatcher, ValueContentCheck[] valueContentChecks)> taintedMethodsNeedsValueContentAnalysis,
+            string[]? taintedProperties,
+            IEnumerable<(MethodMatcher methodMatcher, PointsToCheck[] pointsToChecks)>? taintedMethodsNeedsPointsToAnalysis,
+            IEnumerable<(MethodMatcher methodMatcher, ValueContentCheck[] valueContentChecks)>? taintedMethodsNeedsValueContentAnalysis,
             TaintArrayKind taintArray = TaintArrayKind.None)
         {
             SourceInfo metadata = new SourceInfo(
@@ -206,8 +206,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             string fullTypeName,
             bool isInterface,
             bool isConstructorSanitizing,
-            string[] sanitizingMethods,
-            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)> sanitizingMethodsSpecifyTargets = null)
+            string[]? sanitizingMethods,
+            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[]? SanitizedArguments) SanitizedTargets)>? sanitizingMethodsSpecifyTargets = null)
         {
             SanitizerInfo info = new SanitizerInfo(
                 fullTypeName,
@@ -234,7 +234,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             string fullTypeName,
             bool isInterface,
             bool isConstructorSanitizing,
-            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)> sanitizingMethodsSpecifyTargets)
+            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)>? sanitizingMethodsSpecifyTargets)
         {
             SanitizerInfo info = new SanitizerInfo(
                 fullTypeName,

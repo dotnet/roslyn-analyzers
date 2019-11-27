@@ -2711,5 +2711,54 @@ public class C
                 }
             }.RunAsync();
         }
+
+        [Theory]
+        [InlineData("struct", "struct")]
+        [InlineData("struct", "class")]
+        [InlineData("class", "struct")]
+        [InlineData("class", "class")]
+        public void DataflowAcrossBranches(string typeTest, string typeA)
+        {
+            VerifyCSharp($@"
+using System;
+
+namespace TestNamespace
+{{
+    public {typeA} A
+    {{
+        public int IntProperty {{ get; set; }}
+    }}
+
+    public {typeTest} Test
+    {{
+        public A A;
+
+        public void Something(int param)
+        {{
+            Test t = new Test();
+            t.A = new A();
+            t.A.IntProperty = param;
+            if (param >= 0)
+            {{
+                A a1 = new A();
+                a1.IntProperty = 1;
+                t.A = a1;                    // t.A now contains/points to a1
+            }}
+            else
+            {{
+                A a2 = new A();
+                a2.IntProperty = 1;
+                t.A = a2;                    // t.A now contains/points to a2     
+            }}
+        
+            if (t.A.IntProperty == 1)        // t.A now contains/points either a1 or a2, both of which have .IntProperty = """"
+            {{
+            }}
+        }}
+    }}
+}}",
+            // Test0.cs(33,17): warning CA1508: 't.A.IntProperty == 1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(33, 17, "t.A.IntProperty == 1", "true"));
+        }
     }
 }

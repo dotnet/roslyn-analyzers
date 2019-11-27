@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                if (!DisposeAnalysisHelper.TryGetOrCreate(compilationContext.Compilation, out DisposeAnalysisHelper disposeAnalysisHelper))
+                if (!DisposeAnalysisHelper.TryGetOrCreate(compilationContext.Compilation, out var disposeAnalysisHelper))
                 {
                     return;
                 }
@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (trackExceptionPaths)
                             {
                                 // Compute diagnostics for undisposed objects at handled exception exit paths.
-                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult.ExceptionPathsExitBlockOutputOpt.Data;
+                                var disposeDataAtHandledExceptionPaths = disposeAnalysisResult.ExceptionPathsExitBlockOutputOpt!.Data;
                                 ComputeDiagnostics(disposeDataAtHandledExceptionPaths,
                                     notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                     disposeAnalysisKind, isDisposeDataForExceptionPaths: true);
@@ -197,7 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     bool CanBeDisposable(ITypeSymbol type)
                         => type.SpecialType == SpecialType.System_Object ||
-                            type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            type.DerivesFrom(disposeAnalysisHelper!.IDisposable) ||
                             type.TypeKind == TypeKind.Delegate;
                 }
             });

@@ -56,8 +56,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         protected abstract class DisposableFieldAnalyzer
         {
-            private readonly INamedTypeSymbol _disposableTypeSymbol;
-            private readonly INamedTypeSymbol _asyncDisposableTypeSymbol;
+            private readonly INamedTypeSymbol? _disposableTypeSymbol;
+            private readonly INamedTypeSymbol? _asyncDisposableTypeSymbol;
 
             public DisposableFieldAnalyzer(WellKnownTypeProvider wellKnownTypeProvider)
             {

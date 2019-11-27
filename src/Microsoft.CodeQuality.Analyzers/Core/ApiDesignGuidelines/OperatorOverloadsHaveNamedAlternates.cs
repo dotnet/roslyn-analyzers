@@ -112,7 +112,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 else
                 {
-                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType, methodSymbol.Parameters.FirstOrDefault()?.Type);
+                    ExpectedAlternateMethodGroup? expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType, methodSymbol.Parameters.FirstOrDefault()?.Type);
                     if (expectedGroup == null)
                     {
                         // no alternate methods required
@@ -191,7 +191,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol parameterType)
+        internal static ExpectedAlternateMethodGroup? GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol? parameterType)
         {
             // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates
 
@@ -267,9 +267,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal class ExpectedAlternateMethodGroup
         {
             public string AlternateMethod1 { get; }
-            public string AlternateMethod2 { get; }
+            public string? AlternateMethod2 { get; }
 
-            public ExpectedAlternateMethodGroup(string alternateMethod1, string alternateMethod2 = null)
+            public ExpectedAlternateMethodGroup(string alternateMethod1, string? alternateMethod2 = null)
             {
                 AlternateMethod1 = alternateMethod1;
                 AlternateMethod2 = alternateMethod2;

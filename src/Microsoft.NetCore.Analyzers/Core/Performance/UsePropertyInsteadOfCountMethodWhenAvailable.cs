@@ -89,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         protected sealed class OperationActionsContext
         {
             private readonly Lazy<WellKnownTypeProvider> _wellKnownTypeProvider;
-            private readonly Lazy<INamedTypeSymbol> _immutableArrayType;
+            private readonly Lazy<INamedTypeSymbol?> _immutableArrayType;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="OperationActionsContext"/> class.
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 EnumerableType = enumerableType;
                 _wellKnownTypeProvider = new Lazy<WellKnownTypeProvider>(() => WellKnownTypeProvider.GetOrCreate(compilation), true);
-                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => _wellKnownTypeProvider.Value.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
+                _immutableArrayType = new Lazy<INamedTypeSymbol?>(() => _wellKnownTypeProvider.Value.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableImmutableArray), true);
             }
 
             private INamedTypeSymbol EnumerableType { get; }
@@ -108,10 +108,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             internal WellKnownTypeProvider WellKnownTypeProvider => _wellKnownTypeProvider.Value;
 
             /// <summary>
-            /// Gets the type of the <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.
+            /// Gets the type of the <see cref="System.Collections.Generic.ICollection{TSource}"/> type.
             /// </summary>
-            /// <value>The <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.</value>
-            internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
+            /// <value>The <see cref="System.Collections.Generic.ICollection{TSource}"/> type.</value>
+            internal INamedTypeSymbol? ImmutableArrayType => _immutableArrayType.Value;
 
             /// <summary>
             /// Determines whether the specified type symbol is the immutable array generic type.
@@ -178,14 +178,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
             /// <returns>The <see cref="ITypeSymbol"/> of the receiver of the extension method.</returns>
-            protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
+            protected abstract ITypeSymbol? GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
 
             /// <summary>
             /// Gets the replacement property.
             /// </summary>
             /// <param name="invocationTarget">The invocation target.</param>
             /// <returns>The name of the replacement property.</returns>
-            private string GetReplacementProperty(ITypeSymbol invocationTarget)
+            private string? GetReplacementProperty(ITypeSymbol invocationTarget)
             {
                 if ((invocationTarget.TypeKind == TypeKind.Array) || Context.IsImmutableArrayType(invocationTarget))
                 {

@@ -88,12 +88,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
                                     out var copyAnalysisResultOpt, out var pointsToAnalysisResult);
-                            if (valueContentAnalysisResult == null)
+                            if (valueContentAnalysisResult == null ||
+                                pointsToAnalysisResult == null)
                             {
                                 continue;
                             }
-
-                            Debug.Assert(pointsToAnalysisResult != null);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {
@@ -168,6 +167,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                              operation.Kind == OperationKind.Invocation ||
                                              operation.Kind == OperationKind.IsNull ||
                                              operation.Kind == OperationKind.IsPattern);
+                                RoslynDebug.Assert(pointsToAnalysisResult != null);
+                                RoslynDebug.Assert(valueContentAnalysisResult != null);
 
                                 if (operation is IBinaryOperation binaryOperation &&
                                     binaryOperation.IsComparisonOperator() ||

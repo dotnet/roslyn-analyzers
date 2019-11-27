@@ -23,7 +23,7 @@ namespace ReleaseNotesUtil
                 return ImmutableArray<CodeFixProvider>.Empty;
             }
 
-            ImmutableArray<CodeFixProvider>.Builder builder = null;
+            ImmutableArray<CodeFixProvider>.Builder? builder = null;
 
             try
             {
@@ -67,8 +67,8 @@ namespace ReleaseNotesUtil
         private static bool HasImplementation(CodeFixProvider fixer)
         {
             MethodInfo method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
-            AsyncStateMachineAttribute stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
-            MethodInfo moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
+            AsyncStateMachineAttribute? stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
+            MethodInfo? moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
             if (moveNextMethod != null)
             {
                 MethodBody body = moveNextMethod.GetMethodBody();
@@ -80,8 +80,7 @@ namespace ReleaseNotesUtil
             // {
             //     return Task.CompletedTask;
             // }
-            byte[] methodBodyIL = method?.GetMethodBody()?.GetILAsByteArray();
-            if (methodBodyIL != null
+            if (method?.GetMethodBody()?.GetILAsByteArray() is { } methodBodyIL
                 && methodBodyIL.Length == 6
                 && methodBodyIL[0] == 0x28    // call <method>
                 && methodBodyIL[5] == 0x2a)   // ret

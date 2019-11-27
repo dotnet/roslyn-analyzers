@@ -68,7 +68,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebHttpCookie,
-                            out INamedTypeSymbol httpCookieSymbol))
+                            out INamedTypeSymbol? httpCookieSymbol))
                     {
                         return;
                     }
@@ -144,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
 
                             try
                             {

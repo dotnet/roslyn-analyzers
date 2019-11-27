@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol stringComparisonType = context.Compilation.GetOrCreateTypeByMetadataName(StringComparisonTypeName);
+                    INamedTypeSymbol? stringComparisonType = context.Compilation.GetOrCreateTypeByMetadataName(StringComparisonTypeName);
                     if (stringComparisonType != null)
                     {
                         context.RegisterOperationAction(operationContext =>

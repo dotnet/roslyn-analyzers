@@ -61,6 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
                 var fieldInitializerValue = fieldInitializer?.Value;
                 if (fieldInitializerValue == null ||
+                    lastField == null ||
                     lastField.IsConst ||
                     !lastField.IsReadOnly ||
                     !fieldInitializerValue.ConstantValue.HasValue ||

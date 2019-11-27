@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -43,10 +42,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override void Initialize(AnalysisContext context)
         {
-            Debug.Assert(TypeMetadataName != null);
-            Debug.Assert(MethodMetadataName != null);
-            Debug.Assert(Rule != null);
-
             context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
@@ -58,28 +53,28 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             TypeMetadataName,
-                            out INamedTypeSymbol xmlSchemaTypeSymbol))
+                            out INamedTypeSymbol? xmlSchemaTypeSymbol))
                 {
                     return;
                 }
 
-                INamedTypeSymbol xmlReaderTypeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
+                INamedTypeSymbol? xmlReaderTypeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var operation = operationAnalysisContext.Operation;
-                    IMethodSymbol methodSymbol = null;
-                    string methodName = null;
+                    IMethodSymbol? methodSymbol = null;
+                    string? methodName = null;
 
                     switch (operation.Kind)
                     {
                         case OperationKind.Invocation:
-                            methodSymbol = (operation as IInvocationOperation).TargetMethod;
+                            methodSymbol = ((IInvocationOperation)operation).TargetMethod;
                             methodName = methodSymbol.Name;
                             break;
 
                         case OperationKind.ObjectCreation:
-                            methodSymbol = (operation as IObjectCreationOperation).Constructor;
+                            methodSymbol = ((IObjectCreationOperation)operation).Constructor;
                             methodName = methodSymbol.ContainingType.Name;
                             break;
 

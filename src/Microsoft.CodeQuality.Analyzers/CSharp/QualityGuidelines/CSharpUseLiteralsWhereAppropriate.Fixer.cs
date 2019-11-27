@@ -15,14 +15,14 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseLiteralsWhereAppropriateFixer : UseLiteralsWhereAppropriateFixer
     {
-        protected override SyntaxNode GetFieldDeclaration(SyntaxNode syntaxNode)
+        protected override SyntaxNode? GetFieldDeclaration(SyntaxNode syntaxNode)
         {
             while (syntaxNode != null && !(syntaxNode is FieldDeclarationSyntax))
             {
                 syntaxNode = syntaxNode.Parent;
             }
 
-            var field = (FieldDeclarationSyntax)syntaxNode;
+            var field = (FieldDeclarationSyntax?)syntaxNode;
 
             // Multiple declarators are not supported, as one of them may not be constant.
             return field?.Declaration.Variables.Count > 1 ? null : field;

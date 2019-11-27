@@ -57,10 +57,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol iCollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
-                    INamedTypeSymbol genericICollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
-                    INamedTypeSymbol arrayType = context.Compilation.GetSpecialType(SpecialType.System_Array);
-                    INamedTypeSymbol dataMemberAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
+                    INamedTypeSymbol? iCollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                    INamedTypeSymbol? genericICollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                    INamedTypeSymbol? arrayType = context.Compilation.GetSpecialType(SpecialType.System_Array);
+                    INamedTypeSymbol? dataMemberAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
                     ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = GetIImmutableInterfaces(context.Compilation);
 
                     if (iCollectionType == null ||
@@ -79,7 +79,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol iCollectionType,
             INamedTypeSymbol genericICollectionType,
             INamedTypeSymbol arrayType,
-            INamedTypeSymbol dataMemberAttribute,
+            INamedTypeSymbol? dataMemberAttribute,
             ImmutableHashSet<INamedTypeSymbol> immutableInterfaces)
         {
             var property = (IPropertySymbol)context.Symbol;
@@ -147,7 +147,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return builder.ToImmutable();
 
             // Local functions.
-            void AddIfNotNull(INamedTypeSymbol type)
+            void AddIfNotNull(INamedTypeSymbol? type)
             {
                 if (type != null)
                 {

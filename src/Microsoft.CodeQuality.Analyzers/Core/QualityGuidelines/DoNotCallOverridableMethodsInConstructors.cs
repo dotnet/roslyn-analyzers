@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
-                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
+                INamedTypeSymbol? webUiControlType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
+                INamedTypeSymbol? componentModelComponentType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
 
                 compilationContext.RegisterOperationBlockStartAction(context =>
                 {
@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
-            var operation = context.Operation as IInvocationOperation;
+            var operation = (IInvocationOperation)context.Operation;
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
@@ -72,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
         }
 
-        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol webUiControlType, INamedTypeSymbol componentModelComponentType)
+        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol? webUiControlType, INamedTypeSymbol? componentModelComponentType)
         {
             // This diagnostic is only relevant in constructors.
             // TODO: should this apply to instance field initializers for VB?

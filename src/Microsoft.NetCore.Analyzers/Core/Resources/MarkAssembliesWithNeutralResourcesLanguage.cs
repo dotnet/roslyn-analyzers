@@ -96,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
                 return false;
             }
 
-            INamedTypeSymbol generatedCode = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCodeDomCompilerGeneratedCodeAttribute);
+            INamedTypeSymbol? generatedCode = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCodeDomCompilerGeneratedCodeAttribute);
             if (model.GetSymbolInfo(attribute, cancellationToken).Symbol?.ContainingType?.Equals(generatedCode) != true)
             {
                 return false;
@@ -123,8 +123,8 @@ namespace Microsoft.NetCore.Analyzers.Resources
 
         private static bool TryCheckNeutralResourcesLanguageAttribute(CompilationAnalysisContext context, out AttributeData attributeData)
         {
-            INamedTypeSymbol attribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemResourcesNeutralResourcesLanguageAttribute);
-            INamedTypeSymbol @string = context.Compilation.GetSpecialType(SpecialType.System_String);
+            INamedTypeSymbol? attribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemResourcesNeutralResourcesLanguageAttribute);
+            INamedTypeSymbol? @string = context.Compilation.GetSpecialType(SpecialType.System_String);
 
             IEnumerable<AttributeData> attributes = context.Compilation.Assembly.GetAttributes().Where(d => d.AttributeClass?.Equals(attribute) == true);
             foreach (AttributeData data in attributes)

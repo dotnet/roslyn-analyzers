@@ -23,7 +23,7 @@ namespace GenerateAnalyzerRulesets
                 return ImmutableArray<CodeFixProvider>.Empty;
             }
 
-            ImmutableArray<CodeFixProvider>.Builder builder = null;
+            ImmutableArray<CodeFixProvider>.Builder? builder = null;
 
             try
             {
@@ -67,8 +67,8 @@ namespace GenerateAnalyzerRulesets
         private static bool HasImplementation(CodeFixProvider fixer)
         {
             MethodInfo method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
-            AsyncStateMachineAttribute stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
-            MethodInfo moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
+            AsyncStateMachineAttribute? stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
+            MethodInfo? moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
             if (moveNextMethod != null)
             {
                 MethodBody body = moveNextMethod.GetMethodBody();

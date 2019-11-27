@@ -82,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
-                        (object o) => o is int i && i != 0),    // None is 0, and anything other than None is flagged.
+                        (object? o) => o is int i && i != 0),    // None is 0, and anything other than None is flagged.
                 TypeNameHandlingIndex),
             new PropertyMapper(
                 "Binder",
@@ -127,9 +127,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings, out INamedTypeSymbol jsonSerializerSettingsSymbol)
-                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializer, out INamedTypeSymbol jsonSerializerSymbol)
-                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonConvert, out INamedTypeSymbol jsonConvertSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings, out INamedTypeSymbol? jsonSerializerSettingsSymbol)
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializer, out INamedTypeSymbol? jsonSerializerSymbol)
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonConvert, out INamedTypeSymbol? jsonConvertSymbol))
                     {
                         return;
                     }
@@ -206,7 +206,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
                             try
                             {
                                 lock (rootOperationsNeedingAnalysis)

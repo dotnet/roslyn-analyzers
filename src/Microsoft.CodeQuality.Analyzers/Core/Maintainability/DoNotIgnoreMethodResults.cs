@@ -130,9 +130,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol expectedExceptionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
-                INamedTypeSymbol nunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
-                INamedTypeSymbol xunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
+                INamedTypeSymbol? expectedExceptionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
+                INamedTypeSymbol? nunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
+                INamedTypeSymbol? xunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -144,8 +144,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     osContext.RegisterOperationAction(opContext =>
                     {
                         IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
-                        DiagnosticDescriptor rule = null;
-                        string targetMethodName = null;
+                        DiagnosticDescriptor? rule = null;
+                        string? targetMethodName = null;
                         switch (expression.Kind)
                         {
                             case OperationKind.ObjectCreation:
@@ -201,9 +201,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType, INamedTypeSymbol xunitAssertType, INamedTypeSymbol nunitAssertType)
+        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol? expectedExceptionType, INamedTypeSymbol? xunitAssertType, INamedTypeSymbol? nunitAssertType)
         {
-            static bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
+            static bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol? assertSymbol)
             {
                 return parameterSymbol.Name == argumentName &&
                        parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
@@ -284,7 +284,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
             else
             {
-                IArgumentOperation argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+                IArgumentOperation? argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
 
                 if (argumentOperation == null)
                 {

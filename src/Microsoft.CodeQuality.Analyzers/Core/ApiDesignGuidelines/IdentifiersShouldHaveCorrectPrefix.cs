@@ -116,7 +116,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             WordParser parser = new WordParser(symbol.Name, WordParserOptions.SplitCompoundWords, prefix);
 
-            string firstWord = parser.NextWord();
+            string? firstWord = parser.NextWord();
 
             if (firstWord == null || firstWord.Length > 1)
             {

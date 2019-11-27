@@ -130,7 +130,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void ReportDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
         {
             //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-            ImmutableDictionary<string, string>.Builder builder = ImmutableDictionary.CreateBuilder<string, string>();
+            ImmutableDictionary<string, string?>.Builder builder = ImmutableDictionary.CreateBuilder<string, string?>();
             builder.Add("Signature", missingCtorSignature.ToString());
 
             //create dignostic and store signature into diagnostic property for fixer

@@ -66,8 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol comparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable);
-                INamedTypeSymbol genericComparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable1);
+                INamedTypeSymbol? comparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable);
+                INamedTypeSymbol? genericComparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable1);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)
@@ -83,7 +83,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol? comparableType, INamedTypeSymbol? genericComparableType)
         {
             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
             // will always have identical configured visibility.
@@ -115,7 +115,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        private static bool IsComparableWithBaseNotComparable(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
+        private static bool IsComparableWithBaseNotComparable(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol? comparableType, INamedTypeSymbol? genericComparableType)
         {
             if (!IsComparableCore(namedTypeSymbol, comparableType, genericComparableType))
             {
@@ -133,20 +133,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return true;
         }
 
-        private static bool IsComparableCore(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
+        private static bool IsComparableCore(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol? comparableType, INamedTypeSymbol? genericComparableType)
             => namedTypeSymbol.AllInterfaces.Any(t => t.Equals(comparableType) ||
                                                     (t.ConstructedFrom?.Equals(genericComparableType) ?? false));
 
         private static string GetNeededComparisonOperators(INamedTypeSymbol symbol)
         {
-            bool first = true;
-            StringBuilder sb = null;
+            StringBuilder? sb = null;
             void Append(string @operator)
             {
-                if (first)
+                if (sb == null)
                 {
                     sb = new StringBuilder();
-                    first = false;
                 }
                 else
                 {

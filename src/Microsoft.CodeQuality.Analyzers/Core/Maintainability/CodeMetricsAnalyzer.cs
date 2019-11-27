@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -128,9 +129,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                 if (!TryGetRuleIdToThresholdMap(
                         compilationContext.Options.AdditionalFiles,
                         compilationContext.CancellationToken,
-                        out AdditionalText additionalTextOpt,
-                        out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
-                        out List<Diagnostic> invalidFileDiagnostics) &&
+                        out AdditionalText? additionalTextOpt,
+                        out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>>? ruleIdToThresholdMap,
+                        out List<Diagnostic>? invalidFileDiagnostics) &&
                     invalidFileDiagnostics != null)
                 {
                     // Report any invalid additional file diagnostics.
@@ -307,9 +308,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         private static bool TryGetRuleIdToThresholdMap(
             ImmutableArray<AdditionalText> additionalFiles,
             CancellationToken cancellationToken,
-            out AdditionalText additionalText,
-            out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
-            out List<Diagnostic> invalidFileDiagnostics)
+            [NotNullWhen(returnValue: true)] out AdditionalText? additionalText,
+            [NotNullWhen(returnValue: true)] out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>>? ruleIdToThresholdMap,
+            out List<Diagnostic>? invalidFileDiagnostics)
         {
             invalidFileDiagnostics = null;
             ruleIdToThresholdMap = null;
@@ -321,7 +322,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                 TryParseCodeMetricsConfigurationFile(additionalText, cancellationToken, out ruleIdToThresholdMap, out invalidFileDiagnostics);
         }
 
-        private static AdditionalText TryGetCodeMetricsConfigurationFile(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
+        private static AdditionalText? TryGetCodeMetricsConfigurationFile(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
         {
             StringComparer comparer = StringComparer.Ordinal;
             foreach (AdditionalText textFile in additionalFiles)
@@ -341,8 +342,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         private static bool TryParseCodeMetricsConfigurationFile(
             AdditionalText additionalText,
             CancellationToken cancellationToken,
-            out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>> ruleIdToThresholdMap,
-            out List<Diagnostic> invalidFileDiagnostics)
+            [NotNullWhen(returnValue: true)] out ImmutableDictionary<string, IReadOnlyList<(SymbolKind?, uint)>>? ruleIdToThresholdMap,
+            out List<Diagnostic>? invalidFileDiagnostics)
         {
             // Parse the additional file with Metric rule ID (which may contain an optional parenthesized SymbolKind suffix) and custom threshold.
             //     # FORMAT:

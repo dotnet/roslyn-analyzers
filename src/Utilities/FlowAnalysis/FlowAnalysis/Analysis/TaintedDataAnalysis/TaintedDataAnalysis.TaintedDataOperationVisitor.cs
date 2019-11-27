@@ -628,7 +628,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 {
                     TaintedDataAbstractValue taintedDataAbstractValue = GetCachedAbstractValue(value);
 
-                    // Array in the default state: NotTainted.
+                    // Array is in the default state or sanitized: NotTainted.
                     if (taintedDataAbstractValue.Kind == TaintedDataAbstractValueKind.NotTainted
                         && this.DataFlowAnalysisContext.SourceInfos.IsSourceArray(arrayTypeSymbol, out TaintArrayKind taintArrayKind)
                         && taintArrayKind == TaintArrayKind.All)

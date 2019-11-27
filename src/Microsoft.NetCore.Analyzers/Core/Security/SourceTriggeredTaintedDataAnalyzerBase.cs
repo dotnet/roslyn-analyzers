@@ -139,17 +139,39 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
-                                    IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceMethod(
-                                            invocationOperation.TargetMethod,
-                                            invocationOperation.Arguments,
-                                            pointsToFactory,
-                                            valueContentFactory,
-                                            out _))
+                                    IMethodSymbol methodSymbol;
+                                    ImmutableArray<IArgumentOperation> argumentOperations;
+                                    IOperation operation = operationAnalysisContext.Operation;
+                                    switch (operation)
                                     {
-                                        lock (rootOperationsNeedingAnalysis)
+                                        case IInvocationOperation invocationOperation:
+                                            methodSymbol = invocationOperation.TargetMethod;
+                                            argumentOperations = invocationOperation.Arguments;
+                                            break;
+
+                                        case IObjectCreationOperation objectCreationOperation:
+                                            methodSymbol = objectCreationOperation.Constructor;
+                                            argumentOperations = objectCreationOperation.Arguments;
+                                            break;
+
+                                        default:
+                                            return;
+                                    }
+
+                                    IOperation rootOperation = operation.GetRoot();
+                                    if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
+                                    {
+                                        if (sourceInfoSymbolMap.IsSourceMethod(
+                                                methodSymbol,
+                                                argumentOperations,
+                                                pointsToFactory,
+                                                valueContentFactory,
+                                                out _))
                                         {
-                                            rootOperationsNeedingAnalysis.Add(invocationOperation.GetRoot());
+                                            lock (rootOperationsNeedingAnalysis)
+                                            {
+                                                rootOperationsNeedingAnalysis.Add(rootOperation);
+                                            }
                                         }
                                     }
                                 },

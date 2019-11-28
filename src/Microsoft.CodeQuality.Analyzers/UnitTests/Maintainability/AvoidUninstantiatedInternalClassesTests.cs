@@ -1342,8 +1342,108 @@ internal interface IFoo4 {}
 
 internal class CFoo {}
 ",
-                CompilerDiagnostics.None, // Invalid syntaxes around CoClass
-                GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
+                CompilerDiagnostics.None); // Invalid syntaxes around CoClass
+        }
+
+        [Fact, WorkItem(1708, "https://github.com/dotnet/roslyn-analyzers/issues/1708")]
+        public async Task CA1812_TypeOf_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+internal class Foo
+{
+}
+
+public class C
+{
+    public C()
+    {
+        var res = typeof(Foo);
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Friend Class Foo
+End Class
+
+Public Class C
+    Public Sub New()
+        Dim res = GetType(Foo)
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1708, "https://github.com/dotnet/roslyn-analyzers/issues/1708")]
+        public async Task CA1812_DebuggerTypeProxyTypeOf_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+internal class FooDebugView
+{
+}
+
+[System.Diagnostics.DebuggerTypeProxy(typeof(FooDebugView))]
+public class Foo
+{
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Friend Class FooDebugView
+End Class
+
+<System.Diagnostics.DebuggerTypeProxy(GetType(FooDebugView))>
+Public Class Foo
+End Class");
+        }
+
+        [Fact, WorkItem(1708, "https://github.com/dotnet/roslyn-analyzers/issues/1708")]
+        public async Task CA1812_IsOperator_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+internal class Foo
+{
+}
+
+public class C
+{
+    public C(object o)
+    {
+        if (o is Foo)
+        {
+        }
+    }
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Friend Class Foo
+End Class
+
+Public Class C
+    Public Sub New(ByVal o As Object)
+        If TypeOf o Is Foo Then
+        End If
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1708, "https://github.com/dotnet/roslyn-analyzers/issues/1708")]
+        public async Task CA1812_IsPattern_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+internal class Foo
+{
+}
+
+public class C
+{
+    public C(object o)
+    {
+        if (o is Foo f)
+        {
+        }
+    }
+}
+");
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

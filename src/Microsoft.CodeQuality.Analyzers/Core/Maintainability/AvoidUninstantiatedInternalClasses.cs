@@ -82,6 +82,34 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
                 }, OperationKind.ObjectCreation);
 
+                startContext.RegisterOperationAction(context =>
+                {
+                    var expr = (ITypeOfOperation)context.Operation;
+                    if (expr.TypeOperand is INamedTypeSymbol namedType)
+                    {
+                        instantiatedTypes.TryAdd(namedType, null);
+                    }
+                }, OperationKind.TypeOf);
+
+                startContext.RegisterOperationAction(context =>
+                {
+                    var expr = (IIsTypeOperation)context.Operation;
+                    if (expr.TypeOperand is INamedTypeSymbol namedType)
+                    {
+                        instantiatedTypes.TryAdd(namedType, null);
+                    }
+                }, OperationKind.IsType);
+
+                startContext.RegisterOperationAction(context =>
+                {
+                    var expr = (IIsPatternOperation)context.Operation;
+                    if (expr.Pattern is IDeclarationPatternOperation declarationPattern &&
+                        declarationPattern.MatchedType is INamedTypeSymbol namedType)
+                    {
+                        instantiatedTypes.TryAdd(namedType, null);
+                    }
+                }, OperationKind.IsPattern);
+
                 startContext.RegisterSymbolAction(context =>
                 {
                     var type = (INamedTypeSymbol)context.Symbol;

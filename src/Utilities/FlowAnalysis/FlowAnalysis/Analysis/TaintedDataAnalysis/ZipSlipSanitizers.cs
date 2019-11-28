@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities.PooledObjects;
 
@@ -31,7 +32,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     "Substring",
                 },
                 sanitizingMethodsSpecifyTargets: new[] {
-                    ("StartsWith", (false, true, (string[])null)),
+                    ("StartsWith", (false, true, Array.Empty<string>())),
                 });
 
             SanitizerInfos = builder.ToImmutableAndFree();

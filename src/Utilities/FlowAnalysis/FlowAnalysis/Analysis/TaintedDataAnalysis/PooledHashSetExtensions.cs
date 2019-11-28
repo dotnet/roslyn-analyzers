@@ -207,7 +207,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             bool isInterface,
             bool isConstructorSanitizing,
             string[]? sanitizingMethods,
-            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[]? SanitizedArguments) SanitizedTargets)>? sanitizingMethodsSpecifyTargets = null)
+            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)>? sanitizingMethodsSpecifyTargets = null)
         {
             SanitizerInfo info = new SanitizerInfo(
                 fullTypeName,

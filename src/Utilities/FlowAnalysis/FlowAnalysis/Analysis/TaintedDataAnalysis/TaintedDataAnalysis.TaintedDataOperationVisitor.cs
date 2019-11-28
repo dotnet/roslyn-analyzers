@@ -636,7 +636,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     {
                         if (AnalysisEntityFactory.TryCreate(value, out AnalysisEntity? analysisEntity))
                         {
-                            if (!this.CurrentAnalysisData.TryGetValue(analysisEntity, out taintedDataAbstractValue))
+                            if (analysisEntity.SymbolOpt != null && !this.CurrentAnalysisData.TryGetValue(analysisEntity, out taintedDataAbstractValue))
                             {
                                 // We're relying on us not tracking AnalysisEntities unless they're sanitized or tainted.
                                 taintedDataAbstractValue = TaintedDataAbstractValue.CreateTainted(analysisEntity.SymbolOpt, analysisEntity.SymbolOpt.DeclaringSyntaxReferences.FirstOrDefault().GetSyntax(), this.OwningSymbol);

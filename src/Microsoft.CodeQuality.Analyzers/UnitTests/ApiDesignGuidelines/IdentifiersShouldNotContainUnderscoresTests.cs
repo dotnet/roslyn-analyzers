@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -437,6 +438,73 @@ public class Span
     public string GetText() => _text;
 }
 ");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolParameter_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public static class MyHelper
+{
+    public static int GetBar(this string _) => 42;
+
+    public static void Foo()
+    {
+        FooBar(out _);
+    }
+
+    public static void FooBar(out int p)
+    {
+        p = 42;
+    }
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolTuple_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo()
+    {
+        var (_, d) = GetSomething();
+    }
+
+    private static (string, double) GetSomething() => ("""", 0);
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolPatternMatching_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo(object o)
+    {
+        switch (o)
+        {
+            case object _:
+                break;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_StandaloneDiscardSymbol_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo(object o)
+    {
+        _ = GetBar();
+    }
+
+    public int GetBar() => 42;
+}");
         }
 
         #endregion

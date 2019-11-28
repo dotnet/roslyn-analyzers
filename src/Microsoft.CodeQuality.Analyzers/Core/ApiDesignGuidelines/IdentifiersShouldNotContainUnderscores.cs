@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
-using System.Collections.Generic;
-using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -230,7 +230,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             foreach (var parameter in parameters)
             {
-                if (ContainsUnderScore(parameter.Name))
+                if (ContainsUnderScore(parameter.Name) && !parameter.IsSymbolWithSpecialDiscardName())
                 {
                     var containingType = parameter.ContainingType;
 

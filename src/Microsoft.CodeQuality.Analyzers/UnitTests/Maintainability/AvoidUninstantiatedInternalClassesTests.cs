@@ -145,6 +145,21 @@ End Module");
         }
 
         [Fact]
+        public async Task CA1812_CSharp_NoDiagnostic_InternalAbstractClass()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(
+@"internal abstract class A { }");
+        }
+
+        [Fact]
+        public async Task CA1812_Basic_NoDiagnostic_InternalAbstractClass()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(
+@"Friend MustInherit Class A
+End Class");
+        }
+
+        [Fact]
         public async Task CA1812_CSharp_NoDiagnostic_InternalDelegate()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

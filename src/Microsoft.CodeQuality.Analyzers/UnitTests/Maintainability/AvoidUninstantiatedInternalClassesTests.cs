@@ -145,21 +145,6 @@ End Module");
         }
 
         [Fact]
-        public async Task CA1812_CSharp_NoDiagnostic_InternalAbstractClass()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(
-@"internal abstract class A { }");
-        }
-
-        [Fact]
-        public async Task CA1812_Basic_NoDiagnostic_InternalAbstractClass()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(
-@"Friend MustInherit Class A
-End Class");
-        }
-
-        [Fact]
         public async Task CA1812_CSharp_NoDiagnostic_InternalDelegate()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -1344,6 +1329,102 @@ internal class CFoo {}
 ",
                 CompilerDiagnostics.None, // Invalid syntaxes around CoClass
                 GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeNameWithFullAssemblyName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=123"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeGlobalTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+internal class MyTextBoxDesigner { }
+
+[Designer(""MyTextBoxDesigner, TestProject"")]
+public class MyTextBox { }");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeWithBaseTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"", ""Foo.SomeBaseType"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeWithBaseType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"", typeof(SomeBaseType))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeNestedType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    [Designer(""Foo.MyTextBox.MyTextBoxDesigner, TestProject"")]
+    public class MyTextBox
+    {
+        internal class MyTextBoxDesigner { }
+    }
+}");
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

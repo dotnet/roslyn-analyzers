@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -127,7 +127,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var isNetStandardAssembly = context.Compilation.ReferencedAssemblyNames.Any(identity => string.Equals(identity.Name, "netstandard", StringComparison.OrdinalIgnoreCase));
+                    var systemObjectSymbol = context.Compilation.GetSpecialType(SpecialType.System_Object);
+                    var isNetStandardAssembly = systemObjectSymbol.ContainingAssembly.Name != "mscorlib";
 
                     var symbolAnalyzer = new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol, isNetStandardAssembly);
                     context.RegisterSymbolAction(symbolAnalyzer.AnalyzeSymbol, SymbolKind.NamedType);
@@ -196,7 +197,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (serializationCtor == null)
                         {
                             context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleCA2229,
-                                string.Format(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
+                                string.Format(CultureInfo.CurrentCulture,
+                                    MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
                                     namedTypeSymbol.Name)));
                         }
                         else
@@ -207,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 serializationCtor.DeclaredAccessibility != Accessibility.Private)
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
-                                    string.Format(
+                                    string.Format(CultureInfo.CurrentCulture,
                                         MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate,
                                         namedTypeSymbol.Name)));
                             }
@@ -216,7 +218,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 serializationCtor.DeclaredAccessibility != Accessibility.Protected)
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
-                                    string.Format(
+                                    string.Format(CultureInfo.CurrentCulture,
                                         MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily,
                                         namedTypeSymbol.Name)));
                             }

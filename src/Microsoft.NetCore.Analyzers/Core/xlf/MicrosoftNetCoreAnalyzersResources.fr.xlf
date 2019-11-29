@@ -159,12 +159,12 @@
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
         <source>HttpClients should enable certificate revocation list checks</source>
-        <target state="new">HttpClients should enable certificate revocation list checks</target>
+        <target state="translated">HttpClients doit activer les vérifications de la liste de révocation de certificats</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheckMessage">
         <source>HttpClient is created without enabling CheckCertificateRevocationList</source>
-        <target state="new">HttpClient is created without enabling CheckCertificateRevocationList</target>
+        <target state="translated">HttpClient est créé sans activation de CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
@@ -179,12 +179,12 @@
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
         <source>Do not use CreateEncryptor with non-default IV</source>
-        <target state="new">Do not use CreateEncryptor with non-default IV</target>
+        <target state="translated">Ne pas utiliser CreateEncryptor avec une valeur IV non définie par défaut</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
         <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
-        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
+        <target state="translated">Le chiffrement symétrique utilise un vecteur d'initialisation non défini par défaut potentiellement répétable</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
@@ -274,12 +274,12 @@
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="translated">Utilisez le modèle de suppression recommandé pour vérifier que l'objet créé par '{0}' est supprimé sur tous les chemins. Si possible, incluez la création dans un wrapper au sein d'une instruction 'using' ou d'une déclaration 'using'. Sinon, utilisez un modèle try-finally avec une variable locale dédiée déclarée avant la région try et un appel inconditionnel de Dispose sur une valeur non null dans la région 'finally', par exemple 'x?.Dispose()'. Si l'objet est explicitement supprimé dans la région try ou si la propriété de suppression est transférée vers un autre objet ou une autre méthode, affectez la valeur 'null' à la variable locale juste après cette opération pour éviter une double suppression dans 'finally'.</target>
+        <target state="translated">Utilisez le modèle Dispose recommandé pour vérifier que l'objet créé par '{0}' est supprimé sur tous les chemins. Si possible, enveloppez la création dans une instruction 'using' ou une déclaration 'using'. Sinon, utilisez un modèle try-finally avec une variable locale dédiée déclarée avant la région try et un appel inconditionnel de Dispose sur une valeur non null dans la région 'finally', par exemple 'x?.Dispose()'. Si l'objet est explicitement supprimé dans la région try ou si la propriété de suppression est transférée vers un autre objet ou une autre méthode, affectez la valeur 'null' à la variable locale juste après cette opération pour éviter une double suppression dans 'finally'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="translated">Utilisez le modèle de suppression recommandé pour vérifier que l'objet créé par '{0}' est supprimé sur tous les chemins d'exception. Si possible, incluez la création dans un wrapper au sein d'une instruction 'using' ou d'une déclaration 'using'. Sinon, utilisez un modèle try-finally avec une variable locale dédiée déclarée avant la région try et un appel inconditionnel de Dispose sur une valeur non null dans la région 'finally', par exemple 'x?.Dispose()'. Si l'objet est explicitement supprimé dans la région try ou si la propriété de suppression est transférée vers un autre objet ou une autre méthode, affectez la valeur 'null' à la variable locale juste après cette opération pour éviter une double suppression dans 'finally'.</target>
+        <target state="translated">Utilisez le modèle Dispose recommandé pour vérifier que l'objet créé par '{0}' est supprimé sur tous les chemins d'exception. Si possible, enveloppez la création dans une instruction 'using' ou une déclaration 'using'. Sinon, utilisez un modèle try-finally avec une variable locale dédiée déclarée avant la région try et un appel inconditionnel de Dispose sur une valeur non null dans la région 'finally', par exemple 'x?.Dispose()'. Si l'objet est explicitement supprimé dans la région try ou si la propriété de suppression est transférée vers un autre objet ou une autre méthode, affectez la valeur 'null' à la variable locale juste après cette opération pour éviter une double suppression dans 'finally'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
@@ -414,7 +414,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
         <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
-        <target state="new">Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</target>
+        <target state="translated">L'utilisation de HttpClient sans fournir de gestionnaire spécifique à la plateforme (WinHttpHandler ou CurlHandler ou HttpClientHandler), où la propriété CheckCertificateRevocationList a la valeur true, permet aux certificats révoqués d'être acceptés par HttpClient comme valides.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
@@ -474,32 +474,32 @@
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
         <source>Do not hard-code certificate</source>
-        <target state="new">Do not hard-code certificate</target>
+        <target state="translated">Ne pas coder en dur le certificat</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificateDescription">
         <source>Hard-coded certificates in source code are vulnerable to being exploited.</source>
-        <target state="new">Hard-coded certificates in source code are vulnerable to being exploited.</target>
+        <target state="translated">Les certificats codés en dur dans le code source sont vulnérables aux attaques.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeCertificateMessage">
         <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</source>
-        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</target>
+        <target state="translated">Une vulnérabilité potentielle liée à la sécurité a été détectée. '{0}' dans la méthode '{1}' peut être souillé par un certificat codé en dur en provenance de '{2}' dans la méthode '{3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
         <source>Do not hard-code encryption key</source>
-        <target state="needs-review-translation">Ne pas coder en dur la clé de chiffrement</target>
+        <target state="translated">Ne pas coder en dur la clé de chiffrement</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
         <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
-        <target state="needs-review-translation">La propriété .Key de SymmetricAlgorithm ou le paramètre rgbKey d'une méthode ne doivent jamais correspondre à une valeur codée en dur.</target>
+        <target state="translated">La propriété .Key de SymmetricAlgorithm ou le paramètre rgbKey d'une méthode ne doivent jamais correspondre à une valeur codée en dur.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
         <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
-        <target state="needs-review-translation">Une vulnérabilité potentielle liée à la sécurité a été détectée. '{0}' dans la méthode '{1}' peut être altéré par une clé codée en dur en provenance de '{2}' dans la méthode '{3}'</target>
+        <target state="translated">Une vulnérabilité potentielle liée à la sécurité a été détectée. '{0}' dans la méthode '{1}' peut être souillé par une clé codée en dur en provenance de '{2}' dans la méthode '{3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -619,37 +619,37 @@
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
+        <target state="translated">Pour les collections non vides, CountAsync() et LongCountAsync() énumèrent la séquence entière, alors que AnyAsync() s'arrête au premier élément ou au premier élément qui satisfait une condition.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
         <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where AnyAsync() could be used instead to improve performance.</target>
+        <target state="translated">{0}() est utilisé alors que AnyAsync() peut être utilisé à la place pour améliorer le niveau de performance.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
         <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="new">Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</target>
+        <target state="translated">N'utilisez pas CountAsync() ou LongCountAsync() quand AnyAsync() peut être utilisé</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
         <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <target state="translated">Pour les collections non vides, Count() et LongCount() énumèrent la séquence entière, alors que Any() s'arrête au premier élément ou au premier élément qui satisfait une condition.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
         <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where Any() could be used instead to improve performance.</target>
+        <target state="translated">{0}() est utilisé alors que Any() peut être utilisé à la place pour améliorer le niveau de performance.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
         <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
+        <target state="translated">N'utilisez pas Count() ou LongCount() quand Any() peut être utilisé</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
         <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
-        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</target>
+        <target state="translated">Le chiffrement symétrique doit toujours utiliser un vecteur d'initialisation non répétable pour empêcher les attaques par dictionnaire.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -704,7 +704,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
         <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.</source>
-        <target state="needs-review-translation">L'utilisation d'un générateur de nombres pseudo-aléatoires faible au niveau du chiffrement peut permettre à un attaquant de prédire la génération d'une valeur dont la sécurité est critique. Utilisez un générateur de nombres aléatoires fort au niveau du chiffrement si une valeur imprévisible est nécessaire, ou vérifiez qu'aucun nombre pseudo-aléatoire faible n'est utilisé dans le cadre d'opérations dont la sécurité est critique.</target>
+        <target state="translated">L'utilisation d'un générateur de nombres pseudo-aléatoires faibles au niveau du chiffrement peut permettre à un attaquant de prédire la génération d'une valeur dont la sécurité est critique. Utilisez un générateur de nombres aléatoires forts au niveau du chiffrement si une valeur imprévisible est nécessaire, ou vérifiez qu'aucun nombre pseudo-aléatoire faible n'est utilisé dans le cadre d'opérations dont la sécurité est critique.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
@@ -1004,7 +1004,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="translated">La méthode '{0}' n'est pas sécurisée durant la désérialisation de données non fiables à l'aide d'un JavaScriptSerializer initialisé avec un SimpleTypeResolver. Vérifiez que JavaScriptSerializer est initialisé sans JavaScriptTypeResolver, ou qu'il est initialisé avec un JavaScriptTypeResolver qui limite les types des objets dans le graphe d'objet désérialisé.</target>
+        <target state="translated">La méthode '{0}' n'est pas sécurisée durant la désérialisation de données non fiables à l'aide d'un JavaScriptSerializer initialisé avec un SimpleTypeResolver. Vérifiez que JavaScriptSerializer est initialisé sans JavaScriptTypeResolver, ou qu'il est initialisé avec un JavaScriptTypeResolver qui limite les types des objets dans le graphe d'objets désérialisé.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle">
@@ -1014,7 +1014,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="translated">La méthode '{0}' n'est pas sécurisée durant la désérialisation de données non fiables à l'aide d'un JavaScriptSerializer initialisé avec un SimpleTypeResolver. Initialisez JavaScriptSerializer sans JavaScriptTypeResolver, ou initialisez un JavaScriptTypeResolver qui limite les types des objets dans le graphe d'objet désérialisé.</target>
+        <target state="translated">La méthode '{0}' n'est pas sécurisée durant la désérialisation de données non fiables à l'aide d'un JavaScriptSerializer initialisé avec un SimpleTypeResolver. Initialisez JavaScriptSerializer sans JavaScriptTypeResolver, ou initialisez un JavaScriptTypeResolver qui limite les types des objets dans le graphe d'objets désérialisé.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverTitle">
@@ -1154,12 +1154,12 @@
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheck">
         <source>Ensure HttpClient certificate revocation list check is not disabled</source>
-        <target state="new">Ensure HttpClient certificate revocation list check is not disabled</target>
+        <target state="translated">Contrôlez si la vérification de la liste de révocation de certificats HttpClient est bien activée</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheckMessage">
         <source>HttpClient may be created without enabling CheckCertificateRevocationList</source>
-        <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
+        <target state="translated">HttpClient peut être créé sans activation de CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -1174,12 +1174,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
         <source>Use CreateEncryptor with the default IV </source>
-        <target state="new">Use CreateEncryptor with the default IV </target>
+        <target state="translated">Utiliser CreateEncryptor avec la valeur par défaut IV </target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
         <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
-        <target state="new">The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
+        <target state="translated">Le vecteur d'initialisation non défini par défaut, potentiellement répétable, est utilisé dans le chiffrement. Veillez à utiliser le vecteur par défaut.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
@@ -1369,7 +1369,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
         <source>Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de DLL a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de DLL potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesTitle">
@@ -1379,7 +1379,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesMessage">
         <source>Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de chemin de fichier a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de chemin de fichier potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesTitle">
@@ -1399,7 +1399,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesMessage">
         <source>Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection LDAP a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de LDAP potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesTitle">
@@ -1409,7 +1409,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesMessage">
         <source>Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une redirection ouverte a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité potentielle liée à une redirection ouverte a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesTitle">
@@ -1419,7 +1419,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
         <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de commande de processus a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de commande de processus potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1429,7 +1429,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesMessage">
         <source>Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection regex a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de regex potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesTitle">
@@ -1439,7 +1439,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
         <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de code SQL a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de SQL potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection XAML a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de XAML potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesTitle">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesMessage">
         <source>Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection XML a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de XML potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
@@ -1469,7 +1469,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
         <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection XPath a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité d'injection de XPath potentielle a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
         <source>Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une faille XSS (scripts intersites) a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <target state="translated">Une vulnérabilité potentielle liée à une faille XSS (scripts intersites) a été détectée. '{0}' dans la méthode '{1}' peut être souillé par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesTitle">
@@ -1744,17 +1744,17 @@
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
         <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
-        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <target state="translated">Enumerable.Count() énumère potentiellement la séquence alors qu'une propriété Length/Count représente un accès direct.</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
         <source>Use the "{0}" property instead of Enumerable.Count().</source>
-        <target state="new">Use the "{0}" property instead of Enumerable.Count().</target>
+        <target state="translated">Utilisez la propriété "{0}" à la place de Enumerable.Count().</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
         <source>Use Length/Count property instead of Count() when available</source>
-        <target state="new">Use Length/Count property instead of Count() when available</target>
+        <target state="translated">Utiliser la propriété Length/Count à la place de Count() si elle est disponible</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">

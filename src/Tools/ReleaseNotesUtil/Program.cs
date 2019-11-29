@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -247,12 +248,12 @@ namespace ReleaseNotesUtil
                     ruleInfos.Add(
                         new RuleInfo(
                             descriptor.Id,
-                            descriptor.Title.ToString(),
+                            descriptor.Title.ToString(CultureInfo.InvariantCulture),
                             descriptor.Category,
                             descriptor.IsEnabledByDefault,
                             fixableDiagnosticIds.Contains(descriptor.Id),
-                            descriptor.MessageFormat.ToString(),
-                            descriptor.Description.ToString(),
+                            descriptor.MessageFormat.ToString(CultureInfo.InvariantCulture),
+                            descriptor.Description.ToString(CultureInfo.InvariantCulture),
                             descriptor.HelpLinkUri));
                 }
             }

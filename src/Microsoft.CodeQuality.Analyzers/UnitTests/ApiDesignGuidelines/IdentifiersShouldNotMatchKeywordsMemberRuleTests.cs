@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldNotMatchKeywordsAnalyzer,
@@ -16,22 +17,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
     /// pertain to the MemberRule, which applies to the names of type members.
     /// </summary>
-    public class IdentifiersShouldNotMatchKeywordsMemberRuleTests : DiagnosticAnalyzerTestBase
+    public class IdentifiersShouldNotMatchKeywordsMemberRuleTests
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
-        }
-
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task CSharpDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @internal() {}
@@ -40,9 +31,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task BasicDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub internal()
     End Sub
@@ -52,9 +43,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClassWithDifferentCasing()
+        public async Task CSharpNoDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClassWithDifferentCasing()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @iNtErNaL() {}
@@ -62,9 +53,9 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClassWithDifferentCasing()
+        public async Task BasicNoDiagnosticForCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClassWithDifferentCasing()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub iNtErNaL()
     End Sub
@@ -72,9 +63,9 @@ End Class");
         }
 
         [Fact]
-        public void CSharpDiagnosticForCaseInsensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task CSharpDiagnosticForCaseInsensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     // Matches VB AddHandler keyword:
@@ -84,9 +75,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForCaseInsensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task BasicDiagnosticForCaseInsensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     ' Matches VB AddHandler keyword:
     Public Overridable Sub [aDdHaNdLeR]()
@@ -96,9 +87,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedProtectedVirtualMethodInPublicClass()
+        public async Task CSharpDiagnosticForKeywordNamedProtectedVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     protected virtual void @for() {}
@@ -107,9 +98,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedProtectedVirtualMethodInPublicClass()
+        public async Task BasicDiagnosticForKeywordNamedProtectedVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Protected Overridable Sub [for]()
     End Sub
@@ -118,9 +109,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
+        public async Task CSharpNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     internal virtual void @for() {}
@@ -128,9 +119,9 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
+        public async Task BasicNoDiagnosticForKeywordNamedInternalVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Friend Overridable Sub [for]()
     End Sub
@@ -138,9 +129,9 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
+        public async Task CSharpNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public void @for() {}
@@ -148,9 +139,9 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
+        public async Task BasicNoDiagnosticForKeywordNamedPublicNonVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Sub [for]()
     End Sub
@@ -158,9 +149,9 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task CSharpNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void fort() {}
@@ -168,9 +159,9 @@ public class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task BasicNoDiagnosticForNonKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub fort()
     End Sub
@@ -178,9 +169,9 @@ End Class");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
+        public async Task CSharpNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C
 {
     public virtual void @for() {}
@@ -188,9 +179,9 @@ internal class C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
+        public async Task BasicNoDiagnosticForKeywordNamedVirtualMethodInInternalClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class C
     Public Overridable Sub [for]()
     End Sub
@@ -198,9 +189,9 @@ End Class");
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedMethodInPublicInterface()
+        public async Task CSharpDiagnosticForKeywordNamedMethodInPublicInterface()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public interface I
 {
     void @for();
@@ -209,9 +200,9 @@ public interface I
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedMethodInPublicInterface()
+        public async Task BasicDiagnosticForKeywordNamedMethodInPublicInterface()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface I
     Sub [for]()
 End Interface",
@@ -219,9 +210,9 @@ End Interface",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedMethodOfInternalInterface()
+        public async Task CSharpNoDiagnosticForKeywordNamedMethodOfInternalInterface()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal interface I
 {
     void @for();
@@ -229,18 +220,18 @@ internal interface I
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedMethodOfInternalInterface()
+        public async Task BasicNoDiagnosticForKeywordNamedMethodOfInternalInterface()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Interface I
     Sub [for]()
 End Interface");
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeyWordNamedPublicVirtualPropertyOfPublicClass()
+        public async Task CSharpDiagnosticForKeyWordNamedPublicVirtualPropertyOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     private int _for;
@@ -260,9 +251,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeyWordNamedPublicVirtualPropertyOfPublicClass()
+        public async Task BasicDiagnosticForKeyWordNamedPublicVirtualPropertyOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Private _for As Integer
     Public Overridable Property [Sub] As Integer
@@ -278,9 +269,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeyWordNamedPublicVirtualAutoPropertyOfPublicClass()
+        public async Task CSharpDiagnosticForKeyWordNamedPublicVirtualAutoPropertyOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual int @for { get; set; }
@@ -289,9 +280,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeyWordNamedPublicVirtualAutoPropertyOfPublicClass()
+        public async Task BasicDiagnosticForKeyWordNamedPublicVirtualAutoPropertyOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Property [Sub] As Integer
 End Class",
@@ -299,9 +290,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeyWordNamedPublicVirtualReadOnlyPropertyOfPublicClass()
+        public async Task CSharpDiagnosticForKeyWordNamedPublicVirtualReadOnlyPropertyOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     private int _for;
@@ -317,9 +308,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeyWordNamedPublicVirtualReadOnlyPropertyOfPublicClass()
+        public async Task BasicDiagnosticForKeyWordNamedPublicVirtualReadOnlyPropertyOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Private _for As Integer
     Public Overridable ReadOnly Property [Sub] As Integer
@@ -332,9 +323,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeyWordNamedPublicVirtualWriteOnlyPropertyOfPublicClass()
+        public async Task CSharpDiagnosticForKeyWordNamedPublicVirtualWriteOnlyPropertyOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     private int _for;
@@ -350,9 +341,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeyWordNamedPublicVirtualWriteOnlyPropertyOfPublicClass()
+        public async Task BasicDiagnosticForKeyWordNamedPublicVirtualWriteOnlyPropertyOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Private _for As Integer
     Public Overridable WriteOnly Property [Sub] As Integer
@@ -365,9 +356,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeyWordNamedPublicVirtualExpressionBodyPropertyOfPublicClass()
+        public async Task CSharpDiagnosticForKeyWordNamedPublicVirtualExpressionBodyPropertyOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     private int _for;
@@ -377,9 +368,9 @@ public class C
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        public async Task CSharpNoDiagnosticForOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @internal() {}
@@ -394,9 +385,9 @@ public class D : C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        public async Task BasicNoDiagnosticForOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub [internal]()
     End Sub
@@ -412,9 +403,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        public async Task CSharpNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @internal() {}
@@ -429,9 +420,9 @@ public class D : C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
+        public async Task BasicNoDiagnosticForSealedOverrideOfKeywordNamedPublicVirtualMethodOfPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub [friend]()
     End Sub
@@ -447,9 +438,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForEachOverloadOfCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task CSharpDiagnosticForEachOverloadOfCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @internal() {}
@@ -460,9 +451,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForEachOverloadOfCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
+        public async Task BasicDiagnosticForEachOverloadOfCaseSensitiveKeywordNamedPublicVirtualMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub internal()
     End Sub
@@ -474,9 +465,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedNewMethodInPublicClass()
+        public async Task CSharpNoDiagnosticForKeywordNamedNewMethodInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @for() {}
@@ -491,9 +482,9 @@ public class D : C
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedNewMethodInPublicClass()
+        public async Task BasicNoDiagnosticForKeywordNamedNewMethodInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub [for]()
     End Sub
@@ -510,9 +501,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForVirtualNewMethod()
+        public async Task CSharpDiagnosticForVirtualNewMethod()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public virtual void @for() {}
@@ -528,9 +519,9 @@ public class D : C
         }
 
         [Fact]
-        public void BasicDiagnosticForVirtualNewMethod()
+        public async Task BasicDiagnosticForVirtualNewMethod()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Overridable Sub [for]()
     End Sub
@@ -548,9 +539,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        public async Task CSharpDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     protected class D
@@ -562,9 +553,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
+        public async Task BasicDiagnosticForKeywordNamedProtectedVirtualMethodInProtectedTypeNestedInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Protected Class D
         Protected Overridable Sub [Protected]()
@@ -575,9 +566,9 @@ End Class",
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedPublicVirtualEventInPublicClass()
+        public async Task CSharpDiagnosticForKeywordNamedPublicVirtualEventInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public delegate void Callback(object sender, System.EventArgs e);
@@ -590,9 +581,9 @@ public class C
         // These tests are just to verify that the formatting of the displayed member name
         // is consistent with FxCop, for the case where the class is in a namespace.
         [Fact]
-        public void CSharpDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
+        public async Task CSharpDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace N
 {
     public class C
@@ -605,9 +596,9 @@ namespace N
         }
 
         [Fact]
-        public void BasicDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
+        public async Task BasicDiagnosticForVirtualPublicMethodInPublicClassInNamespace()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Namespace N
     Public Class C
         Public Overridable Sub [for]()
@@ -621,9 +612,9 @@ End Namespace",
         // These tests are just to verify that the formatting of the displayed member name
         // is consistent with FxCop, for the case where the class is generic.
         [Fact]
-        public void CSharpDiagnosticForVirtualPublicMethodInPublicGenericClass()
+        public async Task CSharpDiagnosticForVirtualPublicMethodInPublicGenericClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C<T> where T : class
 {
     public virtual void @for() {}
@@ -633,9 +624,9 @@ public class C<T> where T : class
         }
 
         [Fact]
-        public void BasicDiagnosticForVirtualPublicMethodInPublicGenericClass()
+        public async Task BasicDiagnosticForVirtualPublicMethodInPublicGenericClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C(Of T As Class)
     Public Overridable Sub [for]()
     End Sub
@@ -643,5 +634,15 @@ End Class",
                 // Include the type parameter name but not the constraint.
                 GetBasicResultAt(3, 28, IdentifiersShouldNotMatchKeywordsAnalyzer.MemberRule, "C(Of T).for()", "for"));
         }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

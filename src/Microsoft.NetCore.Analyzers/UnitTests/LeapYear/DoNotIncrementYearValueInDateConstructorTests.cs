@@ -12,6 +12,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
 {
     public class DoNotIncrementYearValueInDateConstructorTests
     {
+
         [Fact]
         public async Task NoDiagnosticCases()
         {
@@ -74,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
         }
 
         [Fact]
-        public async Task YearIncrementDiagnosticCases()
+        public async Task YearIncrementBasicCases()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -103,7 +104,33 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
                 DateTimeOffset d11 = new DateTimeOffset(orig.Year + 11, orig.Month, orig.Day, 0, 0, 0, 0, new TimeSpan(3, 0, 0));
                 var d12 = new DateTimeOffset(orig.Year - 12, orig.Month, orig.Day, 0, 0, 1, 0, new GregorianCalendar(), threeHourTour);
             }
-            
+        }
+    }",
+            GetCSharpResultAt(14, 31, "orig.Year + 1"),
+            GetCSharpResultAt(15, 26, "orig.Year - 2"),
+            GetCSharpResultAt(16, 31, "orig.Year + 3"),
+            GetCSharpResultAt(17, 31, "orig.Year - 4"),
+            GetCSharpResultAt(18, 26, "orig.Year + 5"),
+            GetCSharpResultAt(19, 26, "orig.Year + 6"),
+            GetCSharpResultAt(20, 31, "orig.Year - 7"),
+            GetCSharpResultAt(21, 26, "orig.Year - 8"),
+            GetCSharpResultAt(24, 27, "orig.Year + 10"),
+            GetCSharpResultAt(25, 38, "orig.Year + 11"),
+            GetCSharpResultAt(26, 27, "orig.Year - 12"));
+        }
+
+        [Fact]
+        public async Task YearIncrementParameterCases()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+    using System;
+    using System.Globalization;
+    using System.Linq;
+
+    namespace LeapYear.UnitTests
+    {
+        public class ClassName
+        {   
             public void ParameterEdgeCases()
             {
                 DateTime orig = new DateTime(2000, 1, 2);
@@ -133,32 +160,21 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
             }
         }
     }",
-            GetCSharpResultAt(14, 31, "orig.Year + 1"),
-            GetCSharpResultAt(15, 26, "orig.Year - 2"),
-            GetCSharpResultAt(16, 31, "orig.Year + 3"),
-            GetCSharpResultAt(17, 31, "orig.Year - 4"),
-            GetCSharpResultAt(18, 26, "orig.Year + 5"),
-            GetCSharpResultAt(19, 26, "orig.Year + 6"),
-            GetCSharpResultAt(20, 31, "orig.Year - 7"),
-            GetCSharpResultAt(21, 26, "orig.Year - 8"),
-            GetCSharpResultAt(24, 27, "orig.Year + 10"),
-            GetCSharpResultAt(25, 38, "orig.Year + 11"),
-            GetCSharpResultAt(26, 27, "orig.Year - 12"),
-            GetCSharpResultAt(33, 36, "orig.Year + 101"),
-            GetCSharpResultAt(34, 31, "orig.Year - 801"),
-            GetCSharpResultAt(35, 44, "orig.Year + 9"),
-            GetCSharpResultAt(36, 27, "orig.Year + 19"),
-            GetCSharpResultAt(38, 32, "a + 19"),
-            GetCSharpResultAt(42, 37, "a + 908"),
-            GetCSharpResultAt(48, 34, "24 + i"),
-            GetCSharpResultAt(49, 27, "orig.Year + 31"),
-            GetCSharpResultAt(50, 27, "orig.Year + 32"),
-            GetCSharpResultAt(53, 32, "orig.Year + 101"),
-            GetCSharpResultAt(54, 57, "orig.Year - 13"));
+            GetCSharpResultAt(14, 36, "orig.Year + 101"),
+            GetCSharpResultAt(15, 31, "orig.Year - 801"),
+            GetCSharpResultAt(16, 44, "orig.Year + 9"),
+            GetCSharpResultAt(17, 27, "orig.Year + 19"),
+            GetCSharpResultAt(19, 32, "a + 19"),
+            GetCSharpResultAt(23, 37, "a + 908"),
+            GetCSharpResultAt(29, 34, "24 + i"),
+            GetCSharpResultAt(30, 27, "orig.Year + 31"),
+            GetCSharpResultAt(31, 27, "orig.Year + 32"),
+            GetCSharpResultAt(34, 32, "orig.Year + 101"),
+            GetCSharpResultAt(35, 57, "orig.Year - 13"));
         }
 
         [Fact]
-        public async Task YearIncrementVariableDiagnosticCases()
+        public async Task YearIncrementVariableCases()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;

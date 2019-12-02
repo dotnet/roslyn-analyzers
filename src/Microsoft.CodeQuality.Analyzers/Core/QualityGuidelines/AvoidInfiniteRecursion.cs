@@ -20,7 +20,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             DiagnosticCategory.Reliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null);
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static DiagnosticDescriptor MaybeRule = new DiagnosticDescriptor(RuleId,
             new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidInfiniteRecursionTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
@@ -28,7 +29,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             DiagnosticCategory.Reliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null);
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule, MaybeRule);
 

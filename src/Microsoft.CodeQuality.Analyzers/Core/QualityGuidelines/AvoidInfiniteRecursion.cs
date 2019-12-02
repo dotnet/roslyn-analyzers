@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidInfiniteRecursion : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2008";
+        internal const string RuleId = "CA2011";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidInfiniteRecursionTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),

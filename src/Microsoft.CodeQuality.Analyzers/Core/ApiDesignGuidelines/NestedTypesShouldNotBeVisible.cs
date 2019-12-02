@@ -57,10 +57,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     Compilation compilation = compilationStartContext.Compilation;
 
-                    INamedTypeSymbol enumeratorType = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
-                    INamedTypeSymbol dataSetType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
-                    INamedTypeSymbol dataTableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
-                    INamedTypeSymbol dataRowType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
+                    INamedTypeSymbol? enumeratorType = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
+                    INamedTypeSymbol? dataSetType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+                    INamedTypeSymbol? dataTableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+                    INamedTypeSymbol? dataRowType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
 
                     compilationStartContext.RegisterSymbolAction(
                         symbolAnalysisContext =>
@@ -128,9 +128,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool IsDataSetSpecialCase(
             INamedTypeSymbol containingType,
             INamedTypeSymbol nestedType,
-            INamedTypeSymbol dataSetType,
-            INamedTypeSymbol dataTableType,
-            INamedTypeSymbol dataRowType)
+            INamedTypeSymbol? dataSetType,
+            INamedTypeSymbol? dataTableType,
+            INamedTypeSymbol? dataRowType)
         {
             if (!containingType.GetBaseTypes().Contains(dataSetType))
             {
@@ -138,7 +138,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             var nestedTypeBases = nestedType.GetBaseTypes().ToList();
-            return nestedTypeBases.Contains(dataTableType) || nestedTypeBases.Contains(dataRowType);
+            return dataTableType != null && nestedTypeBases.Contains(dataTableType) ||
+                dataRowType != null && nestedTypeBases.Contains(dataRowType);
         }
     }
 }

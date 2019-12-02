@@ -51,7 +51,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IMethodSymbol candidateToIncreaseVisibility = GetExistingNonVisibleAlternate(methodSymbol);
+            IMethodSymbol? candidateToIncreaseVisibility = GetExistingNonVisibleAlternate(methodSymbol);
             if (candidateToIncreaseVisibility != null)
             {
                 ISymbol symbolToChange;
@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 context.Diagnostics);
         }
 
-        private static IMethodSymbol GetExistingNonVisibleAlternate(IMethodSymbol methodSymbol)
+        private static IMethodSymbol? GetExistingNonVisibleAlternate(IMethodSymbol methodSymbol)
         {
             foreach (IMethodSymbol interfaceMethod in methodSymbol.ExplicitInterfaceImplementations)
             {
@@ -121,8 +121,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
-            ISymbol getter = null;
-            ISymbol setter = null;
+            ISymbol? getter = null;
+            ISymbol? setter = null;
             if (symbolToChange.Kind == SymbolKind.Property)
             {
                 var propertySymbol = (IPropertySymbol)symbolToChange;
@@ -158,7 +158,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SymbolEditor editor = SymbolEditor.Create(document);
 
-            IEnumerable<ISymbol> explicitImplementations = GetExplicitImplementations(symbolToChange);
+            IEnumerable<ISymbol>? explicitImplementations = GetExplicitImplementations(symbolToChange);
             if (explicitImplementations == null)
             {
                 return document;
@@ -179,7 +179,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocuments().First();
         }
 
-        private static IEnumerable<ISymbol> GetExplicitImplementations(ISymbol symbol)
+        private static IEnumerable<ISymbol>? GetExplicitImplementations(ISymbol? symbol)
         {
             if (symbol == null)
             {

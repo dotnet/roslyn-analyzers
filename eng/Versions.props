@@ -15,8 +15,9 @@
     <!-- Toolset -->
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
-    <OpenCoverVersion>4.6.519</OpenCoverVersion>
-    <CodecovVersion>1.0.3</CodecovVersion>
+    <CodecovVersion>1.9.0</CodecovVersion>
+    <CoverletVersion>2.7.0</CoverletVersion>
+    <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
@@ -29,7 +30,7 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.19554.4</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.19557.2</MicrosoftCodeAnalysisTestingVersion>
 
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>

@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// </summary>
     public abstract class EnumStorageShouldBeInt32Fixer : CodeFixProvider
     {
-        protected abstract SyntaxNode GetTargetNode(SyntaxNode node);
+        protected abstract SyntaxNode? GetTargetNode(SyntaxNode node);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumStorageShouldBeInt32Analyzer.RuleId);
 
@@ -54,6 +54,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // Find the target syntax node to replace. Was not able to find a language neutral way of doing this. So using the language specific methods
             var targetNode = GetTargetNode(enumDeclarationNode);
+            if (targetNode == null)
+            {
+                return document;
+            }
 
             // Remove target node 
             editor.RemoveNode(targetNode, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia | SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.KeepEndOfLine);

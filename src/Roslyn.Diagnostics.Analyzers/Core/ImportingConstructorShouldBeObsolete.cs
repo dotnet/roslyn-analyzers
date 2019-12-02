@@ -29,7 +29,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.ImportingConstructorShouldBeObsoleteRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
@@ -69,7 +69,7 @@ namespace Roslyn.Diagnostics.Analyzers
             });
         }
 
-        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttribute, INamedTypeSymbol exportAttributeOpt, INamedTypeSymbol importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
+        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol? obsoleteAttribute, INamedTypeSymbol? exportAttributeOpt, INamedTypeSymbol? importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
         {
             if (exportAttributeOpt is null)
             {
@@ -89,7 +89,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
 
                 var constructorAttributes = constructor.GetAttributes();
-                AttributeData importingConstructorAttributeData = null;
+                AttributeData? importingConstructorAttributeData = null;
                 foreach (var attributeData in constructorAttributes)
                 {
                     if (attributeData.AttributeClass.DerivesFrom(importingConstructorAttribute))

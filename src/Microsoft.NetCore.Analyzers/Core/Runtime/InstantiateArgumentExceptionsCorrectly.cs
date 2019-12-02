@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext =>
                 {
                     Compilation compilation = compilationContext.Compilation;
-                    ITypeSymbol argumentExceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException);
+                    ITypeSymbol? argumentExceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException);
 
                     if (argumentExceptionType == null)
                     {
@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         continue;
                     }
 
-                    string value = argument.Value.ConstantValue.HasValue ? argument.Value.ConstantValue.Value as string : null;
+                    string? value = argument.Value.ConstantValue.HasValue ? argument.Value.ConstantValue.Value as string : null;
                     if (value == null)
                     {
                         continue;
@@ -108,7 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             OperationAnalysisContext context)
         {
             bool matchesParameter = MatchesParameter(targetSymbol, creation, stringArgument);
-            LocalizableString format = null;
+            LocalizableString? format = null;
 
             if (IsMessage(parameter) && matchesParameter)
             {
@@ -171,7 +171,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool MatchesParameter(ISymbol symbol, IObjectCreationOperation creation, string stringArgumentValue)
+        private static bool MatchesParameter(ISymbol? symbol, IObjectCreationOperation creation, string stringArgumentValue)
         {
             if (MatchesParameterCore(symbol, stringArgumentValue))
             {
@@ -204,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool MatchesParameterCore(ISymbol symbol, string stringArgumentValue)
+        private static bool MatchesParameterCore(ISymbol? symbol, string stringArgumentValue)
         {
             foreach (IParameterSymbol parameter in symbol.GetParameters())
             {

@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     Compilation compilation = compilationStartAnalysisContext.Compilation;
 
-                    ImmutableHashSet<INamedTypeSymbol> nativeResourceTypes = ImmutableHashSet.Create(
+                    ImmutableHashSet<INamedTypeSymbol?> nativeResourceTypes = ImmutableHashSet.Create(
                         compilation.GetSpecialType(SpecialType.System_IntPtr),
                         compilation.GetSpecialType(SpecialType.System_UIntPtr),
                         compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)

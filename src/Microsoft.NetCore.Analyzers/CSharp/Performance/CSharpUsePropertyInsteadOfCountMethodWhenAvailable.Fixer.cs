@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Composition;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -25,7 +26,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         /// <param name="nameNode">The name node for the invocation node.</param>
         /// <returns><see langword="true" /> if a <paramref name="memberAccessNode" /> and <paramref name="nameNode" /> were found;
         /// <see langword="false" /> otherwise.</returns>
-        protected override bool TryGetExpression(SyntaxNode invocationNode, out SyntaxNode memberAccessNode, out SyntaxNode nameNode)
+        protected override bool TryGetExpression(
+            SyntaxNode invocationNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? memberAccessNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? nameNode)
         {
             if (invocationNode is InvocationExpressionSyntax invocationExpression)
             {

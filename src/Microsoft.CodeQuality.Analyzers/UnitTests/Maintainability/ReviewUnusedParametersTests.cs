@@ -790,7 +790,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2996")]
+        [Fact]
         [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
         public async Task NoDiagnosticUsedLocalFunctionParameters()
         {
@@ -991,7 +991,7 @@ static class C
     GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2996")]
+        [Fact]
         [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
         public async Task DiagnosticForUnusedLocalFunctionParameters_01()
         {
@@ -1014,7 +1014,7 @@ public class C
             GetCSharpUnusedParameterResultAt(11, 32, "x", "LocalFunction"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2996")]
+        [Fact]
         [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
         public async Task DiagnosticForUnusedLocalFunctionParameters_02()
         {

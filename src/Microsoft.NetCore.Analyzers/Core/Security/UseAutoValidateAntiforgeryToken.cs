@@ -129,8 +129,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                         {
-                            ISymbol calledSymbol = null;
-                            ConcurrentDictionary<ISymbol, bool> callers = null;
+                            ISymbol? calledSymbol = null;
+                            ConcurrentDictionary<ISymbol, bool>? callers = null;
 
                             switch (operationContext.Operation)
                             {

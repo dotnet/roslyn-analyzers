@@ -14,11 +14,10 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpEnumStorageShouldBeInt32Fixer : EnumStorageShouldBeInt32Fixer
     {
-        protected override SyntaxNode GetTargetNode(SyntaxNode node)
+        protected override SyntaxNode? GetTargetNode(SyntaxNode node)
         {
             var enumDecl = (EnumDeclarationSyntax)node;
-            var baseTypeNode = (enumDecl.BaseList.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
-            return baseTypeNode;
+            return (enumDecl.BaseList.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
         }
     }
 }

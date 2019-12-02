@@ -59,14 +59,14 @@ namespace Microsoft.NetFramework.Analyzers
         {
             ImmutableHashSet<INamedTypeSymbol> badBaseTypes = s_badBaseTypesToMessage.Keys
                                 .Select(bt => context.Compilation.GetOrCreateTypeByMetadataName(bt))
-                                .Where(bt => bt != null)
+                                .WhereNotNull()
                                 .ToImmutableHashSet();
 
             if (badBaseTypes.Count > 0)
             {
                 context.RegisterSymbolAction((saContext) =>
                     {
-                        var namedTypeSymbol = saContext.Symbol as INamedTypeSymbol;
+                        var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
 
                         if (namedTypeSymbol.BaseType != null &&
                             badBaseTypes.Contains(namedTypeSymbol.BaseType) &&

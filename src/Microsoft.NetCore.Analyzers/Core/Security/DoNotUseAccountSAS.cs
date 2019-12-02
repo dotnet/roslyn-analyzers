@@ -50,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                                                 WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
-                                                out INamedTypeSymbol cloudStorageAccountTypeSymbol))
+                                                out INamedTypeSymbol? cloudStorageAccountTypeSymbol))
                 {
                     return;
                 }

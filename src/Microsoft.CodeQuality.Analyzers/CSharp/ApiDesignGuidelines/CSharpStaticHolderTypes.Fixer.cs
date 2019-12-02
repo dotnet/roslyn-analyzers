@@ -34,7 +34,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 
             cancellationToken.ThrowIfCancellationRequested();
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            ClassDeclarationSyntax classDeclaration = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            ClassDeclarationSyntax? classDeclaration = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration != null)
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.MakeClassStatic;

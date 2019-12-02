@@ -97,6 +97,11 @@
         <target state="translated">不捕获常规异常类型</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIgnoreMethodResultsMessageDisposable">
+        <source>{0} calls {1} which is never disposed. Ensure this is the intended use.</source>
+        <target state="new">{0} calls {1} which is never disposed. Ensure this is the intended use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">不要将异步 Lambda 作为 Void 返回委托类型传递</target>

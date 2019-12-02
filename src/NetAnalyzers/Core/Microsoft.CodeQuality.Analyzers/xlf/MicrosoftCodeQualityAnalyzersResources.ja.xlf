@@ -97,6 +97,11 @@
         <target state="translated">一般的な例外の種類はキャッチしません</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIgnoreMethodResultsMessageDisposable">
+        <source>{0} calls {1} which is never disposed. Ensure this is the intended use.</source>
+        <target state="new">{0} calls {1} which is never disposed. Ensure this is the intended use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>

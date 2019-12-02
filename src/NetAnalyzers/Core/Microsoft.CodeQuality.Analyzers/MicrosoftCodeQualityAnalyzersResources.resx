@@ -1370,4 +1370,7 @@
   <data name="EnumShouldNotHaveDuplicatedValuesTitle" xml:space="preserve">
     <value>Enums values should not be duplicated</value>
   </data>
+  <data name="DoNotIgnoreMethodResultsMessageDisposable" xml:space="preserve">
+    <value>{0} calls {1} which is never disposed. Ensure this is the intended use.</value>
+  </data>
 </root>

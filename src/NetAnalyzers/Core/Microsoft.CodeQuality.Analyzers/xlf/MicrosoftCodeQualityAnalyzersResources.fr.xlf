@@ -97,6 +97,11 @@
         <target state="translated">Ne pas intercepter les types d'exception générale</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIgnoreMethodResultsMessageDisposable">
+        <source>{0} calls {1} which is never disposed. Ensure this is the intended use.</source>
+        <target state="new">{0} calls {1} which is never disposed. Ensure this is the intended use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Ne pas passer de lambdas asynchrones en tant que types délégués retournant void</target>

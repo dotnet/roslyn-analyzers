@@ -97,6 +97,11 @@
         <target state="translated">일반적인 예외 형식을 catch하지 마세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotIgnoreMethodResultsMessageDisposable">
+        <source>{0} calls {1} which is never disposed. Ensure this is the intended use.</source>
+        <target state="new">{0} calls {1} which is never disposed. Ensure this is the intended use.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 전달하지 마세요.</target>

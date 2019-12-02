@@ -68,6 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private static readonly LocalizableString s_localizableMessageHResultOrErrorCode = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessagePureMethod = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageTryParse = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDisposable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsMessageDisposable), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotIgnoreMethodResultsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor ObjectCreationRule = DiagnosticDescriptorHelper.Create(RuleId,
@@ -116,6 +117,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
+        internal static DiagnosticDescriptor DisposableRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageDisposable,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule, PureMethodRule);
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -125,9 +136,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol? expectedExceptionType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
-                INamedTypeSymbol? nunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
-                INamedTypeSymbol? xunitAssertType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
+                WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
+                INamedTypeSymbol? expectedExceptionType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
+                INamedTypeSymbol? nunitAssertType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
+                INamedTypeSymbol? xunitAssertType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
+                INamedTypeSymbol? disposableType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -176,6 +189,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 {
                                     rule = PureMethodRule;
                                 }
+                                else if (disposableType != null &&
+                                    targetMethod.ReturnType.ImplementsIDisposable(disposableType) &&
+                                    // We want to ignore some of the async methods from assertion frameworks
+                                    (xunitAssertType == null || !targetMethod.ContainingType.Equals(xunitAssertType)) &&
+                                    (nunitAssertType == null || !targetMethod.ContainingType.Equals(nunitAssertType)))
+                                {
+                                    rule = DisposableRule;
+                                }
 
                                 targetMethodName = targetMethod.Name;
                                 break;
@@ -192,6 +213,33 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             opContext.ReportDiagnostic(diagnostic);
                         }
                     }, OperationKind.ExpressionStatement);
+
+                    osContext.RegisterOperationAction(opContext =>
+                    {
+                        var invocation = (IInvocationOperation)opContext.Operation;
+                        var targetMethod = invocation.TargetMethod;
+
+                        if (targetMethod == null ||
+                            disposableType == null ||
+                            !targetMethod.ReturnType.ImplementsIDisposable(disposableType) ||
+                            ShouldSkipAnalyzing(opContext, expectedExceptionType, xunitAssertType, nunitAssertType))
+                        {
+                            return;
+                        }
+
+                        // Try to find first ancestor of type Invocation or Assignment...
+                        IOperation ancestor = invocation;
+                        do
+                        {
+                            ancestor = ancestor.Parent;
+                        } while (ancestor != null && ancestor.Kind != OperationKind.Invocation && ancestor.Kind != OperationKind.SimpleAssignment);
+
+                        // If it's Invocation then the temporary "data" is lost so we want to report.
+                        if (ancestor != null && ancestor.Kind == OperationKind.Invocation)
+                        {
+                            opContext.ReportDiagnostic(invocation.CreateDiagnostic(DisposableRule, method.Name, targetMethod.Name));
+                        }
+                    }, OperationKind.Invocation);
                 });
             });
         }

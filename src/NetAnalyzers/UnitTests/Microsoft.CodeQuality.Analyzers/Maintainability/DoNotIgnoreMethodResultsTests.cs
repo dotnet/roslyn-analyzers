@@ -233,6 +233,45 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
             }.RunAsync();
         }
 
+        [Fact]
+        public async Task DoNotReportOnChainedMethodCallsReturningIDisposableWithVariableCreation()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo
+{
+    public Foo()
+    {
+        Bar b;
+        FooBar f;
+
+        f = (b = GetBar()).GetFooBar();
+
+        f = b.GetFooBar((b = GetBar()));
+    }
+
+    public Bar GetBar() => new Bar();
+}
+
+public class Bar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public FooBar GetFooBar() => new FooBar();
+    public FooBar GetFooBar(Bar bar) => new FooBar();
+}
+
+public class FooBar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)
@@ -690,6 +729,198 @@ Public Class B
 End Class");
         }
 
+        [Fact]
+        public async Task ReportOnInvocationOfTypeIDisposable()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo
+{
+    public Foo()
+    {
+        new Bar();
+        new FooBar();
+    }
+}
+
+public class Bar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+public class FooBar : Bar
+{
+}",
+                GetCSharpObjectCreationResultAt(8, 9, ".ctor", "Bar"),
+                GetCSharpObjectCreationResultAt(9, 9, ".ctor", "FooBar"));
+        }
+
+        [Fact]
+        public async Task ReportOnSimpleMethodCallReturningIDisposable()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo
+{
+    public Foo()
+    {
+        GetBar();
+        GetFooBar();
+        GetFooBarAsBar();
+    }
+
+    public Bar GetBar() => new Bar();
+    public FooBar GetFooBar() => new FooBar();
+    public Bar GetFooBarAsBar() => new FooBar();
+}
+
+public class Bar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+public class FooBar : Bar
+{
+}",
+                GetCSharpDisposableMethodResultAt(8, 9, ".ctor", "GetBar"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetFooBar"),
+                GetCSharpDisposableMethodResultAt(10, 9, ".ctor", "GetFooBarAsBar"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class Foo
+    Public Sub New()
+        GetBar()
+        GetFooBar()
+        GetFooBarAsBar()
+    End Sub
+
+    Public Function GetBar() As Bar
+        Return New Bar()
+    End Function
+
+    Public Function GetFooBar() As FooBar
+        Return New FooBar()
+    End Function
+
+    Public Function GetFooBarAsBar() As Bar
+        Return New FooBar()
+    End Function
+End Class
+
+Public Class Bar
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Public Class FooBar
+    Inherits Bar
+End Class",
+                GetBasicDisposableMethodResultAt(6, 9, ".ctor", "GetBar"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetFooBar"),
+                GetBasicDisposableMethodResultAt(8, 9, ".ctor", "GetFooBarAsBar"));
+        }
+
+        [Fact]
+        public async Task ReportOnChainedMethodCallsReturningIDisposable()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo
+{
+    public Foo()
+    {
+        var result = GetBar().GetFooBar();
+        GetBar().GetFooBar();
+
+        var b = new Bar();
+        result = b.GetFooBar(GetBar());
+        b.GetFooBar(GetBar());
+    }
+
+    public Bar GetBar() => new Bar();
+}
+
+public class Bar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public FooBar GetFooBar() => new FooBar();
+    public FooBar GetFooBar(Bar bar) => new FooBar();
+}
+
+public class FooBar : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}",
+                GetCSharpDisposableMethodResultAt(8, 22, ".ctor", "GetBar"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetBar"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetFooBar"),
+                GetCSharpDisposableMethodResultAt(12, 30, ".ctor", "GetBar"),
+                GetCSharpDisposableMethodResultAt(13, 9, ".ctor", "GetFooBar"),
+                GetCSharpDisposableMethodResultAt(13, 21, ".ctor", "GetBar"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class Foo
+    Public Sub New()
+        Dim result = GetBar.GetFooBar
+        GetBar.GetFooBar
+
+        Dim b = New Bar
+        result = b.GetFooBar(GetBar)
+        b.GetFooBar(GetBar)
+    End Sub
+
+    Public Function GetBar() As Bar
+        Return New Bar
+    End Function
+End Class
+
+Public Class Bar
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Public Function GetFooBar() As FooBar
+        Return New FooBar
+    End Function
+
+    Public Function GetFooBar(ByVal bar As Bar) As FooBar
+        Return New FooBar
+    End Function
+End Class
+
+Public Class FooBar
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class",
+                GetBasicDisposableMethodResultAt(6, 22, ".ctor", "GetBar"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetBar"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetFooBar"),
+                GetBasicDisposableMethodResultAt(10, 30, ".ctor", "GetBar"),
+                GetBasicDisposableMethodResultAt(11, 9, ".ctor", "GetFooBar"),
+                GetBasicDisposableMethodResultAt(11, 21, ".ctor", "GetBar"));
+        }
+
         #endregion
 
         #region Helpers
@@ -736,6 +967,16 @@ End Class");
 
         private static DiagnosticResult GetBasicPureMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
             => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.PureMethodRule)
+                .WithLocation(line, column)
+                .WithArguments(containingMethodName, invokedMethodName);
+
+        private static DiagnosticResult GetCSharpDisposableMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
+            => VerifyCS.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.DisposableRule)
+                .WithLocation(line, column)
+                .WithArguments(containingMethodName, invokedMethodName);
+
+        private static DiagnosticResult GetBasicDisposableMethodResultAt(int line, int column, string containingMethodName, string invokedMethodName)
+            => VerifyVB.Diagnostic(DoNotIgnoreMethodResultsAnalyzer.DisposableRule)
                 .WithLocation(line, column)
                 .WithArguments(containingMethodName, invokedMethodName);
 

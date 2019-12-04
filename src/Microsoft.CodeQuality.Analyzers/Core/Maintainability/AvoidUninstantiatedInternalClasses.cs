@@ -129,14 +129,22 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
 
                             if (designerAttributeSymbol != null &&
-                                attribute.AttributeClass.Equals(designerAttributeSymbol) &&
-                                attribute.ConstructorArguments[0].Value is string designerTypeName)
+                                attribute.AttributeClass.Equals(designerAttributeSymbol))
                             {
-                                var nameParts = designerTypeName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                if (nameParts.Length >= 2 &&
-                                    nameParts[1].Trim().Equals(context.Compilation.AssemblyName, StringComparison.Ordinal))
+                                switch (attribute.ConstructorArguments[0].Value)
                                 {
-                                    instantiatedTypeNames.TryAdd(nameParts[0].Trim(), null);
+                                    case string designerTypeName:
+                                        var nameParts = designerTypeName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (nameParts.Length >= 2 &&
+                                            nameParts[1].Trim().Equals(context.Compilation.AssemblyName, StringComparison.Ordinal))
+                                        {
+                                            instantiatedTypeNames.TryAdd(nameParts[0].Trim(), null);
+                                        }
+                                        break;
+
+                                    case INamedTypeSymbol namedType:
+                                        instantiatedTypes.TryAdd(namedType, null);
+                                        break;
                                 }
                             }
                         }

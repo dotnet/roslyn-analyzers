@@ -1392,7 +1392,23 @@ public class MyTextBox { }");
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
-        public async Task CA1812_DesignerAttributeWithBaseTypeName_NoDiagnostic()
+        public async Task CA1812_DesignerAttributeType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(typeof(MyTextBoxDesigner))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeNameWithBaseTypeName_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1409,7 +1425,7 @@ namespace Foo
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
-        public async Task CA1812_DesignerAttributeWithBaseType_NoDiagnostic()
+        public async Task CA1812_DesignerAttributeTypeNameWithBaseType_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1426,7 +1442,24 @@ namespace Foo
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
-        public async Task CA1812_DesignerAttributeNestedType_NoDiagnostic()
+        public async Task CA1812_DesignerAttributeTypeWithBaseType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(typeof(Foo.MyTextBoxDesigner), typeof(SomeBaseType))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeNestedTypeName_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -1435,6 +1468,23 @@ using System.ComponentModel;
 namespace Foo
 {
     [Designer(""Foo.MyTextBox.MyTextBoxDesigner, TestProject"")]
+    public class MyTextBox
+    {
+        internal class MyTextBoxDesigner { }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeNestedType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    [Designer(typeof(Foo.MyTextBox.MyTextBoxDesigner))]
     public class MyTextBox
     {
         internal class MyTextBoxDesigner { }

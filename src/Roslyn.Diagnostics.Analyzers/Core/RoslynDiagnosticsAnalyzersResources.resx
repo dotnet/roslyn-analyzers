@@ -252,4 +252,10 @@
   <data name="TestExportsShouldNotBeDiscoverableCodeFix" xml:space="preserve">
     <value>Apply PartNotDiscoverableAttribute</value>
   </data>
+  <data name="SpecifyDiagnosticDescriptorCustomTagsMessage" xml:space="preserve">
+    <value>The 'customTags' argument should always be specified.</value>
+  </data>
+  <data name="SpecifyDiagnosticDescriptorCustomTagsTitle" xml:space="preserve">
+    <value>Add 'customTags' argument</value>
+  </data>
 </root>

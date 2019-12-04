@@ -72,6 +72,16 @@
         <target state="translated">Конструктор импорта должен быть [Obsolete]</target>
         <note />
       </trans-unit>
+      <trans-unit id="SpecifyDiagnosticDescriptorCustomTagsMessage">
+        <source>The 'customTags' argument should always be specified.</source>
+        <target state="new">The 'customTags' argument should always be specified.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecifyDiagnosticDescriptorCustomTagsTitle">
+        <source>Add 'customTags' argument</source>
+        <target state="new">Add 'customTags' argument</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestExportsShouldNotBeDiscoverableCodeFix">
         <source>Apply PartNotDiscoverableAttribute</source>
         <target state="translated">Применить PartNotDiscoverableAttribute</target>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -30,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.UriParametersShouldNotBeStringsTitle;
+            var title = MicrosoftCodeQualityAnalyzersResources.UriParametersShouldNotBeStringsTitle;
 
             var document = context.Document;
             var cancellationToken = context.CancellationToken;
@@ -38,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol uriType = WellKnownTypes.Uri(model.Compilation);
+            INamedTypeSymbol? uriType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
             if (uriType == null)
             {
                 return;

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -8,6 +10,66 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests : DiagnosticAnalyzerTestBase
     {
+        [Fact]
+        public void DocSample1_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
+    }
+}",
+            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        ' CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true)
+    End Sub
+End Class",
+            GetBasicResultAt(7, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", false);
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", false)
+    End Sub
+End Class");
+        }
+
         [Fact]
         public void TestBoolDiagnostic()
         {
@@ -133,8 +195,8 @@ class TestClass
 }");
         }
 
-        //Ideally, we would generate a diagnostic in this case.
         [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         public void TestSwitchNameVariableNoDiagnostic()
         {
             VerifyCSharp(@"
@@ -147,7 +209,8 @@ class TestClass
         string switchName = ""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"";
         AppContext.SetSwitch(switchName, true);
     }
-}");
+}",
+                GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         //Ideally, we would generate a diagnostic in this case.
@@ -164,6 +227,35 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", bool.Parse(""true""));
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = ExampleMethod")]
+        [InlineData("dotnet_code_quality.CA5378.excluded_symbol_names = ExampleMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = ExampleMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

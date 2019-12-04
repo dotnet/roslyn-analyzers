@@ -1,14 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Analyzer.Utilities.Extensions
 {
     internal static partial class IOperationExtensions
     {
-        public static bool IsInsideCatchRegion(this IOperation operation, ControlFlowGraph cfg)
+        public static bool IsInsideCatchRegion([NotNullWhen(returnValue: true)] this IOperation? operation, ControlFlowGraph cfg)
         {
+            if (operation == null)
+            {
+                return false;
+            }
+
             foreach (var block in cfg.Blocks)
             {
                 var isCatchRegionBlock = false;
@@ -40,15 +47,8 @@ namespace Analyzer.Utilities.Extensions
             return false;
         }
 
-        public static ITypeSymbol GetThrowExceptionType(this IOperation thrownOperation, BasicBlock currentBlock)
-        {
-            if (thrownOperation?.Type != null)
-            {
-                return thrownOperation.Type;
-            }
-
-            // rethrow or throw with no argument.
-            return currentBlock.GetEnclosingRegionExceptionType();
-        }
+        public static bool IsLValueFlowCaptureReference(this IFlowCaptureReferenceOperation flowCaptureReference)
+            => flowCaptureReference.Parent is IAssignmentOperation assignment &&
+               assignment.Target == flowCaptureReference;
     }
 }

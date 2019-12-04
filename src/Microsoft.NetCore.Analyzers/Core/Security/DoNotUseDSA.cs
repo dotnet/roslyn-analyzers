@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -7,7 +7,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -17,17 +16,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5384";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseDSA),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDSA),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseDSAMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDSAMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseDSADescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDSADescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -38,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly ImmutableHashSet<string> s_DSAAlgorithmNames =
             ImmutableHashSet.Create(
@@ -59,13 +58,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyDSA,
                     out var dsaTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyAsymmetricAlgorithm,
                     out var asymmetricAlgorithmTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyCryptoConfig,
                     out var cryptoConfigTypeSymbol);
 

@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+// TODO(dotpaul): Enable nullable analysis.
+#nullable disable
+
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -143,7 +146,7 @@ namespace Microsoft.NetFramework.Analyzers
                             LocalizableResourceString message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 isSetInBlock ? nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage) :
                                     nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
-                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                             );
 
                             context.ReportDiagnostic(

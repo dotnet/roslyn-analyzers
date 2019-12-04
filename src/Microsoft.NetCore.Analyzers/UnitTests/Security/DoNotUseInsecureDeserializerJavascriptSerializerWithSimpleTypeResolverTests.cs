@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.Security;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -600,6 +601,40 @@ namespace Blah
     }
 }",
                   GetCSharpResultAt(19, 20, MaybeRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = D")]
+        [InlineData(@"dotnet_code_quality.CA2321.excluded_symbol_names = D
+                      dotnet_code_quality.CA2322.excluded_symbol_names = D")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = D")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(12, 20, DefinitelyRule, "T JavaScriptSerializer.Deserialize<T>(string input)")
+                };
+            }
+
+            VerifyCSharp(@"
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public T D<T>(string str)
+        {
+            JavaScriptSerializer s = new JavaScriptSerializer(new SimpleTypeResolver());
+            return s.Deserialize<T>(str);
+        }
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
     }
 }

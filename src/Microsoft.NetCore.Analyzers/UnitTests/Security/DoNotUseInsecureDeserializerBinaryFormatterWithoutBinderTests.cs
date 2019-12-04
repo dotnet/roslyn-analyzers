@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -68,8 +69,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class BookRecord
 {
     public string Title { get; set; }
-    public string Author { get; set; }
-    public int PageCount { get; set; }
     public AisleLocation Location { get; set; }
 }
 
@@ -87,11 +86,11 @@ public class ExampleClass
         BinaryFormatter formatter = new BinaryFormatter();
         using (MemoryStream ms = new MemoryStream(bytes))
         {
-            return (BookRecord) formatter.Deserialize(ms);
+            return (BookRecord) formatter.Deserialize(ms);   // CA2301 violation
         }
     }
 }",
-                GetCSharpResultAt(29, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+                GetCSharpResultAt(27, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
         [Fact]
@@ -105,7 +104,6 @@ Imports System.Runtime.Serialization.Formatters.Binary
 <Serializable()>
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As AisleLocation
 End Class
 
@@ -119,11 +117,11 @@ Public Class ExampleClass
     Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
         Dim formatter As BinaryFormatter = New BinaryFormatter()
         Using ms As MemoryStream = New MemoryStream(bytes)
-            Return CType(formatter.Deserialize(ms), BookRecord)
+            Return CType(formatter.Deserialize(ms), BookRecord)    ' CA2301 violation
         End Using
     End Function
 End Class",
-                GetBasicResultAt(23, 26, BinderNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
+                GetBasicResultAt(22, 26, BinderNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
         }
 
         [Fact]
@@ -159,8 +157,6 @@ public class BookRecordSerializationBinder : SerializationBinder
 public class BookRecord
 {
     public string Title { get; set; }
-    public string Author { get; set; }
-    public int PageCount { get; set; }
     public AisleLocation Location { get; set; }
 }
 
@@ -214,7 +210,6 @@ End Class
 <Serializable()>
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As AisleLocation
 End Class
 
@@ -247,8 +242,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class BookRecord
 {
     public string Title { get; set; }
-    public string Author { get; set; }
-    public int PageCount { get; set; }
     public AisleLocation Location { get; set; }
 }
 
@@ -267,11 +260,11 @@ public class ExampleClass
     {
         using (MemoryStream ms = new MemoryStream(bytes))
         {
-            return (BookRecord) this.Formatter.Deserialize(ms);
+            return (BookRecord) this.Formatter.Deserialize(ms);    // CA2302 violation
         }
     }
 }",
-            GetCSharpResultAt(30, 33, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            GetCSharpResultAt(28, 33, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
         [Fact]
@@ -285,7 +278,6 @@ Imports System.Runtime.Serialization.Formatters.Binary
 <Serializable()>
 Public Class BookRecord
     Public Property Title As String
-    Public Property Author As String
     Public Property Location As AisleLocation
 End Class
 
@@ -300,11 +292,252 @@ Public Class ExampleClass
 
     Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
         Using ms As MemoryStream = New MemoryStream(bytes)
-            Return CType(Me.Formatter.Deserialize(ms), BookRecord)
+            Return CType(Me.Formatter.Deserialize(ms), BookRecord)    ' CA2302 violation
         End Using
     End Function
 End Class",
-                GetBasicResultAt(24, 26, BinderMaybeNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
+                GetBasicResultAt(23, 26, BinderMaybeNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
+        }
+
+        [Fact]
+        public void DocSample3_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+public class BookRecordSerializationBinder : SerializationBinder
+{
+    public override Type BindToType(string assemblyName, string typeName)
+    {
+        // One way to discover expected types is through testing deserialization
+        // of **valid** data and logging the types used.
+
+        ////Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"");
+
+        if (typeName == ""BookRecord"" || typeName == ""AisleLocation"")
+        {
+            return null;
+        }
+        else
+        {
+            throw new ArgumentException(""Unexpected type"", nameof(typeName));
+        }
+    }
+}
+
+[Serializable]
+public class BookRecord
+{
+    public string Title { get; set; }
+    public AisleLocation Location { get; set; }
+}
+
+[Serializable]
+public class AisleLocation
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class Binders
+{
+    public static SerializationBinder BookRecord =
+        new BookRecordSerializationBinder();
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Binder = Binders.BookRecord;
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord)formatter.Deserialize(ms);    // CA2302 violation
+        }
+    }
+}",
+                GetCSharpResultAt(55, 32, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact]
+        public void DocSample3_VB_Violation_Diagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+Imports System.Runtime.Serialization.Formatters.Binary
+
+Public Class BookRecordSerializationBinder
+    Inherits SerializationBinder
+
+    Public Overrides Function BindToType(assemblyName As String, typeName As String) As Type
+        ' One way to discover expected types is through testing deserialization
+        ' of **valid** data and logging the types used.
+
+        'Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"")
+
+        If typeName = ""BinaryFormatterVB.BookRecord"" Or typeName = ""BinaryFormatterVB.AisleLocation"" Then
+            Return Nothing
+        Else
+            Throw New ArgumentException(""Unexpected type"", NameOf(typeName))
+        End If
+    End Function
+End Class
+
+<Serializable()>
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Location As AisleLocation
+End Class
+
+<Serializable()>
+Public Class AisleLocation
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class Binders
+    Public Shared Property BookRecord As SerializationBinder = New BookRecordSerializationBinder()
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
+        Dim formatter As BinaryFormatter = New BinaryFormatter()
+        formatter.Binder = Binders.BookRecord
+        Using ms As MemoryStream = New MemoryStream(bytes)
+            Return CType(formatter.Deserialize(ms), BookRecord)    ' CA2302 violation
+        End Using
+    End Function
+End Class",
+                GetBasicResultAt(45, 26, BinderMaybeNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
+        }
+
+
+        [Fact]
+        public void DocSample3_CSharp_Solution_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+public class BookRecordSerializationBinder : SerializationBinder
+{
+    public override Type BindToType(string assemblyName, string typeName)
+    {
+        // One way to discover expected types is through testing deserialization
+        // of **valid** data and logging the types used.
+
+        ////Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"");
+
+        if (typeName == ""BookRecord"" || typeName == ""AisleLocation"")
+        {
+            return null;
+        }
+        else
+        {
+            throw new ArgumentException(""Unexpected type"", nameof(typeName));
+        }
+    }
+}
+
+[Serializable]
+public class BookRecord
+{
+    public string Title { get; set; }
+    public AisleLocation Location { get; set; }
+}
+
+[Serializable]
+public class AisleLocation
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class Binders
+{
+    public static SerializationBinder BookRecord =
+        new BookRecordSerializationBinder();
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+
+        // Ensure that Binder is always non-null before deserializing
+        formatter.Binder = Binders.BookRecord ?? throw new Exception(""Expected non-null"");
+
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord)formatter.Deserialize(ms);
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample3_VB_Solution_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+Imports System.Runtime.Serialization.Formatters.Binary
+
+Public Class BookRecordSerializationBinder
+    Inherits SerializationBinder
+
+    Public Overrides Function BindToType(assemblyName As String, typeName As String) As Type
+        ' One way to discover expected types is through testing deserialization
+        ' of **valid** data and logging the types used.
+
+        'Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"")
+
+        If typeName = ""BinaryFormatterVB.BookRecord"" Or typeName = ""BinaryFormatterVB.AisleLocation"" Then
+            Return Nothing
+        Else
+            Throw New ArgumentException(""Unexpected type"", NameOf(typeName))
+        End If
+    End Function
+End Class
+
+<Serializable()>
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Location As AisleLocation
+End Class
+
+<Serializable()>
+Public Class AisleLocation
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class Binders
+    Public Shared Property BookRecord As SerializationBinder = New BookRecordSerializationBinder()
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
+        Dim formatter As BinaryFormatter = New BinaryFormatter()
+
+        ' Ensure that Binder is always non-null before deserializing
+        formatter.Binder = If(Binders.BookRecord, New Exception(""Expected non-null""))
+
+        Using ms As MemoryStream = New MemoryStream(bytes)
+            Return CType(formatter.Deserialize(ms), BookRecord)
+        End Using
+    End Function
+End Class");
         }
 
         [Fact]
@@ -1143,6 +1376,110 @@ namespace Blah
     }
 }",
             GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = DeserializeBookRecord")]
+        [InlineData(@"dotnet_code_quality.CA2301.excluded_symbol_names = DeserializeBookRecord
+                      dotnet_code_quality.CA2302.excluded_symbol_names = DeserializeBookRecord")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = DeserializeBookRecord")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(29, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+[Serializable]
+public class BookRecord
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public int PageCount { get; set; }
+    public AisleLocation Location { get; set; }
+}
+
+[Serializable]
+public class AisleLocation
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord) formatter.Deserialize(ms);
+        }
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstance_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            f.Binder = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            return f.Deserialize(stream);
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            SerializationBinder b = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            f.Binder = b;
+            return f.Deserialize(stream);
+        }
+    }
+}");
         }
     }
 }

@@ -1,25 +1,25 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Threading
-Imports System.Collections.Generic
 Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Analyzer.Utilities
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer
         Inherits TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer(Of TypeBlockSyntax)
-        Protected Overrides Function GetAnalyzer(disposableTypeSymbol As INamedTypeSymbol) As DisposableFieldAnalyzer
-            Return New BasicDisposableFieldAnalyzer(disposableTypeSymbol)
+        Protected Overrides Function GetAnalyzer(wellKnownTypeProvider As WellKnownTypeProvider) As DisposableFieldAnalyzer
+            Return New BasicDisposableFieldAnalyzer(wellKnownTypeProvider)
         End Function
 
         Private Class BasicDisposableFieldAnalyzer
             Inherits DisposableFieldAnalyzer
-            Public Sub New(disposableTypeSymbol As INamedTypeSymbol)
-                MyBase.New(disposableTypeSymbol)
+            Public Sub New(wellKnownTypeProvider As WellKnownTypeProvider)
+                MyBase.New(wellKnownTypeProvider)
             End Sub
 
             Protected Overrides Function IsDisposableFieldCreation(node As SyntaxNode, model As SemanticModel, disposableFields As HashSet(Of ISymbol), cancellationToken As CancellationToken) As Boolean

@@ -24,7 +24,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.SymbolDeclaredEventRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticSeverity.Error,
             isEnabledByDefault: false,
             description: s_localizableDescription,
@@ -41,10 +41,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol symbolType = compilationContext.Compilation.GetTypeByMetadataName(s_fullNameOfSymbol);
+                INamedTypeSymbol? symbolType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(s_fullNameOfSymbol);
                 if (symbolType != null)
                 {
-                    CompilationAnalyzer compilationAnalyzer = GetCompilationAnalyzer(compilationContext.Compilation, symbolType);
+                    CompilationAnalyzer? compilationAnalyzer = GetCompilationAnalyzer(compilationContext.Compilation, symbolType);
                     if (compilationAnalyzer != null)
                     {
                         compilationContext.RegisterSyntaxNodeAction(compilationAnalyzer.AnalyzeNode, InvocationExpressionSyntaxKind);
@@ -56,7 +56,7 @@ namespace Roslyn.Diagnostics.Analyzers
         }
 
         protected abstract TSyntaxKind InvocationExpressionSyntaxKind { get; }
-        protected abstract CompilationAnalyzer GetCompilationAnalyzer(Compilation compilation, INamedTypeSymbol symbolType);
+        protected abstract CompilationAnalyzer? GetCompilationAnalyzer(Compilation compilation, INamedTypeSymbol symbolType);
 
         protected abstract class CompilationAnalyzer
         {
@@ -84,11 +84,11 @@ namespace Roslyn.Diagnostics.Analyzers
                     _hasMemberNamedSymbolDeclaredEvent = true;
 
                     // If the below assert fire then probably the definition of "SymbolDeclaredEvent" has changed and we need to fix this analyzer.
-                    Debug.Assert(symbolDeclaredEvent.GetParameters().Count() == 1);
+                    Debug.Assert(symbolDeclaredEvent.GetParameters().HasExactly(1));
                 }
             }
 
-            protected abstract SyntaxNode GetFirstArgumentOfInvocation(SyntaxNode invocation);
+            protected abstract SyntaxNode? GetFirstArgumentOfInvocation(SyntaxNode invocation);
             protected abstract ImmutableHashSet<string> SymbolTypesWithExpectedSymbolDeclaredEvent { get; }
 
             internal void AnalyzeNode(SyntaxNodeAnalysisContext context)
@@ -106,12 +106,12 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (invocationSymbol.Name.Equals(SymbolDeclaredEventName, StringComparison.Ordinal) &&
                     _compilationType.Equals(invocationSymbol.ContainingType))
                 {
-                    SyntaxNode argument = GetFirstArgumentOfInvocation(context.Node);
+                    SyntaxNode? argument = GetFirstArgumentOfInvocation(context.Node);
                     AnalyzeSymbolDeclaredEventInvocation(argument, context);
                 }
             }
 
-            protected bool AnalyzeSymbolDeclaredEventInvocation(SyntaxNode argument, SyntaxNodeAnalysisContext context)
+            protected bool AnalyzeSymbolDeclaredEventInvocation(SyntaxNode? argument, SyntaxNodeAnalysisContext context)
             {
                 if (argument != null)
                 {

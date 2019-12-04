@@ -47,35 +47,32 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            INamedTypeSymbol equatableType = WellKnownTypes.GenericIEquatable(model.Compilation);
+            INamedTypeSymbol? equatableType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
             if (equatableType == null)
             {
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable;
+                string title = MicrosoftCodeQualityAnalyzersResources.ImplementEquatable;
                 context.RegisterCodeFix(new MyCodeAction(
                     title,
                     async ct =>
                         await ImplementEquatableInStructAsync(context.Document, declaration, type, model.Compilation,
                             equatableType, ct).ConfigureAwait(false),
-                    equivalenceKey: title), diagnostic);
+                    equivalenceKey: title), context.Diagnostics);
             }
 
             if (!type.OverridesEquals())
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
+                string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
                 context.RegisterCodeFix(new MyCodeAction(
                     title,
                     async ct =>
                         await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
                             ct).ConfigureAwait(false),
-                    equivalenceKey: title), diagnostic);
+                    equivalenceKey: title), context.Diagnostics);
             }
         }
 
@@ -156,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool HasExplicitEqualsImplementation(INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType)
         {
             INamedTypeSymbol constructedType = equatableType.Construct(typeSymbol);
-            IMethodSymbol constructedEqualsMethod = constructedType.GetMembers().OfType<IMethodSymbol>().Single();
+            IMethodSymbol constructedEqualsMethod = constructedType.GetMembers().OfType<IMethodSymbol>().FirstOrDefault();
 
             foreach (IMethodSymbol method in typeSymbol.GetMembers().OfType<IMethodSymbol>())
             {

@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+// TODO(dotpaul): Enable nullable analysis.
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -35,7 +38,7 @@ namespace Microsoft.NetFramework.Analyzers
                 analyzer.AnalyzeOperation,
                 OperationKind.Invocation,
                 OperationKind.SimpleAssignment,
-                OperationKind.VariableDeclaration,
+                OperationKind.VariableDeclarator,
                 OperationKind.ObjectCreation,
                 OperationKind.FieldInitializer
             );
@@ -195,33 +198,21 @@ namespace Microsoft.NetFramework.Analyzers
                         AnalyzeAssignment(context);
                         break;
                     case OperationKind.FieldInitializer:
-                        AnalyzeFieldDeclaration(context);
+                        var fieldInitializer = (IFieldInitializerOperation)context.Operation;
+                        foreach (var field in fieldInitializer.InitializedFields)
+                        {
+                            AnalyzeObjectCreationInternal(context, field, fieldInitializer.Value);
+                        }
                         break;
-                    case OperationKind.VariableDeclaration:
-                        AnalyzeVariableDeclaration(context);
+                    case OperationKind.VariableDeclarator:
+                        var declarator = (IVariableDeclaratorOperation)context.Operation;
+                        AnalyzeObjectCreationInternal(context, declarator.Symbol, declarator.GetVariableInitializer()?.Value);
                         break;
                     case OperationKind.Invocation:
-                        AnalyzeInvocation(context);
+                        var invocation = (IInvocationOperation)context.Operation;
+                        AnalyzeMethodOverloads(context, invocation.TargetMethod, invocation.Arguments, invocation.Syntax);
                         break;
                 }
-            }
-
-            private void AnalyzeInvocation(OperationAnalysisContext context)
-            {
-
-                if (!(context.Operation is IInvocationOperation invocationExpression))
-                {
-                    return;
-                }
-
-                IMethodSymbol method = invocationExpression.TargetMethod;
-
-                if (method == null)
-                {
-                    return;
-                }
-
-                AnalyzeMethodOverloads(context, method, invocationExpression.Arguments, invocationExpression.Syntax);
             }
 
             private void AnalyzeMethodOverloads(OperationAnalysisContext context, IMethodSymbol method, ImmutableArray<IArgumentOperation> arguments, SyntaxNode expressionSyntax)
@@ -275,11 +266,10 @@ namespace Microsoft.NetFramework.Analyzers
                         // If no XmlReaderSettings are passed, then the default
                         // XmlReaderSettings are used, with DtdProcessing set to Prohibit.
                     }
-                    else
+                    else if (arguments.Length > xmlReaderSettingsIndex)
                     {
-                        SemanticModel model = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
                         IArgumentOperation arg = arguments[xmlReaderSettingsIndex];
-                        ISymbol settingsSymbol = arg.Value.Syntax.GetDeclaredOrReferencedSymbol(model);
+                        ISymbol settingsSymbol = arg.GetReferencedMemberOrLocalOrParameter();
 
                         if (settingsSymbol == null)
                         {
@@ -319,24 +309,8 @@ namespace Microsoft.NetFramework.Analyzers
                 }
             }
 
-            private void AnalyzeFieldDeclaration(OperationAnalysisContext context)
-            {
-                if (!(context.Operation is IAssignmentOperation assign))
-                {
-                    return;
-                }
-
-                if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IFieldSymbol field))
-                {
-                    return;
-                }
-
-                AnalyzeObjectCreationInternal(context, field, assign.Value);
-            }
-
             private void AnalyzeObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation valueOpt)
             {
-
                 if (!(valueOpt is IObjectCreationOperation objCreation))
                 {
                     return;
@@ -361,7 +335,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
                 else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsCtor(objCreation.Constructor, _xmlTypes))
                 {
-                    AnalyzeObjectCreationForXmlReaderSettings(context, variable, objCreation);
+                    AnalyzeObjectCreationForXmlReaderSettings(variable, objCreation);
                 }
                 else
                 {
@@ -398,14 +372,14 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
+                            if (!(assign.Target is IPropertyReferenceOperation propertyReference))
                             {
                                 continue;
                             }
 
+                            var prop = propertyReference.Property;
                             if (prop.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, "XmlResolver"))
                             {
-
                                 if (!(propValue is IConversionOperation operation))
                                 {
                                     return;
@@ -421,8 +395,13 @@ namespace Microsoft.NetFramework.Analyzers
                                 }
                                 else // Non secure resolvers
                                 {
+                                    ReportDiagnostic(assign.Syntax, context);
                                     return;
                                 }
+                            }
+                            else
+                            {
+                                AnalyzeNeverSetProperties(context, prop, assign.Syntax.GetLocation());
                             }
                         }
                     }
@@ -435,6 +414,14 @@ namespace Microsoft.NetFramework.Analyzers
                     _xmlDocumentEnvironments[variable] = xmlDocumentEnvironment;
                 }
                 else if (!xmlDocumentEnvironment.IsSecureResolver) // Insecure temp object
+                {
+                    ReportDiagnostic(node, context);
+                }
+
+                return;
+
+                // Local functions
+                static void ReportDiagnostic(SyntaxNode node, OperationAnalysisContext context)
                 {
                     Diagnostic diag = Diagnostic.Create(
                                         RuleDoNotUseInsecureDtdProcessing,
@@ -449,7 +436,6 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeObjectCreationForXmlTextReader(OperationAnalysisContext context, ISymbol variable, IObjectCreationOperation objCreation)
             {
-
                 if (variable == null || !_xmlTextReaderEnvironments.TryGetValue(variable, out XmlTextReaderEnvironment env))
                 {
                     env = new XmlTextReaderEnvironment(_isFrameworkSecure)
@@ -471,11 +457,12 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
+                            if (!(assign.Target is IPropertyReferenceOperation propertyReference))
                             {
                                 continue;
                             }
 
+                            var prop = propertyReference.Property;
                             if (propValue is IConversionOperation operation
                                 && SecurityDiagnosticHelpers.IsXmlTextReaderXmlResolverPropertyDerived(prop, _xmlTypes))
                             {
@@ -535,7 +522,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
             }
 
-            private void AnalyzeObjectCreationForXmlReaderSettings(OperationAnalysisContext context, ISymbol variable, IObjectCreationOperation objCreation)
+            private void AnalyzeObjectCreationForXmlReaderSettings(ISymbol variable, IObjectCreationOperation objCreation)
             {
                 XmlReaderSettingsEnvironment xmlReaderSettingsEnv = new XmlReaderSettingsEnvironment(_isFrameworkSecure);
 
@@ -553,11 +540,12 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
+                            if (!(assign.Target is IPropertyReferenceOperation propertyReference))
                             {
                                 continue;
                             }
 
+                            var prop = propertyReference.Property;
                             if (SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(
                                     prop,
                                     _xmlTypes)
@@ -591,21 +579,12 @@ namespace Microsoft.NetFramework.Analyzers
                 }
             }
 
-            private void AnalyzeVariableDeclaration(OperationAnalysisContext context)
-            {
-                var declare = (IVariableDeclarationOperation)context.Operation;
-                foreach (var declarator in declare.Declarators)
-                {
-                    AnalyzeObjectCreationInternal(context, declarator.Symbol, declarator.GetVariableInitializer()?.Value);
-                }
-            }
-
             private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentOperation expression)
             {
                 bool isSecureResolver = false;
-                IConversionOperation conv = expression.Value as IConversionOperation;
 
-                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
+                IConversionOperation conv = expression.Value as IConversionOperation;
+                if (conv != null && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                 {
                     isSecureResolver = true;
                 }
@@ -678,36 +657,27 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeAssignment(OperationAnalysisContext context)
             {
-                IAssignmentOperation expression = context.Operation as IAssignmentOperation;
+                var assignment = (IAssignmentOperation)context.Operation;
 
-                if (expression.Target == null)
+                if (!(assignment.Target is IPropertyReferenceOperation propRef)) // A variable/field assignment
                 {
-                    return;
-                }
-
-                SemanticModel model = context.Compilation.GetSemanticModel(expression.Syntax.SyntaxTree);
-
-                if (!(expression.Target is IPropertyReferenceOperation propRef)) // A variable/field assignment
-                {
-                    ISymbol symbolAssignedTo = expression.Target.Syntax.GetDeclaredOrReferencedSymbol(model);
-
+                    var symbolAssignedTo = assignment.Target.GetReferencedMemberOrLocalOrParameter();
                     if (symbolAssignedTo != null)
                     {
-                        AnalyzeObjectCreationInternal(context, symbolAssignedTo, expression.Value);
+                        AnalyzeObjectCreationInternal(context, symbolAssignedTo, assignment.Value);
                     }
                 }
                 else // A property assignment
                 {
-                    if (propRef.Instance == null)
+                    ISymbol assignedSymbol = propRef.Instance?.GetReferencedMemberOrLocalOrParameter();
+                    if (assignedSymbol == null)
                     {
                         return;
                     }
 
-                    ISymbol assignedSymbol = propRef.Instance.Syntax.GetDeclaredOrReferencedSymbol(model);
-
                     if (propRef.Property.MatchPropertyByName(_xmlTypes.XmlDocument, "XmlResolver"))
                     {
-                        AnalyzeXmlResolverPropertyAssignmentForXmlDocument(context, assignedSymbol, expression);
+                        AnalyzeXmlResolverPropertyAssignmentForXmlDocument(context, assignedSymbol, assignment);
                     }
                     else
                     {
@@ -717,7 +687,7 @@ namespace Microsoft.NetFramework.Analyzers
                             SecurityDiagnosticHelpers.IsXmlTextReaderDtdProcessingPropertyDerived(propRef.Property, _xmlTypes);
                         if (isXmlTextReaderXmlResolverProperty || isXmlTextReaderDtdProcessingProperty)
                         {
-                            AnalyzeXmlTextReaderProperties(context, assignedSymbol, expression, isXmlTextReaderXmlResolverProperty,
+                            AnalyzeXmlTextReaderProperties(context, assignedSymbol, assignment, isXmlTextReaderXmlResolverProperty,
                                 isXmlTextReaderDtdProcessingProperty);
                         }
                         else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsType(propRef.Instance.Type, _xmlTypes))
@@ -730,7 +700,7 @@ namespace Microsoft.NetFramework.Analyzers
                             }
 
 
-                            if (expression.Value is IConversionOperation conv && SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(propRef.Property, _xmlTypes))
+                            if (assignment.Value is IConversionOperation conv && SecurityDiagnosticHelpers.IsXmlReaderSettingsXmlResolverProperty(propRef.Property, _xmlTypes))
                             {
                                 if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                                 {
@@ -744,18 +714,18 @@ namespace Microsoft.NetFramework.Analyzers
                             else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsDtdProcessingProperty(propRef.Property, _xmlTypes))
                             {
                                 env.IsDtdProcessingDisabled =
-                                    !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(expression.Value);
+                                    !SecurityDiagnosticHelpers.IsExpressionEqualsDtdProcessingParse(assignment.Value);
                             }
                             else if (SecurityDiagnosticHelpers.IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(propRef.Property,
                                 _xmlTypes))
                             {
                                 env.IsMaxCharactersFromEntitiesLimited =
-                                    !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(expression.Value);
+                                    !SecurityDiagnosticHelpers.IsExpressionEqualsIntZero(assignment.Value);
                             }
                         }
                         else
                         {
-                            AnalyzeNeverSetProperties(context, propRef.Property, expression.Syntax.GetLocation());
+                            AnalyzeNeverSetProperties(context, propRef.Property, assignment.Syntax.GetLocation());
                         }
                     }
                 }

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -45,10 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
 
-            Debug.Assert(this.DeserializerTypeMetadataName != null);
-            Debug.Assert(cachedDeserializationMethodNames != null);
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
-            Debug.Assert(this.MethodUsedDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -58,8 +55,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    INamedTypeSymbol deserializerTypeSymbol =
-                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(this.DeserializerTypeMetadataName);
+                    INamedTypeSymbol? deserializerTypeSymbol =
+                        compilationStartAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(this.DeserializerTypeMetadataName);
                     if (deserializerTypeSymbol == null)
                     {
                         return;

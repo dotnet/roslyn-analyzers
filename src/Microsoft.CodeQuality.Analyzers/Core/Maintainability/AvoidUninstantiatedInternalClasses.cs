@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,10 +20,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     {
         internal const string RuleId = "CA1812";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUninstantiatedInternalClassesTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUninstantiatedInternalClassesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUninstantiatedInternalClassesMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUninstantiatedInternalClassesDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUninstantiatedInternalClassesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUninstantiatedInternalClassesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -45,10 +44,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
-                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
+                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
+                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
 
                 var compilation = startContext.Compilation;
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
                 // If the assembly being built by this compilation exposes its internals to
                 // any other assembly, don't report any "uninstantiated internal class" errors.
@@ -58,19 +58,20 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                var internalsVisibleToAttributeSymbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.InternalsVisibleToAttribute");
-                if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
+                var internalsVisibleToAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
+                if (compilation.Assembly.HasAttribute(internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
 
-                var systemAttributeSymbol = compilation.GetTypeByMetadataName("System.Attribute");
-                var iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName("System.Configuration.IConfigurationSectionHandler");
-                var configurationSectionSymbol = compilation.GetTypeByMetadataName("System.Configuration.ConfigurationSection");
-                var safeHandleSymbol = compilation.GetTypeByMetadataName("System.Runtime.InteropServices.SafeHandle");
-                var traceListenerSymbol = compilation.GetTypeByMetadataName("System.Diagnostics.TraceListener");
-                var mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.ComponentModel.Composition.ExportAttribute");
-                var mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName("System.Composition.ExportAttribute");
+                var systemAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
+                var iConfigurationSectionHandlerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationIConfigurationSectionHandler);
+                var configurationSectionSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationConfigurationSection);
+                var safeHandleSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesSafeHandle);
+                var traceListenerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
+                var mef1ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var mef2ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var coClassAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesCoClassAttribute);
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -101,6 +102,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     if (type.BaseType != null)
                     {
                         instantiatedTypes.TryAdd(type.BaseType, null);
+                    }
+
+                    // Consider class type declared in the CoClass attribute as instantiated
+                    if (coClassAttributeSymbol != null &&
+                        type.TypeKind == TypeKind.Interface &&
+                        type.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals(coClassAttributeSymbol)) is AttributeData coClassAttribute &&
+                        coClassAttribute.ConstructorArguments.Length == 1 &&
+                        coClassAttribute.ConstructorArguments[0].Kind == TypedConstantKind.Type &&
+                        coClassAttribute.ConstructorArguments[0].Value is INamedTypeSymbol typeSymbol &&
+                        typeSymbol.TypeKind == TypeKind.Class)
+                    {
+                        instantiatedTypes.TryAdd(typeSymbol, null);
                     }
                 }, SymbolKind.NamedType);
 
@@ -140,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                             else if (typeArg is ITypeParameterSymbol typeParameterArg && !typeParameterArg.ConstraintTypes.IsEmpty)
                             {
-                                IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
+                                static IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
                                 {
                                     var directConstraints = t.ConstraintTypes.OfType<INamedTypeSymbol>();
                                     var inheritedConstraints = t.ConstraintTypes.OfType<ITypeParameterSymbol>()
@@ -201,16 +214,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
-        private static bool AssemblyExposesInternals(
-            Compilation compilation,
-            INamedTypeSymbol internalsVisibleToAttributeSymbol)
-        {
-            ISymbol assemblySymbol = compilation.Assembly;
-            var attributes = assemblySymbol.GetAttributes();
-            return attributes.Any(
-                attr => attr.AttributeClass.Equals(internalsVisibleToAttributeSymbol));
-        }
-
         private bool HasInstantiatedNestedType(INamedTypeSymbol type, IEnumerable<INamedTypeSymbol> instantiatedTypes)
         {
             // We don't care whether a private nested type is instantiated, because if it
@@ -236,13 +239,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         public static bool IsOkToBeUnused(
             INamedTypeSymbol type,
             Compilation compilation,
-            INamedTypeSymbol systemAttributeSymbol,
-            INamedTypeSymbol iConfigurationSectionHandlerSymbol,
-            INamedTypeSymbol configurationSectionSymbol,
-            INamedTypeSymbol safeHandleSymbol,
-            INamedTypeSymbol traceListenerSymbol,
-            INamedTypeSymbol mef1ExportAttributeSymbol,
-            INamedTypeSymbol mef2ExportAttributeSymbol)
+            INamedTypeSymbol? systemAttributeSymbol,
+            INamedTypeSymbol? iConfigurationSectionHandlerSymbol,
+            INamedTypeSymbol? configurationSectionSymbol,
+            INamedTypeSymbol? safeHandleSymbol,
+            INamedTypeSymbol? traceListenerSymbol,
+            INamedTypeSymbol? mef1ExportAttributeSymbol,
+            INamedTypeSymbol? mef2ExportAttributeSymbol)
         {
             if (type.TypeKind != TypeKind.Class || type.IsAbstract)
             {
@@ -300,8 +303,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         }
         public static bool IsMefExported(
             INamedTypeSymbol type,
-            INamedTypeSymbol mef1ExportAttributeSymbol,
-            INamedTypeSymbol mef2ExportAttributeSymbol)
+            INamedTypeSymbol? mef1ExportAttributeSymbol,
+            INamedTypeSymbol? mef2ExportAttributeSymbol)
         {
             return (mef1ExportAttributeSymbol != null && type.HasAttribute(mef1ExportAttributeSymbol))
                 || (mef2ExportAttributeSymbol != null && type.HasAttribute(mef2ExportAttributeSymbol));
@@ -318,8 +321,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            var taskSymbol = WellKnownTypes.Task(compilation);
-            var genericTaskSymbol = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+            var wellKnowTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+            var taskSymbol = wellKnowTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            var genericTaskSymbol = wellKnowTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
 
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.
@@ -331,7 +335,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 .Any(m => IsEntryPoint(m, taskSymbol, genericTaskSymbol));
         }
 
-        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
+        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol? taskSymbol, ITypeSymbol? genericTaskSymbol)
         {
             if (!method.IsStatic)
             {
@@ -343,12 +347,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            if (method.Parameters.Count() == 0)
+            if (!method.Parameters.Any())
             {
                 return true;
             }
 
-            if (method.Parameters.Count() > 1)
+            if (method.Parameters.HasMoreThan(1))
             {
                 return false;
             }
@@ -356,7 +360,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return true;
         }
 
-        private static bool IsSupportedReturnType(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
+        private static bool IsSupportedReturnType(IMethodSymbol method, ITypeSymbol? taskSymbol, ITypeSymbol? genericTaskSymbol)
         {
             if (method.ReturnType.SpecialType == SpecialType.System_Int32)
             {

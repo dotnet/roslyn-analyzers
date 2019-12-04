@@ -1,4 +1,66 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!-- Add License and Third Party Notices files into each VSIX. -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\EULA.rtf">
+      <Link>EULA.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\ThirdPartyNotices.rtf">
+       <Link>ThirdPartyNotices.rtf</Link>
+       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Coverage)' == 'true'">
+    <!-- https://github.com/tonerdo/coverlet/issues/363 -->
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+
+    <!-- https://github.com/tonerdo/coverlet/issues/618 -->
+    <IncludeTestAssembly>true</IncludeTestAssembly>
+
+    <CollectCoverage>true</CollectCoverage>
+    <SingleHit>true</SingleHit>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>$(ArtifactsDir)coverage\$(MSBuildProjectName)_$(TargetFramework)_$(_TestArchitecture).coverage</CoverletOutput>
+    <Include></Include>
+    <Exclude></Exclude>
+    <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
+    <ExcludeByFile></ExcludeByFile>
+  </PropertyGroup>
+
+  <Target Name="InstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true'">
+    <Coverlet.MSbuild.Tasks.InstrumentationTask
+      Condition="'$(CollectCoverage)' == 'true'"
+      Path="$(TargetPath)"
+      Include="$(Include)"
+      IncludeDirectory="$(IncludeDirectory)"
+      Exclude="$(Exclude)"
+      ExcludeByFile="$(ExcludeByFile)"
+      ExcludeByAttribute="$(ExcludeByAttribute)"
+      IncludeTestAssembly="$(IncludeTestAssembly)"
+      SingleHit="$(SingleHit)"
+      MergeWith="$(MergeWith)"
+      UseSourceLink="$(UseSourceLink)" >
+      <Output TaskParameter="InstrumenterState" PropertyName="InstrumenterState"/>
+    </Coverlet.MSbuild.Tasks.InstrumentationTask>
+  </Target>
+
+  <Target Name="GenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true'">
+    <Coverlet.MSbuild.Tasks.CoverageResultTask
+      Condition="'$(CollectCoverage)' == 'true'"
+      Output="$(CoverletOutput)"
+      OutputFormat="$(CoverletOutputFormat)"
+      Threshold="$(Threshold)"
+      ThresholdType="$(ThresholdType)"
+      ThresholdStat="$(ThresholdStat)"
+      InstrumenterState="$(InstrumenterState)"/>
+  </Target>
 </Project>

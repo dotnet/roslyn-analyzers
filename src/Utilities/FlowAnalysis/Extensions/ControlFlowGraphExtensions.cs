@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis
 {
-    public static class ControlFlowGraphExtensions
+    internal static class ControlFlowGraphExtensions
     {
         public static BasicBlock GetEntry(this ControlFlowGraph cfg) => cfg.Blocks.Single(b => b.Kind == BasicBlockKind.Entry);
         public static BasicBlock GetExit(this ControlFlowGraph cfg) => cfg.Blocks.Single(b => b.Kind == BasicBlockKind.Exit);
@@ -26,8 +25,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
         public static IEnumerable<T> DescendantOperations<T>(this ControlFlowGraph cfg, OperationKind operationKind)
             where T : IOperation
         {
-            Debug.Assert(cfg != null);
-
             foreach (var descendant in cfg.DescendantOperations())
             {
                 if (descendant?.Kind == operationKind)

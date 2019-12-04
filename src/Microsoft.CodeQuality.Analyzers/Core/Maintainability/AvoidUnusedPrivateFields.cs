@@ -3,6 +3,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -18,10 +19,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     {
         internal const string RuleId = "CA1823";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                                       s_localizableTitle,
@@ -49,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     ConcurrentDictionary<IFieldSymbol, UnusedValue> referencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
-                    var structLayoutAttribute = WellKnownTypes.StructLayoutAttribute(compilationContext.Compilation);
+                    var structLayoutAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesStructLayoutAttribute);
 
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
@@ -112,19 +113,32 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         },
                         OperationKind.FieldReference);
 
-                    compilationContext.RegisterCompilationEndAction(
-                        (compilationEndContext) =>
+                    // Private field reference information reaches a state of consistency as each type symbol completes
+                    // analysis. Reporting information at the end of each named type provides incremental analysis
+                    // support inside the IDE.
+                    compilationContext.RegisterSymbolStartAction(
+                        context =>
                         {
-                            foreach (IFieldSymbol maybeUnreferencedPrivateField in maybeUnreferencedPrivateFields.Keys)
+                            context.RegisterSymbolEndAction(context =>
                             {
-                                if (referencedPrivateFields.ContainsKey(maybeUnreferencedPrivateField))
+                                var namedType = (INamedTypeSymbol)context.Symbol;
+                                foreach (var member in namedType.GetMembers())
                                 {
-                                    continue;
-                                }
+                                    if (!(member is IFieldSymbol field))
+                                    {
+                                        continue;
+                                    }
 
-                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, maybeUnreferencedPrivateField.Locations[0], maybeUnreferencedPrivateField.Name));
-                            }
-                        });
+                                    if (!maybeUnreferencedPrivateFields.ContainsKey(field) || referencedPrivateFields.ContainsKey(field))
+                                    {
+                                        continue;
+                                    }
+
+                                    context.ReportDiagnostic(Diagnostic.Create(Rule, field.Locations[0], field.Name));
+                                }
+                            });
+                        },
+                        SymbolKind.NamedType);
                 });
         }
 
@@ -132,19 +146,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             var specialAttributes = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
-            var fieldOffsetAttribute = WellKnownTypes.FieldOffsetAttribute(compilation);
+            var fieldOffsetAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesFieldOffsetAttribute);
             if (fieldOffsetAttribute != null)
             {
                 specialAttributes.Add(fieldOffsetAttribute);
             }
 
-            var mefV1Attribute = WellKnownTypes.MEFV1ExportAttribute(compilation);
+            var mefV1Attribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
             if (mefV1Attribute != null)
             {
                 specialAttributes.Add(mefV1Attribute);
             }
 
-            var mefV2Attribute = WellKnownTypes.MEFV2ExportAttribute(compilation);
+            var mefV2Attribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
             if (mefV2Attribute != null)
             {
                 specialAttributes.Add(mefV2Attribute);

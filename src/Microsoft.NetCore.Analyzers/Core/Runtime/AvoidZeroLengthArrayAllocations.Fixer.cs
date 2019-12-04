@@ -6,6 +6,7 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -36,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            string title = SystemRuntimeAnalyzersResources.UseArrayEmpty;
+            string title = MicrosoftNetCoreAnalyzersResources.UseArrayEmpty;
             context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await ConvertToArrayEmpty(context.Document, nodeToFix, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),
@@ -50,18 +51,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
 
-            ITypeSymbol elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
+            INamedTypeSymbol? arrayTypeSymbol = semanticModel.Compilation.GetOrCreateTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
+            if (arrayTypeSymbol == null)
+            {
+                return document;
+            }
+
+            ITypeSymbol? elementType = GetArrayElementType(nodeToFix, semanticModel, cancellationToken);
             if (elementType == null)
             {
                 return document;
             }
 
-            SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, elementType, semanticModel).WithTriviaFrom(nodeToFix);
+            SyntaxNode arrayEmptyInvocation = GenerateArrayEmptyInvocation(generator, arrayTypeSymbol, elementType).WithTriviaFrom(nodeToFix);
             editor.ReplaceNode(nodeToFix, arrayEmptyInvocation);
             return editor.GetChangedDocument();
         }
 
-        private static ITypeSymbol GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static ITypeSymbol? GetArrayElementType(SyntaxNode arrayCreationExpression, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var typeInfo = semanticModel.GetTypeInfo(arrayCreationExpression, cancellationToken);
             // When Type is null in cases like 'T[] goo = { }', use ConvertedType instead (https://github.com/dotnet/roslyn/issues/23545).
@@ -71,9 +78,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return arrayType?.ElementType;
         }
 
-        private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)
+        private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, INamedTypeSymbol arrayTypeSymbol, ITypeSymbol elementType)
         {
-            INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
             SyntaxNode arrayEmptyName = generator.MemberAccessExpression(
                 generator.TypeExpressionForStaticMemberAccess(arrayTypeSymbol),
                 generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, elementType));

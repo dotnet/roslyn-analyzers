@@ -2,25 +2,24 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System;
-using Analyzer.Utilities.PooledObjects;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Analyzer.Utilities
 {
     /// <summary>
     /// Helper for DisposeAnalysis.
     /// </summary>
-    public class DisposeAnalysisHelper
+    internal sealed class DisposeAnalysisHelper
     {
         private static readonly string[] s_disposeOwnershipTransferLikelyTypes = new string[]
             {
@@ -29,10 +28,8 @@ namespace Analyzer.Utilities
                 "System.IO.TextWriter",
                 "System.Resources.IResourceReader",
             };
-        private static readonly ConditionalWeakTable<Compilation, DisposeAnalysisHelper> s_DisposeHelperCache =
-            new ConditionalWeakTable<Compilation, DisposeAnalysisHelper>();
-        private static readonly ConditionalWeakTable<Compilation, DisposeAnalysisHelper>.CreateValueCallback s_DisposeHelperCacheCallback =
-            new ConditionalWeakTable<Compilation, DisposeAnalysisHelper>.CreateValueCallback(compilation => new DisposeAnalysisHelper(compilation));
+        private static readonly BoundedCacheWithFactory<Compilation, DisposeAnalysisHelper> s_DisposeHelperCache =
+            new BoundedCacheWithFactory<Compilation, DisposeAnalysisHelper>();
 
         private static readonly ImmutableHashSet<OperationKind> s_DisposableCreationKinds = ImmutableHashSet.Create(
             OperationKind.ObjectCreation,
@@ -42,17 +39,20 @@ namespace Analyzer.Utilities
 
         private readonly WellKnownTypeProvider _wellKnownTypeProvider;
         private readonly ImmutableHashSet<INamedTypeSymbol> _disposeOwnershipTransferLikelyTypes;
-        private ConcurrentDictionary<INamedTypeSymbol, ImmutableHashSet<IFieldSymbol>> _lazyDisposableFieldsMap;
-        public INamedTypeSymbol IDisposable => _wellKnownTypeProvider.IDisposable;
-        public INamedTypeSymbol Task => _wellKnownTypeProvider.Task;
+        private ConcurrentDictionary<INamedTypeSymbol, ImmutableHashSet<IFieldSymbol>>? _lazyDisposableFieldsMap;
+        public INamedTypeSymbol? IDisposable { get; }
+        public INamedTypeSymbol? Task { get; }
 
         private DisposeAnalysisHelper(Compilation compilation)
         {
             _wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
-            if (IDisposable != null)
-            {
-                _disposeOwnershipTransferLikelyTypes = GetDisposeOwnershipTransferLikelyTypes(compilation);
-            }
+
+            IDisposable = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
+            Task = _wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+
+            _disposeOwnershipTransferLikelyTypes = IDisposable != null ?
+                GetDisposeOwnershipTransferLikelyTypes(compilation) :
+                ImmutableHashSet<INamedTypeSymbol>.Empty;
         }
 
         private static ImmutableHashSet<INamedTypeSymbol> GetDisposeOwnershipTransferLikelyTypes(Compilation compilation)
@@ -60,7 +60,7 @@ namespace Analyzer.Utilities
             var builder = PooledHashSet<INamedTypeSymbol>.GetInstance();
             foreach (var typeName in s_disposeOwnershipTransferLikelyTypes)
             {
-                INamedTypeSymbol typeSymbol = compilation.GetTypeByMetadataName(typeName);
+                INamedTypeSymbol? typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
                 if (typeSymbol != null)
                 {
                     builder.Add(typeSymbol);
@@ -78,9 +78,9 @@ namespace Analyzer.Utilities
             }
         }
 
-        public static bool TryGetOrCreate(Compilation compilation, out DisposeAnalysisHelper disposeHelper)
+        public static bool TryGetOrCreate(Compilation compilation, [NotNullWhen(returnValue: true)] out DisposeAnalysisHelper? disposeHelper)
         {
-            disposeHelper = s_DisposeHelperCache.GetValue(compilation, s_DisposeHelperCacheCallback);
+            disposeHelper = s_DisposeHelperCache.GetOrCreateValue(compilation, CreateDisposeAnalysisHelper);
             if (disposeHelper.IDisposable == null)
             {
                 disposeHelper = null;
@@ -88,6 +88,10 @@ namespace Analyzer.Utilities
             }
 
             return true;
+
+            // Local functions
+            static DisposeAnalysisHelper CreateDisposeAnalysisHelper(Compilation compilation)
+                => new DisposeAnalysisHelper(compilation);
         }
 
         public bool TryGetOrComputeResult(
@@ -98,13 +102,13 @@ namespace Analyzer.Utilities
             bool trackInstanceFields,
             bool trackExceptionPaths,
             CancellationToken cancellationToken,
-            out DisposeAnalysisResult disposeAnalysisResult,
-            out PointsToAnalysisResult pointsToAnalysisResult,
-            InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt = null,
+            [NotNullWhen(returnValue: true)] out DisposeAnalysisResult? disposeAnalysisResult,
+            [NotNullWhen(returnValue: true)] out PointsToAnalysisResult? pointsToAnalysisResult,
+            InterproceduralAnalysisPredicate? interproceduralAnalysisPredicateOpt = null,
             bool defaultDisposeOwnershipTransferAtConstructor = false)
         {
             var cfg = operationBlocks.GetControlFlowGraph();
-            if (cfg != null)
+            if (cfg != null && IDisposable != null)
             {
                 disposeAnalysisResult = DisposeAnalysis.TryGetOrComputeResult(cfg, containingMethod, _wellKnownTypeProvider,
                     analyzerOptions, rule, _disposeOwnershipTransferLikelyTypes, trackInstanceFields,
@@ -140,6 +144,8 @@ namespace Analyzer.Utilities
         public ImmutableHashSet<IFieldSymbol> GetDisposableFields(INamedTypeSymbol namedType)
         {
             EnsureDisposableFieldsMap();
+            RoslynDebug.Assert(_lazyDisposableFieldsMap != null);
+
             if (_lazyDisposableFieldsMap.TryGetValue(namedType, out ImmutableHashSet<IFieldSymbol> disposableFields))
             {
                 return disposableFields;
@@ -153,7 +159,7 @@ namespace Analyzer.Utilities
             {
                 disposableFields = namedType.GetMembers()
                     .OfType<IFieldSymbol>()
-                    .Where(f => f.Type.IsDisposable(IDisposable) && !f.Type.DerivesFrom(_wellKnownTypeProvider.Task))
+                    .Where(f => f.Type.IsDisposable(IDisposable) && !f.Type.DerivesFrom(Task))
                     .ToImmutableHashSet();
             }
 

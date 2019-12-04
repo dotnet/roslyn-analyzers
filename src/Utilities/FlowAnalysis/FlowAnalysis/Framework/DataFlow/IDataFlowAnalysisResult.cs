@@ -10,6 +10,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     {
         ControlFlowGraph ControlFlowGraph { get; }
         (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }
-        object AnalysisDataForUnhandledThrowOperationsOpt { get; }
+        object? AnalysisDataForUnhandledThrowOperationsOpt { get; }
+        object? TaskWrappedValuesMapOpt { get; }
     }
 }

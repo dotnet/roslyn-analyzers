@@ -1,29 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.AvoidDuplicateElementInitialization,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public partial class AvoidDuplicateElementInitializationTests : DiagnosticAnalyzerTestBase
+    public class AvoidDuplicateElementInitializationTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return null;
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AvoidDuplicateElementInitialization();
-        }
-
         [Fact]
-        public void NoInitializer()
+        public async Task NoInitializer()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -35,9 +26,9 @@ class C
         }
 
         [Fact]
-        public void LiteralIntIndex()
+        public async Task LiteralIntIndex()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -55,9 +46,9 @@ class C
         }
 
         [Fact]
-        public void CalculatedIntIndex()
+        public async Task CalculatedIntIndex()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -75,9 +66,9 @@ class C
         }
 
         [Fact]
-        public void LiteralStringIndex()
+        public async Task LiteralStringIndex()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -95,9 +86,9 @@ class C
         }
 
         [Fact]
-        public void ConcatenatedStringIndex()
+        public async Task ConcatenatedStringIndex()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -115,9 +106,9 @@ class C
         }
 
         [Fact]
-        public void EnumIndex()
+        public async Task EnumIndex()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -136,9 +127,9 @@ class C
         }
 
         [Fact]
-        public void MultipleIndexerArguments()
+        public async Task MultipleIndexerArguments()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -166,9 +157,9 @@ class D
         }
 
         [Fact]
-        public void MultipleIndexerArgumentsNamed()
+        public async Task MultipleIndexerArgumentsNamed()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -196,9 +187,9 @@ class D
         }
 
         [Fact]
-        public void MultipleIndexerArgumentsNamedWithAtPrefix()
+        public async Task MultipleIndexerArgumentsNamedWithAtPrefix()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -226,9 +217,9 @@ class D
         }
 
         [Fact]
-        public void MultipleArgumentsWithOmittedDefault()
+        public async Task MultipleArgumentsWithOmittedDefault()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -258,9 +249,9 @@ class D
         }
 
         [Fact]
-        public void NonConstantArguments()
+        public async Task NonConstantArguments()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -278,9 +269,9 @@ class C
         }
 
         [Fact]
-        public void MatchingNonConstantArguments()
+        public async Task MatchingNonConstantArguments()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -298,9 +289,9 @@ class C
         }
 
         [Fact]
-        public void ConstantMatchingNonConstantArgument()
+        public async Task ConstantMatchingNonConstantArgument()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo()
@@ -317,9 +308,9 @@ class C
         }
 
         [Fact]
-        public void AllNonConstantArguments()
+        public async Task AllNonConstantArguments()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     void Foo(string a)
@@ -337,8 +328,8 @@ class C
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-        {
-            return GetCSharpResultAt(line, column, AvoidDuplicateElementInitialization.Rule, symbolName);
-        }
+            => new DiagnosticResult(AvoidDuplicateElementInitialization.Rule)
+                .WithLocation(line, column)
+                .WithArguments(symbolName);
     }
 }

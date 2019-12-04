@@ -12,7 +12,7 @@ namespace Analyzer.Utilities.PooledObjects
 {
     [DebuggerDisplay("Count = {Count,nq}")]
     [DebuggerTypeProxy(typeof(ArrayBuilder<>.DebuggerProxy))]
-    public sealed partial class ArrayBuilder<T> : IReadOnlyCollection<T>, IReadOnlyList<T>
+    internal sealed partial class ArrayBuilder<T> : IReadOnlyCollection<T>, IReadOnlyList<T>, IDisposable
     {
         #region DebuggerProxy
 #pragma warning disable CA1812 // ArrayBuilder<T>.DebuggerProxy is an internal class that is apparently never instantiated - used in DebuggerTypeProxy attribute above.
@@ -47,19 +47,19 @@ namespace Analyzer.Utilities.PooledObjects
 
         private readonly ImmutableArray<T>.Builder _builder;
 
-        private readonly ObjectPool<ArrayBuilder<T>> _pool;
+        private readonly ObjectPool<ArrayBuilder<T>>? _pool;
 
         public ArrayBuilder(int size)
         {
             _builder = ImmutableArray.CreateBuilder<T>(size);
         }
 
-        public ArrayBuilder() :
-            this(8)
+        public ArrayBuilder()
+            : this(8)
         { }
 
-        private ArrayBuilder(ObjectPool<ArrayBuilder<T>> pool) :
-            this()
+        private ArrayBuilder(ObjectPool<ArrayBuilder<T>>? pool)
+            : this()
         {
             _pool = pool;
         }
@@ -105,7 +105,7 @@ namespace Analyzer.Utilities.PooledObjects
         {
             while (index > _builder.Count)
             {
-                _builder.Add(default);
+                _builder.Add(default!);
             }
 
             if (index == _builder.Count)
@@ -266,7 +266,7 @@ namespace Analyzer.Utilities.PooledObjects
             var tmp = ArrayBuilder<U>.GetInstance(Count);
             foreach (var i in _builder)
             {
-                tmp.Add((U)i);
+                tmp.Add((U)i!);
             }
 
             return tmp.ToImmutableAndFree();
@@ -297,6 +297,8 @@ namespace Analyzer.Utilities.PooledObjects
             this.Free();
             return result;
         }
+
+        public void Dispose() => Free();
 
         #region Poolable
 
@@ -370,7 +372,7 @@ namespace Analyzer.Utilities.PooledObjects
 
         internal static ObjectPool<ArrayBuilder<T>> CreatePool(int size)
         {
-            ObjectPool<ArrayBuilder<T>> pool = null;
+            ObjectPool<ArrayBuilder<T>>? pool = null;
             pool = new ObjectPool<ArrayBuilder<T>>(() => new ArrayBuilder<T>(pool), size);
             return pool;
         }
@@ -392,7 +394,7 @@ namespace Analyzer.Utilities.PooledObjects
             return GetEnumerator();
         }
 
-        internal Dictionary<K, ImmutableArray<T>> ToDictionary<K>(Func<T, K> keySelector, IEqualityComparer<K> comparer = null)
+        internal Dictionary<K, ImmutableArray<T>> ToDictionary<K>(Func<T, K> keySelector, IEqualityComparer<K>? comparer = null)
         {
             if (this.Count == 1)
             {

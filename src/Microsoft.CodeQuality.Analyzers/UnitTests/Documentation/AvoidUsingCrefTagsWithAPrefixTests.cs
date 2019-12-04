@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.Documentation;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.Documentation;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.CSharp.Analyzers.Documentation.CSharpAvoidUsingCrefTagsWithAPrefixAnalyzer,
@@ -15,24 +12,14 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.Documentation.UnitTests
 {
-    public class AvoidUsingCrefTagsWithAPrefixTests : DiagnosticAnalyzerTestBase
+    public class AvoidUsingCrefTagsWithAPrefixTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicAvoidUsingCrefTagsWithAPrefixAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpAvoidUsingCrefTagsWithAPrefixAnalyzer();
-        }
-
         #region No Diagnostic Tests
 
         [Fact]
-        public void NoDiagnosticCases()
+        public async Task NoDiagnosticCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 /// <summary>
 /// Type <see cref=""C"" /> contains method <see cref=""C.F"" />
 /// This one is a dummy cref without kind prefix <see cref="":C.F"" />, <see cref=""T : C.F"" />
@@ -43,7 +30,7 @@ class C
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 ''' <summary>
 ''' Type <see cref=""C""/> contains method <see cref=""C.F"" />
 ''' This one is a dummy cref without kind prefix <see cref="":C.F"" />, <see cref=""T : C.F"" />
@@ -60,9 +47,9 @@ End Class
         #region Diagnostic Tests
 
         [Fact]
-        public void DiagnosticCases()
+        public async Task DiagnosticCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 /// <summary>
 /// Type <see cref=""T:C""/> contains method <see cref=""M:C.F"" />
 /// </summary>
@@ -76,7 +63,7 @@ class C
     // Test0.cs(3,55): warning RS0010: Avoid using cref tags with a prefix
     GetCSharpResultAt(3, 55));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 ''' <summary>
 ''' Type <see cref=""T:C""/> contains method <see cref=""M:C.F"" />
 ''' </summary>
@@ -94,13 +81,13 @@ End Class
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
-        }
+            => new DiagnosticResult(AvoidUsingCrefTagsWithAPrefixAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
-        }
+            => new DiagnosticResult(AvoidUsingCrefTagsWithAPrefixAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
     }
 }

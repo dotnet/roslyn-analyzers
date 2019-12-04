@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -35,37 +35,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            INamedTypeSymbol notImplementedExceptionType = WellKnownTypes.NotImplementedException(model.Compilation);
+            INamedTypeSymbol? notImplementedExceptionType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             if (notImplementedExceptionType == null)
             {
                 return;
             }
 
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             // There was no constructor and so the diagnostic was on the type. Generate a serialization ctor.
-            string title = SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle;
             if (symbol.Kind == SymbolKind.NamedType)
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
-                     async ct => await GenerateConstructor(context.Document, node, symbol, notImplementedExceptionType, ct).ConfigureAwait(false),
+                     async ct => await GenerateConstructor(context.Document, node, (INamedTypeSymbol)symbol, notImplementedExceptionType, ct).ConfigureAwait(false),
                      equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
             }
             // There is a serialization constructor but with incorrect accessibility. Set that right.
             else if (symbol.Kind == SymbolKind.Method)
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
-                     async ct => await SetAccessibility(context.Document, symbol, ct).ConfigureAwait(false),
+                     async ct => await SetAccessibility(context.Document, (IMethodSymbol)symbol, ct).ConfigureAwait(false),
                      equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
             }
         }
 
-        private static async Task<Document> GenerateConstructor(Document document, SyntaxNode node, ISymbol symbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
+        private static async Task<Document> GenerateConstructor(Document document, SyntaxNode node, INamedTypeSymbol typeSymbol, INamedTypeSymbol notImplementedExceptionType, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
-            var typeSymbol = symbol as INamedTypeSymbol;
 
             await editor.EditOneDeclarationAsync(typeSymbol, node.GetLocation(), (docEditor, declaration) =>
             {
@@ -75,8 +72,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     typeSymbol.Name,
                                     new[]
                                     {
-                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(WellKnownTypes.SerializationInfo(docEditor.SemanticModel.Compilation))),
-                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(WellKnownTypes.StreamingContext(docEditor.SemanticModel.Compilation)))
+                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo))),
+                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext)))
                                     },
                                     typeSymbol.IsSealed ? Accessibility.Private : Accessibility.Protected,
                                     statements: new[] { throwStatement });
@@ -87,13 +84,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return editor.GetChangedDocuments().First();
         }
 
-        private static async Task<Document> SetAccessibility(Document document, ISymbol symbol, CancellationToken cancellationToken)
+        private static async Task<Document> SetAccessibility(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
             SymbolEditor editor = SymbolEditor.Create(document);
-            var methodSymbol = symbol as IMethodSymbol;
 
             // This would be constructor and can have only one definition.
-            Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.Count() == 1);
+            Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.HasExactly(1));
             await editor.EditOneDeclarationAsync(methodSymbol, (docEditor, declaration) =>
             {
                 Accessibility newAccessibility = methodSymbol.ContainingType.IsSealed ? Accessibility.Private : Accessibility.Protected;

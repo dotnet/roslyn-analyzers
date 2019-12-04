@@ -1,4 +1,6 @@
-﻿Imports Analyzer.Utilities
+﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+Imports Analyzer.Utilities.Extensions
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
@@ -31,7 +33,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
                             Return False
                         End If
 
-                        Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation)
+                        Dim conditionalAttributeSymbol = analysisContext.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(GetType(ConditionalAttribute).FullName)
                         Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
                     End If
                 End If

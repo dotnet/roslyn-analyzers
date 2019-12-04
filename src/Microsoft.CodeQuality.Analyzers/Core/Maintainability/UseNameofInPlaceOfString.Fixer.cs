@@ -1,9 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Composition;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -34,13 +31,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var diagnostics = context.Diagnostics;
             var diagnosticSpan = context.Span;
+
             // getInnerModeNodeForTie = true so we are replacing the string literal node and not the whole argument node
             var nodeToReplace = root.FindNode(diagnosticSpan, getInnermostNodeForTie: true);
+            if (nodeToReplace == null)
+            {
+                return;
+            }
 
-            Debug.Assert(nodeToReplace != null);
             var stringText = nodeToReplace.FindToken(diagnosticSpan.Start).ValueText;
             context.RegisterCodeFix(CodeAction.Create(
-                    MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle,
+                    MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringTitle,
                     c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c),
                     equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
                 context.Diagnostics);

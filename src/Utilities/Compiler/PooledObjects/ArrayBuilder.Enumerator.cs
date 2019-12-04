@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Analyzer.Utilities.PooledObjects
 {
-    public partial class ArrayBuilder<T>
+    internal partial class ArrayBuilder<T>
     {
         /// <summary>
         /// struct enumerator used in foreach.
@@ -40,7 +40,7 @@ namespace Analyzer.Utilities.PooledObjects
             {
             }
 
-            object System.Collections.IEnumerator.Current
+            object? System.Collections.IEnumerator.Current
             {
                 get
                 {

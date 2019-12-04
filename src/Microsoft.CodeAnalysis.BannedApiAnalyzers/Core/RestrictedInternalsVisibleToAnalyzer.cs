@@ -78,21 +78,17 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
             compilationContext.RegisterOperationAction(
                 context =>
                 {
-                    ISymbol symbol;
-                    switch (context.Operation)
+                    var symbol = context.Operation switch
                     {
-                        case IObjectCreationOperation objectCreation:
-                            symbol = objectCreation.Constructor;
-                            break;
-                        case IInvocationOperation invocation:
-                            symbol = invocation.TargetMethod;
-                            break;
-                        case IMemberReferenceOperation memberReference:
-                            symbol = memberReference.Member;
-                            break;
-                        default:
-                            throw new NotImplementedException($"Unhandled OperationKind: {context.Operation.Kind}");
-                    }
+                        IObjectCreationOperation objectCreation => objectCreation.Constructor,
+                        IInvocationOperation invocation => invocation.TargetMethod,
+                        IMemberReferenceOperation memberReference => memberReference.Member,
+                        IConversionOperation conversion => conversion.OperatorMethod,
+                        IUnaryOperation unary => unary.OperatorMethod,
+                        IBinaryOperation binary => binary.OperatorMethod,
+                        IIncrementOrDecrementOperation incrementOrDecrement => incrementOrDecrement.OperatorMethod,
+                        _ => throw new NotImplementedException($"Unhandled OperationKind: {context.Operation.Kind}"),
+                    };
 
                     VerifySymbol(symbol, context.Operation.Syntax,
                         context.ReportDiagnostic, restrictedInternalsVisibleToMap, namespaceToIsBannedMap);
@@ -102,12 +98,17 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
                 OperationKind.EventReference,
                 OperationKind.FieldReference,
                 OperationKind.MethodReference,
-                OperationKind.PropertyReference);
+                OperationKind.PropertyReference,
+                OperationKind.Conversion,
+                OperationKind.UnaryOperator,
+                OperationKind.BinaryOperator,
+                OperationKind.Increment,
+                OperationKind.Decrement);
         }
 
         private static ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>> GetRestrictedInternalsVisibleToMap(Compilation compilation)
         {
-            var restrictedInternalsVisibleToAttribute = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.RestrictedInternalsVisibleToAttribute");
+            var restrictedInternalsVisibleToAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRestrictedInternalsVisibleToAttribute);
             if (restrictedInternalsVisibleToAttribute == null)
             {
                 return ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>>.Empty;
@@ -142,8 +143,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
                     if (assemblyAttribute.ConstructorArguments.Length != 2 ||
                         assemblyAttribute.ConstructorArguments[0].Kind != TypedConstantKind.Primitive ||
                         !(assemblyAttribute.ConstructorArguments[0].Value is string assemblyName) ||
-                        !AssemblyIdentity.TryParseDisplayName(assemblyName, out var assemblyIdentity) ||
-                        AssemblyIdentityComparer.Default.Compare(assemblyIdentity, compilation.Assembly.Identity) == AssemblyIdentityComparer.ComparisonResult.NotEquivalent)
+                        !string.Equals(assemblyName, compilation.Assembly.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         }
 
         private static void VerifySymbol(
-            ISymbol symbol,
+            ISymbol? symbol,
             SyntaxNode node,
             Action<Diagnostic> reportDiagnostic,
             ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>> restrictedInternalsVisibleToMap,
@@ -200,7 +200,8 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         {
             // Check if the symbol belongs to an assembly to which this compilation has restricted internals access
             // and it is an internal symbol.
-            if (!restrictedInternalsVisibleToMap.TryGetValue(symbol.ContainingAssembly, out var allowedNamespaces) ||
+            if (symbol.ContainingAssembly == null ||
+                !restrictedInternalsVisibleToMap.TryGetValue(symbol.ContainingAssembly, out var allowedNamespaces) ||
                 symbol.GetResultantVisibility() != SymbolVisibility.Internal)
             {
                 return false;
@@ -234,8 +235,8 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         }
 
         private static void MarkIsBanned(
-            INamespaceSymbol startNamespace,
-            INamespaceSymbol uptoNamespace,
+            INamespaceSymbol? startNamespace,
+            INamespaceSymbol? uptoNamespace,
             ConcurrentDictionary<INamespaceSymbol, bool> namespaceToIsBannedMap,
             bool banned)
         {

@@ -2,13 +2,9 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using Analyzer.Utilities;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
-
-#pragma warning disable CA1067 // Override Object.Equals(object) when implementing IEquatable<T>
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -29,7 +25,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     {
         public InterproceduralAnalysisData(
             TAnalysisData initialAnalysisData,
-            (AnalysisEntity, PointsToAbstractValue)? invocationInstanceOpt,
+            (AnalysisEntity?, PointsToAbstractValue)? invocationInstanceOpt,
             (AnalysisEntity, PointsToAbstractValue)? thisOrMeInstanceForCallerOpt,
             ImmutableDictionary<IParameterSymbol, ArgumentInfo<TAbstractAnalysisValue>> argumentValuesMap,
             ImmutableDictionary<ISymbol, PointsToAbstractValue> capturedVariablesMap,
@@ -37,20 +33,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             ImmutableStack<IOperation> callStack,
             ImmutableHashSet<TAnalysisContext> methodsBeingAnalyzed,
             Func<IOperation, TAbstractAnalysisValue> getCachedAbstractValueFromCaller,
-            Func<IMethodSymbol, ControlFlowGraph> getInterproceduralControlFlowGraph,
-            Func<IOperation, AnalysisEntity> getAnalysisEntityForFlowCapture,
-            Func<ISymbol, ImmutableStack<IOperation>> getInterproceduralCallStackForOwningSymbol)
+            Func<IMethodSymbol, ControlFlowGraph?> getInterproceduralControlFlowGraph,
+            Func<IOperation, AnalysisEntity?> getAnalysisEntityForFlowCapture,
+            Func<ISymbol, ImmutableStack<IOperation>?> getInterproceduralCallStackForOwningSymbol)
         {
-            Debug.Assert(initialAnalysisData != null);
-            Debug.Assert(argumentValuesMap != null);
-            Debug.Assert(addressSharedEntities != null);
-            Debug.Assert(callStack != null);
-            Debug.Assert(methodsBeingAnalyzed != null);
-            Debug.Assert(getCachedAbstractValueFromCaller != null);
-            Debug.Assert(getInterproceduralControlFlowGraph != null);
-            Debug.Assert(getAnalysisEntityForFlowCapture != null);
-            Debug.Assert(getInterproceduralCallStackForOwningSymbol != null);
-
             InitialAnalysisData = initialAnalysisData;
             InvocationInstanceOpt = invocationInstanceOpt;
             ThisOrMeInstanceForCallerOpt = thisOrMeInstanceForCallerOpt;
@@ -66,7 +52,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         }
 
         public TAnalysisData InitialAnalysisData { get; }
-        public (AnalysisEntity InstanceOpt, PointsToAbstractValue PointsToValue)? InvocationInstanceOpt { get; }
+        public (AnalysisEntity? InstanceOpt, PointsToAbstractValue PointsToValue)? InvocationInstanceOpt { get; }
         public (AnalysisEntity Instance, PointsToAbstractValue PointsToValue)? ThisOrMeInstanceForCallerOpt { get; }
         public ImmutableDictionary<IParameterSymbol, ArgumentInfo<TAbstractAnalysisValue>> ArgumentValuesMap { get; }
         public ImmutableDictionary<ISymbol, PointsToAbstractValue> CapturedVariablesMap { get; }
@@ -74,34 +60,34 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public ImmutableStack<IOperation> CallStack { get; }
         public ImmutableHashSet<TAnalysisContext> MethodsBeingAnalyzed { get; }
         public Func<IOperation, TAbstractAnalysisValue> GetCachedAbstractValueFromCaller { get; }
-        public Func<IMethodSymbol, ControlFlowGraph> GetInterproceduralControlFlowGraph { get; }
-        public Func<IOperation, AnalysisEntity> GetAnalysisEntityForFlowCapture { get; }
-        public Func<ISymbol, ImmutableStack<IOperation>> GetInterproceduralCallStackForOwningSymbol { get; }
+        public Func<IMethodSymbol, ControlFlowGraph?> GetInterproceduralControlFlowGraph { get; }
+        public Func<IOperation, AnalysisEntity?> GetAnalysisEntityForFlowCapture { get; }
+        public Func<ISymbol, ImmutableStack<IOperation>?> GetInterproceduralCallStackForOwningSymbol { get; }
 
-        protected override void ComputeHashCodeParts(ArrayBuilder<int> builder)
+        protected override void ComputeHashCodeParts(Action<int> addPart)
         {
-            builder.Add(InitialAnalysisData.GetHashCodeOrDefault());
-            AddHashCodeParts(InvocationInstanceOpt, builder);
-            AddHashCodeParts(ThisOrMeInstanceForCallerOpt, builder);
-            builder.Add(HashUtilities.Combine(ArgumentValuesMap));
-            builder.Add(HashUtilities.Combine(CapturedVariablesMap));
-            builder.Add(HashUtilities.Combine(AddressSharedEntities));
-            builder.Add(HashUtilities.Combine(CallStack));
-            builder.Add(HashUtilities.Combine(MethodsBeingAnalyzed));
+            addPart(InitialAnalysisData.GetHashCodeOrDefault());
+            AddHashCodeParts(InvocationInstanceOpt, addPart);
+            AddHashCodeParts(ThisOrMeInstanceForCallerOpt, addPart);
+            addPart(HashUtilities.Combine(ArgumentValuesMap));
+            addPart(HashUtilities.Combine(CapturedVariablesMap));
+            addPart(HashUtilities.Combine(AddressSharedEntities));
+            addPart(HashUtilities.Combine(CallStack));
+            addPart(HashUtilities.Combine(MethodsBeingAnalyzed));
         }
 
         private static void AddHashCodeParts(
-            (AnalysisEntity InstanceOpt, PointsToAbstractValue PointsToValue)? instanceAndPointsToValueOpt,
-            ArrayBuilder<int> builder)
+            (AnalysisEntity? InstanceOpt, PointsToAbstractValue PointsToValue)? instanceAndPointsToValueOpt,
+            Action<int> addPart)
         {
             if (instanceAndPointsToValueOpt.HasValue)
             {
-                builder.Add(instanceAndPointsToValueOpt.Value.InstanceOpt.GetHashCodeOrDefault());
-                builder.Add(instanceAndPointsToValueOpt.Value.PointsToValue.GetHashCode());
+                addPart(instanceAndPointsToValueOpt.Value.InstanceOpt.GetHashCodeOrDefault());
+                addPart(instanceAndPointsToValueOpt.Value.PointsToValue.GetHashCode());
             }
             else
             {
-                builder.Add(0);
+                addPart(0);
             }
         }
     }

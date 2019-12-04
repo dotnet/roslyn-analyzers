@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -38,15 +37,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
                     cancellationToken => ToConstantDeclarationAsync(context.Document, fieldFeclaration, cancellationToken),
                     equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
         }
 
         private async Task<Document> ToConstantDeclarationAsync(Document document, SyntaxNode fieldDeclaration, CancellationToken cancellationToken)
@@ -94,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return editor.GetChangedDocument();
         }
 
-        protected abstract SyntaxNode GetFieldDeclaration(SyntaxNode syntaxNode);
+        protected abstract SyntaxNode? GetFieldDeclaration(SyntaxNode syntaxNode);
         protected abstract bool IsStaticKeyword(SyntaxToken syntaxToken);
         protected abstract bool IsReadonlyKeyword(SyntaxToken syntaxToken);
         protected abstract SyntaxToken GetConstKeywordToken();

@@ -7,8 +7,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
@@ -24,7 +24,7 @@ namespace Analyzer.Utilities.Extensions
         /// If the invocation actually involves a conversion from A to some other type, say 'C', on which B is invoked,
         /// then this method returns type A if <paramref name="beforeConversion"/> is true, and C if false.
         /// </summary>
-        public static INamedTypeSymbol GetReceiverType(this IInvocationOperation invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
+        public static INamedTypeSymbol? GetReceiverType(this IInvocationOperation invocation, Compilation compilation, bool beforeConversion, CancellationToken cancellationToken)
         {
             if (invocation.Instance != null)
             {
@@ -50,27 +50,11 @@ namespace Analyzer.Utilities.Extensions
             return null;
         }
 
-        private static INamedTypeSymbol GetReceiverType(SyntaxNode receiverSyntax, Compilation compilation, CancellationToken cancellationToken)
+        private static INamedTypeSymbol? GetReceiverType(SyntaxNode receiverSyntax, Compilation compilation, CancellationToken cancellationToken)
         {
             var model = compilation.GetSemanticModel(receiverSyntax.SyntaxTree);
             var typeInfo = model.GetTypeInfo(receiverSyntax, cancellationToken);
             return typeInfo.Type as INamedTypeSymbol;
-        }
-
-        public static bool HasConstantValue(this IOperation operation, string comparand, StringComparison comparison)
-        {
-            var constantValue = operation.ConstantValue;
-            if (!constantValue.HasValue)
-            {
-                return false;
-            }
-
-            if (operation.Type == null || operation.Type.SpecialType != SpecialType.System_String)
-            {
-                return false;
-            }
-
-            return string.Equals((string)constantValue.Value, comparand, comparison);
         }
 
         public static bool HasNullConstantValue(this IOperation operation)
@@ -134,7 +118,7 @@ namespace Analyzer.Utilities.Extensions
             return DiagnosticHelpers.TryConvertToUInt64(constantValue.Value, constantValueType.SpecialType, out ulong convertedValue) && convertedValue == comparand;
         }
 
-        public static ITypeSymbol GetElementType(this IArrayCreationOperation arrayCreation)
+        public static ITypeSymbol? GetElementType(this IArrayCreationOperation? arrayCreation)
         {
             return (arrayCreation?.Type as IArrayTypeSymbol)?.ElementType;
         }
@@ -144,7 +128,7 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         public static ImmutableArray<IOperation> WithoutFullyImplicitOperations(this ImmutableArray<IOperation> operations)
         {
-            ImmutableArray<IOperation>.Builder builder = null;
+            ImmutableArray<IOperation>.Builder? builder = null;
             for (int i = 0; i < operations.Length; i++)
             {
                 var operation = operations[i];
@@ -215,10 +199,10 @@ namespace Analyzer.Utilities.Extensions
         /// <summary>
         /// Returns the topmost <see cref="IBlockOperation"/> containing the given <paramref name="operation"/>.
         /// </summary>
-        public static IBlockOperation GetTopmostParentBlock(this IOperation operation)
+        public static IBlockOperation? GetTopmostParentBlock(this IOperation? operation)
         {
-            IOperation currentOperation = operation;
-            IBlockOperation topmostBlockOperation = null;
+            IOperation? currentOperation = operation;
+            IBlockOperation? topmostBlockOperation = null;
             while (currentOperation != null)
             {
                 if (currentOperation is IBlockOperation blockOperation)
@@ -238,14 +222,15 @@ namespace Analyzer.Utilities.Extensions
         ///  2. If <paramref name="predicateOpt"/> is non-null, it succeeds for the ancestor.
         /// Returns null if there is no such ancestor.
         /// </summary>
-        public static TOperation GetAncestor<TOperation>(this IOperation root, OperationKind ancestorKind, Func<TOperation, bool> predicateOpt = null) where TOperation : IOperation
+        public static TOperation? GetAncestor<TOperation>(this IOperation root, OperationKind ancestorKind, Func<TOperation, bool>? predicateOpt = null)
+            where TOperation : class, IOperation
         {
             if (root == null)
             {
                 throw new ArgumentNullException(nameof(root));
             }
 
-            IOperation ancestor = root;
+            var ancestor = root;
             do
             {
                 ancestor = ancestor.Parent;
@@ -265,7 +250,7 @@ namespace Analyzer.Utilities.Extensions
             }
         }
 
-        public static IConditionalAccessOperation GetConditionalAccess(this IConditionalAccessInstanceOperation operation)
+        public static IConditionalAccessOperation? GetConditionalAccess(this IConditionalAccessInstanceOperation operation)
         {
             return operation.GetAncestor(OperationKind.ConditionalAccess, (IConditionalAccessOperation c) => c.Operation.Syntax == operation.Syntax);
         }
@@ -279,7 +264,7 @@ namespace Analyzer.Utilities.Extensions
         /// <remarks>
         /// PERF: Note that the parameter <paramref name="isInsideAnonymousObjectInitializer"/> is to improve performance by avoiding walking the entire IOperation parent for non-initializer cases.
         /// </remarks>
-        public static IOperation GetInstance(this IInstanceReferenceOperation operation, bool isInsideAnonymousObjectInitializer)
+        public static IOperation? GetInstance(this IInstanceReferenceOperation operation, bool isInsideAnonymousObjectInitializer)
         {
             Debug.Assert(isInsideAnonymousObjectInitializer ==
                 (operation.GetAncestor<IAnonymousObjectCreationOperation>(OperationKind.AnonymousObjectCreation) != null));
@@ -315,7 +300,7 @@ namespace Analyzer.Utilities.Extensions
         /// Gets the instance for the anonymous object being created that is being referenced by <paramref name="operation"/>.
         /// Otherwise, returns null
         /// </summary>
-        public static IAnonymousObjectCreationOperation GetAnonymousObjectCreation(this IPropertyReferenceOperation operation)
+        public static IAnonymousObjectCreationOperation? GetAnonymousObjectCreation(this IPropertyReferenceOperation operation)
         {
             if (operation.Instance == null &&
                 operation.Property.ContainingType.IsAnonymousType)
@@ -348,10 +333,8 @@ namespace Analyzer.Utilities.Extensions
             return operationBlock.HasAnyOperationDescendant(predicate, out _);
         }
 
-        public static bool HasAnyOperationDescendant(this IOperation operationBlock, Func<IOperation, bool> predicate, out IOperation foundOperation)
+        public static bool HasAnyOperationDescendant(this IOperation operationBlock, Func<IOperation, bool> predicate, [NotNullWhen(returnValue: true)] out IOperation? foundOperation)
         {
-            Debug.Assert(operationBlock != null);
-            Debug.Assert(predicate != null);
             foreach (var descendant in operationBlock.DescendantsAndSelf())
             {
                 if (predicate(descendant))
@@ -394,12 +377,6 @@ namespace Analyzer.Utilities.Extensions
             }
         }
 
-        public static bool IsLambdaOrLocalFunctionOrDelegateInvocation(this IInvocationOperation operation)
-            => operation.TargetMethod.IsLambdaOrLocalFunctionOrDelegate();
-
-        public static bool IsLambdaOrLocalFunctionOrDelegateReference(this IMethodReferenceOperation operation)
-            => operation.Method.IsLambdaOrLocalFunctionOrDelegate();
-
         public static IOperation GetRoot(this IOperation operation)
         {
             while (operation.Parent != null)
@@ -415,17 +392,26 @@ namespace Analyzer.Utilities.Extensions
         /// across analyzers and analyzer callbacks to re-use the control flow graph.
         /// </summary>
         /// <remarks>Also see <see cref="IMethodSymbolExtensions.s_methodToTopmostOperationBlockCache"/></remarks>
-        private static readonly ConditionalWeakTable<Compilation, ConcurrentDictionary<IOperation, ControlFlowGraph>> s_operationToCfgCache
-            = new ConditionalWeakTable<Compilation, ConcurrentDictionary<IOperation, ControlFlowGraph>>();
+        private static readonly BoundedCache<Compilation, ConcurrentDictionary<IOperation, ControlFlowGraph?>> s_operationToCfgCache
+            = new BoundedCache<Compilation, ConcurrentDictionary<IOperation, ControlFlowGraph?>>();
 
-        public static ControlFlowGraph GetEnclosingControlFlowGraph(this IOperation operation)
+        public static bool TryGetEnclosingControlFlowGraph(this IOperation operation, [NotNullWhen(returnValue: true)] out ControlFlowGraph? cfg)
         {
             operation = operation.GetRoot();
             var operationToCfgMap = s_operationToCfgCache.GetOrCreateValue(operation.SemanticModel.Compilation);
-            return operationToCfgMap.GetOrAdd(operation, CreateControlFlowGraph);
+            cfg = operationToCfgMap.GetOrAdd(operation, CreateControlFlowGraph);
+            return cfg != null;
         }
 
-        private static ControlFlowGraph CreateControlFlowGraph(IOperation operation)
+        public static ControlFlowGraph? GetEnclosingControlFlowGraph(this IBlockOperation blockOperation)
+        {
+            var success = blockOperation.TryGetEnclosingControlFlowGraph(out var cfg);
+            Debug.Assert(success);
+            Debug.Assert(cfg != null);
+            return cfg;
+        }
+
+        private static ControlFlowGraph? CreateControlFlowGraph(IOperation operation)
         {
             switch (operation)
             {
@@ -448,7 +434,11 @@ namespace Analyzer.Utilities.Extensions
                     return ControlFlowGraph.Create(parameterInitializerOperation);
 
                 default:
-                    throw new NotSupportedException($"Unexpected root operation kind: {operation.Kind.ToString()}");
+                    // Attribute blocks have OperationKind.None, but ControlFlowGraph.Create does not
+                    // have an overload for such operation roots.
+                    // Gracefully return null for this case and fire an assert for any other OperationKind.
+                    Debug.Assert(operation.Kind == OperationKind.None, $"Unexpected root operation kind: {operation.Kind.ToString()}");
+                    return null;
             }
         }
 
@@ -518,34 +508,23 @@ namespace Analyzer.Utilities.Extensions
             => operation.GetAncestor<IAnonymousFunctionOperation>(OperationKind.AnonymousFunction) != null ||
                operation.GetAncestor<ILocalFunctionOperation>(OperationKind.LocalFunction) != null;
 
-        public static ITypeSymbol GetPatternType(this IPatternOperation pattern)
+        public static ITypeSymbol? GetPatternType(this IPatternOperation pattern)
         {
-            switch (pattern)
+            return pattern switch
             {
-                case IDeclarationPatternOperation declarationPattern:
-                    switch (declarationPattern.DeclaredSymbol)
-                    {
-                        case ILocalSymbol local:
-                            return local.Type;
+                IDeclarationPatternOperation declarationPattern => declarationPattern.DeclaredSymbol switch
+                {
+                    ILocalSymbol local => local.Type,
 
-                        case IDiscardSymbol discard:
-                            return discard.Type;
+                    IDiscardSymbol discard => discard.Type,
 
-                        default:
-                            // TODO use the new IOperation API 'IDeclarationPatternOperation.MatchedType' when we move the repo
-                            // to use Microsoft.CodeAnalysis 3.0 or greater.
-                            return null;
-                    }
+                    _ => null,
+                },
 
-                case IConstantPatternOperation constantPattern:
-                    return constantPattern.Value.Type;
+                IConstantPatternOperation constantPattern => constantPattern.Value.Type,
 
-                default:
-                    // Below assert fires for IDiscardPatternOperation.
-                    // https://github.com/dotnet/roslyn-analyzers/issues/2185 tracks enabling this assert.
-                    //Debug.Fail($"Unhandled pattern kind '{pattern.Kind}'");
-                    return null;
-            }
+                _ => null,
+            };
         }
 
         /// <summary>
@@ -554,8 +533,8 @@ namespace Analyzer.Utilities.Extensions
         /// which contains the given tupleOperation as a descendant operation.
         /// </summary>
         public static bool TryGetParentTupleOperation(this ITupleOperation tupleOperation,
-            out ITupleOperation parentTupleOperation,
-            out IOperation elementOfParentTupleContainingTuple)
+            [NotNullWhen(returnValue: true)] out ITupleOperation? parentTupleOperation,
+            [NotNullWhen(returnValue: true)] out IOperation? elementOfParentTupleContainingTuple)
         {
             parentTupleOperation = null;
             elementOfParentTupleContainingTuple = null;
@@ -596,6 +575,68 @@ namespace Analyzer.Utilities.Extensions
         public static SyntaxNode GetInstance(this IInvocationOperation invocationOperation)
         {
             return invocationOperation.IsExtensionMethodAndHasNoInstance() ? invocationOperation.Arguments[0].Value.Syntax : invocationOperation.Instance.Syntax;
+        }
+
+        public static ISymbol? GetReferencedMemberOrLocalOrParameter(this IOperation operation)
+        {
+            return operation switch
+            {
+                IMemberReferenceOperation memberReference => memberReference.Member,
+
+                IParameterReferenceOperation parameterReference => parameterReference.Parameter,
+
+                ILocalReferenceOperation localReference => localReference.Local,
+
+                IParenthesizedOperation parenthesized => parenthesized.Operand.GetReferencedMemberOrLocalOrParameter(),
+
+                IConversionOperation conversion => conversion.Operand.GetReferencedMemberOrLocalOrParameter(),
+
+                _ => null,
+            };
+        }
+
+        /// <summary>
+        /// Walks down consequtive parenthesized operations until an operand is reached that isn't a parenthesized operation.
+        /// </summary>
+        /// <param name="operation">The starting operation.</param>
+        /// <returns>The inner non parenthesized operation or the starting operation if it wasn't a parenthesized operation.</returns>
+        public static IOperation WalkDownParenthesis(this IOperation operation)
+        {
+            while (operation is IParenthesizedOperation parenthesizedOperation)
+            {
+                operation = parenthesizedOperation.Operand;
+            }
+
+            return operation;
+        }
+
+        /// <summary>
+        /// Walks down consequtive conversion operations until an operand is reached that isn't a conversion operation.
+        /// </summary>
+        /// <param name="operation">The starting operation.</param>
+        /// <returns>The inner non conversion operation or the starting operation if it wasn't a conversion operation.</returns>
+        public static IOperation WalkDownConversion(this IOperation operation)
+        {
+            while (operation is IConversionOperation conversionOperation)
+            {
+                operation = conversionOperation.Operand;
+            }
+
+            return operation;
+        }
+
+        public static ITypeSymbol? GetThrownExceptionType(this IThrowOperation operation)
+        {
+            var thrownObject = operation.Exception;
+
+            // Starting C# 8.0, C# compiler wraps the thrown operation within an implicit conversion to System.Exception type.
+            if (thrownObject is IConversionOperation conversion &&
+                conversion.IsImplicit)
+            {
+                thrownObject = conversion.Operand;
+            }
+
+            return thrownObject?.Type;
         }
     }
 }

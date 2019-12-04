@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -24,21 +23,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1714 =
             new DiagnosticDescriptor(
@@ -59,21 +58,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1717 =
             new DiagnosticDescriptor(
@@ -93,19 +92,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            if (!CultureInfo.CurrentCulture.Name.Equals("en", StringComparison.Ordinal) &&
-                !CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
-            {
-                // FxCop compat: Skip for non-English cultures.
-                return;
-            }
-
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                INamedTypeSymbol? flagsAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
                 if (flagsAttribute == null)
                 {
                     return;

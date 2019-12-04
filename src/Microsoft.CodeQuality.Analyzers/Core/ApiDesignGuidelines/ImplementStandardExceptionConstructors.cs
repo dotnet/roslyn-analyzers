@@ -10,9 +10,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1032 - redefined: Implement standard exception constructors
-    /// Cause: A type extends System.Exception and does not declare all the required constructors. 
+    /// Cause: A type extends System.Exception and does not declare all the required constructors.
     /// Description: Exception types must implement the following constructors. Failure to provide the full set of constructors can make it difficult to correctly handle exceptions
-    /// For CSharp, example when type name is GoodException 
+    /// For CSharp, example when type name is GoodException
     ///     public GoodException()
     ///     public GoodException(string)
     ///     public GoodException(string, Exception)
@@ -30,9 +30,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         internal const string RuleId = "CA1032";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMissingConstructor = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageMissingConstructor = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor MissingConstructorRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -62,13 +62,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeCompilationSymbol(CompilationStartAnalysisContext context)
         {
-            var exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
+            var exceptionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
             if (exceptionType == null)
             {
                 return;
             }
 
-            // Analyze named types 
+            // Analyze named types
             context.RegisterSymbolAction(symbolContext =>
             {
                 var namedTypeSymbol = (INamedTypeSymbol)symbolContext.Symbol;
@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (defaultConstructorFound && secondConstructorFound && thirdConstructorFound)
                         {
-                            //reaches here only when all 3 constructors are found - no diagnostic needed 
+                            //reaches here only when all 3 constructors are found - no diagnostic needed
                             return;
                         }
                     } //end of for loop
@@ -130,7 +130,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void ReportDiagnostic(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol, MissingCtorSignature missingCtorSignature, string constructorSignature)
         {
             //store MissingCtorSignature enum type into dictionary, to set diagnostic property. This is needed because Diagnostic is immutable
-            ImmutableDictionary<string, string>.Builder builder = ImmutableDictionary.CreateBuilder<string, string>();
+            ImmutableDictionary<string, string?>.Builder builder = ImmutableDictionary.CreateBuilder<string, string?>();
             builder.Add("Signature", missingCtorSignature.ToString());
 
             //create dignostic and store signature into diagnostic property for fixer

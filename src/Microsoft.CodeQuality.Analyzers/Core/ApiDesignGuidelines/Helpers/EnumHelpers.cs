@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers
@@ -61,23 +60,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers
 
         internal static bool TryGetEnumMemberValues(INamedTypeSymbol enumType, out IList<ulong> values)
         {
-            Debug.Assert(enumType != null);
             Debug.Assert(enumType.TypeKind == TypeKind.Enum);
 
             values = new List<ulong>();
-            foreach (IFieldSymbol field in enumType.GetMembers().Where(m => m.Kind == SymbolKind.Field && !m.IsImplicitlyDeclared))
+            foreach (var member in enumType.GetMembers())
             {
-                if (!field.HasConstantValue)
+                if (member is IFieldSymbol field && !field.IsImplicitlyDeclared)
                 {
-                    return false;
-                }
+                    if (!field.HasConstantValue)
+                    {
+                        return false;
+                    }
 
-                if (!TryConvertToUInt64(field.ConstantValue, enumType.EnumUnderlyingType.SpecialType, out ulong convertedValue))
-                {
-                    return false;
-                }
+                    if (!TryConvertToUInt64(field.ConstantValue, enumType.EnumUnderlyingType.SpecialType, out ulong convertedValue))
+                    {
+                        return false;
+                    }
 
-                values.Add(convertedValue);
+                    values.Add(convertedValue);
+                }
             }
 
             return true;

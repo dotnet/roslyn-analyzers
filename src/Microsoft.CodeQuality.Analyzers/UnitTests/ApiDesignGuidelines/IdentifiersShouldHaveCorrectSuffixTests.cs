@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectSuffixAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpIdentifiersShouldHaveCorrectSuffixFixer>;
@@ -14,27 +14,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class IdentifiersShouldHaveCorrectSuffixTests : DiagnosticAnalyzerTestBase
+    public class IdentifiersShouldHaveCorrectSuffixTests
     {
-        public IdentifiersShouldHaveCorrectSuffixTests(ITestOutputHelper output)
-            : base(output)
-        {
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldHaveCorrectSuffixAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldHaveCorrectSuffixAnalyzer();
-        }
-
         [Fact]
-        public void CA1710_AllScenarioDiagnostics_CSharp()
+        public async Task CA1710_AllScenarioDiagnostics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -252,9 +237,9 @@ GetCA1710CSharpResultAt(line: 186, column: 14, symbolName: "DataTableWithWrongSu
         }
 
         [Fact]
-        public void CA1710_NoDiagnostics_CSharp()
+        public async Task CA1710_NoDiagnostics_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -430,9 +415,9 @@ public class MyCollectionDataTable : DataTable, IEnumerable
         }
 
         [Fact]
-        public void CA1710_AllScenarioDiagnostics_VisualBasic()
+        public async Task CA1710_AllScenarioDiagnostics_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -781,9 +766,9 @@ GetCA1710BasicResultAt(line: 263, column: 14, symbolName: "WronglyNamedType", re
         }
 
         [Fact]
-        public void CA1710_NoDiagnostics_VisualBasic()
+        public async Task CA1710_NoDiagnostics_VisualBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -1090,9 +1075,9 @@ End Class");
         }
 
         [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
-        public void CA1710_SystemAction_CSharp()
+        public async Task CA1710_SystemAction_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class C
@@ -1102,9 +1087,9 @@ public class C
         }
 
         [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
-        public void CA1710_CustomDelegate_CSharp()
+        public async Task CA1710_CustomDelegate_CSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class C
@@ -1116,30 +1101,28 @@ public class C
 
         private static DiagnosticResult GetCA1710BasicResultAt(int line, int column, string symbolName, string replacementName, bool isSpecial = false)
         {
-            return GetBasicResultAt(
-                line,
-                column,
-                IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
-                    isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
-                    symbolName,
-                    replacementName));
+            var message = string.Format(CultureInfo.CurrentCulture,
+                isSpecial ?
+                    MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                    MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+                symbolName,
+                replacementName);
+            return new DiagnosticResult(IdentifiersShouldHaveCorrectSuffixAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         private static DiagnosticResult GetCA1710CSharpResultAt(int line, int column, string symbolName, string replacementName, bool isSpecial = false)
         {
-            return GetCSharpResultAt(
-                line,
-                column,
-                IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
-                    isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
-                    symbolName,
-                    replacementName));
+            var message = string.Format(CultureInfo.CurrentCulture,
+               isSpecial ?
+                   MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                   MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+               symbolName,
+               replacementName);
+            return new DiagnosticResult(IdentifiersShouldHaveCorrectSuffixAnalyzer.DefaultRule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
     }
 }

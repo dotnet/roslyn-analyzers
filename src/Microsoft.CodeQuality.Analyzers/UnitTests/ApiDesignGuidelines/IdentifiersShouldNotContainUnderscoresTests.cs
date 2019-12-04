@@ -1,6 +1,7 @@
 
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -850,7 +851,7 @@ End Class
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyCSharp(string source, string testProjectName, params DiagnosticResult[] expected)
@@ -865,7 +866,7 @@ End Class
 
         private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyBasic(string source, string testProjectName, params DiagnosticResult[] expected)
@@ -882,27 +883,18 @@ End Class
 
         private static string GetApproriateMessage(SymbolKind symbolKind)
         {
-            switch (symbolKind)
+            return symbolKind switch
             {
-                case SymbolKind.Assembly:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly;
-                case SymbolKind.Namespace:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageNamespace;
-                case SymbolKind.NamedType:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType;
-                case SymbolKind.Member:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember;
-                case SymbolKind.DelegateParameter:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter;
-                case SymbolKind.MemberParameter:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter;
-                case SymbolKind.TypeTypeParameter:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter;
-                case SymbolKind.MethodTypeParameter:
-                    return MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter;
-                default:
-                    throw new System.Exception("Unknown Symbol Kind");
-            }
+                SymbolKind.Assembly => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly,
+                SymbolKind.Namespace => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageNamespace,
+                SymbolKind.NamedType => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType,
+                SymbolKind.Member => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember,
+                SymbolKind.DelegateParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter,
+                SymbolKind.MemberParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter,
+                SymbolKind.TypeTypeParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter,
+                SymbolKind.MethodTypeParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter,
+                _ => throw new System.Exception("Unknown Symbol Kind"),
+            };
         }
 
         private enum SymbolKind

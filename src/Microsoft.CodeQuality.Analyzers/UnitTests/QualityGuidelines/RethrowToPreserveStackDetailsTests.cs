@@ -1,11 +1,18 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicRethrowToPreserveStackDetailsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
@@ -22,9 +29,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA2200_NoDiagnosticsForRethrow()
+        public async Task CA2200_NoDiagnosticsForRethrow()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -43,7 +50,7 @@ class Program
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -58,9 +65,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_NoDiagnosticsForThrowAnotherException()
+        public async Task CA2200_NoDiagnosticsForThrowAnotherException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -81,7 +88,7 @@ class Program
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -98,9 +105,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_DiagnosticForThrowCaughtException()
+        public async Task CA2200_DiagnosticForThrowCaughtException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -125,7 +132,7 @@ class Program
 ",
            GetCA2200CSharpResultAt(14, 13));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -139,6 +146,90 @@ Class Program
 End Class
 ",
             GetCA2200BasicResultAt(9, 13));
+        }
+
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForThrowCaughtReassignedException()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+            e = new ArithmeticException();
+            throw e;
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+            e = New ArithmeticException()
+            Throw e
+        End Try
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForEmptyBlock()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+
+        End Try
+    End Sub
+End Class
+");
         }
 
         [Fact]
@@ -191,9 +282,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlaces()
+        public async Task CA2200_MultipleDiagnosticsForThrowCaughtExceptionAtMultiplePlaces()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -223,7 +314,7 @@ class Program
             GetCA2200CSharpResultAt(14, 13),
             GetCA2200CSharpResultAt(18, 13));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -243,9 +334,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_DiagnosticForThrowOuterCaughtException()
+        public async Task CA2200_DiagnosticForThrowOuterCaughtException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -272,7 +363,7 @@ class Program
 ",
             GetCA2200CSharpResultAt(20, 17));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -293,9 +384,9 @@ End Class
         }
 
         [Fact]
-        public void CA2200_NoDiagnosticsForNestingWithCompileErrors()
+        public async Task CA2200_NoDiagnosticsForNestingWithCompileErrors()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -330,9 +421,9 @@ class Program
         }
     }
 }
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrowExplicitly()
@@ -353,13 +444,13 @@ Class Program
         End Try
     End Sub
 End Class
-", TestValidationMode.AllowCompileErrors);
+", CompilerDiagnostics.None);
         }
 
         [Fact]
-        public void CA2200_NoDiagnosticsForCatchWithoutIdentifier()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutIdentifier()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -381,9 +472,9 @@ class Program
 
         [Fact]
         [WorkItem(2167, "https://github.com/dotnet/roslyn-analyzers/issues/2167")]
-        public void CA2200_NoDiagnosticsForCatchWithoutArgument()
+        public async Task CA2200_NoDiagnosticsForCatchWithoutArgument()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class Program
@@ -402,7 +493,7 @@ class Program
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Class Program
     Sub CatchAndRethrow(exception As Exception)
@@ -418,13 +509,13 @@ End Class
         }
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
-        }
+            => new DiagnosticResult(RethrowToPreserveStackDetailsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
 
         private static DiagnosticResult GetCA2200CSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
-        }
+            => new DiagnosticResult(RethrowToPreserveStackDetailsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
     }
 }

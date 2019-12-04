@@ -26,35 +26,13 @@ namespace Analyzer.Utilities.Extensions
         /// </remarks>
         public static bool IsAtLeastAsVisibleAs(this SymbolVisibility typeVisibility, SymbolVisibility comparisonVisibility)
         {
-            switch (typeVisibility)
+            return typeVisibility switch
             {
-                case SymbolVisibility.Public:
-                    return true;
-                case SymbolVisibility.Internal:
-                    return comparisonVisibility != SymbolVisibility.Public;
-                case SymbolVisibility.Private:
-                    return comparisonVisibility == SymbolVisibility.Private;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(typeVisibility), typeVisibility, null);
-            }
-        }
-
-        public static SymbolVisibilityGroup ToSymbolVisibilityGroup(this SymbolVisibility symbolVisibility)
-        {
-            switch (symbolVisibility)
-            {
-                case SymbolVisibility.Public:
-                    return SymbolVisibilityGroup.Public;
-
-                case SymbolVisibility.Internal:
-                    return SymbolVisibilityGroup.Internal;
-
-                case SymbolVisibility.Private:
-                    return SymbolVisibilityGroup.Private;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(symbolVisibility), symbolVisibility, null);
-            }
+                SymbolVisibility.Public => true,
+                SymbolVisibility.Internal => comparisonVisibility != SymbolVisibility.Public,
+                SymbolVisibility.Private => comparisonVisibility == SymbolVisibility.Private,
+                _ => throw new ArgumentOutOfRangeException(nameof(typeVisibility), typeVisibility, null),
+            };
         }
     }
 }

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -21,21 +19,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableStandardMessage =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(
@@ -59,12 +57,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                   INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                   INamedTypeSymbol iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
-                   INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
-                   INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
-                   INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
+                   INamedTypeSymbol? iCollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                   INamedTypeSymbol? genericICollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                   INamedTypeSymbol? iEnumerableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
+                   INamedTypeSymbol? genericIEnumerableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                   INamedTypeSymbol? iListType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList);
+                   INamedTypeSymbol? genericIListType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&
@@ -83,12 +81,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(
             SymbolAnalysisContext context,
-            INamedTypeSymbol iCollectionType,
-            INamedTypeSymbol gCollectionType,
-            INamedTypeSymbol iEnumerableType,
-            INamedTypeSymbol gEnumerableType,
-            INamedTypeSymbol iListType,
-            INamedTypeSymbol gListType)
+            INamedTypeSymbol? iCollectionType,
+            INamedTypeSymbol? gCollectionType,
+            INamedTypeSymbol? iEnumerableType,
+            INamedTypeSymbol? gEnumerableType,
+            INamedTypeSymbol? iListType,
+            INamedTypeSymbol? gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
@@ -128,8 +126,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
 
-            INamedTypeSymbol missingInterface;
-            INamedTypeSymbol implementedInterface;
+            INamedTypeSymbol? missingInterface;
+            INamedTypeSymbol? implementedInterface;
             if (allInterfacesStatus.GenericIListPresent)
             {
                 // Implemented IList<T>, meaning has all 3 generic interfaces. Nothing can be wrong.
@@ -169,7 +167,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            Debug.Assert(missingInterface != null && implementedInterface != null);
+            RoslynDebug.Assert(missingInterface != null && implementedInterface != null);
             context.ReportDiagnostic(Diagnostic.Create(Rule,
                                                        namedTypeSymbol.Locations.First(),
                                                        namedTypeSymbol.Name,

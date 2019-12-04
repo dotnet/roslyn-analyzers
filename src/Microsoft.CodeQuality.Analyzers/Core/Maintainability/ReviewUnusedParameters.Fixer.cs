@@ -30,15 +30,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Fixer not yet implemented.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
-            context.RegisterCodeFix(
-                new MyCodeAction(
-                    MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage,
-                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
-                    equivalenceKey: MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage),
-                diagnostic);
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                context.RegisterCodeFix(
+                    new MyCodeAction(
+                        MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
+                        async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
+                        equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
+                    diagnostic);
+            }
 
             return Task.CompletedTask;
         }
@@ -169,9 +169,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 case SymbolKind.Property:
                     return false;
                 case SymbolKind.Method:
-                    var methodSymbol = methodDeclarationSymbol as IMethodSymbol;
+                    var methodSymbol = (IMethodSymbol)methodDeclarationSymbol;
                     // Should not remove parameter for a conversion operator.
-                    return (methodSymbol.MethodKind != MethodKind.Conversion);
+                    return methodSymbol.MethodKind != MethodKind.Conversion;
                 default:
                     return true;
             }

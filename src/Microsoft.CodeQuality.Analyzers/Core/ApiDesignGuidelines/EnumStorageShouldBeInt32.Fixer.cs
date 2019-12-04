@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -17,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// </summary>
     public abstract class EnumStorageShouldBeInt32Fixer : CodeFixProvider
     {
-        protected abstract SyntaxNode GetTargetNode(SyntaxNode node);
+        protected abstract SyntaxNode? GetTargetNode(SyntaxNode node);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumStorageShouldBeInt32Analyzer.RuleId);
 
@@ -29,18 +28,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumStorageShouldBeInt32Title;
+            var title = MicrosoftCodeQualityAnalyzersResources.EnumStorageShouldBeInt32Title;
 
             // Get syntax root node
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            // No multiple overlapping diagnostics of this id. So get the only diagnostic.
-            var diagnostic = context.Diagnostics.Single();
-
-            // Register fixer
-            context.RegisterCodeFix(new MyCodeAction(title,
-                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
-                     equivalenceKey: title), context.Diagnostics.First());
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                // Register fixer
+                context.RegisterCodeFix(new MyCodeAction(title,
+                         c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
+                         equivalenceKey: title), diagnostic);
+            }
         }
 
         private async Task<Document> ChangeEnumTypeToInt32Async(Document document, Diagnostic diagnostic, SyntaxNode root, CancellationToken cancellationToken)
@@ -55,6 +54,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // Find the target syntax node to replace. Was not able to find a language neutral way of doing this. So using the language specific methods
             var targetNode = GetTargetNode(enumDeclarationNode);
+            if (targetNode == null)
+            {
+                return document;
+            }
 
             // Remove target node 
             editor.RemoveNode(targetNode, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia | SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.KeepEndOfLine);

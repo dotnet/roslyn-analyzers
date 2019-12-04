@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -15,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// CA1003: Use generic event handler instances
     /// CA1009: A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.
-    /// 
+    ///
     /// Recommends that event handlers use <see cref="System.EventHandler{TEventArgs}"/>
     /// </summary>
     /// <remarks>
@@ -26,13 +25,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public abstract class UseGenericEventHandlerInstancesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1003";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForDelegate = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForDelegateMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForDelegate = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForDelegateDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEventMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEventDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent2 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Message), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent2 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Description), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Message), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Description), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleForDelegates = new DiagnosticDescriptor(
             RuleId,
@@ -68,7 +67,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
-        protected abstract bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol);
+        protected abstract bool IsAssignableTo(
+            [NotNullWhen(returnValue: true)] ITypeSymbol? fromSymbol,
+            [NotNullWhen(returnValue: true)] ITypeSymbol? toSymbol,
+            Compilation compilation);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -78,25 +80,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol eventArgs = WellKnownTypes.EventArgs(context.Compilation);
+                    INamedTypeSymbol? eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                     if (eventArgs == null)
                     {
                         return;
                     }
 
                     // Only analyze compilations that have a generic event handler defined.
-                    if (WellKnownTypes.GenericEventHandler(context.Compilation) == null)
+                    if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventHandler1) == null)
                     {
                         return;
                     }
 
-                    bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
+                    static bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
                         namedType.TypeKind == TypeKind.Delegate && namedType.DelegateInvokeMethod != null;
 
                     bool IsEventArgsParameter(IParameterSymbol parameter)
                     {
                         var type = parameter.Type;
-                        if (IsAssignableTo(context.Compilation, type, eventArgs))
+                        if (IsAssignableTo(type, eventArgs, context.Compilation))
                         {
                             return true;
                         }
@@ -112,8 +114,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     bool IsValidNonGenericEventHandler(IMethodSymbol delegateInvokeMethod)
                     {
-                        Debug.Assert(delegateInvokeMethod != null);
-
                         return delegateInvokeMethod.ReturnsVoid &&
                             delegateInvokeMethod.Parameters.Length == 2 &&
                             delegateInvokeMethod.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
@@ -134,7 +134,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }, SymbolKind.NamedType);
 
-                    INamedTypeSymbol comSourceInterfacesAttribute = WellKnownTypes.ComSourceInterfaceAttribute(context.Compilation);
+                    INamedTypeSymbol? comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
                         eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));

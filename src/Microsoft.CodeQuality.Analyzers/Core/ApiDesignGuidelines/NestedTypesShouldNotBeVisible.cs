@@ -17,11 +17,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1034";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageVisualBasicModule = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleMessageVisualBasicModule), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageVisualBasicModule = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleMessageVisualBasicModule), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.NestedTypesShouldNotBeVisibleDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         // Properties common to the descriptors defined by this analyzer.
         private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca1034-nested-types-should-not-be-visible";
@@ -57,10 +57,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     Compilation compilation = compilationStartContext.Compilation;
 
-                    INamedTypeSymbol enumeratorType = compilation.GetTypeByMetadataName("System.Collections.IEnumerator");
-                    INamedTypeSymbol dataSetType = compilation.GetTypeByMetadataName("System.Data.DataSet");
-                    INamedTypeSymbol dataTableType = compilation.GetTypeByMetadataName("System.Data.DataTable");
-                    INamedTypeSymbol dataRowType = compilation.GetTypeByMetadataName("System.Data.DataRow");
+                    INamedTypeSymbol? enumeratorType = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
+                    INamedTypeSymbol? dataSetType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+                    INamedTypeSymbol? dataTableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+                    INamedTypeSymbol? dataRowType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataDataRow);
 
                     compilationStartContext.RegisterSymbolAction(
                         symbolAnalysisContext =>
@@ -128,9 +128,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool IsDataSetSpecialCase(
             INamedTypeSymbol containingType,
             INamedTypeSymbol nestedType,
-            INamedTypeSymbol dataSetType,
-            INamedTypeSymbol dataTableType,
-            INamedTypeSymbol dataRowType)
+            INamedTypeSymbol? dataSetType,
+            INamedTypeSymbol? dataTableType,
+            INamedTypeSymbol? dataRowType)
         {
             if (!containingType.GetBaseTypes().Contains(dataSetType))
             {
@@ -138,7 +138,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             var nestedTypeBases = nestedType.GetBaseTypes().ToList();
-            return nestedTypeBases.Contains(dataTableType) || nestedTypeBases.Contains(dataRowType);
+            return dataTableType != null && nestedTypeBases.Contains(dataTableType) ||
+                dataRowType != null && nestedTypeBases.Contains(dataRowType);
         }
     }
 }

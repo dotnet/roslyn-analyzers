@@ -2508,5 +2508,218 @@ namespace ClassLibrary14
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysisWithLocalFunctionInvocationsInStaticMethods()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    public static float NextSingle(this Random random, float minValue, float maxValue)
+    {
+        float AdjustValue(float value) => Single.IsNegativeInfinity(value) ? Single.MinValue : (Single.IsPositiveInfinity(value) ? Single.MaxValue : value);
+
+        return (float)random.NextDouble(AdjustValue(minValue), AdjustValue(maxValue));
+    }
+
+    public static double NextDouble(this Random random, double minValue, double maxValue)
+    {
+        return minValue;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void PredicateAnalysisWithCast()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static int _f;
+    public static bool M1(int x, int y)
+    {
+        y = x > 0 ?  x : 0;
+        return !(bool)GetObject(y);
+    }
+
+    private static object GetObject(int o)
+    {
+        return (object)(o > _f);
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(2246, "https://github.com/dotnet/roslyn-analyzers/issues/2246")]
+        public void NestedPredicateAnalysisWithDifferentStrings()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static bool Test(string A, string B, string C, string D)
+    {
+        bool result = false;
+
+        if (string.Compare(A, B, StringComparison.OrdinalIgnoreCase) == 0)
+        {
+            if (string.Compare(C, D, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void InterlockedOperations_NoDiagnostic()
+        {
+            // Ensure that Interlocked increment/decrement/add operations
+            // are not treated as absolute writes as it likely involves multiple threads
+            // invoking the method and that can lead to false positives.
+            VerifyCSharp(@"
+class Test
+{
+    private int a;
+    void M1()
+    {
+        a = 0;
+        System.Threading.Interlocked.Increment(ref a);
+        if (a == 1)
+        {
+        }
+
+        a = 1;
+        System.Threading.Interlocked.Decrement(ref a);
+        if (a == 0)
+        {
+        }
+
+        a = 2;
+        System.Threading.Interlocked.Add(ref a, 1);
+        if (a == 3)
+        {
+        }
+    }
+}");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1()
+        Dim a As Integer = 0
+        System.Threading.Interlocked.Increment(a)
+        If a = 1 Then
+        End If
+
+        a = 1
+        System.Threading.Interlocked.Decrement(a)
+        If a = 0 Then
+        End If
+
+        a = 2
+        System.Threading.Interlocked.Add(a, 1)
+        If a = 3 Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysis_MergeForUnreachableCode()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void Load(C c1, C c2)
+    {
+        var x = c1 ?? c2;
+        this.Load(null);
+    }
+
+    public void Load(Uri productFileUrl, Uri originalLocation = null)
+    {
+        if (productFileUrl == null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        Uri feedLocationUri = originalLocation ?? productFileUrl;
+
+        _ = feedLocationUri.LocalPath;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
+
+        [Theory]
+        [InlineData("struct", "struct")]
+        [InlineData("struct", "class")]
+        [InlineData("class", "struct")]
+        [InlineData("class", "class")]
+        public void DataflowAcrossBranches(string typeTest, string typeA)
+        {
+            VerifyCSharp($@"
+using System;
+
+namespace TestNamespace
+{{
+    public {typeA} A
+    {{
+        public int IntProperty {{ get; set; }}
+    }}
+
+    public {typeTest} Test
+    {{
+        public A A;
+
+        public void Something(int param)
+        {{
+            Test t = new Test();
+            t.A = new A();
+            t.A.IntProperty = param;
+            if (param >= 0)
+            {{
+                A a1 = new A();
+                a1.IntProperty = 1;
+                t.A = a1;                    // t.A now contains/points to a1
+            }}
+            else
+            {{
+                A a2 = new A();
+                a2.IntProperty = 1;
+                t.A = a2;                    // t.A now contains/points to a2     
+            }}
+        
+            if (t.A.IntProperty == 1)        // t.A now contains/points either a1 or a2, both of which have .IntProperty = """"
+            {{
+            }}
+        }}
+    }}
+}}",
+            // Test0.cs(33,17): warning CA1508: 't.A.IntProperty == 1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(33, 17, "t.A.IntProperty == 1", "true"));
+        }
     }
 }

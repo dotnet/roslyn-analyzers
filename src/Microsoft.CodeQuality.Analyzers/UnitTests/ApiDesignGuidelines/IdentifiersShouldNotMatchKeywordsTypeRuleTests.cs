@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldNotMatchKeywordsAnalyzer,
@@ -16,31 +17,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
     /// pertain to the TypeRule, which applies to the names of types.
     /// </summary>
-    public class IdentifiersShouldNotMatchKeywordsTypeRuleTests : DiagnosticAnalyzerTestBase
+    public class IdentifiersShouldNotMatchKeywordsTypeRuleTests
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
-        }
-
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedPublicType()
+        public async Task CSharpDiagnosticForKeywordNamedPublicType()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class @class {}
 ",
                 GetCSharpResultAt(2, 14, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "class", "class"));
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedPublicType()
+        public async Task BasicDiagnosticForKeywordNamedPublicType()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class [Class]
 End Class
 ",
@@ -48,77 +39,77 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForCaseSensitiveKeywordNamedPublicTypeWithDifferentCasing()
+        public async Task CSharpNoDiagnosticForCaseSensitiveKeywordNamedPublicTypeWithDifferentCasing()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class iNtErNaL {}
 ");
         }
 
         [Fact]
-        public void BasicNoDiagnosticForCaseSensitiveKeywordNamedPublicTypeWithDifferentCasing()
+        public async Task BasicNoDiagnosticForCaseSensitiveKeywordNamedPublicTypeWithDifferentCasing()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class iNtErNaL
 End Class");
         }
 
         [Fact]
-        public void CSharpDiagnosticForCaseInsensitiveKeywordNamedPublicType()
+        public async Task CSharpDiagnosticForCaseInsensitiveKeywordNamedPublicType()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct aDdHaNdLeR {}
 ",
                 GetCSharpResultAt(2, 15, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "aDdHaNdLeR", "AddHandler"));
         }
 
         [Fact]
-        public void BasicDiagnosticForCaseInsensitiveKeywordNamedPublicType()
+        public async Task BasicDiagnosticForCaseInsensitiveKeywordNamedPublicType()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure [aDdHaNdLeR]
 End Structure",
                 GetBasicResultAt(2, 18, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "aDdHaNdLeR", "AddHandler"));
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForKeywordNamedInternalype()
+        public async Task CSharpNoDiagnosticForKeywordNamedInternalype()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class @class {}
 ");
         }
 
         [Fact]
-        public void BasicNoDiagnosticForKeywordNamedInternalType()
+        public async Task BasicNoDiagnosticForKeywordNamedInternalType()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class [Class]
 End Class
 ");
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForNonKeywordNamedPublicType()
+        public async Task CSharpNoDiagnosticForNonKeywordNamedPublicType()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class classic {}
 ");
         }
 
         [Fact]
-        public void BasicNoDiagnosticForNonKeywordNamedPublicType()
+        public async Task BasicNoDiagnosticForNonKeywordNamedPublicType()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Classic
 End Class
 ");
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedPublicTypeInNamespace()
+        public async Task CSharpDiagnosticForKeywordNamedPublicTypeInNamespace()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace N
 {
     public enum @enum {}
@@ -128,9 +119,9 @@ namespace N
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedPublicTypeInNamespace()
+        public async Task BasicDiagnosticForKeywordNamedPublicTypeInNamespace()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Namespace N
     Public Enum [Enum]
         X
@@ -141,9 +132,9 @@ End Namespace
         }
 
         [Fact]
-        public void CSharpDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
+        public async Task CSharpDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     protected class @protected {}
@@ -153,9 +144,9 @@ public class C
         }
 
         [Fact]
-        public void BasicDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
+        public async Task BasicDiagnosticForKeywordNamedProtectedTypeNestedInPublicClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Protected Class [Protected]
     End Class
@@ -163,5 +154,15 @@ End Class
 ",
                 GetBasicResultAt(3, 21, IdentifiersShouldNotMatchKeywordsAnalyzer.TypeRule, "C.Protected", "Protected"));
         }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, string arg1, string arg2) =>
+            new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2);
+
+        private DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, string arg1, string arg2) =>
+            new DiagnosticResult(rule)
+                .WithLocation(line, column)
+                .WithArguments(arg1, arg2);
     }
 }

@@ -1,13 +1,13 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -17,17 +17,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5385";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySize),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySize),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySizeMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySizeDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly ImmutableHashSet<string> s_RSAAlgorithmNames =
             ImmutableHashSet.Create(
@@ -60,13 +60,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyRSA,
                     out var rsaTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyAsymmetricAlgorithm,
                     out var asymmetricAlgorithmTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyCryptoConfig,
                     out var cryptoConfigTypeSymbol);
 
@@ -96,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (arguments.Length == 1 &&
                             arguments[0].Parameter.Type.SpecialType == SpecialType.System_Int32 &&
                             arguments[0].Value.ConstantValue.HasValue &&
-                            Convert.ToInt32(arguments[0].Value.ConstantValue.Value) < 2048)
+                            Convert.ToInt32(arguments[0].Value.ConstantValue.Value, CultureInfo.InvariantCulture) < 2048)
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 objectCreationOperation.CreateDiagnostic(
@@ -105,27 +105,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
                 }, OperationKind.ObjectCreation);
-
-                compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
-                {
-                    var returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                    var typeSymbol = returnOperation.ReturnedValue?.Type;
-
-                    if (typeSymbol == null)
-                    {
-                        return;
-                    }
-
-                    var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
-
-                    if (rsaTypeSymbol != null && baseTypesAndThis.Contains(rsaTypeSymbol))
-                    {
-                        operationAnalysisContext.ReportDiagnostic(
-                            returnOperation.CreateDiagnostic(
-                                Rule,
-                                typeSymbol.Name));
-                    }
-                }, OperationKind.Return);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
@@ -186,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 arrayCreationOperation.Initializer.ElementValues.Any(
                                     s => s is IConversionOperation conversionOperation &&
                                         conversionOperation.Operand.ConstantValue.HasValue &&
-                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value) < 2048) /* Specify the key size is smaller than 2048 explicitly */ )
+                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value, CultureInfo.InvariantCulture) < 2048) /* Specify the key size is smaller than 2048 explicitly */ )
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(

@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+// TODO(dotpaul): Enable nullable analysis.
+#nullable disable
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,11 +26,41 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 throw new ArgumentException("No PropertyMappers specified", nameof(propertyMappers));
             }
 
+            if (propertyMappers.Any(p => p.PropertyIndex >= 0))
+            {
+                if (!propertyMappers.All(p => p.PropertyIndex >= 0))
+                {
+                    throw new ArgumentException(
+                        "Either all PropertyMappers must specify a property index, or no PropertyMappers specify a property index",
+                        nameof(propertyMappers));
+                }
+
+                int expected = 0;
+                foreach (int pi in propertyMappers.Select(p => p.PropertyIndex).Distinct().OrderBy(propertyIndex => propertyIndex))
+                {
+                    if (pi != expected)
+                    {
+                        throw new ArgumentException(
+                            "PropertyIndex values aren't contiguous starting from 0",
+                            nameof(propertyMappers));
+                    }
+
+                    expected++;
+                }
+
+                this.PropertyValuesCount = expected;
+            }
+            else
+            {
+                this.PropertyValuesCount = propertyMappers.Count();
+            }
+
             ImmutableDictionary<string, (int Index, PropertyMapper PropertyMapper)>.Builder builder = ImmutableDictionary.CreateBuilder<string, (int Index, PropertyMapper PropertyMapper)>(StringComparer.Ordinal);
             int index = 0;
             foreach (PropertyMapper p in propertyMappers)
             {
-                builder.Add(p.PropertyName, (index++, p));
+                int indexToAdd = p.PropertyIndex >= 0 ? p.PropertyIndex : index++;
+                builder.Add(p.PropertyName, (indexToAdd, p));
             }
 
             this.PropertyMappersWithIndex = builder.ToImmutable();
@@ -47,7 +80,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
         internal bool RequiresValueContentAnalysis { get; }
 
-        internal int Count => this.PropertyMappersWithIndex.Count;
+        internal int PropertyValuesCount { get; }
 
         internal bool TryGetPropertyMapper(string propertyName, out PropertyMapper propertyMapper, out int index)
         {

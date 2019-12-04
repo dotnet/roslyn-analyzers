@@ -23,10 +23,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1308";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageToUpper = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseMessageToUpper), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.NormalizeStringsToUppercaseDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageToUpper = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseMessageToUpper), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.NormalizeStringsToUppercaseDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor ToUpperRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -47,13 +47,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var stringType = WellKnownTypes.String(compilationStartContext.Compilation);
+                var stringType = compilationStartContext.Compilation.GetSpecialType(SpecialType.System_String);
                 if (stringType == null)
                 {
                     return;
                 }
 
-                var cultureInfo = compilationStartContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var cultureInfo = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 var invariantCulture = cultureInfo?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 // We want to flag calls to "ToLowerInvariant" and "ToLower(CultureInfo.InvariantCulture)".
@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         (method.Equals(toLowerWithCultureInfo) &&
                          ((invocation.Arguments.FirstOrDefault()?.Value as IMemberReferenceOperation)?.Member.Equals(invariantCulture) ?? false)))
                     {
-                        var suggestedMethod = toUpperInvariant ?? toUpperWithCultureInfo;
+                        IMethodSymbol suggestedMethod = toUpperInvariant ?? toUpperWithCultureInfo!;
 
                         // In method {0}, replace the call to {1} with {2}.
                         var diagnostic = Diagnostic.Create(ToUpperRule, invocation.Syntax.GetLocation(), operationAnalysisContext.ContainingSymbol.Name, method.Name, suggestedMethod.Name);

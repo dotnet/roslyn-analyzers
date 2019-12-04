@@ -19,11 +19,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1724";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypeNamesShouldNotMatchNamespacesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypeNamesShouldNotMatchNamespacesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypeNamesShouldNotMatchNamespacesMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystem = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypeNamesShouldNotMatchNamespacesMessageSystem), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypeNamesShouldNotMatchNamespacesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypeNamesShouldNotMatchNamespacesMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystem = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypeNamesShouldNotMatchNamespacesMessageSystem), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypeNamesShouldNotMatchNamespacesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -47,7 +47,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
         private static readonly object s_lock = new object();
-        private static ImmutableDictionary<string, string> s_wellKnownSystemNamespaceTable;
+        private static ImmutableDictionary<string, string>? s_wellKnownSystemNamespaceTable;
+
+        private static ImmutableDictionary<string, string> WellKnownSystemNamespaceTable
+        {
+            get
+            {
+                InitializeWellKnownSystemNamespaceTable();
+                RoslynDebug.Assert(s_wellKnownSystemNamespaceTable != null);
+                return s_wellKnownSystemNamespaceTable;
+            }
+        }
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -91,13 +101,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             var namespaceComponentToNamespaceNameDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                             UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
-                            InitializeWellKnownSystemNamespaceTable();
                             foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
-                                if (s_wellKnownSystemNamespaceTable.ContainsKey(symbolName))
+                                if (WellKnownSystemNamespaceTable.ContainsKey(symbolName))
                                 {
-                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, s_wellKnownSystemNamespaceTable[symbolName]));
+                                    compilationAnalysisContext.ReportDiagnostic(symbol.CreateDiagnostic(SystemRule, symbolName, WellKnownSystemNamespaceTable[symbolName]));
                                 }
                                 else if (namespaceComponentToNamespaceNameDictionary.ContainsKey(symbolName))
                                 {

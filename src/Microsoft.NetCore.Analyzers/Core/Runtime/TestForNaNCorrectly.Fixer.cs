@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -38,42 +37,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol systemSingleType = model.Compilation.GetTypeByMetadataName("System.Single");
-            INamedTypeSymbol systemDoubleType = model.Compilation.GetTypeByMetadataName("System.Double");
+            INamedTypeSymbol? systemSingleType = model.Compilation.GetSpecialType(SpecialType.System_Single);
+            INamedTypeSymbol? systemDoubleType = model.Compilation.GetSpecialType(SpecialType.System_Double);
 
             if (systemSingleType == null || systemDoubleType == null)
             {
                 return;
             }
 
-            FixResolution resolution = TryGetFixResolution(binaryExpressionSyntax, model, systemSingleType, systemDoubleType);
+            FixResolution? resolution = TryGetFixResolution(binaryExpressionSyntax, model, systemSingleType, systemDoubleType);
 
             if (resolution != null)
             {
-                // We cannot have multiple overlapping diagnostics of this id.
-                Diagnostic diagnostic = context.Diagnostics.Single();
-
-                var action = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForNaNCorrectlyMessage,
+                var action = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.TestForNaNCorrectlyMessage,
                     async ct => await ConvertToMethodInvocation(context, resolution).ConfigureAwait(false),
-                    equivalenceKey: SystemRuntimeAnalyzersResources.TestForNaNCorrectlyMessage);
+                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.TestForNaNCorrectlyMessage);
 
-                context.RegisterCodeFix(action, diagnostic);
+                context.RegisterCodeFix(action, context.Diagnostics);
             }
         }
 
-        private FixResolution TryGetFixResolution(SyntaxNode binaryExpressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
+        private FixResolution? TryGetFixResolution(SyntaxNode binaryExpressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
         {
             bool isEqualsOperator = IsEqualsOperator(binaryExpressionSyntax);
             SyntaxNode leftOperand = GetLeftOperand(binaryExpressionSyntax);
             SyntaxNode rightOperand = GetRightOperand(binaryExpressionSyntax);
 
-            ITypeSymbol systemTypeLeft = TryGetSystemTypeForNanConstantExpression(leftOperand, model, systemSingleType, systemDoubleType);
+            ITypeSymbol? systemTypeLeft = TryGetSystemTypeForNanConstantExpression(leftOperand, model, systemSingleType, systemDoubleType);
             if (systemTypeLeft != null)
             {
                 return new FixResolution(binaryExpressionSyntax, systemTypeLeft, rightOperand, isEqualsOperator);
             }
 
-            ITypeSymbol systemTypeRight = TryGetSystemTypeForNanConstantExpression(rightOperand, model, systemSingleType, systemDoubleType);
+            ITypeSymbol? systemTypeRight = TryGetSystemTypeForNanConstantExpression(rightOperand, model, systemSingleType, systemDoubleType);
             if (systemTypeRight != null)
             {
                 return new FixResolution(binaryExpressionSyntax, systemTypeRight, leftOperand, isEqualsOperator);
@@ -82,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return null;
         }
 
-        private static ITypeSymbol TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
+        private static ITypeSymbol? TryGetSystemTypeForNanConstantExpression(SyntaxNode expressionSyntax, SemanticModel model, INamedTypeSymbol systemSingleType, INamedTypeSymbol systemDoubleType)
         {
             if (model.GetSymbolInfo(expressionSyntax).Symbol is IFieldSymbol fieldSymbol)
             {

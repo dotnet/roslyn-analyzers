@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -62,16 +63,14 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 
         private static bool IsEmptyExpressionBody(ArrowExpressionClauseSyntax expressionBody, SemanticModel semanticModel)
         {
-            switch (expressionBody.Expression.Kind())
+            return (expressionBody.Expression.Kind()) switch
             {
-                case SyntaxKind.ThrowExpression:
-                    return true;
+                SyntaxKind.ThrowExpression => true,
 
-                case SyntaxKind.InvocationExpression:
-                    return IsConditionalInvocation((InvocationExpressionSyntax)expressionBody.Expression, semanticModel);
-            }
+                SyntaxKind.InvocationExpression => IsConditionalInvocation((InvocationExpressionSyntax)expressionBody.Expression, semanticModel),
 
-            return false;
+                _ => false,
+            };
         }
 
         private static bool IsConditionalInvocation(InvocationExpressionSyntax invocationExpr, SemanticModel semanticModel)
@@ -83,7 +82,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(semanticModel.Compilation);
+            var conditionalAttributeSymbol = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
             return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
         }
     }

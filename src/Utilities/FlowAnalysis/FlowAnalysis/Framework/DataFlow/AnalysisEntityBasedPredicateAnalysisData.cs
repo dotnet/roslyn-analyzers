@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Analyzer.Utilities.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -140,7 +139,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             AssertValidAnalysisData();
         }
 
-        public void StartTrackingPredicatedData(AnalysisEntity predicatedEntity, AnalysisEntityBasedPredicateAnalysisData<TValue> truePredicateData, AnalysisEntityBasedPredicateAnalysisData<TValue> falsePredicateData)
+        public void StartTrackingPredicatedData(AnalysisEntity predicatedEntity, AnalysisEntityBasedPredicateAnalysisData<TValue>? truePredicateData, AnalysisEntityBasedPredicateAnalysisData<TValue>? falsePredicateData)
         {
             AssertValidAnalysisData();
 
@@ -157,7 +156,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return result;
         }
 
-        public void AddTrackedEntities(PooledHashSet<AnalysisEntity> builder) => builder.UnionWith(CoreAnalysisData.Keys);
+        public void AddTrackedEntities(HashSet<AnalysisEntity> builder) => builder.UnionWith(CoreAnalysisData.Keys);
 
         protected override void Dispose(bool disposing)
         {

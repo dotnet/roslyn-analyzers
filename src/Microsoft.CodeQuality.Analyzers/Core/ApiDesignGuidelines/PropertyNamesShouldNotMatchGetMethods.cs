@@ -20,9 +20,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private const string Get = "Get";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyze properties, methods 
+            // Analyze properties, methods
             analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
         }
 
@@ -49,6 +49,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             string identifier;
             var symbol = context.Symbol;
+
+            // We only want to report an issue when the user is free to update the member.
+            // This method will be called for both the property and the method so we can bail out
+            // when the member (symbol) is an override.
+            // Note that in the case of an override + a local declaration, the issue will be raised from
+            // the local declaration.
+            if (symbol.IsOverride)
+            {
+                return;
+            }
 
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
             var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);
@@ -76,7 +86,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Iterate through all declared types, including base
             foreach (INamedTypeSymbol type in symbol.ContainingType.GetBaseTypesAndThis())
             {
-                Diagnostic diagnostic = null;
+                Diagnostic? diagnostic = null;
 
                 var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
                 foreach (var member in exposedMembers)
@@ -84,6 +94,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
                     if (member.ContainingType.SpecialType == SpecialType.System_Object &&
                         member.Name == nameof(GetType))
+                    {
+                        continue;
+                    }
+
+                    // Ignore members whose IsStatic does not match with the symbol's IsStatic
+                    if (symbol.IsStatic != member.IsStatic)
                     {
                         continue;
                     }

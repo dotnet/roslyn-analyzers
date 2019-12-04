@@ -19,7 +19,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.ImportedMembersShouldNotBeReadOnlyRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
@@ -35,10 +35,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(context =>
             {
-                var importAttributeV1 = WellKnownTypes.MEFV1ImportAttribute(context.Compilation);
-                var importManyAttributeV1 = WellKnownTypes.MEFV1ImportManyAttribute(context.Compilation);
-                var importAttributeV2 = WellKnownTypes.MEFV2ImportAttribute(context.Compilation);
-                var importManyAttributeV2 = WellKnownTypes.MEFV2ImportManyAttribute(context.Compilation);
+                var importAttributeV1 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportAttribute);
+                var importManyAttributeV1 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportManyAttribute);
+                var importAttributeV2 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportAttribute);
+                var importManyAttributeV2 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportManyAttribute);
 
                 if (importAttributeV1 is null && importAttributeV2 is null)
                 {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -16,20 +16,20 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5364",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocols),
-            nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsMessage),
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsDescription),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocols),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsMessage),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsDescription),
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5364",
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5386",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolTitle),
-            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5386",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         private readonly ImmutableHashSet<string> HardCodedSafeProtocolMetadataNames = ImmutableHashSet.Create(
@@ -54,54 +54,32 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var securityProtocolTypeTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNetSecurityProtocolType);
-
-                    if (securityProtocolTypeTypeSymbol == null)
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                            WellKnownTypeNames.SystemNetSecurityProtocolType,
+                            out var securityProtocolTypeTypeSymbol)
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                                WellKnownTypeNames.SystemNetServicePointManager,
+                                out var servicePointManagerTypeSymbol))
                     {
                         return;
-                    }
-
-                    bool IsReferencingSecurityProtocolType(
-                        IFieldReferenceOperation fieldReferenceOperation,
-                        out bool isDeprecatedProtocol,
-                        out bool isHardCodedOkayProtocol)
-                    {
-                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
-                        {
-                            if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
-                            {
-                                isHardCodedOkayProtocol = true;
-                                isDeprecatedProtocol = false;
-                            }
-                            else if (fieldReferenceOperation.Field.Name == SystemDefaultName)
-                            {
-                                isHardCodedOkayProtocol = false;
-                                isDeprecatedProtocol = false;
-                            }
-                            else
-                            {
-                                isDeprecatedProtocol = true;
-                                isHardCodedOkayProtocol = false;
-                            }
-
-                            return true;
-                        }
-                        else
-                        {
-                            isHardCodedOkayProtocol = false;
-                            isDeprecatedProtocol = false;
-                            return false;
-                        }
                     }
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var fieldReferenceOperation = (IFieldReferenceOperation)operationAnalysisContext.Operation;
+
+                            // Make sure we're not inside an &= assignment like:
+                            //   ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            // cuz &= is at worst, disabling protocol versions.
                             if (IsReferencingSecurityProtocolType(
                                     fieldReferenceOperation,
                                     out var isDeprecatedProtocol,
-                                    out var isHardCodedOkayProtocol))
+                                    out var isHardCodedOkayProtocol)
+                                && null == fieldReferenceOperation.GetAncestor<ICompoundAssignmentOperation>(
+                                      OperationKind.CompoundAssignment,
+                                      IsAndEqualsServicePointManagerAssignment))
                             {
                                 if (isDeprecatedProtocol)
                                 {
@@ -124,16 +102,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var assignmentOperation = (IAssignmentOperation)operationAnalysisContext.Operation;
-                            if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type))
+
+                            // Make sure this is an assignment operation for a SecurityProtocolType, and not
+                            // an assignment like:
+                            //   ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            // cuz &= is at worst, disabling protocol versions.
+                            if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type)
+                                || (assignmentOperation is ICompoundAssignmentOperation compoundAssignmentOperation
+                                    && IsAndEqualsServicePointManagerAssignment(compoundAssignmentOperation)))
                             {
                                 return;
                             }
 
                             // Find the topmost operation with a bad bit set, unless we find an operation that would've been
                             // flagged by the FieldReference callback above.
-                            IOperation foundDeprecatedOperation = null;
+                            IOperation? foundDeprecatedOperation = null;
                             bool foundDeprecatedReference = false;
-                            IOperation foundHardCodedOperation = null;
+                            IOperation? foundHardCodedOperation = null;
                             bool foundHardCodedReference = false;
                             foreach (IOperation childOperation in assignmentOperation.Value.DescendantsAndSelf())
                             {
@@ -193,6 +178,55 @@ namespace Microsoft.NetCore.Analyzers.Security
                         },
                         OperationKind.SimpleAssignment,
                         OperationKind.CompoundAssignment);
+
+                    return;
+
+                    // Local function(s).
+                    bool IsReferencingSecurityProtocolType(
+                        IFieldReferenceOperation fieldReferenceOperation,
+                        out bool isDeprecatedProtocol,
+                        out bool isHardCodedOkayProtocol)
+                    {
+                        RoslynDebug.Assert(securityProtocolTypeTypeSymbol != null);
+
+                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
+                        {
+                            if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
+                            {
+                                isHardCodedOkayProtocol = true;
+                                isDeprecatedProtocol = false;
+                            }
+                            else if (fieldReferenceOperation.Field.Name == SystemDefaultName)
+                            {
+                                isHardCodedOkayProtocol = false;
+                                isDeprecatedProtocol = false;
+                            }
+                            else
+                            {
+                                isDeprecatedProtocol = true;
+                                isHardCodedOkayProtocol = false;
+                            }
+
+                            return true;
+                        }
+                        else
+                        {
+                            isHardCodedOkayProtocol = false;
+                            isDeprecatedProtocol = false;
+                            return false;
+                        }
+                    }
+
+                    bool IsAndEqualsServicePointManagerAssignment(ICompoundAssignmentOperation compoundAssignmentOperation)
+                    {
+                        RoslynDebug.Assert(servicePointManagerTypeSymbol != null);
+
+                        return compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And
+                            && compoundAssignmentOperation.Target is IPropertyReferenceOperation targetPropertyReference
+                            && targetPropertyReference.Instance == null
+                            && servicePointManagerTypeSymbol.Equals(targetPropertyReference.Property.ContainingType)
+                            && targetPropertyReference.Property.MetadataName == "SecurityProtocol";
+                    }
                 });
         }
     }

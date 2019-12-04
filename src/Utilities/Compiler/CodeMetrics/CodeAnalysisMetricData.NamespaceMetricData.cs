@@ -8,11 +8,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 
 namespace Microsoft.CodeAnalysis.CodeMetrics
 {
-    internal abstract partial class CodeAnalysisMetricData
+    public abstract partial class CodeAnalysisMetricData
     {
         private sealed class NamespaceMetricData : CodeAnalysisMetricData
         {
@@ -43,12 +42,12 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
                     MetricsHelper.AddCoupledNamedTypes(coupledTypesBuilder, child.CoupledNamedTypes);
                     maintainabilityIndexTotal += child.MaintainabilityIndex;
                     cyclomaticComplexity += child.CyclomaticComplexity;
-                    depthOfInheritance = Math.Max(child.DepthOfInheritance.Value, depthOfInheritance);
+                    depthOfInheritance = Math.Max(child.DepthOfInheritance.GetValueOrDefault(), depthOfInheritance);
 
                     // Avoid double counting lines for nested types.
                     if (child.Symbol.ContainingType == null)
                     {
-                        childrenLinesOfCode += child.LinesOfCode;
+                        childrenLinesOfCode += child.SourceLines;
                     }
                 }
 

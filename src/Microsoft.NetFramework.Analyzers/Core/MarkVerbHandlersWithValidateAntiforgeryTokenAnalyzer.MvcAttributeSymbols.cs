@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetFramework.Analyzers
@@ -14,29 +16,29 @@ namespace Microsoft.NetFramework.Analyzers
         /// </summary>
         private sealed class MvcAttributeSymbols
         {
-            INamedTypeSymbol ValidateAntiforgeryTokenAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpGetAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpPostAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpPutAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpDeleteAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpPatchAttributeSymbol { get; set; }
-            INamedTypeSymbol AcceptVerbsAttributeSymbol { get; set; }
-            INamedTypeSymbol NonActionAttributeSymbol { get; set; }
-            INamedTypeSymbol ChildActionOnlyAttributeSymbol { get; set; }
-            INamedTypeSymbol HttpVerbsSymbol { get; set; }
+            INamedTypeSymbol? ValidateAntiforgeryTokenAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpGetAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpPostAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpPutAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpDeleteAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpPatchAttributeSymbol { get; set; }
+            INamedTypeSymbol? AcceptVerbsAttributeSymbol { get; set; }
+            INamedTypeSymbol? NonActionAttributeSymbol { get; set; }
+            INamedTypeSymbol? ChildActionOnlyAttributeSymbol { get; set; }
+            INamedTypeSymbol? HttpVerbsSymbol { get; set; }
 
             public MvcAttributeSymbols(Compilation compilation)
             {
-                this.ValidateAntiforgeryTokenAttributeSymbol = WellKnownTypes.ValidateAntiforgeryTokenAttribute(compilation);
-                this.HttpGetAttributeSymbol = WellKnownTypes.HttpGetAttribute(compilation);
-                this.HttpPostAttributeSymbol = WellKnownTypes.HttpPostAttribute(compilation);
-                this.HttpPutAttributeSymbol = WellKnownTypes.HttpPutAttribute(compilation);
-                this.HttpDeleteAttributeSymbol = WellKnownTypes.HttpDeleteAttribute(compilation);
-                this.HttpPatchAttributeSymbol = WellKnownTypes.HttpPatchAttribute(compilation);
-                this.AcceptVerbsAttributeSymbol = WellKnownTypes.AcceptVerbsAttribute(compilation);
-                this.NonActionAttributeSymbol = WellKnownTypes.NonActionAttribute(compilation);
-                this.ChildActionOnlyAttributeSymbol = WellKnownTypes.ChildActionOnlyAttribute(compilation);
-                this.HttpVerbsSymbol = WellKnownTypes.HttpVerbs(compilation);
+                this.ValidateAntiforgeryTokenAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcValidateAntiForgeryTokenAttribute);
+                this.HttpGetAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpGetAttribute);
+                this.HttpPostAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPostAttribute);
+                this.HttpPutAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPutAttribute);
+                this.HttpDeleteAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpDeleteAttribute);
+                this.HttpPatchAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPatchAttribute);
+                this.AcceptVerbsAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcAcceptVerbsAttribute);
+                this.NonActionAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcNonActionAttribute);
+                this.ChildActionOnlyAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcChildActionOnlyAttribute);
+                this.HttpVerbsSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpVerbs);
             }
 
             /// <summary>
@@ -135,7 +137,7 @@ namespace Microsoft.NetFramework.Analyzers
             /// <param name="attributeData">The .NET attribute to check.</param>
             /// <param name="symbol">The type of .NET attribute to compare.</param>
             /// <returns>True if .NET attribute's type matches the specified type, false otherwise.</returns>
-            private static bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol symbol)
+            private static bool IsAttributeClass(AttributeData attributeData, [NotNullWhen(returnValue: true)] INamedTypeSymbol? symbol)
             {
                 return symbol != null && Equals(attributeData.AttributeClass, symbol);
             }

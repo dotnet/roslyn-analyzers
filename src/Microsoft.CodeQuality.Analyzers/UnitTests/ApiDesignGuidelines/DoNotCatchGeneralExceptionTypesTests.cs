@@ -1,29 +1,26 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotCatchGeneralExceptionTypesAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotCatchGeneralExceptionTypesAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 {
-    public class DoNotCatchGeneralExceptionTypesTests : DiagnosticAnalyzerTestBase
+    public class DoNotCatchGeneralExceptionTypesTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCatchGeneralExceptionTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCatchGeneralExceptionTypesAnalyzer();
-        }
-
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatch()
+        public async Task CSharp_Diagnostic_GeneralCatch()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -50,9 +47,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatch()
+        public async Task Basic_Diagnostic_GeneralCatch()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -71,9 +68,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatchInGetAccessor()
+        public async Task CSharp_Diagnostic_GeneralCatchInGetAccessor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -104,9 +101,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatchInGetAccessor()
+        public async Task Basic_Diagnostic_GeneralCatchInGetAccessor()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -128,9 +125,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_GeneralCatchRethrow()
+        public async Task CSharp_NoDiagnostic_GeneralCatchRethrow()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -157,9 +154,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_GeneralCatchRethrow()
+        public async Task Basic_NoDiagnostic_GeneralCatchRethrow()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -178,9 +175,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_GeneralCatchThrowNew()
+        public async Task CSharp_NoDiagnostic_GeneralCatchThrowNew()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -207,9 +204,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_GeneralCatchThrowNew()
+        public async Task Basic_NoDiagnostic_GeneralCatchThrowNew()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -228,9 +225,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatchWithRethrowFromSpecificCatch()
+        public async Task CSharp_Diagnostic_GeneralCatchWithRethrowFromSpecificCatch()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -258,9 +255,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatchWithRethrowFromSpecificCatch()
+        public async Task Basic_Diagnostic_GeneralCatchWithRethrowFromSpecificCatch()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -280,9 +277,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GenericException()
+        public async Task CSharp_Diagnostic_GenericException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -306,9 +303,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GenericException()
+        public async Task Basic_Diagnostic_GenericException()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
 
@@ -327,9 +324,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_GenericExceptionRethrown()
+        public async Task CSharp_NoDiagnostic_GenericExceptionRethrown()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -353,9 +350,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_GenericExceptionRethrown()
+        public async Task Basic_NoDiagnostic_GenericExceptionRethrown()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
 
@@ -374,9 +371,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_ThrowNewWrapped()
+        public async Task CSharp_NoDiagnostic_ThrowNewWrapped()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -400,9 +397,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_ThrowNewWrapped()
+        public async Task Basic_NoDiagnostic_ThrowNewWrapped()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
 
@@ -421,9 +418,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_SystemException()
+        public async Task CSharp_Diagnostic_SystemException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -447,9 +444,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_SystemException()
+        public async Task Basic_Diagnostic_SystemException()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
 
             Namespace TestNamespace
@@ -467,9 +464,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatchWithFilter()
+        public async Task CSharp_Diagnostic_GeneralCatchWithFilter()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             namespace TestNamespace
@@ -492,9 +489,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatchWithFilter()
+        public async Task Basic_Diagnostic_GeneralCatchWithFilter()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Namespace TestNamespace
                 Class TestClass
@@ -511,9 +508,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GenericExceptionWithoutVariableWithFilter()
+        public async Task CSharp_Diagnostic_GenericExceptionWithoutVariableWithFilter()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             namespace TestNamespace
@@ -536,9 +533,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_NoDiagnostic_GenericExceptionWithVariableWithFilter()
+        public async Task CSharp_NoDiagnostic_GenericExceptionWithVariableWithFilter()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             namespace TestNamespace
@@ -560,9 +557,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_NoDiagnostic_GenericExceptionWithVariableWithFilter()
+        public async Task Basic_NoDiagnostic_GenericExceptionWithVariableWithFilter()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Namespace TestNamespace
@@ -579,9 +576,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatchInLambdaExpression()
+        public async Task CSharp_Diagnostic_GeneralCatchInLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
 
@@ -608,9 +605,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatchInLambdaExpression()
+        public async Task Basic_Diagnostic_GeneralCatchInLambdaExpression()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
 
@@ -629,7 +626,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             ",
             GetCA1031BasicResultAt(11, 29, "TestMethod"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
 
@@ -651,9 +648,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact, WorkItem(2518, "https://github.com/dotnet/roslyn-analyzers/issues/2518")]
-        public void CSharp_NoDiagnostic_SpecificExceptionWithoutVariable()
+        public async Task CSharp_NoDiagnostic_SpecificExceptionWithoutVariable()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
 
             public class Class1
@@ -671,14 +668,89 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             }");
         }
 
-        private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)
+        [Theory]
+        [WorkItem(2713, "https://github.com/dotnet/roslyn-analyzers/issues/2713")]
+        // No configuration - validate no diagnostics in default configuration
+        [InlineData("")]
+        // Match by type name
+        [InlineData("dotnet_code_quality.disallowed_symbol_names = NullReferenceException")]
+        // Setting only for Rule ID
+        [InlineData("dotnet_code_quality." + DoNotCatchGeneralExceptionTypesAnalyzer.RuleId + ".disallowed_symbol_names = NullReferenceException")]
+        // Match by type documentation ID
+        [InlineData(@"dotnet_code_quality.disallowed_symbol_names = T:System.NullReferenceException")]
+        public async Task EditorConfigConfiguration_DisallowedExceptionTypes(string editorConfigText)
         {
-            return GetCSharpResultAt(line, column, DoNotCatchGeneralExceptionTypesAnalyzer.Rule, signature);
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCA1031CSharpResultAt(7, 9, "M1")
+                };
+            }
+
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+class Test
+{
+    void M1(string param)
+    {
+        try { }
+        catch (System.NullReferenceException ex) { }
+    }
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+            csTest.ExpectedDiagnostics.AddRange(expected);
+            await csTest.RunAsync();
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCA1031BasicResultAt(5, 9, "M1")
+
+                };
+            }
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Class Test
+    Private Sub M1(param As String)
+        Try
+        Catch ex As System.NullReferenceException
+        End Try
+    End Sub
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+            await vbTest.RunAsync();
         }
 
+        private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)
+            => VerifyCS.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(signature);
+
         private static DiagnosticResult GetCA1031BasicResultAt(int line, int column, string signature)
-        {
-            return GetBasicResultAt(line, column, DoNotCatchGeneralExceptionTypesAnalyzer.Rule, signature);
-        }
+            => VerifyVB.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(signature);
     }
 }

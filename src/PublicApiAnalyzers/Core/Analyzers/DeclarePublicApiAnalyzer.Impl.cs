@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Analyzer.Utilities;
@@ -142,7 +143,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <param name="reportDiagnostic">Action called to actually report a diagnostic.</param>
             /// <param name="explicitLocation">A location to report the diagnostics for a symbol at. If null, then
             /// the location of the symbol will be used.</param>
-            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, Location explicitLocation = null)
+            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, Location? explicitLocation = null)
             {
                 if (!IsPublicAPI(symbol))
                 {
@@ -173,7 +174,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <param name="isImplicitlyDeclaredConstructor">If the symbol is an implicitly declared constructor.</param>
             /// <param name="explicitLocation">A location to report the diagnostics for a symbol at. If null, then
             /// the location of the symbol will be used.</param>
-            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, Location explicitLocation = null)
+            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, Location? explicitLocation = null)
             {
                 Debug.Assert(IsPublicAPI(symbol));
 
@@ -309,11 +310,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         ? PublicApiAnalyzerResources.PublicImplicitGetAccessor
                         : PublicApiAnalyzerResources.PublicImplicitSetAccessor;
 
-                    return string.Format(formatString, property.Name);
+                    return string.Format(CultureInfo.CurrentCulture, formatString, property.Name);
                 }
 
                 return isImplicitlyDeclaredConstructor ?
-                    string.Format(PublicApiAnalyzerResources.PublicImplicitConstructorErrorMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
+                    string.Format(CultureInfo.CurrentCulture, PublicApiAnalyzerResources.PublicImplicitConstructorErrorMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
                     symbol.ToDisplayString(ShortSymbolNameFormat);
             }
 
@@ -420,7 +421,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 string publicApiName = symbol.ToDisplayString(s_publicApiFormat);
 
-                ITypeSymbol memberType = null;
+                ITypeSymbol? memberType = null;
                 if (symbol is IMethodSymbol)
                 {
                     memberType = ((IMethodSymbol)symbol).ReturnType;
@@ -493,7 +494,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private void ProcessTypeForwardedAttributes(Compilation compilation, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
             {
-                var typeForwardedToAttribute = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.TypeForwardedToAttribute");
+                var typeForwardedToAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesTypeForwardedToAttribute);
 
                 if (typeForwardedToAttribute != null)
                 {

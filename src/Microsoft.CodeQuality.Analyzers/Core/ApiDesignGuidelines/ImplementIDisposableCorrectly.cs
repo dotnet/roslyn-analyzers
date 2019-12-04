@@ -23,18 +23,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private const string GarbageCollectorTypeName = "System.GC";
         private const string SuppressFinalizeMethodName = "SuppressFinalize";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageIDisposableReimplementation = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFinalizeOverride = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeOverride = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeSignature = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageRenameDispose = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeBoolSignature = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDisposeImplementation = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFinalizeImplementation = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageProvideDisposeBool = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageIDisposableReimplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageFinalizeOverride = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDisposeOverride = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDisposeSignature = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageRenameDispose = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDisposeBoolSignature = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDisposeImplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageFinalizeImplementation = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageProvideDisposeBool = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor IDisposableReimplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -129,24 +129,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 context =>
                 {
-                    INamedTypeSymbol disposableType = WellKnownTypes.IDisposable(context.Compilation);
+                    INamedTypeSymbol? disposableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
                     if (disposableType == null)
                     {
                         return;
                     }
 
-                    if (!(disposableType.GetMembers(DisposeMethodName).Single() is IMethodSymbol disposeInterfaceMethod))
+                    if (!(disposableType.GetMembers(DisposeMethodName).FirstOrDefault() is IMethodSymbol disposeInterfaceMethod))
                     {
                         return;
                     }
 
-                    INamedTypeSymbol garbageCollectorType = context.Compilation.GetTypeByMetadataName(GarbageCollectorTypeName);
+                    INamedTypeSymbol? garbageCollectorType = context.Compilation.GetOrCreateTypeByMetadataName(GarbageCollectorTypeName);
                     if (garbageCollectorType == null)
                     {
                         return;
                     }
 
-                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).Single() is IMethodSymbol suppressFinalizeMethod))
+                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).FirstOrDefault() is IMethodSymbol suppressFinalizeMethod))
                     {
                         return;
                     }
@@ -197,7 +197,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
                         }
 
-                        IMethodSymbol disposeMethod = FindDisposeMethod(type);
+                        IMethodSymbol? disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
                             CheckDisposeSignatureRule(disposeMethod, type, context);
@@ -249,7 +249,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
-                            IMethodSymbol disposeMethod = FindDisposeMethod(type);
+                            IMethodSymbol? disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
                                 if (method.Equals(disposeMethod))
@@ -421,7 +421,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// Returns method that implements IDisposable.Dispose operation.
             /// Only direct implementation is taken into account, implementation in base type is ignored.
             /// </summary>
-            private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
+            private IMethodSymbol? FindDisposeMethod(INamedTypeSymbol type)
             {
                 if (type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) is IMethodSymbol disposeMethod && Equals(disposeMethod.ContainingType, type))
                 {
@@ -442,9 +442,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// <summary>
             /// Returns method defined in the nearest ancestor: void Dispose(bool)
             /// </summary>
-            private IMethodSymbol FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
+            private IMethodSymbol? FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
             {
-                IMethodSymbol method = null;
+                IMethodSymbol? method = null;
 
                 while (type != null && method == null && ImplementsDisposableInBaseType(type))
                 {
@@ -458,18 +458,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
         {
-            if (invocationExpression.TargetMethod == null ||
-                !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
+            if (!invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
             {
                 return false;
             }
 
-            if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
+            if (invocationExpression.Instance == null)
             {
-                return false;
+                if (!type.Equals(invocationExpression.TargetMethod.ContainingType))
+                {
+                    return false;
+                }
             }
-
-            if (!type.Equals(invocationExpression.Instance.Type))
+            else if (invocationExpression.Instance.Kind != OperationKind.InstanceReference ||
+                !type.Equals(invocationExpression.Instance.Type))
             {
                 return false;
             }
@@ -556,7 +558,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
-                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        // Ignore operation roots with no IOperation API support (OperationKind.None)
                         return operation.IsOperationNoneRoot();
                 }
             }
@@ -689,7 +691,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     case OperationKind.Try:
                         return ValidateTryOperation((ITryOperation)operation);
                     default:
-                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        // Ignore operation roots with no IOperation API support (OperationKind.None)
                         return operation.IsOperationNoneRoot();
                 }
             }

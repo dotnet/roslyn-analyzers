@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -30,14 +29,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (declaration != null)
             {
-                // We cannot have multiple overlapping diagnostics of this id.
-                Diagnostic diagnostic = context.Diagnostics.Single();
-
-                string title = SystemRuntimeAnalyzersResources.AvoidUnsealedAttributesMessage;
+                string title = MicrosoftNetCoreAnalyzersResources.AvoidUnsealedAttributesMessage;
                 context.RegisterCodeFix(new MyCodeAction(title,
                     async ct => await MakeSealed(editor, declaration).ConfigureAwait(false),
                     equivalenceKey: title),
-                    diagnostic);
+                    context.Diagnostics);
             }
         }
 

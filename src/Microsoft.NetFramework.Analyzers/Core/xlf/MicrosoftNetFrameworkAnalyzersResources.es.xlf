@@ -357,6 +357,36 @@
         <target state="translated">En {0}, se proporciona una combinación no segura de instancias de XsltSettings y XmlResolver a XslCompiledTransfor.Load como argumento.</target>
         <note>CA3076</note>
       </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage">
+        <source>The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</source>
+        <target state="translated">El valor ValidateAntiForgeryAttribute se define con HttpVerbs.Get y al menos uno de HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete o HttpVerbs.Patch en la acción del controlador {0}. El atributo no se utilizará cuando se use el verbo GET.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage">
+        <source>Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</source>
+        <target state="translated">El uso de HttpVerbs.GET y ValidateAntiForgeryTokenAttribute no es compatible con MVC en la acción del controlador {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage">
+        <source>HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</source>
+        <target state="translated">Los atributos de verbo HTTP faltan en la acción del controlador {0}. El valor ValidateAntiForgeryTokenAttribute no se utilizará cuando se utilice el verbo GET.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</source>
+        <target state="translated">Falta ValidateAntiForgeryTokenAttribute en la acción {0} del controlador de MVC, que de manera predeterminada acepta solicitudes POST.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
+        <source>Mark Verb Handlers With Validate Antiforgery Token</source>
+        <target state="translated">Marcar los controladores de verbos con validación de token antifalsificación</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
+        <target state="translated">Falta ValidateAntiForgeryTokenAttribute en la acción del controlador {0}.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotUseAccountSASTests
     {
-        protected async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             string microsoftWindowsAzureStorageCSharpSourceCode = @"
 using System;
@@ -65,7 +65,7 @@ namespace NormalNamespace
         [Fact]
         public async Task TestGetSharedAccessSignatureOfCloudStorageAccountDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -83,7 +83,7 @@ class TestClass
         [Fact]
         public async Task TestNormalMethodOfCloudStorageAccountNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -100,7 +100,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureOfCloudStorageAccountOfNormalNamespaceNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using NormalNamespace;
 

@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         private static readonly DiagnosticDescriptor DefinitelyRule = DoNotDisableHttpClientCRLCheck.DefinitelyDisableHttpClientCRLCheckRule;
         private static readonly DiagnosticDescriptor MaybeRule = DoNotDisableHttpClientCRLCheck.MaybeDisableHttpClientCRLCheckRule;
 
-        private async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_NotSet_DefaultWrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -53,7 +53,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -71,7 +71,7 @@ class TestClass
         [Fact]
         public async Task Test_HttpClientHandler_CheckCertificateRevocationList_Wrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -89,7 +89,7 @@ class TestClass
         [Fact]
         public async Task Test_CurlHandler_CheckCertificateRevocationList_Wrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -107,7 +107,7 @@ class TestClass
         [Fact]
         public async Task Test_HttpClientWithHttpMessageHandlerAndBooleanParameters_WinHttpHandler_CheckCertificateRevocationList_Wrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -125,7 +125,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_PropertyInitializer_CheckCertificateRevocationList_Wrong_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -142,7 +142,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_UnknownOrRight_MaybeDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Net.Http;
 
@@ -168,7 +168,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_Null_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -187,7 +187,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_MaybeNull_MaybeDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Net.Http;
 
@@ -213,7 +213,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_NotNull_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Net.Http;
 
@@ -232,7 +232,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_UnknownOrWrong_MaybeDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Net.Http;
 
@@ -258,7 +258,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_WrongOrRight_MaybeDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Net.Http;
 
@@ -284,7 +284,7 @@ class TestClass
         [Fact]
         public async Task Test_DerivedClassOfHttpClient_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class DerivedClass : HttpClient
@@ -309,7 +309,7 @@ class TestClass
         [Fact]
         public async Task Test_HttpClientConstructorWithoutParameter_handlerSetByDefault_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -326,7 +326,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Right_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass
@@ -343,7 +343,7 @@ class TestClass
         [Fact]
         public async Task Test_WinHttpHandler_CheckCertificateRevocationList_Unknown_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Net.Http;
 
 class TestClass

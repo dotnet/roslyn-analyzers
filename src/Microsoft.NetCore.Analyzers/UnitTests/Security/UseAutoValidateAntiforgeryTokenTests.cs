@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
                .WithLocation(line, column)
                .WithArguments(arguments);
 
-        protected async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_NotCallMethodsOf_DescedantOfIAntiForgery_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -83,7 +83,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAuthorizationFilter_NotCallMethodsOf_DescedantOfIAntiForgery_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -127,7 +127,7 @@ class BlahClass
         [Fact]
         public async Task Test_ChildrenOfController_ActionMethodWithHttpPostAndHttpGetAttributes_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -150,7 +150,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_ChildrenOfController_ActionMethodWithHttpPatchAttribute_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
@@ -173,7 +173,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_ChildrenOfController_ActionMethodWithHttpPostAttribute_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -195,7 +195,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_ChildrenOfController_ActionMethodWithHttpPutAttribute_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -217,7 +217,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_ChildrenOfController_ActionMethodWithHttpDeleteAttribute_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -239,7 +239,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_WithoutValidateAntiForgeryAttribute_ActionMethodWithTwoHttpVervAttributes_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -266,7 +266,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_NoValidateAntiForgeryTokenAttribute_ActionMethodMissingHttpVerbAttribute_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -291,7 +291,7 @@ class TestClass : Controller
         [Fact, WorkItem(2844, "https://github.com/dotnet/roslyn-analyzers/issues/2844")]
         public async Task Test_ConcurrencyIssue_Diagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -406,7 +406,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_DirectlyCallMethodsOf_ChildrenOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -452,7 +452,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_MethodReferItSelft_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -511,7 +511,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_DelegateField_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -569,7 +569,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_StaticDelegateField_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -625,7 +625,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Interface_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -679,7 +679,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_DirectlyCallMethodsOf_ChildrenOfIAntiForgeryImplicitly_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Antiforgery.Internal;
@@ -726,7 +726,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_DirectlyCallMethodsOf_DescedantOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Antiforgery.Internal;
@@ -780,7 +780,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_IndirectlyCallMethodsOf_ChildrenOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -831,7 +831,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAsyncAuthorizationFilter_IndirectlyCallMethodsOf_DescedantOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Antiforgery.Internal;
@@ -891,7 +891,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_DescedantOfIAsyncAuthorizationFilter_DirectlyCallMethodsOf_ChildrenOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -941,7 +941,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_AddIsAGenericMethod_ChildrenOfIAsyncAuthorizationFilter_DirectlyCallMethodsOf_ChildrenOfIAntiForgery_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -987,7 +987,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_ChildrenOfIFilterMetadata_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1025,7 +1025,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_Add_DescedantOfIFilterMetadata_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1067,7 +1067,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_AddIsAGenericMethod_ChildrenOfIFilterMetadata_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1105,7 +1105,7 @@ class BlahClass
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_AddIsAGenericMethod_DescedantOfIFilterMetadata_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1147,7 +1147,7 @@ class BlahClass
         [Fact]
         public async Task Test_ActionMethodIsNotPublic_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -1168,7 +1168,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ActionMethodIsStatic_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -1189,7 +1189,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ActionMethodWithNonActionAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -1210,7 +1210,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_OverridenMethodWithNonActionAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -1231,7 +1231,7 @@ class TestClass : Controller
         [Fact]
         public async Task Test_ActionMethodWitoutAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 class TestClass : ControllerBase
@@ -1246,7 +1246,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ChildrenOfControllerBase_ActionMethodWithBothValidateAntiForgeryAndHttpPostAttributes_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
@@ -1264,7 +1264,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAttributeWhileTypeWithValidateAntiForgeryAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
@@ -1282,7 +1282,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_NotUsingValidateAntiForgeryAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 class TestClass : ControllerBase
@@ -1298,7 +1298,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ActionMethodWithHttpGetAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
@@ -1319,7 +1319,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ValidateAntiForgeryTokenAttributeOnActionMethod_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1339,7 +1339,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_ValidateAntiForgeryTokenAttributeOnController_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1359,7 +1359,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_NoValidateAntiForgeryTokenAttribute_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;
@@ -1378,7 +1378,7 @@ class TestClass : ControllerBase
         [Fact]
         public async Task Test_GlobalAntiForgeryFilter_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Http;

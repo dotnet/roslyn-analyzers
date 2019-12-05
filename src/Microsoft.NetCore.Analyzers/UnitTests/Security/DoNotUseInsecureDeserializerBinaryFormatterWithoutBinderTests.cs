@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             return new DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder();
         }
 
-        private async Task VerifyCSharpWithMyBinderDefined(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithMyBinderDefinedAsync(string source, params DiagnosticResult[] expected)
         {
             string myBinderCSharpSourceCode = @"
 using System;
@@ -622,7 +622,7 @@ namespace Blah
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1851")]
         public async Task DeserializeWithInstanceField_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -645,7 +645,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_BinderMaybeSet_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -672,7 +672,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_BinderSet_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -694,7 +694,7 @@ namespace Blah
         [Fact]
         public async Task TwoDeserializersOneBinderOnFirst_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -724,7 +724,7 @@ namespace Blah
         [Fact]
         public async Task TwoDeserializersOneBinderOnSecond_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -753,7 +753,7 @@ namespace Blah
         [Fact]
         public async Task TwoDeserializersNoBinder_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -783,7 +783,7 @@ namespace Blah
         [Fact]
         public async Task BinderSetInline_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -825,7 +825,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_LoopBinderSetAfter_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -851,7 +851,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_LoopBinderSetBefore_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -876,7 +876,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_LoopBinderSetBeforeMaybe_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -960,7 +960,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_BranchInvokedAsDelegate_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -990,7 +990,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_Property_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1020,7 +1020,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_Constructor_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1044,7 +1044,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_FieldInitializer_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1064,7 +1064,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_InConstructorAndMethod_Diagnostics()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1110,7 +1110,7 @@ class Derived : Base
         [Fact]
         public async Task BinderVariableSetInAllBranches_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1138,7 +1138,7 @@ namespace Blah
         [Fact]
         public async Task BinderParameter_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1163,7 +1163,7 @@ namespace Blah
         [Fact]
         public async Task BinderNotNullInsideIf_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1192,7 +1192,7 @@ namespace Blah
         [Fact]
         public async Task SomeOtherSerializer_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1217,7 +1217,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodInstantiatesWithoutBinder_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1245,7 +1245,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodInstantiatesWithBinderMaybe_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1276,7 +1276,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodInstantiatesWithBinder_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1303,7 +1303,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodDeserializesWithoutBinder_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1333,7 +1333,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodDeserializesWithoutBinderUsingDelegate_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1364,7 +1364,7 @@ namespace Blah
         [Fact]
         public async Task OtherMethodDeserializesWithoutBinderUsingBinaryFormatter_Diagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1453,7 +1453,7 @@ public class ExampleClass
         [Fact]
         public async Task Deserialize_SharedBinderInstance_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1479,7 +1479,7 @@ namespace Blah
         [Fact]
         public async Task Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
         {
-            await VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefinedAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;

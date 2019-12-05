@@ -71,7 +71,7 @@ namespace Microsoft.WindowsAzure.Storage
     }
 }";
 
-        protected async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -86,7 +86,7 @@ namespace Microsoft.WindowsAzure.Storage
             await csharpTest.RunAsync();
         }
 
-        protected async Task VerifyCSharpWithDependencies(string source, string editorConfigText, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, string editorConfigText, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -105,7 +105,7 @@ namespace Microsoft.WindowsAzure.Storage
         [Fact]
         public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -125,7 +125,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -142,7 +142,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -161,7 +161,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -179,7 +179,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -250,7 +250,7 @@ class TestClass
                 };
             }
 
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;

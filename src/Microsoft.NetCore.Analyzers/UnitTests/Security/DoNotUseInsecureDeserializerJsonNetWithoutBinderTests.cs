@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task DocSample1_CSharp_Violation()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 public class BookRecord
@@ -67,7 +67,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample1_VB_Violation()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports Newtonsoft.Json
 
 Public Class BookRecord
@@ -107,7 +107,7 @@ End Class
         [Fact]
         public async Task DocSample1_CSharp_Solution()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -173,7 +173,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample1_VB_Solution()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports System
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Serialization
@@ -235,7 +235,7 @@ End Class
         [Fact]
         public async Task DocSample2_CSharp_Violation()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -307,7 +307,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample2_VB_Violation()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports System
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Serialization
@@ -374,7 +374,7 @@ End Class
         [Fact]
         public async Task DocSample2_CSharp_Solution()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -448,7 +448,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample2_VB_Solution()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports System
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Serialization
@@ -517,7 +517,7 @@ End Class
         [Fact]
         public async Task Insecure_JsonSerializer_Deserialize_DefinitelyDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 class Blah
@@ -535,7 +535,7 @@ class Blah
         [Fact]
         public async Task ExplicitlyNone_JsonSerializer_Deserialize_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 class Blah
@@ -552,7 +552,7 @@ class Blah
         [Fact]
         public async Task AllAndBinder_JsonSerializer_Deserialize_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -582,7 +582,7 @@ class Blah
         [Fact]
         public async Task InitializeField_JsonSerializer_Diagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 class Blah
@@ -601,7 +601,7 @@ class Blah
         [Fact]
         public async Task Insecure_JsonSerializer_Populate_MaybeDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -626,7 +626,7 @@ class Blah
         [Fact]
         public async Task Insecure_JsonSerializer_DeserializeGeneric_MaybeDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -650,7 +650,7 @@ class Blah
         [Fact]
         public async Task Insecure_JsonSerializer_FromInsecureSettings_DeserializeGeneric_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -674,7 +674,7 @@ class Blah
         [Fact]
         public async Task TypeNameHandlingNoneBinderNonNull_JsonSerializer_Populate_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -744,7 +744,7 @@ class Blah
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithJsonNetAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -760,7 +760,7 @@ class Blah
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyBasicWithJsonNetAsync(string source, params DiagnosticResult[] expected)
         {
             var vbTest = new VerifyVB.Test
             {

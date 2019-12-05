@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task DocSample1_CSharp_Violation_Diagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 public class ExampleClass
@@ -40,7 +40,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample1_VB_Violation_Diagnostic()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports Newtonsoft.Json
 
 Public Class ExampleClass
@@ -57,7 +57,7 @@ End Class",
         [Fact]
         public async Task DocSample1_CSharp_Solution_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using Newtonsoft.Json;
 
 public class ExampleClass
@@ -76,7 +76,7 @@ public class ExampleClass
         [Fact]
         public async Task DocSample1_VB_Solution_NoDiagnostic()
         {
-            await VerifyBasicWithJsonNet(@"
+            await VerifyBasicWithJsonNetAsync(@"
 Imports Newtonsoft.Json
 
 Public Class ExampleClass
@@ -93,7 +93,7 @@ End Class");
         [Fact]
         public async Task Reference_TypeNameHandling_None_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -109,7 +109,7 @@ class Blah
         [Fact]
         public async Task Reference_TypeNameHandling_All_Diagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -126,7 +126,7 @@ class Blah
         [Fact]
         public async Task Reference_AttributeTargets_All_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -142,7 +142,7 @@ class Blah
         [Fact]
         public async Task Assign_TypeNameHandling_Objects_Diagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -159,7 +159,7 @@ class Blah
         [Fact]
         public async Task Assign_TypeNameHandling_1_Or_Arrays_Diagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -176,7 +176,7 @@ class Blah
         [Fact]
         public async Task Assign_TypeNameHandling_0_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -192,7 +192,7 @@ class Blah
         [Fact]
         public async Task Assign_TypeNameHandling_None_NoDiagnostic()
         {
-            await VerifyCSharpWithJsonNet(@"
+            await VerifyCSharpWithJsonNetAsync(@"
 using System;
 using Newtonsoft.Json;
 
@@ -205,7 +205,7 @@ class Blah
 }");
         }
 
-        private async Task VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithJsonNetAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -221,7 +221,7 @@ class Blah
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
+        private async Task VerifyBasicWithJsonNetAsync(string source, params DiagnosticResult[] expected)
         {
             var vbTest = new VerifyVB.Test
             {

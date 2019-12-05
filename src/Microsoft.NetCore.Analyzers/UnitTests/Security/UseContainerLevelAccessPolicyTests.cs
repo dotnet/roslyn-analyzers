@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         private static ReferenceAssemblies DefaultWithAzureStorage { get; } = ReferenceAssemblies.Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("WindowsAzure.Storage", "9.0.0")));
 
-        private async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyCSharpWithDependencies(string source, string editorConfigText, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithDependenciesAsync(string source, string editorConfigText, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task TestGroupPolicyIdentifierOfBlobNamespaceIsNullDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -72,7 +72,7 @@ class TestClass
         [Fact]
         public async Task TestAccessPolicyIdentifierOfTableNamespaceIsNullDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -91,7 +91,7 @@ class TestClass
         [Fact]
         public async Task TestGroupPolicyIdentifierOfFileNamespaceIsNullDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -110,7 +110,7 @@ class TestClass
         [Fact]
         public async Task TestAccessPolicyIdentifierOfQueueNamespaceIsNullDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -130,7 +130,7 @@ class TestClass
         [Fact]
         public async Task TestWithoutGroupPolicyIdentifierParameterOfBlobNamespaceDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -149,7 +149,7 @@ class TestClass
         [Fact]
         public async Task TestWithoutAccessPolicyIdentifierParameterOfTableNamespaceDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -167,7 +167,7 @@ class TestClass
         [Fact]
         public async Task TestWithoutGroupPolicyIdentifierParameterOfFileNamespaceDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -185,7 +185,7 @@ class TestClass
         [Fact]
         public async Task TestWithoutAccessPolicyIdentifierParameterOfQueueNamespaceDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -204,7 +204,7 @@ class TestClass
         [Fact]
         public async Task TestGroupPolicyIdentifierOfBlobNamespaceIsNotNullNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -223,7 +223,7 @@ class TestClass
         [Fact]
         public async Task TestGroupPolicyIdentifierOfFileNamespaceIsNotNullNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -241,7 +241,7 @@ class TestClass
         [Fact]
         public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -262,7 +262,7 @@ class TestClass
         [Fact]
         public async Task TestAccessPolicyIdentifierOfQueueNamespaceIsNotNullNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -280,7 +280,7 @@ class TestClass
         [Fact]
         public async Task TestAccessPolicyIdentifierOfTableNamespaceIsNotNullNoDiagnostic()
         {
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -311,7 +311,7 @@ class TestClass
                 };
             }
 
-            await VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 

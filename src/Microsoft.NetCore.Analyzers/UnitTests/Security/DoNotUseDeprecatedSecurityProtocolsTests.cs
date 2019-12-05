@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.DoNotUseDeprecatedSecurityProtocols,
@@ -38,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
     }
 
-    public class DoNotUseDeprecatedSecurityProtocolsTests
+    public class DoNotUseDeprecatedSecurityProtocolsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
         public async Task DocSample1_CSharp_Violation()
@@ -440,9 +442,9 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestUse768DeconstructionAssignmentNoDiagnostic()
+        public void TestUse768DeconstructionAssignmentNoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            VerifyCSharp(@"
 using System;
 using System.Net;
 
@@ -536,5 +538,15 @@ class TestClass
            => VerifyVB.Diagnostic(rule)
                .WithLocation(line, column)
                .WithArguments(arguments);
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return new DoNotUseDeprecatedSecurityProtocols();
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new DoNotUseDeprecatedSecurityProtocols();
+        }
     }
 }

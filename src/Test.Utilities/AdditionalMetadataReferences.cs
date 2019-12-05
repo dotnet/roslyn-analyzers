@@ -10,7 +10,7 @@ namespace Test.Utilities
 {
     public static class AdditionalMetadataReferences
     {
-        public static ReferenceAssemblies Default { get; } = ReferenceAssemblies.NetFramework.Net472.Default
+        public static ReferenceAssemblies Default { get; } = ReferenceAssemblies.Default
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "2.9.0")));
 

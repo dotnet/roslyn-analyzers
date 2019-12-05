@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 using CSharpLanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
 using VisualBasicLanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion;
@@ -1803,6 +1804,193 @@ Class Test
         Await a.DisposeAsync()
     End Function
 End Class");
+        }
+
+        [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
+        public void LocalWithAsyncDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
+        {
+            VerifyCSharp(IAsyncDisposable.CSharp + @"
+class AsyncDisposable : IAsyncDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+}
+
+class Test
+{
+    public static async Task M1()
+    {
+        var e = new AsyncDisposable();
+        await e.DisposeAsync();
+    }
+}
+");
+
+            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+Class AsyncDisposable
+    Implements IAsyncDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+End Class
+
+Class Test
+    Public Shared Async Function M1() As Task
+        Dim e = New AsyncDisposable()
+        Await e.DisposeAsync()
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
+        public void LocalWithAsyncDisposableAssignment_NoDisposeAsyncCall_Diagnostic()
+        {
+            VerifyCSharp(IAsyncDisposable.CSharp + @"
+class AsyncDisposable : IAsyncDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+}
+
+class Test
+{
+    public static async Task M1()
+    {
+        var e = new AsyncDisposable();
+    }
+}
+",
+            // Test0.cs(43,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new AsyncDisposable()' before all references to it are out of scope.
+            GetCSharpResultAt(43, 17, "new AsyncDisposable()"));
+
+            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+Class AsyncDisposable
+    Implements IAsyncDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+End Class
+
+Class Test
+    Public Shared Async Function M1() As Task
+        Dim e = New AsyncDisposable()
+    End Function
+End Class",
+            // Test0.vb(43,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'New AsyncDisposable()' before all references to it are out of scope.
+            GetBasicResultAt(43, 17, "New AsyncDisposable()"));
+        }
+
+        [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
+        public void LocalWithAsyncDisposableAndDisposableAssignment_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(IAsyncDisposable.CSharp + @"
+class AsyncDisposableAndDisposable : IAsyncDisposable, IDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public static async Task M1()
+    {
+        var e = new AsyncDisposableAndDisposable();
+        await e.DisposeAsync();
+
+        var e2 = new AsyncDisposableAndDisposable();
+        e2.Dispose();
+
+        using (var e3 = new AsyncDisposableAndDisposable()) { }
+    }
+}
+");
+
+            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+Class AsyncDisposableAndDisposable
+    Implements IAsyncDisposable
+    Implements IDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Public Shared Async Function M1() As Task
+        Dim e = New AsyncDisposableAndDisposable()
+        Await e.DisposeAsync()
+
+        Dim e2 = New AsyncDisposableAndDisposable()
+        e2.Dispose()
+
+        Using e3 As New AsyncDisposableAndDisposable()
+        End Using
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
+        public void LocalWithAsyncDisposableAndDisposableAssignment_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(IAsyncDisposable.CSharp + @"
+class AsyncDisposableAndDisposable : IAsyncDisposable, IDisposable
+{
+    public ValueTask DisposeAsync()
+    {
+        return default(ValueTask);
+    }
+
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public static async Task M1()
+    {
+        var e = new AsyncDisposableAndDisposable();
+    }
+}
+",
+            // Test0.cs(47,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new AsyncDisposableAndDisposable()' before all references to it are out of scope.
+            GetCSharpResultAt(47, 17, "new AsyncDisposableAndDisposable()"));
+
+            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+Class AsyncDisposableAndDisposable
+    Implements IAsyncDisposable
+    Implements IDisposable
+
+    Public Function DisposeAsync() As ValueTask Implements IAsyncDisposable.DisposeAsync
+        Return Nothing
+    End Function
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Public Shared Async Function M1() As Task
+        Dim e = New AsyncDisposableAndDisposable()
+    End Function
+End Class",
+            // Test0.vb(47,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'New AsyncDisposableAndDisposable()' before all references to it are out of scope.
+            GetBasicResultAt(47, 17, "New AsyncDisposableAndDisposable()"));
         }
 
         [Fact]

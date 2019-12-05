@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Analyzer.Utilities;
@@ -46,31 +47,32 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                DisposableFieldAnalyzer analyzer = GetAnalyzer(disposableType);
+                DisposableFieldAnalyzer analyzer = GetAnalyzer(compilationContext.Compilation);
                 compilationContext.RegisterSymbolAction(analyzer.AnalyzeSymbol, SymbolKind.NamedType);
             });
         }
 
-        protected abstract DisposableFieldAnalyzer GetAnalyzer(INamedTypeSymbol disposableType);
+        protected abstract DisposableFieldAnalyzer GetAnalyzer(Compilation compilation);
 
         protected abstract class DisposableFieldAnalyzer
         {
-            private readonly INamedTypeSymbol _disposableTypeSymbol;
+            private readonly DisposeAnalysisHelper _disposeAnalysisHelper;
 
-            public DisposableFieldAnalyzer(INamedTypeSymbol disposableTypeSymbol)
+            public DisposableFieldAnalyzer(Compilation compilation)
             {
-                _disposableTypeSymbol = disposableTypeSymbol;
+                DisposeAnalysisHelper.TryGetOrCreate(compilation, out _disposeAnalysisHelper!);
+                Debug.Assert(_disposeAnalysisHelper != null);
             }
 
             public void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
             {
                 INamedTypeSymbol namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                if (!namedType.AllInterfaces.Contains(_disposableTypeSymbol))
+                if (!_disposeAnalysisHelper.IsDisposable(namedType))
                 {
                     IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
                                                                  where member.Kind == SymbolKind.Field && !member.IsStatic
                                                                  let field = member as IFieldSymbol
-                                                                 where field.Type != null && field.Type.IsDisposable(_disposableTypeSymbol)
+                                                                 where _disposeAnalysisHelper.IsDisposable(field.Type)
                                                                  select field;
 
                     if (disposableFields.Any())

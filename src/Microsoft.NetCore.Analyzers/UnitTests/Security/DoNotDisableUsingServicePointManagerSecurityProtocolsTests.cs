@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -14,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests
     {
         [Fact]
         public async Task DocSample1_CSharp_Violation()
@@ -203,9 +202,9 @@ class TestClass
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
-        public void TestSwitchNameVariableNoDiagnostic()
+        public async Task TestSwitchNameVariableNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -221,9 +220,9 @@ class TestClass
 
         //Ideally, we would generate a diagnostic in this case.
         [Fact]
-        public void TestBoolParseNoDiagnostic()
+        public async Task TestBoolParseNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -270,16 +269,6 @@ public class ExampleClass
             }
 
             await test.RunAsync();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotSetSwitch();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)

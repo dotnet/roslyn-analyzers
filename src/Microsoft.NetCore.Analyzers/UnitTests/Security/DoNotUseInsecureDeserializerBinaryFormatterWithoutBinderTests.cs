@@ -1,11 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
@@ -26,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             return new DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder();
         }
 
-        protected void VerifyCSharpWithMyBinderDefined(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithMyBinderDefined(string source, params DiagnosticResult[] expected)
         {
             string myBinderCSharpSourceCode = @"
 using System;
@@ -52,15 +58,23 @@ namespace Blah
 }
             ";
 
-            this.VerifyCSharp(
-                new[] { source, myBinderCSharpSourceCode }.ToFileAndSource(),
-                expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, myBinderCSharpSourceCode }
+                },
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void DocSample1_CSharp_Violation_Diagnostic()
+        public async Task DocSample1_CSharp_Violation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -94,9 +108,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Violation_Diagnostic()
+        public async Task DocSample1_VB_Violation_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
@@ -125,9 +139,9 @@ End Class",
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution_NoDiagnostic()
+        public async Task DocSample1_CSharp_Solution_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -182,9 +196,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution_NoDiagnostic()
+        public async Task DocSample1_VB_Solution_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -231,9 +245,9 @@ End Class");
         }
 
         [Fact]
-        public void DocSample2_CSharp_Violation_Diagnostic()
+        public async Task DocSample2_CSharp_Violation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -268,9 +282,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample2_VB_Violation_Diagnostic()
+        public async Task DocSample2_VB_Violation_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
@@ -300,9 +314,9 @@ End Class",
         }
 
         [Fact]
-        public void DocSample3_CSharp_Violation_Diagnostic()
+        public async Task DocSample3_CSharp_Violation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -364,9 +378,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample3_VB_Violation_Diagnostic()
+        public async Task DocSample3_VB_Violation_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -419,9 +433,9 @@ End Class",
 
 
         [Fact]
-        public void DocSample3_CSharp_Solution_NoDiagnostic()
+        public async Task DocSample3_CSharp_Solution_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -485,9 +499,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample3_VB_Solution_NoDiagnostic()
+        public async Task DocSample3_VB_Solution_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Runtime.Serialization
@@ -541,9 +555,9 @@ End Class");
         }
 
         [Fact]
-        public void Deserialize_Diagnostic()
+        public async Task Deserialize_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -562,9 +576,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_OptionalParameters_Diagnostic()
+        public async Task Deserialize_OptionalParameters_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -584,9 +598,9 @@ namespace Blah
 
         // Ideally, we'd detect that formatter.Binder is always null.
         [Fact]
-        public void DeserializeWithInstanceField_Diagnostic_NotIdeal()
+        public async Task DeserializeWithInstanceField_Diagnostic_NotIdeal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -606,9 +620,9 @@ namespace Blah
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1851")]
-        public void DeserializeWithInstanceField_NoDiagnostic()
+        public async Task DeserializeWithInstanceField_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -629,9 +643,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_BinderMaybeSet_Diagnostic()
+        public async Task Deserialize_BinderMaybeSet_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -656,9 +670,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_BinderSet_NoDiagnostic()
+        public async Task Deserialize_BinderSet_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -678,9 +692,9 @@ namespace Blah
         }
 
         [Fact]
-        public void TwoDeserializersOneBinderOnFirst_Diagnostic()
+        public async Task TwoDeserializersOneBinderOnFirst_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -708,9 +722,9 @@ namespace Blah
         }
 
         [Fact]
-        public void TwoDeserializersOneBinderOnSecond_Diagnostic()
+        public async Task TwoDeserializersOneBinderOnSecond_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -737,9 +751,9 @@ namespace Blah
         }
 
         [Fact]
-        public void TwoDeserializersNoBinder_Diagnostic()
+        public async Task TwoDeserializersNoBinder_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -767,9 +781,9 @@ namespace Blah
         }
 
         [Fact]
-        public void BinderSetInline_NoDiagnostic()
+        public async Task BinderSetInline_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -787,9 +801,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Serialize_NoDiagnostic()
+        public async Task Serialize_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -809,9 +823,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_LoopBinderSetAfter_Diagnostic()
+        public async Task Deserialize_LoopBinderSetAfter_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -835,9 +849,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_LoopBinderSetBefore_NoDiagnostic()
+        public async Task Deserialize_LoopBinderSetBefore_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -860,9 +874,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_LoopBinderSetBeforeMaybe_Diagnostic()
+        public async Task Deserialize_LoopBinderSetBeforeMaybe_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -889,9 +903,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_InvokedAsDelegate_Diagnostic()
+        public async Task Deserialize_InvokedAsDelegate_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -940,14 +954,13 @@ namespace Blah
     }
 }",
                 GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"),
-                GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)")
-                );
+                GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"));
         }
 
         [Fact]
-        public void Deserialize_BranchInvokedAsDelegate_NoDiagnostic()
+        public async Task Deserialize_BranchInvokedAsDelegate_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -975,9 +988,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_Property_Diagnostic()
+        public async Task Deserialize_Property_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1005,9 +1018,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_Constructor_Diagnostic()
+        public async Task Deserialize_Constructor_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1029,9 +1042,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_FieldInitializer_Diagnostic()
+        public async Task Deserialize_FieldInitializer_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1049,9 +1062,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_InConstructorAndMethod_Diagnostics()
+        public async Task Deserialize_InConstructorAndMethod_Diagnostics()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1095,9 +1108,9 @@ class Derived : Base
         }
 
         [Fact]
-        public void BinderVariableSetInAllBranches_NoDiagnostic()
+        public async Task BinderVariableSetInAllBranches_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1123,9 +1136,9 @@ namespace Blah
         }
 
         [Fact]
-        public void BinderParameter_NoDiagnostic()
+        public async Task BinderParameter_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1148,9 +1161,9 @@ namespace Blah
         }
 
         [Fact]
-        public void BinderNotNullInsideIf_NoDiagnostic()
+        public async Task BinderNotNullInsideIf_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1177,9 +1190,9 @@ namespace Blah
         }
 
         [Fact]
-        public void SomeOtherSerializer_NoDiagnostic()
+        public async Task SomeOtherSerializer_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1202,9 +1215,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodInstantiatesWithoutBinder_Diagnostic()
+        public async Task OtherMethodInstantiatesWithoutBinder_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1230,9 +1243,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodInstantiatesWithBinderMaybe_Diagnostic()
+        public async Task OtherMethodInstantiatesWithBinderMaybe_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1261,9 +1274,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodInstantiatesWithBinder_NoDiagnostic()
+        public async Task OtherMethodInstantiatesWithBinder_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1288,9 +1301,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodDeserializesWithoutBinder_Diagnostic()
+        public async Task OtherMethodDeserializesWithoutBinder_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1318,9 +1331,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodDeserializesWithoutBinderUsingDelegate_Diagnostic()
+        public async Task OtherMethodDeserializesWithoutBinderUsingDelegate_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1349,9 +1362,9 @@ namespace Blah
         }
 
         [Fact]
-        public void OtherMethodDeserializesWithoutBinderUsingBinaryFormatter_Diagnostic()
+        public async Task OtherMethodDeserializesWithoutBinderUsingBinaryFormatter_Diagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1384,18 +1397,15 @@ namespace Blah
         [InlineData(@"dotnet_code_quality.CA2301.excluded_symbol_names = DeserializeBookRecord
                       dotnet_code_quality.CA2302.excluded_symbol_names = DeserializeBookRecord")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = DeserializeBookRecord")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var csharpTest = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(29, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)")
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1426,13 +1436,24 @@ public class ExampleClass
             return (BookRecord) formatter.Deserialize(ms);
         }
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCSharpResultAt(29, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            }
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void Deserialize_SharedBinderInstance_NoDiagnostic()
+        public async Task Deserialize_SharedBinderInstance_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1456,9 +1477,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
+        public async Task Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
         {
-            VerifyCSharpWithMyBinderDefined(@"
+            await VerifyCSharpWithMyBinderDefined(@"
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -1481,5 +1502,15 @@ namespace Blah
     }
 }");
         }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+           => VerifyCS.Diagnostic(rule)
+               .WithLocation(line, column)
+               .WithArguments(arguments);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+           => VerifyVB.Diagnostic(rule)
+               .WithLocation(line, column)
+               .WithArguments(arguments);
     }
 }

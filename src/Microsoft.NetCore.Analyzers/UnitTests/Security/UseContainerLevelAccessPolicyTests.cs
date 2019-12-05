@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.UseContainerLevelAccessPolicy,
@@ -13,14 +14,11 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class UseContainerLevelAccessPolicyTests
     {
-        private static ReferenceAssemblies DefaultWithAzureStorage { get; } = ReferenceAssemblies.Default
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("WindowsAzure.Storage", "9.0.0")));
-
         private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
-                ReferenceAssemblies = DefaultWithAzureStorage,
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
                 TestState =
                 {
                     Sources = { source  }
@@ -36,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         {
             var csharpTest = new VerifyCS.Test
             {
-                ReferenceAssemblies = DefaultWithAzureStorage,
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
                 TestState =
                 {
                     Sources = { source },

@@ -12,7 +12,7 @@ namespace Test.Utilities
     {
         public static ReferenceAssemblies Default { get; } = ReferenceAssemblies.Default
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "2.9.0")));
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "2.10.0")));
 
         public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
         public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);

@@ -3,15 +3,13 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpRemoveEmptyFinalizersAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RemoveEmptyFinalizersAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicRemoveEmptyFinalizersAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.RemoveEmptyFinalizersAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
@@ -20,12 +18,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicRemoveEmptyFinalizersAnalyzer();
+            return new RemoveEmptyFinalizersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpRemoveEmptyFinalizersAnalyzer();
+            return new RemoveEmptyFinalizersAnalyzer();
         }
 
         [Fact]
@@ -515,12 +513,12 @@ public class SomeTestClass : IDisposable
         }
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
-            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
+            => new DiagnosticResult(RemoveEmptyFinalizersAnalyzer.Rule)
                 .WithLocation(line, column)
                 .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
-            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
+            => new DiagnosticResult(RemoveEmptyFinalizersAnalyzer.Rule)
                 .WithLocation(line, column)
                 .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
     }

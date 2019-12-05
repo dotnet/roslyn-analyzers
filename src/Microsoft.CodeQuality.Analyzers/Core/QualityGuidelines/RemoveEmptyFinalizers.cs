@@ -1,15 +1,17 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis;
+using System.Threading;
 using Analyzer.Utilities;
-using System.Linq;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
-    public abstract class AbstractRemoveEmptyFinalizersAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class RemoveEmptyFinalizersAnalyzer : DiagnosticAnalyzer
     {
         public const string RuleId = "CA1821";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
@@ -33,31 +35,45 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCodeBlockAction(codeBlockContext =>
+            analysisContext.RegisterOperationBlockStartAction(obsac =>
             {
-                if (codeBlockContext.OwningSymbol.Kind != SymbolKind.Method)
+                if (!obsac.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute, out var conditionalAttributeType) ||
+                    obsac.OperationBlocks.Length != 1 ||
+                    !(obsac.OperationBlocks[0] is IBlockOperation blockOperation) ||
+                    !(obsac.OwningSymbol is IMethodSymbol methodSymbol) ||
+                    !methodSymbol.IsDestructor())
                 {
                     return;
                 }
 
-                var methodSymbol = (IMethodSymbol)codeBlockContext.OwningSymbol;
-                if (!methodSymbol.IsDestructor())
-                {
-                    return;
-                }
+                const int IS_EMPTY = 0;
+                const int IS_NOT_EMPTY = 1;
+                var state = IS_EMPTY;
 
-                var methodBody = methodSymbol.DeclaringSyntaxReferences.First().GetSyntax();
-
-                if (IsEmptyFinalizer(methodBody, codeBlockContext))
+                obsac.RegisterOperationAction(oac =>
                 {
-                    codeBlockContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule));
-                }
+                    if (Interlocked.CompareExchange(ref state, IS_EMPTY, IS_EMPTY) == IS_EMPTY &&
+                    !((IInvocationOperation)oac.Operation).TargetMethod.HasAttribute(conditionalAttributeType))
+                    {
+                        Interlocked.Exchange(ref state, IS_NOT_EMPTY);
+                    }
+                }, OperationKind.Invocation);
+
+                obsac.RegisterOperationAction(oac => Interlocked.Exchange(ref state, IS_NOT_EMPTY),
+                    OperationKind.SimpleAssignment,
+                    OperationKind.VariableDeclaration,
+                    OperationKind.Loop,
+                    OperationKind.Conditional,
+                    OperationKind.Invalid);
+
+                obsac.RegisterOperationBlockEndAction(obac =>
+                {
+                    if (state == IS_EMPTY)
+                    {
+                        obac.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule));
+                    }
+                });
             });
         }
-
-        protected static bool InvocationIsConditional(IMethodSymbol methodSymbol, INamedTypeSymbol? conditionalAttributeSymbol) =>
-            methodSymbol.HasAttribute(conditionalAttributeSymbol);
-
-        protected abstract bool IsEmptyFinalizer(SyntaxNode methodBody, CodeBlockAnalysisContext analysisContext);
     }
 }

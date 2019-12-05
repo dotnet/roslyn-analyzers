@@ -1,22 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotSerializeTypeWithPointerFields,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotSerializeTypeWithPointerFieldsTests : DiagnosticAnalyzerTestBase
+    public class DoNotSerializeTypeWithPointerFieldsTests
     {
         [Fact]
-        public void TestChildPointerToStructureDiagnostic()
+        public async Task TestChildPointerToStructureDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -29,13 +27,13 @@ unsafe class TestClassA
 struct TestStructB
 {
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, "pointer"));
         }
 
         [Fact]
-        public void TestChildPointerToIntegerDiagnostic()
+        public async Task TestChildPointerToIntegerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -43,13 +41,13 @@ unsafe class TestClassA
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(7, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 18, "pointer"));
         }
 
         [Fact]
-        public void TestChildPointerToBooleanDiagnostic()
+        public async Task TestChildPointerToBooleanDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -57,13 +55,13 @@ unsafe class TestClassA
 {
     private bool* pointer;
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
-        public void TestChildPointerToPointerDiagnostic()
+        public async Task TestChildPointerToPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -71,13 +69,13 @@ unsafe class TestClassA
 {
     private int** pointer;
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
-        public void TestChildPointerPropertyToPointerDiagnostic()
+        public async Task TestChildPointerPropertyToPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -85,13 +83,13 @@ unsafe class TestClassA
 {
     private int** pointer { get; set; }
 }",
-            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 19, "pointer"));
         }
 
         [Fact]
-        public void TestChildPointerInArrayDiagnostic()
+        public async Task TestChildPointerInArrayDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -99,13 +97,13 @@ unsafe class TestClassA
 {
     private int*[] pointers;
 }",
-            GetCSharpResultAt(7, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
+            GetCSharpResultAt(7, 20, "pointers"));
         }
 
         [Fact]
-        public void TestChildArrayOfChildPointerDiagnostic()
+        public async Task TestChildArrayOfChildPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -119,13 +117,13 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(13, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 18, "pointer"));
         }
 
         [Fact]
-        public void TestChildListOfChildPointerDiagnostic()
+        public async Task TestChildListOfChildPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -140,13 +138,13 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(14, 18, "pointer"));
         }
 
         [Fact]
-        public void TestChildListOfListOfChildPointerDiagnostic()
+        public async Task TestChildListOfListOfChildPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -161,13 +159,13 @@ unsafe class TestClassB
 {
     private int* pointer;
 }",
-            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(14, 18, "pointer"));
         }
 
         [Fact]
-        public void TestGrandchildPointerToIntegerDiagnostic()
+        public async Task TestGrandchildPointerToIntegerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -181,13 +179,13 @@ unsafe class TestClassB
 {
     public int* pointer;
 }",
-            GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 17, "pointer"));
         }
 
         [Fact]
-        public void TestGrandchildPointerInArrayDiagnostic()
+        public async Task TestGrandchildPointerInArrayDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -201,13 +199,13 @@ unsafe class TestClassB
 {
     private int*[] pointers;
 }",
-            GetCSharpResultAt(13, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
+            GetCSharpResultAt(13, 20, "pointers"));
         }
 
         [Fact]
-        public void TestChildPointerAndGrandchildPointerDiagnostic()
+        public async Task TestChildPointerAndGrandchildPointerDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -221,14 +219,14 @@ unsafe struct TestStructB
 {
     public int* pointer2;
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 26, "pointer1"),
+            GetCSharpResultAt(13, 17, "pointer2"));
         }
 
         [Fact]
-        public void TestMultiChildPointersDiagnostic()
+        public async Task TestMultiChildPointersDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -238,14 +236,14 @@ unsafe class TestClassA
     
     private int* pointer2;
 }",
-            GetCSharpResultAt(7, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(9, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 18, "pointer1"),
+            GetCSharpResultAt(9, 18, "pointer2"));
         }
 
         [Fact]
-        public void TestChildPointerToSelfDiagnostic()
+        public async Task TestChildPointerToSelfDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -253,13 +251,13 @@ unsafe struct TestStructA
 {
     private TestStructA* pointer;
 }",
-            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, "pointer"));
         }
 
         [Fact]
-        public void TestGrandchildPointerToSelfDiagnostic()
+        public async Task TestGrandchildPointerToSelfDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -273,13 +271,13 @@ unsafe struct TestStructB
 {
     public TestStructB* pointer;
 }",
-            GetCSharpResultAt(13, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 25, "pointer"));
         }
 
         [Fact]
-        public void TestSubclassWithPointerFieldsDiagnostic()
+        public async Task TestSubclassWithPointerFieldsDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -298,14 +296,14 @@ unsafe class TestClassC : TestClassA
 {
     private int* pointer2;
 }",
-            GetCSharpResultAt(7, 28, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
-            GetCSharpResultAt(18, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+            GetCSharpResultAt(7, 28, "pointer1"),
+            GetCSharpResultAt(18, 18, "pointer2"));
         }
 
         [Fact]
-        public void TestGenericTypeWithPointerFieldDiagnostic()
+        public async Task TestGenericTypeWithPointerFieldDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -315,13 +313,13 @@ unsafe class TestClassA<T>
 
     private int* pointer;
 }",
-            GetCSharpResultAt(9, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(9, 18, "pointer"));
         }
 
         [Fact]
-        public void TestGenericTypeWithoutPointerFieldNoDiagnostic()
+        public async Task TestGenericTypeWithoutPointerFieldNoDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -332,9 +330,9 @@ class TestClassA<T>
         }
 
         [Fact]
-        public void TestWithoutPointerFieldNoDiagnostic()
+        public async Task TestWithoutPointerFieldNoDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -345,9 +343,9 @@ unsafe class TestClassA
         }
 
         [Fact]
-        public void TestWithoutSerializableAttributeNoDiagnostic()
+        public async Task TestWithoutSerializableAttributeNoDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 unsafe class TestClassA
@@ -357,9 +355,9 @@ unsafe class TestClassA
         }
 
         [Fact]
-        public void TestChildPointerWithNonSerializedNoDiagnostic()
+        public async Task TestChildPointerWithNonSerializedNoDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -371,9 +369,9 @@ unsafe class TestClassA
         }
 
         [Fact]
-        public void TestChildPointerWithStaticNoDiagnostic()
+        public async Task TestChildPointerWithStaticNoDiagnostic()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -383,14 +381,9 @@ unsafe class TestClassA
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotSerializeTypeWithPointerFields();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotSerializeTypeWithPointerFields();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

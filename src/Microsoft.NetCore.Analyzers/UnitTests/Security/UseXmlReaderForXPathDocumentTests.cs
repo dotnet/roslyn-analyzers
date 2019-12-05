@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForXPathDocument,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseXmlReaderForXPathDocumentTests : DiagnosticAnalyzerTestBase
+    public class UseXmlReaderForXPathDocumentTests
     {
         [Fact]
-        public void TestStreamParameterDiagnostic()
+        public async Task TestStreamParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.XPath;
@@ -23,13 +26,13 @@ class TestClass
         var obj = new XPathDocument(stream);
     }
 }",
-            GetCSharpResultAt(10, 19, UseXmlReaderForXPathDocument.RealRule, "XPathDocument", "XPathDocument"));
+            GetCSharpResultAt(10, 19, "XPathDocument", "XPathDocument"));
         }
 
         [Fact]
-        public void TestStringParameterDiagnostic()
+        public async Task TestStringParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.XPath;
 
@@ -40,13 +43,13 @@ class TestClass
         var obj = new XPathDocument(uri);
     }
 }",
-            GetCSharpResultAt(9, 19, UseXmlReaderForXPathDocument.RealRule, "XPathDocument", "XPathDocument"));
+            GetCSharpResultAt(9, 19, "XPathDocument", "XPathDocument"));
         }
 
         [Fact]
-        public void TestStringAndXmlSpaceParametersDiagnostic()
+        public async Task TestStringAndXmlSpaceParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 using System.Xml.XPath;
@@ -58,13 +61,13 @@ class TestClass
         var obj = new XPathDocument(uri, space);
     }
 }",
-            GetCSharpResultAt(10, 19, UseXmlReaderForXPathDocument.RealRule, "XPathDocument", "XPathDocument"));
+            GetCSharpResultAt(10, 19, "XPathDocument", "XPathDocument"));
         }
 
         [Fact]
-        public void TestTextReaderParameterDiagnostic()
+        public async Task TestTextReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml.XPath;
@@ -76,13 +79,13 @@ class TestClass
         var obj = new XPathDocument(reader);
     }
 }",
-            GetCSharpResultAt(10, 19, UseXmlReaderForXPathDocument.RealRule, "XPathDocument", "XPathDocument"));
+            GetCSharpResultAt(10, 19, "XPathDocument", "XPathDocument"));
         }
 
         [Fact]
-        public void TestXmlReaderParameterNoDiagnostic()
+        public async Task TestXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 using System.Xml.XPath;
@@ -97,9 +100,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestXmlReaderAndXmlSpaceParametersNoDiagnostic()
+        public async Task TestXmlReaderAndXmlSpaceParametersNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 using System.Xml.XPath;
@@ -113,14 +116,9 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForXPathDocument();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForXPathDocument();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForDataSetReadXml,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseXmlReaderForDataSetReadXml,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseXmlReaderForDataSetReadXmlTests : DiagnosticAnalyzerTestBase
+    public class UseXmlReaderForDataSetReadXmlTests
     {
         [Fact]
-        public void TestReadXmlWithStreamParameterDiagnostic()
+        public async Task TestReadXmlWithStreamParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -23,9 +29,9 @@ class TestClass
         new DataSet().ReadXml(new FileStream(""xmlFilename"", FileMode.Open));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXml"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 Imports System.IO
@@ -36,13 +42,13 @@ Class TestClass
         dataSet.ReadXml(new FileStream(""xmlFilename"", FileMode.Open))
     End Sub
 End Class",
-            GetBasicResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetBasicResultAt(9, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlWithStreamAndXmlReadModeParametersDiagnostic()
+        public async Task TestReadXmlWithStreamAndXmlReadModeParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Data;
@@ -54,13 +60,13 @@ class TestClass
         new DataSet().ReadXml(new FileStream(""xmlFilename"", FileMode.Open), XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlWithStringParameterDiagnostic()
+        public async Task TestReadXmlWithStringParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 
@@ -71,13 +77,13 @@ class TestClass
         new DataSet().ReadXml(""Filename"");
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(9, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlWithStringXmlReadModeParametersDiagnostic()
+        public async Task TestReadXmlWithStringXmlReadModeParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 
@@ -88,13 +94,13 @@ class TestClass
         new DataSet().ReadXml(""Filename"", XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(9, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlWithTextReaderParameterDiagnostic()
+        public async Task TestReadXmlWithTextReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -106,13 +112,13 @@ class TestClass
         new DataSet().ReadXml(new StreamReader(""TestFile.txt""));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlWithTextReaderAndXmlReadModeParametersDiagnostic()
+        public async Task TestReadXmlWithTextReaderAndXmlReadModeParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -124,13 +130,13 @@ class TestClass
         new DataSet().ReadXml(new StreamReader(""TestFile.txt""), XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXml"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXml"));
         }
 
         [Fact]
-        public void TestReadXmlSchemaWithStreamParameterDiagnostic()
+        public async Task TestReadXmlSchemaWithStreamParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -142,13 +148,13 @@ class TestClass
         new DataSet().ReadXmlSchema(new FileStream(""xmlFilename"", FileMode.Open));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXmlSchema"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXmlSchema"));
         }
 
         [Fact]
-        public void TestReadXmlSchemaWithStringParameterDiagnostic()
+        public async Task TestReadXmlSchemaWithStringParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 
@@ -159,13 +165,13 @@ class TestClass
         new DataSet().ReadXmlSchema(""Filename"");
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXmlSchema"));
+            GetCSharpResultAt(9, 9, "DataSet", "ReadXmlSchema"));
         }
 
         [Fact]
-        public void TestReadXmlSchemaWithTextReaderParameterDiagnostic()
+        public async Task TestReadXmlSchemaWithTextReaderParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -177,13 +183,13 @@ class TestClass
         new DataSet().ReadXmlSchema(new StreamReader(""TestFile.txt""));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "DataSet", "ReadXmlSchema"));
+            GetCSharpResultAt(10, 9, "DataSet", "ReadXmlSchema"));
         }
 
         [Fact]
-        public void TestReadXmlWithXmlReaderParameterNoDiagnostic()
+        public async Task TestReadXmlWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -199,9 +205,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReadXmlWithXmlReaderAndXmlReadModeParametersNoDiagnostic()
+        public async Task TestReadXmlWithXmlReaderAndXmlReadModeParametersNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -217,9 +223,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReadXmlSchemaWithXmlReaderParameterNoDiagnostic()
+        public async Task TestReadXmlSchemaWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -235,9 +241,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReadXmlSerializableWithXmlReaderParameterNoDiagnostic()
+        public async Task TestReadXmlSerializableWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -255,7 +261,7 @@ class TestClass : DataSet
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 Imports System.IO
@@ -273,9 +279,9 @@ End Class");
         }
 
         [Fact]
-        public void TestDerivedFromANormalClassNoDiagnostic()
+        public async Task TestDerivedFromANormalClassNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -302,9 +308,9 @@ class SubTestClass : TestClass
         }
 
         [Fact]
-        public void TestTwoLevelsOfInheritanceAndOverridesNoDiagnostic()
+        public async Task TestTwoLevelsOfInheritanceAndOverridesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -331,9 +337,9 @@ class SubTestClass : TestClass
         }
 
         [Fact]
-        public void TestNormalClassReadXmlWithXmlReaderParameterNoDiagnostic()
+        public async Task TestNormalClassReadXmlWithXmlReaderParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Data;
 using System.IO;
@@ -353,14 +359,14 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForDataSetReadXml();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseXmlReaderForDataSetReadXml();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

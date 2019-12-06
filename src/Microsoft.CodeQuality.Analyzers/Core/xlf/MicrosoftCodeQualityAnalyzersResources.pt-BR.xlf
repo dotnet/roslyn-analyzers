@@ -127,6 +127,21 @@
         <target state="translated">Não armazenar lambdas assíncronas como tipos delegados que retornam void</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart">
+        <source>This enum value bitwise part duplicates another part.</source>
+        <target state="new">This enum value bitwise part duplicates another part.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedValue">
+        <source>This enum value duplicates another value.</source>
+        <target state="new">This enum value duplicates another value.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesTitle">
+        <source>Enums values should not be duplicated</source>
+        <target state="new">Enums values should not be duplicated</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
         <target state="translated">Remova o finalizador do tipo '{0}', substitua Dispose(bool disposing) e coloque a lógica de finalização no caminho do código em que 'disposing' é false. Caso contrário, ele poderá duplicar invocações Dispose, já que o tipo Base '{1}' também fornece um finalizador.</target>

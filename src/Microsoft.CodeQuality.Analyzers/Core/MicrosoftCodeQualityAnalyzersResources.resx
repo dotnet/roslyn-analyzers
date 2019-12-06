@@ -1352,4 +1352,13 @@
   <data name="AvoidInfiniteRecursionMessageMaybe" xml:space="preserve">
     <value>Do not assign the property within its setter. This call might result in an infinite recursion.</value>
   </data>
+  <data name="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart" xml:space="preserve">
+    <value>This enum value bitwise part duplicates another part.</value>
+  </data>
+  <data name="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedValue" xml:space="preserve">
+    <value>This enum value duplicates another value.</value>
+  </data>
+  <data name="EnumShouldNotHaveDuplicatedValuesTitle" xml:space="preserve">
+    <value>Enums values should not be duplicated</value>
+  </data>
 </root>

@@ -2,9 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.SslProtocolsAnalyzer,
@@ -15,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class SslProtocolsAnalyzerTests : DiagnosticAnalyzerTestBase
+    public class SslProtocolsAnalyzerTests
     {
         [Fact]
         public async Task DocSample1_CSharp_Violation()
@@ -481,9 +479,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls12Or192_Diagnostic()
+        public async Task UseTls12Or192_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -494,14 +492,14 @@ class TestClass
         SslProtocols protocols = SslProtocols.Tls12 | (SslProtocols)192;
     }
 }",
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls12"),
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.DeprecatedRule, "3264"));
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.HardcodedRule).WithSpan(9, 34, 9, 52).WithArguments("Tls12"),
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.DeprecatedRule).WithSpan(9, 34, 9, 72).WithArguments("3264"));
         }
 
         [Fact]
-        public void Use768DeconstructionAssignment_NoDiagnostic()
+        public async Task Use768DeconstructionAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -560,15 +558,5 @@ class TestClass
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SslProtocolsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SslProtocolsAnalyzer();
-        }
     }
 }

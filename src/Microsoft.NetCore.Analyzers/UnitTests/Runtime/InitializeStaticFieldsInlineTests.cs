@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
-using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInitializeStaticFieldsInlineAnalyzer,
@@ -15,14 +14,14 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class InitializeStaticFieldsInlineTests : DiagnosticAnalyzerTestBase
+    public class InitializeStaticFieldsInlineTests
     {
         #region Unit tests for no analyzer diagnostic
 
         [Fact]
-        public void CA1810_EmptyStaticConstructor()
+        public async Task CA1810_EmptyStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private readonly static int field = 1;
@@ -31,7 +30,7 @@ public class Class1
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer = 1
 	Shared Sub New() ' Empty
@@ -41,9 +40,9 @@ End Class
         }
 
         [Fact]
-        public void CA2207_EmptyStaticConstructor()
+        public async Task CA2207_EmptyStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Struct1
 {
     private readonly static int field = 1;
@@ -52,7 +51,7 @@ public struct Struct1
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure Struct1
 	Private Shared ReadOnly field As Integer = 1
 	Shared Sub New() ' Empty
@@ -62,9 +61,9 @@ End Structure
         }
 
         [Fact]
-        public void CA1810_NoStaticFieldInitializedInStaticConstructor()
+        public async Task CA1810_NoStaticFieldInitializedInStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private readonly static int field = 1;
@@ -77,7 +76,7 @@ public class Class1
     private static void Class1_Method() { throw new System.NotImplementedException(); }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer = 1
 	Shared Sub New() ' No static field initalization
@@ -93,9 +92,9 @@ End Class
         }
 
         [Fact]
-        public void CA1810_StaticPropertyInStaticConstructor()
+        public async Task CA1810_StaticPropertyInStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private static int Property { get; set; }
@@ -107,7 +106,7 @@ public class Class1
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared Property [Property]() As Integer
 		Get
@@ -126,9 +125,9 @@ End Class
         }
 
         [Fact]
-        public void CA1810_InitializionInNonStaticConstructor()
+        public async Task CA1810_InitializionInNonStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private static int field = 1;
@@ -143,7 +142,7 @@ public class Class1
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared field As Integer = 1
 	Public Sub New() ' Non static constructor
@@ -162,9 +161,9 @@ End Class
         #region Unit tests for analyzer diagnostic(s)
 
         [Fact]
-        public void CA1810_InitializationInStaticConstructor()
+        public async Task CA1810_InitializationInStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private readonly static int field;
@@ -176,7 +175,7 @@ public class Class1
 ",
     GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer
 	Shared Sub New()
@@ -189,9 +188,9 @@ End Class
         }
 
         [Fact]
-        public void CA2207_InitializationInStaticConstructor()
+        public async Task CA2207_InitializationInStaticConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Struct1
 {
     private readonly static int field;
@@ -203,7 +202,7 @@ public struct Struct1
 ",
     GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure Struct1
 	Private Shared ReadOnly field As Integer
 	Shared Sub New()
@@ -216,9 +215,9 @@ End Structure
         }
 
         [Fact]
-        public void CA1810_NoDuplicateDiagnostics()
+        public async Task CA1810_NoDuplicateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     private readonly static int field, field2;
@@ -231,7 +230,7 @@ public class Class1
 ",
     GetCA1810CSharpDefaultResultAt(5, 12, "Class1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
 	Private Shared ReadOnly field As Integer, field2 As Integer
 	Shared Sub New()
@@ -244,9 +243,9 @@ End Class",
         }
 
         [Fact]
-        public void CA2207_NoDuplicateDiagnostics()
+        public async Task CA2207_NoDuplicateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Struct1
 {
     private readonly static int field, field2;
@@ -259,7 +258,7 @@ public struct Struct1
 ",
     GetCA2207CSharpDefaultResultAt(5, 12, "Struct1"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure Struct1
 	Private Shared ReadOnly field As Integer, field2 As Integer
 	Shared Sub New()
@@ -275,38 +274,36 @@ End Structure",
 
         #region Helpers
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicInitializeStaticFieldsInlineAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpInitializeStaticFieldsInlineAnalyzer();
-        }
-
         private static DiagnosticResult GetCA1810CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
-            return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            return new DiagnosticResult(CSharpInitializeStaticFieldsInlineAnalyzer.CA1810Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         private static DiagnosticResult GetCA1810BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
-            return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            return new DiagnosticResult(CSharpInitializeStaticFieldsInlineAnalyzer.CA1810Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         private static DiagnosticResult GetCA2207CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
-            return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            return new DiagnosticResult(CSharpInitializeStaticFieldsInlineAnalyzer.CA2207Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         private static DiagnosticResult GetCA2207BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
-            return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            return new DiagnosticResult(CSharpInitializeStaticFieldsInlineAnalyzer.CA2207Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         #endregion

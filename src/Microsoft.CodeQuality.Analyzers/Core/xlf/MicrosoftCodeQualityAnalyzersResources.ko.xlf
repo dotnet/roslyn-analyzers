@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">동일한 문의 기호 및 해당 멤버(필드/속성)에 할당하는 것은 권장되지 않습니다. 멤버 액세스가 할당 전 기호의 이전 값을 사용하려는 것인지 이 문의 할당에서 새 값을 사용하려는 것인지 명확하지 않습니다. 명확성을 위해 할당을 개별 문으로 분할하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">'{0}' 기호와 해당 멤버 '{1}'이(가) 모두 동일한 문에 할당되어 있으므로 의도하지 않은 개체의 멤버를 할당할 위험이 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">동일한 문에 기호 및 해당 멤버 할당</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -52,14 +52,29 @@
         <target state="translated">비동기 메서드 이름은 Async로 끝나야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">System.Exception 또는 System.SystemException과 같은 일반 예외가 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외는 catch되면 안 됩니다.</target>
+        <target state="translated">System.Exception이나 System.SystemException과 같은 일반 예외 또는 허용되지 않는 예외 형식이 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외와 허용되지 않는 예외는 catch되면 안 됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">'{0}'을(를) 수정하여 좀 더 구체적인 예외 유형을 catch하거나 예외를 다시 throw합니다.</target>
+        <target state="translated">'{0}'을(를) 수정하여 좀 더 구체적인 허용되는 예외 형식을 catch하거나 해당 예외를 다시 throw합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -794,7 +809,7 @@
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyDescription">
         <source>Although it is acceptable and often necessary to have a read-only property, the design guidelines prohibit the use of write-only properties. This is because letting a user set a value, and then preventing the user from viewing that value, does not provide any security. Also, without read access, the state of shared objects cannot be viewed, which limits their usefulness.</source>
-        <target state="translated">읽기 전용 속성은 사용할 수 있으며 필수로 사용해야 하는 경우가 많지만 디자인 지침에서는 쓰기 전용 속성 사용을 금지합니다. 쓰기 전용 속성 사용을 금지하는 이유는 값을 설정한 사용자가 해당 값을 보지 못하는 경우 보안 문제가 발생하기 때문입니다. 또한 읽기 권한이 없어 공유된 개체의 상태를 볼 수 없는 경우 개체의 유용성이 떨어집니다.</target>
+        <target state="translated">읽기 전용 속성은 사용할 수 있으며 필수로 사용해야 하는 경우가 많지만 디자인 지침에서는 쓰기 전용 속성 사용을 금지합니다. 쓰기 전용 속성 사용을 금지하는 이유는 값을 설정한 사용자가 해당 값을 못 보는 경우, 보안 문제가 발생하기 때문입니다. 또한 읽기 권한이 없어 공유된 개체의 상태를 볼 수 없는 경우 개체의 유용성이 떨어집니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyMessageAddGetter">
@@ -1564,7 +1579,7 @@
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoSetProxyBlanket">
         <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
-        <target state="translated">{0}는 런타임 호출 가능 래퍼 (COM 개체를 래핑하는 관리 되는 개체)에 대 한 안정적으로 호출 될 수 없습니다 OLE32 API에는 P/Invoke 선언 이다. 런타임 호출 가능 래퍼는 동적으로 호출의 효과 임의로 손실 될 수 있습니다 그래서 인터페이스 포인터를 가져옵니다. 통화 가능 하 게 다른 사용자에 영향을 미칠 수 있도록 지정된 된 COM 개체에 대 한 런타임 호출 가능 래퍼 또한 응용 프로그램 도메인에 걸쳐 공유 됩니다. 이 호출을 적절 한 CoSetProxyBlanket 호출을 수행 하는 인터페이스 포인터에 대 한 네이티브 래퍼 COM 개체를 바꿉니다.</target>
+        <target state="translated">{0}은(는) 런타임 호출 가능 래퍼(COM 개체를 래핑하는 관리형 개체)에 대해 안정적으로 호출할 수 없는 OLE32 API에 대한 P/Invoke 선언입니다. 런타임 호출 가능 래퍼는 인터페이스 포인터를 동적으로 페치하므로 호출 효과가 임의로 사라질 수 있습니다. 지정된 COM 개체의 런타임 호출 가능 래퍼는 애플리케이션 도메인 전체에서도 공유되므로 호출이 다른 사용자에게 영향을 줄 수 있습니다. 이 호출을 적절한 CoSetProxyBlanket 호출을 수행하는 인터페이스 포인터의 네이티브 래퍼 COM 개체로 바꾸세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle">
@@ -1849,12 +1864,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">'{0}' 필드가 'static readonly'로 선언되었지만 상수 값으로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
+        <target state="translated">'{0}' 필드가 'readonly'로 선언되었지만 상수 값으로 초기화되었습니다. 대신 이 필드를 'const'로 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">'{0}' 필드가 'static readonly'로 선언되었지만 빈 문자열("")로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
+        <target state="translated">'{0}' 필드가 'readonly'로 선언되었지만 빈 문자열("")로 초기화되었습니다. 대신 이 필드를 'const'로 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

@@ -700,6 +700,42 @@ class C
             DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
         }
 
+        [Fact, WorkItem(2785, "https://github.com/dotnet/roslyn-analyzers/issues/2785")]
+        public async Task CSharp_CustomTestMethodAttribute_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace Microsoft.VisualStudio.TestTools.UnitTesting
+{
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
+    public class TestMethodAttribute : Attribute
+    {
+        public TestMethodAttribute() {}
+    }
+}
+
+namespace Foo
+{
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class CustomTestAttribute : TestMethodAttribute
+    {
+        public CustomTestAttribute() {}
+    }
+
+    public class C
+    {
+        [CustomTest]
+        public void Test()
+        {
+            Console.WriteLine();
+        }
+    }
+}");
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(symbolName);

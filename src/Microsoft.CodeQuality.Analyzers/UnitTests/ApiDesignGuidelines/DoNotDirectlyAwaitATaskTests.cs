@@ -1,11 +1,18 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -22,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void CSharpSimpleAwaitTask()
+        public async Task CSharpSimpleAwaitTask()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -36,11 +43,11 @@ public class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(9, 15));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(9, 15));
         }
 
         [Fact]
-        public void BasicSimpleAwaitTask()
+        public async Task BasicSimpleAwaitTask()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -52,11 +59,11 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(7, 15));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicResultAt(7, 15));
         }
 
         [Fact]
-        public void CSharpSimpleAwaitTaskOfT()
+        public async Task CSharpSimpleAwaitTaskOfT()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -70,11 +77,11 @@ public class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(9, 23));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(9, 23));
         }
 
         [Fact]
-        public void BasicSimpleAwaitTaskOfT()
+        public async Task BasicSimpleAwaitTaskOfT()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -86,11 +93,11 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(7, 34));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicResultAt(7, 34));
         }
 
         [Fact]
-        public void CSharpNoDiagnostic()
+        public async Task CSharpNoDiagnostic()
         {
             var code = @"
 using System;
@@ -132,11 +139,11 @@ public class SomeAwaiter : INotifyCompletion
     }
 }
 ";
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
+            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
         }
 
         [Fact]
-        public void BasicNoDiagnostic()
+        public async Task BasicNoDiagnostic()
         {
             var code = @"
 Imports System
@@ -176,11 +183,11 @@ Public Class SomeAwaiter
     End Sub
 End Class
 ";
-            VerifyBasic(code, TestValidationMode.AllowCompileErrors);
+            await VerifyVB.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
         }
 
         [Fact]
-        public void CSharpAwaitAwaitTask()
+        public async Task CSharpAwaitAwaitTask()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -196,7 +203,7 @@ public class C
     }
 }
 ";
-            VerifyCSharp(code,
+            await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpResultAt(9, 15),
                 GetCSharpResultAt(9, 21),
                 GetCSharpResultAt(10, 15),
@@ -204,7 +211,7 @@ public class C
         }
 
         [Fact]
-        public void BasicAwaitAwaitTask()
+        public async Task BasicAwaitAwaitTask()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -218,7 +225,7 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code,
+            await VerifyVB.VerifyAnalyzerAsync(code,
                 GetBasicResultAt(7, 15),
                 GetBasicResultAt(7, 21),
                 GetBasicResultAt(8, 15),
@@ -226,7 +233,7 @@ End Class
         }
 
         [Fact]
-        public void CSharpComplexAwaitTask()
+        public async Task CSharpComplexAwaitTask()
         {
             var code = @"
 using System;
@@ -244,14 +251,14 @@ public class C
     public Task<int> GetTask() { throw new NotImplementedException(); }
 }
 ";
-            VerifyCSharp(code,
+            await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpResultAt(9, 28),
                 GetCSharpResultAt(10, 47),
                 GetCSharpResultAt(11, 33));
         }
 
         [Fact]
-        public void BasicComplexeAwaitTask()
+        public async Task BasicComplexeAwaitTask()
         {
             var code = @"
 Imports System
@@ -268,14 +275,14 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasic(code,
+            await VerifyVB.VerifyAnalyzerAsync(code,
                 GetBasicResultAt(7, 39),
                 GetBasicResultAt(8, 69),
                 GetBasicResultAt(9, 33));
         }
 
         [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
-        public void CSharpAsyncVoidMethod_Diagnostic()
+        public async Task CSharpAsyncVoidMethod_Diagnostic()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -293,13 +300,13 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            VerifyCSharp(code, GetCSharpResultAt(9, 15));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(9, 15));
         }
 
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
         [InlineData("dotnet_code_quality.exclude_async_void_methods = true")]
         [InlineData("dotnet_code_quality.CA2007.exclude_async_void_methods = true")]
-        public void CSharpAsyncVoidMethod_AnalyzerOption_NoDiagnostic(string editorConfigText)
+        public async Task CSharpAsyncVoidMethod_AnalyzerOption_NoDiagnostic(string editorConfigText)
         {
             var code = @"
 using System.Threading.Tasks;
@@ -317,13 +324,20 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText));
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
         [InlineData("dotnet_code_quality.exclude_async_void_methods = false")]
         [InlineData("dotnet_code_quality.CA2007.exclude_async_void_methods = false")]
-        public void CSharpAsyncVoidMethod_AnalyzerOption_Diagnostic(string editorConfigText)
+        public async Task CSharpAsyncVoidMethod_AnalyzerOption_Diagnostic(string editorConfigText)
         {
             var code = @"
 using System.Threading.Tasks;
@@ -341,7 +355,15 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), GetCSharpResultAt(9, 15));
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics = { GetCSharpResultAt(9, 15) }
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
@@ -380,7 +402,7 @@ public class C
         }
 
         [Fact, WorkItem(2393, "https://github.com/dotnet/roslyn-analyzers/issues/2393")]
-        public void CSharpSimpleAwaitTaskInLocalFunction()
+        public async Task CSharpSimpleAwaitTaskInLocalFunction()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -397,17 +419,17 @@ public class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(11, 19));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(11, 19));
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
-        }
+            => new DiagnosticResult(DoNotDirectlyAwaitATaskAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
 
         private DiagnosticResult GetBasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
-        }
+            => new DiagnosticResult(DoNotDirectlyAwaitATaskAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
     }
 }

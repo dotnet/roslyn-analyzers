@@ -1,6 +1,7 @@
 
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -850,7 +851,7 @@ End Class
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyCSharp(string source, string testProjectName, params DiagnosticResult[] expected)
@@ -865,7 +866,7 @@ End Class
 
         private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyBasic(string source, string testProjectName, params DiagnosticResult[] expected)

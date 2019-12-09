@@ -7,21 +7,22 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Analyzer.Utilities;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer : TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<TypeDeclarationSyntax>
     {
-        protected override DisposableFieldAnalyzer GetAnalyzer(INamedTypeSymbol disposableTypeSymbol)
+        protected override DisposableFieldAnalyzer GetAnalyzer(WellKnownTypeProvider wellKnownTypeProvider)
         {
-            return new CSharpDisposableFieldAnalyzer(disposableTypeSymbol);
+            return new CSharpDisposableFieldAnalyzer(wellKnownTypeProvider);
         }
 
         private class CSharpDisposableFieldAnalyzer : DisposableFieldAnalyzer
         {
-            public CSharpDisposableFieldAnalyzer(INamedTypeSymbol disposableTypeSymbol)
-                : base(disposableTypeSymbol)
+            public CSharpDisposableFieldAnalyzer(WellKnownTypeProvider wellKnownTypeProvider)
+                : base(wellKnownTypeProvider)
             { }
 
             protected override bool IsDisposableFieldCreation(SyntaxNode node, SemanticModel model, HashSet<ISymbol> disposableFields, CancellationToken cancellationToken)

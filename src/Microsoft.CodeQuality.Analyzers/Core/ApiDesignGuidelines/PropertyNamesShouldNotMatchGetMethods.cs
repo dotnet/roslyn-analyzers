@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyze properties, methods 
+            // Analyze properties, methods
             analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
         }
 
@@ -49,6 +49,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             string identifier;
             var symbol = context.Symbol;
+
+            // We only want to report an issue when the user is free to update the member.
+            // This method will be called for both the property and the method so we can bail out
+            // when the member (symbol) is an override.
+            // Note that in the case of an override + a local declaration, the issue will be raised from
+            // the local declaration.
+            if (symbol.IsOverride)
+            {
+                return;
+            }
 
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
             var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);

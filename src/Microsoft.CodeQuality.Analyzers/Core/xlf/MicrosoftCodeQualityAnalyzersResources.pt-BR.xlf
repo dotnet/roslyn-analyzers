@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">Não é recomendável designar um símbolo e seu membro (campo/propriedade) na mesma instrução. Não fica claro se o acesso para membros deveria usar o antigo valor do símbolo antes da atribuição ou o novo valor da atribuição nessa instrução. Para fins de clareza, considere dividir as atribuições em instruções separadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">O símbolo '{0}' e seu membro '{1}' estão designados na mesma instrução. Você corre o risco de designar o membro de um objeto não desejado.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">Designando símbolo e seu membro na mesma instrução.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -52,14 +52,29 @@
         <target state="translated">Os nomes de método assíncrono devem terminar em Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
+        <target state="translated">Uma exceção geral, como System.Exception ou System.SystemException, ou uma exceção não permitida foi capturada em uma instrução catch ou uma cláusula catch geral foi usada. As exceções gerais e não permitidas não devem ser capturadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
+        <target state="translated">Modifique '{0}' para capturar um tipo de exceção permitida mais específico ou gerar a exceção novamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -889,7 +904,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
         <source>All IDisposable types should implement the Dispose pattern correctly.</source>
-        <target state="translated">Todos os tipos IDisposable devem implementar o padrão Dispose corretamente.</target>
+        <target state="translated">Todos os tipos IDisposable devem implementar o Padrão de descarte corretamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
@@ -1444,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="translated">Quando um método assíncrono aguarda uma Tarefa diretamente, a continuação ocorre no mesmo thread que criou a tarefa. Considere chamar Task.ConfigureAwait(Boolean) para sinalizar sua intenção de continuação. Chame ConfigureAwait(false) na tarefa para agendar continuações para o pool de threads, evitando assim um deadlock no thread da interface do usuário. Passar false é uma boa opção para bibliotecas independentes de aplicativo. Chamar ConfigureAwait(true) na tarefa tem o mesmo comportamento que não chamar ConfigureAwait explicitamente. Ao chamar esse método explicitamente, você está permitindo que os leitores saibam que você deseja intencionalmente executar a continuação no contexto de sincronização original.</target>
+        <target state="translated">Quando um método assíncrono aguarda uma Tarefa diretamente, a continuação ocorre no mesmo thread que criou a tarefa. Considere chamar Task.ConfigureAwait(Boolean) para sinalizar sua intenção de continuação. Chame ConfigureAwait(false) na tarefa para agendar continuações para o pool de threads, evitando assim um deadlock no thread da IU. Passar false é uma boa opção para bibliotecas independentes de aplicativo. Chamar ConfigureAwait(true) na tarefa tem o mesmo comportamento que não chamar ConfigureAwait explicitamente. Ao chamar esse método explicitamente, você está permitindo que os leitores saibam que você deseja intencionalmente executar a continuação no contexto de sincronização original.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
@@ -1849,12 +1864,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com um valor constante. Em vez disso, marque esse campo como 'const'.</target>
+        <target state="translated">O campo '{0}' está declarado como 'readonly', mas foi inicializado com um valor constante. Nesse caso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com uma cadeia de caracteres vazia (""). Em vez disso, marque esse campo como 'const'.</target>
+        <target state="translated">O campo '{0}' está declarado como 'readonly', mas foi inicializado com uma cadeia de caracteres vazia (""). Nesse caso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

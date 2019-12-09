@@ -378,6 +378,7 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAn
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBlockAnalysisResult
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBlockAnalysisResult.Data.get -> System.Collections.Immutable.ImmutableDictionary<Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBlockAnalysisResult.IsReachable.get -> bool
+Microsoft.CodeAnalysis.RulesetToEditorconfig.Converter
 Analyzer.Utilities.WellKnownTypeProvider
 Analyzer.Utilities.WellKnownTypeProvider.Compilation.get -> Microsoft.CodeAnalysis.Compilation
 Analyzer.Utilities.WellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(string fullTypeName, out Microsoft.CodeAnalysis.INamedTypeSymbol namedTypeSymbol) -> bool
@@ -642,6 +643,8 @@ static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.Dis
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.NotDisposable -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.NotDisposed -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.Unknown -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
+static Microsoft.CodeAnalysis.RulesetToEditorconfig.Converter.GenerateEditorconfig(string rulesetFilePath, string editorconfigFilePath) -> void
+static Microsoft.CodeAnalysis.RulesetToEditorconfig.Converter.GetEditorconfig(string rulesetFilePath) -> string
 static Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue.ContainsEmptyStringLiteralState.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue
 static Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue.ContainsOneIntergralLiteralState.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue
 static Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue.ContainsNullLiteralState.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue

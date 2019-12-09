@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -28,21 +29,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         private static DiagnosticResult CSharpResult(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString());
-        }
+            => VerifyCS.Diagnostic().WithLocation(line, column);
 
         private static DiagnosticResult BasicResult(int line, int column)
-        {
-            return GetBasicResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString());
-        }
+            => VerifyVB.Diagnostic().WithLocation(line, column);
 
         #endregion
 
         [Fact]
-        public void CA1060ProperlyNamedClassCSharp()
+        public async Task CA1060ProperlyNamedClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 class NativeMethods
@@ -66,9 +63,9 @@ class UnsafeNativeMethods
         }
 
         [Fact]
-        public void CA1060ProperlyNamedClassBasic()
+        public async Task CA1060ProperlyNamedClassBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Class NativeMethods
@@ -92,9 +89,9 @@ End Class
         }
 
         [Fact]
-        public void CA1060ImproperlyNamedClassCSharp()
+        public async Task CA1060ImproperlyNamedClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 class FooClass
@@ -148,9 +145,9 @@ class BazClass
         }
 
         [Fact]
-        public void CA1060ImproperlyNamedClassBasic()
+        public async Task CA1060ImproperlyNamedClassBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Class FooClass
@@ -204,9 +201,9 @@ End Class
         }
 
         [Fact]
-        public void CA1060ClassesInNamespaceCSharp()
+        public async Task CA1060ClassesInNamespaceCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 namespace MyNamespace
@@ -228,9 +225,9 @@ namespace MyNamespace
         }
 
         [Fact]
-        public void CA1060ClassesInNamespaceBasic()
+        public async Task CA1060ClassesInNamespaceBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Namespace MyNamespace
@@ -251,9 +248,9 @@ End Namespace
         }
 
         [Fact]
-        public void CA1060NestedClassesCSharp()
+        public async Task CA1060NestedClassesCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
 class Outer
@@ -269,9 +266,9 @@ class Outer
         }
 
         [Fact]
-        public void CA1060NestedClassesBasic()
+        public async Task CA1060NestedClassesBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Runtime.InteropServices
 
 Class Outer

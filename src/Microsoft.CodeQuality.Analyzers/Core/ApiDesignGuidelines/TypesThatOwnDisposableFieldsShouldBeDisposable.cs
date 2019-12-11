@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             public DisposableFieldAnalyzer(Compilation compilation)
             {
-                DisposeAnalysisHelper.TryGetOrCreate(wellKnownTypeProvider.Compilation, out _disposeAnalysisHelper!);
+                DisposeAnalysisHelper.TryGetOrCreate(compilation, out _disposeAnalysisHelper!);
                 Debug.Assert(_disposeAnalysisHelper != null);
             }
 
@@ -76,25 +76,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                  where _disposeAnalysisHelper.IsDisposable(field.Type)
                                                                  select field;
 
-                if (disposableFields.Any())
-                {
-                    var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
-                    IEnumerable<TTypeDeclarationSyntax> classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
-                    foreach (TTypeDeclarationSyntax classDecl in classDecls)
+                    if (disposableFields.Any())
                     {
-                        SemanticModel model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
-                        IEnumerable<SyntaxNode> syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
-                            .Where(n => IsDisposableFieldCreation(n,
-                                                                model,
-                                                                disposableFieldsHashSet,
-                                                                symbolContext.CancellationToken));
-                        if (syntaxNodes.Any())
+                        var disposableFieldsHashSet = new HashSet<ISymbol>(disposableFields);
+                        IEnumerable<TTypeDeclarationSyntax> classDecls = GetClassDeclarationNodes(namedType, symbolContext.CancellationToken);
+                        foreach (TTypeDeclarationSyntax classDecl in classDecls)
                         {
-                            // Type '{0}' owns disposable field(s) '{1}' but is not disposable
-                            var arg1 = namedType.Name;
-                            var arg2 = string.Join(", ", disposableFieldsHashSet.Select(f => f.Name).Order());
-                            symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, arg1, arg2));
-                            return;
+                            SemanticModel model = symbolContext.Compilation.GetSemanticModel(classDecl.SyntaxTree);
+                            IEnumerable<SyntaxNode> syntaxNodes = classDecl.DescendantNodes(n => !(n is TTypeDeclarationSyntax) || ReferenceEquals(n, classDecl))
+                                .Where(n => IsDisposableFieldCreation(n,
+                                                                    model,
+                                                                    disposableFieldsHashSet,
+                                                                    symbolContext.CancellationToken));
+                            if (syntaxNodes.Any())
+                            {
+                                // Type '{0}' owns disposable field(s) '{1}' but is not disposable
+                                var arg1 = namedType.Name;
+                                var arg2 = string.Join(", ", disposableFieldsHashSet.Select(f => f.Name).Order());
+                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, arg1, arg2));
+                                return;
+                            }
                         }
                     }
                 }

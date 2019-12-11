@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
 
 namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 {

@@ -12,14 +12,14 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public NotInheritable Class BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer
         Inherits TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer(Of TypeBlockSyntax)
-        Protected Overrides Function GetAnalyzer(wellKnownTypeProvider As WellKnownTypeProvider) As DisposableFieldAnalyzer
-            Return New BasicDisposableFieldAnalyzer(wellKnownTypeProvider)
+        Protected Overrides Function GetAnalyzer(compilation As Compilation) As DisposableFieldAnalyzer
+            Return New BasicDisposableFieldAnalyzer(compilation)
         End Function
 
         Private Class BasicDisposableFieldAnalyzer
             Inherits DisposableFieldAnalyzer
-            Public Sub New(wellKnownTypeProvider As WellKnownTypeProvider)
-                MyBase.New(wellKnownTypeProvider)
+            Public Sub New(compilation As Compilation)
+                MyBase.New(compilation)
             End Sub
 
             Protected Overrides Function IsDisposableFieldCreation(node As SyntaxNode, model As SemanticModel, disposableFields As HashSet(Of ISymbol), cancellationToken As CancellationToken) As Boolean

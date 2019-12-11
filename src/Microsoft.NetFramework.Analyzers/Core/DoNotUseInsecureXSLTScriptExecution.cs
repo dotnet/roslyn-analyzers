@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// TODO(dotpaul): Enable nullable analysis.
+// TODO(dotpaul): Enable nullable analysis when rewriting this to use DFA.
 #nullable disable
 
 using System.Collections.Generic;

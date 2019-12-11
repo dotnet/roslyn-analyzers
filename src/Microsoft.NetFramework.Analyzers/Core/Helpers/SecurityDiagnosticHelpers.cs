@@ -1,8 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// TODO(dotpaul): Enable nullable analysis.
-#nullable disable
-
 using System;
 using System.Threading;
 using Analyzer.Utilities;
@@ -17,13 +14,15 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XslCompiledTransform != null
                 && method.MatchMethodByName(xmlTypes.XslCompiledTransform, SecurityMemberNames.Load);
         }
 
         public static bool IsXmlDocumentCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
-            return method != null &&
-                   method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
+            return method != null
+                && xmlTypes.XmlDocument != null
+                && method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
         }
 
         public static bool IsXmlDocumentXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
@@ -34,6 +33,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsXmlTextReaderCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XmlTextReader != null
                 && method.MatchMethodDerivedByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
@@ -60,6 +60,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsXmlReaderSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XmlReaderSettings != null
                 && method.MatchMethodByName(xmlTypes.XmlReaderSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
@@ -81,6 +82,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsXsltSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XsltSettings != null
                 && method.MatchMethodByName(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
@@ -173,9 +175,9 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return literal.HasConstantValue(0);
         }
 
-        private static bool IsSpecifiedProperty(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        private static bool IsSpecifiedProperty(IPropertySymbol symbol, INamedTypeSymbol? namedType, string propertyName)
         {
-            if (symbol != null)
+            if (symbol != null && namedType != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyByName(namedType, propertyName);
@@ -184,9 +186,9 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return false;
         }
 
-        private static bool IsSpecifiedPropertyDerived(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        private static bool IsSpecifiedPropertyDerived(IPropertySymbol symbol, INamedTypeSymbol? namedType, string propertyName)
         {
-            if (symbol != null)
+            if (symbol != null && namedType != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyDerivedByName(namedType, propertyName);
@@ -229,7 +231,8 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             {
                 return null;
             }
-            INamedTypeSymbol typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
+
+            INamedTypeSymbol? typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
             return typeSymbol?.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
         }
 
@@ -274,7 +277,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         /// For .NET Framework 4.X, this method returns the actual framework version instead of assembly verison of mscorlib,
         /// i.e. for .NET framework 4.5.2, this method return 4.5.2 instead of 4.0.0.0.
         /// </remarks>
-        public static Version GetDotNetFrameworkVersion(Compilation compilation)
+        public static Version? GetDotNetFrameworkVersion(Compilation compilation)
         {
             if (compilation == null || !IsTypeDeclaredInExpectedAssembly(compilation, "System.String", "mscorlib").GetValueOrDefault())
             {

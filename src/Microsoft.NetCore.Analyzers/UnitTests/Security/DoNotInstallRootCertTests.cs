@@ -1,20 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotInstallRootCert,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PropertySetAnalysis)]
-    public class DoNotInstallRootCertTests : DiagnosticAnalyzerTestBase
+    public class DoNotInstallRootCertTests
     {
         [Fact]
-        public void TestConstructorWithStoreNameParameterDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -30,9 +33,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterMaybeChangedDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterMaybeChangedDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -56,9 +59,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithRootDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithRootDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -81,9 +84,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameAndStoreLocationParametersDiagnostic()
+        public async Task TestConstructorWithStoreNameAndStoreLocationParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -99,16 +102,16 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStringParameterDiagnostic()
+        public async Task TestConstructorWithStringParameterDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
     public void TestMethod()
     {
-        var storeName = ""Root""; 
+        var storeName = ""Root"";
         var x509Store = new X509Store(storeName);
         x509Store.Add(new X509Certificate2());
     }
@@ -117,16 +120,16 @@ class TestClass
         }
 
         [Fact]
-        public void TestStringCaseSensitiveDiagnostic()
+        public async Task TestStringCaseSensitiveDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
     public void TestMethod()
     {
-        var storeName = ""rooT""; 
+        var storeName = ""rooT"";
         var x509Store = new X509Store(storeName);
         x509Store.Add(new X509Certificate2());
     }
@@ -135,16 +138,16 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStringAndStoreLocationParametersDiagnostic()
+        public async Task TestConstructorWithStringAndStoreLocationParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
 {
     public void TestMethod()
     {
-        var storeName = ""Root""; 
+        var storeName = ""Root"";
         var x509Store = new X509Store(storeName, StoreLocation.CurrentUser);
         x509Store.Add(new X509Certificate2());
     }
@@ -153,9 +156,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterWithoutTemporaryObjectDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterWithoutTemporaryObjectDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -169,9 +172,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStringParameterWithoutTemporaryObjectDiagnostic()
+        public async Task TestConstructorWithStringParameterWithoutTemporaryObjectDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -185,9 +188,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestPassX509StoreAsParameterInterproceduralDiagnostic()
+        public async Task TestPassX509StoreAsParameterInterproceduralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -208,9 +211,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetX509StoreFromLocalFunctionDiagnostic()
+        public async Task TestGetX509StoreFromLocalFunctionDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -226,9 +229,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnX509StoreInterproceduralDiagnostic()
+        public async Task TestReturnX509StoreInterproceduralDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -247,9 +250,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestNotCallAddMethodNoDiagnostic()
+        public async Task TestNotCallAddMethodNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -262,9 +265,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestInstallCertToOtherStoreNoDiagnostic()
+        public async Task TestInstallCertToOtherStoreNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -278,9 +281,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestInstallCertToNullStoreNoDiagnostic()
+        public async Task TestInstallCertToNullStoreNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -294,9 +297,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestCreateAStoreWithoutSettingStoreNameNoDiagnostic()
+        public async Task TestCreateAStoreWithoutSettingStoreNameNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -310,9 +313,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterUnassignedNoDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterUnassignedNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -326,9 +329,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithMyNoDiagnostic()
+        public async Task TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithMyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -350,9 +353,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestPassX509StoreAsParameterInterproceduralNoDiagnostic()
+        public async Task TestPassX509StoreAsParameterInterproceduralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -372,9 +375,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLambdaNoDiagnostic()
+        public async Task TestLambdaNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -389,9 +392,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnX509StoreInterproceduralNoDiagnostic()
+        public async Task TestReturnX509StoreInterproceduralNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -414,18 +417,15 @@ class TestClass
         [InlineData(@"dotnet_code_quality.CA5380.excluded_symbol_names = TestMethod
                       dotnet_code_quality.CA5381.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
+            var csharpTest = new VerifyCS.Test
             {
-                expected = new DiagnosticResult[]
+                TestState =
                 {
-                    GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule)
-                };
-            }
-
-            VerifyCSharp(@"
+                    Sources =
+                    {
+                        @"
 using System.Security.Cryptography.X509Certificates;
 
 class TestClass
@@ -436,17 +436,22 @@ class TestClass
         var x509Store = new X509Store(storeName);
         x509Store.Add(new X509Certificate2());
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+
+            if (editorConfigText.Length == 0)
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
+            }
+
+            await csharpTest.RunAsync();
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotInstallRootCert();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotInstallRootCert();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column);
     }
 }

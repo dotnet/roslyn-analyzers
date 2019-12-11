@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.SetHttpOnlyForHttpCookie,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class SetHttpOnlyForHttpCookieTests : DiagnosticAnalyzerTestBase
+    public class SetHttpOnlyForHttpCookieTests
     {
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             string httpCookieCSharpSourceCode = @"
 namespace System.Web
@@ -27,15 +29,23 @@ namespace System.Web
         public bool HttpOnly { get; set; }
     }
 }";
-            this.VerifyCSharp(
-                new[] { source, httpCookieCSharpSourceCode }.ToFileAndSource(),
-                expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, httpCookieCSharpSourceCode }
+                },
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void Test_AssignHttpOnlyWithFalse_Diagnostic()
+        public async Task Test_AssignHttpOnlyWithFalse_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -46,13 +56,13 @@ class TestClass
         httpCookie.HttpOnly = false;
     }
 }",
-            GetCSharpResultAt(9, 9, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(9, 9));
         }
 
         [Fact]
-        public void Test_AssignHttpOnlyWithFalsePossibly_Diagnostic()
+        public async Task Test_AssignHttpOnlyWithFalsePossibly_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Web;
 
@@ -69,13 +79,13 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(14, 13, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(14, 13));
         }
 
         [Fact]
-        public void Test_ReturnHttpCookieWithFalseHttpOnly_Diagnostic()
+        public async Task Test_ReturnHttpCookieWithFalseHttpOnly_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -87,13 +97,13 @@ class TestClass
         return httpCookie;
     }
 }",
-            GetCSharpResultAt(8, 9, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(8, 9));
         }
 
         [Fact]
-        public void Test_ReturnHttpCookie_WithoutSettingHttpOnly_Diagnostic()
+        public async Task Test_ReturnHttpCookie_WithoutSettingHttpOnly_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -105,13 +115,13 @@ class TestClass
         return httpCookie;
     }
 }",
-            GetCSharpResultAt(10, 16, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(10, 16));
         }
 
         [Fact]
-        public void Test_PassHttpCookieAsAParamter_WithoutSettingHttpOnly_Diagnostic()
+        public async Task Test_PassHttpCookieAsAParamter_WithoutSettingHttpOnly_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -126,13 +136,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(9, 21, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(9, 21));
         }
 
         [Fact]
-        public void Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsFalse_Diagnostic()
+        public async Task Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsFalse_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -148,13 +158,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(9, 9, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(9, 9));
         }
 
         [Fact]
-        public void Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsFalsePossibly_Diagnostic()
+        public async Task Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsFalsePossibly_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Web;
 
@@ -177,13 +187,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(14, 13, SetHttpOnlyForHttpCookie.Rule));
+            GetCSharpResultAt(14, 13));
         }
 
         [Fact]
-        public void Test_CreateHttpCookieWithNullArguments_NoDiagnostic()
+        public async Task Test_CreateHttpCookieWithNullArguments_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -196,9 +206,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_AssignHttpOnlyWithTrue_NoDiagnostic()
+        public async Task Test_AssignHttpOnlyWithTrue_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -212,9 +222,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_JustObjectCreation_NoDiagnostic()
+        public async Task Test_JustObjectCreation_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -227,9 +237,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_AssignHttpOnlyWithTruePossibly_NoDiagnostic()
+        public async Task Test_AssignHttpOnlyWithTruePossibly_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Web;
 
@@ -249,9 +259,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_ReturnHttpCookieWithUnkownHttpOnly_NoDiagnostic()
+        public async Task Test_ReturnHttpCookieWithUnkownHttpOnly_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -264,9 +274,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_ReturnHttpCookieWithTrueHttpOnly_NoDiagnostic()
+        public async Task Test_ReturnHttpCookieWithTrueHttpOnly_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -281,9 +291,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsTrue_NoDiagnostic()
+        public async Task Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsTrue_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -303,9 +313,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsTruePossibly_NoDiagnostic()
+        public async Task Test_PassHttpCookieAsAParamter_WithSettingHttpOnlyAsTruePossibly_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using System.Web;
 
@@ -331,9 +341,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_PassHttpCookieWithNullValue_NoDiagnostic()
+        public async Task Test_PassHttpCookieWithNullValue_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -350,9 +360,9 @@ class TestClass
         }
 
         [Fact]
-        public void Test_ReturnNull_NoDiagnostic()
+        public async Task Test_ReturnNull_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web;
 
 class TestClass
@@ -364,14 +374,8 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SetHttpOnlyForHttpCookie();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SetHttpOnlyForHttpCookie();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column);
     }
 }

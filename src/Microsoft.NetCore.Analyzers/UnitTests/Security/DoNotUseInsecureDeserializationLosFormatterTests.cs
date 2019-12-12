@@ -1,31 +1,25 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureDeserializerLosFormatter,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseInsecureDeserializerLosFormatter,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseInsecureDeserializerLosFormatterTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseInsecureDeserializerLosFormatterTests
     {
-        private static readonly DiagnosticDescriptor Rule = DoNotUseInsecureDeserializerLosFormatter.RealMethodUsedDescriptor;
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDeserializerLosFormatter();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDeserializerLosFormatter();
-        }
-
         [Fact]
-        public void DocSample1_CSharp_Violation_Diagnostic()
+        public async Task DocSample1_CSharp_Violation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -37,13 +31,13 @@ public class ExampleClass
         return formatter.Deserialize(new MemoryStream(bytes));
     }
 }",
-                GetCSharpResultAt(10, 16, Rule, "object LosFormatter.Deserialize(Stream stream)"));
+                GetCSharpResultAt(10, 16, "object LosFormatter.Deserialize(Stream stream)"));
         }
 
         [Fact]
-        public void DocSample1_VB_Violation_Diagnostic()
+        public async Task DocSample1_VB_Violation_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyBasicAnalyzerAsync(@"
 Imports System.IO
 Imports System.Web.UI
 
@@ -53,13 +47,13 @@ Public Class ExampleClass
         Return formatter.Deserialize(New MemoryStream(bytes))
     End Function
 End Class",
-                GetBasicResultAt(8, 16, Rule, "Function LosFormatter.Deserialize(stream As Stream) As Object"));
+                GetBasicResultAt(8, 16, "Function LosFormatter.Deserialize(stream As Stream) As Object"));
         }
 
         [Fact]
-        public void DeserializeStream_Diagnostic()
+        public async Task DeserializeStream_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -74,13 +68,13 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(Stream stream)"));
+            GetCSharpResultAt(12, 20, "object LosFormatter.Deserialize(Stream stream)"));
         }
 
         [Fact]
-        public void DeserializeString_Diagnostic()
+        public async Task DeserializeString_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -95,13 +89,13 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(string input)"));
+            GetCSharpResultAt(12, 20, "object LosFormatter.Deserialize(string input)"));
         }
 
         [Fact]
-        public void DeserializeTextReader_Diagnostic()
+        public async Task DeserializeTextReader_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -116,13 +110,13 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(TextReader input)"));
+            GetCSharpResultAt(12, 20, "object LosFormatter.Deserialize(TextReader input)"));
         }
 
         [Fact]
-        public void Deserialize_Reference_Diagnostic()
+        public async Task Deserialize_Reference_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -138,13 +132,13 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(13, 20, Rule, "object LosFormatter.Deserialize(string input)"));
+                GetCSharpResultAt(13, 20, "object LosFormatter.Deserialize(string input)"));
         }
 
         [Fact]
-        public void Serialize_NoDiagnostic()
+        public async Task Serialize_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -164,9 +158,9 @@ namespace Blah
         }
 
         [Fact]
-        public void Serialize_Reference_NoDiagnostic()
+        public async Task Serialize_Reference_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCSharpAnalyzerAsync(@"
 using System.IO;
 using System.Web.UI;
 
@@ -183,5 +177,47 @@ namespace Blah
     }
 }");
         }
+
+        private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
+                TestState =
+                {
+                    Sources = { source },
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
+        }
+
+        private static async Task VerifyBasicAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        {
+            var csharpTest = new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
+                TestState =
+                {
+                    Sources = { source },
+                }
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
+        }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotUseObsoleteKDFAlgorithm,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseObsoleteKDFAlgorithmTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseObsoleteKDFAlgorithmTests
     {
         [Fact]
-        public void TestNormalMethodOfPasswordDeriveBytesDiagnostic()
+        public async Task TestNormalMethodOfPasswordDeriveBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -22,13 +25,13 @@ class TestClass
         passwordDeriveBytes.GetBytes(1);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "GetBytes"));
+            GetCSharpResultAt(9, 9, "PasswordDeriveBytes", "GetBytes"));
         }
 
         [Fact]
-        public void TestCryptDeriveKeyOfClassDerivedFromPasswordDeriveBytesDiagnostic()
+        public async Task TestCryptDeriveKeyOfClassDerivedFromPasswordDeriveBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -46,13 +49,13 @@ class TestClass
         derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
-            GetCSharpResultAt(16, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "CryptDeriveKey"));
+            GetCSharpResultAt(16, 9, "PasswordDeriveBytes", "CryptDeriveKey"));
         }
 
         [Fact]
-        public void TestCryptDeriveKeyOfRfc2898DeriveBytesDiagnostic()
+        public async Task TestCryptDeriveKeyOfRfc2898DeriveBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -63,13 +66,13 @@ class TestClass
         rfc2898DeriveBytes.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "Rfc2898DeriveBytes", "CryptDeriveKey"));
+            GetCSharpResultAt(9, 9, "Rfc2898DeriveBytes", "CryptDeriveKey"));
         }
 
         [Fact]
-        public void TestCryptDeriveKeyOfClassDerivedFromRfc2898DeriveBytesDiagnostic()
+        public async Task TestCryptDeriveKeyOfClassDerivedFromRfc2898DeriveBytesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -87,13 +90,13 @@ class TestClass
         derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
-            GetCSharpResultAt(16, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "Rfc2898DeriveBytes", "CryptDeriveKey"));
+            GetCSharpResultAt(16, 9, "Rfc2898DeriveBytes", "CryptDeriveKey"));
         }
 
         [Fact]
-        public void TestNormalMethodOfRfc2898DeriveBytesNoDiagnostic()
+        public async Task TestNormalMethodOfRfc2898DeriveBytesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -107,9 +110,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorOfRfc2898DeriveBytesNoDiagnostic()
+        public async Task TestConstructorOfRfc2898DeriveBytesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -123,9 +126,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorOfPasswordDeriveBytesNoDiagnostic()
+        public async Task TestConstructorOfPasswordDeriveBytesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -139,9 +142,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetBytesOfClassDerivedFromPasswordDeriveBytesNoDiagnostic()
+        public async Task TestGetBytesOfClassDerivedFromPasswordDeriveBytesNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Cryptography;
 
@@ -166,14 +169,9 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseObsoleteKDFAlgorithm();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseObsoleteKDFAlgorithm();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

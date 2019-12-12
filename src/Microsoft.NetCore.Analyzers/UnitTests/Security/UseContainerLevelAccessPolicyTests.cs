@@ -1,150 +1,56 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseContainerLevelAccessPolicy,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseContainerLevelAccessPolicyTests : DiagnosticAnalyzerTestBase
+    public class UseContainerLevelAccessPolicyTests
     {
-        private const string MicrosoftWindowsAzureStorageCSharpSourceCode = @"
-using System;
-
-namespace Microsoft.WindowsAzure.Storage
-{
-    public sealed class SharedAccessAccountPolicy
-    {
-    }
-
-    public class IPAddressOrRange
-    {
-    }
-
-    public enum SharedAccessProtocol
-    {
-        HttpsOnly = 1,
-        HttpsOrHttp = 2
-    }
-
-    namespace Blob
-    {
-        public class CloudBlob
+        private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
-            public string GetSharedAccessSignature (SharedAccessBlobPolicy policy)
+            var csharpTest = new VerifyCS.Test
             {
-                return """";
-            }
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
+                TestState =
+                {
+                    Sources = { source  }
+                },
+            };
 
-            public string GetSharedAccessSignature (SharedAccessBlobPolicy policy, SharedAccessBlobHeaders headers, string groupPolicyIdentifier, Nullable<SharedAccessProtocol> protocols, IPAddressOrRange ipAddressOrRange)
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
+        }
+
+        private async Task VerifyCSharpWithDependenciesAsync(string source, string editorConfigText, params DiagnosticResult[] expected)
+        {
+            var csharpTest = new VerifyCS.Test
             {
-                return """";
-            }
-        }
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
 
-        public sealed class SharedAccessBlobPolicy
-        {
-        }
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
 
-        public sealed class SharedAccessBlobHeaders
-        {
-        }
-
-        public class CloudAppendBlob : CloudBlob
-        {
-        }
-    }
-    namespace File
-    {
-        public class CloudFile
-        {
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy)
-            {
-                return """";
-            }
-
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, string groupPolicyIdentifier)
-            {
-                return """";
-            }
-
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, Nullable<SharedAccessProtocol> protocols, IPAddressOrRange ipAddressOrRange)
-            {
-                return """";
-            }
-        }
-
-        public sealed class SharedAccessFilePolicy
-        {
-        }
-
-        public sealed class SharedAccessFileHeaders
-        {
-        }
-    }
-
-    namespace Queue
-    {
-        public class CloudQueue
-        {
-            public string GetSharedAccessSignature (SharedAccessQueuePolicy policy)
-            {
-                return """";
-            }
-
-            public string GetSharedAccessSignature (SharedAccessQueuePolicy policy, string accessPolicyIdentifier)
-            {
-                return """";
-            }
-        }
-
-        public sealed class SharedAccessQueuePolicy
-        {
-        }
-    }
-    namespace Table
-    {
-        public class CloudTable
-        {
-            public string GetSharedAccessSignature (SharedAccessTablePolicy policy)
-            {
-                return """";
-            }
-
-            public string GetSharedAccessSignature (SharedAccessTablePolicy policy, string accessPolicyIdentifier, string startPartitionKey, string startRowKey, string endPartitionKey, string endRowKey)
-            {
-                return """";
-            }
-        }
-
-        public sealed class SharedAccessTablePolicy
-        {
-        }
-    }
-}";
-
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
-                expected);
-        }
-
-        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode },
-                additionalFile,
-                ReferenceFlags.None,
-                expected);
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void TestGroupPolicyIdentifierOfBlobNamespaceIsNullDiagnostic()
+        public async Task TestGroupPolicyIdentifierOfBlobNamespaceIsNullDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -153,18 +59,18 @@ class TestClass
 {
     public void TestMethod(SharedAccessBlobPolicy policy, SharedAccessBlobHeaders headers, Nullable<SharedAccessProtocol> protocols, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudAppendBlob = new CloudAppendBlob();
+        var cloudAppendBlob = new CloudAppendBlob(null);
         string groupPolicyIdentifier = null;
         cloudAppendBlob.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange);
     }
 }",
-            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(12, 9));
         }
 
         [Fact]
-        public void TestAccessPolicyIdentifierOfTableNamespaceIsNullDiagnostic()
+        public async Task TestAccessPolicyIdentifierOfTableNamespaceIsNullDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -172,18 +78,18 @@ class TestClass
 {
     public void TestMethod(SharedAccessTablePolicy policy, string startPartitionKey, string startRowKey, string endPartitionKey, string endRowKey)
     {
-        var cloudTable = new CloudTable();
+        var cloudTable = new CloudTable(null);
         string accessPolicyIdentifier = null;
         cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestGroupPolicyIdentifierOfFileNamespaceIsNullDiagnostic()
+        public async Task TestGroupPolicyIdentifierOfFileNamespaceIsNullDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -191,18 +97,18 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         string groupPolicyIdentifier = null;
         cloudFile.GetSharedAccessSignature(policy, groupPolicyIdentifier);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestAccessPolicyIdentifierOfQueueNamespaceIsNullDiagnostic()
+        public async Task TestAccessPolicyIdentifierOfQueueNamespaceIsNullDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -211,18 +117,18 @@ class TestClass
     public int a; 
     public void TestMethod(SharedAccessQueuePolicy policy)
     {
-        var cloudQueue = new CloudQueue();
+        var cloudQueue = new CloudQueue(null);
         string accessPolicyIdentifier = null;
         cloudQueue.GetSharedAccessSignature(policy, accessPolicyIdentifier);
     }
 }",
-            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(12, 9));
         }
 
         [Fact]
-        public void TestWithoutGroupPolicyIdentifierParameterOfBlobNamespaceDiagnostic()
+        public async Task TestWithoutGroupPolicyIdentifierParameterOfBlobNamespaceDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -231,17 +137,17 @@ class TestClass
 {
     public void TestMethod(SharedAccessBlobPolicy policy)
     {
-        var cloudAppendBlob = new CloudAppendBlob();
+        var cloudAppendBlob = new CloudAppendBlob(null);
         cloudAppendBlob.GetSharedAccessSignature(policy);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestWithoutAccessPolicyIdentifierParameterOfTableNamespaceDiagnostic()
+        public async Task TestWithoutAccessPolicyIdentifierParameterOfTableNamespaceDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -249,17 +155,17 @@ class TestClass
 {
     public void TestMethod(SharedAccessTablePolicy policy)
     {
-        var cloudTable = new CloudTable();
+        var cloudTable = new CloudTable(null);
         cloudTable.GetSharedAccessSignature(policy);
     }
 }",
-            GetCSharpResultAt(10, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(10, 9));
         }
 
         [Fact]
-        public void TestWithoutGroupPolicyIdentifierParameterOfFileNamespaceDiagnostic()
+        public async Task TestWithoutGroupPolicyIdentifierParameterOfFileNamespaceDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -267,17 +173,17 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         cloudFile.GetSharedAccessSignature(policy);
     }
 }",
-            GetCSharpResultAt(10, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(10, 9));
         }
 
         [Fact]
-        public void TestWithoutAccessPolicyIdentifierParameterOfQueueNamespaceDiagnostic()
+        public async Task TestWithoutAccessPolicyIdentifierParameterOfQueueNamespaceDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -286,17 +192,17 @@ class TestClass
     public int a; 
     public void TestMethod(SharedAccessQueuePolicy policy)
     {
-        var cloudQueue = new CloudQueue();
+        var cloudQueue = new CloudQueue(null);
         cloudQueue.GetSharedAccessSignature(policy);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9));
         }
 
         [Fact]
-        public void TestGroupPolicyIdentifierOfBlobNamespaceIsNotNullNoDiagnostic()
+        public async Task TestGroupPolicyIdentifierOfBlobNamespaceIsNotNullNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -305,7 +211,7 @@ class TestClass
 {
     public void TestMethod(SharedAccessBlobPolicy policy, SharedAccessBlobHeaders headers, Nullable<SharedAccessProtocol> protocols, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudAppendBlob = new CloudAppendBlob();
+        var cloudAppendBlob = new CloudAppendBlob(null);
         string groupPolicyIdentifier = ""123"";
         cloudAppendBlob.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange);
     }
@@ -313,9 +219,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGroupPolicyIdentifierOfFileNamespaceIsNotNullNoDiagnostic()
+        public async Task TestGroupPolicyIdentifierOfFileNamespaceIsNotNullNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -323,7 +229,7 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         string groupPolicyIdentifier = ""123"";
         cloudFile.GetSharedAccessSignature(policy, groupPolicyIdentifier);
     }
@@ -331,9 +237,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -352,9 +258,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestAccessPolicyIdentifierOfQueueNamespaceIsNotNullNoDiagnostic()
+        public async Task TestAccessPolicyIdentifierOfQueueNamespaceIsNotNullNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -362,7 +268,7 @@ class TestClass
 {
     public void TestMethod(SharedAccessQueuePolicy policy)
     {
-        var cloudQueue = new CloudQueue();
+        var cloudQueue = new CloudQueue(null);
         string groupPolicyIdentifier = ""123"";
         cloudQueue.GetSharedAccessSignature(policy, groupPolicyIdentifier);
     }
@@ -370,9 +276,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestAccessPolicyIdentifierOfTableNamespaceIsNotNullNoDiagnostic()
+        public async Task TestAccessPolicyIdentifierOfTableNamespaceIsNotNullNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -380,7 +286,7 @@ class TestClass
 {
     public void TestMethod(SharedAccessTablePolicy policy, string startPartitionKey, string startRowKey, string endPartitionKey, string endRowKey)
     {
-        var cloudTable = new CloudTable();
+        var cloudTable = new CloudTable(null);
         string accessPolicyIdentifier = ""123"";
         cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
     }
@@ -392,18 +298,18 @@ class TestClass
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality." + UseContainerLevelAccessPolicy.DiagnosticId + ".excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
             {
                 expected = new DiagnosticResult[]
                 {
-                    GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule)
+                    GetCSharpResultAt(11, 9)
                 };
             }
 
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -411,21 +317,15 @@ class TestClass
 {
     public void TestMethod(SharedAccessTablePolicy policy, string startPartitionKey, string startRowKey, string endPartitionKey, string endRowKey)
     {
-        var cloudTable = new CloudTable();
+        var cloudTable = new CloudTable(null);
         string accessPolicyIdentifier = null;
         cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}", editorConfigText, expected);
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseContainerLevelAccessPolicy();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseContainerLevelAccessPolicy();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column);
     }
 }

@@ -1,21 +1,25 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Diagnostics;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableCertificateValidation,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableCertificateValidation,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableCertificateValidationTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableCertificateValidationTests
     {
         [Fact]
-        public void TestLambdaDiagnostic()
+        public async Task TestLambdaDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -25,13 +29,13 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => { return true; };
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(8, 68));
         }
 
         [Fact]
-        public void TestLambdaWithLiteralValueDiagnostic()
+        public async Task TestLambdaWithLiteralValueDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -41,13 +45,13 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => true;
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(8, 68));
         }
 
         [Fact]
-        public void TestAnonymousMethodDiagnostic()
+        public async Task TestAnonymousMethodDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -57,13 +61,13 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(8, 68));
         }
 
         [Fact]
-        public void TestDelegateCreationLocalFunctionDiagnostic()
+        public async Task TestDelegateCreationLocalFunctionDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -84,13 +88,13 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(10, 67, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(10, 67));
         }
 
         [Fact]
-        public void TestDelegateCreationDiagnostic()
+        public async Task TestDelegateCreationDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -111,9 +115,9 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
     }
 }",
-            GetCSharpResultAt(19, 67, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(19, 67));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Net.Security
 Imports System.Security.Cryptography.X509Certificates
@@ -129,13 +133,13 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-            GetBasicResultAt(9, 82, DoNotDisableCertificateValidation.Rule));
+            GetBasicResultAt(9, 82));
         }
 
         [Fact]
-        public void TestDelegateCreationNormalMethodWithLambdaDiagnostic()
+        public async Task TestDelegateCreationNormalMethodWithLambdaDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -153,11 +157,11 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
     }
 }",
-            GetCSharpResultAt(16, 67, DoNotDisableCertificateValidation.Rule));
+            GetCSharpResultAt(16, 67));
         }
 
         [Fact]
-        public void TestDelegatedMethodFromDifferentAssemblyNoDiagnostic()
+        public async Task TestDelegatedMethodFromDifferentAssemblyNoDiagnostic()
         {
             string source1 = @"
 
@@ -192,11 +196,31 @@ class TestClass
     }
 }";
 
-            VerifyCSharpAcrossTwoAssemblies(source1, source2);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source2 },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", source1).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestDelegatedMethodFromLocalFromDifferentAssemblyNoDiagnostic()
+        public async Task TestDelegatedMethodFromLocalFromDifferentAssemblyNoDiagnostic()
         {
             string source1 = @"
 
@@ -242,13 +266,33 @@ class TestClass
     }
 }";
 
-            VerifyCSharpAcrossTwoAssemblies(source1, source2);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source2 },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var sideProject = solution.AddProject("DependencyProject", "DependencyProject", LanguageNames.CSharp)
+                            .AddDocument("Dependency.cs", source1).Project
+                            .AddMetadataReferences(solution.GetProject(projectId).MetadataReferences)
+                            .WithCompilationOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+                        return sideProject.Solution.GetProject(projectId)
+                            .AddProjectReference(new ProjectReference(sideProject.Id))
+                            .Solution;
+                    }
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestLambdaNoDiagnostic()
+        public async Task TestLambdaNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -261,9 +305,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestLambdaWithLiteralValueNoDiagnostic()
+        public async Task TestLambdaWithLiteralValueNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -276,9 +320,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestAnonymousMethodNoDiagnostic()
+        public async Task TestAnonymousMethodNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 
 class TestClass
@@ -291,9 +335,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationLocalFunctionNoDiagnostic()
+        public async Task TestDelegateCreationLocalFunctionNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -322,9 +366,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationNoDiagnostic()
+        public async Task TestDelegateCreationNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -350,7 +394,7 @@ class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Net.Security
 Imports System.Security.Cryptography.X509Certificates
@@ -371,9 +415,9 @@ End Module");
         }
 
         [Fact]
-        public void TestDelegateCreationNoDiagnostic2()
+        public async Task TestDelegateCreationNoDiagnostic2()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -396,9 +440,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationNormalMethodWithLambdaNoDiagnostic()
+        public async Task TestDelegateCreationNormalMethodWithLambdaNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -419,9 +463,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestDelegateCreationFromLocalFromLocalNoDiagnostic()
+        public async Task TestDelegateCreationFromLocalFromLocalNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -456,7 +500,7 @@ class TestClass
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Net.Security
 Imports System.Security.Cryptography.X509Certificates
@@ -477,9 +521,9 @@ End Module");
         }
 
         [Fact]
-        public void TestDelegateCreationFromLocalFromLocal2NoDiagnostic()
+        public async Task TestDelegateCreationFromLocalFromLocal2NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -523,14 +567,12 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotDisableCertificateValidation();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotDisableCertificateValidation();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

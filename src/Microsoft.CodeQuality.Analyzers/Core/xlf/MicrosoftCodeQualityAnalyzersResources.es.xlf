@@ -52,6 +52,21 @@
         <target state="translated">Los nombres de métodos asincrónicos deben terminar en Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Una excepción general, como System.Exception o System.SystemException, o un tipo de excepción no permitido se captura con una instrucción catch, o bien se utiliza una cláusula catch general. No deben capturarse excepciones generales o no permitidas.</target>

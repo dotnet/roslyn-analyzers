@@ -52,6 +52,21 @@
         <target state="translated">비동기 메서드 이름은 Async로 끝나야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">System.Exception이나 System.SystemException과 같은 일반 예외 또는 허용되지 않는 예외 형식이 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외와 허용되지 않는 예외는 catch되면 안 됩니다.</target>

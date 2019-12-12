@@ -1,22 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotAddSchemaByURL,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotAddSchemaByURL,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotAddSchemaByURLTests : DiagnosticAnalyzerTestBase
+    public class DoNotAddSchemaByURLTests
     {
         [Fact]
-        public void TestAddWithStringStringParametersDiagnostic()
+        public async Task TestAddWithStringStringParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Schema;
 
@@ -28,9 +29,9 @@ class TestClass
         xsc.Add(""urn: bookstore - schema"", ""books.xsd"");
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotAddSchemaByURL.Rule));
+            GetCSharpResultAt(10, 9));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml.Schema
 
@@ -40,13 +41,13 @@ class TestClass
         xsc.Add(""urn: bookstore - schema"", ""books.xsd"")
     End Sub
 End Class",
-            GetBasicResultAt(8, 9, DoNotAddSchemaByURL.Rule));
+            GetBasicResultAt(8, 9));
         }
 
         [Fact]
-        public void TestAddWithNullStringParametersDiagnostic()
+        public async Task TestAddWithNullStringParametersDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Schema;
 
@@ -58,9 +59,9 @@ class TestClass
         xsc.Add(null, ""books.xsd"");
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotAddSchemaByURL.Rule));
+            GetCSharpResultAt(10, 9));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml.Schema
 
@@ -70,13 +71,13 @@ class TestClass
         xsc.Add(Nothing, ""books.xsd"")
     End Sub
 End Class",
-            GetBasicResultAt(8, 9, DoNotAddSchemaByURL.Rule));
+            GetBasicResultAt(8, 9));
         }
 
         [Fact]
-        public void TestAddWithXmlSchemaCollectionParameterNoDiagnostic()
+        public async Task TestAddWithXmlSchemaCollectionParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Schema;
 
@@ -91,9 +92,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestAddWithXmlSchemaParameterNoDiagnostic()
+        public async Task TestAddWithXmlSchemaParameterNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Schema;
 
@@ -108,9 +109,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestNormalAddMethodNoDiagnostic()
+        public async Task TestNormalAddMethodNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.Schema;
 
@@ -127,14 +128,12 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotAddSchemaByURL();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotAddSchemaByURL();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column);
     }
 }

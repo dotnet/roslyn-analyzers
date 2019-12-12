@@ -60,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var disposeMethodKind = containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task);
+                    var disposeMethodKind = disposeAnalysisHelper.GetDisposeMethodKind(containingMethod);
                     switch (disposeMethodKind)
                     {
                         case DisposeMethodKind.Dispose:
@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             invocation.Instance is IInstanceReferenceOperation instanceReference &&
                             instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                         {
-                            Debug.Assert(invocation.TargetMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) == disposeMethodKind);
+                            Debug.Assert(disposeAnalysisHelper.GetDisposeMethodKind(invocation.TargetMethod) == disposeMethodKind);
                             invokesBaseDispose = true;
                         }
                     }, OperationKind.Invocation);

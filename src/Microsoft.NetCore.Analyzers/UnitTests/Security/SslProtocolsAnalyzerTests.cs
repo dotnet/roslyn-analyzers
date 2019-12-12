@@ -1,23 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using Xunit.Abstractions;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.SslProtocolsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.SslProtocolsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class SslProtocolsAnalyzerTests : DiagnosticAnalyzerTestBase
+    public class SslProtocolsAnalyzerTests
     {
-        public SslProtocolsAnalyzerTests(ITestOutputHelper output)
-            : base(output)
-        {
-        }
-
         [Fact]
-        public void DocSample1_CSharp_Violation()
+        public async Task DocSample1_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -34,9 +35,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample1_VB_Violation()
+        public async Task DocSample1_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Security.Authentication
 
@@ -52,9 +53,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample2_CSharp_Violation()
+        public async Task DocSample2_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -70,9 +71,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample2_VB_Violation()
+        public async Task DocSample2_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Security.Authentication
 
@@ -87,9 +88,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample1_CSharp_Solution()
+        public async Task DocSample1_CSharp_Solution()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -105,9 +106,9 @@ public class TestClass
         }
 
         [Fact]
-        public void DocSample1_VB_Solution()
+        public async Task DocSample1_VB_Solution()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Security.Authentication
 
@@ -122,9 +123,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample3_CSharp_Violation()
+        public async Task DocSample3_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -140,9 +141,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample3_VB_Violation()
+        public async Task DocSample3_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Security.Authentication
 
@@ -157,9 +158,9 @@ End Class
         }
 
         [Fact]
-        public void DocSample4_CSharp_Violation()
+        public async Task DocSample4_CSharp_Violation()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -175,9 +176,9 @@ public class ExampleClass
         }
 
         [Fact]
-        public void DocSample4_VB_Violation()
+        public async Task DocSample4_VB_Violation()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Security.Authentication
 
@@ -192,9 +193,9 @@ End Class
         }
 
         [Fact]
-        public void Argument_Ssl2_Diagnostic()
+        public async Task Argument_Ssl2_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net.Security;
 using System.Security.Authentication;
@@ -211,9 +212,9 @@ class TestClass
         }
 
         [Fact]
-        public void Argument_Tls12_Diagnostic()
+        public async Task Argument_Tls12_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net.Security;
 using System.Security.Authentication;
@@ -230,9 +231,9 @@ class TestClass
         }
 
         [Fact]
-        public void Argument_None_Diagnostic()
+        public async Task Argument_None_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Net.Security;
 using System.Security.Authentication;
@@ -248,9 +249,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseSsl3_Diagnostic()
+        public async Task UseSsl3_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -265,9 +266,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls_Diagnostic()
+        public async Task UseTls_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -282,9 +283,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls11_Diagnostic()
+        public async Task UseTls11_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -299,9 +300,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseSystemDefault_NoDiagnostic()
+        public async Task UseSystemDefault_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -316,9 +317,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls12_Diagnostic()
+        public async Task UseTls12_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -332,10 +333,17 @@ class TestClass
                 GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls12"));
         }
 
-        [FactUnlessTls13Unavailable]
-        public void UseTls13_Diagnostic()
+        [Fact]
+        public async Task UseTls13_Diagnostic()
         {
-            VerifyCSharp(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net48.Default,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 using System.Security.Authentication;
 
@@ -346,13 +354,19 @@ class TestClass
         SslProtocols protocols = SslProtocols.Tls13;
     }
 }",
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls13"));
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls13"),
+                    },
+                }
+            }.RunAsync();
         }
 
         [Fact]
-        public void UseTls12OrdTls11_Diagnostic()
+        public async Task UseTls12OrdTls11_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -368,9 +382,9 @@ class TestClass
         }
 
         [Fact]
-        public void Use192CompoundAssignment_Diagnostic()
+        public async Task Use192CompoundAssignment_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -387,10 +401,10 @@ class TestClass
         }
 
         [Fact]
-        public void Use384SimpleAssignment_Diagnostic()
+        public async Task Use384SimpleAssignment_Diagnostic()
         {
             // 384 = SchProtocols.Tls11Server | SchProtocols.Tls10Client
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -407,9 +421,9 @@ class TestClass
         }
 
         [Fact]
-        public void Use768SimpleAssignmentOrExpression_Diagnostic()
+        public async Task Use768SimpleAssignmentOrExpression_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -426,9 +440,9 @@ class TestClass
         }
 
         [Fact]
-        public void Use12288SimpleAssignmentOrExpression_Diagnostic()
+        public async Task Use12288SimpleAssignmentOrExpression_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -445,9 +459,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls12OrTls11Or192_Diagnostic()
+        public async Task UseTls12OrTls11Or192_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -465,9 +479,9 @@ class TestClass
         }
 
         [Fact]
-        public void UseTls12Or192_Diagnostic()
+        public async Task UseTls12Or192_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -478,14 +492,14 @@ class TestClass
         SslProtocols protocols = SslProtocols.Tls12 | (SslProtocols)192;
     }
 }",
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.HardcodedRule, "Tls12"),
-                GetCSharpResultAt(9, 34, SslProtocolsAnalyzer.DeprecatedRule, "3264"));
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.HardcodedRule).WithSpan(9, 34, 9, 52).WithArguments("Tls12"),
+                VerifyCS.Diagnostic(SslProtocolsAnalyzer.DeprecatedRule).WithSpan(9, 34, 9, 72).WithArguments("3264"));
         }
 
         [Fact]
-        public void Use768DeconstructionAssignment_NoDiagnostic()
+        public async Task Use768DeconstructionAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -503,9 +517,9 @@ class TestClass
         }
 
         [Fact]
-        public void Use24Plus24SimpleAssignment_Diagnostic()
+        public async Task Use24Plus24SimpleAssignment_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -520,9 +534,9 @@ class TestClass
         }
 
         [Fact]
-        public void Use768NotSslProtocols_NoDiagnostic()
+        public async Task Use768NotSslProtocols_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Security.Authentication;
 
@@ -535,14 +549,14 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SslProtocolsAnalyzer();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyCS.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SslProtocolsAnalyzer();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => VerifyVB.Diagnostic(rule)
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

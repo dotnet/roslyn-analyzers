@@ -71,7 +71,7 @@ namespace ReleaseNotesUtil
             if (!RoslynString.IsNullOrWhiteSpace(latestRulesJsonPath))
             {
                 RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
-                Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
+                Dictionary<string?, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
                 foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
                 {
                     if (RoslynString.IsNullOrWhiteSpace(rule.HelpLink)
@@ -82,8 +82,8 @@ namespace ReleaseNotesUtil
                 }
             }
 
-            Dictionary<string, RuleInfo> oldRulesById = oldContent.Rules.ToDictionary(r => r.Id);
-            Dictionary<string, RuleInfo> newRulesById = newContent.Rules.ToDictionary(r => r.Id);
+            Dictionary<string?, RuleInfo> oldRulesById = oldContent.Rules.ToDictionary(r => r.Id);
+            Dictionary<string?, RuleInfo> newRulesById = newContent.Rules.ToDictionary(r => r.Id);
             IEnumerable<RuleInfo> addedRules =
                 newContent.Rules
                     .Where(r => !oldRulesById.ContainsKey(r.Id));

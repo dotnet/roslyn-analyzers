@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// TODO(dotpaul): Enable nullable analysis.
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -14,155 +12,160 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 {
     public static class SecurityDiagnosticHelpers
     {
-        public static bool IsXslCompiledTransformLoad(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXslCompiledTransformLoad([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XslCompiledTransform != null
                 && method.MatchMethodByName(xmlTypes.XslCompiledTransform, SecurityMemberNames.Load);
         }
 
-        public static bool IsXmlDocumentCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlDocumentCtorDerived([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
-            return method != null &&
-                   method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
+            return method != null
+                && xmlTypes.XmlDocument != null
+                && method.MatchMethodDerivedByName(xmlTypes.XmlDocument, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlDocumentXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlDocumentXmlResolverProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlDocument, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderCtorDerived(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderCtorDerived([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XmlTextReader != null
                 && method.MatchMethodDerivedByName(xmlTypes.XmlTextReader, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlTextReaderXmlResolverPropertyDerived(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderXmlResolverPropertyDerived([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderDtdProcessingPropertyDerived(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderDtdProcessingPropertyDerived([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedPropertyDerived(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlTextReaderXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderXmlResolverProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlTextReaderDtdProcessingProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlTextReaderDtdProcessingProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlTextReader, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlReaderSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsCtor([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XmlReaderSettings != null
                 && method.MatchMethodByName(xmlTypes.XmlReaderSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXmlReaderSettingsXmlResolverProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsXmlResolverProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.XmlResolver);
         }
 
-        public static bool IsXmlReaderSettingsDtdProcessingProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsDtdProcessingProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.DtdProcessing);
         }
 
-        public static bool IsXmlReaderSettingsMaxCharactersFromEntitiesProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsMaxCharactersFromEntitiesProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XmlReaderSettings, SecurityMemberNames.MaxCharactersFromEntities);
         }
 
-        public static bool IsXsltSettingsCtor(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsCtor([NotNullWhen(returnValue: true)] IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return method != null
+                && xmlTypes.XsltSettings != null
                 && method.MatchMethodByName(xmlTypes.XsltSettings, WellKnownMemberNames.InstanceConstructorName);
         }
 
-        public static bool IsXsltSettingsTrustedXsltProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsTrustedXsltProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.TrustedXslt);
         }
 
-        public static bool IsXsltSettingsDefaultProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsDefaultProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.Default);
         }
 
-        public static bool IsXsltSettingsEnableDocumentFunctionProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsEnableDocumentFunctionProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableDocumentFunction);
         }
 
-        public static bool IsXsltSettingsEnableScriptProperty(IPropertySymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsEnableScriptProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return IsSpecifiedProperty(symbol, xmlTypes.XsltSettings, SecurityMemberNames.EnableScript);
         }
 
-        public static bool IsXmlResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlResolverType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
                 && symbol.DerivesFrom(xmlTypes.XmlResolver, baseTypesOnly: true);
         }
 
-        public static bool IsXmlSecureResolverType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlSecureResolverType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
                 && symbol.DerivesFrom(xmlTypes.XmlSecureResolver, baseTypesOnly: true);
         }
 
-        public static bool IsXsltSettingsType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXsltSettingsType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return Equals(symbol, xmlTypes.XsltSettings);
         }
 
-        public static bool IsXmlReaderSettingsType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderSettingsType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return Equals(symbol, xmlTypes.XmlReaderSettings);
         }
 
-        public static int GetXmlResolverParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlResolverParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlResolverType);
         }
 
-        public static int GetXsltSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXsltSettingsParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return GetSpecifiedParameterIndex(method, xmlTypes, IsXsltSettingsType);
         }
 
-        public static int GetXmlReaderSettingsParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int GetXmlReaderSettingsParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderSettingsType);
         }
 
-        public static bool IsXmlReaderType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
+        public static bool IsXmlReaderType([NotNullWhen(returnValue: true)] ITypeSymbol? symbol, CompilationSecurityTypes xmlTypes)
         {
             return symbol != null
                 && symbol.DerivesFrom(xmlTypes.XmlReader, baseTypesOnly: true);
         }
 
-        public static int HasXmlReaderParameter(IMethodSymbol method, CompilationSecurityTypes xmlTypes)
+        public static int HasXmlReaderParameter(IMethodSymbol? method, CompilationSecurityTypes xmlTypes)
         {
             return GetSpecifiedParameterIndex(method, xmlTypes, IsXmlReaderType);
         }
 
-        public static bool IsExpressionEqualsNull(IOperation operation)
+        public static bool IsExpressionEqualsNull([NotNullWhen(returnValue: true)] IOperation? operation)
         {
             return operation is ILiteralOperation literal && literal.HasNullConstantValue();
         }
 
-        public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
+        public static bool IsExpressionEqualsDtdProcessingParse([NotNullWhen(returnValue: true)] IOperation? operation)
         {
             return operation is IFieldReferenceOperation enumRef && enumRef.HasConstantValue(2); // DtdProcessing.Parse
         }
 
-        public static bool IsExpressionEqualsIntZero(IOperation operation)
+        public static bool IsExpressionEqualsIntZero([NotNullWhen(returnValue: true)] IOperation? operation)
         {
 
             if (!(operation is ILiteralOperation literal) || !literal.ConstantValue.HasValue)
@@ -173,9 +176,9 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return literal.HasConstantValue(0);
         }
 
-        private static bool IsSpecifiedProperty(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        private static bool IsSpecifiedProperty([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? namedType, string propertyName)
         {
-            if (symbol != null)
+            if (symbol != null && namedType != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyByName(namedType, propertyName);
@@ -184,9 +187,9 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return false;
         }
 
-        private static bool IsSpecifiedPropertyDerived(IPropertySymbol symbol, INamedTypeSymbol namedType, string propertyName)
+        private static bool IsSpecifiedPropertyDerived([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, [NotNullWhen(returnValue: true)]  INamedTypeSymbol? namedType, string propertyName)
         {
-            if (symbol != null)
+            if (symbol != null && namedType != null)
             {
                 IPropertySymbol property = (IPropertySymbol)symbol;
                 return property.MatchPropertyDerivedByName(namedType, propertyName);
@@ -195,7 +198,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
             return false;
         }
 
-        private static int GetSpecifiedParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
+        private static int GetSpecifiedParameterIndex(IMethodSymbol? method, CompilationSecurityTypes xmlTypes, Func<ITypeSymbol, CompilationSecurityTypes, bool> func)
         {
             int index = -1;
 
@@ -223,13 +226,14 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         /// This can be used to decide whether we are referencing the expected framework for a given type.
         /// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core).
         /// </remarks>
-        public static bool? IsTypeDeclaredInExpectedAssembly(Compilation compilation, string typeName, string assemblyName)
+        public static bool? IsTypeDeclaredInExpectedAssembly([NotNullWhen(returnValue: true)] Compilation? compilation, string typeName, string assemblyName)
         {
             if (compilation == null)
             {
                 return null;
             }
-            INamedTypeSymbol typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
+
+            INamedTypeSymbol? typeSymbol = compilation.GetOrCreateTypeByMetadataName(typeName);
             return typeSymbol?.ContainingAssembly.Identity.Name.Equals(assemblyName, StringComparison.Ordinal);
         }
 
@@ -274,7 +278,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         /// For .NET Framework 4.X, this method returns the actual framework version instead of assembly verison of mscorlib,
         /// i.e. for .NET framework 4.5.2, this method return 4.5.2 instead of 4.0.0.0.
         /// </remarks>
-        public static Version GetDotNetFrameworkVersion(Compilation compilation)
+        public static Version? GetDotNetFrameworkVersion([NotNullWhen(returnValue: true)] Compilation? compilation)
         {
             if (compilation == null || !IsTypeDeclaredInExpectedAssembly(compilation, "System.String", "mscorlib").GetValueOrDefault())
             {

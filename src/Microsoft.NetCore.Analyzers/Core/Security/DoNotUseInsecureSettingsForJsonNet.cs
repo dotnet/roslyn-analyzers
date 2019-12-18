@@ -206,7 +206,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>? allResults = null;
+                            PooledDictionary<(Location Location, IMethodSymbol? Method), HazardousUsageEvaluationResult>? allResults = null;
                             try
                             {
                                 lock (rootOperationsNeedingAnalysis)
@@ -236,7 +236,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     return;
                                 }
 
-                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                foreach (KeyValuePair<(Location Location, IMethodSymbol? Method), HazardousUsageEvaluationResult> kvp
                                     in allResults)
                                 {
                                     DiagnosticDescriptor descriptor;

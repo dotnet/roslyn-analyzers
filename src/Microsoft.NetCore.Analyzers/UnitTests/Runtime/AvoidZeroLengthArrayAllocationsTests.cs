@@ -143,12 +143,10 @@ class C
         {
             const string badSource = @"
 // This is a compile error but we want to ensure analyzer doesn't complain for it.
-[System.Runtime.CompilerServices.Dynamic(new bool[0])]
+[System.Runtime.CompilerServices.Dynamic(new bool[0]){|CS0116:]|}
 ";
 
-            await VerifyCS.VerifyAnalyzerAsync(
-                badSource,
-                DiagnosticResult.CompilerError("CS0116").WithSpan(3, 54, 3, 55).WithMessage("A namespace cannot directly contain members such as fields or methods"));
+            await VerifyCS.VerifyAnalyzerAsync(badSource);
         }
 
         [Fact]

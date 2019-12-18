@@ -920,7 +920,8 @@ public class C
                     },
                     ExpectedDiagnostics =
                     {
-                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 29).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
+                        // Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead
+                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 29),
                     },
                 },
             }.RunAsync();
@@ -986,7 +987,8 @@ public class C
                     },
                     ExpectedDiagnostics =
                     {
-                        DiagnosticResult.CompilerError("CS0266").WithSpan(13, 16, 13, 38).WithMessage("Cannot implicitly convert type 'object' to 'C'. An explicit conversion exists (are you missing a cast?)"),
+                        // Cannot implicitly convert type 'object' to 'C'. An explicit conversion exists (are you missing a cast?)
+                        DiagnosticResult.CompilerError("CS0266").WithSpan(13, 16, 13, 38),
                     },
                 },
                 FixedState =
@@ -1011,7 +1013,8 @@ public class C
                     },
                     ExpectedDiagnostics =
                     {
-                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 30).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
+                        // Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead
+                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 30),
                     },
                 },
             }.RunAsync();

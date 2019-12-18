@@ -151,9 +151,8 @@ class C2
 }";
 
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("CS0122")
-                    .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+                // 'C1' is inaccessible due to its protection level
+                DiagnosticResult.CompilerError("CS0122").WithLocation(4, 15));
         }
 
         [Fact]
@@ -172,9 +171,8 @@ Class C2
 End Class";
 
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("BC30389")
-                    .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+                // 'N1.C1' is not accessible in this context because it is 'Friend'.
+                DiagnosticResult.CompilerError("BC30389").WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations));
         }
 
         [Fact]
@@ -239,9 +237,8 @@ class C2
 }";
 
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("CS0122")
-                    .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+                // 'C1' is inaccessible due to its protection level
+                DiagnosticResult.CompilerError("CS0122").WithLocation(4, 15));
         }
 
         [Fact]
@@ -262,9 +259,8 @@ Class C2
 End Class";
 
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("BC30389")
-                    .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+                // 'N1.C1' is not accessible in this context because it is 'Friend'.
+                DiagnosticResult.CompilerError("BC30389").WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations));
         }
 
         [Fact]
@@ -1753,9 +1749,8 @@ class C2
 
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
                 GetCSharpResultAt(6, 13, "N1.C1.Event", "N2"),
-                DiagnosticResult.CompilerError("CS0070")
-                    .WithLocation(6, 15)
-                    .WithMessage("The event 'C1.Event' can only appear on the left hand side of += or -= (except when used from within the type 'C1')"));
+                // The event 'C1.Event' can only appear on the left hand side of += or -= (except when used from within the type 'C1')
+                DiagnosticResult.CompilerError("CS0070").WithLocation(6, 15));
         }
 
         [Fact]
@@ -1781,9 +1776,8 @@ End Class";
 
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
                 GetBasicResultAt(4, 22, "N1.C1.Event", "N2"),
-                DiagnosticResult.CompilerError("BC32022")
-                    .WithLocation(4, 22)
-                    .WithMessage("'Friend Event [Event] As EventHandler' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event."));
+                // 'Friend Event [Event] As EventHandler' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event.
+                DiagnosticResult.CompilerError("BC32022").WithLocation(4, 22));
         }
 
         [Fact]

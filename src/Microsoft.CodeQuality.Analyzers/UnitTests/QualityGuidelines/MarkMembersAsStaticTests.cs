@@ -697,7 +697,8 @@ class C
         throw;
     }
 }",
-            DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
+            // A throw statement with no arguments is not allowed outside of a catch clause
+            DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9));
         }
 
         [Fact, WorkItem(2785, "https://github.com/dotnet/roslyn-analyzers/issues/2785")]

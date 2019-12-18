@@ -384,12 +384,13 @@ End Class",
             {
                 TestCode =
 @"Friend Class C
-    Private Shared Sub mAiN() ' error BC30737: No accessible 'Main' method with an appropriate signature was found in 'TestProject'.
+    Private Shared Sub mAiN()
     End Sub
 End Class",
                 ExpectedDiagnostics =
                 {
-                    DiagnosticResult.CompilerError("BC30737").WithMessage("No accessible 'Main' method with an appropriate signature was found in 'TestProject'."),
+                    // error BC30737: No accessible 'Main' method with an appropriate signature was found in 'TestProject'.
+                    DiagnosticResult.CompilerError("BC30737"),
                 },
                 SolutionTransforms =
                 {

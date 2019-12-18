@@ -148,7 +148,8 @@ class C
 
             await VerifyCS.VerifyAnalyzerAsync(
                 badSource,
-                DiagnosticResult.CompilerError("CS0116").WithSpan(3, 54, 3, 55).WithMessage("A namespace cannot directly contain members such as fields or methods"));
+                // A namespace cannot directly contain members such as fields or methods
+                DiagnosticResult.CompilerError("CS0116").WithSpan(3, 54, 3, 55));
         }
 
         [Fact]

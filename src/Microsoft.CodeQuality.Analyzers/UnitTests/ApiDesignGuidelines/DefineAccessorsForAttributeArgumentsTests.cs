@@ -1,11 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpDefineAccessorsForAttributeArgumentsAnalyzer,
@@ -2192,7 +2188,8 @@ End Class
             GetCA1019BasicIncreaseVisibilityResultAt(76, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(93, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(110, 3, "Name", "name"),
-            DiagnosticResult.CompilerError("BC31105").WithLocation(126, 3).WithMessage("'ReadOnly' properties cannot have an access modifier on 'Get'."),
+            // 'ReadOnly' properties cannot have an access modifier on 'Get'.
+            DiagnosticResult.CompilerError("BC31105").WithLocation(126, 3),
             GetCA1019BasicIncreaseVisibilityResultAt(126, 11, "Name", "name"));
         }
 

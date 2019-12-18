@@ -343,7 +343,8 @@ End Class
 ",
                 // Test0.vb(3,21): warning CA1024: Use properties where appropriate
                 GetCA1024BasicResultAt(3, 21, "GetSomethingWithUnboundInvocation"),
-                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 9).WithMessage("'Console' is not declared. It may be inaccessible due to its protection level."));
+                // Test0.vb(4) : error BC30451: 'Console' is not declared. It may be inaccessible due to its protection level.
+                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 9));
         }
 
         [Fact]

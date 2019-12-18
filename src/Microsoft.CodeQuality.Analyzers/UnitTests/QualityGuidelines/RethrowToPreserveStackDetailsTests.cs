@@ -403,7 +403,7 @@ class Program
             {
                 throw;
             }
-            catch (ArithmeticException)
+            catch (ArithmeticException)   // error CS0160: A previous catch clause already catches all exceptions of this or of a super type ('ArithmeticException')
             {
                 try
                 {
@@ -411,7 +411,7 @@ class Program
                 }
                 catch (ArithmeticException i)
                 {
-                    throw e;
+                    throw e;   // error CS0103: The name 'e' does not exist in the current context
                 }
             }
         }
@@ -422,8 +422,8 @@ class Program
     }
 }
 ",
-            DiagnosticResult.CompilerError("CS0160").WithLocation(18, 20).WithMessage("A previous catch clause already catches all exceptions of this or of a super type ('ArithmeticException')"),
-            DiagnosticResult.CompilerError("CS0103").WithLocation(26, 27).WithMessage("The name 'e' does not exist in the current context"));
+            DiagnosticResult.CompilerError("CS0160").WithLocation(18, 20),
+            DiagnosticResult.CompilerError("CS0103").WithLocation(26, 27));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -438,7 +438,7 @@ Class Program
                 Try
                     Throw New ArithmeticException()
                 Catch e As Exception
-                    Throw ex
+                    Throw ex   ' error BC30451: 'ex' is not declared. It may be inaccessible due to its protection level.
                 End Try
             End Try
         Catch ex As Exception
@@ -447,7 +447,7 @@ Class Program
     End Sub
 End Class
 ",
-            DiagnosticResult.CompilerError("BC30451").WithLocation(14, 27).WithMessage("'ex' is not declared. It may be inaccessible due to its protection level."));
+            DiagnosticResult.CompilerError("BC30451").WithLocation(14, 27));
         }
 
         [Fact]

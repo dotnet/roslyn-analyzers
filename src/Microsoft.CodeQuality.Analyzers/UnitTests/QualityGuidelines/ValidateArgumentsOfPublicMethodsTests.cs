@@ -3769,7 +3769,8 @@ public class C
     }
 }
 ",
-            DiagnosticResult.CompilerError("CS0165").WithLocation(8, 9).WithMessage("Use of unassigned local variable 'c2'"),
+            // Test0.cs(8,9): error CS0165: Use of unassigned local variable 'c2'
+            DiagnosticResult.CompilerError("CS0165").WithLocation(8, 9),
             // Test0.cs(8,15): warning CA1062: In externally visible method 'void C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(8, 15, "void C.M(C c)", "c"));
         }

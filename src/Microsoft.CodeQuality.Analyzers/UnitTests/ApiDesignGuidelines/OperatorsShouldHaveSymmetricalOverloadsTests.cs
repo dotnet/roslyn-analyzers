@@ -19,10 +19,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator==(A a1, A a2) { return false; }
+    public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
-DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined"));
+// Test0.cs(4,32): error CS0216: The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -31,10 +32,11 @@ DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The op
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator!=(A a1, A a2) { return false; }
+    public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="),
-DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined"));
+// Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -60,10 +62,14 @@ public class B
 }
 
 ",
-                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined"),
-                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36).WithMessage("The operator 'B.C.operator ==(B.C, B.C)' requires a matching operator '!=' to also be defined"),
-                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38).WithMessage("The operator 'B.D.operator ==(B.D, B.D)' requires a matching operator '!=' to also be defined"),
-                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38).WithMessage("User-defined operator 'B.D.operator ==(B.D, B.D)' must be declared static and public"));
+                // Test0.cs(4,32): error CS0216: The operator 'A.operator ==(A, A)' requires a matching operator '!=' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
+                // Test0.cs(11,36): error CS0216: The operator 'B.C.operator ==(B.C, B.C)' requires a matching operator '!=' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36),
+                // Test0.cs(16,38): error CS0216: The operator 'B.D.operator ==(B.D, B.D)' requires a matching operator '!=' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38),
+                // Test0.cs(16,38): error CS0558: User-defined operator 'B.D.operator ==(B.D, B.D)' must be declared static and public
+                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -88,10 +94,14 @@ public class B
     }
 }
 ",
-                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined"),
-                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36).WithMessage("The operator 'B.C.operator !=(B.C, B.C)' requires a matching operator '==' to also be defined"),
-                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38).WithMessage("The operator 'B.D.operator !=(B.D, B.D)' requires a matching operator '==' to also be defined"),
-                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38).WithMessage("User-defined operator 'B.D.operator !=(B.D, B.D)' must be declared static and public"));
+                // Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
+                // Test0.cs(11,36): error CS0216: The operator 'B.C.operator !=(B.C, B.C)' requires a matching operator '==' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(11, 36),
+                // Test0.cs(16,38): error CS0216: The operator 'B.D.operator !=(B.D, B.D)' requires a matching operator '==' to also be defined
+                DiagnosticResult.CompilerError("CS0216").WithLocation(16, 38),
+                // Test0.cs(16,38): error CS0558: User-defined operator 'B.D.operator !=(B.D, B.D)' must be declared static and public
+                DiagnosticResult.CompilerError("CS0558").WithLocation(16, 38));
         }
 
         [Fact]
@@ -111,10 +121,11 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator<(A a1, A a2) { return false; }
+    public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<", ">"),
-DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator <(A, A)' requires a matching operator '>' to also be defined"));
+// Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -134,10 +145,11 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator<=(A a1, A a2) { return false; }
+    public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<=", ">="),
-DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator <=(A, A)' requires a matching operator '>=' to also be defined"));
+// Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32));
         }
 
         [Fact]
@@ -161,9 +173,11 @@ public class A
     public static bool operator!=(A a1, string a2) { return false; }
 }",
 GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
-DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32).WithMessage("The operator 'A.operator ==(A, int)' requires a matching operator '!=' to also be defined"),
+// Test0.cs(4,32): error CS0216: The operator 'A.operator !=(A, A)' requires a matching operator '==' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(4, 32),
 GetCSharpResultAt(5, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="),
-DiagnosticResult.CompilerError("CS0216").WithLocation(5, 32).WithMessage("The operator 'A.operator !=(A, string)' requires a matching operator '==' to also be defined"));
+// Test0.cs(5,32): error CS0216: The operator 'A.operator !=(A, string)' requires a matching operator '==' to also be defined
+DiagnosticResult.CompilerError("CS0216").WithLocation(5, 32));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

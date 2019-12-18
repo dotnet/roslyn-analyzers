@@ -333,14 +333,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"public class TestClass
                            {
                                public override void TestMethod(string arg1, string arg2) { }
+                                // Test0.cs(3,53): error CS0115: 'TestClass.TestMethod(string, string)': no suitable method found to override
                            }",
-                           DiagnosticResult.CompilerError("CS0115").WithLocation(3, 53).WithMessage("'TestClass.TestMethod(string, string)': no suitable method found to override"));
+                           DiagnosticResult.CompilerError("CS0115").WithLocation(3, 53));
 
             await VerifyVB.VerifyAnalyzerAsync(@"Public Class TestClass
                               Public Overrides Sub TestMethod(arg1 As String, arg2 As String)
+                                ' Test0.vb(2) : error BC30284: sub 'TestMethod' cannot be declared 'Overrides' because it does not override a sub in a base class.
                               End Sub
                           End Class",
-                          DiagnosticResult.CompilerError("BC30284").WithLocation(2, 52).WithMessage("sub 'TestMethod' cannot be declared 'Overrides' because it does not override a sub in a base class."));
+                          DiagnosticResult.CompilerError("BC30284").WithLocation(2, 52));
         }
 
         [Fact]

@@ -921,7 +921,8 @@ class C
           GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
           // Test0.cs(30,47): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
           GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
-          DiagnosticResult.CompilerError("CS0246").WithLocation(34, 44).WithMessage("The type or namespace name 'UndefinedType' could not be found (are you missing a using directive or an assembly reference?)"),
+          // Test0.cs(34,44): error CS0246: The type or namespace name 'UndefinedType' could not be found (are you missing a using directive or an assembly reference?)
+          DiagnosticResult.CompilerError("CS0246").WithLocation(34, 44),
           // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
           GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
         }
@@ -975,7 +976,8 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"),
-      DiagnosticResult.CompilerError("BC30002").WithLocation(24, 53).WithMessage("Type 'UndefinedType' is not defined."));
+      // Test0.vb(24) : error BC30002: Type 'UndefinedType' is not defined.
+      DiagnosticResult.CompilerError("BC30002").WithLocation(24, 53));
         }
 
         [Fact]

@@ -299,11 +299,11 @@ Imports System.Globalization
 
 Class C
     Public Sub DoesNotAssignObjectToVariable()
-        New C()
+        New C() ' error BC30035: Syntax error
     End Sub
 End Class
 ",
-                DiagnosticResult.CompilerError("BC30035").WithLocation(7, 9).WithMessage("Syntax error."));
+                DiagnosticResult.CompilerError("BC30035").WithLocation(7, 9));
         }
 
         [Fact]

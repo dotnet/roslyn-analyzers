@@ -258,7 +258,7 @@ public class C
                     ExpectedDiagnostics =
                     {
                         // 🐛 the Fix All should not be producing this invalid code
-                        DiagnosticResult.CompilerError("CS1061").WithSpan(9, 69, 9, 83).WithMessage("'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)"),
+                        DiagnosticResult.CompilerError("CS1061").WithSpan(9, 69, 9, 83)/*.WithMessage("'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)")*/,
                     },
                 },
                 NumberOfFixAllIterations = 2,
@@ -315,7 +315,7 @@ End Class
                     ExpectedDiagnostics =
                     {
                         // 🐛 the Fix All should not be producing this invalid code
-                        DiagnosticResult.CompilerError("BC30456").WithSpan(7, 15, 7, 83).WithMessage("'ConfigureAwait' is not a member of 'ConfiguredTaskAwaitable'."),
+                        DiagnosticResult.CompilerError("BC30456").WithSpan(7, 15, 7, 83)/*.WithMessage("'ConfigureAwait' is not a member of 'ConfiguredTaskAwaitable'.")*/,
                     },
                 },
                 NumberOfFixAllIterations = 2,

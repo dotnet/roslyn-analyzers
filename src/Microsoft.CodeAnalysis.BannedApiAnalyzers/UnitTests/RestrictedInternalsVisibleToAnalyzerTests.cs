@@ -153,7 +153,7 @@ class C2
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
                 DiagnosticResult.CompilerError("CS0122")
                     .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+                    /*.WithMessage("'C1' is inaccessible due to its protection level")*/);
         }
 
         [Fact]
@@ -174,7 +174,7 @@ End Class";
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
                 DiagnosticResult.CompilerError("BC30389")
                     .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+                    /*.WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'.")*/);
         }
 
         [Fact]
@@ -241,7 +241,7 @@ class C2
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
                 DiagnosticResult.CompilerError("CS0122")
                     .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+                    /*.WithMessage("'C1' is inaccessible due to its protection level")*/);
         }
 
         [Fact]
@@ -264,7 +264,7 @@ End Class";
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
                 new DiagnosticResult("BC30389", DiagnosticSeverity.Error)
                     .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+                    /*.WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'.")*/);
         }
 
         [Fact]
@@ -1755,7 +1755,7 @@ class C2
                 GetCSharpResultAt(6, 13, "N1.C1.Event", "N2"),
                 DiagnosticResult.CompilerError("CS0070")
                     .WithLocation(6, 15)
-                    .WithMessage("The event 'C1.Event' can only appear on the left hand side of += or -= (except when used from within the type 'C1')"));
+                    /*.WithMessage("The event 'C1.Event' can only appear on the left hand side of += or -= (except when used from within the type 'C1')")*/);
         }
 
         [Fact]
@@ -1783,7 +1783,7 @@ End Class";
                 GetBasicResultAt(4, 22, "N1.C1.Event", "N2"),
                 DiagnosticResult.CompilerError("BC32022")
                     .WithLocation(4, 22)
-                    .WithMessage("'Friend Event [Event] As EventHandler' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event."));
+                    /*.WithMessage("'Friend Event [Event] As EventHandler' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event.")*/);
         }
 
         [Fact]

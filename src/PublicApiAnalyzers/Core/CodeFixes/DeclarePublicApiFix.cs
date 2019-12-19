@@ -28,17 +28,15 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return new PublicSurfaceAreaFixAllProvider();
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Project project = context.Document.Project;
             TextDocument publicSurfaceAreaDocument = GetPublicSurfaceAreaDocument(project);
             if (publicSurfaceAreaDocument == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 string minimalSymbolName = diagnostic.Properties[DeclarePublicApiAnalyzer.MinimalNamePropertyBagKey];
@@ -53,6 +51,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             c => GetFix(publicSurfaceAreaDocument, publicSurfaceAreaSymbolName, siblingSymbolNamesToRemove, c)),
                         diagnostic);
             }
+
+            return Task.CompletedTask;
         }
 
         private static TextDocument GetPublicSurfaceAreaDocument(Project project)

@@ -111,6 +111,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 miscellaneousOptions:
                     SymbolDisplayMiscellaneousOptions.None);
 
+        private const int IncludeNullableReferenceTypeModifier = 1 << 6;
+
         private static readonly SymbolDisplayFormat s_publicApiFormat =
             new SymbolDisplayFormat(
                 globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining,
@@ -130,7 +132,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     SymbolDisplayParameterOptions.IncludeName |
                     SymbolDisplayParameterOptions.IncludeDefaultValue,
                 miscellaneousOptions:
-                    SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+                    SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+                    (SymbolDisplayMiscellaneousOptions)IncludeNullableReferenceTypeModifier);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(DeclareNewApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,

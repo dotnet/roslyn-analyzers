@@ -925,6 +925,27 @@ C.Property.set -> void";
         }
 
         [Fact]
+        public async Task TestSimpleMissingMember_Fix_WithNullability()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? {|RS0016:NewField|}; // Newly added field, not in current public API.
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"C
+C.C() -> void";
+            var fixedUnshippedText = @"C
+C.C() -> void
+C.NewField -> string?";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
         public async Task TestAddAndRemoveMembers_CSharp_Fix()
         {
             // Unshipped file has a state 'ObsoleteField' entry and a missing 'NewField' entry.
@@ -956,6 +977,46 @@ C.Method() -> void
 C.NewField -> int
 C.Property.get -> int
 C.Property.set -> void";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithRemovedNullability()
+        {
+            var source = @"
+public class C
+{
+    public string {|RS0016:ChangedField|};
+}
+";
+            var shippedText = @"";
+            var unshippedText = @"C
+C.C() -> void
+{|RS0017:C.ChangedField -> string?|}";
+            var fixedUnshippedText = @"C
+C.C() -> void
+C.ChangedField -> string";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithAddedNullability()
+        {
+            var source = @"
+public class C
+{
+    public string? {|RS0016:ChangedField|};
+}
+";
+            var shippedText = @"";
+            var unshippedText = @"C
+C.C() -> void
+{|RS0017:C.ChangedField -> string|}";
+            var fixedUnshippedText = @"C
+C.C() -> void
+C.ChangedField -> string?";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }

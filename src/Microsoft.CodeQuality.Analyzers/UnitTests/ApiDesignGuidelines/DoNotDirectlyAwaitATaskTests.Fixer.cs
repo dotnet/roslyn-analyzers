@@ -78,7 +78,7 @@ public class C
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { fixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Append .ConfigureAwait(true)",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitTrue,
             }.RunAsync();
         }
 
@@ -139,7 +139,7 @@ End Class
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { fixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Append .ConfigureAwait(true)",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitTrue,
             }.RunAsync();
         }
 
@@ -233,6 +233,7 @@ public class C
 }
 ";
 
+            // 🐛 the Fix All should not be producing this invalid code
             var fixAllCode = @"
 using System.Threading.Tasks;
 
@@ -241,7 +242,7 @@ public class C
     public async Task M()
     {
         Task<Task> t = null;
-        await (await t.ConfigureAwait(false)).ConfigureAwait(false).ConfigureAwait(false); // both have warnings.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false).{|CS1061:ConfigureAwait|}(false); // both have warnings.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
     }
@@ -252,15 +253,7 @@ public class C
             {
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { fixedCode } },
-                BatchFixedState =
-                {
-                    Sources = { fixAllCode },
-                    ExpectedDiagnostics =
-                    {
-                        // 🐛 the Fix All should not be producing this invalid code
-                        DiagnosticResult.CompilerError("CS1061").WithSpan(9, 69, 9, 83).WithMessage("'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)"),
-                    },
-                },
+                BatchFixedState = { Sources = { fixAllCode } },
                 NumberOfFixAllIterations = 2,
             }.RunAsync();
         }
@@ -292,13 +285,15 @@ Public Class C
     End Function
 End Class
 ";
+
+            // 🐛 the Fix All should not be producing this invalid code
             var fixAllCode = @"
 Imports System.Threading.Tasks
 
 Public Class C
     Public Async Function M() As Task
         Dim t As Task(Of Task)
-        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False).ConfigureAwait(False) ' both have warnings.
+        Await {|BC30456:(Await t.ConfigureAwait(False)).ConfigureAwait(False).ConfigureAwait|}(False) ' both have warnings.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
     End Function
@@ -309,15 +304,7 @@ End Class
             {
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { fixedCode } },
-                BatchFixedState =
-                {
-                    Sources = { fixAllCode },
-                    ExpectedDiagnostics =
-                    {
-                        // 🐛 the Fix All should not be producing this invalid code
-                        DiagnosticResult.CompilerError("BC30456").WithSpan(7, 15, 7, 83).WithMessage("'ConfigureAwait' is not a member of 'ConfiguredTaskAwaitable'."),
-                    },
-                },
+                BatchFixedState = { Sources = { fixAllCode } },
                 NumberOfFixAllIterations = 2,
             }.RunAsync();
         }

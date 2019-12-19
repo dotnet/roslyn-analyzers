@@ -368,7 +368,7 @@ public sealed class ImplementsGeneral  : IGeneral
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { expectedFixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3,
             }.RunAsync();
         }
 
@@ -518,7 +518,7 @@ public sealed class ImplementsGeneralThree : IGeneral
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { expectedFixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3,
             }.RunAsync();
         }
 
@@ -950,7 +950,7 @@ End Class
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { expectedFixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3,
             }.RunAsync();
         }
 
@@ -1066,7 +1066,7 @@ End Class
                 TestState = { Sources = { code } },
                 FixedState = { Sources = { expectedFixedCode } },
                 CodeFixIndex = 1,
-                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+                CodeFixEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3,
             }.RunAsync();
         }
 

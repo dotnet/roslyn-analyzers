@@ -46,7 +46,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
                 var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
-                var instantiatedTypeNames = new ConcurrentDictionary<string, object?>();
                 var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
 
                 var compilation = startContext.Compilation;
@@ -129,20 +128,25 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
 
                             if (designerAttributeSymbol != null &&
+                                (attribute.ConstructorArguments.Length == 1 || attribute.ConstructorArguments.Length == 2) &&
                                 attribute.AttributeClass.Equals(designerAttributeSymbol))
                             {
                                 switch (attribute.ConstructorArguments[0].Value)
                                 {
-                                    case string designerTypeName:
-                                        var nameParts = designerTypeName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                        if (nameParts.Length >= 2 &&
-                                            nameParts[1].Trim().Equals(context.Compilation.AssemblyName, StringComparison.Ordinal))
+                                    case string designerTypeName when (designerTypeName != null):
                                         {
-                                            instantiatedTypeNames.TryAdd(nameParts[0].Trim(), null);
+                                            var nameParts = designerTypeName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                            if (nameParts.Length >= 2 &&
+                                                nameParts[1].Trim().Equals(context.Compilation.AssemblyName, StringComparison.Ordinal) &&
+                                                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(nameParts[0].Trim(), out var namedType) &&
+                                                namedType.ContainingAssembly.Equals(compilation.Assembly))
+                                            {
+                                                instantiatedTypes.TryAdd(namedType, null);
+                                            }
+                                            break;
                                         }
-                                        break;
 
-                                    case INamedTypeSymbol namedType:
+                                    case INamedTypeSymbol namedType when (namedType != null):
                                         instantiatedTypes.TryAdd(namedType, null);
                                         break;
                                 }
@@ -238,8 +242,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var uninstantiatedInternalTypes = internalTypes
                         .Select(it => it.Key.OriginalDefinition)
                         .Except(instantiatedTypes.Select(it => it.Key.OriginalDefinition))
-                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes.Keys))
-                        .Where(type => !instantiatedTypeNames.ContainsKey(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Substring("global::".Length)));
+                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes.Keys));
 
                     foreach (var type in uninstantiatedInternalTypes)
                     {

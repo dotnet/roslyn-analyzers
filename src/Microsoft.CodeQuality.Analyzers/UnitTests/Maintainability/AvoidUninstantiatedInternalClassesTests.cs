@@ -1472,7 +1472,9 @@ namespace Foo
     {
         internal class MyTextBoxDesigner { }
     }
-}");
+}",
+                // False-Positive: when evaluating the string of the DesignerAttribute the type symbol doesn't exist yet
+                GetCSharpResultAt(10, 24, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "MyTextBox.MyTextBoxDesigner"));
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]

@@ -2180,7 +2180,7 @@ Public NotInheritable Class PublicPropertyPrivateAccessorTestAttribute
 	End Sub
 
 	Public ReadOnly Property Name() As String
-		Private Get
+		{|BC31105:Private Get|}
 			Return m_name
 		End Get
 	End Property
@@ -2192,7 +2192,6 @@ End Class
             GetCA1019BasicIncreaseVisibilityResultAt(76, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(93, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(110, 3, "Name", "name"),
-            DiagnosticResult.CompilerError("BC31105").WithLocation(126, 3).WithMessage("'ReadOnly' properties cannot have an access modifier on 'Get'."),
             GetCA1019BasicIncreaseVisibilityResultAt(126, 11, "Name", "name"));
         }
 

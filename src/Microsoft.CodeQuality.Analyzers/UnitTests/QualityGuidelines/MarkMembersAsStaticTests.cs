@@ -694,10 +694,9 @@ class C
 {
     private void Validate()
     {
-        throw;
+        {|CS0156:throw|};
     }
-}",
-            DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
+}");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

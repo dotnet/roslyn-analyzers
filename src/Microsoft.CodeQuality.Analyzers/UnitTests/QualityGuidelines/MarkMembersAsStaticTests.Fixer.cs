@@ -980,13 +980,9 @@ public class C
     public C M2(C paramC)
     {
         var localC = fieldC;
-        return ((C)paramC).M1(localC);
+        return {|CS0266:((C)paramC).M1(localC)|};
     }
 }"
-                    },
-                    ExpectedDiagnostics =
-                    {
-                        DiagnosticResult.CompilerError("CS0266").WithSpan(13, 16, 13, 38).WithMessage("Cannot implicitly convert type 'object' to 'C'. An explicit conversion exists (are you missing a cast?)"),
                     },
                 },
                 FixedState =
@@ -1005,13 +1001,9 @@ public class C
     public C M2(C paramC)
     {
         var localC = fieldC;
-        return ((C)paramC).M1(localC);
+        return {|CS0176:((C)paramC).M1|}(localC);
     }
 }",
-                    },
-                    ExpectedDiagnostics =
-                    {
-                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 30).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
                     },
                 },
             }.RunAsync();

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -72,6 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var mef1ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
                 var mef2ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
                 var coClassAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesCoClassAttribute);
+                var designerAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelDesignerAttribute);
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -104,16 +106,52 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         instantiatedTypes.TryAdd(type.BaseType, null);
                     }
 
-                    // Consider class type declared in the CoClass attribute as instantiated
-                    if (coClassAttributeSymbol != null &&
-                        type.TypeKind == TypeKind.Interface &&
-                        type.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals(coClassAttributeSymbol)) is AttributeData coClassAttribute &&
-                        coClassAttribute.ConstructorArguments.Length == 1 &&
-                        coClassAttribute.ConstructorArguments[0].Kind == TypedConstantKind.Type &&
-                        coClassAttribute.ConstructorArguments[0].Value is INamedTypeSymbol typeSymbol &&
-                        typeSymbol.TypeKind == TypeKind.Class)
+                    // Consider class types declared in the CoClassAttribute or DesignerAttribute as instantiated
+                    if ((coClassAttributeSymbol != null || designerAttributeSymbol != null) &&
+                        (type.TypeKind == TypeKind.Class || type.TypeKind == TypeKind.Interface))
                     {
-                        instantiatedTypes.TryAdd(typeSymbol, null);
+                        bool isCoClassHandled = false;
+                        foreach (var attribute in type.GetAttributes())
+                        {
+                            if (coClassAttributeSymbol != null &&
+                                !isCoClassHandled &&
+                                attribute.AttributeClass.Equals(coClassAttributeSymbol))
+                            {
+                                isCoClassHandled = true;
+                                if (attribute.ConstructorArguments.Length == 1 &&
+                                    attribute.ConstructorArguments[0].Kind == TypedConstantKind.Type &&
+                                    attribute.ConstructorArguments[0].Value is INamedTypeSymbol typeSymbol &&
+                                    typeSymbol.TypeKind == TypeKind.Class)
+                                {
+                                    instantiatedTypes.TryAdd(typeSymbol, null);
+                                }
+                            }
+
+                            if (designerAttributeSymbol != null &&
+                                (attribute.ConstructorArguments.Length == 1 || attribute.ConstructorArguments.Length == 2) &&
+                                attribute.AttributeClass.Equals(designerAttributeSymbol))
+                            {
+                                switch (attribute.ConstructorArguments[0].Value)
+                                {
+                                    case string designerTypeName when (designerTypeName != null):
+                                        {
+                                            var nameParts = designerTypeName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                            if (nameParts.Length >= 2 &&
+                                                nameParts[1].Trim().Equals(context.Compilation.AssemblyName, StringComparison.Ordinal) &&
+                                                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(nameParts[0].Trim(), out var namedType) &&
+                                                namedType.ContainingAssembly.Equals(compilation.Assembly))
+                                            {
+                                                instantiatedTypes.TryAdd(namedType, null);
+                                            }
+                                            break;
+                                        }
+
+                                    case INamedTypeSymbol namedType when (namedType != null):
+                                        instantiatedTypes.TryAdd(namedType, null);
+                                        break;
+                                }
+                            }
+                        }
                     }
                 }, SymbolKind.NamedType);
 

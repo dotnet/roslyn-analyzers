@@ -19,9 +19,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator==(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '!=' to also be defined
-}", CompilerDiagnostics.None,
-GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="));
+    public static bool operator{|CS0216:==|}(A a1, A a2) { return false; }
+}", GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="));
         }
 
         [Fact]
@@ -30,9 +29,8 @@ GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator!=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '==' to also be defined
-}", CompilerDiagnostics.None,
-GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
+    public static bool operator{|CS0216:!=|}(A a1, A a2) { return false; }
+}", GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -41,23 +39,23 @@ GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "
             await VerifyCS.VerifyAnalyzerAsync(@"
 class A
 {
-    public static bool operator==(A a1, A a2) { return false; }
+    public static bool operator{|CS0216:==|}(A a1, A a2) { return false; }
 }
 
 public class B
 {
     private class C
     {
-        public static bool operator==(C a1, C a2) { return false; }
+        public static bool operator{|CS0216:==|}(C a1, C a2) { return false; }
     }
 
     public class D
     {
-        internal static bool operator==(D a1, D a2) { return false; }
+        internal static bool operator{|CS0216:{|CS0558:==|}|}(D a1, D a2) { return false; }
     }
 }
 
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -66,22 +64,22 @@ public class B
             await VerifyCS.VerifyAnalyzerAsync(@"
 class A
 {
-    public static bool operator!=(A a1, A a2) { return false; }
+    public static bool operator{|CS0216:!=|}(A a1, A a2) { return false; }
 }
 
 public class B
 {
     private class C
     {
-        public static bool operator!=(C a1, C a2) { return false; }
+        public static bool operator{|CS0216:!=|}(C a1, C a2) { return false; }
     }
 
     public class D
     {
-        internal static bool operator!=(D a1, D a2) { return false; }
+        internal static bool operator{|CS0216:{|CS0558:!=|}|}(D a1, D a2) { return false; }
     }
 }
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]
@@ -101,9 +99,8 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator<(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
-}", CompilerDiagnostics.None,
-GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<", ">"));
+    public static bool operator{|CS0216:<|}(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>' to also be defined
+}", GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<", ">"));
         }
 
         [Fact]
@@ -123,9 +120,9 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator<=(A a1, A a2) { return false; }   // error CS0216: The operator requires a matching operator '>=' to also be defined
-}", CompilerDiagnostics.None,
-GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<=", ">="));
+    public static bool operator{|CS0216:<=|}(A a1, A a2) { return false; }
+}",
+                GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "<=", ">="));
         }
 
         [Fact]
@@ -145,11 +142,11 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
-    public static bool operator==(A a1, int a2) { return false; }
-    public static bool operator!=(A a1, string a2) { return false; }
-}", CompilerDiagnostics.None,
-GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
-GetCSharpResultAt(5, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
+    public static bool operator{|CS0216:==|}(A a1, int a2) { return false; }
+    public static bool operator{|CS0216:!=|}(A a1, string a2) { return false; }
+}",
+                GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
+                GetCSharpResultAt(5, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

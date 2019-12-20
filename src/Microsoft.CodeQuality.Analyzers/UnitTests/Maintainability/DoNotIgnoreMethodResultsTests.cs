@@ -299,10 +299,10 @@ Imports System.Globalization
 
 Class C
     Public Sub DoesNotAssignObjectToVariable()
-        New C() ' error BC30035: Syntax error
+        {|BC30035:New|} C()
     End Sub
 End Class
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]

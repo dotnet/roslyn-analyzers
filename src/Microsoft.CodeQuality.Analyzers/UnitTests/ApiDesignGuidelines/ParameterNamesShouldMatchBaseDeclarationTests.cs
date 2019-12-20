@@ -332,13 +332,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             await VerifyCS.VerifyAnalyzerAsync(@"public class TestClass
                            {
-                               public override void TestMethod(string arg1, string arg2) { }
-                           }", CompilerDiagnostics.None);
+                               public override void {|CS0115:TestMethod|}(string arg1, string arg2) { }
+                           }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"Public Class TestClass
-                              Public Overrides Sub TestMethod(arg1 As String, arg2 As String)
+                              Public Overrides Sub {|BC30284:TestMethod|}(arg1 As String, arg2 As String)
                               End Sub
-                          End Class", CompilerDiagnostics.None);
+                          End Class");
         }
 
         [Fact]

@@ -452,11 +452,10 @@ public class C1
 {
     ~C1()
     {
-        a
+        {|CS0103:a|}{|CS1002:|}
     }
 }
-",
-                CompilerDiagnostics.None);
+");
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
@@ -465,11 +464,10 @@ public class C1
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
 {
-    ~C1() { }
-    => ;
+    {|CS8057:~C1() { }
+    => {|CS1525:;|}|}
 }
-",
-                CompilerDiagnostics.None);
+");
         }
 
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
@@ -478,11 +476,10 @@ public class C1
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Protected Overrides Sub Finalize()
-        a
+        {|BC30451:a|}
     End Sub
 End Class
-",
-                CompilerDiagnostics.None);
+");
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]

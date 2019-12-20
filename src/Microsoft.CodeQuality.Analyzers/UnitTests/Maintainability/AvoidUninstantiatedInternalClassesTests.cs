@@ -387,7 +387,6 @@ End Class",
     Private Shared Sub mAiN()
     End Sub
 End Class",
-                CompilerDiagnostics = CompilerDiagnostics.None, // No Main method
                 SolutionTransforms =
                 {
                     (solution, projectId) =>
@@ -395,6 +394,11 @@ End Class",
                       var compilationOptions = solution.GetProject(projectId).CompilationOptions;
                       return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
                     }
+                },
+                ExpectedDiagnostics =
+                {
+                     // error BC30737: No accessible 'Main' method with an appropriate signature was found in 'TestProject'.
+                     DiagnosticResult.CompilerError("BC30737"),
                 }
             }.RunAsync();
         }
@@ -1328,13 +1332,13 @@ internal class CFoo {}
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
-[CoClass]
+[{|CS7036:CoClass|}]
 internal interface IFoo1 {}
 
-[CoClass(CFoo)]
+[CoClass({|CS0119:CFoo|})]
 internal interface IFoo2 {}
 
-[CoClass(typeof(CFoo), null)]
+[{|CS1729:CoClass(typeof(CFoo), null)|}]
 internal interface IFoo3 {}
 
 [CoClass(typeof(IFoo3))] // This isn't a class-type
@@ -1342,7 +1346,6 @@ internal interface IFoo4 {}
 
 internal class CFoo {}
 ",
-                CompilerDiagnostics.None, // Invalid syntaxes around CoClass
                 GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
         }
 

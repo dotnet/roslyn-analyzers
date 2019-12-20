@@ -714,11 +714,11 @@ End Class
         public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-public class C26 :
+public class C26 :{|CS1031:|}
 {
     public static void Foo() { }
 }
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]
@@ -726,21 +726,21 @@ public class C26 :
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B26
-	Inherits
+	Inherits{|BC30182:|}
 	Public Shared Sub Foo()
 	End Sub
 End Class
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]
         public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-public class C27 :
+public class C27 :{|CS1031:|}
 {
 }
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]
@@ -748,9 +748,9 @@ public class C27 :
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B27
-	Inherits
+	Inherits{|BC30182:|}
 End Class
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]

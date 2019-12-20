@@ -192,13 +192,12 @@ interface IFace
     void Method(string input);
 }
 
-class Derived : IFace
+class Derived : {|CS0535:IFace|}
 {
     public void Method(object input)
     {
     }
-}",
-                CompilerDiagnostics.None);
+}");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Interface IFace
@@ -206,12 +205,11 @@ Interface IFace
 End Interface
 
 Class Derived
-    Implements IFace
+    Implements {|BC30149:IFace|}
 
-    Public Sub Method(input As Object) Implements IFace.Method
+    Public Sub Method(input As Object) Implements {|BC30401:IFace.Method|}
     End Sub
-End Class",
-                CompilerDiagnostics.None);
+End Class");
         }
 
         [Fact]
@@ -220,16 +218,15 @@ End Class",
             await VerifyCS.VerifyAnalyzerAsync(@"
 class Base
 {
-    public virtual void Method(string input);
+    public virtual void {|CS0501:Method|}(string input);
 }
 
 class Derived : Base
 {
-    public override void Method(object input)
+    public override void {|CS0115:Method|}(object input)
     {
     }
-}",
-                CompilerDiagnostics.None);
+}");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Class Base
@@ -240,10 +237,9 @@ End Class
 Class Derived
     Inherits Base
     
-    Public Overrides Sub Method(input As Object)
+    Public Overrides Sub {|BC30284:Method|}(input As Object)
     End Sub
-End Class",
-                CompilerDiagnostics.None);
+End Class");
         }
 
 
@@ -256,27 +252,25 @@ abstract class Base
     public abstract void Method(string input);
 }
 
-class Derived : Base
+class {|CS0534:Derived|} : Base
 {
-    public override void Method(object input)
+    public override void {|CS0115:Method|}(object input)
     {
     }
-}",
-                CompilerDiagnostics.None);
+}");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class Base
     Public MustOverride Sub Method(input As String)
-    End Sub
+    {|BC30429:End Sub|}
 End Class
 
-Class Derived
+Class {|BC30610:Derived|}
     Inherits Base
     
-    Public Overrides Sub Method(input As Object)
+    Public Overrides Sub {|BC30284:Method|}(input As Object)
     End Sub
-End Class",
-                CompilerDiagnostics.None);
+End Class");
         }
 
         [Fact]

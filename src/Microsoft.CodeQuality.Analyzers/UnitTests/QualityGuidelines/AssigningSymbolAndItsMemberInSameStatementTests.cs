@@ -297,7 +297,7 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
 {
-    public S {|CS0523:Property|} { get; set; }
+    public S Property { get => default; set { } }
 }
 
 public class Test

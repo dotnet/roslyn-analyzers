@@ -137,8 +137,7 @@ class Class
     private int field;
 }
 ",
-    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCA1823CSharpResultAt(5, 17, "field"));
+                GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -150,7 +149,7 @@ class Class
 {
     private int {|CS0625:field|};
 }
-",     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
+",
                 GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
@@ -169,9 +168,8 @@ class Class2
 {
     private int field;
 }
-",     // Test0.cs(5,17): warning CA1823: Unused field 'field'.
+",
                 GetCA1823CSharpResultAt(5, 17, "field"),
-                // Test0.cs(11,17): warning CA1823: Unused field 'field'.
                 GetCA1823CSharpResultAt(11, 17, "field"));
         }
 
@@ -223,9 +221,7 @@ public class Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
-                    // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();
@@ -252,8 +248,8 @@ public class Class
     private int Value => Used1 + Used2;
 }
 ",
-            GetCA1823CSharpResultAt(7, 17, "Unused1"),
-            GetCA1823CSharpResultAt(8, 17, "Unused2"));
+                GetCA1823CSharpResultAt(7, 17, "Unused1"),
+                GetCA1823CSharpResultAt(8, 17, "Unused2"));
         }
 
         [Fact]
@@ -279,8 +275,8 @@ Public Class Class1
     End Property
 End Class
 ",
-            GetCA1823BasicResultAt(6, 13, "Unused1"),
-            GetCA1823BasicResultAt(7, 13, "Unused2"));
+                GetCA1823BasicResultAt(6, 13, "Unused1"),
+                GetCA1823BasicResultAt(7, 13, "Unused2"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -333,8 +329,7 @@ Public Class [Class]
     Private field As Integer
 End Class
 ",
-    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetCA1823BasicResultAt(4, 13, "field"));
+                GetCA1823BasicResultAt(4, 13, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -345,7 +340,7 @@ End Class
 Public Class [Class]
     Private field As Integer
 End Class
-",     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
+",
                 GetCA1823BasicResultAt(4, 13, "field"));
         }
 
@@ -362,9 +357,8 @@ End Class
 Public Class Class2
     Private field As Integer
 End Class
-",     // Test0.vb(4,13): warning CA1823: Unused field 'field'.
+",
                 GetCA1823BasicResultAt(4, 13, "field"),
-                // Test0.vb(9,13): warning CA1823: Unused field 'field'.
                 GetCA1823BasicResultAt(9, 13, "field"));
         }
 
@@ -413,9 +407,7 @@ End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
-                    // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();

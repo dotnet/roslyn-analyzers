@@ -284,8 +284,8 @@ public class Test
 {
     public void Method()
     {
-        S a, b;
-        a.Field = a = {|CS0165:b|};
+        S a, b = new S();
+        a.Field = a = b;
     }
 }
 ");
@@ -304,8 +304,8 @@ public class Test
 {
     public void Method()
     {
-        S a, b;
-        {|CS0165:a|}.Property = {|CS0103:c|} = a = {|CS0165:b|};
+        S a, b = new S();
+        {|CS0165:a|}.Property = {|CS0103:c|} = a = b;
     }
 }
 ");

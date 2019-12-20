@@ -145,6 +145,8 @@ public class A
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
+    /* We intentionally declare invalid methods for this test */
+
     public static bool operator{|CS0216:==|}(A a1, int a2) { return false; }
     public static bool operator{|CS0216:!=|}(A a1, string a2) { return false; }
 }",

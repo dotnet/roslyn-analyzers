@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpEnumShouldNotHaveDuplicatedValues,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumShouldNotHaveDuplicatedValues,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicEnumShouldNotHaveDuplicatedValues,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumShouldNotHaveDuplicatedValues,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
@@ -257,6 +257,7 @@ public enum MyEnum
     Value2 = 2,
     Value3 = Value1 | Value1,
 }",
+                GetCSharpResultAt(6, 5),
                 GetCSharpBitwiseResultAt(6, 23));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -265,6 +266,7 @@ Public Enum MyEnum
     Value2 = 2
     Value3 = Value1 Or Value1
 End Enum",
+                GetBasicResultAt(5, 5),
                 GetBasicBitwiseResultAt(5, 24));
         }
 
@@ -279,6 +281,7 @@ public enum MyEnum
     Value3 = 3,
     Value4 = Value1 | Value2 | Value1,
 }",
+                GetCSharpResultAt(7, 5),
                 GetCSharpBitwiseResultAt(7, 32));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -288,6 +291,7 @@ Public Enum MyEnum
     Value3 = 3
     Value4 = Value1 Or Value2 Or Value1
 End Enum",
+                GetBasicResultAt(6, 5),
                 GetBasicBitwiseResultAt(6, 34));
         }
 
@@ -351,6 +355,44 @@ Public Enum MyEnum
     Value1 = 1
     Value2 = 1 + 1
     Value3 = (Value1 + 1) * Value2
+End Enum");
+        }
+
+        [Fact]
+        public async Task EnumComplexBitwiseParts_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public enum MyEnum
+{
+    Value1 = 1,
+    Value2 = 2,
+    Value3 = (Value1 + Value2) | (Value1 + Value2),
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Enum MyEnum
+    Value1 = 1
+    Value2 = 2
+    Value3 = (Value1 + Value2) Or (Value1 + Value2)
+End Enum");
+        }
+
+        [Fact]
+        public async Task EnumBitwisePartsInAddition_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public enum MyEnum
+{
+    Value1 = 1,
+    Value2 = 2,
+    Value3 = (Value1 | Value2) + (Value1 | Value2),
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Enum MyEnum
+    Value1 = 1
+    Value2 = 2
+    Value3 = (Value1 Or Value2) + (Value1 Or Value2)
 End Enum");
         }
 

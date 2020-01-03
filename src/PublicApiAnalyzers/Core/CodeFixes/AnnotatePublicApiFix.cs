@@ -39,13 +39,15 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 bool isShippedDocument = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiIsShippedPropertyBagKey] == "true";
 
                 TextDocument? document = isShippedDocument ? GetShippedDocument(project) : DeclarePublicApiFix.GetUnshippedDocument(project);
-                Debug.Assert(document is object);
 
-                context.RegisterCodeFix(
-                        new DeclarePublicApiFix.AdditionalDocumentChangeAction(
-                            $"Annotate {minimalSymbolName} in public API",
-                            c => GetFix(document, publicSymbolName, publicSymbolNameWithNullability, c)),
-                        diagnostic);
+                if (document != null)
+                {
+                    context.RegisterCodeFix(
+                            new DeclarePublicApiFix.AdditionalDocumentChangeAction(
+                                $"Annotate {minimalSymbolName} in public API",
+                                c => GetFix(document, publicSymbolName, publicSymbolNameWithNullability, c)),
+                            diagnostic);
+                }
             }
 
             return Task.CompletedTask;

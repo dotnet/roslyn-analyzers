@@ -19,8 +19,8 @@
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.VisualBasic.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\Core\Microsoft.NetFramework.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\CSharp\Microsoft.NetFramework.CSharp.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\VisualBasic\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
 </Project>

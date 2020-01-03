@@ -238,7 +238,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                         else
                         {
-                            // TODO2
                             reportAnnotateApi(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, locationsToReport);
                         }
                     }
@@ -318,8 +317,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                                 else if (!overloadHasOptionalParams)
                                 {
                                     var overloadPublicApiName = GetPublicApiName(overload);
-                                    ApiLine overloadPublicApiLine;
-                                    var isOverloadUnshipped = !lookupPublicApi(overloadPublicApiName, out overloadPublicApiLine) ||
+                                    var isOverloadUnshipped = !lookupPublicApi(overloadPublicApiName, out ApiLine overloadPublicApiLine) ||
                                         !overloadPublicApiLine.IsShippedApi;
                                     if (isOverloadUnshipped)
                                     {
@@ -448,7 +446,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             continue;
                         }
 
-                        if (!ContainsPublicApiName(apiLineText, containingSymbolPublicApiName + "."))
+                        if (!ContainsPublicApiName(apiLineText, containingSymbolPublicApiName.Name + "."))
                         {
                             // Doesn't contain containingSymbol public API name - not a sibling of symbol.
                             continue;
@@ -505,11 +503,10 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private ApiName GetPublicApiName(ISymbol symbol)
             {
-                return new ApiName(getPublicApiString(withNullability: false), getPublicApiString(withNullability: true));
+                return new ApiName(getPublicApiString(s_publicApiFormat), getPublicApiString(s_publicApiFormatWithNullability));
 
-                string getPublicApiString(bool withNullability)
+                string getPublicApiString(SymbolDisplayFormat format)
                 {
-                    var format = withNullability ? s_publicApiFormatWithNullability : s_publicApiFormat;
                     string publicApiName = symbol.ToDisplayString(format);
 
                     ITypeSymbol? memberType = null;
@@ -578,7 +575,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 foreach (ApiLine cur in deletedApiList)
                 {
                     LinePositionSpan linePositionSpan = cur.SourceText.Lines.GetLinePositionSpan(cur.Span);
-                    var location = Location.Create(cur.Path, cur.Span, linePositionSpan);
+                    Location location = Location.Create(cur.Path, cur.Span, linePositionSpan);
                     ImmutableDictionary<string, string> propertyBag = ImmutableDictionary<string, string>.Empty.Add(PublicApiNamePropertyBagKey, cur.Text);
                     context.ReportDiagnostic(Diagnostic.Create(RemoveDeletedApiRule, location, propertyBag, cur.Text));
                 }
@@ -701,7 +698,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 // not internal, private or protected&internal
                 return !type.IsSealed &&
                     type.GetMembers(WellKnownMemberNames.InstanceConstructorName).Any(
-(Func<ISymbol, bool>)(m => m.DeclaredAccessibility != Accessibility.Internal && m.DeclaredAccessibility != Accessibility.Private && m.DeclaredAccessibility != Accessibility.ProtectedAndInternal)
+                        m => m.DeclaredAccessibility != Accessibility.Internal && m.DeclaredAccessibility != Accessibility.Private && m.DeclaredAccessibility != Accessibility.ProtectedAndInternal
                     );
             }
         }

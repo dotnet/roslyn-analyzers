@@ -150,8 +150,8 @@ public class A
     public static bool operator{|CS0216:==|}(A a1, int a2) { return false; }
     public static bool operator{|CS0216:!=|}(A a1, string a2) { return false; }
 }",
-                GetCSharpResultAt(4, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
-                GetCSharpResultAt(5, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
+                GetCSharpResultAt(6, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "==", "!="),
+                GetCSharpResultAt(7, 32, OperatorsShouldHaveSymmetricalOverloadsAnalyzer.Rule, "A", "!=", "=="));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

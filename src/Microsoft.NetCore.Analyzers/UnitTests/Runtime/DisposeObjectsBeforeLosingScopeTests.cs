@@ -1879,9 +1879,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void LocalWithAsyncDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
+        public async Task LocalWithAsyncDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class AsyncDisposable : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -1900,7 +1900,7 @@ class Test
 }
 ");
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class AsyncDisposable
     Implements IAsyncDisposable
 
@@ -1918,9 +1918,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void LocalWithAsyncDisposableAssignment_NoDisposeAsyncCall_Diagnostic()
+        public async Task LocalWithAsyncDisposableAssignment_NoDisposeAsyncCall_Diagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class AsyncDisposable : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -1940,7 +1940,7 @@ class Test
             // Test0.cs(43,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new AsyncDisposable()' before all references to it are out of scope.
             GetCSharpResultAt(43, 17, "new AsyncDisposable()"));
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class AsyncDisposable
     Implements IAsyncDisposable
 
@@ -1959,9 +1959,9 @@ End Class",
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void LocalWithAsyncDisposableAndDisposableAssignment_Disposed_NoDiagnostic()
+        public async Task LocalWithAsyncDisposableAndDisposableAssignment_Disposed_NoDiagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class AsyncDisposableAndDisposable : IAsyncDisposable, IDisposable
 {
     public ValueTask DisposeAsync()
@@ -1989,7 +1989,7 @@ class Test
 }
 ");
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class AsyncDisposableAndDisposable
     Implements IAsyncDisposable
     Implements IDisposable
@@ -2017,9 +2017,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void LocalWithAsyncDisposableAndDisposableAssignment_NotDisposed_Diagnostic()
+        public async Task LocalWithAsyncDisposableAndDisposableAssignment_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class AsyncDisposableAndDisposable : IAsyncDisposable, IDisposable
 {
     public ValueTask DisposeAsync()
@@ -2043,7 +2043,7 @@ class Test
             // Test0.cs(47,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new AsyncDisposableAndDisposable()' before all references to it are out of scope.
             GetCSharpResultAt(47, 17, "new AsyncDisposableAndDisposable()"));
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class AsyncDisposableAndDisposable
     Implements IAsyncDisposable
     Implements IDisposable
@@ -2454,7 +2454,7 @@ End Class");
         {
             var editorConfigFile = GetEditorConfigContent(disposeAnalysisKind);
 
-            var csharpTest = new VerifyCS.Test
+            await new VerifyCS.Test
             {
                 TestState =
                 {
@@ -2483,20 +2483,9 @@ class Test
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigFile) }
                 }
-            };
+            }.RunAsync();
 
-            if (disposeAnalysisKind.AreExceptionPathsEnabled())
-            {
-                csharpTest.ExpectedDiagnostics.AddRange(new[]
-                {
-                    // Test0.cs(17,37): warning CA2000: Object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
-                    GetCSharpNotDisposedOnExceptionPathsResultAt(17, 37, "new A()")
-                });
-            }
-
-            await csharpTest.RunAsync();
-
-            var vbTest = new VerifyVB.Test
+            await new VerifyVB.Test
             {
                 TestState =
                 {
@@ -2521,18 +2510,7 @@ End Class"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigFile) }
                 }
-            };
-
-            if (disposeAnalysisKind.AreExceptionPathsEnabled())
-            {
-                vbTest.ExpectedDiagnostics.AddRange(new[]
-                {
-                    // Test0.vb(14,52): warning CA2000: Object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
-                    GetBasicNotDisposedOnExceptionPathsResultAt(14, 52, "New A()")
-                });
-            }
-
-            await vbTest.RunAsync();
+            }.RunAsync();
         }
 
         [Theory]
@@ -11748,9 +11726,9 @@ class Test
 
         [Fact]
         [WorkItem(3082, "https://github.com/dotnet/roslyn-analyzers/issues/3082")]
-        public void DisposableObject_DictionaryAddVariants_NotDisposed_NoDiagnostic()
+        public async Task DisposableObject_DictionaryAddVariants_NotDisposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

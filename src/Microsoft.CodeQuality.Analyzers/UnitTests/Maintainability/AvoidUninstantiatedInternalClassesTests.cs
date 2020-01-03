@@ -715,9 +715,7 @@ End Class");
     {
     } 
 }",
-                GetCSharpResultAt(
-                    3, 20,
-                    "C.C2"));
+                GetCSharpResultAt(3, 20, "C.C2"));
         }
 
         [Fact]
@@ -728,9 +726,7 @@ End Class");
     Friend Class C2
     End Class
 End Class",
-                GetBasicResultAt(
-                    2, 18,
-                    "C.C2"));
+                GetBasicResultAt(2, 18, "C.C2"));
         }
 
         [Fact]
@@ -744,9 +740,7 @@ End Class",
     {
     } 
 }",
-                GetCSharpResultAt(
-                    1, 16,
-                    "C"));
+                GetCSharpResultAt(1, 16, "C"));
         }
 
         [Fact]
@@ -759,9 +753,7 @@ End Class",
     Private Class C2
     End Class
 End Class",
-                GetBasicResultAt(
-                    1, 14,
-                    "C"));
+                GetBasicResultAt(1, 14, "C"));
         }
 
         [Fact]
@@ -862,9 +854,7 @@ End Module");
             await VerifyCS.VerifyAnalyzerAsync(
 @"internal static class S { }",
 
-                GetCSharpResultAt(
-                    1, 23,
-                    "S"));
+                GetCSharpResultAt(1, 23, "S"));
         }
 
         [Fact]
@@ -1201,12 +1191,8 @@ internal class Program
         var list = new List<Factory<InstantiatedType>>();
     }
 }",
-                GetCSharpResultAt(
-                    4, 16,
-                    "InstantiatedType"),
-                GetCSharpResultAt(
-                    8, 16,
-                    "Factory<T>"));
+                GetCSharpResultAt(4, 16, "InstantiatedType"),
+                GetCSharpResultAt(8, 16, "Factory<T>"));
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
@@ -1226,12 +1212,8 @@ Module Library
         Dim a = New List(Of Factory(Of InstantiatedType))
     End Sub
 End Module",
-                GetBasicResultAt(
-                    5, 18,
-                    "Library.InstantiatedType"),
-                GetBasicResultAt(
-                    8, 18,
-                    "Library.Factory(Of T)"));
+                GetBasicResultAt(5, 18, "Library.InstantiatedType"),
+                GetBasicResultAt(8, 18, "Library.Factory(Of T)"));
         }
 
         [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
@@ -1470,7 +1452,7 @@ namespace Foo
     }
 }",
                 // False-Positive: when evaluating the string of the DesignerAttribute the type symbol doesn't exist yet
-                GetCSharpResultAt(10, 24, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "MyTextBox.MyTextBoxDesigner"));
+                GetCSharpResultAt(10, 24, "MyTextBox.MyTextBoxDesigner"));
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
@@ -1490,14 +1472,14 @@ namespace Foo
 }");
         }
 
-        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-            => new DiagnosticResult(rule)
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, string className)
+            => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
-                .WithArguments(arguments);
+                .WithArguments(className);
 
-        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
-            => new DiagnosticResult(rule)
+        private static DiagnosticResult GetBasicResultAt(int line, int column, string className)
+            => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
-                .WithArguments(arguments);
+                .WithArguments(className);
     }
 }

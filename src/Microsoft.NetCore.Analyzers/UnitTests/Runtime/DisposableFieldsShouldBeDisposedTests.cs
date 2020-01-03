@@ -383,9 +383,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -409,7 +409,7 @@ class B : IDisposable
 }
 ");
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IAsyncDisposable
 
@@ -433,9 +433,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -460,7 +460,7 @@ class B : IDisposable
             // Test0.cs(41,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(41, 24, "B", "a", "A"));
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IAsyncDisposable
 
@@ -485,9 +485,9 @@ End Class",
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class A : IDisposable
 {
     public void Dispose()
@@ -511,7 +511,7 @@ class B : IAsyncDisposable
 }
 ");
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
@@ -534,9 +534,9 @@ End Class");
         }
 
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
-        public void DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_Diagnostic()
+        public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
 class A : IDisposable
 {
     public void Dispose()
@@ -561,7 +561,7 @@ class B : IAsyncDisposable
             // Test0.cs(40,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(40, 24, "B", "a", "A"));
 
-            VerifyBasic(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose

@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotDisableRequestValidation,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableRequestValidationTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableRequestValidationTests
     {
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             string validateInputAttributeCSharpSourceCode = @"
 namespace System.Web.Mvc
@@ -22,15 +24,23 @@ namespace System.Web.Mvc
         }
     }
 }";
-            this.VerifyCSharp(
-                new[] { source, validateInputAttributeCSharpSourceCode }.ToFileAndSource(),
-                expected);
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, validateInputAttributeCSharpSourceCode }
+                },
+            };
+
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void TestLiteralAtActionLevelDiagnostic()
+        public async Task TestLiteralAtActionLevelDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -40,13 +50,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(7, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
+            GetCSharpResultAt(7, 17, "TestActionMethod"));
         }
 
         [Fact]
-        public void TestConstAtActionLevelDiagnostic()
+        public async Task TestConstAtActionLevelDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -58,13 +68,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
+            GetCSharpResultAt(9, 17, "TestActionMethod"));
         }
 
         [Fact]
-        public void TestLiteralAtControllerLevelDiagnostic()
+        public async Task TestLiteralAtControllerLevelDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 [ValidateInput(false)]
@@ -74,13 +84,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(5, 7, DoNotDisableRequestValidation.Rule, "TestControllerClass"));
+            GetCSharpResultAt(5, 7, "TestControllerClass"));
         }
 
         [Fact]
-        public void TestSetBothControllerLevelAndActionLevelDiagnostic()
+        public async Task TestSetBothControllerLevelAndActionLevelDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 [ValidateInput(true)]
@@ -91,13 +101,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
+            GetCSharpResultAt(8, 17, "TestActionMethod"));
         }
 
         [Fact]
-        public void TestLiteralAtActionLevelNoDiagnostic()
+        public async Task TestLiteralAtActionLevelNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -110,9 +120,9 @@ class TestControllerClass
         }
 
         [Fact]
-        public void TestConstAtActionLevelNoDiagnostic()
+        public async Task TestConstAtActionLevelNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -127,9 +137,9 @@ class TestControllerClass
         }
 
         [Fact]
-        public void TestLiteralAtControllerLevelNoDiagnostic()
+        public async Task TestLiteralAtControllerLevelNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 [ValidateInput(true)]
@@ -142,9 +152,9 @@ class TestControllerClass
         }
 
         [Fact]
-        public void TestSetBothControllerLevelAndActionLevelNoDiagnostic()
+        public async Task TestSetBothControllerLevelAndActionLevelNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 [ValidateInput(false)]
@@ -158,9 +168,9 @@ class TestControllerClass
         }
 
         [Fact]
-        public void TestWithoutValidateInputAttributeNoDiagnostic()
+        public async Task TestWithoutValidateInputAttributeNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -171,14 +181,9 @@ class TestControllerClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotDisableRequestValidation();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotDisableRequestValidation();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

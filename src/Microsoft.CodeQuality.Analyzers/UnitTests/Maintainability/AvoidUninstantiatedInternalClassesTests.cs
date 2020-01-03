@@ -1342,13 +1342,161 @@ internal class CFoo {}  // Test0.cs(16,16): warning CA1812: CFoo is an internal 
                 GetCSharpResultAt(16, 16, "CFoo"));
         }
 
-        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
-            => VerifyCS.Diagnostic()
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeNameWithFullAssemblyName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=123"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeGlobalTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+internal class MyTextBoxDesigner { }
+
+[Designer(""MyTextBoxDesigner, TestProject"")]
+public class MyTextBox { }");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    internal class MyTextBoxDesigner { }
+
+    [Designer(typeof(MyTextBoxDesigner))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeNameWithBaseTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"", ""Foo.SomeBaseType"")]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeNameWithBaseType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(""Foo.MyTextBoxDesigner, TestProject"", typeof(SomeBaseType))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeTypeWithBaseType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    public class SomeBaseType { }
+    internal class MyTextBoxDesigner { }
+
+    [Designer(typeof(Foo.MyTextBoxDesigner), typeof(SomeBaseType))]
+    public class MyTextBox { }
+}");
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeNestedTypeName_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    [Designer(""Foo.MyTextBox.MyTextBoxDesigner, TestProject"")]
+    public class MyTextBox
+    {
+        internal class MyTextBoxDesigner { }
+    }
+}",
+                // False-Positive: when evaluating the string of the DesignerAttribute the type symbol doesn't exist yet
+                GetCSharpResultAt(10, 24, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "MyTextBox.MyTextBoxDesigner"));
+        }
+
+        [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]
+        public async Task CA1812_DesignerAttributeNestedType_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.ComponentModel;
+
+namespace Foo
+{
+    [Designer(typeof(Foo.MyTextBox.MyTextBoxDesigner))]
+    public class MyTextBox
+    {
+        internal class MyTextBoxDesigner { }
+    }
+}");
+        }
+
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
 
-        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
-            => VerifyVB.Diagnostic()
+        private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+            => new DiagnosticResult(rule)
                 .WithLocation(line, column)
                 .WithArguments(arguments);
     }

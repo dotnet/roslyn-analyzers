@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 void addOrUpdateFieldDisposedValue(IFieldSymbol field, bool disposed)
                 {
                     Debug.Assert(!field.IsStatic);
-                    Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper!.IDisposable));
+                    Debug.Assert(disposeAnalysisHelper!.IsDisposable(field.Type));
 
                     fieldDisposeValueMap.AddOrUpdate(field,
                         addValue: disposed,
@@ -176,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     IFieldSymbol field = fieldWithPointsToValue.Key;
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
 
-                                    Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
+                                    Debug.Assert(disposeAnalysisHelper.IsDisposable(field.Type));
                                     ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult.ExitBlockOutput.Data;
                                     var disposed = false;
                                     foreach (var location in pointsToValue.Locations)
@@ -241,13 +241,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // We only want to analyze types which are disposable (implement System.IDisposable directly or indirectly)
                     // and have at least one disposable field.
                     return !hasErrors &&
-                        namedType.IsDisposable(disposeAnalysisHelper!.IDisposable) &&
+                        disposeAnalysisHelper!.IsDisposable(namedType) &&
                         !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty &&
                         !namedType.IsConfiguredToSkipAnalysis(compilationContext.Options, Rule, compilationContext.Compilation, compilationContext.CancellationToken);
                 }
 
                 bool IsDisposeMethod(IMethodSymbol method)
-                    => method.GetDisposeMethodKind(disposeAnalysisHelper!.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None;
+                    => disposeAnalysisHelper!.GetDisposeMethodKind(method) != DisposeMethodKind.None;
 
                 bool HasDisposeMethod(INamedTypeSymbol namedType)
                 {

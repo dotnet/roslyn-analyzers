@@ -1,40 +1,41 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotReferSelfInSerializableClass,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.DoNotReferSelfInSerializableClass,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotReferSelfInSerializableClassTests : DiagnosticAnalyzerTestBase
+    public class DoNotReferSelfInSerializableClassTests
     {
         [Fact]
-        public void TestSelfReferDirectlyDiagnostic()
+        public async Task TestSelfReferDirectlyDiagnostic()
         {
-            VerifyCSharp(@"
-using System;
+            await VerifyCS.VerifyAnalyzerAsync(@"
+            using System;
 
-[Serializable()]
-class TestClass
-{
-    private TestClass testClass;
+            [Serializable()]
+            class TestClass
+            {
+                private TestClass testClass;
 
-    public void TestMethod()
-    {
-    }
-}",
-            GetCSharpResultAt(7, 23, DoNotReferSelfInSerializableClass.Rule, "testClass"));
+                public void TestMethod()
+                {
+                }
+            }",
+            GetCSharpResultAt(7, 35, "testClass"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Namespace TestNamespace
-    <Serializable()> _
+    <Serializable()>
     Class TestClass
         Private testClass As TestClass
         
@@ -42,13 +43,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(7, 17, DoNotReferSelfInSerializableClass.Rule, "testClass"));
+            GetBasicResultAt(7, 17, "testClass"));
         }
 
         [Fact]
-        public void TestParentChildCircleDiagnostic()
+        public async Task TestParentChildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -70,14 +71,14 @@ class TestClassB
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"),
-            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA"));
+            GetCSharpResultAt(7, 24, "testClassB"),
+            GetCSharpResultAt(17, 24, "testClassA"));
         }
 
         [Fact]
-        public void TestParentGrandchildCircleDiagnostic()
+        public async Task TestParentGrandchildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -119,15 +120,15 @@ class TestClassD
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInA"),
-            GetCSharpResultAt(19, 24, DoNotReferSelfInSerializableClass.Rule, "testClassCInB"),
-            GetCSharpResultAt(29, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInC"));
+            GetCSharpResultAt(7, 24, "testClassBInA"),
+            GetCSharpResultAt(19, 24, "testClassCInB"),
+            GetCSharpResultAt(29, 24, "testClassAInC"));
         }
 
         [Fact]
-        public void TestChildCircleDiagnostic()
+        public async Task TestChildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -149,13 +150,13 @@ class TestClassB
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInA"));
+            GetCSharpResultAt(7, 24, "testClassAInA"));
         }
 
         [Fact]
-        public void TestChildGrandchildCircleDiagnostic()
+        public async Task TestChildGrandchildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -187,14 +188,14 @@ class TestClassC
     {
     }
 }",
-            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassCInB"),
-            GetCSharpResultAt(27, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInC"));
+            GetCSharpResultAt(17, 24, "testClassCInB"),
+            GetCSharpResultAt(27, 24, "testClassBInC"));
         }
 
         [Fact]
-        public void TestClassReferedInTwoLoopsDiagnostic()
+        public async Task TestClassReferedInTwoLoopsDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -258,18 +259,18 @@ class TestClassC2
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInA"),
-            GetCSharpResultAt(11, 25, DoNotReferSelfInSerializableClass.Rule, "testClassB2InA"),
-            GetCSharpResultAt(21, 24, DoNotReferSelfInSerializableClass.Rule, "testClassCInB"),
-            GetCSharpResultAt(31, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInC"),
-            GetCSharpResultAt(49, 25, DoNotReferSelfInSerializableClass.Rule, "testClassC2InB2"),
-            GetCSharpResultAt(59, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInC2"));
+            GetCSharpResultAt(7, 24, "testClassBInA"),
+            GetCSharpResultAt(11, 25, "testClassB2InA"),
+            GetCSharpResultAt(21, 24, "testClassCInB"),
+            GetCSharpResultAt(31, 24, "testClassAInC"),
+            GetCSharpResultAt(49, 25, "testClassC2InB2"),
+            GetCSharpResultAt(59, 24, "testClassAInC2"));
         }
 
         [Fact]
-        public void TestMultiFieldsWithSameTypeDiagnostic()
+        public async Task TestMultiFieldsWithSameTypeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -295,16 +296,16 @@ class TestClassB
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInA"),
-            GetCSharpResultAt(9, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB2InA"),
-            GetCSharpResultAt(19, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInB"),
-            GetCSharpResultAt(21, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA2InB"));
+            GetCSharpResultAt(7, 24, "testClassBInA"),
+            GetCSharpResultAt(9, 24, "testClassB2InA"),
+            GetCSharpResultAt(19, 24, "testClassAInB"),
+            GetCSharpResultAt(21, 24, "testClassA2InB"));
         }
 
         [Fact]
-        public void TestChildCircleWithParentChildCircleDiagnostic()
+        public async Task TestChildCircleWithParentChildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -328,15 +329,15 @@ class TestClassB
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInA"),
-            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassAInB"),
-            GetCSharpResultAt(19, 24, DoNotReferSelfInSerializableClass.Rule, "testClassBInB"));
+            GetCSharpResultAt(7, 24, "testClassBInA"),
+            GetCSharpResultAt(17, 24, "testClassAInB"),
+            GetCSharpResultAt(19, 24, "testClassBInB"));
         }
 
         [Fact]
-        public void TestTwoIndependentParentChildCirclesDiagnostic()
+        public async Task TestTwoIndependentParentChildCirclesDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -378,16 +379,16 @@ class TestClassB2
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"),
-            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA"),
-            GetCSharpResultAt(27, 25, DoNotReferSelfInSerializableClass.Rule, "testClassB2"),
-            GetCSharpResultAt(37, 25, DoNotReferSelfInSerializableClass.Rule, "testClassA2"));
+            GetCSharpResultAt(7, 24, "testClassB"),
+            GetCSharpResultAt(17, 24, "testClassA"),
+            GetCSharpResultAt(27, 25, "testClassB2"),
+            GetCSharpResultAt(37, 25, "testClassA2"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyByPropertyDiagnostic()
+        public async Task TestSelfReferDirectlyByPropertyDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -399,13 +400,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(7, 22, DoNotReferSelfInSerializableClass.Rule, "TestClassProperty"));
+            GetCSharpResultAt(7, 22, "TestClassProperty"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithGenericTypeDiagnostic()
+        public async Task TestSelfReferDirectlyWithGenericTypeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [System.Serializable]
@@ -422,13 +423,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(12, 37, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(12, 37, "testClasses"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithArrayDiagnostic()
+        public async Task TestSelfReferDirectlyWithArrayDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -440,13 +441,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(7, 25, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(7, 25, "testClasses"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithDoubleDimensionalArrayDiagnostic()
+        public async Task TestSelfReferDirectlyWithDoubleDimensionalArrayDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -458,13 +459,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(7, 27, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(7, 27, "testClasses"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithListDiagnostic()
+        public async Task TestSelfReferDirectlyWithListDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -477,13 +478,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(8, 29, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(8, 29, "testClasses"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithListListDiagnostic()
+        public async Task TestSelfReferDirectlyWithListListDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -496,13 +497,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(8, 35, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(8, 35, "testClasses"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithListListListDiagnostic()
+        public async Task TestSelfReferDirectlyWithListListListDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -515,13 +516,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(8, 41, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(8, 41, "testClasses"));
         }
 
         [Fact]
-        public void TestGenericChildCircleDiagnostic()
+        public async Task TestGenericChildCircleDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -544,13 +545,13 @@ class TestClassB
     {
     }
 }",
-            GetCSharpResultAt(8, 30, DoNotReferSelfInSerializableClass.Rule, "testClassAInA"));
+            GetCSharpResultAt(8, 30, "testClassAInA"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyByPropertyWithArrayDiagnostic()
+        public async Task TestSelfReferDirectlyByPropertyWithArrayDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -562,13 +563,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "TestClassProperty"));
+            GetCSharpResultAt(7, 24, "TestClassProperty"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithinGenericTypeDiagnostic()
+        public async Task TestSelfReferDirectlyWithinGenericTypeDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -580,13 +581,13 @@ class TestClass<T>
     {
     }
 }",
-            GetCSharpResultAt(7, 26, DoNotReferSelfInSerializableClass.Rule, "testClass"));
+            GetCSharpResultAt(7, 26, "testClass"));
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithDictionaryDiagnostic()
+        public async Task TestSelfReferDirectlyWithDictionaryDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -604,13 +605,13 @@ class TestClass
     {
     }
 }",
-            GetCSharpResultAt(13, 48, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+            GetCSharpResultAt(13, 48, "testClasses"));
         }
 
         [Fact]
-        public void TestParentClassSubclassCirlceDiagnostic()
+        public async Task TestParentClassSubclassCirlceDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -632,9 +633,9 @@ class TestClassB : TestClassA
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"));
+            GetCSharpResultAt(7, 24, "testClassB"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Namespace TestNamespace
@@ -656,13 +657,13 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(7, 17, DoNotReferSelfInSerializableClass.Rule, "testClassB"));
+            GetBasicResultAt(7, 17, "testClassB"));
         }
 
         [Fact]
-        public void TestParentClassIndirectSubclassCirlceDiagnostic()
+        public async Task TestParentClassIndirectSubclassCirlceDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -694,15 +695,15 @@ class TestClassC : TestClassB
     {
     }
 }",
-            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"),
-            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassC"),
-            GetCSharpResultAt(27, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA"));
+            GetCSharpResultAt(7, 24, "testClassB"),
+            GetCSharpResultAt(17, 24, "testClassC"),
+            GetCSharpResultAt(27, 24, "testClassA"));
         }
 
         [Fact]
-        public void TestWithoutSelfReferNoDiagnostic()
+        public async Task TestWithoutSelfReferNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -727,9 +728,9 @@ class TestClassB
         }
 
         [Fact]
-        public void TestStaticSelfReferNoDiagnostic()
+        public async Task TestStaticSelfReferNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -744,9 +745,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestStaticParentChildCircleNoDiagnostic()
+        public async Task TestStaticParentChildCircleNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -771,9 +772,9 @@ class TestClassB
         }
 
         [Fact]
-        public void TestStaticParentGrandchildCircleNoDiagnostic()
+        public async Task TestStaticParentGrandchildCircleNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -818,9 +819,9 @@ class TestClassD
         }
 
         [Fact]
-        public void TestNonSerializedAttributeSelfReferNoDiagnostic()
+        public async Task TestNonSerializedAttributeSelfReferNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -836,9 +837,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithArrayNoDiagnostic()
+        public async Task TestSelfReferDirectlyWithArrayNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -858,9 +859,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithDoubleDimensionalArrayNoDiagnostic()
+        public async Task TestSelfReferDirectlyWithDoubleDimensionalArrayNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [Serializable()]
@@ -880,9 +881,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithListNoDiagnostic()
+        public async Task TestSelfReferDirectlyWithListNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -903,9 +904,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestSelfReferDirectlyWithListListNoDiagnostic()
+        public async Task TestSelfReferDirectlyWithListListNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -925,14 +926,14 @@ class TestClass
 }");
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotReferSelfInSerializableClass();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+            => VerifyCS.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotReferSelfInSerializableClass();
-        }
+        private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+            => VerifyVB.Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
     }
 }

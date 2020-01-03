@@ -1,94 +1,55 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Security.UseSharedAccessProtocolHttpsOnly,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class UseSharedAccessProtocolHttpsOnlyTests : DiagnosticAnalyzerTestBase
+    public class UseSharedAccessProtocolHttpsOnlyTests
     {
-        private const string MicrosoftWindowsAzureStorageCSharpSourceCode = @"
-using System;
-
-namespace Microsoft.WindowsAzure.Storage
-{
-    public class CloudStorageAccount
-    {
-        public string GetSharedAccessSignature (SharedAccessAccountPolicy policy)
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
-            return """";
-        }
-    }
-
-    public sealed class SharedAccessAccountPolicy
-    {
-    }
-
-    public class IPAddressOrRange
-    {
-    }
-
-    public enum SharedAccessProtocol
-    {
-        HttpsOnly = 1,
-        HttpsOrHttp = 2
-    }
-
-    namespace File
-    {
-        public class CloudFile
-        {
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, string groupPolicyIdentifier)
+            var csharpTest = new VerifyCS.Test
             {
-                return """";
-            }
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
+                TestState =
+                {
+                    Sources = { source }
+                },
+            };
 
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, Nullable<SharedAccessProtocol> protocols, IPAddressOrRange ipAddressOrRange)
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
+
+            await csharpTest.RunAsync();
+        }
+
+        protected async Task VerifyCSharpWithDependenciesAsync(string source, string editorConfigText, params DiagnosticResult[] expected)
+        {
+            var csharpTest = new VerifyCS.Test
             {
-                return """";
-            }
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAzureStorage,
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
 
-            // This stub API is not a real method of CloudFile.
-            // It is written for testing the case when the signature of method didn't match.
-            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, int protocols, IPAddressOrRange ipAddressOrRange)
-            {
-                return """";
-            }
-        }
+            csharpTest.ExpectedDiagnostics.AddRange(expected);
 
-        public sealed class SharedAccessFilePolicy
-        {
-        }
-
-        public sealed class SharedAccessFileHeaders
-        {
-        }
-    }
-}";
-
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
-                expected);
-        }
-
-        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode },
-                additionalFile,
-                ReferenceFlags.None,
-                expected);
+            await csharpTest.RunAsync();
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -97,18 +58,18 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         var protocols = SharedAccessProtocol.HttpsOrHttp;
         cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
     }
 }",
-            GetCSharpResultAt(12, 9, UseSharedAccessProtocolHttpsOnly.Rule));
+            GetCSharpResultAt(12, 9));
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithoutProtocolsParameterNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage.File;
 
@@ -116,16 +77,16 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy, string groupPolicyIdentifier)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         cloudFile.GetSharedAccessSignature(policy, groupPolicyIdentifier);
     }
 }");
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -134,7 +95,7 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         var protocols = SharedAccessProtocol.HttpsOnly;
         cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
     }
@@ -142,9 +103,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -153,16 +114,16 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudFile = new CloudFile();
-        cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, 1, ipAddressOrRange); 
+        var cloudFile = new CloudFile(null);
+        cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, {|CS1503:1|}, ipAddressOrRange); 
     }
 }");
         }
 
         [Fact]
-        public void TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
+        public async Task TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 
@@ -181,9 +142,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class TestClass
@@ -195,9 +156,9 @@ class TestClass
         }
 
         [Fact]
-        public void TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        public async Task TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using Microsoft.WindowsAzure;
 
@@ -222,18 +183,18 @@ class TestClass
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality." + UseSharedAccessProtocolHttpsOnly.DiagnosticId + ".excluded_symbol_names = TestMethod")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
         {
             var expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
             {
                 expected = new DiagnosticResult[]
                 {
-                    GetCSharpResultAt(12, 9, UseSharedAccessProtocolHttpsOnly.Rule)
+                    GetCSharpResultAt(12, 9)
                 };
             }
 
-            VerifyCSharpWithDependencies(@"
+            await VerifyCSharpWithDependenciesAsync(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
@@ -242,21 +203,15 @@ class TestClass
 {
     public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
     {
-        var cloudFile = new CloudFile();
+        var cloudFile = new CloudFile(null);
         var protocols = SharedAccessProtocol.HttpsOrHttp;
         cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
     }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+}", editorConfigText, expected);
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UseSharedAccessProtocolHttpsOnly();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UseSharedAccessProtocolHttpsOnly();
-        }
+        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+           => VerifyCS.Diagnostic()
+               .WithLocation(line, column);
     }
 }

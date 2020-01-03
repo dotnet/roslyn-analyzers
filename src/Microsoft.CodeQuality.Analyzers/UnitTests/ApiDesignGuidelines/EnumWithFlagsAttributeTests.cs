@@ -97,7 +97,7 @@ internal class OuterClass
         public async Task CSharp_EnumWithFlagsAttributes_SimpleCaseWithScope()
         {
             var code = @"{0}
-public enum SimpleFlagsEnumClass
+public enum {{|CA1027:SimpleFlagsEnumClass|}}
 {{
     Zero = 0,
     One = 1,
@@ -106,7 +106,7 @@ public enum SimpleFlagsEnumClass
 }}
 
 {0}
-public enum {{|CA1027:HexFlagsEnumClass|}}
+public enum HexFlagsEnumClass
 {{
     One = 0x1,
     Two = 0x2,
@@ -117,7 +117,7 @@ public enum {{|CA1027:HexFlagsEnumClass|}}
             // Verify CA1027: Mark enums with FlagsAttribute
             string codeWithoutFlags = GetCSharpCode_EnumWithFlagsAttributes(code, hasFlags: false);
             await VerifyCS.VerifyAnalyzerAsync(codeWithoutFlags,
-                GetCA1027CSharpResultAt(2, 13, "HexFlagsEnumClass"));
+                GetCA1027CSharpResultAt(11, 13, "HexFlagsEnumClass"));
         }
 
         [Fact]
@@ -184,7 +184,7 @@ End Class";
         public async Task VisualBasic_EnumWithFlagsAttributes_SimpleCaseWithScope()
         {
             var code = @"{0}
-Public Enum SimpleFlagsEnumClass
+Public Enum {{|CA1027:SimpleFlagsEnumClass|}}
     Zero = 0
     One = 1
     Two = 2
@@ -192,7 +192,7 @@ Public Enum SimpleFlagsEnumClass
 End Enum
 
 {0}
-Public Enum {{|CA1027:HexFlagsEnumClass|}}
+Public Enum HexFlagsEnumClass
     One = &H1
     Two = &H2
     Four = &H4
@@ -202,7 +202,7 @@ End Enum";
             // Verify CA1027: Mark enums with FlagsAttribute
             string codeWithoutFlags = GetBasicCode_EnumWithFlagsAttributes(code, hasFlags: false);
             await VerifyVB.VerifyAnalyzerAsync(codeWithoutFlags,
-                GetCA1027BasicResultAt(2, 13, "HexFlagsEnumClass"));
+                GetCA1027BasicResultAt(10, 13, "HexFlagsEnumClass"));
         }
 
         [Fact]

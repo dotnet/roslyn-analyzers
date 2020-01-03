@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -229,6 +228,7 @@ End Class
         {
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWebAndWinForms,
                 TestState =
                 {
                     Sources =
@@ -282,11 +282,6 @@ abstract class F : System.ComponentModel.Component
 }
 "
                     },
-                    AdditionalReferences =
-                    {
-                        MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location),
-                        MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location),
-                    }
                 }
             }.RunAsync();
         }
@@ -296,6 +291,7 @@ abstract class F : System.ComponentModel.Component
         {
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWebAndWinForms,
                 TestState =
                 {
                     Sources =
@@ -342,11 +338,6 @@ MustInherit Class F
 End Class
 "
                     },
-                    AdditionalReferences =
-                    {
-                        MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location),
-                        MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location),
-                    }
                 }
             }.RunAsync();
         }

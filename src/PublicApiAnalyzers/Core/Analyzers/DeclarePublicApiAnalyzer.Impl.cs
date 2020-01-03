@@ -234,11 +234,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         var hasPublicApiEntryWithoutNullability = _publicApiMap.TryGetValue(publicApiName.Name, out foundApiLine);
                         if (!hasPublicApiEntryWithoutNullability)
                         {
-                            reportDeclareNewApi(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor, publicApiName.NameWithNullability, locationsToReport);
+                            reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.NameWithNullability);
                         }
                         else
                         {
-                            reportAnnotateApi(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi, locationsToReport);
+                            reportAnnotateApi(symbol, isImplicitlyDeclaredConstructor, publicApiName, foundApiLine.IsShippedApi);
                         }
                     }
                 }
@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     var hasPublicApiEntryWithoutNullability = _publicApiMap.TryGetValue(publicApiName.Name, out foundApiLine);
                     if (!hasPublicApiEntryWithoutNullability)
                     {
-                        reportDeclareNewApi(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor, publicApiName.Name, locationsToReport);
+                        reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.Name);
                     }
                 }
 
@@ -342,7 +342,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     }
                 }
 
-                void reportDeclareNewApi(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, string publicApiName, List<Location> locationsToReport)
+                void reportDeclareNewApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, string publicApiName)
                 {
                     // Unshipped public API with no entry in public API file - report diagnostic.
                     string errorMessageName = GetErrorMessageName(symbol, isImplicitlyDeclaredConstructor);
@@ -356,7 +356,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     reportDiagnosticAtLocations(DeclareNewApiRule, propertyBag, errorMessageName);
                 }
 
-                void reportAnnotateApi(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped, List<Location> locationsToReport)
+                void reportAnnotateApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, ApiName publicApiName, bool isShipped)
                 {
                     // Public API missing annotations in public API file - report diagnostic.
                     string errorMessageName = GetErrorMessageName(symbol, isImplicitlyDeclaredConstructor);
@@ -371,7 +371,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 bool lookupPublicApi(ApiName overloadPublicApiName, out ApiLine overloadPublicApiLine)
                 {
-                    // TODO2 test scenario for this
                     if (_useNullability)
                     {
                         return _publicApiMap.TryGetValue(overloadPublicApiName.NameWithNullability, out overloadPublicApiLine) ||
@@ -432,7 +431,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     var nestedNamespaceOrTypesPublicApiNames = new List<string>(nestedNamespaceOrTypeMembers.Length);
                     foreach (var nestedNamespaceOrType in nestedNamespaceOrTypeMembers)
                     {
-                        var nestedNamespaceOrTypePublicApiName = GetPublicApiName(nestedNamespaceOrType).Name; // TODO2
+                        var nestedNamespaceOrTypePublicApiName = GetPublicApiName(nestedNamespaceOrType).Name;
                         nestedNamespaceOrTypesPublicApiNames.Add(nestedNamespaceOrTypePublicApiName);
                     }
 
@@ -440,7 +439,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     foreach (var apiLine in _unshippedData.ApiList)
                     {
                         var apiLineText = apiLine.Text;
-                        if (apiLineText == containingSymbolPublicApiName.Name) // TODO2
+                        if (apiLineText == containingSymbolPublicApiName.Name)
                         {
                             // Not a sibling of symbol.
                             continue;
@@ -490,7 +489,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             }
 
                             var siblingPublicApiName = GetPublicApiName(sibling);
-                            publicApiLinesForSiblingsOfSymbol.Remove(siblingPublicApiName.Name); // TODO2
+                            publicApiLinesForSiblingsOfSymbol.Remove(siblingPublicApiName.Name);
                         }
 
                         // Join all the symbols names with a special separator.

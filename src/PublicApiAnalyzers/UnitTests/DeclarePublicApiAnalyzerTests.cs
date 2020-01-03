@@ -967,6 +967,26 @@ C.NewField -> string?";
         }
 
         [Fact]
+        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithRemovedNullability()
+        {
+            var source = @"
+public class C
+{
+    public string {|RS0016:ChangedField|}; // oblivious
+}
+";
+            var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";
+            var unshippedText = @"C
+C.C() -> void
+{|RS0017:C.ChangedField -> string?|}";
+            var fixedUnshippedText = @"C
+C.C() -> void
+C.ChangedField -> string";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
         public async Task ApiFileShippedWithDuplicateNullableEnable()
         {
             var source = @"
@@ -1086,7 +1106,6 @@ C2.C2() -> void";
         [Fact]
         public async Task TestChangingMethodSignatureForAnUnshippedMethod_Fix()
         {
-            // TODO2 test this with nullability
             var source = @"
 public class C
 {
@@ -1099,6 +1118,26 @@ public class C
             // previously method had no params, so the fix should remove the previous overload.
             var unshippedText = @"{|RS0017:C.Method() -> void|}";
             var fixedUnshippedText = @"C.Method(int p1) -> void";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task TestChangingMethodSignatureForAnUnshippedMethod_Fix_WithNullability()
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+    public void {|RS0016:Method|}(object? p1){ }
+}
+";
+
+            var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}
+C";
+            // previously method had no params, so the fix should remove the previous overload.
+            var unshippedText = @"{|RS0017:C.Method(string p1) -> void|}";
+            var fixedUnshippedText = @"C.Method(object? p1) -> void";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }

@@ -307,14 +307,14 @@ End Class
         public async Task CA1823_VisualBasic_StructLayoutAttribute_LayoutKindSequential_NoDiagnostic()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
-<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)>
-Friend Class Class1
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)> _
+Public Class Class1
     Private field As Integer
 End Class
 
 ' System.Runtime.InteropServices.LayoutKind.Sequential has value 0
-<System.Runtime.InteropServices.StructLayout(CShort(0))>
-Friend Class Class2
+<System.Runtime.InteropServices.StructLayout(0)> _
+Public Class Class2
     Private field As Integer
 End Class
 ");

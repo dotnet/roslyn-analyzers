@@ -305,8 +305,7 @@ struct C : {|CS0527:B|}
             await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage1),
                 // Test0.cs(12,8): warning CA1066: Implement IEquatable when overriding Object.Equals
-                GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage2),
-                DiagnosticResult.CompilerError("CS0527").WithLocation(12, 12).WithMessage("Type 'B' in interface list is not an interface"));
+                GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage2));
         }
 
         [Fact, WorkItem(1914, "https://github.com/dotnet/roslyn-analyzers/issues/1914")]

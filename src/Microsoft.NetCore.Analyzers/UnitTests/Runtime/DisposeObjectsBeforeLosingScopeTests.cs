@@ -6557,13 +6557,11 @@ End Class
 
 Class Test
     Private Sub M1()
-        New A()
-        New A().M()
+        {|BC30035:New|} A()
+        {|BC30035:New|} A().M()
         Dim x = New A().X
     End Sub
-End Class",
-                DiagnosticResult.CompilerError("BC30035").WithLocation(17, 9).WithMessage("Syntax error."),
-                DiagnosticResult.CompilerError("BC30035").WithLocation(18, 9).WithMessage("Syntax error."));
+End Class");
         }
 
         [Fact]
@@ -7849,13 +7847,11 @@ class B : IDisposable
 {
     public void Dispose()
     {
-        A x = new A();
-        = x
+        A x = new A();{|CS1525:|}
+        = x{|CS1002:|}
     }
 }
-",
-                    DiagnosticResult.CompilerError("CS1525").WithLocation(16, 23).WithMessage("Invalid expression term '='"),
-                    DiagnosticResult.CompilerError("CS1002").WithLocation(17, 12).WithMessage("; expected"));
+");
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
@@ -7879,7 +7875,7 @@ class Test
     void M1()
     {
         var builder = new StringBuilder();
-        using ()        // This erroneous code used to cause a null reference exception in the analysis.
+        using ({|CS1525:)|}        // This erroneous code used to cause a null reference exception in the analysis.
         this.WriteTo(new StringWriter(builder));
         return;
     }
@@ -7888,8 +7884,7 @@ class Test
     {
     }
 }
-",
-                DiagnosticResult.CompilerError("CS1525").WithLocation(19, 16).WithMessage("Invalid expression term ')'"));
+");
         }
 
         [Fact]
@@ -10816,7 +10811,7 @@ class C : IDisposable
     void M1()
     {
         IDisposable local;
-        M2(local);
+        M2({|CS0165:local|});
         local = new C();
     }
 
@@ -10828,7 +10823,6 @@ class C : IDisposable
     {
     }
 }",
-            DiagnosticResult.CompilerError("CS0165").WithLocation(9, 12).WithMessage("Use of unassigned local variable 'local'"),
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
             GetCSharpResultAt(10, 17, "new C()"));
         }
@@ -10927,12 +10921,9 @@ class C : IDisposable
     void M1()
     {
         var c = new C();
-        if()
+        if({|CS1525:)|}{|CS1002:|}{|CS1525:|}
     }
-}",
-                DiagnosticResult.CompilerError("CS1525").WithLocation(11, 12).WithMessage("Invalid expression term ')'"),
-                DiagnosticResult.CompilerError("CS1002").WithLocation(11, 13).WithMessage("; expected"),
-                DiagnosticResult.CompilerError("CS1525").WithLocation(11, 13).WithMessage("Invalid expression term '}'"));
+}");
         }
 
         [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
@@ -10953,14 +10944,11 @@ class C : IDisposable
 
     void M2(C c)
     {
-        if()
+        if({|CS1525:)|}{|CS1002:|}{|CS1525:|}
     }
 }",
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-            GetCSharpResultAt(10, 17, "new C()"),
-            DiagnosticResult.CompilerError("CS1525").WithLocation(16, 12).WithMessage("Invalid expression term ')'"),
-            DiagnosticResult.CompilerError("CS1002").WithLocation(16, 13).WithMessage("; expected"),
-            DiagnosticResult.CompilerError("CS1525").WithLocation(16, 13).WithMessage("Invalid expression term '}'"));
+            GetCSharpResultAt(10, 17, "new C()"));
         }
 
         [Fact, WorkItem(2529, "https://github.com/dotnet/roslyn-analyzers/issues/2529")]

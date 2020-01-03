@@ -246,12 +246,11 @@ public class A
 {
     public bool Compare(float f)
     {
-        return f == float.NbN; // Misspelled.
+        return f == float.{|CS0117:NbN|}; // Misspelled.
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0117").WithLocation(6, 27).WithMessage("'float' does not contain a definition for 'NbN'"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -260,12 +259,11 @@ public class A
             var code = @"
 Public Class A
     Public Function Compare(f As Single) As Boolean
-        Return f = Single.NbN   ' Misspelled
+        Return f = {|BC30456:Single.NbN|}   ' Misspelled
     End Function
 End Class
 ";
-            await VerifyVB.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("BC30456").WithLocation(4, 20).WithMessage("'NbN' is not a member of 'Single'."));
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]

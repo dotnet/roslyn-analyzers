@@ -4788,15 +4788,14 @@ class Test<T>
             return;
         }
 
-        var d = (D)t;
+        var d = {|CS0030:(D)t|};
         if (d == null)
         {
             return;
         }
     }
 }
-",
-                DiagnosticResult.CompilerError("CS0030").WithLocation(20, 17).WithMessage("Cannot convert type 'T' to 'D'"));
+");
 
             await VerifyBasicAnalyzerAsync(@"
 Class C
@@ -4812,13 +4811,12 @@ Class Test(Of T As C)
             Return
         End If
 
-        Dim d = DirectCast(t, D)
+        Dim d = DirectCast({|BC30311:t|}, D)
         If d Is Nothing Then
             Return
         End If
     End Sub
-End Class",
-                DiagnosticResult.CompilerError("BC30311").WithLocation(15, 28).WithMessage("Value of type 'T' cannot be converted to 'D'."));
+End Class");
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
@@ -6618,12 +6616,11 @@ public class C
             await VerifyBasicAnalyzerAsync(@"
 Class C
     Public Sub F(p As Object)
-        Dim a = {M}
+        Dim a = {|BC30451:M|}
         Dim b = If(p, new C())
     End Sub
 End Class
-",
-                DiagnosticResult.CompilerError("BC30451").WithLocation(4, 18).WithMessage("'M' is not declared. It may be inaccessible due to its protection level."));
+");
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]

@@ -334,6 +334,8 @@ public class class1
         public async Task VisualBasic_CA1024NoDiagnosticOnUnboundMethodCaller()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
 Public Class class1
     Public Function GetSomethingWithUnboundInvocation() As Integer
         Console.WriteLine(Me)

@@ -925,7 +925,7 @@ C.Property.set -> void";
         }
 
         [Fact]
-        public async Task TestSimpleMissingMember_Fix_WithNullability()
+        public async Task TestSimpleMissingMember_Fix_WithoutNullability()
         {
             var source = @"
 #nullable enable
@@ -940,9 +940,71 @@ public class C
 C.C() -> void";
             var fixedUnshippedText = @"C
 C.C() -> void
+C.NewField -> string";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task TestSimpleMissingMember_Fix_WithNullability()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? {|RS0016:NewField|}; // Newly added field, not in current public API.
+}
+";
+
+            var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";
+            var unshippedText = @"C
+C.C() -> void";
+            var fixedUnshippedText = @"C
+C.C() -> void
 C.NewField -> string?";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task ApiFileShippedWithDuplicateNullableEnable()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            string shippedText = $@"
+{DeclarePublicApiAnalyzer.NullableEnable}
+{DeclarePublicApiAnalyzer.NullableEnable}
+";
+
+            string unshippedText = $@"";
+
+            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.PublicApiFilesInvalid)
+                .WithArguments(DeclarePublicApiAnalyzer.InvalidReasonMisplacedNullableEnable);
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
+        }
+
+        [Fact]
+        public async Task ApiFileUnshippedWithNullableEnable()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            string shippedText = $@"";
+
+            string unshippedText = $@"
+{DeclarePublicApiAnalyzer.NullableEnable}
+";
+
+            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.PublicApiFilesInvalid)
+                .WithArguments(DeclarePublicApiAnalyzer.InvalidReasonMisplacedNullableEnable);
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
         }
 
         [Fact]
@@ -977,46 +1039,6 @@ C.Method() -> void
 C.NewField -> int
 C.Property.get -> int
 C.Property.set -> void";
-
-            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
-        }
-
-        [Fact]
-        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithRemovedNullability()
-        {
-            var source = @"
-public class C
-{
-    public string {|RS0016:ChangedField|};
-}
-";
-            var shippedText = @"";
-            var unshippedText = @"C
-C.C() -> void
-{|RS0017:C.ChangedField -> string?|}";
-            var fixedUnshippedText = @"C
-C.C() -> void
-C.ChangedField -> string";
-
-            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
-        }
-
-        [Fact]
-        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithAddedNullability()
-        {
-            var source = @"
-public class C
-{
-    public string? {|RS0016:ChangedField|};
-}
-";
-            var shippedText = @"";
-            var unshippedText = @"C
-C.C() -> void
-{|RS0017:C.ChangedField -> string|}";
-            var fixedUnshippedText = @"C
-C.C() -> void
-C.ChangedField -> string?";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }

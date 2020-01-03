@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Project project = context.Document.Project;
-            TextDocument publicSurfaceAreaDocument = GetPublicSurfaceAreaDocument(project);
+            TextDocument publicSurfaceAreaDocument = GetUnshippedDocument(project);
             if (publicSurfaceAreaDocument == null)
             {
                 return Task.CompletedTask;
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return Task.CompletedTask;
         }
 
-        private static TextDocument GetPublicSurfaceAreaDocument(Project project)
+        internal static TextDocument GetUnshippedDocument(Project project)
         {
             return project.AdditionalDocuments.FirstOrDefault(doc => doc.Name.Equals(DeclarePublicApiAnalyzer.UnshippedFileName, StringComparison.Ordinal));
         }
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return newSourceText;
         }
 
-        private static List<string> GetLinesFromSourceText(SourceText sourceText)
+        internal static List<string> GetLinesFromSourceText(SourceText sourceText)
         {
             var lines = new List<string>();
 
@@ -144,7 +144,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return lastLine.Span.IsEmpty ? Environment.NewLine : string.Empty;
         }
 
-        private class AdditionalDocumentChangeAction : CodeAction
+        internal class AdditionalDocumentChangeAction : CodeAction
         {
             private readonly Func<CancellationToken, Task<Solution>> _createChangedAdditionalDocument;
 
@@ -187,7 +187,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     Project project = pair.Key;
                     ImmutableArray<Diagnostic> diagnostics = pair.Value;
 
-                    TextDocument publicSurfaceAreaAdditionalDocument = GetPublicSurfaceAreaDocument(project);
+                    TextDocument publicSurfaceAreaAdditionalDocument = GetUnshippedDocument(project);
 
                     if (publicSurfaceAreaAdditionalDocument == null)
                     {

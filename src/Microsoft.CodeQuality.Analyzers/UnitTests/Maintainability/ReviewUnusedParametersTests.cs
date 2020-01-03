@@ -900,29 +900,20 @@ class C
     {
     }
 
-    public void UnusedErrorTypeParamMethod(UndefinedType param1) // error CS0246: The type or namespace name 'UndefinedType' could not be found.
+    public void UnusedErrorTypeParamMethod({|CS0246:UndefinedType|} param1)
     {
     }
 }
-", CompilerDiagnostics.None,
-          // Test0.cs(6,18): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
-          // Test0.cs(10,39): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(10, 39, "param", "UnusedParamMethod"),
-          // Test0.cs(14,52): warning CA1801: Parameter param1 of method UnusedParamStaticMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(14, 52, "param1", "UnusedParamStaticMethod"),
-          // Test0.cs(18,46): warning CA1801: Parameter defaultParam of method UnusedDefaultParamMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(18, 46, "defaultParam", "UnusedDefaultParamMethod"),
-          // Test0.cs(22,59): warning CA1801: Parameter paramsArr of method UnusedParamsArrayParamMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(22, 59, "paramsArr", "UnusedParamsArrayParamMethod"),
-          // Test0.cs(26,48): warning CA1801: Parameter param1 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(26, 48, "param1", "MultipleUnusedParamsMethod"),
-          // Test0.cs(26,60): warning CA1801: Parameter param2 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
-          // Test0.cs(30,47): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
-          // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
-          GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
+",
+                GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
+                GetCSharpUnusedParameterResultAt(10, 39, "param", "UnusedParamMethod"),
+                GetCSharpUnusedParameterResultAt(14, 52, "param1", "UnusedParamStaticMethod"),
+                GetCSharpUnusedParameterResultAt(18, 46, "defaultParam", "UnusedDefaultParamMethod"),
+                GetCSharpUnusedParameterResultAt(22, 59, "paramsArr", "UnusedParamsArrayParamMethod"),
+                GetCSharpUnusedParameterResultAt(26, 48, "param1", "MultipleUnusedParamsMethod"),
+                GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
+                GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
+                GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
         }
 
         [Fact]
@@ -952,28 +943,19 @@ Class C
     Private Sub UnusedRefParamMethod(ByRef param1 As Integer)
     End Sub
 
-    Public Sub UnusedErrorTypeParamMethod(param1 As UndefinedType) ' error BC30002: Type 'UndefinedType' is not defined.
+    Public Sub UnusedErrorTypeParamMethod(param1 As {|BC30002:UndefinedType|})
     End Sub
 End Class
-", CompilerDiagnostics.None,
-      // Test0.vb(3,20): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(3, 20, "param", ".ctor"),
-      // Test0.vb(6,34): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(6, 34, "param", "UnusedParamMethod"),
-      // Test0.vb(9,47): warning CA1801: Parameter param1 of method UnusedParamStaticMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(9, 47, "param1", "UnusedParamStaticMethod"),
-      // Test0.vb(12,50): warning CA1801: Parameter defaultParam of method UnusedDefaultParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(12, 50, "defaultParam", "UnusedDefaultParamMethod"),
-      // Test0.vb(15,56): warning CA1801: Parameter paramsArr of method UnusedParamsArrayParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(15, 56, "paramsArr", "UnusedParamsArrayParamMethod"),
-      // Test0.vb(18,43): warning CA1801: Parameter param1 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(18, 43, "param1", "MultipleUnusedParamsMethod"),
-      // Test0.vb(18,62): warning CA1801: Parameter param2 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(18, 62, "param2", "MultipleUnusedParamsMethod"),
-      // Test0.vb(21,44): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
-      // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
-      GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
+",
+                GetBasicUnusedParameterResultAt(3, 20, "param", ".ctor"),
+                GetBasicUnusedParameterResultAt(6, 34, "param", "UnusedParamMethod"),
+                GetBasicUnusedParameterResultAt(9, 47, "param1", "UnusedParamStaticMethod"),
+                GetBasicUnusedParameterResultAt(12, 50, "defaultParam", "UnusedDefaultParamMethod"),
+                GetBasicUnusedParameterResultAt(15, 56, "paramsArr", "UnusedParamsArrayParamMethod"),
+                GetBasicUnusedParameterResultAt(18, 43, "param1", "MultipleUnusedParamsMethod"),
+                GetBasicUnusedParameterResultAt(18, 62, "param2", "MultipleUnusedParamsMethod"),
+                GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
+                GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
         }
 
         [Fact]
@@ -985,8 +967,7 @@ static class C
     static void ExtensionMethod(this int i, int anotherParam) { }
 }
 ",
-    // Test0.cs(4,49): warning CA1801: Parameter anotherParam of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
-    GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
+                GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
         }
 
         [Fact]
@@ -1008,8 +989,7 @@ public class C
         }
     }
 }",
-            // Test0.cs(11,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
-            GetCSharpUnusedParameterResultAt(11, 32, "x", "LocalFunction"));
+                GetCSharpUnusedParameterResultAt(11, 32, "x", "LocalFunction"));
         }
 
         [Fact]
@@ -1029,8 +1009,7 @@ public class C
         }
     }
 }",
-            // Test0.cs(9,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
-            GetCSharpUnusedParameterResultAt(9, 32, "x", "LocalFunction"));
+                GetCSharpUnusedParameterResultAt(9, 32, "x", "LocalFunction"));
         }
 
         #endregion

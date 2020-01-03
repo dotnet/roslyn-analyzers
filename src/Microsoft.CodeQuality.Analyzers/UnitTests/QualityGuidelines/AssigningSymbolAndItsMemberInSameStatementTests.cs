@@ -277,18 +277,18 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
 {
-    public S Field;
+    public S {|CS0523:Field|};
 }
 
 public class Test
 {
     public void Method()
     {
-        S a, b;
+        S a, b = new S();
         a.Field = a = b;
     }
 }
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]
@@ -297,18 +297,18 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct S
 {
-    public S Property { get; set; }
+    public S Property { get => default; set { } }
 }
 
 public class Test
 {
     public void Method()
     {
-        S a, b;
-        a.Property = c = a = b;
+        S a, b = new S();
+        a.Property = a = b;
     }
 }
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]

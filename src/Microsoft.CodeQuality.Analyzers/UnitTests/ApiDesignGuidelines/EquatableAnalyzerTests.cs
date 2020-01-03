@@ -113,15 +113,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals
+    public bool {|CS0548:Equals|}
     {
-        return true;
+        {|CS1014:return|} true{|CS1014:;|}
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -130,15 +130,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals(
+    public bool Equals({|CS1026:|}
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -147,15 +147,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals)
+    public bool Equals{|CS1003:)|}
     {
         return true;
     }
-}
+{|CS1022:}|}
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -164,7 +164,7 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
     public bool Equals()
     {
@@ -172,7 +172,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -181,15 +181,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals(x)
+    public bool Equals({|CS0246:x|}{|CS1001:)|}
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -198,7 +198,7 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0738:IEquatable<C>|}
 {
     public int Equals(C x)
     {
@@ -206,7 +206,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -217,11 +217,11 @@ using System;
 
 class C : IEquatable<C>
 {
-    public bool Equals(C other)
+    public bool {|CS0501:Equals|}(C other){|CS1002:|}
 }
 ";
             string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None,
+            await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverridesObjectEqualsDescriptor, expectedMessage));
         }
 
@@ -231,15 +231,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public Equals(C other)
+    public {|CS1520:Equals|}(C other)
     {
-        return true;
+        {|CS0127:return|} true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -250,13 +250,13 @@ using System;
 
 class C
 {
-    public override bool Equals(object other, int n)
+    public override bool {|CS0115:Equals|}(object other, int n)
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -292,7 +292,7 @@ struct B
     }
 }
 
-struct C : B
+struct C : {|CS0527:B|}
 {
     public override bool Equals(object other)
     {
@@ -302,7 +302,7 @@ struct C : B
 ";
             string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
             string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
-            await VerifyCS.VerifyAnalyzerAsync(code, CompilerDiagnostics.None,
+            await VerifyCS.VerifyAnalyzerAsync(code,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage2));
         }

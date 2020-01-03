@@ -125,9 +125,9 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(
+        throw new ArgumentNullException({|CS1002:|}{|CS1026:|}
     }
-}", CompilerDiagnostics.None);
+}");
         }
 
         [Fact]
@@ -139,9 +139,9 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(""test"", ""test2"", ""test3"");
+        throw new {|CS1729:ArgumentNullException|}(""test"", ""test2"", ""test3"");
     }
-}", CompilerDiagnostics.None);
+}");
         }
 
         [Fact]

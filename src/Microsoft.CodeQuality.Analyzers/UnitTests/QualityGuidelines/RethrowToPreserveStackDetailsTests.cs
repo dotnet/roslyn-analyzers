@@ -403,7 +403,7 @@ class Program
             {
                 throw;
             }
-            catch (ArithmeticException)   // error CS0160: A previous catch clause already catches all exceptions of this or of a super type ('ArithmeticException')
+            catch ({|CS0160:ArithmeticException|})
             {
                 try
                 {
@@ -411,7 +411,7 @@ class Program
                 }
                 catch (ArithmeticException i)
                 {
-                    throw e;   // error CS0103: The name 'e' does not exist in the current context
+                    throw {|CS0103:e|};
                 }
             }
         }
@@ -421,7 +421,7 @@ class Program
         }
     }
 }
-", CompilerDiagnostics.None);
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -436,7 +436,7 @@ Class Program
                 Try
                     Throw New ArithmeticException()
                 Catch e As Exception
-                    Throw ex   ' error BC30451: 'ex' is not declared. It may be inaccessible due to its protection level.
+                    Throw {|BC30451:ex|}
                 End Try
             End Try
         Catch ex As Exception
@@ -444,7 +444,7 @@ Class Program
         End Try
     End Sub
 End Class
-", CompilerDiagnostics.None);
+");
         }
 
         [Fact]

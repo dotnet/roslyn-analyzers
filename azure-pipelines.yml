@@ -19,7 +19,7 @@ jobs:
         _configuration: Release
   pool:
     name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2017.open
+    queue: buildpool.windows.10.amd64.open
   timeoutInMinutes: 20
 
   steps:
@@ -48,7 +48,7 @@ jobs:
     maxParallel: 4
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
+    queue: BuildPool.Windows.10.Amd64.ES.Open
   timeoutInMinutes: 20
 
   steps:

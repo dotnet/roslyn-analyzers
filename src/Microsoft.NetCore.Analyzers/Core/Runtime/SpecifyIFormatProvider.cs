@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -128,6 +129,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 var obsoleteAttributeType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+
+                var excludeTryParseMethods = csaContext.Options.GetBoolOptionValue(EditorConfigOptionNames.ExcludeTryParseMethods, IFormatProviderAlternateRule,
+                    defaultValue: true, cancellationToken: csaContext.CancellationToken);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -180,6 +184,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         // If there are two matching overloads, one with CultureInfo as the first parameter and one with CultureInfo as the last parameter,
                         // report the diagnostic on the overload with CultureInfo as the last parameter, to match the behavior of FxCop.
                         var correctOverload = correctOverloads.FirstOrDefault(overload => overload.Parameters.Last().Type.Equals(iformatProviderType)) ?? correctOverloads.FirstOrDefault();
+
+                        // Use a different mechanism for TryParse methods as they usually have more than 1 extra parameter and
+                        // the IFormatProvider parameter is neither first nor last.
+                        if (correctOverload == null && targetMethod.Name.Equals("TryParse", StringComparison.Ordinal) && !excludeTryParseMethods)
+                        {
+                            correctOverload = methodsWithSameNameAsTargetMethod.FirstOrDefault(x => HasCorrectTryMethodParameters(x, targetMethod));
+                        }
 
                         // Sample message for IFormatProviderAlternateRule: Because the behavior of Convert.ToInt64(string) could vary based on the current user's locale settings,
                         // replace this call in IFormatProviderStringTest.TestMethod() with a call to Convert.ToInt64(string, IFormatProvider).
@@ -250,6 +261,35 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
+        }
+
+        private static bool HasCorrectTryMethodParameters(IMethodSymbol candidateMethod, IMethodSymbol referenceMethod)
+        {
+            if (candidateMethod.Parameters.Length <= referenceMethod.Parameters.Length)
+            {
+                return false;
+            }
+
+            var remainingCandidateMethodParameters = candidateMethod.Parameters.ToList();
+            for (int i = 0; i < referenceMethod.Parameters.Length; i++)
+            {
+                for (int j = 0; j < remainingCandidateMethodParameters.Count; j++)
+                {
+                    if (remainingCandidateMethodParameters[j].Type.Equals(referenceMethod.Parameters[i].Type))
+                    {
+                        remainingCandidateMethodParameters.RemoveAt(i);
+                        continue;
+                    }
+
+                    if (j == remainingCandidateMethodParameters.Count)
+                    {
+                        // Cannot find any parameter of the expected type.
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

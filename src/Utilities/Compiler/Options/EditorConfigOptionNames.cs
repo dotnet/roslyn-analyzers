@@ -119,5 +119,10 @@ namespace Analyzer.Utilities
         ///   3. Default FxCop heuristic (75% of enum values)
         /// </summary>
         public const string EnumValuesPrefixTrigger = "enum_values_prefix_trigger";
+
+        /// <summary>
+        /// Boolean option to configure if TryParse methods are flagged for CA1305 (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1305).
+        /// </summary>
+        public const string ExcludeTryParseMethods = "exclude_tryparse_methods";
     }
 }

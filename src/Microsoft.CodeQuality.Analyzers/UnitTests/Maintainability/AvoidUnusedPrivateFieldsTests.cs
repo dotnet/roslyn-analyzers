@@ -295,9 +295,9 @@ End Class
         public async Task CA1823_VisualBasic_FieldOffsetAttributeError_NoDiagnostic()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
-<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)>
 Public Class [Class]
-    <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
+    <System.Runtime.InteropServices.{|BC30455:FieldOffsetAttribute|}>
     Private fieldWithFieldOffsetAttribute As Integer
 End Class
 ");

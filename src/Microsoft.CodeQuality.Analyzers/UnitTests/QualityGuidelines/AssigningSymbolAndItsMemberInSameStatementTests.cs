@@ -305,7 +305,7 @@ public class Test
     public void Method()
     {
         S a, b = new S();
-        {|CS0165:a|}.Property = a = b;
+        a.Property = a = b;
     }
 }
 ");

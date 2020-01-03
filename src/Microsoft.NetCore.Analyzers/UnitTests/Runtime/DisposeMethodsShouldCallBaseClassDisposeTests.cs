@@ -1085,18 +1085,18 @@ End Class",
         {
             // Missing "using System;" causes "Equals" method be marked as IsOverride but with null OverriddenMethod.
             await VerifyCS.VerifyAnalyzerAsync(@"
-public class BaseClass<T> : IComparable<T>
-     where T : IComparable<T>
+public class BaseClass<T> : {|CS0246:IComparable<T>|}
+     where T : {|CS0246:IComparable<T>|}
 {
     public T Value { get; set; }
 
 
     public int CompareTo(T other)
     {
-        return Value.CompareTo(other);
+        return Value.{|CS1061:CompareTo|}(other);
     }
 
-    public override bool Equals(object obj)
+    public override bool {|CS0115:Equals|}(object obj)
     {
         if (obj is BaseClass<T> other)
         {
@@ -1106,28 +1106,14 @@ public class BaseClass<T> : IComparable<T>
         return false;
     }
 
-    public override int GetHashCode() => Value?.GetHashCode() ?? 0;
+    public override int {|CS0115:GetHashCode|}() => Value?.GetHashCode() ?? 0;
 }
 
-public class DerivedClass<T> : BaseClass<T>
-    where T : IComparable<T>
+public class {|CS0314:DerivedClass|}<T> : BaseClass<T>
+    where T : {|CS0246:IComparable<T>|}
 {
 }
-",
-                DiagnosticResult.CompilerError("CS0246").WithLocation(2, 29)
-                    .WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
-                DiagnosticResult.CompilerError("CS0246").WithLocation(3, 16)
-                    .WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"),
-                DiagnosticResult.CompilerError("CS1061").WithLocation(10, 22)
-                    .WithMessage("'T' does not contain a definition for 'CompareTo' and no accessible extension method 'CompareTo' accepting a first argument of type 'T' could be found (are you missing a using directive or an assembly reference?)"),
-                DiagnosticResult.CompilerError("CS0115").WithLocation(13, 26)
-                    .WithMessage("'BaseClass<T>.Equals(object)': no suitable method found to override"),
-                DiagnosticResult.CompilerError("CS0115").WithLocation(23, 25)
-                    .WithMessage("'BaseClass<T>.GetHashCode()': no suitable method found to override"),
-                DiagnosticResult.CompilerError("CS0314").WithLocation(26, 14)
-                    .WithMessage("The type 'T' cannot be used as type parameter 'T' in the generic type or method 'BaseClass<T>'. There is no boxing conversion or type parameter conversion from 'T' to 'IComparable<T>'."),
-                DiagnosticResult.CompilerError("CS0246").WithLocation(27, 15)
-                    .WithMessage("The type or namespace name 'IComparable<>' could not be found (are you missing a using directive or an assembly reference?)"));
+");
         }
     }
 }

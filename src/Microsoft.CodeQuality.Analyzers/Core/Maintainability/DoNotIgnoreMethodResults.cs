@@ -160,7 +160,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             case OperationKind.Invocation:
                                 IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
                                 IMethodSymbol targetMethod = invocationExpression.TargetMethod;
-                                if (targetMethod == null)
+                                if (targetMethod.ReturnsVoid)
                                 {
                                     break;
                                 }
@@ -177,7 +177,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 {
                                     rule = HResultOrErrorCodeRule;
                                 }
-                                else if (IsPureWithReturnMethod(targetMethod, opContext.Compilation))
+                                else if (IsPureMethod(targetMethod, opContext.Compilation))
                                 {
                                     rule = PureMethodRule;
                                 }
@@ -317,9 +317,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 method.ReturnType.SpecialType == SpecialType.System_UInt32);
         }
 
-        private static bool IsPureWithReturnMethod(IMethodSymbol method, Compilation compilation)
+        private static bool IsPureMethod(IMethodSymbol method, Compilation compilation)
         {
-            return !method.ReturnsVoid && method.GetAttributes().Any(attr => attr.AttributeClass.Equals(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsContractsPureAttribute)));
+            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsContractsPureAttribute)));
         }
     }
 }

@@ -356,7 +356,7 @@ End Structure
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure A
-    Public Overrides Overloads Function Equals(obj As A) As Boolean
+    Public Overrides Overloads Function {|BC30284:Equals|}(obj As A) As Boolean
         Return True
     End Function
 
@@ -369,8 +369,7 @@ Public Structure A
     End Operator
 End Structure
 ",
-                GetBasicOverrideEqualsDiagnostic(2, 18, "A"),
-                DiagnosticResult.CompilerError("BC30284").WithLocation(3, 41).WithMessage("function 'Equals' cannot be declared 'Overrides' because it does not override a function in a base class."));
+                GetBasicOverrideEqualsDiagnostic(2, 18, "A"));
         }
 
         [Fact]

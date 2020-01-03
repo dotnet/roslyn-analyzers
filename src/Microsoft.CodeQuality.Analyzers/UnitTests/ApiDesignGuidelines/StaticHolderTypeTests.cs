@@ -714,12 +714,11 @@ End Class
         public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-public class C26 :
+public class C26 :{|CS1031:|}
 {
     public static void Foo() { }
 }
-",
-                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19).WithMessage("Type expected"));
+");
         }
 
         [Fact]
@@ -727,23 +726,21 @@ public class C26 :
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B26
-	Inherits
+	Inherits{|BC30182:|}
 	Public Shared Sub Foo()
 	End Sub
 End Class
-",
-                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10).WithMessage("Type expected."));
+");
         }
 
         [Fact]
         public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-public class C27 :
+public class C27 :{|CS1031:|}
 {
 }
-",
-                DiagnosticResult.CompilerError("CS1031").WithLocation(2, 19).WithMessage("Type expected"));
+");
         }
 
         [Fact]
@@ -751,10 +748,9 @@ public class C27 :
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B27
-	Inherits
+	Inherits{|BC30182:|}
 End Class
-",
-                DiagnosticResult.CompilerError("BC30182").WithLocation(3, 10).WithMessage("Type expected."));
+");
         }
 
         [Fact]

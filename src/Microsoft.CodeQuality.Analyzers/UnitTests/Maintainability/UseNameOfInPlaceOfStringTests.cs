@@ -125,11 +125,9 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(
+        throw new ArgumentNullException({|CS1002:|}{|CS1026:|}
     }
-}",
-                DiagnosticResult.CompilerError("CS1002").WithLocation(7, 41).WithMessage("; expected"),
-                DiagnosticResult.CompilerError("CS1026").WithLocation(7, 41).WithMessage(") expected"));
+}");
         }
 
         [Fact]
@@ -141,7 +139,7 @@ class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(""test"", ""test2"");
+        throw new {|CS1729:ArgumentNullException|}(""test"", ""test2"", ""test3"");
     }
 }");
         }

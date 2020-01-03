@@ -299,11 +299,10 @@ Imports System.Globalization
 
 Class C
     Public Sub DoesNotAssignObjectToVariable()
-        New C()
+        {|BC30035:New|} C()
     End Sub
 End Class
-",
-                DiagnosticResult.CompilerError("BC30035").WithLocation(7, 9).WithMessage("Syntax error."));
+");
         }
 
         [Fact]

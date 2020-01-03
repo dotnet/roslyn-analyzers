@@ -102,12 +102,10 @@ public class Class
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 public class Class
 {
-    [System.Runtime.InteropServices.FieldOffsetAttribute]
-    private int fieldWithFieldOffsetAttribute;
+    [{|CS7036:System.Runtime.InteropServices.FieldOffsetAttribute|}]
+    private int {|CS0625:fieldWithFieldOffsetAttribute|};
 }
-",
-                DiagnosticResult.CompilerError("CS7036").WithLocation(5, 6).WithMessage("There is no argument given that corresponds to the required formal parameter 'offset' of 'FieldOffsetAttribute.FieldOffsetAttribute(int)'"),
-                DiagnosticResult.CompilerError("CS0625").WithLocation(6, 17).WithMessage("'Class.fieldWithFieldOffsetAttribute': instance field in types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute"));
+");
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -139,8 +137,7 @@ class Class
     private int field;
 }
 ",
-    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCA1823CSharpResultAt(5, 17, "field"));
+                GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -150,19 +147,17 @@ class Class
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
 class Class
 {
-    private int field;
+    private int {|CS0625:field|};
 }
 ",
-    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCA1823CSharpResultAt(5, 17, "field"),
-    DiagnosticResult.CompilerError("CS0625").WithLocation(5, 17).WithMessage("'Class.field': instance field in types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute"));
+                GetCA1823CSharpResultAt(5, 17, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
         public async Task CA1823_CSharp_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-[System.Runtime.InteropServices.StructLayout]
+[{|CS1729:System.Runtime.InteropServices.StructLayout|}]
 class Class1
 {
     private int field;
@@ -174,11 +169,8 @@ class Class2
     private int field;
 }
 ",
-    DiagnosticResult.CompilerError("CS1729").WithLocation(2, 2).WithMessage("'StructLayoutAttribute' does not contain a constructor that takes 0 arguments"),
-    // Test0.cs(5,17): warning CA1823: Unused field 'field'.
-    GetCA1823CSharpResultAt(5, 17, "field"),
-    // Test0.cs(11,17): warning CA1823: Unused field 'field'.
-    GetCA1823CSharpResultAt(11, 17, "field"));
+                GetCA1823CSharpResultAt(5, 17, "field"),
+                GetCA1823CSharpResultAt(11, 17, "field"));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -202,15 +194,13 @@ public class Class
             await VerifyCS.VerifyAnalyzerAsync(CSharpMEFAttributesDefinition + @"
 public class Class
 {
-    [System.Composition.ExportAttribute(0)]
+    [{|CS1729:System.Composition.ExportAttribute(0)|}]
     private int fieldWithMefV1ExportAttribute;
 
-    [System.ComponentModel.Composition.ExportAttribute(0)]
+    [{|CS1729:System.ComponentModel.Composition.ExportAttribute(0)|}]
     private int fieldWithMefV2ExportAttribute;
 }
-",
-                 DiagnosticResult.CompilerError("CS1729").WithLocation(18, 6).WithMessage("'ExportAttribute' does not contain a constructor that takes 1 arguments"),
-                 DiagnosticResult.CompilerError("CS1729").WithLocation(21, 6).WithMessage("'ExportAttribute' does not contain a constructor that takes 1 arguments"));
+");
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -222,20 +212,16 @@ public class Class
                 TestCode = @"
 public class Class
 {
-    [System.Composition.ExportAttribute]
+    [System.{|CS0234:Composition|}.ExportAttribute]
     private int fieldWithMefV1ExportAttribute;
 
-    [System.ComponentModel.Composition.ExportAttribute]
+    [System.ComponentModel.{|CS0234:Composition|}.ExportAttribute]
     private int fieldWithMefV2ExportAttribute;
 }
 ",
                 ExpectedDiagnostics =
                 {
-                    DiagnosticResult.CompilerError("CS0234").WithLocation(4, 13).WithMessage("The type or namespace name 'Composition' does not exist in the namespace 'System' (are you missing an assembly reference?)"),
-                    // Test0.cs(5,17): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823CSharpResultAt(5, 17, "fieldWithMefV1ExportAttribute"),
-                    DiagnosticResult.CompilerError("CS0234").WithLocation(7, 28).WithMessage("The type or namespace name 'Composition' does not exist in the namespace 'System.ComponentModel' (are you missing an assembly reference?)"),
-                    // Test0.cs(8,17): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823CSharpResultAt(8, 17, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();
@@ -262,8 +248,8 @@ public class Class
     private int Value => Used1 + Used2;
 }
 ",
-            GetCA1823CSharpResultAt(7, 17, "Unused1"),
-            GetCA1823CSharpResultAt(8, 17, "Unused2"));
+                GetCA1823CSharpResultAt(7, 17, "Unused1"),
+                GetCA1823CSharpResultAt(8, 17, "Unused2"));
         }
 
         [Fact]
@@ -289,8 +275,8 @@ Public Class Class1
     End Property
 End Class
 ",
-            GetCA1823BasicResultAt(6, 13, "Unused1"),
-            GetCA1823BasicResultAt(7, 13, "Unused2"));
+                GetCA1823BasicResultAt(6, 13, "Unused1"),
+                GetCA1823BasicResultAt(7, 13, "Unused2"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -309,9 +295,9 @@ End Class
         public async Task CA1823_VisualBasic_FieldOffsetAttributeError_NoDiagnostic()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
-<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)> _
+<System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)>
 Public Class [Class]
-    <System.Runtime.InteropServices.FieldOffsetAttribute(8)> _
+    <System.Runtime.InteropServices.{|BC30455:FieldOffsetAttribute|}>
     Private fieldWithFieldOffsetAttribute As Integer
 End Class
 ");
@@ -343,8 +329,7 @@ Public Class [Class]
     Private field As Integer
 End Class
 ",
-    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetCA1823BasicResultAt(4, 13, "field"));
+                GetCA1823BasicResultAt(4, 13, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
@@ -356,32 +341,25 @@ Public Class [Class]
     Private field As Integer
 End Class
 ",
-    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetCA1823BasicResultAt(4, 13, "field"));
+                GetCA1823BasicResultAt(4, 13, "field"));
         }
 
         [Fact, WorkItem(1219, "https://github.com/dotnet/roslyn-analyzers/issues/1219")]
         public async Task CA1823_VisualBasic_StructLayoutAttributeError_NoLayoutKind_Diagnostic()
         {
             await VerifyVB.VerifyAnalyzerAsync(@"
-<System.Runtime.InteropServices.StructLayout> _
+<System.Runtime.InteropServices.{|BC30516:StructLayout|}> _
 Public Class Class1
     Private field As Integer
 End Class
 
-<System.Runtime.InteropServices.StructLayout(1000)> _
+<System.Runtime.InteropServices.{|BC30519:StructLayout|}(1000)> _
 Public Class Class2
     Private field As Integer
 End Class
 ",
-    DiagnosticResult.CompilerError("BC30516").WithLocation(2, 33).WithMessage("Overload resolution failed because no accessible 'New' accepts this number of arguments."),
-    // Test0.vb(4,13): warning CA1823: Unused field 'field'.
-    GetCA1823BasicResultAt(4, 13, "field"),
-    DiagnosticResult.CompilerError("BC30519").WithLocation(7, 33).WithMessage(@"Overload resolution failed because no accessible 'New' can be called without a narrowing conversion:
-    'Public Overloads Sub New(layoutKind As LayoutKind)': Argument matching parameter 'layoutKind' narrows from 'Integer' to 'LayoutKind'.
-    'Public Overloads Sub New(layoutKind As Short)': Argument matching parameter 'layoutKind' narrows from 'Integer' to 'Short'."),
-    // Test0.vb(9,13): warning CA1823: Unused field 'field'.
-    GetCA1823BasicResultAt(9, 13, "field"));
+                GetCA1823BasicResultAt(4, 13, "field"),
+                GetCA1823BasicResultAt(9, 13, "field"));
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -403,15 +381,13 @@ End Class
         {
             await VerifyVB.VerifyAnalyzerAsync(BasicMEFAttributesDefinition + @"
 Public Class [Class]
-    <System.Composition.ExportAttribute(0)> _
+    <System.Composition.ExportAttribute({|BC30057:0|})> _
     Private fieldWithMefV1ExportAttribute As Integer
 
-    <System.ComponentModel.Composition.ExportAttribute(0)> _
+    <System.ComponentModel.Composition.ExportAttribute({|BC30057:0|})> _
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
-",
-                DiagnosticResult.CompilerError("BC30057").WithLocation(15, 41).WithMessage("Too many arguments to 'Public Sub New()'."),
-                DiagnosticResult.CompilerError("BC30057").WithLocation(18, 56).WithMessage("Too many arguments to 'Public Sub New()'."));
+");
         }
 
         [Fact, WorkItem(1217, "https://github.com/dotnet/roslyn-analyzers/issues/1217")]
@@ -422,20 +398,16 @@ End Class
                 ReferenceAssemblies = ReferenceAssemblies.Default,
                 TestCode = @"
 Public Class [Class]
-    <System.Composition.ExportAttribute> _
+    <{|BC30002:System.Composition.ExportAttribute|}> _
     Private fieldWithMefV1ExportAttribute As Integer
 
-    <System.ComponentModel.Composition.ExportAttribute> _
+    <{|BC30002:System.ComponentModel.Composition.ExportAttribute|}> _
     Private fieldWithMefV2ExportAttribute As Integer
 End Class
 ",
                 ExpectedDiagnostics =
                 {
-                    DiagnosticResult.CompilerError("BC30002").WithLocation(3, 6).WithMessage("Type 'System.Composition.ExportAttribute' is not defined."),
-                    // Test0.vb(4,13): warning CA1823: Unused field 'fieldWithMefV1ExportAttribute'.
                     GetCA1823BasicResultAt(4, 13, "fieldWithMefV1ExportAttribute"),
-                    DiagnosticResult.CompilerError("BC30002").WithLocation(6, 6).WithMessage("Type 'System.ComponentModel.Composition.ExportAttribute' is not defined."),
-                    // Test0.vb(7,13): warning CA1823: Unused field 'fieldWithMefV2ExportAttribute'.
                     GetCA1823BasicResultAt(7, 13, "fieldWithMefV2ExportAttribute"),
                 },
             }.RunAsync();

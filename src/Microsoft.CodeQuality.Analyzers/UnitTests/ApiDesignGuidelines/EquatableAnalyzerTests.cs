@@ -113,19 +113,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals
+    public bool {|CS0548:Equals|}
     {
-        return true;
+        {|CS1014:return|} true{|CS1014:;|}
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"),
-                DiagnosticResult.CompilerError("CS0548").WithLocation(6, 17).WithMessage("'C.Equals': property or indexer must have at least one accessor"),
-                DiagnosticResult.CompilerError("CS1014").WithLocation(8, 9).WithMessage("A get or set accessor expected"),
-                DiagnosticResult.CompilerError("CS1014").WithLocation(8, 20).WithMessage("A get or set accessor expected"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -134,17 +130,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals(
+    public bool Equals({|CS1026:|}
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"),
-                DiagnosticResult.CompilerError("CS1026").WithLocation(6, 24).WithMessage(") expected"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -153,18 +147,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals)
+    public bool Equals{|CS1003:)|}
     {
         return true;
     }
-}
+{|CS1022:}|}
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"),
-                DiagnosticResult.CompilerError("CS1003").WithLocation(6, 23).WithMessage("Syntax error, ',' expected"),
-                DiagnosticResult.CompilerError("CS1022").WithLocation(10, 1).WithMessage("Type or namespace definition, or end-of-file expected"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -173,7 +164,7 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
     public bool Equals()
     {
@@ -181,8 +172,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -191,18 +181,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public bool Equals(x)
+    public bool Equals({|CS0246:x|}{|CS1001:)|}
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"),
-                DiagnosticResult.CompilerError("CS0246").WithLocation(6, 24).WithMessage("The type or namespace name 'x' could not be found (are you missing a using directive or an assembly reference?)"),
-                DiagnosticResult.CompilerError("CS1001").WithLocation(6, 25).WithMessage("Identifier expected"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -211,7 +198,7 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0738:IEquatable<C>|}
 {
     public int Equals(C x)
     {
@@ -219,8 +206,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0738").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'. 'C.Equals(C)' cannot implement 'IEquatable<C>.Equals(C)' because it does not have the matching return type of 'bool'."));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -231,15 +217,12 @@ using System;
 
 class C : IEquatable<C>
 {
-    public bool Equals(C other)
+    public bool {|CS0501:Equals|}(C other){|CS1002:|}
 }
 ";
             string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             await VerifyCS.VerifyAnalyzerAsync(code,
-                // Test0.cs(4,7): warning CA1067: Type C should override Equals because it implements IEquatable<T>
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverridesObjectEqualsDescriptor, expectedMessage),
-                DiagnosticResult.CompilerError("CS0501").WithLocation(6, 17).WithMessage("'C.Equals(C)' must declare a body because it is not marked abstract, extern, or partial"),
-                DiagnosticResult.CompilerError("CS1002").WithLocation(6, 32).WithMessage("; expected"));
+                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverridesObjectEqualsDescriptor, expectedMessage));
         }
 
         [Fact]
@@ -248,18 +231,15 @@ class C : IEquatable<C>
             var code = @"
 using System;
 
-class C : IEquatable<C>
+class C : {|CS0535:IEquatable<C>|}
 {
-    public Equals(C other)
+    public {|CS1520:Equals|}(C other)
     {
-        return true;
+        {|CS0127:return|} true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0535").WithLocation(4, 11).WithMessage("'C' does not implement interface member 'IEquatable<C>.Equals(C)'"),
-                DiagnosticResult.CompilerError("CS1520").WithLocation(6, 12).WithMessage("Method must have a return type"),
-                DiagnosticResult.CompilerError("CS0127").WithLocation(8, 9).WithMessage("Since 'C.C(C)' returns void, a return keyword must not be followed by an object expression"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -270,14 +250,13 @@ using System;
 
 class C
 {
-    public override bool Equals(object other, int n)
+    public override bool {|CS0115:Equals|}(object other, int n)
     {
         return true;
     }
 }
 ";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                DiagnosticResult.CompilerError("CS0115").WithLocation(6, 26).WithMessage("'C.Equals(object, int)': no suitable method found to override"));
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
@@ -313,7 +292,7 @@ struct B
     }
 }
 
-struct C : B
+struct C : {|CS0527:B|}
 {
     public override bool Equals(object other)
     {
@@ -324,7 +303,6 @@ struct C : B
             string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
             string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             await VerifyCS.VerifyAnalyzerAsync(code,
-                // Test0.cs(4,8): warning CA1066: Implement IEquatable when overriding Object.Equals
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage1),
                 // Test0.cs(12,8): warning CA1066: Implement IEquatable when overriding Object.Equals
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableDescriptor, expectedMessage2),

@@ -387,10 +387,6 @@ End Class",
     Private Shared Sub mAiN()
     End Sub
 End Class",
-                ExpectedDiagnostics =
-                {
-                    DiagnosticResult.CompilerError("BC30737").WithMessage("No accessible 'Main' method with an appropriate signature was found in 'TestProject'."),
-                },
                 SolutionTransforms =
                 {
                     (solution, projectId) =>
@@ -398,6 +394,11 @@ End Class",
                       var compilationOptions = solution.GetProject(projectId).CompilationOptions;
                       return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
                     }
+                },
+                ExpectedDiagnostics =
+                {
+                     // error BC30737: No accessible 'Main' method with an appropriate signature was found in 'TestProject'.
+                     DiagnosticResult.CompilerError("BC30737"),
                 }
             }.RunAsync();
         }
@@ -1304,13 +1305,13 @@ internal class CFoo {}
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Runtime.InteropServices;
 
-[CoClass]
+[{|CS7036:CoClass|}]
 internal interface IFoo1 {}
 
-[CoClass(CFoo)]
+[CoClass({|CS0119:CFoo|})]
 internal interface IFoo2 {}
 
-[CoClass(typeof(CFoo), null)]
+[{|CS1729:CoClass(typeof(CFoo), null)|}]
 internal interface IFoo3 {}
 
 [CoClass(typeof(IFoo3))] // This isn't a class-type
@@ -1318,10 +1319,7 @@ internal interface IFoo4 {}
 
 internal class CFoo {}  // Test0.cs(16,16): warning CA1812: CFoo is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).
 ",
-                DiagnosticResult.CompilerError("CS7036").WithLocation(4, 2).WithMessage("There is no argument given that corresponds to the required formal parameter 'coClass' of 'CoClassAttribute.CoClassAttribute(Type)'"),
-                DiagnosticResult.CompilerError("CS0119").WithLocation(7, 10).WithMessage("'CFoo' is a type, which is not valid in the given context"),
-                DiagnosticResult.CompilerError("CS1729").WithLocation(10, 2).WithMessage("'CoClassAttribute' does not contain a constructor that takes 2 arguments"),
-                GetCSharpResultAt(16, 16, "CFoo"));
+                GetCSharpResultAt(16, 16, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "CFoo"));
         }
 
         [Fact, WorkItem(2957, "https://github.com/dotnet/roslyn-analyzers/issues/2957")]

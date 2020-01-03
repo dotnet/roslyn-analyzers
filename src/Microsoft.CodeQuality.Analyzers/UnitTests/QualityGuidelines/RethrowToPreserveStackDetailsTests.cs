@@ -390,7 +390,7 @@ class Program
             {
                 throw;
             }
-            catch (ArithmeticException)
+            catch ({|CS0160:ArithmeticException|})
             {
                 try
                 {
@@ -398,7 +398,7 @@ class Program
                 }
                 catch (ArithmeticException i)
                 {
-                    throw e;
+                    throw {|CS0103:e|};
                 }
             }
         }
@@ -408,9 +408,7 @@ class Program
         }
     }
 }
-",
-            DiagnosticResult.CompilerError("CS0160").WithLocation(18, 20).WithMessage("A previous catch clause already catches all exceptions of this or of a super type ('ArithmeticException')"),
-            DiagnosticResult.CompilerError("CS0103").WithLocation(26, 27).WithMessage("The name 'e' does not exist in the current context"));
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -425,7 +423,7 @@ Class Program
                 Try
                     Throw New ArithmeticException()
                 Catch e As Exception
-                    Throw ex
+                    Throw {|BC30451:ex|}
                 End Try
             End Try
         Catch ex As Exception
@@ -433,8 +431,7 @@ Class Program
         End Try
     End Sub
 End Class
-",
-            DiagnosticResult.CompilerError("BC30451").WithLocation(14, 27).WithMessage("'ex' is not declared. It may be inaccessible due to its protection level."));
+");
         }
 
         [Fact]

@@ -11,19 +11,19 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj">
+    <ProjectReference Include="..\..\NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj">
       <Name>Microsoft.NetCore.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\..\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj">
+    <ProjectReference Include="..\..\NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj">
       <Name>Microsoft.NetCore.CSharp.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\..\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj">
+    <ProjectReference Include="..\..\NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj">
       <Name>Microsoft.NetCore.VisualBasic.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>

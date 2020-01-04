@@ -142,17 +142,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReleaseNotesUtil", "src\Too
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.NetAnalyzers", "Microsoft.CodeAnalysis.NetAnalyzers", "{31F86414-C34B-462A-AFB5-BDA7724904F3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj", "{1C62A2F6-7A44-4030-9D1A-7E7A966736E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers", "src\NetAnalyzers\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj", "{1C62A2F6-7A44-4030-9D1A-7E7A966736E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.NetAnalyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj", "{DC277D4D-9479-4B55-95BB-9FDB8A682DE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.NetAnalyzers", "src\NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj", "{DC277D4D-9479-4B55-95BB-9FDB8A682DE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.Setup", "src\Microsoft.CodeAnalysis.NetAnalyzers\Setup\Microsoft.CodeAnalysis.NetAnalyzers.Setup.csproj", "{9F4C5E8F-10EE-4193-BB36-A2FDE07B5557}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.Setup", "src\NetAnalyzers\Setup\Microsoft.CodeAnalysis.NetAnalyzers.Setup.csproj", "{9F4C5E8F-10EE-4193-BB36-A2FDE07B5557}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.UnitTests", "src\Microsoft.CodeAnalysis.NetAnalyzers\UnitTests\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.csproj", "{F4F111E0-7108-47A7-97A1-A5B10207C0D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.UnitTests", "src\NetAnalyzers\UnitTests\Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.csproj", "{F4F111E0-7108-47A7-97A1-A5B10207C0D8}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj", "{C75555DC-D059-4665-A421-4EF5F30BD9B6}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers", "src\NetAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj", "{C75555DC-D059-4665-A421-4EF5F30BD9B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.Package", "nuget\Microsoft.CodeAnalysis.NetAnalyzers\Microsoft.CodeAnalysis.NetAnalyzers.Package.csproj", "{8AC54A99-5655-435B-8417-BF2F995BE66A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.NetAnalyzers.Package", "nuget\NetAnalyzers\Microsoft.CodeAnalysis.NetAnalyzers.Package.csproj", "{8AC54A99-5655-435B-8417-BF2F995BE66A}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

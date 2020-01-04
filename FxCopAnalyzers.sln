@@ -32,23 +32,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.NetCore.Analyzers
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.NetFramework.Analyzers", "Microsoft.NetFramework.Analyzers", "{31B73922-AADE-4B0C-88F5-92AA5883A0E6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeQuality.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.csproj", "{DB2A3703-0149-46D4-B575-018346B2F406}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeQuality.Analyzers", "src\NetAnalyzers\Core\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.csproj", "{DB2A3703-0149-46D4-B575-018346B2F406}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetCore.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj", "{FEE46B63-96AC-476E-80C3-4CA964E748E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetCore.Analyzers", "src\NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj", "{FEE46B63-96AC-476E-80C3-4CA964E748E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetFramework.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.csproj", "{E038E362-EFBE-4A81-A93F-CFA5D779FD2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetFramework.Analyzers", "src\NetAnalyzers\Core\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.csproj", "{E038E362-EFBE-4A81-A93F-CFA5D779FD2E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeQuality.CSharp.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.CSharp.Analyzers.csproj", "{BCB20922-349F-45A6-A8CA-0BC9C29C878C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeQuality.CSharp.Analyzers", "src\NetAnalyzers\CSharp\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.CSharp.Analyzers.csproj", "{BCB20922-349F-45A6-A8CA-0BC9C29C878C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetCore.CSharp.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj", "{47A90FE9-1942-44AD-ABBC-AF4AD45C04B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetCore.CSharp.Analyzers", "src\NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj", "{47A90FE9-1942-44AD-ABBC-AF4AD45C04B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetFramework.CSharp.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.CSharp.Analyzers.csproj", "{DB4AAE94-5DEC-4CCB-91C4-1244D72E7966}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.NetFramework.CSharp.Analyzers", "src\NetAnalyzers\CSharp\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.CSharp.Analyzers.csproj", "{DB4AAE94-5DEC-4CCB-91C4-1244D72E7966}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeQuality.VisualBasic.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj", "{748416D8-6D6C-4F85-B29A-E145DE589715}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.CodeQuality.VisualBasic.Analyzers", "src\NetAnalyzers\VisualBasic\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj", "{748416D8-6D6C-4F85-B29A-E145DE589715}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.NetCore.VisualBasic.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj", "{EC0535DF-6A80-428A-B13A-C0FD22AE4592}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.NetCore.VisualBasic.Analyzers", "src\NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj", "{EC0535DF-6A80-428A-B13A-C0FD22AE4592}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.NetFramework.VisualBasic.Analyzers", "src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj", "{A410FBFA-994E-450B-A492-177D20A7D9FE}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Microsoft.NetFramework.VisualBasic.Analyzers", "src\NetAnalyzers\VisualBasic\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.VisualBasic.Analyzers.vbproj", "{A410FBFA-994E-450B-A492-177D20A7D9FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeQuality.Analyzers.Package", "nuget\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj", "{E75CA893-D29C-43F3-A262-E0DF90A8FE00}"
 EndProject

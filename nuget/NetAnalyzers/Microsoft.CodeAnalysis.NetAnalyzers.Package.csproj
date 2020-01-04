@@ -11,6 +11,8 @@
     <ReleaseNotes>Diagnostic analyzers for the Microsoft .NET Compiler Platform (Roslyn)</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
     <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
+	<AnalyzerDocumentationFileDir>$(RepoRoot)src\NetAnalyzers</AnalyzerDocumentationFileDir>
+    <AnalyzerSarifFileDir>$(RepoRoot)src\NetAnalyzers</AnalyzerSarifFileDir>
   </PropertyGroup>
   
   <ItemGroup>
@@ -21,8 +23,8 @@
 	</ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj" /> 
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj" /> 
+    <ProjectReference Include="..\..\src\NetAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj" />
   </ItemGroup>
 </Project>

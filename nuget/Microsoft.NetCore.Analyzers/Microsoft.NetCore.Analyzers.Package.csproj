@@ -20,8 +20,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
 </Project>

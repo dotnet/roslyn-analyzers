@@ -51,18 +51,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
-        private readonly struct NullableLine
-#pragma warning restore CA1815 // Override equals and operator equals on value types
-        {
-            public int Rank { get; }
-
-            internal NullableLine(int rank)
-            {
-                Rank = rank;
-            }
-        }
-
-#pragma warning disable CA1815 // Override equals and operator equals on value types
         private struct ApiName
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
@@ -82,13 +70,14 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         {
             public ImmutableArray<ApiLine> ApiList { get; }
             public ImmutableArray<RemovedApiLine> RemovedApiList { get; }
-            public ImmutableArray<NullableLine> NullableLines { get; }
+            // Number for the max line where #nullable enable was found (-1 otherwise)
+            public int NullableRank { get; }
 
-            internal ApiData(ImmutableArray<ApiLine> apiList, ImmutableArray<RemovedApiLine> removedApiList, ImmutableArray<NullableLine> nullableLines)
+            internal ApiData(ImmutableArray<ApiLine> apiList, ImmutableArray<RemovedApiLine> removedApiList, int nullableRank)
             {
                 ApiList = apiList;
                 RemovedApiList = removedApiList;
-                NullableLines = nullableLines;
+                NullableRank = nullableRank;
             }
         }
 
@@ -107,7 +96,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             internal Impl(Compilation compilation, ApiData shippedData, ApiData unshippedData)
             {
                 _compilation = compilation;
-                _useNullability = shippedData.NullableLines.Length > 0;
+                _useNullability = shippedData.NullableRank >= 0 || unshippedData.NullableRank >= 0;
                 _unshippedData = unshippedData;
 
                 var publicApiMap = new Dictionary<string, ApiLine>(StringComparer.Ordinal);

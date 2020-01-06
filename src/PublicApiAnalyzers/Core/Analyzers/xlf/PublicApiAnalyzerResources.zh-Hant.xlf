@@ -33,18 +33,18 @@
         <note />
       </trans-unit>
       <trans-unit id="AnnotatePublicApiDescription">
-        <source>All public types and members should be declared with annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</source>
-        <target state="new">All public types and members should be declared with annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</target>
+        <source>All public types and members should be declared with nullability annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</source>
+        <target state="new">All public types and members should be declared with nullability annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</target>
         <note />
       </trans-unit>
       <trans-unit id="AnnotatePublicApiMessage">
-        <source>Symbol '{0}' is not annotated in the declared API.</source>
-        <target state="new">Symbol '{0}' is not annotated in the declared API.</target>
+        <source>Symbol '{0}' is missing nullability annotations in the declared API.</source>
+        <target state="new">Symbol '{0}' is missing nullability annotations in the declared API.</target>
         <note />
       </trans-unit>
       <trans-unit id="AnnotatePublicApiTitle">
-        <source>Annotate public types and members in the declared API</source>
-        <target state="new">Annotate public types and members in the declared API</target>
+        <source>Annotate nullability of public types and members in the declared API</source>
+        <target state="new">Annotate nullability of public types and members in the declared API</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidMultipleOverloadsWithOptionalParametersMessage">

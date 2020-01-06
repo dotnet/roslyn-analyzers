@@ -127,13 +127,13 @@
     <value>All public types and members should be declared in PublicAPI.txt. This draws attention to API changes in the code reviews and source control history, and helps prevent breaking changes.</value>
   </data>
   <data name="AnnotatePublicApiTitle" xml:space="preserve">
-    <value>Annotate public types and members in the declared API</value>
+    <value>Annotate nullability of public types and members in the declared API</value>
   </data>
   <data name="AnnotatePublicApiMessage" xml:space="preserve">
-    <value>Symbol '{0}' is not annotated in the declared API.</value>
+    <value>Symbol '{0}' is missing nullability annotations in the declared API.</value>
   </data>
   <data name="AnnotatePublicApiDescription" xml:space="preserve">
-    <value>All public types and members should be declared with annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</value>
+    <value>All public types and members should be declared with nullability annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</value>
   </data>
   <data name="RemoveDeletedApiTitle" xml:space="preserve">
     <value>Remove deleted types and members from the declared API</value>

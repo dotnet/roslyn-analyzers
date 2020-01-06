@@ -12,6 +12,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 {
     public class AnnotatePublicApiAnalyzerTests
     {
+        #region Utilities
         private async Task VerifyCSharpAsync(string source, string shippedApiText, string unshippedApiText, params DiagnosticResult[] expected)
         {
             var test = new CSharpCodeFixTest<DeclarePublicApiAnalyzer, AnnotatePublicApiFix, XUnitVerifier>
@@ -58,6 +59,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 
             await test.RunAsync();
         }
+        #endregion
 
         #region Fix tests
 
@@ -136,7 +138,39 @@ C.Field2 -> string!";
         }
 
         [Fact]
-        public async Task AnnotatedMemberInAnnotatedUnshippedAPI()
+        public async Task AnnotatedMemberInAnnotatedUnshippedAPI_EnabledViaUnshipped()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? OldField;
+    public string? {|RS0036:Field|};
+    public string {|RS0036:Field2|};
+}
+";
+
+            var unshippedText = @"#nullable enable
+C
+C.C() -> void
+C.OldField -> string?
+C.Field -> string
+C.Field2 -> string";
+
+            var shippedText = @"";
+
+            var fixedUnshippedText = @"#nullable enable
+C
+C.C() -> void
+C.OldField -> string?
+C.Field -> string?
+C.Field2 -> string!";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, shippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task AnnotatedMemberInAnnotatedUnshippedAPI_EnabledViaShipped()
         {
             var source = @"
 #nullable enable
@@ -156,6 +190,37 @@ C.Field -> string
 C.Field2 -> string";
 
             var fixedUnshippedText = @"C
+C.C() -> void
+C.OldField -> string?
+C.Field -> string?
+C.Field2 -> string!";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, newShippedApiText: shippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        public async Task AnnotatedMemberInAnnotatedUnshippedAPI_EnabledViaBoth()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? OldField;
+    public string? {|RS0036:Field|};
+    public string {|RS0036:Field2|};
+}
+";
+
+            var shippedText = @"#nullable enable";
+            var unshippedText = @"#nullable enable
+C
+C.C() -> void
+C.OldField -> string?
+C.Field -> string
+C.Field2 -> string";
+
+            var fixedUnshippedText = @"#nullable enable
+C
 C.C() -> void
 C.OldField -> string?
 C.Field -> string?

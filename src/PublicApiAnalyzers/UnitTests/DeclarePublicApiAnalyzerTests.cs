@@ -1008,7 +1008,7 @@ public class C
         }
 
         [Fact]
-        public async Task ApiFileUnshippedWithNullableEnable()
+        public async Task ApiFileUnshippedWithDuplicateNullableEnable()
         {
             var source = @"
 public class C
@@ -1019,6 +1019,7 @@ public class C
             string shippedText = $@"";
 
             string unshippedText = $@"
+{DeclarePublicApiAnalyzer.NullableEnable}
 {DeclarePublicApiAnalyzer.NullableEnable}
 ";
 

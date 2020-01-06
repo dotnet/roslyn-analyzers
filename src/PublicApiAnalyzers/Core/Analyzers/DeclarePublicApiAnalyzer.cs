@@ -211,7 +211,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         {
             var apiBuilder = ImmutableArray.CreateBuilder<ApiLine>();
             var removedBuilder = ImmutableArray.CreateBuilder<RemovedApiLine>();
-            var nullableBuilder = ImmutableArray.CreateBuilder<NullableLine>();
+            var maxNullableRank = -1;
 
             int rank = -1;
             foreach (TextLine line in sourceText.Lines)
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 if (text == NullableEnable)
                 {
-                    nullableBuilder.Add(new NullableLine(rank));
+                    maxNullableRank = rank;
                     continue;
                 }
 
@@ -242,7 +242,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            return new ApiData(apiBuilder.ToImmutable(), removedBuilder.ToImmutable(), nullableBuilder.ToImmutable());
+            return new ApiData(apiBuilder.ToImmutable(), removedBuilder.ToImmutable(), maxNullableRank);
         }
 
         private static bool TryGetApiData(ImmutableArray<AdditionalText> additionalTexts, CancellationToken cancellationToken, out ApiData shippedData, out ApiData unshippedData)
@@ -298,13 +298,15 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonShippedCantHaveRemoved));
             }
 
-            if (shippedData.NullableLines.Any(nl => nl.Rank != 0))
+            if (shippedData.NullableRank > 0)
             {
+                // #nullable enable must be on the first line
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 
-            if (unshippedData.NullableLines.Length > 0)
+            if (unshippedData.NullableRank > 0)
             {
+                // #nullable enable must be on the first line
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 

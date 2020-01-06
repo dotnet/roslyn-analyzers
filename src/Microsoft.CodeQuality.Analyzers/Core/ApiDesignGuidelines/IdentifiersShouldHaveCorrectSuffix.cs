@@ -63,7 +63,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                         ("System.Collections.Generic.Stack`1", "Stack", true),
                                                         ("System.Collections.Generic.ICollection`1", "Collection", false),
                                                         ("System.Collections.Generic.IDictionary`2", "Dictionary", false),
-                                                        ("System.Collections.Generic.IReadOnlyCollection`1", "Collection", false),
                                                         ("System.Collections.Generic.IReadOnlyDictionary`2", "Dictionary", false),
                                                         ("System.Data.DataSet", "DataSet", false),
                                                         ("System.Data.DataTable", "DataTable", true),

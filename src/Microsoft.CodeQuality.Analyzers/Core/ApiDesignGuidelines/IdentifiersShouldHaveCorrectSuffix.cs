@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Linq;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using Analyzer.Utilities.Extensions;
-using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -101,10 +101,34 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
             }
 
+            var additionalTypesWithTheirSuffix = context.Options.GetAdditionalRequiredSuffixesOption(DefaultRule,
+                context.Compilation, context.CancellationToken);
+            foreach (var (type, suffix) in additionalTypesWithTheirSuffix)
+            {
+                if (type.OriginalDefinition.TypeKind == TypeKind.Interface)
+                {
+                    if (!interfaceTypeSuffixMapBuilder.ContainsKey(type.OriginalDefinition))
+                    {
+                        interfaceTypeSuffixMapBuilder.Add(type.OriginalDefinition, SuffixInfo.Create(suffix, false));
+                    }
+                }
+                else
+                {
+                    if (!baseTypeSuffixMapBuilder.ContainsKey(type.OriginalDefinition))
+                    {
+                        baseTypeSuffixMapBuilder.Add(type.OriginalDefinition, SuffixInfo.Create(suffix, false));
+                    }
+                }
+            }
+
             if (baseTypeSuffixMapBuilder.Count > 0 || interfaceTypeSuffixMapBuilder.Count > 0)
             {
                 var baseTypeSuffixMap = baseTypeSuffixMapBuilder.ToImmutable();
                 var interfaceTypeSuffixMap = interfaceTypeSuffixMapBuilder.ToImmutable();
+
+                var excludeIndirectBaseTypes = context.Options.GetBoolOptionValue(EditorConfigOptionNames.ExcludeIndirectBaseTypes, DefaultRule,
+                    defaultValue: false, cancellationToken: context.CancellationToken);
+
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
@@ -116,7 +140,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     Debug.Assert(namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, SpecialCollectionRule, saContext.CancellationToken));
 
-                    var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
+                    var baseTypes = excludeIndirectBaseTypes
+                        ? (new[] { namedTypeSymbol.BaseType })
+                        : namedTypeSymbol.GetBaseTypes();
+                    var baseType = baseTypes.FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
                     if (baseType != null)
                     {
                         var suffixInfo = baseTypeSuffixMap[baseType.OriginalDefinition];
@@ -134,7 +161,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    var implementedInterface = namedTypeSymbol.AllInterfaces.FirstOrDefault(i => interfaceTypeSuffixMap.ContainsKey(i.OriginalDefinition));
+                    var interfaces = excludeIndirectBaseTypes
+                        ? namedTypeSymbol.Interfaces
+                        : namedTypeSymbol.AllInterfaces;
+                    var implementedInterface = interfaces.FirstOrDefault(i => interfaceTypeSuffixMap.ContainsKey(i.OriginalDefinition));
                     if (implementedInterface != null)
                     {
                         var suffixInfo = interfaceTypeSuffixMap[implementedInterface.OriginalDefinition];

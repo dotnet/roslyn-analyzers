@@ -1099,6 +1099,282 @@ public class C
 }");
         }
 
+        [Theory, WorkItem(3065, "https://github.com/dotnet/roslyn-analyzers/issues/3065")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = MyNamespace.Bar:Bar")]
+        [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = Buzz:ABC")]
+        [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = MyNamespace.Bar:Bar|MyNamespace.IFoo:Foo")]
+        // In case of duplicated entries, only the first is kept
+        [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = MyNamespace.Bar:Bar|MyNamespace.Bar:BaBar")]
+        [InlineData("dotnet_code_quality.CA1710.additional_required_suffixes = junk")]
+        public async Task CA1710_AdditionalSuffixes(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+
+namespace MyNamespace
+{
+    public interface IFoo {}
+    public class Bar {}
+
+    public class B : Bar {}
+    public class B1 : B {}
+
+    public class C : ICloneable, IFoo
+    {
+        public object Clone() => null;
+    }
+}
+
+public class Buzz
+{
+}
+
+public class Bzzz : Buzz {}"},
+                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                }
+            };
+
+            if (editorConfigText.EndsWith("Bar", System.StringComparison.Ordinal))
+            {
+                csharpTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710CSharpResultAt(9, 18, "MyNamespace.B", "Bar"),
+                    GetCA1710CSharpResultAt(10, 18, "MyNamespace.B1", "Bar"),
+                });
+            }
+            else if (editorConfigText.EndsWith("ABC", System.StringComparison.Ordinal))
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(22, 14, "Bzzz", "ABC"));
+            }
+            else if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+            {
+                csharpTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710CSharpResultAt(9, 18, "MyNamespace.B", "Bar"),
+                    GetCA1710CSharpResultAt(10, 18, "MyNamespace.B1", "Bar"),
+                    GetCA1710CSharpResultAt(12, 18, "MyNamespace.C", "Foo"),
+                });
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System
+
+Namespace MyNamespace
+    Interface IFoo
+    End Interface
+
+    Public Class Bar
+    End Class
+
+    Public Class B
+        Inherits Bar
+    End Class
+
+    Public Class B1
+        Inherits B
+    End Class
+
+    Public Class C
+        Implements ICloneable, IFoo
+
+        Public Function Clone() As Object Implements ICloneable.Clone
+            Return Nothing
+        End Function
+    End Class
+End Namespace
+
+Public Class Buzz
+End Class
+
+Public Class Bzzz
+    Inherits Buzz
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                }
+            };
+
+            if (editorConfigText.EndsWith("Bar", System.StringComparison.Ordinal))
+            {
+                vbTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710BasicResultAt(11, 18, "MyNamespace.B", "Bar"),
+                    GetCA1710BasicResultAt(15, 18, "MyNamespace.B1", "Bar"),
+                });
+            }
+            else if (editorConfigText.EndsWith("ABC", System.StringComparison.Ordinal))
+            {
+                vbTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(31, 14, "Bzzz", "ABC"));
+            }
+            else if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+            {
+                vbTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710BasicResultAt(11, 18, "MyNamespace.B", "Bar"),
+                    GetCA1710BasicResultAt(15, 18, "MyNamespace.B1", "Bar"),
+                    GetCA1710BasicResultAt(19, 18, "MyNamespace.C", "Foo"),
+                });
+            }
+
+            await vbTest.RunAsync();
+        }
+
+        [Theory, WorkItem(3065, "https://github.com/dotnet/roslyn-analyzers/issues/3065")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.CA1710.exclude_indirect_base_types = false")]
+        [InlineData("dotnet_code_quality.CA1710.exclude_indirect_base_types = true")]
+        [InlineData("dotnet_code_quality.CA1710.exclude_indirect_base_types = junk")]
+        [InlineData(@"dotnet_code_quality.CA1710.exclude_indirect_base_types = true
+                      dotnet_code_quality.CA1710.additional_required_suffixes = Foo:Foo")]
+        [InlineData(@"dotnet_code_quality.CA1710.exclude_indirect_base_types = false
+                      dotnet_code_quality.CA1710.additional_required_suffixes = Foo:Foo")]
+        public async Task CA1710_ExcludeIndirectTypes(string editorConfigText)
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+public class C : Exception {}
+public class Sub : C {}
+
+public class FreezableList : ReadOnlyCollection<int>
+{
+    public FreezableList(IList<int> list) : base(list)
+    {
+    }
+}
+
+public class Foo {}
+public class Bar : Foo {}
+public class Buzz : Bar {}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    ExpectedDiagnostics = { GetCA1710CSharpResultAt(7, 14, "C", "Exception") },
+                }
+            };
+
+            if (editorConfigText.Contains("exclude_indirect_base_types = true"))
+            {
+                if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+                {
+                    csharpTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(18, 14, "Bar", "Foo"));
+                }
+            }
+            else
+            {
+                csharpTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710CSharpResultAt(8, 14, "Sub", "Exception"),
+                    GetCA1710CSharpResultAt(10, 14, "FreezableList", "Collection"),
+                });
+
+                if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+                {
+                    csharpTest.ExpectedDiagnostics.AddRange(new[]
+                    {
+                        GetCA1710CSharpResultAt(18, 14, "Bar", "Foo"),
+                        GetCA1710CSharpResultAt(19, 14, "Buzz", "Foo"),
+                    });
+                }
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System
+Imports System.Collections
+Imports System.Collections.Generic
+Imports System.Collections.ObjectModel
+
+Public Class C
+    Inherits Exception
+End Class
+
+Public Class [Sub]
+    Inherits C
+End Class
+
+Public Class FreezableList
+    Inherits ReadOnlyCollection(Of Integer)
+
+    Public Sub New(ByVal list As IList(Of Integer))
+        MyBase.New(list)
+    End Sub
+End Class
+
+Public Class Foo
+End Class
+
+Public Class Bar
+    Inherits Foo
+End Class
+
+Public Class Buzz
+    Inherits Bar
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText)  },
+                    ExpectedDiagnostics = { GetCA1710BasicResultAt(7, 14, "C", "Exception") },
+                }
+            };
+
+            if (editorConfigText.Contains("exclude_indirect_base_types = true"))
+            {
+                if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+                {
+                    vbTest.ExpectedDiagnostics.Add(GetCA1710BasicResultAt(26, 14, "Bar", "Foo"));
+                }
+            }
+            else
+            {
+                vbTest.ExpectedDiagnostics.AddRange(new[]
+                {
+                    GetCA1710BasicResultAt(11, 14, "[Sub]", "Exception"),
+                    GetCA1710BasicResultAt(15, 14, "FreezableList", "Collection"),
+                });
+
+                if (editorConfigText.EndsWith("Foo", System.StringComparison.Ordinal))
+                {
+                    vbTest.ExpectedDiagnostics.AddRange(new[]
+                    {
+                        GetCA1710BasicResultAt(26, 14, "Bar", "Foo"),
+                        GetCA1710BasicResultAt(30, 14, "Buzz", "Foo"),
+                    });
+                }
+            }
+
+            await vbTest.RunAsync();
+        }
+
         private static DiagnosticResult GetCA1710BasicResultAt(int line, int column, string symbolName, string replacementName, bool isSpecial = false)
         {
             var message = string.Format(CultureInfo.CurrentCulture,

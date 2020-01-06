@@ -128,6 +128,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     SymbolDisplayMiscellaneousOptions.None);
 
         private const int IncludeNullableReferenceTypeModifier = 1 << 6;
+        private const int IncludeNonNullableReferenceTypeModifier = 1 << 8;
 
         private static readonly SymbolDisplayFormat s_publicApiFormat =
             new SymbolDisplayFormat(
@@ -153,7 +154,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         private static readonly SymbolDisplayFormat s_publicApiFormatWithNullability =
             s_publicApiFormat.WithMiscellaneousOptions(
                 SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
-                (SymbolDisplayMiscellaneousOptions)IncludeNullableReferenceTypeModifier);
+                (SymbolDisplayMiscellaneousOptions)IncludeNullableReferenceTypeModifier |
+                (SymbolDisplayMiscellaneousOptions)IncludeNonNullableReferenceTypeModifier);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(DeclareNewApiRule, AnnotateApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,

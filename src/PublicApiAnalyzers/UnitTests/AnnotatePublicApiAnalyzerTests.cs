@@ -69,14 +69,15 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 public class C
 {
     public string? Field;
-    //public string Field2; // TODO2
+    public string Field2;
 }
 ";
 
             var shippedText = @"";
             var unshippedText = @"C
 C.C() -> void
-C.Field -> string";
+C.Field -> string
+C.Field2 -> string";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
         }
@@ -89,13 +90,14 @@ C.Field -> string";
 public class C
 {
     public string? Field;
-    //public string Field2; // TODO2
+    public string Field2;
 }
 ";
 
             var shippedText = @"C
 C.C() -> void
-C.Field -> string";
+C.Field -> string
+C.Field2 -> string";
             var unshippedText = @"";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
@@ -110,7 +112,7 @@ public class C
 {
     public string? OldField;
     public string? {|RS0036:Field|};
-    //public string Field2; // TODO2
+    public string {|RS0036:Field2|};
 }
 ";
 
@@ -118,7 +120,8 @@ public class C
 C
 C.C() -> void
 C.OldField -> string?
-C.Field -> string";
+C.Field -> string
+C.Field2 -> string";
 
             var unshippedText = @"";
 
@@ -126,7 +129,8 @@ C.Field -> string";
 C
 C.C() -> void
 C.OldField -> string?
-C.Field -> string?";
+C.Field -> string?
+C.Field2 -> string!";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedShippedText, newUnshippedApiText: unshippedText);
         }
@@ -140,7 +144,7 @@ public class C
 {
     public string? OldField;
     public string? {|RS0036:Field|};
-    //public string Field2; // TODO2
+    public string {|RS0036:Field2|};
 }
 ";
 
@@ -148,12 +152,14 @@ public class C
             var unshippedText = @"C
 C.C() -> void
 C.OldField -> string?
-C.Field -> string";
+C.Field -> string
+C.Field2 -> string";
 
             var fixedUnshippedText = @"C
 C.C() -> void
 C.OldField -> string?
-C.Field -> string?";
+C.Field -> string?
+C.Field2 -> string!";
 
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, newShippedApiText: shippedText, fixedUnshippedText);
         }

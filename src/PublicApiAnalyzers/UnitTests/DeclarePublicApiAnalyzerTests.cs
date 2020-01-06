@@ -927,7 +927,6 @@ C.Property.set -> void";
         [Fact]
         public async Task TestSimpleMissingMember_Fix_WithoutNullability()
         {
-            // TODO2
             var source = @"
 #nullable enable
 public class C
@@ -1026,27 +1025,6 @@ public class C
 
             var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.PublicApiFilesInvalid)
                 .WithArguments(DeclarePublicApiAnalyzer.InvalidReasonMisplacedNullableEnable);
-            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
-        }
-
-        [Fact]
-        public async Task ApiFileShippedWithoutNullableEnable()
-        {
-            var source = @"
-#nullable enable
-public class C
-{
-    public string? {|RS0037:NewField|}; // Should add '#nullable enable' to PublicAPI.txt
-    public string {|RS0037:NewField2|}; // Should add '#nullable enable' to PublicAPI.txt
-}
-";
-
-            string shippedText = $@"";
-
-            string unshippedText = $@"";
-
-            // TODO2
-            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.ShouldAnnotateApiFilesRule);
             await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
         }
 

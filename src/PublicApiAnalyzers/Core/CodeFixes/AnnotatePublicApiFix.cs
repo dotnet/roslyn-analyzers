@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 string publicSymbolNameWithNullability = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNameWithNullabilityPropertyBagKey];
                 bool isShippedDocument = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiIsShippedPropertyBagKey] == "true";
 
-                TextDocument? document = isShippedDocument ? GetShippedDocument(project) : DeclarePublicApiFix.GetUnshippedDocument(project);
+                TextDocument? document = isShippedDocument ? DeclarePublicApiFix.GetShippedDocument(project) : DeclarePublicApiFix.GetUnshippedDocument(project);
 
                 if (document != null)
                 {
@@ -59,11 +59,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 return publicSurfaceAreaDocument.Project.Solution.WithAdditionalDocumentText(publicSurfaceAreaDocument.Id, newSourceText);
             }
-        }
-
-        private static TextDocument? GetShippedDocument(Project project)
-        {
-            return project.AdditionalDocuments.FirstOrDefault(doc => doc.Name.Equals(DeclarePublicApiAnalyzer.ShippedFileName, StringComparison.Ordinal));
         }
 
         private static SourceText AnnotateSymbolNamesInSourceText(SourceText sourceText, Dictionary<string, string> changes)
@@ -112,7 +107,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     ImmutableArray<Diagnostic> diagnostics = pair.Value;
 
                     TextDocument? unshippedDocument = DeclarePublicApiFix.GetUnshippedDocument(project);
-                    TextDocument? shippedDocument = GetShippedDocument(project);
+                    TextDocument? shippedDocument = DeclarePublicApiFix.GetShippedDocument(project);
 
                     SourceText? unshippedSourceText = unshippedDocument is null ? null : await unshippedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
                     SourceText? shippedSourceText = shippedDocument is null ? null : await shippedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);

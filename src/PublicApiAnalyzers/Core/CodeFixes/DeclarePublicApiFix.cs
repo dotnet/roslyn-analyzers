@@ -60,6 +60,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return project.AdditionalDocuments.FirstOrDefault(doc => doc.Name.Equals(DeclarePublicApiAnalyzer.UnshippedFileName, StringComparison.Ordinal));
         }
 
+        internal static TextDocument? GetShippedDocument(Project project)
+        {
+            return project.AdditionalDocuments.FirstOrDefault(doc => doc.Name.Equals(DeclarePublicApiAnalyzer.ShippedFileName, StringComparison.Ordinal));
+        }
+
         private static async Task<Solution> GetFix(TextDocument publicSurfaceAreaDocument, string newSymbolName, ImmutableHashSet<string> siblingSymbolNamesToRemove, CancellationToken cancellationToken)
         {
             SourceText sourceText = await publicSurfaceAreaDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
@@ -218,6 +223,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                         foreach (Diagnostic diagnostic in grouping)
                         {
+                            if (diagnostic.Id == DeclarePublicApiAnalyzer.ShouldAnnotateApiFilesRule.Id)
+                            {
+                                continue;
+                            }
+
                             string publicSurfaceAreaSymbolName = diagnostic.Properties[DeclarePublicApiAnalyzer.PublicApiNamePropertyBagKey];
 
                             newSymbolNames.Add(publicSurfaceAreaSymbolName);

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -156,7 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            if (IsSkippedMethod(methodSymbol))
+            if (IsSkippedMethod(methodSymbol, wellKnownTypeProvider))
             {
                 return false;
             }
@@ -284,7 +285,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }
 
-        private static bool IsSkippedMethod(IMethodSymbol methodSymbol)
+        private static bool IsSkippedMethod(IMethodSymbol methodSymbol, WellKnownTypeProvider wellKnownTypeProvider)
         {
             if (methodSymbol.IsConstructor() || methodSymbol.IsFinalizer())
             {
@@ -293,7 +294,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             if (methodSymbol.ReturnsVoid &&
                 methodSymbol.Parameters.IsEmpty &&
-                (methodSymbol.Name == "Application_Start" || methodSymbol.Name == "Application_End"))
+                (methodSymbol.Name == "Application_Start" || methodSymbol.Name == "Application_End") &&
+                methodSymbol.ContainingType.Inherits(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebHttpApplication)))
             {
                 return true;
             }

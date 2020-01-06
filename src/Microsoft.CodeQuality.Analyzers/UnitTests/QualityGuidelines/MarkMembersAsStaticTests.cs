@@ -897,7 +897,12 @@ End Namespace"
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class C
+namespace System.Web
+{
+    public class HttpApplication {}
+}
+
+public class C : System.Web.HttpApplication
 {
     // The following methods are detected as event handler and so won't
     // trigger a diagnostic
@@ -919,7 +924,14 @@ public class C
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
+Namespace System.Web
+    Public Class HttpApplication
+    End Class
+End Namespace
+
 Public Class C
+    Inherits System.Web.HttpApplication
+
     Protected Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
     End Sub
 
@@ -954,6 +966,42 @@ Public Class C
     End Sub
 End Class
 ");
+        }
+
+        [Fact]
+        public async Task WebSpecificControllerMethods_WrongEnclosingType_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo {}
+
+public class C : Foo
+{
+    protected void Application_Start() { }
+    protected void Application_End() { }
+}",
+                GetCSharpResultAt(8, 20, "Application_Start"),
+                GetCSharpResultAt(9, 20, "Application_End"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class Foo
+End Class
+
+Public Class C
+    Inherits Foo
+
+    Protected Sub Application_Start()
+    End Sub
+
+    Protected Sub Application_End()
+    End Sub
+End Class
+",
+                GetBasicResultAt(10, 19, "Application_Start"),
+                GetBasicResultAt(13, 19, "Application_End"));
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

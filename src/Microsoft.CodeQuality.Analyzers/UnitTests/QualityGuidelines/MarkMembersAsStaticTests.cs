@@ -915,6 +915,45 @@ public class C
     protected void Application_Start() { }
     protected void Application_End() { }
 }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Protected Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_AuthenticateRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_BeginRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_EndRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Error(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Init(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Start()
+    End Sub
+
+    Protected Sub Application_End()
+    End Sub
+End Class
+");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

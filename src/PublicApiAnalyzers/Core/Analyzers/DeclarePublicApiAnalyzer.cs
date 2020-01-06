@@ -114,6 +114,17 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             helpLinkUri: @"https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
+        internal static readonly DiagnosticDescriptor ShouldAnnotateApiFilesRule = new DiagnosticDescriptor(
+            id: DiagnosticIds.ShouldAnnotateApiFilesRuleId,
+            title: PublicApiAnalyzerResources.ShouldAnnotateApiFilesTitle,
+            messageFormat: PublicApiAnalyzerResources.ShouldAnnotateApiFilesMessage,
+            category: "ApiDesign",
+            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            description: PublicApiAnalyzerResources.ShouldAnnotateApiFilesDescription,
+            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
         internal static readonly SymbolDisplayFormat ShortSymbolNameFormat =
             new SymbolDisplayFormat(
                 globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining,
@@ -160,7 +171,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(DeclareNewApiRule, AnnotateApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,
                 PublicApiFilesInvalid, DuplicateSymbolInApiFiles, AvoidMultipleOverloadsWithOptionalParameters,
-                OverloadWithOptionalParametersShouldHaveMostParameters);
+                OverloadWithOptionalParametersShouldHaveMostParameters, ShouldAnnotateApiFilesRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -300,13 +311,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             if (shippedData.NullableRank > 0)
             {
-                // #nullable enable must be on the first line
+                // '#nullable enable' must be on the first line
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 
             if (unshippedData.NullableRank > 0)
             {
-                // #nullable enable must be on the first line
+                // '#nullable enable' must be on the first line
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 

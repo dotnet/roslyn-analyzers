@@ -238,6 +238,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     {
                         reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, publicApiName.Name);
                     }
+
+                    if (publicApiName.Name != publicApiName.NameWithNullability)
+                    {
+                        // '#nullable enable' would be useful and should be set
+                        reportDiagnosticAtLocations(ShouldAnnotateApiFilesRule, ImmutableDictionary<string, string>.Empty);
+                    }
                 }
 
                 if (symbol.Kind == SymbolKind.Method)

@@ -64,21 +64,38 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
         #region Fix tests
 
         [Fact]
-        public async Task DoNotAnnotateMemberInUnannotatedUnshippedAPI()
+        public async Task DoNotAnnotateMemberInUnannotatedUnshippedAPI_Nullable()
         {
             var source = @"
 #nullable enable
 public class C
 {
-    public string? Field;
-    public string Field2;
+    public string? {|RS0037:Field|};
 }
 ";
 
             var shippedText = @"";
             var unshippedText = @"C
 C.C() -> void
-C.Field -> string
+C.Field -> string";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact]
+        public async Task DoNotAnnotateMemberInUnannotatedUnshippedAPI_NonNullable()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string {|RS0037:Field2|};
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"C
+C.C() -> void
 C.Field2 -> string";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
@@ -91,8 +108,8 @@ C.Field2 -> string";
 #nullable enable
 public class C
 {
-    public string? Field;
-    public string Field2;
+    public string? {|RS0037:Field|};
+    public string {|RS0037:Field2|};
 }
 ";
 

@@ -152,6 +152,21 @@
         <target state="translated">從宣告的 API 移除已刪除的類型與成員</target>
         <note />
       </trans-unit>
+      <trans-unit id="ShouldAnnotateApiFilesDescription">
+        <source>All public types and members should be declared with nullability annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</source>
+        <target state="new">All public types and members should be declared with nullability annotations in PublicAPI.txt. This draws attention to API nullability changes in the code reviews and source control history, and helps prevent breaking changes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShouldAnnotateApiFilesMessage">
+        <source>PublicAPI.txt is missing '#nullable enable', so the nullability annotations of API isn't recorded. It is recommended to enable this tracking.</source>
+        <target state="new">PublicAPI.txt is missing '#nullable enable', so the nullability annotations of API isn't recorded. It is recommended to enable this tracking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShouldAnnotateApiFilesTitle">
+        <source>Annotate nullability of types and members in the declared API</source>
+        <target state="new">Annotate nullability of types and members in the declared API</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

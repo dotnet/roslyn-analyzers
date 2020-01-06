@@ -927,11 +927,12 @@ C.Property.set -> void";
         [Fact]
         public async Task TestSimpleMissingMember_Fix_WithoutNullability()
         {
+            // TODO2
             var source = @"
 #nullable enable
 public class C
 {
-    public string? {|RS0016:NewField|}; // Newly added field, not in current public API.
+    public string? {|RS0037:{|RS0016:NewField|}|}; // Newly added field, not in current public API.
 }
 ";
 
@@ -1029,6 +1030,45 @@ public class C
         }
 
         [Fact]
+        public async Task ApiFileShippedWithoutNullableEnable()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? {|RS0037:NewField|}; // Should add '#nullable enable' to PublicAPI.txt
+    public string {|RS0037:NewField2|}; // Should add '#nullable enable' to PublicAPI.txt
+}
+";
+
+            string shippedText = $@"";
+
+            string unshippedText = $@"";
+
+            // TODO2
+            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.ShouldAnnotateApiFilesRule);
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
+        }
+
+        [Fact]
+        public async Task ApiFileShippedWithoutNullableEnable_AvoidUnnecessaryDiagnostic()
+        {
+            var source = @"
+public class C
+{
+}
+";
+
+            string shippedText = $@"C
+C.C() -> void";
+
+            string unshippedText = $@"";
+
+            // Only oblivious APIs, so no need to warn about lack of '#nullable enable'
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact]
         public async Task TestAddAndRemoveMembers_CSharp_Fix()
         {
             // Unshipped file has a state 'ObsoleteField' entry and a missing 'NewField' entry.
@@ -1037,7 +1077,7 @@ public class C
 {
     public int Field;
     public int Property { get; set; }
-    public void Method() { } 
+    public void Method() { }
     public int ArrowExpressionProperty => 0;
 
     public int {|RS0016:NewField|};

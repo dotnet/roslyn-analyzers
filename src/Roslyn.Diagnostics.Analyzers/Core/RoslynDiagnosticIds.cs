@@ -40,5 +40,6 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string ExportedPartsShouldHaveImportingConstructorRuleId = "RS0034";
         public const string RestrictedInternalsVisibleToRuleId = "RS0035";
         public const string AnnotatePublicApiRuleId = "RS0036";
+        public const string ShouldAnnotateApiFilesRuleId = "RS0037";
     }
 }

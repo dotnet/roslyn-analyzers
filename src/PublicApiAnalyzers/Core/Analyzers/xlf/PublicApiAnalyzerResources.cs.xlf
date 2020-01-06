@@ -82,6 +82,16 @@
         <target state="translated">Neduplikovat symboly v souborech veřejných rozhraní API</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnableNullableInProjectToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for project '{0}'</source>
+        <target state="new">Enable nullability annotations in the public API for project '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnableNullableInTheSolutionToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for the solution</source>
+        <target state="new">Enable nullability annotations in the public API for the solution</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ExposedNoninstantiableTypeMessage">
         <source>Constructor makes its noninheritable base class inheritable, thereby exposing its protected members.</source>
         <target state="translated">Konstruktor nastavuje základní třídu, ze které se nedá dědit, na třídu, ze které se dědit dá, čímž zpřístupňuje své chráněné členy.</target>

@@ -82,6 +82,16 @@
         <target state="translated">공용 API 파일에서 기호를 복제하지 마세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnableNullableInProjectToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for project '{0}'</source>
+        <target state="new">Enable nullability annotations in the public API for project '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnableNullableInTheSolutionToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for the solution</source>
+        <target state="new">Enable nullability annotations in the public API for the solution</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ExposedNoninstantiableTypeMessage">
         <source>Constructor makes its noninheritable base class inheritable, thereby exposing its protected members.</source>
         <target state="translated">생성자는 해당 상속할 수 없는 기본 클래스를 상속할 수 있도록 만들어 보호된 멤버가 공개됩니다.</target>

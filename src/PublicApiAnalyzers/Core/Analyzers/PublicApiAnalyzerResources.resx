@@ -218,4 +218,10 @@
   <data name="AnnotateAllItemsInTheSolutionToThePublicApiTitle" xml:space="preserve">
     <value>Annotate all items in the solution in the public API</value>
   </data>
+  <data name="EnableNullableInProjectToThePublicApiTitle" xml:space="preserve">
+    <value>Enable nullability annotations in the public API for project '{0}'</value>
+  </data>
+  <data name="EnableNullableInTheSolutionToThePublicApiTitle" xml:space="preserve">
+    <value>Enable nullability annotations in the public API for the solution</value>
+  </data>
 </root>

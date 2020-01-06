@@ -82,6 +82,16 @@
         <target state="translated">請勿在公用 API 檔案中使用重複的符號</target>
         <note />
       </trans-unit>
+      <trans-unit id="EnableNullableInProjectToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for project '{0}'</source>
+        <target state="new">Enable nullability annotations in the public API for project '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnableNullableInTheSolutionToThePublicApiTitle">
+        <source>Enable nullability annotations in the public API for the solution</source>
+        <target state="new">Enable nullability annotations in the public API for the solution</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ExposedNoninstantiableTypeMessage">
         <source>Constructor makes its noninheritable base class inheritable, thereby exposing its protected members.</source>
         <target state="translated">建構函式會使無法繼承的基底類別變成可繼承，進而公開其受保護的成員。</target>

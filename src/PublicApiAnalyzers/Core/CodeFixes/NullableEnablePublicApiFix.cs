@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             Project project = fixAllContext.Project;
                             ImmutableArray<Diagnostic> diagnostics = await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
                             diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(fixAllContext.Project, diagnostics));
-                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.AddAllItemsInProjectToThePublicApiTitle, fixAllContext.Project.Name);
+                            title = string.Format(CultureInfo.InvariantCulture, PublicApiAnalyzerResources.EnableNullableInProjectToThePublicApiTitle, fixAllContext.Project.Name);
                             break;
                         }
 
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                                 diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(project, diagnostics));
                             }
 
-                            title = PublicApiAnalyzerResources.AddAllItemsInTheSolutionToThePublicApiTitle;
+                            title = PublicApiAnalyzerResources.EnableNullableInTheSolutionToThePublicApiTitle;
                             break;
                         }
 

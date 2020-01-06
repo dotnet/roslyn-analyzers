@@ -11,12 +11,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.LeapYear
 {
     /// <summary>
-    /// CA2300: Do not increment or decrement year parameter in DateTime constructor.
+    /// CA2260: Do not increment or decrement year parameter in DateTime constructor.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class DoNotIncrementYearValueInDateConstructor : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2270";
+        internal const string RuleId = "CA2260";
 
         private static readonly LocalizableString _localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotIncrementYearInDateTimeConstructorTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString _localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotIncrementYearInDateTimeConstructorMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             _localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: false,
             helpLinkUri: null);
 
         private static readonly LocalizableString _localizableIdentifierTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotIncrementYearInDateTimeIdentifierConstructorTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             _localizableIdentifierMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: false,
             helpLinkUri: null);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule, IdentifierRule);

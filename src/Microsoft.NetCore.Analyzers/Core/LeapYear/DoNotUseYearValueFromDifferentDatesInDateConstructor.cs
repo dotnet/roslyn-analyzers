@@ -10,12 +10,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.LeapYear
 {
     /// <summary>
-    /// CA2301: Do not increment or decrement year parameter in DateTime constructor.
+    /// CA2261: Do not increment or decrement year parameter in DateTime constructor.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class DoNotUseYearValueFromDifferentDatesInDateConstructor : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2271";
+        internal const string RuleId = "CA2261";
 
         private static readonly LocalizableString _localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDatePartOverflowPatternTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString _localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDatePartOverflowPatternMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             _localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: false,
             helpLinkUri: null);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

@@ -82,5 +82,123 @@ Public Structure A
 End Structure
 ");
         }
+
+        [Fact]
+        public async Task CA2231_CSharp_FixAll()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+using System;
+
+public struct [|A|]
+{
+    public override bool Equals(object obj)
+    {
+        return true;
+    }
+}
+
+public struct [|B|]
+{
+    public override bool Equals(object obj)
+    {
+        return true;
+    }
+}",
+                FixedCode = @"
+using System;
+
+public struct A
+{
+    public override bool Equals(object obj)
+    {
+        return true;
+    }
+
+    public static bool operator ==(A left, A right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(A left, A right)
+    {
+        return !(left == right);
+    }
+}
+
+public struct B
+{
+    public override bool Equals(object obj)
+    {
+        return true;
+    }
+
+    public static bool operator ==(B left, B right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(B left, B right)
+    {
+        return !(left == right);
+    }
+}",
+                NumberOfFixAllIterations = 1
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA2231_Basic_FixAll()
+        {
+            await new VerifyVB.Test
+            {
+                TestCode = @"
+Imports System
+
+Public Structure [|A|]
+    Public Overloads Overrides Function Equals(obj As Object) As Boolean
+        Return True
+    End Function
+End Structure
+
+Public Structure [|B|]
+    Public Overloads Overrides Function Equals(obj As Object) As Boolean
+        Return True
+    End Function
+End Structure",
+                FixedCode = @"
+Imports System
+
+Public Structure A
+    Public Overloads Overrides Function Equals(obj As Object) As Boolean
+        Return True
+    End Function
+
+    Public Shared Operator =(left As A, right As A) As Boolean
+        Return left.Equals(right)
+    End Operator
+
+    Public Shared Operator <>(left As A, right As A) As Boolean
+        Return Not left = right
+    End Operator
+End Structure
+
+Public Structure B
+    Public Overloads Overrides Function Equals(obj As Object) As Boolean
+        Return True
+    End Function
+
+    Public Shared Operator =(left As B, right As B) As Boolean
+        Return left.Equals(right)
+    End Operator
+
+    Public Shared Operator <>(left As B, right As B) As Boolean
+        Return Not left = right
+    End Operator
+End Structure",
+                NumberOfFixAllIterations = 1
+            }.RunAsync();
+        }
     }
 }

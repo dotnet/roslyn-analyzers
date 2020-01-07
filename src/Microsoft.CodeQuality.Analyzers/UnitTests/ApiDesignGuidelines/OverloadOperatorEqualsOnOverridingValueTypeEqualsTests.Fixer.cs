@@ -145,7 +145,7 @@ public struct B
         }
 
         [Fact]
-        public async Task CA2231_Basic_FixAll()
+        public async Task CA2231_Basic_MultipleViolations()
         {
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System

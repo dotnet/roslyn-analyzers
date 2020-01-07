@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     CodeAction.Create(
                         string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.RenameToTitle, newName),
                         cancellationToken => GetUpdatedDocumentForParameterRenameAsync(context.Document, declaredSymbol, newName, cancellationToken),
-                        nameof(ParameterNamesShouldMatchBaseDeclarationFixer) + newName),
+                        nameof(ParameterNamesShouldMatchBaseDeclarationFixer)),
                     diagnostic);
             }
         }

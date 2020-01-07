@@ -18,6 +18,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleId = "CA1707";
         private const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1707-identifiers-should-not-contain-underscores";
 
+        private static readonly IImmutableSet<string> s_GlobalAsaxSpecialMethodNames =
+            ImmutableHashSet.Create(
+                "Application_AuthenticateRequest",
+                "Application_BeginRequest",
+                "Application_End",
+                "Application_EndRequest",
+                "Application_Error",
+                "Application_Init",
+                "Application_Start",
+                "Session_End",
+                "Session_Start");
+
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageAssembly = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
@@ -184,6 +196,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                                 AnalyzeParameters(symbolAnalysisContext, methodSymbol.Parameters);
                                 AnalyzeTypeParameters(symbolAnalysisContext, methodSymbol.TypeParameters);
+
+                                if (s_GlobalAsaxSpecialMethodNames.Contains(methodSymbol.Name) &&
+                                    methodSymbol.ContainingType.Inherits(symbolAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebHttpApplication)))
+                                {
+                                    // Do not flag the convention based web methods.
+                                    return;
+                                }
                             }
 
                             if (symbol is IPropertySymbol propertySymbol)

@@ -16,17 +16,6 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             this.semanticModel = model;
         }
 
-        public IMethodSymbol? GetConstructorSymbolInfo(ObjectCreationExpressionSyntax node)
-        {
-            SymbolInfo symbolInfo = this.semanticModel.GetSymbolInfo(node);
-            if (symbolInfo.Symbol != null && symbolInfo.Symbol is IMethodSymbol methodSymbol)
-            {
-                return methodSymbol;
-            }
-
-            return null;
-        }
-
         public TypeInfo GetNodeTypeInfo(SyntaxNode node)
         {
             return this.semanticModel.GetTypeInfo(node);

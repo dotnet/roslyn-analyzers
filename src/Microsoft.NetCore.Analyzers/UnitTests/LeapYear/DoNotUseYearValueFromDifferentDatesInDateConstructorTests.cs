@@ -92,6 +92,8 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
                 DateTimeOffset d3 = new DateTimeOffset(d2.Year, orig.Month, orig.Day, 0, 0, 0, new TimeSpan(3, 0, 0));
                 var d4 = new DateTime(d3.Year, orig.Month, orig.Day);
                 var d5 = new DateTime(DateTime.Now.Year, unsafeMonth, unsafeDay);
+                int safeMonth = 4;
+                var d6 = new DateTime(DateTime.Now.Year, safeMonth, 29);
             }
         }
     }",
@@ -99,7 +101,8 @@ namespace Microsoft.NetCore.Analyzers.LeapYear.UnitTests
             GetCSharpResultAt(18, 37, "utc2", "orig"),
             GetCSharpResultAt(19, 37, "d2", "orig"),
             GetCSharpResultAt(20, 26, "d3", "orig"),
-            GetCSharpResultAt(21, 26, "DateTime.Now", "unsafeMonth"));
+            GetCSharpResultAt(21, 26, "DateTime.Now", "unsafeMonth"),
+            GetCSharpResultAt(23, 26, "DateTime.Now", "unsafeDay"));
         }
 
         [Fact]

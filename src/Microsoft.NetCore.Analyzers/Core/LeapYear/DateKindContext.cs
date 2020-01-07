@@ -1,34 +1,36 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.NetCore.Analyzers.LeapYear
 {
     public sealed class DateKindContext
     {
-        public DateKindContext(ObjectCreationExpressionSyntax node, IMethodSymbol semanticMethodInfo)
+        public DateKindContext(ObjectCreationExpressionSyntax node)
         {
             this.ObjectCreationExpression = node;
-            this.SemanticMethodInfo = semanticMethodInfo;
         }
 
-        public string CurrentArgumentIdentifier { get; set; }
+        public string CurrentArgumentIdentifier { get; set; } = string.Empty;
 
         public ObjectCreationExpressionSyntax ObjectCreationExpression { get; private set; }
 
-        public IMethodSymbol SemanticMethodInfo { get; private set; }
-
+        [DisallowNull]
         public int? MonthIntValue { get; set; }
 
+        [DisallowNull]
         public int? DayIntValue { get; set; }
 
-        public BinaryExpressionSyntax YearArgumentBinaryExpression { get; set; }
+        [DisallowNull]
+        public BinaryExpressionSyntax? YearArgumentBinaryExpression { get; set; }
 
-        public IdentifierNameSyntax YearArgumentIdentifier { get; set; }
+        [DisallowNull]
+        public IdentifierNameSyntax? YearArgumentIdentifier { get; set; }
 
-        public BinaryExpressionSyntax YearArgumentIdentifierBinaryExpression { get; set; }
+        [DisallowNull]
+        public BinaryExpressionSyntax? YearArgumentIdentifierBinaryExpression { get; set; }
 
         public IList<ExpressionSyntax> YearArgumentExpressions { get; } = new List<ExpressionSyntax>();
 
@@ -36,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public bool IgnoreDiagnostic { get; private set; } = false;
 
-        public string IgnoreDiagnosticReason { get; private set; }
+        public string IgnoreDiagnosticReason { get; private set; } = string.Empty;
 
         public void ShouldNotRaiseDiagnostic(string reason)
         {

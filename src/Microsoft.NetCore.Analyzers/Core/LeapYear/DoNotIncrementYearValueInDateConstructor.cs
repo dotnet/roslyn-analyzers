@@ -63,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
                         // the date won't be a possible leap year.
                         if (!dateKindContext.AreMonthOrDayValuesSafe())
                         {
-                            if (this.YearIncrementIssueExists(dateKindContext))
+                            if (YearIncrementIssueExists(dateKindContext))
                             {
                                 if (dateKindContext.YearArgumentBinaryExpression != null)
                                 {
@@ -94,10 +94,10 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         /// Examines stored code analysis to see if there is a year increment issue.
         /// </summary>
         /// <returns>True if a year increment pattern was detected.</returns>
-        private bool YearIncrementIssueExists(DateKindContext dateKindContext)
+        private static bool YearIncrementIssueExists(DateKindContext dateKindContext)
         {
-            return this.IsBinaryExpressionAYearIncrementTriggeringPattern(dateKindContext.YearArgumentBinaryExpression)
-                || this.IsBinaryExpressionAYearIncrementTriggeringPattern(dateKindContext.YearArgumentIdentifierBinaryExpression);
+            return IsBinaryExpressionAYearIncrementTriggeringPattern(dateKindContext.YearArgumentBinaryExpression)
+                || IsBinaryExpressionAYearIncrementTriggeringPattern(dateKindContext.YearArgumentIdentifierBinaryExpression);
         }
 
         /// <summary>
@@ -105,14 +105,15 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         /// or subtraction(-) and neither of the operands are numeric literals greater
         /// than 1000.
         /// </summary>
-        private bool IsBinaryExpressionAYearIncrementTriggeringPattern(BinaryExpressionSyntax node)
+        private static bool IsBinaryExpressionAYearIncrementTriggeringPattern(BinaryExpressionSyntax? node)
         {
-            return (node.IsKind(SyntaxKind.AddExpression) || node.IsKind(SyntaxKind.SubtractExpression))
-                && !this.IsExpressionLiteralIntValueGreaterThanOrEqual(node.Left, 1000)
-                && !this.IsExpressionLiteralIntValueGreaterThanOrEqual(node.Right, 1000);
+            return node != null
+                && (node.IsKind(SyntaxKind.AddExpression) || node.IsKind(SyntaxKind.SubtractExpression))
+                && !IsExpressionLiteralIntValueGreaterThanOrEqual(node.Left, 1000)
+                && !IsExpressionLiteralIntValueGreaterThanOrEqual(node.Right, 1000);
         }
 
-        private bool IsExpressionLiteralIntValueGreaterThanOrEqual(ExpressionSyntax expressionSyntax, int limit)
+        private static bool IsExpressionLiteralIntValueGreaterThanOrEqual(ExpressionSyntax expressionSyntax, int limit)
         {
             return expressionSyntax.IsKind(SyntaxKind.NumericLiteralExpression)
                 && expressionSyntax is LiteralExpressionSyntax literal

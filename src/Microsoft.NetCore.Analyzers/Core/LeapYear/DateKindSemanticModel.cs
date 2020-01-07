@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             this.semanticModel = model;
         }
 
-        public IMethodSymbol GetConstructorSymbolInfo(ObjectCreationExpressionSyntax node)
+        public IMethodSymbol? GetConstructorSymbolInfo(ObjectCreationExpressionSyntax node)
         {
             SymbolInfo symbolInfo = this.semanticModel.GetSymbolInfo(node);
             if (symbolInfo.Symbol != null && symbolInfo.Symbol is IMethodSymbol methodSymbol)
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public void FindIntegerVariableWithLastAssignedBinaryExpression(IdentifierNameSyntax node, DateKindContext context)
         {
-            string typeString = this.semanticModel.GetTypeInfo(node).Type?.ToString();
+            string? typeString = this.semanticModel.GetTypeInfo(node).Type?.ToString();
             if (typeString == DateKindConstants.IntQualifiedName)
             {
                 // We have detected a variable of type int being used in a date object for the year constructor argument.

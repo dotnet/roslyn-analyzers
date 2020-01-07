@@ -25,21 +25,23 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
         {
             // We are entering an object creation expression (i.e. `new Xyz(arg1, arg2, ...)`).
-            DateKindContext context = this.CreateDateContext(node);
-            this.currentContexts.Push(context);
+            DateKindContext? context = this.CreateDateContext(node);
 
-            base.VisitObjectCreationExpression(node);
-
-            this.currentContexts.Pop();
             if (context != null)
             {
+                this.currentContexts.Push(context);
+
+                base.VisitObjectCreationExpression(node);
+
+                this.currentContexts.Pop();
+
                 this.resolvedContexts.Add(context);
             }
         }
 
         public override void VisitArgumentList(ArgumentListSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && context.ObjectCreationExpression.IsEquivalentTo(node.Parent))
             {
@@ -52,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public override void VisitArgument(ArgumentSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && context.ObjectCreationExpression.ArgumentList.IsEquivalentTo(node.Parent)
                 && context.CurrentArgumentIdentifier != null)
@@ -89,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && this.IsSyntaxNodeAnArgumentForCurrentDateKindContext(node))
             {
@@ -101,7 +103,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && this.IsSyntaxNodeAnArgumentForCurrentDateKindContext(node))
             {
@@ -118,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && this.IsSyntaxNodeAnArgumentForCurrentDateKindContext(node))
             {
@@ -144,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         public override void VisitLiteralExpression(LiteralExpressionSyntax node)
         {
             // TODO #513386 See if we can this for variables' last set value also.
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && this.IsSyntaxNodeAnArgumentForCurrentDateKindContext(node))
             {
@@ -174,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
         public override void VisitConditionalExpression(ConditionalExpressionSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null
                 && this.IsSyntaxNodeAnArgumentForCurrentDateKindContext(node))
             {
@@ -204,10 +206,9 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             base.VisitConditionalExpression(node);
         }
 
-        private DateKindContext CreateDateContext(ObjectCreationExpressionSyntax node)
+        private DateKindContext? CreateDateContext(ObjectCreationExpressionSyntax node)
         {
-            DateKindContext context = null;
-            IMethodSymbol methodSymbol = this.semanticModel.GetConstructorSymbolInfo(node);
+            DateKindContext? context = null;
 
             TypeInfo type = this.semanticModel.GetNodeTypeInfo(node);
             switch (type.Type?.ToString())
@@ -217,7 +218,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
                     // `int year, int month, int day, ...`; these are the ones we are interested in.
                     if (node.ArgumentList.Arguments.Count >= 3)
                     {
-                        context = new DateKindContext(node, methodSymbol);
+                        context = new DateKindContext(node);
                     }
 
                     break;
@@ -226,7 +227,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
                     // `int year, int month, int day, ...`; these are the ones we are interested in.
                     if (node.ArgumentList.Arguments.Count >= 7)
                     {
-                        context = new DateKindContext(node, methodSymbol);
+                        context = new DateKindContext(node);
                     }
 
                     break;
@@ -235,7 +236,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
             return context;
         }
 
-        private DateKindContext Peek()
+        private DateKindContext? Peek()
         {
             if (this.currentContexts.Count == 0)
             {
@@ -252,7 +253,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         /// </summary>
         private bool IsSyntaxNodeAnArgumentForCurrentDateKindContext(ExpressionSyntax node)
         {
-            DateKindContext context = this.Peek();
+            DateKindContext? context = this.Peek();
             if (context != null)
             {
                 return context.CurrentArgumentIdentifier != null

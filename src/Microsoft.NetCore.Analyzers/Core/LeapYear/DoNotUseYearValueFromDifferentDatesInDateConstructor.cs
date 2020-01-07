@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -78,10 +79,9 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
                     && monthArgumentExpression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
                     {
                         // Both the year and month arguments are member access expressions.
-                        var yearArgumentMemberAccess = yearArgumentExpression as MemberAccessExpressionSyntax;
-                        var monthArgumentMemberAccess = monthArgumentExpression as MemberAccessExpressionSyntax;
-
-                        if (!yearArgumentMemberAccess.Expression.IsEquivalentTo(monthArgumentMemberAccess.Expression, topLevel: true))
+                        if (yearArgumentExpression is MemberAccessExpressionSyntax yearArgumentMemberAccess
+                            && monthArgumentExpression is MemberAccessExpressionSyntax monthArgumentMemberAccess
+                            && !yearArgumentMemberAccess.Expression.IsEquivalentTo(monthArgumentMemberAccess.Expression, topLevel: true))
                         {
                             // We have detected the two expressions are accessing upon different identifiers.
                             return new DatePartOverflowAnalysisResult()
@@ -110,7 +110,7 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
 
             return new DatePartOverflowAnalysisResult()
             {
-                IssueDetected = false,
+                IssueDetected = false
             };
         }
 
@@ -118,9 +118,11 @@ namespace Microsoft.NetCore.Analyzers.LeapYear
         {
             public bool IssueDetected { get; set; }
 
-            public ExpressionSyntax YearArgumentExpression { get; set; }
+            [DisallowNull]
+            public ExpressionSyntax? YearArgumentExpression { get; set; }
 
-            public ExpressionSyntax MonthArgumentExpression { get; set; }
+            [DisallowNull]
+            public ExpressionSyntax? MonthArgumentExpression { get; set; }
         }
     }
 }

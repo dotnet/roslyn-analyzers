@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">L'affectation à un symbole et à son membre (champ/propriété) dans la même instruction n'est pas recommandée. Il est difficile de déterminer si l'accès membre était destiné à utiliser l'ancienne valeur du symbole avant l'assignation ou la nouvelle valeur de l'assignation dans cette instruction. Pour plus de clarté, divisez les assignations en instructions distinctes.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">Le symbole '{0}' et son membre '{1}' sont tous deux affectés dans la même instruction. Vous risquez d'affecter le membre d'un objet non souhaité.</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">Affectation du symbole et de son membre dans la même instruction.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -52,14 +52,29 @@
         <target state="translated">Les noms de méthodes Async doivent finir par Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">Une exception générale de type System.Exception ou System.SystemException est interceptée dans une instruction catch, ou une clause catch générale est utilisée. Les exceptions générales ne doivent pas être interceptées.</target>
+        <target state="translated">Une exception générale comme System.Exception ou System.SystemException, ou un type d'exception interdit, est interceptée dans une instruction catch, ou une clause catch générale est utilisée. Les exceptions générales ou interdites ne doivent pas être interceptées.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">Modifiez '{0}' pour intercepter un type d'exception plus spécifique ou relevez l'exception.</target>
+        <target state="translated">Modifiez '{0}' pour intercepter un type d'exception autorisé plus spécifique ou levez une nouvelle fois l'exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -114,7 +129,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="translated">Supprimez le finaliseur du type '{0}', remplacez Dispose(bool disposing) et placez la logique de finalisation dans le chemin de code où 'disposing' est false. Sinon, vous risquez d'avoir des invocations de Dispose en double, car le type de base '{1}' fournit aussi un finaliseur.</target>
+        <target state="translated">Supprimez le finaliseur du type '{0}', remplacez Dispose(bool disposing) et placez la logique de finalisation dans le chemin du code où 'disposing' est false. Sinon, vous risquez d'avoir des invocations de Dispose en double, car le type de base '{1}' fournit aussi un finaliseur.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -899,7 +914,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">Supprimez '{0}', remplacez Dispose(bool disposing) et placez la logique dispose dans le chemin de code où 'disposing' est true.</target>
+        <target state="translated">Supprimez '{0}', remplacez Dispose(bool disposing) et placez la logique dispose dans le chemin du code où 'disposing' est true.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
@@ -1729,7 +1744,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
         <source>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</source>
-        <target state="translated">Le paramètre {0} de la méthode {1} n'est jamais utilisé. Supprimez le paramètre ou utilisez-le dans le corps de la méthode.</target>
+        <target state="translated">Le paramètre {0} de la méthode {1} n'est jamais utilisé. Supprimez le paramètre ou utilisez-le dans le corps de méthode.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
@@ -1849,12 +1864,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <target state="translated">Le champ '{0}' est déclaré comme étant 'readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <target state="translated">Le champ '{0}' est déclaré comme étant 'readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

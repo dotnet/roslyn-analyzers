@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -13,22 +13,12 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class UsePropertiesWhereAppropriateTests : DiagnosticAnalyzerTestBase
+    public class UsePropertiesWhereAppropriateTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new UsePropertiesWhereAppropriateAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new UsePropertiesWhereAppropriateAnalyzer();
-        }
-
         [Fact]
-        public void CSharp_CA1024NoDiagnosticCases()
+        public async Task CSharp_CA1024NoDiagnosticCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -156,9 +146,9 @@ public class Class1 : Base
         }
 
         [Fact]
-        public void CSharp_CA1024DiagnosticCases()
+        public async Task CSharp_CA1024DiagnosticCases()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
 {
     private string fileName = ""data.txt"";
@@ -191,9 +181,9 @@ public class Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void CSharp_CA1024NoDiagnosticCases_Internal()
+        public async Task CSharp_CA1024NoDiagnosticCases_Internal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class
 {
     private string fileName = ""data.txt"";
@@ -222,9 +212,9 @@ public class Class
         }
 
         [Fact]
-        public void VisualBasic_CA1024NoDiagnosticCases()
+        public async Task VisualBasic_CA1024NoDiagnosticCases()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections
 
 Public Class Base
@@ -324,9 +314,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1024NoDiagnosticOnUnboundMethodCaller()
+        public async Task CSharp_CA1024NoDiagnosticOnUnboundMethodCaller()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class class1
@@ -341,22 +331,22 @@ public class class1
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7222")]
-        public void VisualBasic_CA1024NoDiagnosticOnUnboundMethodCaller()
+        public async Task VisualBasic_CA1024NoDiagnosticOnUnboundMethodCaller()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class class1
     Public Function GetSomethingWithUnboundInvocation() As Integer
         Console.WriteLine(Me)
         Return 0
     End Function
 End Class
-", TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void VisualBasic_CA1024DiagnosticCases()
+        public async Task VisualBasic_CA1024DiagnosticCases()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Private fileName As String
 
@@ -384,9 +374,9 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void VisualBasic_CA1024NoDiagnosticCases_Internal()
+        public async Task VisualBasic_CA1024NoDiagnosticCases_Internal()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Private fileName As String
 
@@ -409,16 +399,52 @@ End Class
 ");
         }
 
-        private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
+        [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
+        public async Task CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
         {
-            return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public interface IFoo
+{
+    object GetContent();
+}
+
+public class Foo : IFoo
+{
+    object IFoo.GetContent()
+    {
+        return null;
+    }
+}
+");
         }
 
-        private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
+        [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
+        public async Task CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
         {
-            return GetBasicResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public interface IFoo
+{
+    object GetContent();
+}
+
+public class Foo : IFoo
+{
+    public object GetContent()
+    {
+        return null;
+    }
+}
+");
         }
+
+        private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
+            => VerifyCS.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(methodName);
+
+        private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
+            => VerifyVB.Diagnostic(UsePropertiesWhereAppropriateAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(methodName);
     }
 }

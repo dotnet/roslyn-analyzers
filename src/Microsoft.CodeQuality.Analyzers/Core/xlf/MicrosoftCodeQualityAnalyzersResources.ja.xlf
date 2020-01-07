@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">同じステートメントにシンボルとそのメンバー (フィールドとプロパティ) を代入することは推奨されていません。メンバー アクセスが、代入前のシンボルの古い値を使用するのか、このステートメントの代入からの新しい値を使用するのかが明確ではありません。わかりやすくするために、代入を個別のステートメントに分割することをご検討ください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">シンボル '{0}' とそのメンバー '{1}' の両方が同じステートメントに割り当てられています。意図しないオブジェクトのメンバーが割り当てられているおそれがあります。</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">同じステートメントにシンボルとそのメンバーを割り当てています。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -52,14 +52,29 @@
         <target state="translated">非同期メソッド名は Async で終わる必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">System.Exception または System.SystemException などの一般的な例外は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外をキャッチしないでください。</target>
+        <target state="translated">System.Exception や System.SystemException などの一般的な例外、または許可されていない例外の種類は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外と許可されていない例外をキャッチしないでください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">'{0}' を変更して特定の例外の種類をさらにキャッチするか、例外を再スローします。</target>
+        <target state="translated">'{0}' を変更して特定の許可された例外の種類をさらにキャッチするか、例外を再スローします。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -889,7 +904,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
         <source>All IDisposable types should implement the Dispose pattern correctly.</source>
-        <target state="translated">すべての IDisposable 型は、Dispose パターンを正しく実装しなければなりません。</target>
+        <target state="translated">すべての IDisposable 型は、破棄パターンを正しく実装しなければなりません。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
@@ -1564,7 +1579,7 @@
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoSetProxyBlanket">
         <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
-        <target state="translated">{0} は、ランタイム呼び出しラッパー (COM オブジェクトをラップするマネージ オブジェクト) に対して正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。ランタイム呼び出しラッパーはインターフェイス ポインターを動的に取得するため、呼び出しの結果は任意に失われます。特定の COM オブジェクトの呼び出しラッパーがアプリケーション ドメインで共有されることもあるため、呼び出しが他のユーザーに影響する可能性もあります。この呼び出しを、適切な CoSetProxyBlanket 呼び出しを行う、インターフェイス ポインターのネイティブ ラッパー COM オブジェクトで置き換えてください。</target>
+        <target state="translated">{0} は、ランタイム呼び出しラッパー (COM オブジェクトを折り返すマネージ オブジェクト) に対して正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。ランタイム呼び出しラッパーはインターフェイス ポインターを動的に取得するため、呼び出しの結果は任意に失われます。特定の COM オブジェクトの呼び出しラッパーがアプリケーション ドメインで共有されることもあるため、呼び出しが他のユーザーに影響する可能性もあります。この呼び出しを、適切な CoSetProxyBlanket 呼び出しを行う、インターフェイス ポインターのネイティブ ラッパー COM オブジェクトで置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle">
@@ -1849,12 +1864,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">フィールド '{0}' は 'static readonly' として宣言されていますが、定数値を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
+        <target state="translated">フィールド '{0}' は 'readonly' として宣言されていますが、定数値を指定して初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">フィールド '{0}' は 'static readonly' として宣言されていますが、空の文字列 ("") を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
+        <target state="translated">フィールド '{0}' は 'readonly' として宣言されていますが、空の文字列 ("") を指定して初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

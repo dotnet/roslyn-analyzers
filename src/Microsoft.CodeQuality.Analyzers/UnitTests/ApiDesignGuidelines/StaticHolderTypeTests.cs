@@ -1,42 +1,38 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.StaticHolderTypesAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpStaticHolderTypesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.StaticHolderTypesAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class StaticHolderTypeTests : DiagnosticAnalyzerTestBase
+    public class StaticHolderTypeTests
     {
         #region Verifiers
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new StaticHolderTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new StaticHolderTypesAnalyzer();
-        }
-
         private static DiagnosticResult CSharpResult(int line, int column, string objectName)
-        {
-            return GetCSharpResultAt(line, column, StaticHolderTypesAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
-        }
+            => VerifyCS.Diagnostic(StaticHolderTypesAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(objectName);
 
         private static DiagnosticResult BasicResult(int line, int column, string objectName)
-        {
-            return GetBasicResultAt(line, column, StaticHolderTypesAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic, objectName));
-        }
+            => VerifyVB.Diagnostic(StaticHolderTypesAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithArguments(objectName);
 
         #endregion
 
         [Fact]
-        public void CA1052NoDiagnosticForEmptyNonStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
 {
 }
@@ -44,9 +40,9 @@ public class C1
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForEmptyInheritableClassBasic()
+        public async Task CA1052NoDiagnosticForEmptyInheritableClassBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B1
 End Class
 ");
@@ -54,9 +50,9 @@ End Class
 
         [Fact]
 
-        public void CA1052NoDiagnosticForStaticClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C2
 {
     public static void Foo() { }
@@ -65,9 +61,9 @@ public static class C2
         }
 
         [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
-        public void CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public sealed class C3
 {
     public static void Foo() { }
@@ -76,9 +72,9 @@ public sealed class C3
         }
 
         [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
-        public void CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public NotInheritable Class B3
     Public Shared Sub Foo()
     End Sub
@@ -87,9 +83,9 @@ End Class
         }
 
         [Fact, WorkItem(1292, "https://github.com/dotnet/roslyn-analyzers/issues/1292")]
-        public void CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembers()
+        public async Task CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
 
 public sealed class ConcurrentCreationDummy
@@ -117,9 +113,9 @@ public sealed class ConcurrentCreationDummy
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C4
 {
     public static void Foo() { }
@@ -129,9 +125,9 @@ public class C4
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithOnlySharedDeclaredMembersBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B4
     Public Shared Sub Foo()
     End Sub
@@ -141,9 +137,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithBothStaticAndInstanceDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithBothStaticAndInstanceDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C5
 {
     public void Moo() { }
@@ -153,9 +149,9 @@ public class C5
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithBothSharedAndInstanceDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithBothSharedAndInstanceDeclaredMembersBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B5
     Public Sub Moo()
     End Sub
@@ -167,9 +163,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C6
 {
     public static void Foo() { }
@@ -178,9 +174,9 @@ internal class C6
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        public async Task CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class C6
 {
     public class Inner
@@ -192,9 +188,9 @@ internal class C6
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class B6
     Public Shared Sub Foo()
     End Sub
@@ -203,9 +199,9 @@ End Class
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasic()
+        public async Task CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Class B6
     Public Class InnerClass
         Public Shared Sub Foo()
@@ -216,9 +212,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C7
 {
     public static int operator +(C7 a, C7 b)
@@ -230,9 +226,9 @@ public class C7
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B7
     Public Shared Operator +(a As B7, b As B7) As Integer
         Return 0
@@ -242,9 +238,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithStaticMethodAndUserDefinedOperatorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticMethodAndUserDefinedOperatorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C8
 {
     public static void Foo() { }
@@ -258,9 +254,9 @@ public class C8
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithSharedMethodAndUserDefinedOperatorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithSharedMethodAndUserDefinedOperatorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B8
     Public Shared Sub Foo()
     End Sub
@@ -273,9 +269,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C9
 {
     public C9() { }
@@ -287,9 +283,9 @@ public class C9
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B9
     Public Sub New()
     End Sub
@@ -302,9 +298,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C10
 {
     protected C10() { }
@@ -316,9 +312,9 @@ public class C10
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B10
     Protected Sub New()
     End Sub
@@ -331,9 +327,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C11
 {
     private C11() { }
@@ -345,9 +341,9 @@ public class C11
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B11
     Private Sub New()
     End Sub
@@ -360,9 +356,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C12
 {
     public C12(int i) { }
@@ -373,9 +369,9 @@ public class C12
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B12
     Public Sub New(i as Integer)
     End Sub
@@ -387,9 +383,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithDefaultedParametersAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithDefaultedParametersAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C13
 {
     public C13(int i = 0, string s = """") { }
@@ -400,9 +396,9 @@ public class C13
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithOptionalParametersAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithOptionalParametersAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B13
     Public Sub New(Optional i as Integer = 0, Optional s as String = """")
     End Sub
@@ -414,9 +410,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C14
 {
     public void Moo() { }
@@ -432,9 +428,9 @@ public class C14
         }
 
         [Fact]
-        public void CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B14
     Public Sub Moo()
     End Sub
@@ -452,9 +448,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForEmptyStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForEmptyStaticClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C15
 {
 }
@@ -462,9 +458,9 @@ public static class C15
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C16
 {
     static C16() { }
@@ -473,9 +469,9 @@ public class C16
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B16
     Shared Sub New()
     End Sub
@@ -484,9 +480,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForStaticClassWithStaticConstructorCSharp()
+        public async Task CA1052NoDiagnosticForStaticClassWithStaticConstructorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public static class C17
 {
     static C17() { }
@@ -495,9 +491,9 @@ public static class C17
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C18
 {
     public C18() { }
@@ -507,9 +503,9 @@ public class C18
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B18
     Sub New()
     End Sub
@@ -521,9 +517,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
+        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C19
 {
     public class C19Inner
@@ -535,9 +531,9 @@ public class C19
         }
 
         [Fact]
-        public void CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassBasic()
+        public async Task CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B19
     Public Class B19Inner
     End Class
@@ -547,9 +543,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticAnEnumCSharp()
+        public async Task CA1052NoDiagnosticAnEnumCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public enum E20
 {
     Unknown = 0
@@ -558,9 +554,9 @@ public enum E20
         }
 
         [Fact]
-        public void CA1052NoDiagnosticAnEnumBasic()
+        public async Task CA1052NoDiagnosticAnEnumBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Enum EB20
     Unknown = 0
 End Enum
@@ -568,9 +564,9 @@ End Enum
         }
 
         [Fact]
-        public void CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorCSharp()
+        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C21
 {
     public C21() { }
@@ -579,9 +575,9 @@ public class C21
         }
 
         [Fact]
-        public void CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorBasic()
+        public async Task CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B21
     Public Sub New()
     End Sub
@@ -590,9 +586,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
+        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C22
 {
     public void Moo() { }
@@ -607,9 +603,9 @@ public class C22
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
+        public async Task CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B22
     Public Sub Moo()
     End Sub
@@ -626,9 +622,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C23Base
 {
 }
@@ -640,9 +636,9 @@ public class C23 : C23Base
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndBaseClassBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B23Base
 End Class
 Public Class B23
@@ -654,9 +650,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IC24Base
 {
 }
@@ -668,9 +664,9 @@ public class C24 : IC24Base
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface IB24Base
 End Interface
 Public Class B24
@@ -682,9 +678,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public interface IC25Base
 {
     void Moo();
@@ -698,9 +694,9 @@ public class C25 : IC25Base
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndNotEmptyBaseInterfaceBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Interface IB25Base
     Sub Moo()
 End Interface
@@ -715,52 +711,52 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionCSharp()
         {
-            VerifyCSharp(@"
-public class C26 :
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C26 :{|CS1031:|}
 {
     public static void Foo() { }
 }
-", TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndIncompleteBaseClassDefinitionBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B26
-	Inherits
+	Inherits{|BC30182:|}
 	Public Shared Sub Foo()
 	End Sub
 End Class
-", TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionCSharp()
         {
-            VerifyCSharp(@"
-public class C27 :
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C27 :{|CS1031:|}
 {
 }
-", TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasic()
+        public async Task CA1052NoDiagnosticForEmptyNonStaticClassWithIncompleteBaseClassDefinitionBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B27
-	Inherits
+	Inherits{|BC30182:|}
 End Class
-", TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C28
 {
     private static void Foo() {}
@@ -770,9 +766,9 @@ public class C28
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B28
 	Private Shared Sub Foo()
 	End Sub
@@ -783,9 +779,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C29
 {
     public static explicit operator C29(int foo) => new C29();
@@ -794,9 +790,9 @@ public class C29
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C29
 {
     public static implicit operator C29(int foo) => new C29();
@@ -805,9 +801,9 @@ public class C29
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
+        public async Task CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class B29
     Public Shared Widening Operator CType(ByVal foo As Integer) As B29
         Return New B29()
@@ -817,9 +813,9 @@ End Class
         }
 
         [Fact]
-        public void CA1052NoDiagnosticForAbstractNonStaticClassCSharp()
+        public async Task CA1052NoDiagnosticForAbstractNonStaticClassCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public abstract class C1
 {
     internal class C2 : C1 {

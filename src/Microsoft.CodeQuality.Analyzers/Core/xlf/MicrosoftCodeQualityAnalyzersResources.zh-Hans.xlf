@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../MicrosoftCodeQualityAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANS" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
@@ -9,17 +9,17 @@
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
-        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <target state="translated">建议不要在同一语句中分配符号及其成员(字段/属性)。因为不清楚此语句中成员访问要使用分配前的符号旧值还是由分配得来的新值。为清楚起见，请考虑将分配拆分到独立语句中。</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
         <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
-        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <target state="translated">在同一语句中分配了符号 "{0}" 及其成员 "{1}"。可能为该成员分配意外的对象。</target>
         <note />
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
         <source>Assigning symbol and its member in the same statement.</source>
-        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <target state="translated">在同一语句中分配符号及其成员。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -52,14 +52,29 @@
         <target state="translated">异步方法名称应以 Async 结尾</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageMaybe">
+        <source>Do not assign the property within its setter. This call might result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call might result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionMessageSure">
+        <source>Do not assign the property within its setter. This call will result in an infinite recursion.</source>
+        <target state="new">Do not assign the property within its setter. This call will result in an infinite recursion.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidInfiniteRecursionTitle">
+        <source>Avoid infinite recursion</source>
+        <target state="new">Avoid infinite recursion</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="needs-review-translation">在 catch 语句中捕获到了 System.Exception 或 System.SystemException 等常规异常，或者已使用常规 catch 子句。不应捕获常规异常。</target>
+        <target state="translated">在 catch 语句中捕获到了 System.Exception 或 System.SystemException 等常规异常或不允许的异常类型，或者已使用常规 catch 子句。不应捕获常规异常和不允许的异常。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
-        <target state="needs-review-translation">请修改“{0}”以捕获更具体的异常类型，或者重新抛出该异常。</target>
+        <target state="translated">请修改“{0}”以捕获更具体的允许异常类型，或者重新抛出该异常。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -889,7 +904,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
         <source>All IDisposable types should implement the Dispose pattern correctly.</source>
-        <target state="translated">所有 IDisposable 类型都应正确实现 Dispose 模式。</target>
+        <target state="translated">所有 IDisposable 类型都应正确实现释放模式。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
@@ -1729,7 +1744,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
         <source>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</source>
-        <target state="translated">从未用过方法 {1} 的参数 {0}。请删除该参数或在方法体中使用它。</target>
+        <target state="translated">从未用过方法 {1} 的参数 {0}。请删除该参数或在方法主体中使用它。</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
@@ -1849,12 +1864,12 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
         <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">虽然字段“{0}”声明为 "static readonly"，但它是用常量值初始化的。请将此字段标记为 "const"。</target>
+        <target state="translated">字段“{0}”声明为 "readonly"，但它是用常量值初始化的。请将此字段标记为 "const"。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
         <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="needs-review-translation">虽然字段“{0}”声明为 "static readonly"，但它是用空字符串 ("") 初始化的。请将此字段标记为 "const"。</target>
+        <target state="translated">字段“{0}”声明为 "readonly"，但它是用空字符串("")初始化的。请将此字段标记为 "const"。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

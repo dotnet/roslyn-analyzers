@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
@@ -1314,6 +1315,51 @@ Public Class C
         Dim x = M1
         M1 = x
         Return fieldC
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(2888, "https://github.com/dotnet/roslyn-analyzers/issues/2888")]
+        public async Task CA1822_CSharp_AsyncModifier()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task<int> [|M1|]()
+    {
+        await Task.Delay(20).ConfigureAwait(false);
+        return 20;
+    }
+}",
+@"
+using System.Threading.Tasks;
+
+public class C
+{
+    public static async Task<int> M1()
+    {
+        await Task.Delay(20).ConfigureAwait(false);
+        return 20;
+    }
+}");
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function [|M1|]() As Task(Of Integer)
+        Await Task.Delay(20).ConfigureAwait(False)
+        Return 20
+    End Function
+End Class",
+@"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Shared Async Function M1() As Task(Of Integer)
+        Await Task.Delay(20).ConfigureAwait(False)
+        Return 20
     End Function
 End Class");
         }

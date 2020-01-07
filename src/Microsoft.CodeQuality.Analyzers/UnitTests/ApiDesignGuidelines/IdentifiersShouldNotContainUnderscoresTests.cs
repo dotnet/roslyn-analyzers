@@ -1,6 +1,8 @@
 
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -438,6 +440,120 @@ public class Span
 ");
         }
 
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolParameter_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public static class MyHelper
+{
+    public static int GetBar(this string _) => 42;
+
+    public static void Foo()
+    {
+        FooBar(out _);
+    }
+
+    public static void FooBar(out int p)
+    {
+        p = 42;
+    }
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolTuple_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo()
+    {
+        var (_, d) = GetSomething();
+    }
+
+    private static (string, double) GetSomething() => ("""", 0);
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_DiscardSymbolPatternMatching_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo(object o)
+    {
+        switch (o)
+        {
+            case object _:
+                break;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public async Task CA1707_CSharp_StandaloneDiscardSymbol_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Foo
+{
+    public Foo(object o)
+    {
+        _ = GetBar();
+    }
+
+    public int GetBar() => 42;
+}");
+        }
+
+        [Fact, WorkItem(3121, "https://github.com/dotnet/roslyn-analyzers/issues/3121")]
+        public async Task CA1707_CSharp_GlobalAsaxSpecialMethods()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace System.Web
+{
+    public class HttpApplication {}
+}
+
+public class ValidContext : System.Web.HttpApplication
+{
+    protected void Application_AuthenticateRequest(object sender, EventArgs e) {}
+    protected void Application_BeginRequest(object sender, EventArgs e) {}
+    protected void Application_End(object sender, EventArgs e) {}
+    protected void Application_EndRequest(object sender, EventArgs e) {}
+    protected void Application_Error(object sender, EventArgs e) {}
+    protected void Application_Init(object sender, EventArgs e) {}
+    protected void Application_Start(object sender, EventArgs e) {}
+    protected void Session_End(object sender, EventArgs e) {}
+    protected void Session_Start(object sender, EventArgs e) {}
+}
+
+public class InvalidContext
+{
+    protected void Application_AuthenticateRequest(object sender, EventArgs e) {}
+    protected void Application_BeginRequest(object sender, EventArgs e) {}
+    protected void Application_End(object sender, EventArgs e) {}
+    protected void Application_EndRequest(object sender, EventArgs e) {}
+    protected void Application_Error(object sender, EventArgs e) {}
+    protected void Application_Init(object sender, EventArgs e) {}
+    protected void Application_Start(object sender, EventArgs e) {}
+    protected void Session_End(object sender, EventArgs e) {}
+    protected void Session_Start(object sender, EventArgs e) {}
+}",
+                GetCA1707CSharpResultAt(24, 20, SymbolKind.Member, "InvalidContext.Application_AuthenticateRequest(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(25, 20, SymbolKind.Member, "InvalidContext.Application_BeginRequest(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(26, 20, SymbolKind.Member, "InvalidContext.Application_End(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(27, 20, SymbolKind.Member, "InvalidContext.Application_EndRequest(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(28, 20, SymbolKind.Member, "InvalidContext.Application_Error(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(29, 20, SymbolKind.Member, "InvalidContext.Application_Init(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(30, 20, SymbolKind.Member, "InvalidContext.Application_Start(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(31, 20, SymbolKind.Member, "InvalidContext.Session_End(object, System.EventArgs)"),
+                GetCA1707CSharpResultAt(32, 20, SymbolKind.Member, "InvalidContext.Session_Start(object, System.EventArgs)"));
+        }
+
         #endregion
 
         #region Visual Basic Tests
@@ -839,6 +955,87 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(3121, "https://github.com/dotnet/roslyn-analyzers/issues/3121")]
+        public async Task CA1707_VisualBasic_GlobalAsaxSpecialMethods()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace System.Web
+    Public Class HttpApplication
+    End Class
+End Namespace
+
+Public Class ValidContext
+    Inherits System.Web.HttpApplication
+
+    Protected Sub Application_AuthenticateRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_BeginRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_EndRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Error(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Init(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+End Class
+
+Public Class InvalidContext
+    Protected Sub Application_AuthenticateRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_BeginRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_EndRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Error(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Init(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+End Class",
+                GetCA1707BasicResultAt(41, 19, SymbolKind.Member, "InvalidContext.Application_AuthenticateRequest(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(44, 19, SymbolKind.Member, "InvalidContext.Application_BeginRequest(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(47, 19, SymbolKind.Member, "InvalidContext.Application_End(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(50, 19, SymbolKind.Member, "InvalidContext.Application_EndRequest(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(53, 19, SymbolKind.Member, "InvalidContext.Application_Error(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(56, 19, SymbolKind.Member, "InvalidContext.Application_Init(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(59, 19, SymbolKind.Member, "InvalidContext.Application_Start(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(62, 19, SymbolKind.Member, "InvalidContext.Session_End(Object, System.EventArgs)"),
+                GetCA1707BasicResultAt(65, 19, SymbolKind.Member, "InvalidContext.Session_Start(Object, System.EventArgs)"));
+        }
+
         #endregion
 
         #region Helpers
@@ -850,7 +1047,7 @@ End Class
 
         private static DiagnosticResult GetCA1707CSharpResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetCSharpResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyCSharp(string source, string testProjectName, params DiagnosticResult[] expected)
@@ -865,7 +1062,7 @@ End Class
 
         private static DiagnosticResult GetCA1707BasicResultAt(int line, int column, string message, params string[] identifierName)
         {
-            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(message, identifierName));
+            return GetBasicResultAt(line, column, IdentifiersShouldNotContainUnderscoresAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, message, identifierName));
         }
 
         private void VerifyBasic(string source, string testProjectName, params DiagnosticResult[] expected)

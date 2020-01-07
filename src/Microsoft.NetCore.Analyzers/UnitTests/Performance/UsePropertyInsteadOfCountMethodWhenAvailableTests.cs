@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer,
@@ -461,5 +462,22 @@ public static class C
     public static int M() => GetData().Count();
 }}
 ");
+
+        [Fact, WorkItem(2974, "https://github.com/dotnet/roslyn-analyzers/issues/2974")]
+        public static async Task CA1829_IReadOnlyCollection()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+    public IReadOnlyCollection<int> GetData() => null;
+    public int M() => GetData().Count();
+}",
+                VerifyCS.Diagnostic(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId)
+                    .WithLocation(8, 23)
+                    .WithArguments(nameof(IReadOnlyCollection<int>.Count)));
+        }
     }
 }

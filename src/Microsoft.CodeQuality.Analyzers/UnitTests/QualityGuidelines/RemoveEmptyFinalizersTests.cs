@@ -1,11 +1,18 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpRemoveEmptyFinalizersAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicRemoveEmptyFinalizersAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
@@ -22,9 +29,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA1821CSharpTestNoWarning()
+        public async Task CA1821CSharpTestNoWarning()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
 
 public class Class1
@@ -152,9 +159,9 @@ public class Class2
         }
 
         [Fact]
-        public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail()
+        public async Task CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
 
 public class Class1
@@ -193,9 +200,9 @@ public class Class1
         }
 
         [Fact]
-        public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirective()
+        public async Task CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirective()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
 #if DEBUG
@@ -246,9 +253,9 @@ public class Class2
 
         [WorkItem(820941, "DevDiv")]
         [Fact]
-        public void CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
+        public async Task CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Class1
 {
     ~Class1()
@@ -265,9 +272,9 @@ public class Class2
         }
 
         [Fact]
-        public void CA1821BasicTestNoWarning()
+        public async Task CA1821BasicTestNoWarning()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Diagnostics
 
 Public Class Class1
@@ -438,50 +445,47 @@ End Class
         }
 
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
-        public void CA1821CSharpRemoveEmptyFinalizersInvalidInvocationExpression()
+        public async Task CA1821CSharpRemoveEmptyFinalizersInvalidInvocationExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
 {
     ~C1()
     {
-        a
+        {|CS0103:a|}{|CS1002:|}
     }
 }
-",
-                TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
-        public void CA1821CSharpRemoveEmptyFinalizers_ErrorCodeWithBothBlockAndExpressionBody()
+        public async Task CA1821CSharpRemoveEmptyFinalizers_ErrorCodeWithBothBlockAndExpressionBody()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
 {
-    ~C1() { }
-    => ;
+    {|CS8057:~C1() { }
+    => {|CS1525:;|}|}
 }
-",
-                TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
-        public void CA1821BasicRemoveEmptyFinalizersInvalidInvocationExpression()
+        public async Task CA1821BasicRemoveEmptyFinalizersInvalidInvocationExpression()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class Class1
     Protected Overrides Sub Finalize()
-        a
+        {|BC30451:a|}
     End Sub
 End Class
-",
-                TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
-        public void CA1821CSharpRemoveEmptyFinalizers_ExpressionBodiedImpl()
+        public async Task CA1821CSharpRemoveEmptyFinalizers_ExpressionBodiedImpl()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -508,13 +512,13 @@ public class SomeTestClass : IDisposable
         }
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
-        }
+            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
-        }
+            => new DiagnosticResult(AbstractRemoveEmptyFinalizersAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
     }
 }

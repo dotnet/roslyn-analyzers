@@ -859,6 +859,66 @@ End Class"
             }.RunAsync();
         }
 
+        [Fact, WorkItem(3106, "https://github.com/dotnet/roslyn-analyzers/issues/3106")]
+        public async Task EventArgsNotInheritingFromSystemEventArgs_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+// Reproduce UWP some specific EventArgs
+namespace Windows.UI.Xaml
+{
+    public class RoutedEventArgs {}
+    public class SizeChangedEventArgs : RoutedEventArgs {}
+    public class WindowCreatedEventArgs {}
+}
+
+namespace Foo
+{
+    public class MyCustomEventArgs {}
+}
+
+public class C
+{
+    private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e) {}
+    private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e) {}
+    private void OnWindowCreated(object sender, Windows.UI.Xaml.WindowCreatedEventArgs e) {}
+
+    private void OnSomething(object sender, Foo.MyCustomEventArgs e) {}
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+' Reproduce UWP some specific EventArgs
+Namespace Windows.UI.Xaml
+    Public Class RoutedEventArgs
+    End Class
+
+    Public Class SizeChangedEventArgs
+        Inherits RoutedEventArgs
+    End Class
+
+    Public Class WindowCreatedEventArgs
+    End Class
+End Namespace
+
+Namespace Foo
+    Public Class MyCustomEventArgs
+    End Class
+End Namespace
+
+Public Class C
+    Private Sub Page_Loaded(ByVal sender As Object, ByVal e As Windows.UI.Xaml.RoutedEventArgs)
+    End Sub
+
+    Private Sub OnSizeChanged(ByVal sender As Object, ByVal e As Windows.UI.Xaml.SizeChangedEventArgs)
+    End Sub
+
+    Private Sub OnWindowCreated(ByVal sender As Object, ByVal e As Windows.UI.Xaml.WindowCreatedEventArgs)
+    End Sub
+
+    Private Sub OnSomething(ByVal sender As Object, ByVal e As Foo.MyCustomEventArgs)
+    End Sub
+End Class");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -147,10 +148,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Ignore event handler methods "Handler(object, MyEventArgs)"
-            if (eventsArgSymbol != null &&
-                method.Parameters.Length == 2 &&
+            if (method.Parameters.Length == 2 &&
                 method.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                method.Parameters[1].Type.Inherits(eventsArgSymbol))
+                // UWP has specific EventArgs not inheriting from System.EventArgs. It was decided to go for a suffix match rather than a whitelist.
+                (method.Parameters[1].Type.Inherits(eventsArgSymbol) || method.Parameters[1].Type.Name.EndsWith("EventArgs", StringComparison.Ordinal)))
             {
                 return;
             }

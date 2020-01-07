@@ -49,7 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -84,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -119,7 +119,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -156,7 +156,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -193,7 +193,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
         }
 
@@ -232,7 +232,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -267,7 +267,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -302,7 +302,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -339,7 +339,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -376,7 +376,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
         }
 
@@ -454,7 +454,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -491,7 +491,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
         }
 
@@ -538,7 +538,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -583,7 +583,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
         }
 
@@ -632,7 +632,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               }",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -679,7 +679,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              End Class",
                     },
                 },
-                NumberOfFixAllIterations = 2,
+                NumberOfFixAllIterations = 1,
             }.RunAsync();
         }
 

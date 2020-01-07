@@ -735,6 +735,275 @@ namespace Foo
 }");
         }
 
+        [Theory, WorkItem(3123, "https://github.com/dotnet/roslyn-analyzers/issues/3123")]
+        [InlineData("System.Web.Mvc.HttpGetAttribute")]
+        [InlineData("System.Web.Mvc.HttpPostAttribute")]
+        [InlineData("System.Web.Mvc.HttpPutAttribute")]
+        [InlineData("System.Web.Mvc.HttpDeleteAttribute")]
+        [InlineData("System.Web.Mvc.HttpPatchAttribute")]
+        [InlineData("System.Web.Mvc.HttpHeadAttribute")]
+        [InlineData("System.Web.Mvc.HttpOptionsAttribute")]
+        [InlineData("System.Web.Http.RouteAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpGetAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpPostAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpPutAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpDeleteAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpPatchAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpHeadAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.HttpOptionsAttribute")]
+        [InlineData("Microsoft.AspNetCore.Mvc.RouteAttribute")]
+        public async Task NoDiagnostic_WebAttributes(string webAttribute)
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+public class C
+{{
+    [{webAttribute}]
+    public void Method1()
+    {{
+    }}
+}}",
+                        @"
+using System;
+
+namespace System.Web.Mvc
+{
+    public class HttpGetAttribute : Attribute {}
+    public class HttpPostAttribute : Attribute {}
+    public class HttpPutAttribute : Attribute {}
+    public class HttpDeleteAttribute : Attribute {}
+    public class HttpPatchAttribute : Attribute {}
+    public class HttpHeadAttribute : Attribute {}
+    public class HttpOptionsAttribute : Attribute {}
+}
+
+namespace System.Web.Http
+{
+    public class RouteAttribute : Attribute {}
+}
+
+namespace Microsoft.AspNetCore.Mvc
+{
+    public class HttpGetAttribute : Attribute {}
+    public class HttpPostAttribute : Attribute {}
+    public class HttpPutAttribute : Attribute {}
+    public class HttpDeleteAttribute : Attribute {}
+    public class HttpPatchAttribute : Attribute {}
+    public class HttpHeadAttribute : Attribute {}
+    public class HttpOptionsAttribute : Attribute {}
+    public class RouteAttribute : Attribute {}
+}"
+                    }
+                }
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+Public Class C
+    <{webAttribute}>
+    Public Sub Method1()
+    End Sub
+End Class",
+                        @"
+Imports System
+
+Namespace System.Web.Mvc
+    Public Class HttpGetAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPostAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPutAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpDeleteAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPatchAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpHeadAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpOptionsAttribute
+        Inherits Attribute
+    End Class
+End Namespace
+
+Namespace System.Web.Http
+    Public Class RouteAttribute
+        Inherits Attribute
+    End Class
+End Namespace
+
+Namespace Microsoft.AspNetCore.Mvc
+    Public Class HttpGetAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPostAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPutAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpDeleteAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpPatchAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpHeadAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class HttpOptionsAttribute
+        Inherits Attribute
+    End Class
+
+    Public Class RouteAttribute
+        Inherits Attribute
+    End Class
+End Namespace"
+                    }
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task WebSpecificControllerMethods_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace System.Web
+{
+    public class HttpApplication {}
+}
+
+public class C : System.Web.HttpApplication
+{
+    // The following methods are detected as event handler and so won't
+    // trigger a diagnostic
+    protected void Application_Start(object sender, EventArgs e) { }
+    protected void Application_AuthenticateRequest(object sender, EventArgs e) { }
+    protected void Application_BeginRequest(object sender, EventArgs e) { }
+    protected void Application_EndRequest(object sender, EventArgs e) { }
+    protected void Application_Error(object sender, EventArgs e) { }
+    protected void Application_End(object sender, EventArgs e) { }
+    protected void Application_Init(object sender, EventArgs e) { }
+    protected void Session_End(object sender, EventArgs e) { }
+    protected void Session_Start(object sender, EventArgs e) { }
+
+    // The following controller methods can't be made static
+    protected void Application_Start() { }
+    protected void Application_End() { }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace System.Web
+    Public Class HttpApplication
+    End Class
+End Namespace
+
+Public Class C
+    Inherits System.Web.HttpApplication
+
+    Protected Sub Application_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_AuthenticateRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_BeginRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_EndRequest(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Error(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Init(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_End(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Session_Start(ByVal sender As Object, ByVal e As EventArgs)
+    End Sub
+
+    Protected Sub Application_Start()
+    End Sub
+
+    Protected Sub Application_End()
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public async Task WebSpecificControllerMethods_WrongEnclosingType_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class Foo {}
+
+public class C : Foo
+{
+    protected void Application_Start() { }
+    protected void Application_End() { }
+}",
+                GetCSharpResultAt(8, 20, "Application_Start"),
+                GetCSharpResultAt(9, 20, "Application_End"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class Foo
+End Class
+
+Public Class C
+    Inherits Foo
+
+    Protected Sub Application_Start()
+    End Sub
+
+    Protected Sub Application_End()
+    End Sub
+End Class
+",
+                GetBasicResultAt(10, 19, "Application_Start"),
+                GetBasicResultAt(13, 19, "Application_End"));
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(symbolName);

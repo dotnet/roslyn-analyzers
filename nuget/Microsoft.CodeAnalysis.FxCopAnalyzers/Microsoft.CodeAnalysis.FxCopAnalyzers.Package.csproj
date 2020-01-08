@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VersionCheckAnalyzer\Microsoft.CodeAnalysis.VersionCheckAnalyzer.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />

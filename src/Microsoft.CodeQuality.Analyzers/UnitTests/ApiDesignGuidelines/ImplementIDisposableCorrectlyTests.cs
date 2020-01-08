@@ -1,3 +1,4 @@
+
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
@@ -269,7 +270,7 @@ public class C : B, ITest
 }
 ",
                 // Test0.cs(9,14): warning CA1063: Provide an overridable implementation of Dispose(bool) on 'B' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
-                GetCA1063BasicProvideDisposeBoolResultAt(9, 14, "B"),
+                GetCA1063CSharpProvideDisposeBoolResultAt(9, 14, "B"),
                 // Test0.cs(11,17): warning CA1063: Modify 'B.Dispose' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.
                 GetCA1063CSharpDisposeImplementationResultAt(11, 17, "B", "Dispose"));
         }
@@ -496,7 +497,7 @@ public class C : B
 }
 ",
                 // Test0.cs(6,25): warning CA1063: Ensure that 'B.Dispose' is declared as public and sealed.
-                GetCA1063BasicDisposeSignatureResultAt(6, 25, "B", "Dispose"),
+                GetCA1063CSharpDisposeSignatureResultAt(6, 25, "B", "Dispose"),
                 // Test0.cs(24,26): warning CA1063: Remove 'C.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
                 GetCA1063CSharpDisposeOverrideResultAt(24, 26, "C", "Dispose"));
         }
@@ -541,7 +542,7 @@ public class C : B
 }
 ",
                 // Test0.cs(6,25): warning CA1063: Ensure that 'A.Dispose' is declared as public and sealed.
-                GetCA1063BasicDisposeSignatureResultAt(6, 25, "A", "Dispose"),
+                GetCA1063CSharpDisposeSignatureResultAt(6, 25, "A", "Dispose"),
                 // Test0.cs(24,26): warning CA1063: Remove 'B.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
                 GetCA1063CSharpDisposeOverrideResultAt(24, 26, "B", "Dispose"),
                 // Test0.cs(31,26): warning CA1063: Remove 'C.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
@@ -1757,7 +1758,7 @@ Public Class C
 End Class
 ",
                 // Test0.vb(10,14): warning CA1063: Provide an overridable implementation of Dispose(bool) on 'B' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
-                GetCA1063CSharpProvideDisposeBoolResultAt(10, 14, "B"),
+                GetCA1063BasicProvideDisposeBoolResultAt(10, 14, "B"),
                 // Test0.vb(13,16): warning CA1063: Modify 'B.Dispose' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.
                 GetCA1063BasicDisposeImplementationResultAt(13, 16, "B", "Dispose"));
         }
@@ -1826,7 +1827,7 @@ Public NotInheritable Class C
 End Class
 ",
                 // Test0.vb(10,14): warning CA1063: Provide an overridable implementation of Dispose(bool) on 'B' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
-                GetCA1063CSharpProvideDisposeBoolResultAt(10, 14, "B"),
+                GetCA1063BasicProvideDisposeBoolResultAt(10, 14, "B"),
                 // Test0.vb(13,16): warning CA1063: Modify 'B.Dispose' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.
                 GetCA1063BasicDisposeImplementationResultAt(13, 16, "B", "Dispose"));
         }
@@ -2048,9 +2049,9 @@ Public Class C
 End Class
 ",
                 // Test0.vb(7,28): warning CA1063: Ensure that 'B.Dispose' is declared as public and sealed.
-                GetCA1063CSharpDisposeSignatureResultAt(7, 28, "B", "Dispose"),
+                GetCA1063BasicDisposeSignatureResultAt(7, 28, "B", "Dispose"),
                 // Test0.vb(25,26): warning CA1063: Remove 'C.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
-                GetCA1063CSharpDisposeOverrideResultAt(25, 26, "C", "Dispose"));
+                GetCA1063BasicDisposeSignatureResultAt(25, 26, "C", "Dispose"));
         }
 
         [Fact]
@@ -2093,11 +2094,11 @@ Public Class C
 End Class
 ",
                 // Test0.vb(7,28): warning CA1063: Ensure that 'A.Dispose' is declared as public and sealed.
-                GetCA1063CSharpDisposeSignatureResultAt(7, 28, "A", "Dispose"),
+                GetCA1063BasicDisposeSignatureResultAt(7, 28, "A", "Dispose"),
                 // Test0.vb(25,26): warning CA1063: Remove 'B.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
-                GetCA1063CSharpDisposeOverrideResultAt(25, 26, "B", "Dispose"),
+                GetCA1063BasicDisposeSignatureResultAt(25, 26, "B", "Dispose"),
                 // Test0.vb(32,26): warning CA1063: Remove 'C.Dispose', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.
-                GetCA1063CSharpDisposeOverrideResultAt(32, 26, "C", "Dispose"));
+                GetCA1063BasicDisposeSignatureResultAt(32, 26, "C", "Dispose"));
         }
 
         [Fact]
@@ -2383,9 +2384,9 @@ Public Class C
 End Class
 ",
                 // Test0.vb(4,14): warning CA1063: Provide an overridable implementation of Dispose(bool) on 'B' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.
-                GetCA1063CSharpProvideDisposeBoolResultAt(4, 14, "B"),
+                GetCA1063BasicProvideDisposeBoolResultAt(4, 14, "B"),
                 // Test0.vb(7,16): warning CA1063: Modify 'B.Dispose' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.
-                GetCA1063CSharpDisposeImplementationResultAt(7, 16, "B", "Dispose"));
+                GetCA1063BasicDisposeImplementationResultAt(7, 16, "B", "Dispose"));
         }
 
         #endregion

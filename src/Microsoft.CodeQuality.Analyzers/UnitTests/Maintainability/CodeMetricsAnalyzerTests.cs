@@ -84,7 +84,7 @@ CA1501: 1
             DiagnosticResult[] expected = new[] {
                 // Test0.cs(3, 7): warning CA1501: 'BaseClass' has an object hierarchy '2' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '2': 'BaseClass, Object'
                 GetCSharpCA1501ExpectedDiagnostic(3, 7, "FirstDerivedClass", 2, 2, "BaseClass, Object")};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ CA1501: 1
             DiagnosticResult[] expected = new[] {
                 // Test0.vb(5, 7): warning CA1501: 'BaseClass' has an object hierarchy '2' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '2': 'BaseClass, Object'
                 GetBasicCA1501ExpectedDiagnostic(5, 7, "FirstDerivedClass", 2, 2, "BaseClass, Object")};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         #endregion
@@ -182,7 +182,7 @@ CA1502: 2
             DiagnosticResult[] expected = new[] {
                 // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
                 GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 4, 3)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -208,7 +208,7 @@ CA1502: 2
             DiagnosticResult[] expected = new[] {
                 // Test0.vb(3,17): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
                 GetBasicCA1502ExpectedDiagnostic(3, 17, "M1", 4, 3)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -241,7 +241,7 @@ CA1502(Method): 2
                 GetCSharpCA1502ExpectedDiagnostic(2, 7, "C", 6, 5),
                 // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
                 GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 4, 3)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -270,7 +270,7 @@ CA1502(Method): 2
                 GetBasicCA1502ExpectedDiagnostic(2, 7, "C", 6, 5),
                 // Test0.vb(3,17): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
                 GetBasicCA1502ExpectedDiagnostic(3, 17, "M1", 4, 3)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         #endregion
@@ -301,7 +301,7 @@ CA1505: 95
                 GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 91, 94),
                 // Test0.cs(4,10): warning CA1505: 'M1' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
                 GetCSharpCA1505ExpectedDiagnostic(4, 10, "M1", 91, 94)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -326,7 +326,7 @@ CA1505: 95
                 GetBasicCA1505ExpectedDiagnostic(2, 7, "C", 91, 94),
                 // Test0.vb(3,17): warning CA1505: 'M1' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
                 GetBasicCA1505ExpectedDiagnostic(3, 17, "M1", 91, 94)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -351,7 +351,7 @@ CA1505(Type): 95
             DiagnosticResult[] expected = new[] {
                 // Test0.cs(2,7): warning CA1505: 'C' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
                 GetCSharpCA1505ExpectedDiagnostic(2, 7, "C", 91, 94)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -374,7 +374,7 @@ CA1505(Type): 95
             DiagnosticResult[] expected = new[] {
                 // Test0.vb(2,7): warning CA1505: 'C' has a maintainability index of '91'. Rewrite or refactor the code to increase its maintainability index (MI) above '94'.
                 GetBasicCA1505ExpectedDiagnostic(2, 7, "C", 91, 94)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         #endregion
@@ -408,7 +408,7 @@ CA1506: 2
                 GetCSharpCA1506ExpectedDiagnostic(2, 7, "C", 4, 2, 3),
                 // Test0.cs(4,10): warning CA1506: 'M1' is coupled with '4' different types from '2' different namespaces. Rewrite or refactor the code to decrease its class coupling below '3'.
                 GetCSharpCA1506ExpectedDiagnostic(4, 10, "M1", 4, 2, 3)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -445,7 +445,7 @@ CA1506: 2
                 GetBasicCA1506ExpectedDiagnostic(2, 7, "C", 4, 2, 3),
                 // Test0.vb(3,17): warning CA1506: 'M1' is coupled with '4' different types from '2' different namespaces. Rewrite or refactor the code to decrease its class coupling below '3'.
                 GetBasicCA1506ExpectedDiagnostic(3, 17, "M1", 4, 2, 3)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -474,7 +474,7 @@ CA1506(Type): 10
             DiagnosticResult[] expected = new[] {
                 // Test0.cs(4,10): warning CA1506: 'M1' is coupled with '4' different types from '2' different namespaces. Rewrite or refactor the code to decrease its class coupling below '3'.
                 GetCSharpCA1506ExpectedDiagnostic(4, 10, "M1", 4, 2, 3)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -510,7 +510,7 @@ CA1506(Type): 10
             DiagnosticResult[] expected = new[] {
                 // Test0.vb(3,17): warning CA1506: 'M1' is coupled with '4' different types from '2' different namespaces. Rewrite or refactor the code to decrease its class coupling below '3'.
                 GetBasicCA1506ExpectedDiagnostic(3, 17, "M1", 4, 2, 3)};
-            await VerifyBasic(source, additionalText, expected);
+            await VerifyBasicAsync(source, additionalText, expected);
         }
 
         #endregion
@@ -572,7 +572,7 @@ CA1501
                 GetCA1509ExpectedDiagnostic(27, 1, "CA1501(Method)(Type): 1", AdditionalFileName),
                 // CodeMetricsConfig.txt(30,1): warning CA1509: Invalid entry 'CA1501' in code metrics rule specification file 'CodeMetricsConfig.txt'
                 GetCA1509ExpectedDiagnostic(30, 1, "CA1501", AdditionalFileName)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         [Fact]
@@ -607,7 +607,7 @@ CA1502(Event): 1
 # 5. Whitespaces before and after the colon are allowed.
 CA1501    :    1
 ";
-            await VerifyCSharp(source, additionalText);
+            await VerifyCSharpAsync(source, additionalText);
         }
 
         [Fact]
@@ -633,7 +633,7 @@ CA 1501: 10
             DiagnosticResult[] expected = new[] {
                 // CodeMetricsConfig.txt(5,1): warning CA1509: Invalid entry 'CA 1501: 10' in code metrics rule specification file 'CodeMetricsConfig.txt'
                 GetCA1509ExpectedDiagnostic(5, 1, "CA 1501: 10", AdditionalFileName)};
-            await VerifyCSharp(source, additionalText, expected);
+            await VerifyCSharpAsync(source, additionalText, expected);
         }
 
         #endregion
@@ -686,7 +686,7 @@ CA 1501: 10
 
         private const string AdditionalFileName = "CodeMetricsConfig.txt";
 
-        private async Task VerifyCSharp(string source, string codeMetricsConfigSource, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpAsync(string source, string codeMetricsConfigSource, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -702,7 +702,7 @@ CA 1501: 10
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyBasic(string source, string codeMetricsConfigSource, params DiagnosticResult[] expected)
+        private async Task VerifyBasicAsync(string source, string codeMetricsConfigSource, params DiagnosticResult[] expected)
         {
             var vbTest = new VerifyVB.Test
             {

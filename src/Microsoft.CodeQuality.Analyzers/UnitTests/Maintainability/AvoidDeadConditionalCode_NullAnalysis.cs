@@ -4788,7 +4788,7 @@ class Test<T>
             return;
         }
 
-        var d = {|CS0030:(D)t|};
+        var d = {|CS0030:(D)t|};   // Compiler error CS0030: Cannot convert type 'T' to 'D'
         if (d == null)
         {
             return;
@@ -4811,7 +4811,7 @@ Class Test(Of T As C)
             Return
         End If
 
-        Dim d = DirectCast({|BC30311:t|}, D)
+        Dim d = DirectCast({|BC30311:t|}, D)    '  Compiler error BC30311: Value of type 'T' cannot be converted to 'D'
         If d Is Nothing Then
             Return
         End If

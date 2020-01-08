@@ -224,11 +224,11 @@ End Class
         }
 
         [Fact]
-        public async Task CA2214SpecialInheritanceCSharp()
+        public async Task CA2214SpecialInheritanceCSharp_Web()
         {
             await new VerifyCS.Test
             {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWebAndWinForms,
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
                 TestState =
                 {
                     Sources =
@@ -246,6 +246,33 @@ abstract class C : System.Web.UI.Control
     protected abstract void Foo();
 }
 
+abstract class F : System.ComponentModel.Component
+{
+    F()
+    {
+        // no diagnostics because we inherit from System.ComponentModel.Component
+        Foo();
+    }
+
+    protected abstract void Foo();
+}
+"
+                    },
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA2214SpecialInheritanceCSharp_WinForms()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithWinForms,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 abstract class D : System.Windows.Forms.Control
 {
     D()
@@ -287,26 +314,16 @@ abstract class F : System.ComponentModel.Component
         }
 
         [Fact]
-        public async Task CA2214SpecialInheritanceBasic()
+        public async Task CA2214SpecialInheritanceBasic_WinForms()
         {
             await new VerifyVB.Test
             {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWebAndWinForms,
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithWinForms,
                 TestState =
                 {
                     Sources =
                     {
                         @"
-MustInherit Class C
-    Inherits System.Web.UI.Control
-    Public Sub New()
-        ' no diagnostics because we inherit from System.Web.UI.Control
-        Foo()
-        OnLoad(Nothing)
-    End Sub
-    MustOverride Sub Foo()
-End Class
-
 MustInherit Class D
     Inherits System.Windows.Forms.Control
     Public Sub New()
@@ -326,6 +343,41 @@ Class E
     Public Sub New()
         OnGotFocus(Nothing) ' no diagnostics when we're not an immediate descendant of a special class
     End Sub
+End Class
+
+MustInherit Class F
+    Inherits System.ComponentModel.Component
+    Public Sub New()
+        ' no diagnostics because we inherit from System.ComponentModel.Component
+        Foo()
+    End Sub
+    MustOverride Sub Foo()
+End Class
+"
+                    },
+                }
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CA2214SpecialInheritanceBasic_Web()
+        {
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+MustInherit Class C
+    Inherits System.Web.UI.Control
+    Public Sub New()
+        ' no diagnostics because we inherit from System.Web.UI.Control
+        Foo()
+        OnLoad(Nothing)
+    End Sub
+    MustOverride Sub Foo()
 End Class
 
 MustInherit Class F

@@ -43,67 +43,85 @@ End Class");
         [Fact]
         public async Task TestCSharpResourceFile()
         {
-            await VerifyCSharpWithDependencies(@"class C {}", VerifyCS.Diagnostic());
+            await VerifyCSharpWithDependenciesAsync(@"class C {}", VerifyCS.Diagnostic());
         }
 
         [Fact]
         public async Task TestBasicResourceFile()
         {
-            await VerifyBasicWithDependencies(@"Class C
+            await VerifyBasicWithDependenciesAsync(@"Class C
 End Class", VerifyVB.Diagnostic());
         }
 
         [Fact]
         public async Task TestCSharpInvalidAttribute1()
         {
-            await VerifyCSharpWithDependencies(@"[assembly: System.Resources.NeutralResourcesLanguage("""")]", VerifyCS.Diagnostic().WithLocation(1, 12));
+            await VerifyCSharpWithDependenciesAsync(@"[assembly: System.Resources.NeutralResourcesLanguage("""")]", VerifyCS.Diagnostic().WithLocation(1, 12));
         }
 
         [Fact]
         public async Task TestCSharpInvalidAttribute2()
         {
-            await VerifyCSharpWithDependencies(@"[assembly: System.Resources.NeutralResourcesLanguage(null)]", VerifyCS.Diagnostic().WithLocation(1, 12));
+            await VerifyCSharpWithDependenciesAsync(@"[assembly: System.Resources.NeutralResourcesLanguage(null)]", VerifyCS.Diagnostic().WithLocation(1, 12));
         }
 
         [Fact]
         public async Task TestBasicInvalidAttribute1()
         {
-            await VerifyBasicWithDependencies(@"<Assembly: System.Resources.NeutralResourcesLanguage("""")>", VerifyVB.Diagnostic().WithLocation(1, 2));
+            await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage("""")>", VerifyVB.Diagnostic().WithLocation(1, 2));
         }
 
         [Fact]
         public async Task TestBasicInvalidAttribute2()
         {
-            await VerifyBasicWithDependencies(@"<Assembly: System.Resources.NeutralResourcesLanguage(Nothing)>", VerifyVB.Diagnostic().WithLocation(1, 2));
+            await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage(Nothing)>", VerifyVB.Diagnostic().WithLocation(1, 2));
         }
 
         [Fact]
         public async Task TestCSharpvalidAttribute()
         {
-            await VerifyCSharpWithDependencies(@"[assembly: System.Resources.NeutralResourcesLanguage(""en"")]");
+            await VerifyCSharpWithDependenciesAsync(@"[assembly: System.Resources.NeutralResourcesLanguage(""en"")]");
         }
 
         [Fact]
         public async Task TestBasicvalidAttribute()
         {
-            await VerifyBasicWithDependencies(@"<Assembly: System.Resources.NeutralResourcesLanguage(""en"")>");
+            await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage(""en"")>");
         }
 
         private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
-            var csharpTest = new VerifyCS.Test { TestCode = source };
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        source,
+                        ("Test.Designer.cs", CSharpDesignerFile),
+                    },
+                },
+            };
 
-            csharpTest.TestState.Sources.Add(("Test.Designer.cs", CSharpDesignerFile));
             csharpTest.ExpectedDiagnostics.AddRange(expected);
 
             await csharpTest.RunAsync();
         }
 
-        private async Task VerifyBasicWithDependencies(string source, params DiagnosticResult[] expected)
+        private async Task VerifyBasicWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
-            var vbTest = new VerifyVB.Test { TestCode = source };
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        source,
+                        ("Test.Designer.vb", BasicDesignerFile),
+                    },
+                },
+            };
 
-            vbTest.TestState.Sources.Add(("Test.Designer.vb", BasicDesignerFile));
             vbTest.ExpectedDiagnostics.AddRange(expected);
 
             await vbTest.RunAsync();

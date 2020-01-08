@@ -1,11 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.CSharp;
@@ -15,14 +19,14 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
-    /// This refactoring looks for numbered comments `// N` or `// N, N+1, ...` on non-empty lines
+    /// This refactoring looks for numbered comments `// N` or `// N, N+1, ...` on non-empty lines within string literals
     /// and checks that the numbers are sequential. If they are not, the refactoring is offered.
     ///
     /// This pattern is commonly used by compiler tests.
     /// Comments that don't look like numbered comments are left alone. For instance, any comment that contains alpha characters.
     /// </summary>
     [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(NumberCommentslRefactoring)), Shared]
-    class NumberCommentslRefactoring : CodeRefactoringProvider
+    internal sealed class NumberCommentslRefactoring : CodeRefactoringProvider
     {
         public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {
@@ -33,7 +37,9 @@ namespace Roslyn.Diagnostics.Analyzers
                 literal.Kind() == SyntaxKind.StringLiteralExpression &&
                 !IsProperlyNumbered(literal.Token.ValueText))
             {
-                var action = CodeAction.Create("TODO", c => FixCommentsAsync(context.Document, literal, c));
+                var action = CodeAction.Create(
+                   RoslynDiagnosticsAnalyzersResources.FixNumberedComments,
+                   c => FixCommentsAsync(context.Document, literal, c));
                 context.RegisterRefactoring(action);
             }
         }
@@ -49,7 +55,7 @@ namespace Roslyn.Diagnostics.Analyzers
             editor.ReplaceNode(stringLiteral, newStringLiteral);
             return editor.GetChangedDocument();
 
-            string getPrefix(string text)
+            static string? getPrefix(string text)
             {
                 if (text.StartsWith("@\"", StringComparison.OrdinalIgnoreCase))
                 {
@@ -175,7 +181,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return text.Length;
         }
 
-        private static string FixComments(string text, string prefixOpt)
+        private static string FixComments(string text, string? prefixOpt)
         {
             var builder = new StringBuilder();
             int nextNumber = 1;
@@ -220,7 +226,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 for (int commaIndex = 0; commaIndex <= commaCount; commaIndex++)
                 {
                     builder.Append(' ');
-                    builder.Append(nextNumber.ToString());
+                    builder.Append(nextNumber.ToString(CultureInfo.InvariantCulture));
                     nextNumber++;
                     if (commaIndex < commaCount)
                     {

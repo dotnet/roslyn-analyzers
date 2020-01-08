@@ -28,13 +28,13 @@ namespace ReleaseNotesUtil
         }
 
         [DataMember]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [DataMember]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [DataMember]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         [DataMember]
         public bool IsEnabledByDefault { get; set; }
@@ -43,13 +43,13 @@ namespace ReleaseNotesUtil
         public bool HasCodeFix { get; set; }
 
         [DataMember]
-        public string MessageFormat { get; set; }
+        public string? MessageFormat { get; set; }
 
         [DataMember]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [DataMember]
-        public string HelpLink { get; set; }
+        public string? HelpLink { get; set; }
 
         // Computed properties.
         public string IdWithHelpLinkMarkdown
@@ -58,7 +58,7 @@ namespace ReleaseNotesUtil
             {
                 return !String.IsNullOrWhiteSpace(this.HelpLink)
                     ? $"[{this.Id}]({this.HelpLink})"
-                    : this.Id;
+                    : this.Id ?? String.Empty;
             }
         }
 
@@ -66,9 +66,11 @@ namespace ReleaseNotesUtil
         {
             get
             {
-                return !String.IsNullOrWhiteSpace(this.Description)
-                    ? this.Description
-                    : this.MessageFormat;
+                return
+                    (!String.IsNullOrWhiteSpace(this.Description)
+                        ? this.Description
+                        : this.MessageFormat)
+                    ?? String.Empty;
             }
         }
     }

@@ -43,15 +43,6 @@
                 d:VsixSubPath="Vsixes"
                 Location="|Microsoft.NetCore.Analyzers.Setup;VSIXContainerProjectOutputGroup|"
                 Id="|Microsoft.NetCore.Analyzers.Setup;VSIXIdentifierProjectOutputGroup|" />
-    
-    <Dependency d:ProjectName="Text.Analyzers.Setup"
-                DisplayName="|Text.Analyzers.Setup;VSIXNameProjectOutputGroup|"
-                Version="[|%CurrentProject%;GetVsixVersion|,)"
-                d:Source="Project"
-                d:InstallSource="Embed"
-                d:VsixSubPath="Vsixes"
-                Location="|Text.Analyzers.Setup;VSIXContainerProjectOutputGroup|"
-                Id="|Text.Analyzers.Setup;VSIXIdentifierProjectOutputGroup|" />
   </Dependencies>
   <Prerequisites>
     <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />

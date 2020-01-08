@@ -19,7 +19,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
-    public partial class ValidateArgumentsOfPublicMethodsTests
+    public class ValidateArgumentsOfPublicMethodsTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
             => VerifyCS.Diagnostic()

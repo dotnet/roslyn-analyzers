@@ -13,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public partial class RemoveEmptyFinalizersTests
+    public class RemoveEmptyFinalizersTests
     {
         [Fact]
         public async Task CA1821CSharpTestNoWarning()

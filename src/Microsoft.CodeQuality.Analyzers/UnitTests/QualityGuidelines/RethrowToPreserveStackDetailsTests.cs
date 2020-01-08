@@ -13,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public partial class RethrowToPreserveStackDetailsTests
+    public class RethrowToPreserveStackDetailsTests
     {
         [Fact]
         public async Task CA2200_NoDiagnosticsForRethrow()

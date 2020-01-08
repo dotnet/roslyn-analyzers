@@ -89,7 +89,7 @@ End Class", VerifyVB.Diagnostic());
             await VerifyBasicWithDependencies(@"<Assembly: System.Resources.NeutralResourcesLanguage(""en"")>");
         }
 
-        private async Task VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        private async Task VerifyCSharpWithDependenciesAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test { TestCode = source };
 

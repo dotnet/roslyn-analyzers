@@ -401,9 +401,9 @@ namespace N
         {
             var diagnosticResult = VerifyCS.Diagnostic().WithArguments(typeName, objectName);
 
-            foreach (var tuple in locations)
+            foreach (var (file, line, column) in locations)
             {
-                diagnosticResult = diagnosticResult.WithLocation(tuple.file, tuple.line, tuple.column);
+                diagnosticResult = diagnosticResult.WithLocation(file, line, column);
             }
 
             return diagnosticResult;

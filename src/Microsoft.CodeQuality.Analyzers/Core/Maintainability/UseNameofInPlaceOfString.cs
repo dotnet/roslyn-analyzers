@@ -61,11 +61,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-            if (argument.Parameter == null)
-            {
-                return;
-            }
-
             var stringText = (string)argument.Value.ConstantValue.Value;
 
             var matchingParameter = argument.Parameter;

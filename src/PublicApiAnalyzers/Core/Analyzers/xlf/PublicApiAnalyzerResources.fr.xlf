@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../PublicApiAnalyzerResources.resx">
     <body>
+      <trans-unit id="AddAllItemsInDocumentToThePublicApiTitle">
+        <source>Add all items in document '{0}' to the public API</source>
+        <target state="new">Add all items in document '{0}' to the public API</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAllItemsInProjectToThePublicApiTitle">
+        <source>Add all items in project '{0}' to the public API</source>
+        <target state="new">Add all items in project '{0}' to the public API</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAllItemsInTheSolutionToThePublicApiTitle">
+        <source>Add all items in the solution to the public API</source>
+        <target state="new">Add all items in the solution to the public API</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidMultipleOverloadsWithOptionalParametersMessage">
         <source>Symbol '{0}' violates the backcompat requirement: 'Do not add multiple overloads with optional parameters'. See '{1}' for details.</source>
         <target state="translated">Le symbole '{0}' viole l'exigence de compatibilité descendante : 'Ne pas ajouter plusieurs surcharges publiques avec des paramètres optionnels'. Pour plus d'informations, consultez '{1}'.</target>
@@ -67,19 +82,29 @@
         <target state="translated">Le contenu des fichiers de l'API publique est non valide</target>
         <note />
       </trans-unit>
+      <trans-unit id="PublicApiFilesMissingMessage">
+        <source>The solution must contain two files with the type "AdditionalFiles": PublicAPI.Unshipped.txt and PublicAPI.Shipped.txt. At least one of these files is missing or has the wrong type.</source>
+        <target state="translated">La solution doit contenir deux fichiers ayant le type "AdditionalFiles" : PublicAPI.Unshipped.txt et PublicAPI.Shipped.txt. L'un de ces fichiers est manquant, ou son type est incorrect.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PublicApiFilesMissingTitle">
+        <source>One or both of the public API files are missing</source>
+        <target state="translated">Il manque l'un des deux fichiers d'API publiques, ou les deux</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PublicImplicitConstructorErrorMessageName">
-        <source>implicit constructor for {0}</source>
-        <target state="translated">constructeur implicite pour {0}</target>
+        <source>implicit constructor for '{0}'</source>
+        <target state="needs-review-translation">constructeur implicite pour {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PublicImplicitGetAccessor">
-        <source>implicit get-accessor for {0}</source>
-        <target state="translated">accesseur get implicite pour {0}</target>
+        <source>implicit get-accessor for '{0}'</source>
+        <target state="needs-review-translation">accesseur get implicite pour {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PublicImplicitSetAccessor">
-        <source>implicit set-accessor for {0}</source>
-        <target state="translated">accesseur set implicite pour {0}</target>
+        <source>implicit set-accessor for '{0}'</source>
+        <target state="needs-review-translation">accesseur set implicite pour {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveDeletedApiDescription">

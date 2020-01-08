@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ko" original="../PublicApiAnalyzerResources.resx">
     <body>
+      <trans-unit id="AddAllItemsInDocumentToThePublicApiTitle">
+        <source>Add all items in document '{0}' to the public API</source>
+        <target state="new">Add all items in document '{0}' to the public API</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAllItemsInProjectToThePublicApiTitle">
+        <source>Add all items in project '{0}' to the public API</source>
+        <target state="new">Add all items in project '{0}' to the public API</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddAllItemsInTheSolutionToThePublicApiTitle">
+        <source>Add all items in the solution to the public API</source>
+        <target state="new">Add all items in the solution to the public API</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidMultipleOverloadsWithOptionalParametersMessage">
         <source>Symbol '{0}' violates the backcompat requirement: 'Do not add multiple overloads with optional parameters'. See '{1}' for details.</source>
         <target state="translated">'{0}' 기호가 backcompat 요구 사항인 '선택적 매개 변수가 있는 여러 오버로드를 추가하지 마세요.'를 위반합니다. 자세한 내용은 '{1}'을(를) 참조하세요.</target>
@@ -67,19 +82,29 @@
         <target state="translated">공용 API 파일의 콘텐츠가 유효하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PublicApiFilesMissingMessage">
+        <source>The solution must contain two files with the type "AdditionalFiles": PublicAPI.Unshipped.txt and PublicAPI.Shipped.txt. At least one of these files is missing or has the wrong type.</source>
+        <target state="translated">솔루션에 "AdditionalFiles": PublicAPI.Unshipped.txt 및 PublicAPI.Shipped.txt 형식의 파일이 두 개 포함되어야 합니다. 이러한 파일 중 하나 이상이 없거나 형식이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PublicApiFilesMissingTitle">
+        <source>One or both of the public API files are missing</source>
+        <target state="translated">공용 API 파일 중 하나 또는 둘 다 없습니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PublicImplicitConstructorErrorMessageName">
-        <source>implicit constructor for {0}</source>
-        <target state="translated">{0}의 암시적 생성자</target>
+        <source>implicit constructor for '{0}'</source>
+        <target state="needs-review-translation">{0}의 암시적 생성자</target>
         <note />
       </trans-unit>
       <trans-unit id="PublicImplicitGetAccessor">
-        <source>implicit get-accessor for {0}</source>
-        <target state="translated">{0}의 암시적 get 접근자</target>
+        <source>implicit get-accessor for '{0}'</source>
+        <target state="needs-review-translation">{0}의 암시적 get 접근자</target>
         <note />
       </trans-unit>
       <trans-unit id="PublicImplicitSetAccessor">
-        <source>implicit set-accessor for {0}</source>
-        <target state="translated">{0}의 암시적 set 접근자</target>
+        <source>implicit set-accessor for '{0}'</source>
+        <target state="needs-review-translation">{0}의 암시적 set 접근자</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveDeletedApiDescription">

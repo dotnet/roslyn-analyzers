@@ -21,15 +21,16 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
         /// </summary>
         private sealed class DisposeDataFlowOperationVisitor : AbstractLocationDataFlowOperationVisitor<DisposeAnalysisData, DisposeAnalysisContext, DisposeAnalysisResult, DisposeAbstractValue>
         {
-            private readonly Dictionary<IFieldSymbol, PointsToAbstractValue> _trackedInstanceFieldLocationsOpt;
+            private readonly Dictionary<IFieldSymbol, PointsToAbstractValue>? _trackedInstanceFieldLocationsOpt;
             private ImmutableHashSet<INamedTypeSymbol> DisposeOwnershipTransferLikelyTypes => DataFlowAnalysisContext.DisposeOwnershipTransferLikelyTypes;
             private bool DisposeOwnershipTransferAtConstructor => DataFlowAnalysisContext.DisposeOwnershipTransferAtConstructor;
+            private bool DisposeOwnershipTransferAtMethodCall => DataFlowAnalysisContext.DisposeOwnershipTransferAtMethodCall;
 
             public DisposeDataFlowOperationVisitor(DisposeAnalysisContext analysisContext)
                 : base(analysisContext)
             {
-                Debug.Assert(analysisContext.WellKnownTypeProvider.IDisposable != null);
-                Debug.Assert(analysisContext.WellKnownTypeProvider.CollectionTypes.All(ct => ct.TypeKind == TypeKind.Interface));
+                Debug.Assert(IDisposableNamedType != null);
+                Debug.Assert(CollectionNamedTypes.All(ct => ct.TypeKind == TypeKind.Interface));
                 Debug.Assert(analysisContext.DisposeOwnershipTransferLikelyTypes != null);
                 Debug.Assert(analysisContext.PointsToAnalysisResultOpt != null);
 
@@ -37,11 +38,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 {
                     _trackedInstanceFieldLocationsOpt = new Dictionary<IFieldSymbol, PointsToAbstractValue>();
                 }
-            }
-
-            public override int GetHashCode()
-            {
-                return HashUtilities.Combine(_trackedInstanceFieldLocationsOpt.GetHashCodeOrDefault(), base.GetHashCode());
             }
 
             public ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> TrackedInstanceFieldPointsToMap
@@ -68,7 +64,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 if (!location.IsNull &&
                     location.LocationTypeOpt != null &&
                     !location.LocationTypeOpt.IsValueType &&
-                    location.LocationTypeOpt.IsDisposable(WellKnownTypeProvider.IDisposable))
+                    IsDisposable(location.LocationTypeOpt))
                 {
                     CurrentAnalysisData[location] = value;
                 }
@@ -88,14 +84,15 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 defaultValue = DisposeAbstractValue.NotDisposable;
                 var instanceType = creation.Type;
 
-                if (!instanceType.IsDisposable(WellKnownTypeProvider.IDisposable) ||
+                if (!IsDisposable(instanceType) ||
                     !IsCurrentBlockReachable())
                 {
                     return defaultValue;
                 }
 
                 // Special case: Do not track System.Threading.Tasks.Task as you are not required to dispose them.
-                if (WellKnownTypeProvider.Task != null && instanceType.DerivesFrom(WellKnownTypeProvider.Task, baseTypesOnly: true))
+                if (TaskNamedType != null &&
+                    instanceType.DerivesFrom(TaskNamedType, baseTypesOnly: true))
                 {
                     return defaultValue;
                 }
@@ -104,9 +101,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return DisposeAbstractValue.NotDisposed;
             }
 
-            private void HandleDisposingOperation(IOperation disposingOperation, IOperation disposedInstance)
+            private void HandleDisposingOperation(IOperation disposingOperation, IOperation? disposedInstance)
             {
-                if (disposedInstance.Type?.IsDisposable(WellKnownTypeProvider.IDisposable) == false)
+                if (disposedInstance == null || !IsDisposable(disposedInstance.Type))
                 {
                     return;
                 }
@@ -114,7 +111,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(disposedInstance);
                 foreach (AbstractLocation location in instanceLocation.Locations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(location, out DisposeAbstractValue currentDisposeValue))
+                    if (CurrentAnalysisData.TryGetValue(location, out var currentDisposeValue))
                     {
                         DisposeAbstractValue disposeValue = currentDisposeValue.WithNewDisposingOperation(disposingOperation);
                         SetAbstractValue(location, disposeValue);
@@ -127,7 +124,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(invalidatedInstance);
                 foreach (AbstractLocation location in instanceLocation.Locations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(location, out DisposeAbstractValue currentDisposeValue) &&
+                    if (CurrentAnalysisData.TryGetValue(location, out var currentDisposeValue) &&
                         currentDisposeValue.Kind != DisposeAbstractValueKind.NotDisposable)
                     {
                         SetAbstractValue(location, DisposeAbstractValue.Invalid);
@@ -139,7 +136,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
             {
                 foreach (AbstractLocation escapedLocation in escapedLocations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(escapedLocation, out DisposeAbstractValue currentDisposeValue) &&
+                    if (CurrentAnalysisData.TryGetValue(escapedLocation, out var currentDisposeValue) &&
                         currentDisposeValue.Kind != DisposeAbstractValueKind.Unknown)
                     {
                         DisposeAbstractValue newDisposeValue = currentDisposeValue.WithNewEscapingOperation(escapingOperation);
@@ -154,7 +151,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 // We do not need to do anything here.
             }
 
-            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
+            protected override void SetAbstractValueForAssignment(IOperation target, IOperation? assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
             {
                 // Assignments should automatically transfer PointsTo value.
                 // We do not need to do anything here.
@@ -179,7 +176,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
             {
                 Debug.Assert(!escapedLocations.IsEmpty);
                 Debug.Assert(parameter.RefKind != RefKind.None);
-                var escapedDisposableLocations = escapedLocations.Where(l => l.LocationTypeOpt?.IsDisposable(WellKnownTypeProvider.IDisposable) == true);
+                var escapedDisposableLocations =
+                    escapedLocations.Where(l => IsDisposable(l.LocationTypeOpt));
                 SetAbstractValue(escapedDisposableLocations, ValueDomain.UnknownOrMayBeValue);
             }
 
@@ -215,13 +213,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 => EqualsHelper(value1, value2);
 
             #region Visitor methods
-            public override DisposeAbstractValue DefaultVisit(IOperation operation, object argument)
+            public override DisposeAbstractValue DefaultVisit(IOperation operation, object? argument)
             {
                 _ = base.DefaultVisit(operation, argument);
                 return DisposeAbstractValue.NotDisposable;
             }
 
-            public override DisposeAbstractValue Visit(IOperation operation, object argument)
+            public override DisposeAbstractValue Visit(IOperation operation, object? argument)
             {
                 var value = base.Visit(operation, argument);
                 HandlePossibleEscapingOperation(operation, GetEscapedLocations(operation));
@@ -265,7 +263,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 
             public override DisposeAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
                 IMethodSymbol targetMethod,
-                IOperation instance,
+                IOperation? instance,
                 ImmutableArray<IArgumentOperation> arguments,
                 bool invokedAsDelegate,
                 IOperation originalOperation,
@@ -274,7 +272,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(targetMethod, instance,
                     arguments, invokedAsDelegate, originalOperation, defaultValue);
 
-                var disposeMethodKind = targetMethod.GetDisposeMethodKind(WellKnownTypeProvider.IDisposable, WellKnownTypeProvider.Task);
+                var disposeMethodKind = GetDisposeMethodKind(targetMethod);
                 switch (disposeMethodKind)
                 {
                     case DisposeMethodKind.Dispose:
@@ -319,7 +317,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 base.ApplyInterproceduralAnalysisResult(resultData, isLambdaOrLocalFunction, hasParameterWithDelegateType, interproceduralResult);
 
                 // Apply the tracked instance field locations from interprocedural analysis.
-                if (_trackedInstanceFieldLocationsOpt != null)
+                if (_trackedInstanceFieldLocationsOpt != null &&
+                    interproceduralResult.TrackedInstanceFieldPointsToMap != null)
                 {
                     foreach (var (field, pointsToValue) in interproceduralResult.TrackedInstanceFieldPointsToMap)
                     {
@@ -342,6 +341,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                     {
                         var pointsToValue = GetPointsToAbstractValue(operation.Value);
                         HandlePossibleEscapingOperation(operation, pointsToValue.Locations);
+                        return;
                     }
                     else if (FlowBranchConditionKind == ControlFlowConditionKind.WhenFalse &&
                         operation.Parameter.RefKind == RefKind.Out &&
@@ -366,9 +366,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                         //      obj.Dispose();
 
                         HandlePossibleInvalidatingOperation(operation);
+                        return;
                     }
                 }
-                else if (operation.Parameter.RefKind == RefKind.Out || operation.Parameter.RefKind == RefKind.Ref)
+
+                // Ref or out argument values from callee might be escaped by assigning to field.
+                if (operation.Parameter.RefKind == RefKind.Out || operation.Parameter.RefKind == RefKind.Ref)
                 {
                     HandlePossibleEscapingOperation(operation, GetEscapedLocations(operation));
                 }
@@ -378,28 +381,26 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 // Local functions.
                 bool IsDisposeOwnershipTransfer()
                 {
-                    if (!operation.Parameter.Type.IsDisposable(WellKnownTypeProvider.IDisposable))
+                    if (operation.Parameter.RefKind == RefKind.Out)
                     {
+                        // Out arguments are always owned by the caller.
                         return false;
                     }
 
-                    switch (operation.Parent)
+                    return operation.Parent switch
                     {
-                        case IObjectCreationOperation _:
-                            return DisposeOwnershipTransferAtConstructor ||
-                                DisposeOwnershipTransferLikelyTypes.Contains(operation.Parameter.Type);
+                        IObjectCreationOperation _ => DisposeOwnershipTransferAtConstructor ||
+                            DisposeOwnershipTransferLikelyTypes.Contains(operation.Parameter.Type),
 
-                        case IInvocationOperation invocation:
-                            return IsDisposableCreationSpecialCase(invocation.TargetMethod) &&
-                                DisposeOwnershipTransferLikelyTypes.Contains(operation.Parameter.Type);
+                        IInvocationOperation invocation => DisposeOwnershipTransferAtMethodCall ||
+                            IsDisposableCreationSpecialCase(invocation.TargetMethod) && DisposeOwnershipTransferLikelyTypes.Contains(operation.Parameter.Type),
 
-                        default:
-                            return false;
-                    }
+                        _ => false,
+                    };
                 }
             }
 
-            public override DisposeAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object argument)
+            public override DisposeAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object? argument)
             {
                 var value = base.VisitFieldReference(operation, argument);
                 if (_trackedInstanceFieldLocationsOpt != null &&
@@ -437,7 +438,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override DisposeAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object? argument)
             {
                 var value = base.VisitBinaryOperatorCore(operation, argument);
 
@@ -481,7 +482,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitIsNull(IIsNullOperation operation, object argument)
+            public override DisposeAbstractValue VisitIsNull(IIsNullOperation operation, object? argument)
             {
                 var value = base.VisitIsNull(operation, argument);
 

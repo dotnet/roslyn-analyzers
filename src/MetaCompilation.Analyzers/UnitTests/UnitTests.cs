@@ -1,13 +1,13 @@
 ﻿//  Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+/*
+Unit tests disabled with https://github.com/dotnet/roslyn-analyzers/issues/1307
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
-
-/*
-Unit tests disabled with https://github.com/dotnet/roslyn-analyzers/issues/1307
 
 namespace MetaCompilation.Analyzers.UnitTests
 {

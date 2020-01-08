@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -13,12 +14,12 @@ namespace Analyzer.Utilities.Extensions
 {
     internal static class ISymbolExtensions
     {
-        public static bool IsType(this ISymbol symbol)
+        public static bool IsType([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return symbol is ITypeSymbol typeSymbol && typeSymbol.IsType;
         }
 
-        public static bool IsAccessorMethod(this ISymbol symbol)
+        public static bool IsAccessorMethod([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return symbol is IMethodSymbol accessorSymbol &&
                 (accessorSymbol.IsPropertyAccessor() || accessorSymbol.IsEventAccessor());
@@ -63,7 +64,7 @@ namespace Analyzer.Utilities.Extensions
             }
         }
 
-        public static bool IsDefaultConstructor(this ISymbol symbol)
+        public static bool IsDefaultConstructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return symbol.IsConstructor() && symbol.GetParameters().Length == 0;
         }
@@ -83,50 +84,52 @@ namespace Analyzer.Utilities.Extensions
             return symbol.DeclaredAccessibility == Accessibility.Private;
         }
 
-        public static bool IsErrorType(this ISymbol symbol)
+        public static bool IsErrorType([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return
-                symbol is ITypeSymbol &&
-                ((ITypeSymbol)symbol).TypeKind == TypeKind.Error;
+                symbol is ITypeSymbol typeSymbol &&
+                typeSymbol.TypeKind == TypeKind.Error;
         }
 
-        public static bool IsConstructor(this ISymbol symbol)
+        public static bool IsConstructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Constructor;
         }
 
-        public static bool IsDestructor(this ISymbol symbol)
+        public static bool IsDestructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IMethodSymbol)?.IsFinalizer() ?? false;
         }
 
-        public static bool IsIndexer(this ISymbol symbol)
+        public static bool IsIndexer([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IPropertySymbol)?.IsIndexer == true;
         }
 
-        public static bool IsPropertyWithBackingField(this ISymbol symbol)
+        public static bool IsPropertyWithBackingField([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return symbol is IPropertySymbol propertySymbol &&
                 propertySymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Any(f => f.IsImplicitlyDeclared && Equals(f.AssociatedSymbol, symbol));
         }
 
-        public static bool IsUserDefinedOperator(this ISymbol symbol)
+        public static bool IsUserDefinedOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
         }
 
-        public static bool IsConversionOperator(this ISymbol symbol)
+        public static bool IsConversionOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.Conversion;
         }
 
-        public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol symbol)
+        public static ImmutableArray<IParameterSymbol> GetParameters(this ISymbol? symbol)
         {
-            return symbol.TypeSwitch(
-                (IMethodSymbol m) => m.Parameters,
-                (IPropertySymbol p) => p.Parameters,
-                _ => ImmutableArray.Create<IParameterSymbol>());
+            return symbol switch
+            {
+                IMethodSymbol m => m.Parameters,
+                IPropertySymbol p => p.Parameters,
+                _ => ImmutableArray.Create<IParameterSymbol>()
+            };
         }
 
         /// <summary>
@@ -144,7 +147,66 @@ namespace Analyzer.Utilities.Extensions
             SymbolVisibilityGroup defaultRequiredVisibility = SymbolVisibilityGroup.Public)
         {
             var allowedVisibilities = options.GetSymbolVisibilityGroupOption(rule, defaultRequiredVisibility, cancellationToken);
-            return allowedVisibilities.Contains(symbol.GetResultantVisibility());
+            return allowedVisibilities == SymbolVisibilityGroup.All ||
+                allowedVisibilities.Contains(symbol.GetResultantVisibility());
+        }
+
+        /// <summary>
+        /// Returns true if the given symbol has been configured to be excluded from analysis by options.
+        /// </summary>
+        public static bool IsConfiguredToSkipAnalysis(
+            this ISymbol symbol,
+            AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            Compilation compilation,
+            CancellationToken cancellationToken)
+        {
+            var excludedSymbols = options.GetExcludedSymbolNamesOption(rule, compilation, cancellationToken);
+            var excludedTypeNamesWithDerivedTypes = options.GetExcludedTypeNamesWithDerivedTypesOption(rule, compilation, cancellationToken);
+            if (excludedSymbols.IsEmpty && excludedTypeNamesWithDerivedTypes.IsEmpty)
+            {
+                return false;
+            }
+
+            while (symbol != null)
+            {
+                if (excludedSymbols.Contains(symbol))
+                {
+                    return true;
+                }
+
+                if (symbol is INamedTypeSymbol namedType && !excludedTypeNamesWithDerivedTypes.IsEmpty)
+                {
+                    foreach (var type in namedType.GetBaseTypesAndThis())
+                    {
+                        if (excludedTypeNamesWithDerivedTypes.Contains(type))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                symbol = symbol.ContainingSymbol;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if the given symbol has required symbol modifiers based on options:
+        ///   1. If user has explicitly configured candidate <see cref="SymbolModifiers"/> in editor config options and
+        ///      given symbol has all the required modifiers.
+        ///   2. Otherwise, if user has not configured modifiers.
+        /// </summary>
+        public static bool MatchesConfiguredModifiers(
+            this ISymbol symbol,
+            AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            CancellationToken cancellationToken,
+            SymbolModifiers defaultRequiredModifiers = SymbolModifiers.None)
+        {
+            var requiredModifiers = options.GetRequiredModifiersOption(rule, defaultRequiredModifiers, cancellationToken);
+            return symbol.GetSymbolModifiers().Contains(requiredModifiers);
         }
 
         /// <summary>
@@ -200,42 +262,37 @@ namespace Analyzer.Utilities.Extensions
             return visibility;
         }
 
-        public static bool MatchMemberDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMemberDerivedByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
-            return member != null && member.ContainingType.DerivesFrom(type) && member.MetadataName == name;
+            return member != null && member.MetadataName == name && member.ContainingType.DerivesFrom(type);
         }
 
-        public static bool MatchMethodDerivedByName(this IMethodSymbol method, INamedTypeSymbol type, string name)
+        public static bool MatchMethodDerivedByName([NotNullWhen(returnValue: true)] this IMethodSymbol? method, INamedTypeSymbol type, string name)
         {
             return method != null && method.MatchMemberDerivedByName(type, name);
         }
 
-        public static bool MatchMethodByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMethodByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
             return member != null && member.Kind == SymbolKind.Method && member.MatchMemberByName(type, name);
         }
 
-        public static bool MatchPropertyDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchPropertyDerivedByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
             return member != null && member.Kind == SymbolKind.Property && member.MatchMemberDerivedByName(type, name);
         }
 
-        public static bool MatchFieldDerivedByName(this ISymbol member, INamedTypeSymbol type, string name)
-        {
-            return member != null && member.Kind == SymbolKind.Field && member.MatchMemberDerivedByName(type, name);
-        }
-
-        public static bool MatchMemberByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchMemberByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
             return member != null && Equals(member.ContainingType, type) && member.MetadataName == name;
         }
 
-        public static bool MatchPropertyByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchPropertyByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
             return member != null && member.Kind == SymbolKind.Property && member.MatchMemberByName(type, name);
         }
 
-        public static bool MatchFieldByName(this ISymbol member, INamedTypeSymbol type, string name)
+        public static bool MatchFieldByName([NotNullWhen(returnValue: true)] this ISymbol? member, INamedTypeSymbol type, string name)
         {
             return member != null && member.Kind == SymbolKind.Field && member.MatchMemberByName(type, name);
         }
@@ -389,14 +446,14 @@ namespace Analyzer.Utilities.Extensions
         /// </summary>
         public static bool IsFromMscorlib(this ISymbol symbol, Compilation compilation)
         {
-            var @object = WellKnownTypes.Object(compilation);
+            var @object = compilation.GetSpecialType(SpecialType.System_Object);
             return symbol.ContainingAssembly?.Equals(@object.ContainingAssembly) == true;
         }
 
         /// <summary>
         /// Get overload from the given overloads that matches given method signature + given parameter
         /// </summary>
-        public static IMethodSymbol GetMatchingOverload(this IMethodSymbol method, IEnumerable<IMethodSymbol> overloads, int parameterIndex, INamedTypeSymbol type, CancellationToken cancellationToken)
+        public static IMethodSymbol? GetMatchingOverload(this IMethodSymbol method, IEnumerable<IMethodSymbol> overloads, int parameterIndex, INamedTypeSymbol type, CancellationToken cancellationToken)
         {
             foreach (IMethodSymbol overload in overloads)
             {
@@ -442,7 +499,7 @@ namespace Analyzer.Utilities.Extensions
         /// Checks if a given symbol implements an interface member implicitly
         /// </summary>
         public static bool IsImplementationOfAnyImplicitInterfaceMember<TSymbol>(this ISymbol symbol)
-        where TSymbol : ISymbol
+            where TSymbol : ISymbol
         {
             if (symbol.ContainingType != null)
             {
@@ -461,7 +518,7 @@ namespace Analyzer.Utilities.Extensions
             return false;
         }
 
-        public static bool IsImplementationOfInterfaceMember(this ISymbol symbol, ISymbol interfaceMember)
+        public static bool IsImplementationOfInterfaceMember(this ISymbol symbol, [NotNullWhen(returnValue: true)] ISymbol? interfaceMember)
         {
             return interfaceMember != null &&
                    symbol.Equals(symbol.ContainingType.FindImplementationForInterfaceMember(interfaceMember));
@@ -470,9 +527,8 @@ namespace Analyzer.Utilities.Extensions
         /// <summary>
         /// Checks if a given symbol implements an interface member or overrides an implementation of an interface member.
         /// </summary>
-        public static bool IsOverrideOrImplementationOfInterfaceMember(this ISymbol symbol, ISymbol interfaceMember)
+        public static bool IsOverrideOrImplementationOfInterfaceMember(this ISymbol symbol, [NotNullWhen(returnValue: true)] ISymbol? interfaceMember)
         {
-            Debug.Assert(symbol != null);
             if (interfaceMember == null)
             {
                 return false;
@@ -484,7 +540,7 @@ namespace Analyzer.Utilities.Extensions
             }
 
             return symbol.IsOverride &&
-                symbol.GetOverriddenMember().IsOverrideOrImplementationOfInterfaceMember(interfaceMember);
+                symbol.GetOverriddenMember()?.IsOverrideOrImplementationOfInterfaceMember(interfaceMember) == true;
         }
 
         /// <summary>
@@ -493,29 +549,24 @@ namespace Analyzer.Utilities.Extensions
         /// <remarks>Requires that <see cref="ISymbol.IsOverride"/> is true for the given <paramref name="symbol"/>.</remarks>
         public static ISymbol GetOverriddenMember(this ISymbol symbol)
         {
-            Debug.Assert(symbol != null);
             Debug.Assert(symbol.IsOverride);
 
-            switch (symbol)
+            return symbol switch
             {
-                case IMethodSymbol methodSymbol:
-                    return methodSymbol.OverriddenMethod;
+                IMethodSymbol methodSymbol => methodSymbol.OverriddenMethod,
 
-                case IPropertySymbol propertySymbol:
-                    return propertySymbol.OverriddenProperty;
+                IPropertySymbol propertySymbol => propertySymbol.OverriddenProperty,
 
-                case IEventSymbol eventSymbol:
-                    return eventSymbol.OverriddenEvent;
+                IEventSymbol eventSymbol => eventSymbol.OverriddenEvent,
 
-                default:
-                    throw new NotImplementedException();
-            }
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>
         /// Checks if a given symbol implements an interface member explicitly
         /// </summary>
-        public static bool IsImplementationOfAnyExplicitInterfaceMember(this ISymbol symbol)
+        public static bool IsImplementationOfAnyExplicitInterfaceMember([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             if (symbol is IMethodSymbol methodSymbol && methodSymbol.ExplicitInterfaceImplementations.Any())
             {
@@ -535,31 +586,44 @@ namespace Analyzer.Utilities.Extensions
             return false;
         }
 
-        public static ITypeSymbol GetMemerOrLocalOrParameterType(this ISymbol symbol)
+        public static ITypeSymbol? GetMemberOrLocalOrParameterType(this ISymbol symbol)
         {
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Event:
-                    return ((IEventSymbol)symbol).Type;
+                SymbolKind.Local => ((ILocalSymbol)symbol).Type,
 
-                case SymbolKind.Field:
-                    return ((IFieldSymbol)symbol).Type;
+                SymbolKind.Parameter => ((IParameterSymbol)symbol).Type,
 
-                case SymbolKind.Method:
-                    return ((IMethodSymbol)symbol).ReturnType;
+                _ => GetMemberType(symbol),
+            };
+        }
 
-                case SymbolKind.Property:
-                    return ((IPropertySymbol)symbol).Type;
+        public static ITypeSymbol? GetMemberType(this ISymbol? symbol)
+        {
+            return symbol switch
+            {
+                IEventSymbol eventSymbol => eventSymbol.Type,
 
-                case SymbolKind.Local:
-                    return ((ILocalSymbol)symbol).Type;
+                IFieldSymbol fieldSymbol => fieldSymbol.Type,
 
-                case SymbolKind.Parameter:
-                    return ((IParameterSymbol)symbol).Type;
+                IMethodSymbol methodSymbol => methodSymbol.ReturnType,
 
-                default:
-                    return null;
-            }
+                IPropertySymbol propertySymbol => propertySymbol.Type,
+
+                _ => null,
+            };
+        }
+
+        public static bool IsReadOnlyFieldOrProperty([NotNullWhen(returnValue: true)] this ISymbol? symbol)
+        {
+            return symbol switch
+            {
+                IFieldSymbol field => field.IsReadOnly,
+
+                IPropertySymbol property => property.IsReadOnly,
+
+                _ => false,
+            };
         }
 
         /// <summary>
@@ -573,16 +637,16 @@ namespace Analyzer.Utilities.Extensions
         /// The attribute in question.
         /// </param>
         /// <returns>
-        /// <c>true</c> if <paramref name="symbol"/> has an attribute of type
-        /// <paramref name="attribute"/>; otherwise <c>false</c>.
+        /// <see langword="true"/> if <paramref name="symbol"/> has an attribute of type
+        /// <paramref name="attribute"/>; otherwise <see langword="false"/>.
         /// </returns>
         /// <remarks>
         /// If <paramref name="symbol"/> is a type, this method does not find attributes
         /// on its base types.
         /// </remarks>
-        public static bool HasAttribute(this ISymbol symbol, INamedTypeSymbol attribute)
+        public static bool HasAttribute(this ISymbol symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? attribute)
         {
-            return symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
+            return attribute != null && symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
         }
 
         /// <summary>
@@ -593,7 +657,43 @@ namespace Analyzer.Utilities.Extensions
             return symbol.Locations.Any(l => l.IsInSource);
         }
 
-        public static bool IsLambdaOrLocalFunction(this ISymbol symbol)
+        public static bool IsLambdaOrLocalFunction([NotNullWhen(returnValue: true)] this ISymbol? symbol)
             => (symbol as IMethodSymbol)?.IsLambdaOrLocalFunction() == true;
+
+        /// <summary>
+        /// Returns true for symbols whose name starts with an underscore and
+        /// are optionally followed by an integer, such as '_', '_1', '_2', etc.
+        /// These symbols can be treated as special discard symbol names.
+        /// </summary>
+        public static bool IsSymbolWithSpecialDiscardName([NotNullWhen(returnValue: true)] this ISymbol? symbol)
+            => symbol?.Name.StartsWith("_", StringComparison.Ordinal) == true &&
+               (symbol.Name.Length == 1 || uint.TryParse(symbol.Name.Substring(1), out _));
+
+        public static bool IsConst([NotNullWhen(returnValue: true)] this ISymbol? symbol)
+        {
+            return symbol switch
+            {
+                IFieldSymbol field => field.IsConst,
+
+                ILocalSymbol local => local.IsConst,
+
+                _ => false,
+            };
+        }
+
+        public static bool IsReadOnly([NotNullWhen(returnValue: true)] this ISymbol? symbol)
+        {
+            return symbol switch
+            {
+                IFieldSymbol field => field.IsReadOnly,
+
+                IPropertySymbol property => property.IsReadOnly,
+
+                // TODO: IMethodSymbol and ITypeSymbol also have IsReadOnly in Microsoft.CodeAnalysis 3.x
+                //       Add these cases once we move to the required Microsoft.CodeAnalysis.nupkg.
+
+                _ => false,
+            };
+        }
     }
 }

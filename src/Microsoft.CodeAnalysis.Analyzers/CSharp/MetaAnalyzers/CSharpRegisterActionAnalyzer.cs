@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -22,19 +23,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             INamedTypeSymbol operationBlockStartAnalysisContext,
             INamedTypeSymbol symbolKind)
         {
-            INamedTypeSymbol csharpSyntaxKind = compilation.GetTypeByMetadataName(CSharpSyntaxKindName);
-            INamedTypeSymbol basicSyntaxKind = compilation.GetTypeByMetadataName(BasicSyntaxKindName);
+            INamedTypeSymbol? csharpSyntaxKind = compilation.GetOrCreateTypeByMetadataName(CSharpSyntaxKindName);
+            INamedTypeSymbol? basicSyntaxKind = compilation.GetOrCreateTypeByMetadataName(BasicSyntaxKindName);
             return new CSharpRegisterActionCodeBlockAnalyzer(csharpSyntaxKind, basicSyntaxKind, analysisContext, compilationStartAnalysisContext,
                 codeBlockStartAnalysisContext, operationBlockStartAnalysisContext, symbolKind);
         }
 
         private sealed class CSharpRegisterActionCodeBlockAnalyzer : RegisterActionCodeBlockAnalyzer
         {
-            private readonly ITypeSymbol _csharpSyntaxKind, _basicSyntaxKind;
+            private readonly ITypeSymbol? _csharpSyntaxKind, _basicSyntaxKind;
 
             public CSharpRegisterActionCodeBlockAnalyzer(
-                INamedTypeSymbol csharpSyntaxKind,
-                INamedTypeSymbol basicSyntaxKind,
+                INamedTypeSymbol? csharpSyntaxKind,
+                INamedTypeSymbol? basicSyntaxKind,
                 INamedTypeSymbol analysisContext,
                 INamedTypeSymbol compilationStartAnalysisContext,
                 INamedTypeSymbol codeBlockStartAnalysisContext,
@@ -50,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
             protected override SyntaxKind ArgumentSyntaxKind => SyntaxKind.Argument;
             protected override SyntaxKind ParameterSyntaxKind => SyntaxKind.Parameter;
 
-            protected override IEnumerable<SyntaxNode> GetArgumentExpressions(InvocationExpressionSyntax invocation)
+            protected override IEnumerable<SyntaxNode>? GetArgumentExpressions(InvocationExpressionSyntax invocation)
             {
                 if (invocation.ArgumentList != null)
                 {
@@ -70,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers.MetaAnalyzers
                 return invocation.Expression;
             }
 
-            protected override SyntaxNode GetInvocationReceiver(InvocationExpressionSyntax invocation)
+            protected override SyntaxNode? GetInvocationReceiver(InvocationExpressionSyntax invocation)
             {
                 return (invocation.Expression as MemberAccessExpressionSyntax)?.Expression;
             }

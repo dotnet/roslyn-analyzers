@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers
@@ -39,11 +40,11 @@ namespace Microsoft.CodeAnalysis.Analyzers
         }
 
 #pragma warning disable RS1025 // Configure generated code analysis
-#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
-#pragma warning restore RS1026 // Enable concurrent execution
 #pragma warning restore RS1025 // Configure generated code analysis
         {
+            context.EnableConcurrentExecution();
+
             if (_performAssemblyChecks)
             {
                 context.RegisterCompilationStartAction(AnalyzeAssemblyReferences);
@@ -94,7 +95,7 @@ namespace Microsoft.CodeAnalysis.Analyzers
             }
 
             // If this compilation contains the type, Microsoft.CodeAnalysis.MSBuild.MSBuildWorkspace, we're done.
-            var msbuildWorkspace = context.Compilation.GetTypeByMetadataName(MSBuildWorkspaceFullName);
+            var msbuildWorkspace = context.Compilation.GetOrCreateTypeByMetadataName(MSBuildWorkspaceFullName);
             if (msbuildWorkspace != null)
             {
                 return;

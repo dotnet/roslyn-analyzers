@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities.PooledObjects;
-using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 {
@@ -41,7 +41,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
         public static PropertySetAbstractValue GetInstance(ArrayBuilder<PropertySetAbstractValueKind> propertyAbstractValues)
         {
-            if (TryGetPooledInstance(propertyAbstractValues, out PropertySetAbstractValue instance))
+            if (TryGetPooledInstance(propertyAbstractValues, out PropertySetAbstractValue? instance))
             {
                 return instance;
             }
@@ -53,7 +53,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
         public static PropertySetAbstractValue GetInstance(ImmutableArray<PropertySetAbstractValueKind> propertyAbstractValues)
         {
-            if (TryGetPooledInstance(propertyAbstractValues, out PropertySetAbstractValue instance))
+            if (TryGetPooledInstance(propertyAbstractValues, out PropertySetAbstractValue? instance))
             {
                 return instance;
             }
@@ -63,7 +63,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             }
         }
 
-        private static bool TryGetPooledInstance(IReadOnlyList<PropertySetAbstractValueKind> values, out PropertySetAbstractValue instance)
+        private static bool TryGetPooledInstance(IReadOnlyList<PropertySetAbstractValueKind> values, [NotNullWhen(returnValue: true)] out PropertySetAbstractValue? instance)
         {
             if (values.Count == 0)
             {

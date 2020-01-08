@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -19,12 +17,15 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
         /// </summary>
         private sealed class ValueContentDataFlowOperationVisitor : AnalysisEntityDataFlowOperationVisitor<ValueContentAnalysisData, ValueContentAnalysisContext, ValueContentAnalysisResult, ValueContentAbstractValue>
         {
-            public ValueContentDataFlowOperationVisitor(ValueContentAnalysisContext analysisContext)
+            private readonly ValueContentAnalysisDomain _valueContentAnalysisDomain;
+
+            public ValueContentDataFlowOperationVisitor(ValueContentAnalysisDomain valueContentAnalysisDomain, ValueContentAnalysisContext analysisContext)
                 : base(analysisContext)
             {
+                _valueContentAnalysisDomain = valueContentAnalysisDomain;
             }
 
-            protected override void AddTrackedEntities(ValueContentAnalysisData analysisData, PooledHashSet<AnalysisEntity> builder, bool forInterproceduralAnalysis)
+            protected override void AddTrackedEntities(ValueContentAnalysisData analysisData, HashSet<AnalysisEntity> builder, bool forInterproceduralAnalysis)
                 => analysisData.AddTrackedEntities(builder);
 
             protected override void ResetAbstractValue(AnalysisEntity analysisEntity)
@@ -55,7 +56,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 => CurrentAnalysisData.TryGetValue(analysisEntity, out var value) ? value : ValueDomain.UnknownOrMayBeValue;
 
             protected override ValueContentAbstractValue GetAbstractDefaultValue(ITypeSymbol type)
-                => ValueContentAbstractValue.DoesNotContainLiteralOrNonLiteralState;
+                => type != null ?
+                   ValueContentAbstractValue.DoesNotContainLiteralOrNonLiteralState :
+                   ValueContentAbstractValue.ContainsNullLiteralState;
 
             protected override bool HasAnyAbstractValue(ValueContentAnalysisData data)
                 => data.HasAnyAbstractValue;
@@ -89,7 +92,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             {
                 ValueContentAbstractValue currentAssignedValue = GetCachedAbstractValue(assignedValue);
                 if (currentAssignedValue.IsLiteralState &&
-                    AnalysisEntityFactory.TryCreate(target, out AnalysisEntity targetEntity))
+                    AnalysisEntityFactory.TryCreate(target, out var targetEntity))
                 {
                     if (CurrentAnalysisData.TryGetValue(targetEntity, out ValueContentAbstractValue existingTargetValue) &&
                         existingTargetValue.IsLiteralState)
@@ -134,9 +137,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             #endregion
 
             protected override ValueContentAnalysisData MergeAnalysisData(ValueContentAnalysisData value1, ValueContentAnalysisData value2)
-                => ValueContentAnalysisDomain.Instance.Merge(value1, value2);
+                => _valueContentAnalysisDomain.Merge(value1, value2);
             protected override ValueContentAnalysisData MergeAnalysisDataForBackEdge(ValueContentAnalysisData value1, ValueContentAnalysisData value2)
-                => ValueContentAnalysisDomain.Instance.MergeAnalysisDataForBackEdge(value1, value2);
+                => _valueContentAnalysisDomain.MergeAnalysisDataForBackEdge(value1, value2);
             protected override void UpdateValuesForAnalysisData(ValueContentAnalysisData targetAnalysisData)
                 => UpdateValuesForAnalysisData(targetAnalysisData.CoreAnalysisData, CurrentAnalysisData.CoreAnalysisData);
             protected override ValueContentAnalysisData GetClonedAnalysisData(ValueContentAnalysisData analysisData)
@@ -155,40 +158,39 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 => GetTrimmedCurrentAnalysisDataHelper(withEntities, CurrentAnalysisData.CoreAnalysisData, SetAbstractValue);
 
             #region Visitor methods
-            public override ValueContentAbstractValue DefaultVisit(IOperation operation, object argument)
+            public override ValueContentAbstractValue DefaultVisit(IOperation operation, object? argument)
             {
                 _ = base.DefaultVisit(operation, argument);
                 if (operation.Type == null)
                 {
-                    return ValueContentAbstractValue.DoesNotContainLiteralOrNonLiteralState;
+                    return ValueContentAbstractValue.ContainsNullLiteralState;
                 }
 
-                if (ValueContentAbstractValue.IsSupportedType(operation.Type, out ITypeSymbol valueTypeSymbol))
+                if (ValueContentAbstractValue.IsSupportedType(operation.Type, out var valueTypeSymbol))
                 {
-                    if (operation.ConstantValue.HasValue && operation.ConstantValue.Value != null)
+                    if (operation.ConstantValue.HasValue)
                     {
-                        return ValueContentAbstractValue.Create(operation.ConstantValue.Value, valueTypeSymbol);
+                        return operation.ConstantValue.Value != null ?
+                            ValueContentAbstractValue.Create(operation.ConstantValue.Value, valueTypeSymbol) :
+                            ValueContentAbstractValue.ContainsNullLiteralState;
                     }
                     else
                     {
-                        switch (GetNullAbstractValue(operation))
+                        return (GetNullAbstractValue(operation)) switch
                         {
-                            case PointsToAnalysis.NullAbstractValue.Invalid:
-                                return ValueContentAbstractValue.InvalidState;
+                            PointsToAnalysis.NullAbstractValue.Invalid => ValueContentAbstractValue.InvalidState,
 
-                            case PointsToAnalysis.NullAbstractValue.Null:
-                                return ValueContentAbstractValue.DoesNotContainLiteralOrNonLiteralState;
+                            PointsToAnalysis.NullAbstractValue.Null => ValueContentAbstractValue.ContainsNullLiteralState,
 
-                            default:
-                                return ValueContentAbstractValue.MayBeContainsNonLiteralState;
-                        }
+                            _ => ValueContentAbstractValue.MayBeContainsNonLiteralState,
+                        };
                     }
                 }
 
                 return ValueDomain.UnknownOrMayBeValue;
             }
 
-            public override ValueContentAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override ValueContentAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object? argument)
             {
                 var leftValue = Visit(operation.LeftOperand, argument);
                 var rightValue = Visit(operation.RightOperand, argument);
@@ -213,14 +215,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 return targetValue.MergeBinaryOperation(incrementValue, operationKind, operation.Target.Type, incrementValueType, operation.Type);
             }
 
-            public override ValueContentAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object argument)
+            public override ValueContentAbstractValue VisitObjectCreation(IObjectCreationOperation operation, object? argument)
             {
                 // TODO: Analyze string constructor
                 // https://github.com/dotnet/roslyn-analyzers/issues/1547
                 return base.VisitObjectCreation(operation, argument);
             }
 
-            public override ValueContentAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object argument)
+            public override ValueContentAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object? argument)
             {
                 var value = base.VisitFieldReference(operation, argument);
 
@@ -236,7 +238,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
 
             public override ValueContentAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
                 IMethodSymbol method,
-                IOperation visitedInstance,
+                IOperation? visitedInstance,
                 ImmutableArray<IArgumentOperation> visitedArguments,
                 bool invokedAsDelegate,
                 IOperation originalOperation,
@@ -247,7 +249,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 return base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(method, visitedInstance, visitedArguments, invokedAsDelegate, originalOperation, defaultValue);
             }
 
-            public override ValueContentAbstractValue VisitInterpolatedString(IInterpolatedStringOperation operation, object argument)
+            public override ValueContentAbstractValue VisitInterpolatedString(IInterpolatedStringOperation operation, object? argument)
             {
                 if (operation.Parts.IsEmpty)
                 {

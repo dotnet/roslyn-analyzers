@@ -4,11 +4,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
@@ -21,9 +22,29 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private const string HelpLinkUriParameterName = "helpLinkUri";
         private const string CategoryParameterName = "category";
         private const string DiagnosticIdParameterName = "id";
+        private const string CustomTagsParameterName = "customTags";
 
         private const string DiagnosticCategoryAndIdRangeFile = "DiagnosticCategoryAndIdRanges.txt";
-        private static readonly (string prefix, int start, int end) s_defaultAllowedIdsInfo = (null, -1, -1);
+        private static readonly (string? prefix, int start, int end) s_defaultAllowedIdsInfo = (null, -1, -1);
+
+        private static readonly ImmutableHashSet<string> CADiagnosticIdAllowedAssemblies = ImmutableHashSet.Create(
+            StringComparer.Ordinal,
+            "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
+            "Microsoft.CodeAnalysis.NetAnalyzers",
+            "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
+            "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers",
+            "Microsoft.CodeQuality.Analyzers",
+            "Microsoft.CodeQuality.CSharp.Analyzers",
+            "Microsoft.CodeQuality.VisualBasic.Analyzers",
+            "Microsoft.NetCore.Analyzers",
+            "Microsoft.NetCore.CSharp.Analyzers",
+            "Microsoft.NetCore.VisualBasic.Analyzers",
+            "Microsoft.NetFramework.Analyzers",
+            "Microsoft.NetFramework.CSharp.Analyzers",
+            "Microsoft.NetFramework.VisualBasic.Analyzers",
+            "Text.Analyzers",
+            "Text.CSharp.Analyzers",
+            "Text.VisualBasic.Analyzers");
 
         private static readonly LocalizableString s_localizableUseLocalizableStringsTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseLocalizableStringsInDescriptorTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableUseLocalizableStringsMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseLocalizableStringsInDescriptorMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
@@ -52,6 +73,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static readonly LocalizableString s_localizableAnalyzerCategoryAndIdRangeFileInvalidTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.AnalyzerCategoryAndIdRangeFileInvalidTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableAnalyzerCategoryAndIdRangeFileInvalidMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.AnalyzerCategoryAndIdRangeFileInvalidMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableAnalyzerCategoryAndIdRangeFileInvalidDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.AnalyzerCategoryAndIdRangeFileInvalidDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+
+        private static readonly LocalizableString s_localizableProvideCustomTagsTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.ProvideCustomTagsInDescriptorTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableProvideCustomTagsMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.ProvideCustomTagsInDescriptorMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableProvideCustomTagsDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.ProvideCustomTagsInDescriptorDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+
+        private static readonly LocalizableString s_localizableDoNotUseReservedDiagnosticIdTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseReservedDiagnosticIdTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableDoNotUseReservedDiagnosticIdMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseReservedDiagnosticIdMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableDoNotUseReservedDiagnosticIdDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseReservedDiagnosticIdDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
 
         public static readonly DiagnosticDescriptor UseLocalizableStringsInDescriptorRule = new DiagnosticDescriptor(
             DiagnosticIds.UseLocalizableStringsInDescriptorRuleId,
@@ -123,6 +152,26 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: s_localizableAnalyzerCategoryAndIdRangeFileInvalidDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
+        public static readonly DiagnosticDescriptor ProvideCustomTagsInDescriptorRule = new DiagnosticDescriptor(
+            DiagnosticIds.ProvideCustomTagsInDescriptorRuleId,
+            s_localizableProvideCustomTagsTitle,
+            s_localizableProvideCustomTagsMessage,
+            DiagnosticCategory.MicrosoftCodeAnalysisDocumentation,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            isEnabledByDefault: false,
+            description: s_localizableProvideCustomTagsDescription,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        public static readonly DiagnosticDescriptor DoNotUseReservedDiagnosticIdRule = new DiagnosticDescriptor(
+            DiagnosticIds.DoNotUseReservedDiagnosticIdRuleId,
+            s_localizableDoNotUseReservedDiagnosticIdTitle,
+            s_localizableDoNotUseReservedDiagnosticIdMessage,
+            DiagnosticCategory.MicrosoftCodeAnalysisDesign,
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true,
+            description: s_localizableDoNotUseReservedDiagnosticIdDescription,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             UseLocalizableStringsInDescriptorRule,
             ProvideHelpUriInDescriptorRule,
@@ -130,7 +179,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             DiagnosticIdMustBeInSpecifiedFormatRule,
             UseUniqueDiagnosticIdRule,
             UseCategoriesFromSpecifiedRangeRule,
-            AnalyzerCategoryAndIdRangeFileInvalidRule);
+            AnalyzerCategoryAndIdRangeFileInvalidRule,
+            ProvideCustomTagsInDescriptorRule,
+            DoNotUseReservedDiagnosticIdRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -139,7 +190,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol diagnosticDescriptorType = compilationContext.Compilation.GetTypeByMetadataName(DiagnosticAnalyzerCorrectnessAnalyzer.DiagnosticDescriptorFullName);
+                INamedTypeSymbol? diagnosticDescriptorType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(DiagnosticAnalyzerCorrectnessAnalyzer.DiagnosticDescriptorFullName);
                 if (diagnosticDescriptorType == null)
                 {
                     return;
@@ -149,9 +200,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 var checkCategoryAndAllowedIds = TryGetCategoryAndAllowedIdsMap(
                     compilationContext.Options.AdditionalFiles,
                     compilationContext.CancellationToken,
-                    out AdditionalText additionalTextOpt,
-                    out ImmutableDictionary<string, ImmutableArray<(string prefix, int start, int end)>> categoryAndAllowedIdsMap,
-                    out List<Diagnostic> invalidFileDiagnostics);
+                    out AdditionalText? additionalTextOpt,
+                    out ImmutableDictionary<string, ImmutableArray<(string? prefix, int start, int end)>>? categoryAndAllowedIdsMap,
+                    out List<Diagnostic>? invalidFileDiagnostics);
 
                 var idToAnalyzerMap = new ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentBag<Location>>>();
                 compilationContext.RegisterOperationAction(operationAnalysisContext =>
@@ -171,11 +222,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                     AnalyzeTitle(operationAnalysisContext, objectCreation);
                     AnalyzeHelpLinkUri(operationAnalysisContext, objectCreation);
+                    AnalyzeCustomTags(operationAnalysisContext, objectCreation);
 
-                    string categoryOpt = null;
+                    string? categoryOpt = null;
                     if (!checkCategoryAndAllowedIds ||
                         !TryAnalyzeCategory(operationAnalysisContext, objectCreation,
-                            additionalTextOpt, categoryAndAllowedIdsMap, out categoryOpt, out var allowedIdsInfoList))
+                            additionalTextOpt!, categoryAndAllowedIdsMap!, out categoryOpt, out var allowedIdsInfoList))
                     {
                         allowedIdsInfoList = default;
                     }
@@ -226,7 +278,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static void AnalyzeTitle(OperationAnalysisContext operationAnalysisContext, IObjectCreationOperation objectCreation)
         {
-            IParameterSymbol title = objectCreation.Constructor.Parameters.Where(p => p.Name == "title").FirstOrDefault();
+            IParameterSymbol title = objectCreation.Constructor.Parameters.FirstOrDefault(p => p.Name == "title");
             if (title != null &&
                 title.Type != null &&
                 title.Type.SpecialType == SpecialType.System_String)
@@ -254,13 +306,35 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             }
         }
 
+        private static void AnalyzeCustomTags(OperationAnalysisContext operationAnalysisContext, IObjectCreationOperation objectCreation)
+        {
+            // Find the matching argument for customTags
+            foreach (var argument in objectCreation.Arguments)
+            {
+                if (argument.Parameter.Name.Equals(CustomTagsParameterName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (argument.Value is IArrayCreationOperation arrayCreation &&
+                        arrayCreation.DimensionSizes.Length == 1 &&
+                        arrayCreation.DimensionSizes[0].ConstantValue.HasValue &&
+                        arrayCreation.DimensionSizes[0].ConstantValue.Value is int size &&
+                        size == 0)
+                    {
+                        Diagnostic diagnostic = Diagnostic.Create(ProvideCustomTagsInDescriptorRule, argument.Syntax.GetLocation());
+                        operationAnalysisContext.ReportDiagnostic(diagnostic);
+                    }
+
+                    return;
+                }
+            }
+        }
+
         private static bool TryAnalyzeCategory(
             OperationAnalysisContext operationAnalysisContext,
             IObjectCreationOperation objectCreation,
             AdditionalText additionalText,
-            ImmutableDictionary<string, ImmutableArray<(string prefix, int start, int end)>> categoryAndAllowedIdsInfoMap,
-            out string category,
-            out ImmutableArray<(string prefix, int start, int end)> allowedIdsInfoList)
+            ImmutableDictionary<string, ImmutableArray<(string? prefix, int start, int end)>> categoryAndAllowedIdsInfoMap,
+            [NotNullWhen(returnValue: true)] out string? category,
+            out ImmutableArray<(string? prefix, int start, int end)> allowedIdsInfoList)
         {
             category = null;
             allowedIdsInfoList = default;
@@ -304,13 +378,13 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static void AnalyzeRuleId(
             OperationAnalysisContext operationAnalysisContext,
             IObjectCreationOperation objectCreation,
-            AdditionalText additionalTextOpt,
-            string categoryOpt,
-            ImmutableArray<(string prefix, int start, int end)> allowedIdsInfoListOpt,
+            AdditionalText? additionalTextOpt,
+            string? categoryOpt,
+            ImmutableArray<(string? prefix, int start, int end)> allowedIdsInfoListOpt,
             ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentBag<Location>>> idToAnalyzerMap)
         {
             var analyzer = ((IFieldSymbol)operationAnalysisContext.ContainingSymbol).ContainingType.OriginalDefinition;
-            string ruleId = null;
+            string? ruleId = null;
             foreach (var argument in objectCreation.Arguments)
             {
                 if (argument.Parameter.Name.Equals(DiagnosticIdParameterName, StringComparison.OrdinalIgnoreCase))
@@ -322,8 +396,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     {
                         ruleId = (string)argument.Value.ConstantValue.Value;
                         var location = argument.Value.Syntax.GetLocation();
-
-                        string GetAnalyzerName(INamedTypeSymbol a) => a.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                        static string GetAnalyzerName(INamedTypeSymbol a) => a.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
                         // Factory methods to track declaration locations for every analyzer rule ID.
                         ConcurrentBag<Location> AddLocationFactory(string analyzerName)
@@ -359,21 +432,26 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             addValueFactory: AddNamedTypeFactory,
                             updateValueFactory: UpdateNamedTypeFactory);
 
+                        if (IsReservedDiagnosticId(ruleId, operationAnalysisContext.Compilation.AssemblyName))
+                        {
+                            operationAnalysisContext.ReportDiagnostic(argument.Value.Syntax.CreateDiagnostic(DoNotUseReservedDiagnosticIdRule, ruleId));
+                        }
+
                         // If we have an additional file specifying required range and/or format for the ID, validate the ID.
                         if (!allowedIdsInfoListOpt.IsDefault)
                         {
-                            Debug.Assert(!allowedIdsInfoListOpt.IsEmpty);
-                            Debug.Assert(categoryOpt != null);
-                            Debug.Assert(additionalTextOpt != null);
+                            RoslynDebug.Assert(!allowedIdsInfoListOpt.IsEmpty);
+                            RoslynDebug.Assert(categoryOpt != null);
+                            RoslynDebug.Assert(additionalTextOpt != null);
 
                             var foundMatch = false;
-                            bool ShouldValidateRange((string prefix, int start, int end) range)
+                            static bool ShouldValidateRange((string? prefix, int start, int end) range)
                                 => range.start >= 0 && range.end >= 0;
 
                             // Check if ID matches any one of the required ranges.
                             foreach (var allowedIds in allowedIdsInfoListOpt)
                             {
-                                Debug.Assert(allowedIds.prefix != null);
+                                RoslynDebug.Assert(allowedIds.prefix != null);
 
                                 if (ruleId.StartsWith(allowedIds.prefix, StringComparison.Ordinal))
                                 {
@@ -434,9 +512,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static bool TryGetCategoryAndAllowedIdsMap(
             ImmutableArray<AdditionalText> additionalFiles,
             CancellationToken cancellationToken,
-            out AdditionalText additionalText,
-            out ImmutableDictionary<string, ImmutableArray<(string prefix, int start, int end)>> categoryAndAllowedIdsMap,
-            out List<Diagnostic> invalidFileDiagnostics)
+            [NotNullWhen(returnValue: true)] out AdditionalText? additionalText,
+            [NotNullWhen(returnValue: true)] out ImmutableDictionary<string, ImmutableArray<(string? prefix, int start, int end)>>? categoryAndAllowedIdsMap,
+            out List<Diagnostic>? invalidFileDiagnostics)
         {
             invalidFileDiagnostics = null;
             categoryAndAllowedIdsMap = null;
@@ -448,7 +526,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 TryParseCategoryAndAllowedIdsInfoFile(additionalText, cancellationToken, out categoryAndAllowedIdsMap, out invalidFileDiagnostics);
         }
 
-        private static AdditionalText TryGetCategoryAndAllowedIdsInfoFile(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
+        private static AdditionalText? TryGetCategoryAndAllowedIdsInfoFile(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
         {
             StringComparer comparer = StringComparer.Ordinal;
             foreach (AdditionalText textFile in additionalFiles)
@@ -468,8 +546,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static bool TryParseCategoryAndAllowedIdsInfoFile(
             AdditionalText additionalText,
             CancellationToken cancellationToken,
-            out ImmutableDictionary<string, ImmutableArray<(string prefix, int start, int end)>> categoryAndAllowedIdsInfoMap,
-            out List<Diagnostic> invalidFileDiagnostics)
+            [NotNullWhen(returnValue: true)] out ImmutableDictionary<string, ImmutableArray<(string? prefix, int start, int end)>>? categoryAndAllowedIdsInfoMap,
+            out List<Diagnostic>? invalidFileDiagnostics)
         {
             // Parse the additional file with allowed diagnostic categories and corresponding ID range.
             // FORMAT:
@@ -478,7 +556,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             categoryAndAllowedIdsInfoMap = null;
             invalidFileDiagnostics = null;
 
-            var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<(string prefix, int start, int end)>>();
+            var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<(string? prefix, int start, int end)>>();
             var lines = additionalText.GetText(cancellationToken).Lines;
             foreach (var line in lines)
             {
@@ -516,10 +594,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     // 'Category': Comma separate list of 'StartId-EndId' or 'Id' or 'Prefix'
                     var ranges = parts[1].Split(',');
 
-                    var infoList = ImmutableArray.CreateBuilder<(string prefix, int start, int end)>(ranges.Length);
+                    var infoList = ImmutableArray.CreateBuilder<(string? prefix, int start, int end)>(ranges.Length);
                     for (int i = 0; i < ranges.Length; i++)
                     {
-                        (string prefix, int start, int end) allowedIdsInfo = s_defaultAllowedIdsInfo;
+                        (string? prefix, int start, int end) allowedIdsInfo = s_defaultAllowedIdsInfo;
                         string range = ranges[i].Trim();
                         if (!range.Contains('-'))
                         {
@@ -576,7 +654,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     string arg2 = Path.GetFileName(additionalText.Path);
                     LinePositionSpan linePositionSpan = lines.GetLinePositionSpan(line.Span);
                     Location location = Location.Create(additionalText.Path, line.Span, linePositionSpan);
-                    invalidFileDiagnostics = invalidFileDiagnostics ?? new List<Diagnostic>();
+                    invalidFileDiagnostics ??= new List<Diagnostic>();
                     var diagnostic = Diagnostic.Create(AnalyzerCategoryAndIdRangeFileInvalidRule, location, arg1, arg2);
                     invalidFileDiagnostics.Add(diagnostic);
                 }
@@ -618,6 +696,30 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             }
 
             return prefix.Length > 0 && suffixStr.Length > 0 && int.TryParse(suffixStr, out suffix);
+        }
+
+        private static bool IsReservedDiagnosticId(string ruleId, string assemblyName)
+        {
+            if (ruleId.Length < 3)
+            {
+                return false;
+            }
+
+            var isCARule = ruleId.StartsWith("CA", StringComparison.Ordinal);
+
+            if (!isCARule &&
+                !ruleId.StartsWith("CS", StringComparison.Ordinal) &&
+                !ruleId.StartsWith("BC", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (!ruleId.Substring(2).All(c => char.IsDigit(c)))
+            {
+                return false;
+            }
+
+            return !isCARule || !CADiagnosticIdAllowedAssemblies.Contains(assemblyName);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -82,9 +81,8 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                     // Check for explicit specification of empty or singleton array
 
                     if (arrayType.RankSpecifiers[0].ChildNodes()
-                        .SingleOrDefault(n => n.Kind() == SyntaxKind.NumericLiteralExpression) is LiteralExpressionSyntax literalRankSpecifier)
+                        .FirstOrDefault(n => n.Kind() == SyntaxKind.NumericLiteralExpression) is LiteralExpressionSyntax literalRankSpecifier)
                     {
-                        Debug.Assert(literalRankSpecifier.Token.Value != null);
                         AnalyzeArrayLength((int)literalRankSpecifier.Token.Value, arrayCreationExpression, addDiagnostic);
                         return;
                     }

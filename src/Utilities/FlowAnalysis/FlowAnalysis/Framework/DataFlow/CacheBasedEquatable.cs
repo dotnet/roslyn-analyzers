@@ -7,12 +7,14 @@ using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.PooledObjects;
 
+#pragma warning disable CA2002
+
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     /// <summary>
     /// Abstract cache based equatable implementation for objects that are compared frequently and hence need a performance optimization of using a cached hash code.
     /// </summary>
-    public abstract class CacheBasedEquatable<T> : IEquatable<T>
+    public abstract class CacheBasedEquatable<T> : IEquatable<T?>
         where T : class
     {
         private ImmutableArray<int> _lazyHashCodeParts;
@@ -45,16 +47,16 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         private ImmutableArray<int> ComputeHashCodeParts()
         {
             var builder = ArrayBuilder<int>.GetInstance();
-            ComputeHashCodeParts(builder);
+            ComputeHashCodeParts(builder.Add);
             return builder.ToImmutableAndFree();
         }
 
-        protected abstract void ComputeHashCodeParts(ArrayBuilder<int> builder);
+        protected abstract void ComputeHashCodeParts(Action<int> addPart);
 
         public sealed override int GetHashCode() => GetOrComputeHashCode();
 
-        public sealed override bool Equals(object obj) => Equals(obj as T);
-        public bool Equals(T other)
+        public sealed override bool Equals(object? obj) => Equals(obj as T);
+        public bool Equals(T? other)
         {
             // Perform fast equality checks first.
             if (ReferenceEquals(this, other))
@@ -74,7 +76,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return _lazyHashCodeParts.SequenceEqual(otherEquatable._lazyHashCodeParts);
         }
 
-        public static bool operator ==(CacheBasedEquatable<T> value1, CacheBasedEquatable<T> value2)
+        public static bool operator ==(CacheBasedEquatable<T>? value1, CacheBasedEquatable<T>? value2)
         {
             if (value1 is null)
             {
@@ -88,7 +90,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return value1.Equals(value2);
         }
 
-        public static bool operator !=(CacheBasedEquatable<T> value1, CacheBasedEquatable<T> value2)
+        public static bool operator !=(CacheBasedEquatable<T>? value1, CacheBasedEquatable<T>? value2)
         {
             return !(value1 == value2);
         }

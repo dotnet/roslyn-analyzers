@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using Analyzer.Utilities.PooledObjects;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
@@ -25,9 +23,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
             public override int Compare(PropertySetAbstractValue oldValue, PropertySetAbstractValue newValue, bool assertMonotonicity)
             {
-                Debug.Assert(oldValue != null);
-                Debug.Assert(newValue != null);
-
                 if (Object.ReferenceEquals(oldValue, newValue))
                 {
                     return 0;
@@ -59,9 +54,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 
             public override PropertySetAbstractValue Merge(PropertySetAbstractValue value1, PropertySetAbstractValue value2)
             {
-                Debug.Assert(value1 != null);
-                Debug.Assert(value2 != null);
-
                 // The PropertySetAbstractValue indexer allows accessing beyond KnownValuesCount (returns Unknown),
                 // so looping through the max of the two KnownValuesCount.
                 int maxKnownCount = Math.Max(value1.KnownValuesCount, value2.KnownValuesCount);

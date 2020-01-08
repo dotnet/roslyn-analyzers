@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Diagnostics;
 using System.Threading;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 
@@ -16,12 +17,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
     /// </summary>
     public partial class ValueContentAnalysis : ForwardDataFlowAnalysis<ValueContentAnalysisData, ValueContentAnalysisContext, ValueContentAnalysisResult, ValueContentBlockAnalysisResult, ValueContentAbstractValue>
     {
-        private ValueContentAnalysis(ValueContentDataFlowOperationVisitor operationVisitor)
-            : base(ValueContentAnalysisDomain.Instance, operationVisitor)
+        private ValueContentAnalysis(ValueContentAnalysisDomain analysisDomain, ValueContentDataFlowOperationVisitor operationVisitor)
+            : base(analysisDomain, operationVisitor)
         {
         }
 
-        public static ValueContentAnalysisResult TryGetOrComputeResult(
+        public static ValueContentAnalysisResult? TryGetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
@@ -37,59 +38,70 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
                 pessimisticAnalysis, performPointsToAnalysis);
         }
 
-        public static ValueContentAnalysisResult TryGetOrComputeResult(
+        public static ValueContentAnalysisResult? TryGetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
             WellKnownTypeProvider wellKnownTypeProvider,
             AnalyzerOptions analyzerOptions,
             DiagnosticDescriptor rule,
             CancellationToken cancellationToken,
-            out CopyAnalysisResult copyAnalysisResultOpt,
-            out PointsToAnalysisResult pointsToAnalysisResultOpt,
+            out CopyAnalysisResult? copyAnalysisResultOpt,
+            out PointsToAnalysisResult? pointsToAnalysisResultOpt,
             InterproceduralAnalysisKind interproceduralAnalysisKind = InterproceduralAnalysisKind.None,
             bool pessimisticAnalysis = true,
             bool performPointsToAnalysis = true,
-            bool performCopyAnalysisIfNotUserConfigured = true,
-            InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt = null)
+            bool performCopyAnalysisIfNotUserConfigured = false,
+            InterproceduralAnalysisPredicate? interproceduralAnalysisPredicateOpt = null)
         {
+            Debug.Assert(!owningSymbol.IsConfiguredToSkipAnalysis(analyzerOptions, rule, wellKnownTypeProvider.Compilation, cancellationToken));
+
             var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                 analyzerOptions, rule, interproceduralAnalysisKind, cancellationToken);
-            return TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
+            return TryGetOrComputeResult(cfg, owningSymbol, analyzerOptions, wellKnownTypeProvider,
                 interproceduralAnalysisConfig, out copyAnalysisResultOpt,
                 out pointsToAnalysisResultOpt, pessimisticAnalysis, performPointsToAnalysis,
                 performCopyAnalysis: analyzerOptions.GetCopyAnalysisOption(rule, defaultValue: performCopyAnalysisIfNotUserConfigured, cancellationToken),
                 interproceduralAnalysisPredicateOpt: interproceduralAnalysisPredicateOpt);
         }
 
-        internal static ValueContentAnalysisResult TryGetOrComputeResult(
+        internal static ValueContentAnalysisResult? TryGetOrComputeResult(
             ControlFlowGraph cfg,
             ISymbol owningSymbol,
+            AnalyzerOptions analyzerOptions,
             WellKnownTypeProvider wellKnownTypeProvider,
             InterproceduralAnalysisConfiguration interproceduralAnalysisConfig,
-            out CopyAnalysisResult copyAnalysisResultOpt,
-            out PointsToAnalysisResult pointsToAnalysisResultOpt,
+            out CopyAnalysisResult? copyAnalysisResultOpt,
+            out PointsToAnalysisResult? pointsToAnalysisResultOpt,
             bool pessimisticAnalysis = true,
             bool performPointsToAnalysis = true,
-            bool performCopyAnalysis = true,
-            InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt = null)
+            bool performCopyAnalysis = false,
+            InterproceduralAnalysisPredicate? interproceduralAnalysisPredicateOpt = null)
         {
             copyAnalysisResultOpt = null;
             pointsToAnalysisResultOpt = performPointsToAnalysis ?
-                PointsToAnalysis.PointsToAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out copyAnalysisResultOpt,
+                PointsToAnalysis.PointsToAnalysis.TryGetOrComputeResult(cfg, owningSymbol, analyzerOptions, wellKnownTypeProvider, out copyAnalysisResultOpt,
                     interproceduralAnalysisConfig, interproceduralAnalysisPredicateOpt, pessimisticAnalysis, performCopyAnalysis) :
                 null;
+
+            if (cfg == null)
+            {
+                Debug.Fail("Expected non-null CFG");
+                return null;
+            }
+
             var analysisContext = ValueContentAnalysisContext.Create(
-                ValueContentAbstractValueDomain.Default, wellKnownTypeProvider, cfg, owningSymbol,
+                ValueContentAbstractValueDomain.Default, wellKnownTypeProvider, cfg, owningSymbol, analyzerOptions,
                 interproceduralAnalysisConfig, pessimisticAnalysis, copyAnalysisResultOpt,
                 pointsToAnalysisResultOpt, TryGetOrComputeResultForAnalysisContext, interproceduralAnalysisPredicateOpt);
             return TryGetOrComputeResultForAnalysisContext(analysisContext);
         }
 
-        private static ValueContentAnalysisResult TryGetOrComputeResultForAnalysisContext(ValueContentAnalysisContext analysisContext)
+        private static ValueContentAnalysisResult? TryGetOrComputeResultForAnalysisContext(ValueContentAnalysisContext analysisContext)
         {
-            var operationVisitor = new ValueContentDataFlowOperationVisitor(analysisContext);
-            var nullAnalysis = new ValueContentAnalysis(operationVisitor);
-            return nullAnalysis.TryGetOrComputeResultCore(analysisContext, cacheResult: false);
+            var analysisDomain = new ValueContentAnalysisDomain(analysisContext.PointsToAnalysisResultOpt);
+            var operationVisitor = new ValueContentDataFlowOperationVisitor(analysisDomain, analysisContext);
+            var nullAnalysis = new ValueContentAnalysis(analysisDomain, operationVisitor);
+            return nullAnalysis.TryGetOrComputeResultCore(analysisContext, cacheResult: true);
         }
 
         protected override ValueContentAnalysisResult ToResult(ValueContentAnalysisContext analysisContext, ValueContentAnalysisResult dataFlowAnalysisResult)

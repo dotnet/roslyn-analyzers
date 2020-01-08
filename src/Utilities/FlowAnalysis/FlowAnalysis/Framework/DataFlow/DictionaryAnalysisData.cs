@@ -4,16 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities.PooledObjects;
 
-#pragma warning disable CA1067 // Override Object.Equals(object) when implementing IEquatable<T>
 #pragma warning disable CA1710 // Rename DictionaryAnalysisData to end in 'Dictionary'
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     public sealed class DictionaryAnalysisData<TKey, TValue> : AbstractAnalysisData, IDictionary<TKey, TValue>
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private PooledDictionary<TKey, TValue> _coreAnalysisData;
+#pragma warning restore
 
         public DictionaryAnalysisData()
         {
@@ -136,7 +138,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return Remove(item.Key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             Debug.Assert(!IsDisposed);
             return _coreAnalysisData.TryGetValue(key, out value);
@@ -158,7 +160,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             if (disposing)
             {
                 _coreAnalysisData.Free();
-                _coreAnalysisData = null;
+                _coreAnalysisData = null!;
             }
 
             base.Dispose(disposing);

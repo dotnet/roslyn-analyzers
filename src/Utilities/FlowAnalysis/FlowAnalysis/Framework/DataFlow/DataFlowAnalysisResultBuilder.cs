@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -15,16 +16,18 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     internal sealed class DataFlowAnalysisResultBuilder<TAnalysisData> : IDisposable
         where TAnalysisData : AbstractAnalysisData
     {
-        private readonly PooledDictionary<BasicBlock, TAnalysisData> _info;
+#pragma warning disable CA2213 // Disposable fields should be disposed
+        private readonly PooledDictionary<BasicBlock, TAnalysisData?> _info;
+#pragma warning restore
 
         public DataFlowAnalysisResultBuilder()
         {
-            _info = PooledDictionary<BasicBlock, TAnalysisData>.GetInstance();
+            _info = PooledDictionary<BasicBlock, TAnalysisData?>.GetInstance();
         }
 
-        public TAnalysisData this[BasicBlock block] => _info[block];
-        public TAnalysisData EntryBlockOutputData { get; set; }
-        public TAnalysisData ExitBlockOutputData { get; set; }
+        public TAnalysisData? this[BasicBlock block] => _info[block];
+        public TAnalysisData? EntryBlockOutputData { get; set; }
+        public TAnalysisData? ExitBlockOutputData { get; set; }
 
         internal void Add(BasicBlock block)
         {
@@ -44,9 +47,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             ImmutableDictionary<IOperation, IDataFlowAnalysisResult<TAbstractAnalysisValue>> interproceduralResultsMap,
             TAnalysisData entryBlockOutputData,
             TAnalysisData exitBlockData,
-            TAnalysisData exceptionPathsExitBlockDataOpt,
-            TAnalysisData mergedDataForUnhandledThrowOperationsOpt,
-            Dictionary<ThrownExceptionInfo, TAnalysisData> analysisDataForUnhandledThrowOperationsOpt,
+            TAnalysisData? exceptionPathsExitBlockDataOpt,
+            TAnalysisData? mergedDataForUnhandledThrowOperationsOpt,
+            Dictionary<ThrownExceptionInfo, TAnalysisData>? analysisDataForUnhandledThrowOperationsOpt,
+            Dictionary<PointsToAbstractValue, TAbstractAnalysisValue>? taskWrappedValuesMapOpt,
             ControlFlowGraph cfg,
             TAbstractAnalysisValue defaultUnknownValue)
             where TBlockAnalysisResult : AbstractBlockAnalysisResult
@@ -56,7 +60,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             {
                 var block = kvp.Key;
                 var blockAnalysisData = kvp.Value;
-                var result = getBlockResult(block, blockAnalysisData);
+                var result = getBlockResult(block, blockAnalysisData!);
                 resultBuilder.Add(block, result);
             }
 
@@ -73,7 +77,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return new DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>(resultBuilder.ToImmutableDictionaryAndFree(), stateMap,
                 predicateValueKindMap, returnValueAndPredicateKindOpt, interproceduralResultsMap,
                 entryBlockOutputResult, exitBlockOutputResult, exceptionPathsExitBlockOutputResultOpt,
-                mergedStateForUnhandledThrowOperationsOpt, analysisDataForUnhandledThrowOperationsOpt, cfg, defaultUnknownValue);
+                mergedStateForUnhandledThrowOperationsOpt, analysisDataForUnhandledThrowOperationsOpt,
+                taskWrappedValuesMapOpt, cfg, defaultUnknownValue);
         }
 
         public void Dispose()

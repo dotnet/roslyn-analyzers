@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Roslyn.Utilities;
 
 namespace Test.Utilities
 {
@@ -17,7 +16,7 @@ namespace Test.Utilities
             this TCompilation c,
             DiagnosticAnalyzer[] analyzers,
             TestValidationMode validationMode,
-            AnalyzerOptions options = null)
+            AnalyzerOptions? options = null)
             where TCompilation : Compilation
         {
             var compilationWithAnalyzers = c.WithAnalyzers(analyzers.ToImmutableArray(), options, CancellationToken.None);
@@ -29,8 +28,10 @@ namespace Test.Utilities
 
             var diagnosticDescriptors = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             var analyzerDiagnosticIds = diagnosticDescriptors.Select(diagnosticDescriptor => diagnosticDescriptor.Id);
-            var allDiagnosticIds = new HashSet<string>(analyzerDiagnosticIds, StringComparer.Ordinal);
-            allDiagnosticIds.Add("AD0001");    // Failures caught by the Analyzer Driver.
+            var allDiagnosticIds = new HashSet<string>(analyzerDiagnosticIds, StringComparer.Ordinal)
+            {
+                "AD0001"    // Failures caught by the Analyzer Driver.
+            };
             var allDiagnostics = compilationWithAnalyzers.GetAllDiagnosticsAsync().Result;
             var resultDiagnostics = allDiagnostics.Where(diagnostic => allDiagnosticIds.Contains(diagnostic.Id));
             return resultDiagnostics.ToImmutableArray();

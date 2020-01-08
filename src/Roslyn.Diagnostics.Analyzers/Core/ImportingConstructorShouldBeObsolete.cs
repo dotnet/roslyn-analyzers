@@ -29,7 +29,7 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.ImportingConstructorShouldBeObsoleteRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
@@ -45,12 +45,12 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var obsoleteAttribute = WellKnownTypes.ObsoleteAttribute(compilationContext.Compilation);
-                var exportAttributeV1 = WellKnownTypes.MEFV1ExportAttribute(compilationContext.Compilation);
-                var importingConstructorAttributeV1 = WellKnownTypes.MEFV1ImportingConstructorAttribute(compilationContext.Compilation);
-                var exportAttributeV2 = WellKnownTypes.MEFV2ExportAttribute(compilationContext.Compilation);
-                var inheritedExportAttribute = WellKnownTypes.InheritedExportAttribute(compilationContext.Compilation);
-                var importingConstructorAttributeV2 = WellKnownTypes.MEFV2ImportingConstructorAttribute(compilationContext.Compilation);
+                var obsoleteAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                var exportAttributeV1 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var importingConstructorAttributeV1 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportingConstructorAttribute);
+                var exportAttributeV2 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var inheritedExportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);
+                var importingConstructorAttributeV2 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportingConstructorAttribute);
 
                 if (exportAttributeV1 is null && exportAttributeV2 is null)
                 {
@@ -69,7 +69,7 @@ namespace Roslyn.Diagnostics.Analyzers
             });
         }
 
-        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttribute, INamedTypeSymbol exportAttributeOpt, INamedTypeSymbol importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
+        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol? obsoleteAttribute, INamedTypeSymbol? exportAttributeOpt, INamedTypeSymbol? importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
         {
             if (exportAttributeOpt is null)
             {
@@ -89,7 +89,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
 
                 var constructorAttributes = constructor.GetAttributes();
-                AttributeData importingConstructorAttributeData = null;
+                AttributeData? importingConstructorAttributeData = null;
                 foreach (var attributeData in constructorAttributes)
                 {
                     if (attributeData.AttributeClass.DerivesFrom(importingConstructorAttribute))

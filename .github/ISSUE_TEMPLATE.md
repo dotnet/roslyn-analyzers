@@ -1,10 +1,10 @@
 #### Analyzer package
 
-Example: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+[Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
 #### Package Version
 
-Example: v2.9.3 (Latest)
+v2.9.8 (Latest)
 
 #### Diagnostic ID
 
@@ -12,9 +12,9 @@ Example: [CA1716](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1
 
 #### Repro steps
 
-1. One
-1. Two
-1. Three
+1.
+2.
+3.
 
 #### Expected behavior
 

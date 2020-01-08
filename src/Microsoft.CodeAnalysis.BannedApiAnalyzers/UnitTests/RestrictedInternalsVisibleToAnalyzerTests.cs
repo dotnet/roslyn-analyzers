@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers;
+using Test.Utilities;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -33,6 +34,13 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers.UnitTests
         {
             return new DiagnosticResult(BasicRestrictedInternalsVisibleToAnalyzer.Rule)
                 .WithLocation(line, column)
+                .WithArguments(bannedSymbolName, ApiProviderProjectName, restrictedNamespaces);
+        }
+
+        private static DiagnosticResult GetBasicResultAt(int startLine, int startColumn, int endLine, int endColumn, string bannedSymbolName, string restrictedNamespaces)
+        {
+            return new DiagnosticResult(BasicRestrictedInternalsVisibleToAnalyzer.Rule)
+                .WithSpan(startLine, startColumn, endLine, endColumn)
                 .WithArguments(bannedSymbolName, ApiProviderProjectName, restrictedNamespaces);
         }
 
@@ -144,15 +152,12 @@ namespace N1
             var apiConsumerSource = @"
 class C2
 {
-    void M(N1.C1 c)
+    void M(N1.{|CS0122:C1|} c)
     {
     }
 }";
 
-            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("CS0122")
-                    .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource);
         }
 
         [Fact]
@@ -166,14 +171,11 @@ End Namespace";
 
             var apiConsumerSource = @"
 Class C2
-    Private Sub M(c As N1.C1)
+    Private Sub M(c As {|BC30389:N1.C1|})
     End Sub
 End Class";
 
-            await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("BC30389")
-                    .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+            await VerifyBasicAsync(apiProviderSource, apiConsumerSource);
         }
 
         [Fact]
@@ -232,15 +234,12 @@ namespace N1
             var apiConsumerSource = @"
 class C2
 {
-    void M(N1.C1 c)
+    void M(N1.{|CS0122:C1|} c)
     {
     }
 }";
 
-            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
-                DiagnosticResult.CompilerError("CS0122")
-                    .WithLocation(4, 15)
-                    .WithMessage("'C1' is inaccessible due to its protection level"));
+            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource);
         }
 
         [Fact]
@@ -256,14 +255,11 @@ End Namespace";
 
             var apiConsumerSource = @"
 Class C2
-    Private Sub M(c As N1.C1)
+    Private Sub M(c As {|BC30389:N1.C1|})
     End Sub
 End Class";
 
-            await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
-                new DiagnosticResult("BC30389", DiagnosticSeverity.Error)
-                    .WithLocation("Test0.vb", new LinePosition(2, 23), DiagnosticLocationOptions.IgnoreAdditionalLocations)
-                    .WithMessage("'N1.C1' is not accessible in this context because it is 'Friend'."));
+            await VerifyBasicAsync(apiProviderSource, apiConsumerSource);
         }
 
         [Fact]
@@ -1746,15 +1742,12 @@ class C2
 {
     void M(N1.C1 c)
     {
-        _ = c.Event;
+        _ = c.{|CS0070:Event|};
     }
 }";
 
             await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
-                GetCSharpResultAt(6, 13, "N1.C1.Event", "N2"),
-                DiagnosticResult.CompilerError("CS0070")
-                    .WithLocation(6, 15)
-                    .WithMessage("The event 'C1.Event' can only appear on the left hand side of += or -= (except when used from within the type 'C1')"));
+                GetCSharpResultAt(6, 13, "N1.C1.Event", "N2"));
         }
 
         [Fact]
@@ -1774,15 +1767,12 @@ End Namespace";
             var apiConsumerSource = @"
 Class C2
     Private Sub M(c As N1.C1)
-        Dim unused = c.[Event]
+        Dim unused = {|BC32022:c.[Event]|}
     End Sub
 End Class";
 
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
-                GetBasicResultAt(4, 22, "N1.C1.Event", "N2"),
-                DiagnosticResult.CompilerError("BC32022")
-                    .WithLocation(4, 22)
-                    .WithMessage("'Friend Event [Event] As EventHandler' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event."));
+                GetBasicResultAt(4, 22, 4, 31, "N1.C1.Event", "N2"));
         }
 
         [Fact]
@@ -2138,6 +2128,105 @@ End Class";
 
             await VerifyBasicAsync(apiProviderSource, apiConsumerSource,
                 GetBasicResultAt(3, 24, "N1.C1", "N2"));
+        }
+
+        [Fact]
+        [WorkItem(2655, "https://github.com/dotnet/roslyn-analyzers/issues/2655")]
+        public async Task CSharp_IVT_RestrictedIVT_InternalOperators_Diagnostic()
+        {
+            var apiProviderSource = @"
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(""ApiConsumerProjectName"")]
+[assembly: System.Runtime.CompilerServices.RestrictedInternalsVisibleTo(""ApiConsumerProjectName"", ""N2"")]
+
+namespace N1
+{
+    internal class C
+    {
+        public static implicit operator C(int i) => new C();
+        public static explicit operator C(float f) => new C();
+        public static C operator +(C c, int i) => c;
+        public static C operator ++(C c) => c;
+        public static C operator -(C c) => c;
+    }
+}";
+
+            var apiConsumerSource = @"
+using N1;
+class C2
+{
+    void M()
+    {
+        C c = 0;        // implicit conversion.
+        c = (C)1.0f;    // Explicit conversion.
+        c = c + 1;      // Binary operator.
+        c++;            // Increment or decrement.
+        c = -c;         // Unary operator.
+    }
+}";
+
+            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
+                GetCSharpResultAt(7, 9, "N1.C", "N2"),
+                GetCSharpResultAt(7, 15, "N1.C.implicit operator N1.C", "N2"),
+                GetCSharpResultAt(8, 13, "N1.C.explicit operator N1.C", "N2"),
+                GetCSharpResultAt(8, 14, "N1.C", "N2"),
+                GetCSharpResultAt(9, 13, "N1.C.operator +", "N2"),
+                GetCSharpResultAt(10, 9, "N1.C.operator ++", "N2"),
+                GetCSharpResultAt(11, 13, "N1.C.operator -", "N2"));
+        }
+
+        [Fact]
+        [WorkItem(2655, "https://github.com/dotnet/roslyn-analyzers/issues/2655")]
+        public async Task CSharp_IVT_RestrictedIVT_TypeArgumentUsage_Diagnostic()
+        {
+            var apiProviderSource = @"
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(""ApiConsumerProjectName"")]
+[assembly: System.Runtime.CompilerServices.RestrictedInternalsVisibleTo(""ApiConsumerProjectName"", ""N2"")]
+
+namespace N1
+{
+    internal struct C {}
+}";
+
+            var apiConsumerSource = @"
+using N1;
+namespace N2
+{
+    class G<T>
+    {
+        class N<U>
+        { }
+
+        unsafe void M()
+        {
+            var b = new G<C>();
+            var c = new G<C>.N<int>();
+            var d = new G<int>.N<C>();
+            var e = new G<G<int>.N<C>>.N<int>();
+            var f = new G<G<C>.N<int>>.N<int>();
+            var g = new C[42];
+            var h = new G<C[]>();
+            fixed (C* i = &g[0]) { }
+        }
+    }
+}";
+
+            await VerifyCSharpAsync(apiProviderSource, apiConsumerSource,
+                // Test0.cs(12,27): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(12, 27, "N1.C", "N2"),
+                // Test0.cs(13,27): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(13, 27, "N1.C", "N2"),
+                // Test0.cs(14,34): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(14, 34, "N1.C", "N2"),
+                // Test0.cs(15,36): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(15, 36, "N1.C", "N2"),
+                // Test0.cs(16,29): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(16, 29, "N1.C", "N2"),
+                // Test0.cs(17,25): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(17, 25, "N1.C", "N2"),
+                // Test0.cs(18,27): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(18, 27, "N1.C", "N2"),
+                // Test0.cs(19,20): error RS0035: External access to internal symbol 'N1.C' is prohibited. Assembly 'ApiProviderProjectName' only allows access to internal symbols defined in the following namespace(s): 'N2'
+                GetCSharpResultAt(19, 20, "N1.C", "N2"));
         }
     }
 }

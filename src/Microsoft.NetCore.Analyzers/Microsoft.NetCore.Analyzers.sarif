@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.9",
+        "version": "3.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -1933,7 +1933,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.9",
+        "version": "3.0.0",
         "language": "en-US"
       },
       "rules": {
@@ -2083,7 +2083,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.9",
+        "version": "3.0.0",
         "language": "en-US"
       },
       "rules": {

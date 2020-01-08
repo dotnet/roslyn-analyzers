@@ -22,7 +22,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: buildpool.windows.10.amd64.vs2017.open
-  timeoutInMinutes: 25
+  timeoutInMinutes: 30
 
   steps:
     - checkout: self
@@ -45,5 +45,34 @@ jobs:
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
         ArtifactName: 'Windows $(_configuration)'
+      continueOnError: true
+      condition: not(succeeded())
+
+- job: Windows_Desktop_Spanish_Unit_Tests
+  strategy:
+    maxParallel: 4
+  pool:
+    name: NetCorePublic-Pool
+    queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
+  timeoutInMinutes: 30
+
+  steps:
+    - checkout: self
+      clean: true
+    - script: eng\common\cibuild.cmd -prepareMachine
+      displayName: Build and Test
+
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: XUnit
+        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\Debug\*.xml'
+        mergeTestResults: true
+        testRunTitle: 'Windows Desktop Spanish'
+      condition: always()
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Logs
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\Debug'
+        ArtifactName: 'Windows Desktop Spanish'
       continueOnError: true
       condition: not(succeeded())

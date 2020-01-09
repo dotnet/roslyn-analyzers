@@ -124,7 +124,7 @@
     <value>Display class allocation to capture closure</value>
   </data>
   <data name="ClosureDriverRuleMessage" xml:space="preserve">
-    <value>Heap allocation of closure Captures: {0}</value>
+    <value>Heap allocation of closure captures '{0}'</value>
   </data>
   <data name="ClosureDriverRuleTitle" xml:space="preserve">
     <value>Closure Allocation Source</value>
@@ -184,7 +184,7 @@
     <value>Value type to reference type conversion causing boxing allocation</value>
   </data>
   <data name="ValueTypeToReferenceTypeInAStringConcatenationRuleMessage" xml:space="preserve">
-    <value>Value type ({0}) is being boxed to a reference type for a string concatenation.</value>
+    <value>Value type '{0}' is being boxed to a reference type for a string concatenation.</value>
   </data>
   <data name="ValueTypeToReferenceTypeInAStringConcatenationRuleTitle" xml:space="preserve">
     <value>Value type to reference type conversion allocation for string concatenation</value>

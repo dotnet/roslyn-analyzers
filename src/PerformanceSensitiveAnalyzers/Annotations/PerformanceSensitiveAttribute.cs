@@ -15,7 +15,7 @@ namespace Roslyn.Utilities
     /// </remarks>
     [Conditional("EMIT_CODE_ANALYSIS_ATTRIBUTES")]
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
-    internal sealed class PerformanceSensitiveAttribute : Attribute
+    public sealed class PerformanceSensitiveAttribute : Attribute
     {
         public PerformanceSensitiveAttribute(string uri)
         {
@@ -82,6 +82,8 @@ namespace Roslyn.Utilities
             set;
         }
 
+
+#pragma warning disable CS1574 // XML comment has cref attribute that could not be resolved
         /// <summary>
         /// Gets or sets a value indicating whether the asynchronous state machine typically completes synchronously.
         /// </summary>
@@ -92,6 +94,7 @@ namespace Roslyn.Utilities
         /// <see cref="System.Threading.Tasks.ValueTask{TResult}"/>.</para>
         /// </remarks>
         public bool OftenCompletesSynchronously
+#pragma warning restore CS1574 // XML comment has cref attribute that could not be resolved
         {
             get;
             set;

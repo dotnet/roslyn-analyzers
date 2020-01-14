@@ -18,17 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--
-      Analyzers that will be used to analyze projects that references 
-       Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations package.
-      
-      Note: PrivateAssets="ContentFiles" ensures that projects referencing Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations package 
-      will import everything but content files from Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers, specifically, analyzers.
-    -->
-    <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="$(VersionPrefix)" Condition="'$(DotNetBuildFromSource)' != 'true'" PrivateAssets="ContentFiles" />
+    <AnalyzerNupkgDependency Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\PerformanceSensitiveAnalyzers\Annotations\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations.csproj" />
+    <ProjectReference Include="..\PerformanceSensitiveAnalyzers\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Package.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

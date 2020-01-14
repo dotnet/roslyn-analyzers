@@ -3,15 +3,4 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <!--
-      Analyzers that will be used to analyze projects that references 
-       Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations package.
-      
-      Note: PrivateAssets="ContentFiles" ensures that projects referencing Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations package 
-      will import everything but content files from Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers, specifically, analyzers.
-    -->
-    <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="$(VersionPrefix)" Condition="'$(DotNetBuildFromSource)' != 'true'" PrivateAssets="ContentFiles" />
-  </ItemGroup>
 </Project>

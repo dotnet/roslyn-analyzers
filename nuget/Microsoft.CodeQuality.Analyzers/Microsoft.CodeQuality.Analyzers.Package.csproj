@@ -1,7 +1,7 @@
 ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -21,8 +21,8 @@
 	</ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\Core\Microsoft.CodeQuality.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\CSharp\Microsoft.CodeQuality.CSharp.Analyzers.csproj" /> 
-    <ProjectReference Include="..\..\src\Microsoft.CodeQuality.Analyzers\VisualBasic\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\Core\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\CSharp\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\VisualBasic\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
 </Project>

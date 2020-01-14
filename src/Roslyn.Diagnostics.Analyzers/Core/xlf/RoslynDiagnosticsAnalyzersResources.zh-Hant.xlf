@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../RoslynDiagnosticsAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../RoslynDiagnosticsAnalyzersResources.resx">
     <body>
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorCodeFix_ImplicitConstructor">
         <source>Explicitly define the importing constructor</source>
@@ -30,6 +30,11 @@
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorTitle">
         <source>Exported parts should have [ImportingConstructor]</source>
         <target state="translated">匯出組件應具有 [ImportingConstructor]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FixNumberedComments">
+        <source>Fix numbered comments</source>
+        <target state="new">Fix numbered comments</target>
         <note />
       </trans-unit>
       <trans-unit id="ImportingConstructorShouldBeObsoleteCodeFix_ErrorSetToFalse">

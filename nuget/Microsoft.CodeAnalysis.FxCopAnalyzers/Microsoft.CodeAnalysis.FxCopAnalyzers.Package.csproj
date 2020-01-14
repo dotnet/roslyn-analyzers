@@ -1,7 +1,7 @@
 ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -30,7 +30,7 @@
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
-    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" TargetFramework="netstandard1.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.CodeAnalysis.VersionCheckAnalyzer\Microsoft.CodeAnalysis.VersionCheckAnalyzer.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.CodeQuality.Analyzers\Microsoft.CodeQuality.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" ReferenceOutputAssembly="false" />

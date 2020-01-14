@@ -1,33 +1,34 @@
 ﻿//  Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-/*
-Unit tests disabled with https://github.com/dotnet/roslyn-analyzers/issues/1307
-
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
 
 namespace MetaCompilation.Analyzers.UnitTests
 {
-    public class UnitTest : CodeFixVerifier
+    public class UnitTest
     {
         private const string s_messagePrefix = "T: ";
 
         #region default no diagnostics tests
         // no diagnostics
         [Fact]
-        public void TestMethod1()
+        public async Task TestMethod1()
         {
             var test = @"";
 
-            VerifyCSharpDiagnostic(test);
+            await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
         // no diagnostics
         [Fact]
-        public void TestMethod2()
+        public async Task TestMethod2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -100,20 +101,16 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
-                Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
-            };
+            var expected = new DiagnosticResult(MetaCompilationAnalyzer.GoToCodeFix, DiagnosticSeverity.Info)
+                .WithMessage(s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.")
+                .WithLocation(15, 18);
 
-            VerifyCSharpDiagnostic(test, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
 
         // no diagnostics
         [Fact]
-        public void TestMethod3()
+        public async Task TestMethod3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -186,20 +183,16 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
-                Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
-            };
+            var expected = new DiagnosticResult(MetaCompilationAnalyzer.GoToCodeFix, DiagnosticSeverity.Info)
+                .WithMessage(s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.")
+                .WithLocation(15, 18);
 
-            VerifyCSharpDiagnostic(test, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
 
         // no diagnostics
         [Fact]
-        public void SyntaxKindCheckAlternate()
+        public async Task SyntaxKindCheckAlternate()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -272,25 +265,19 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
-                Severity = DiagnosticSeverity.Info,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
-            };
+            var expected = new DiagnosticResult(MetaCompilationAnalyzer.GoToCodeFix, DiagnosticSeverity.Info)
+                .WithMessage(s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.")
+                .WithLocation(15, 18);
 
-            VerifyCSharpDiagnostic(test, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
         #endregion
 
         #region MissingId
 
-        private const string s_missingIdMessage = s_messagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)";
-
         // no id, nothing else after
         [Fact]
-        public void MissingId1()
+        public async Task MissingId1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -327,17 +314,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -377,12 +353,33 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(18,29): error MetaAnalyzer019: T: The analyzer should have at least one DiagnosticDescriptor rule
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
 
         //  no id, rules exists
         [Fact]
-        public void MissingId2()
+        public async Task MissingId2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -427,17 +424,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -484,11 +470,40 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                        // Test0.cs(18,21): error CS0103: The name 'SpacingRuleId' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(18, 21, 18, 34).WithArguments("SpacingRuleId"),
+                        // Test0.cs(22,17): error CS0103: The name 'defaultSeverity' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(22, 17, 22, 32).WithArguments("defaultSeverity")
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(20,21): error CS0103: The name 'SpacingRuleId' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(20, 21, 20, 34).WithArguments("SpacingRuleId"),
+                        // Test0.cs(20,21): error MetaAnalyzer015: T: This diagnostic id should be the constant string declared above
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingIdDeclaration).WithSpan(20, 21, 20, 34),
+                        // Test0.cs(24,17): error CS0103: The name 'defaultSeverity' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(24, 17, 24, 32).WithArguments("defaultSeverity")
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
 
         [Fact]
-        public void MissingId3()
+        public async Task MissingId3()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -526,17 +541,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -576,11 +580,32 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(18,29): error MetaAnalyzer019: T: The analyzer should have at least one DiagnosticDescriptor rule
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
 
         [Fact]
-        public void MissingId4()
+        public async Task MissingId4()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -618,17 +643,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixTest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -668,11 +682,32 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixTest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixTest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(18,29): error MetaAnalyzer019: T: The analyzer should have at least one DiagnosticDescriptor rule
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
 
         [Fact]
-        public void MissingId5()
+        public async Task MissingId5()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -710,17 +745,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -760,11 +784,32 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(18,29): error MetaAnalyzer019: T: The analyzer should have at least one DiagnosticDescriptor rule
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
 
         [Fact]
-        public void MissingId6()
+        public async Task MissingId6()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -802,17 +847,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingId,
-                Message = s_missingIdMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -852,16 +886,35 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,22): error MetaAnalyzer001: T: 'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingId).WithSpan(15, 22, 15, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(18,29): error MetaAnalyzer019: T: The analyzer should have at least one DiagnosticDescriptor rule
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
+                    },
+                },
+                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+            }.RunAsync();
         }
         #endregion
 
         #region MissingInit
 
-        private const string s_missingInitMessage = s_messagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions";
-
         [Fact]
-        public void MissingInit1()
+        public async Task MissingInit1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -898,17 +951,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingInit,
-                Message = s_missingInitMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -950,14 +992,35 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-
-
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(16,22): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(16,22): error MetaAnalyzer002: T: 'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingInit).WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+            }.RunAsync();
         }
 
         // slight misspelling
         [Fact]
-        public void MissingInit2()
+        public async Task MissingInit2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -998,17 +1061,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingInit,
-                Message = s_missingInitMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -1054,12 +1106,39 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(16,22): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(16,22): error MetaAnalyzer002: T: 'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingInit).WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer"),
+                        // Test0.cs(34,34): error CS0115: 'SyntaxNodeAnalyzer.initialize(AnalysisContext)': no suitable method found to override
+                        DiagnosticResult.CompilerError("CS0115").WithSpan(34, 34, 34, 44).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,34): error CS0115: 'SyntaxNodeAnalyzer.initialize(AnalysisContext)': no suitable method found to override
+                        DiagnosticResult.CompilerError("CS0115").WithSpan(34, 34, 34, 44).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(41,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(41, 13, 41, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+            }.RunAsync();
         }
 
         //  everything except the initialize method
         [Fact]
-        public void MissingInit3()
+        public async Task MissingInit3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1123,17 +1202,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingInit,
-                Message = s_missingInitMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1202,16 +1270,37 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(15,18): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(15, 18, 15, 36).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(15,18): error MetaAnalyzer002: T: 'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingInit).WithSpan(15, 18, 15, 36).WithArguments("SyntaxNodeAnalyzer"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(64,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(64, 13, 64, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+            }.RunAsync();
         }
         #endregion
 
         #region MissingRegisterStatement
 
-        private const string s_missingRegisterStatementMessage = s_messagePrefix + "A syntax node action should be registered within the 'Initialize' method";
-
         [Fact]
-        public void MissingRegister1()
+        public async Task MissingRegister1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1251,17 +1340,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = s_missingRegisterStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixTest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1311,12 +1389,33 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixTest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer003: T: A syntax node action should be registered within the 'Initialize' method
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixTest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(45,13): error MetaAnalyzer021: T: This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(45, 13, 45, 49).WithArguments("context"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+            }.RunAsync();
         }
 
         //  register statement in comments
         [Fact]
-        public void MissingRegister2()
+        public async Task MissingRegister2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1357,17 +1456,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = s_missingRegisterStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1417,11 +1505,32 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer003: T: A syntax node action should be registered within the 'Initialize' method
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(45,13): error MetaAnalyzer021: T: This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(45, 13, 45, 49).WithArguments("context"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+            }.RunAsync();
         }
 
         [Fact]
-        public void MissingRegister3()
+        public async Task MissingRegister3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1465,17 +1574,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = s_missingRegisterStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixTest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1522,7 +1620,28 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixTest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer003: T: A syntax node action should be registered within the 'Initialize' method
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixTest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(42,13): error MetaAnalyzer021: T: This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(42, 13, 42, 49).WithArguments("context"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+            }.RunAsync();
         }
         #endregion
 
@@ -1532,7 +1651,7 @@ namespace SyntaxNodeAnalyzer
 
         //  statement below, incorrect method name
         [Fact]
-        public void MultipleInit1()
+        public async Task MultipleInit1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1574,17 +1693,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1625,12 +1733,39 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(37,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(37, 46, 37, 54).WithArguments("Practice"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(36,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
 
         //  statement below, incorrect syntax kind
         [Fact]
-        public void MultipleInit2()
+        public async Task MultipleInit2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1672,17 +1807,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1723,12 +1847,39 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(37,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(37, 46, 37, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(36,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
 
         //  incorrect statement above
         [Fact]
-        public void MultipleInit3()
+        public async Task MultipleInit3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1770,17 +1921,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1821,12 +1961,39 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(37,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(37, 46, 37, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(36,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
 
         // multiple incorrect statements below
         [Fact]
-        public void MultipleInit4()
+        public async Task MultipleInit4()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1869,17 +2036,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -1920,12 +2076,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(37,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(37, 46, 37, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(38,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(38, 46, 38, 54).WithArguments("Practice"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(36,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(36,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
 
         //  multiple incorrect statements above
         [Fact]
-        public void MultipleInit5()
+        public async Task MultipleInit5()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1968,17 +2153,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2019,12 +2193,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(34, 30, 34, 40).WithArguments("Initialize"),
+                        // Test0.cs(36,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 54).WithArguments("Practice"),
+                        // Test0.cs(37,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(37, 46, 37, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(38,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(38, 46, 38, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(36,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(36, 46, 36, 54).WithArguments("Practice"),
+                        // Test0.cs(36,46): error MetaAnalyzer044: T: The method 'Practice' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 54).WithArguments("Practice"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
 
         //  no correct statements, multiple incorrect
         [Fact]
-        public void MultipleInit6()
+        public async Task MultipleInit6()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2063,17 +2266,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = s_tooManyInitStatementsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 31, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2111,17 +2303,46 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(31,30): error MetaAnalyzer004: T: For this tutorial, the 'Initialize' method should only register one action
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.TooManyInitStatements).WithSpan(31, 30, 31, 40).WithArguments("Initialize"),
+                        // Test0.cs(33,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 46, 33, 54).WithArguments("Practice"),
+                        // Test0.cs(33,56): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 56, 33, 66).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 46, 34, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(34,66): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 66, 34, 76).WithArguments("SyntaxKind"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,46): error CS0103: The name 'Practice' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 46, 33, 54).WithArguments("Practice"),
+                        // Test0.cs(33,56): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 56, 33, 66).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+            }.RunAsync();
         }
         #endregion
 
         #region InvalidStatement
 
-        private const string s_invalidStatementMessage = s_messagePrefix + "The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect";
-
         //  invalid throw statement
         [Fact]
-        public void InvalidStatement1()
+        public async Task InvalidStatement1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2159,17 +2380,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2206,12 +2416,33 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(33, 12, 33, 48),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(31,30): error MetaAnalyzer003: T: A syntax node action should be registered within the 'Initialize' method
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(31, 30, 31, 40).WithArguments("Initialize"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid break statement
         [Fact]
-        public void InvalidStatement2()
+        public async Task InvalidStatement2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2250,17 +2481,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2298,12 +2518,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error CS0139: No enclosing loop out of which to break or continue
+                        DiagnosticResult.CompilerError("CS0139").WithSpan(34, 12, 34, 18),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 18),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         // invalid check statement
         [Fact]
-        public void InvalidStatement3()
+        public async Task InvalidStatement3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2342,17 +2591,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2390,12 +2628,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 42),
+                        // Test0.cs(34,32): error CS0841: Cannot use local variable 'num' before it is declared
+                        DiagnosticResult.CompilerError("CS0841").WithSpan(34, 32, 34, 35).WithArguments("num"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid continue statement
         [Fact]
-        public void InvalidStatement4()
+        public async Task InvalidStatement4()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2434,17 +2701,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2482,12 +2738,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error CS0139: No enclosing loop out of which to break or continue
+                        DiagnosticResult.CompilerError("CS0139").WithSpan(34, 12, 34, 21),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 21),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  do while statement
         [Fact]
-        public void InvalidStatement5()
+        public async Task InvalidStatement5()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2526,17 +2811,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2574,12 +2848,41 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 44),
+                        // Test0.cs(34,37): error CS0103: The name 'i' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 37, 34, 38).WithArguments("i"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid random expression statement
         [Fact]
-        public void InvalidStatement6()
+        public async Task InvalidStatement6()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2618,17 +2921,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2666,12 +2958,35 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 34),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid foreach statement
         [Fact]
-        public void InvalidStatement7()
+        public async Task InvalidStatement7()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2710,17 +3025,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
 }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -2758,12 +3062,47 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,12): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 12, 34, 32),
+                        // Test0.cs(34,20): error CS0230: Type and identifier are both required in a foreach statement
+                        DiagnosticResult.CompilerError("CS0230").WithSpan(34, 20, 34, 21),
+                        // Test0.cs(34,20): error CS1515: 'in' expected
+                        DiagnosticResult.CompilerError("CS1515").WithSpan(34, 20, 34, 21),
+                        // Test0.cs(34,20): error CS1525: Invalid expression term ')'
+                        DiagnosticResult.CompilerError("CS1525").WithSpan(34, 20, 34, 21).WithArguments(")"),
+                        // Test0.cs(34,20): error CS1525: Invalid expression term ')'
+                        DiagnosticResult.CompilerError("CS1525").WithSpan(34, 20, 34, 21).WithArguments(")")
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,45): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 45, 33, 63).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,65): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid for statement
         [Fact]
-        public void InvalidStatement8()
+        public async Task InvalidStatement8()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2802,17 +3141,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -2850,12 +3178,35 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 52),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid if statement
         [Fact]
-        public void InvalidStatement9()
+        public async Task InvalidStatement9()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2894,17 +3245,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -2942,12 +3282,43 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 36),
+                        // Test0.cs(34,21): error CS0103: The name 'i' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 21, 34, 22).WithArguments("i"),
+                        // Test0.cs(34,30): error CS0103: The name 'i' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 30, 34, 31).WithArguments("i"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid labeled statement
         [Fact]
-        public void InvalidStatement10()
+        public async Task InvalidStatement10()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2986,17 +3357,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3034,12 +3394,41 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 41),
+                        // Test0.cs(34,26): error CS0127: Since 'SyntaxNodeAnalyzerAnalyzer.Initialize(AnalysisContext)' returns void, a return keyword must not be followed by an object expression
+                        DiagnosticResult.CompilerError("CS0127").WithSpan(34, 26, 34, 32).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzerAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid local declaration statement
         [Fact]
-        public void InvalidStatement11()
+        public async Task InvalidStatement11()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3078,17 +3467,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3126,12 +3504,35 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 23),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid lock statement
         [Fact]
-        public void InvalidStatement12()
+        public async Task InvalidStatement12()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3170,17 +3571,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3218,12 +3608,41 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 27),
+                        // Test0.cs(34,23): error CS1525: Invalid expression term ')'
+                        DiagnosticResult.CompilerError("CS1525").WithSpan(34, 23, 34, 24).WithArguments(")"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  invalid return statement
         [Fact]
-        public void InvalidStatement13()
+        public async Task InvalidStatement13()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3262,17 +3681,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3310,12 +3718,35 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 24),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  multiple invalid statements
         [Fact]
-        public void InvalidStatement14()
+        public async Task InvalidStatement14()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3355,17 +3786,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3404,12 +3824,41 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 29),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 29),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  one invalid statement, no valid statements
         [Fact]
-        public void InvalidStatement15()
+        public async Task InvalidStatement15()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3447,17 +3896,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3494,12 +3932,33 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(33, 17, 33, 29),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(31,34): error MetaAnalyzer003: T: A syntax node action should be registered within the 'Initialize' method
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(31, 34, 31, 44).WithArguments("Initialize"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  multiple invalid statements, no valid statements
         [Fact]
-        public void InvalidStatement16()
+        public async Task InvalidStatement16()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3538,17 +3997,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3586,12 +4034,33 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(33, 17, 33, 29),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(33, 17, 33, 29),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
 
         //  multiple valid statements, one invalid statement
         [Fact]
-        public void InvalidStatement17()
+        public async Task InvalidStatement17()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3632,17 +4101,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = s_invalidStatementMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3682,16 +4140,51 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 50, 34, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(34,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 70, 34, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(35,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(35, 17, 35, 29),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(33,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 50, 33, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(33,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(34,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 50, 34, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(34,70): error CS0103: The name 'SyntaxKind' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 70, 34, 80).WithArguments("SyntaxKind"),
+                        // Test0.cs(35,17): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(35, 17, 35, 29),
+                    },
+                },
+                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+            }.RunAsync();
         }
         #endregion
 
         #region IncorrectKind
 
-        private const string s_incorrectKindMessage = s_messagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement";
-
         [Fact]
-        public void IncorrectKind()
+        public async Task IncorrectKind()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3730,17 +4223,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectKind,
-                Message = s_incorrectKindMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 70) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3780,16 +4262,39 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,50): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(34, 50, 34, 68).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(34,70): error MetaAnalyzer051: T: This tutorial only allows registering for SyntaxKind.IfStatement
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectKind).WithSpan(34, 70, 34, 90),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(35,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(35,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Analyze the correct SyntaxKind",
+            }.RunAsync();
         }
         #endregion
 
         #region IncorrectArguments
 
-        private const string s_incorrectArgumentsMessage = s_messagePrefix + "The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind";
-
         [Fact]
-        public void IncorrectArguments1()
+        public async Task IncorrectArguments1()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3828,17 +4333,6 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = s_incorrectArgumentsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3878,11 +4372,36 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,17): error MetaAnalyzer053: T: The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectArguments).WithSpan(34, 17, 34, 49),
+                        // Test0.cs(34,25): error CS1501: No overload for method 'RegisterSyntaxNodeAction' takes 0 arguments
+                        DiagnosticResult.CompilerError("CS1501").WithSpan(34, 25, 34, 49).WithArguments("RegisterSyntaxNodeAction", "0"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(35,46): error CS0103: The name 'AnalyzeIfStatement' does not exist in the current context
+                        DiagnosticResult.CompilerError("CS0103").WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
+                        // Test0.cs(35,46): error MetaAnalyzer044: T: The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+            }.RunAsync();
         }
 
         [Fact]
-        public void IncorrectArguments2()
+        public async Task IncorrectArguments2()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -3926,17 +4445,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = s_incorrectArgumentsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 13) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -3981,11 +4489,34 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,13): error MetaAnalyzer053: T: The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectArguments).WithSpan(34, 13, 34, 45),
+                        // Test0.cs(34,21): error CS1501: No overload for method 'RegisterSyntaxNodeAction' takes 0 arguments
+                        DiagnosticResult.CompilerError("CS1501").WithSpan(34, 21, 34, 45).WithArguments("RegisterSyntaxNodeAction", "0"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(40,13): error MetaAnalyzer021: T: This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(40, 13, 40, 49).WithArguments("context"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+            }.RunAsync();
         }
 
         [Fact]
-        public void IncorrectArguments3()
+        public async Task IncorrectArguments3()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -4029,17 +4560,6 @@ namespace SyntaxNodeAnalyzer
         }
         }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = s_incorrectArgumentsMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 13) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
             using System.Collections.Generic;
             using System.Collections.Immutable;
@@ -4084,17 +4604,38 @@ namespace SyntaxNodeAnalyzer
         }
     }";
 
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(34,13): error MetaAnalyzer053: T: The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectArguments).WithSpan(34, 13, 34, 45),
+                        // Test0.cs(34,21): error CS0411: The type arguments for method 'AnalysisContext.RegisterSyntaxNodeAction<TLanguageKindEnum>(Action<SyntaxNodeAnalysisContext>, params TLanguageKindEnum[])' cannot be inferred from the usage. Try specifying the type arguments explicitly.
+                        DiagnosticResult.CompilerError("CS0411").WithSpan(34, 21, 34, 45).WithArguments("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext.RegisterSyntaxNodeAction<TLanguageKindEnum>(System.Action<Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext>, params TLanguageKindEnum[])"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(40,13): error MetaAnalyzer021: T: This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(40, 13, 40, 49).WithArguments("context"),
+                    },
+                },
+                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+            }.RunAsync();
         }
         #endregion
 
         #region IncorrectInitSig
 
-        private const string s_incorrectInitSigMessage = s_messagePrefix + "The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'";
-
         //  more than one parameter
         [Fact]
-        public void InitSig1()
+        public async Task InitSig1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -4136,17 +4677,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = s_incorrectInitSigMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -4188,12 +4718,37 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(16,22): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(35,30): error CS0115: 'SyntaxNodeAnalyzer.Initialize(AnalysisContext, int)': no suitable method found to override
+                        DiagnosticResult.CompilerError("CS0115").WithSpan(35, 30, 35, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext, int)"),
+                        // Test0.cs(35,30): error MetaAnalyzer005: T: The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectInitSig).WithSpan(35, 30, 35, 40).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+            }.RunAsync();
         }
 
         //  Wrong type for first parameter
         [Fact]
-        public void InitSig2()
+        public async Task InitSig2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -4235,17 +4790,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = s_incorrectInitSigMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -4287,12 +4831,37 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(16,22): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(35,30): error CS0115: 'SyntaxNodeAnalyzer.Initialize(int)': no suitable method found to override
+                        DiagnosticResult.CompilerError("CS0115").WithSpan(35, 30, 35, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.Initialize(int)"),
+                        // Test0.cs(35,30): error MetaAnalyzer005: T: The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectInitSig).WithSpan(35, 30, 35, 40).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+            }.RunAsync();
         }
 
         //  accessibility is not public
         [Fact]
-        public void InitSig3()
+        public async Task InitSig3()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -4334,17 +4903,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = s_incorrectInitSigMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 31) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -4386,12 +4944,37 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(35,31): error CS0507: 'SyntaxNodeAnalyzer.Initialize(AnalysisContext)': cannot change access modifiers when overriding 'public' inherited member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0507").WithSpan(35, 31, 35, 41).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)", "public", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(35,31): error CS0621: 'SyntaxNodeAnalyzer.Initialize(AnalysisContext)': virtual or abstract members cannot be private
+                        DiagnosticResult.CompilerError("CS0621").WithSpan(35, 31, 35, 41).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(35,31): error MetaAnalyzer005: T: The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectInitSig).WithSpan(35, 31, 35, 41).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+            }.RunAsync();
         }
 
         //  initialize method is not overriden
         [Fact]
-        public void InitSig4()
+        public async Task InitSig4()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -4433,17 +5016,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = s_incorrectInitSigMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 21) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -4485,12 +5057,35 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(16,22): error CS0534: 'SyntaxNodeAnalyzer' does not implement inherited abstract member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0534").WithSpan(16, 22, 16, 40).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)"),
+                        // Test0.cs(35,21): error MetaAnalyzer005: T: The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectInitSig).WithSpan(35, 21, 35, 31).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+            }.RunAsync();
         }
 
         //  initialize method does not return void
         [Fact]
-        public void InitSig5()
+        public async Task InitSig5()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -4532,17 +5127,6 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = s_incorrectInitSigMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 29) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
@@ -4584,10 +5168,34 @@ namespace SyntaxNodeAnalyzer
     }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { test },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(35,29): error CS0508: 'SyntaxNodeAnalyzer.Initialize(AnalysisContext)': return type must be 'void' to match overridden member 'DiagnosticAnalyzer.Initialize(AnalysisContext)'
+                        DiagnosticResult.CompilerError("CS0508").WithSpan(35, 29, 35, 39).WithArguments("SyntaxNodeAnalyzer.SyntaxNodeAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)", "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext)", "void"),
+                        // Test0.cs(35,29): error MetaAnalyzer005: T: The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.IncorrectInitSig).WithSpan(35, 29, 35, 39).WithArguments("Initialize"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixtest },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(37,13): error MetaAnalyzer006: T: The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect
+                        VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
+                    },
+                },
+                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+            }.RunAsync();
         }
         #endregion
 
+#if false
         #region IfStatementIncorrect
 
         private const string s_ifStatementIncorrectMessage = s_messagePrefix + "This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax";
@@ -22926,16 +23534,6 @@ namespace SyntaxNodeAnalyzerAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new MetaCompilationCodeFixProvider();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MetaCompilationAnalyzer();
-        }
+#endif
     }
 }
-*/

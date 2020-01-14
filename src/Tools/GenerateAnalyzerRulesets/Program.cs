@@ -419,9 +419,9 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                             return "warning";
 
                         case DiagnosticSeverity.Hidden:
+                            return "hidden";
+
                         default:
-                            // hidden diagnostics are not reported on the command line and therefore not currently given to 
-                            // the error logger. We could represent it with a custom property in the SARIF log if that changes.
                             Debug.Assert(false);
                             goto case DiagnosticSeverity.Warning;
                     }

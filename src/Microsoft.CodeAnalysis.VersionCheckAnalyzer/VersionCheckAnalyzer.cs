@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
                                                         s_localizableMessageFormat,
                                                         DiagnosticCategory.Reliability,
                                                         DiagnosticSeverity.Warning,
-                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                        isEnabledByDefault: true,
                                                         description: s_localizableDescription);
 
         private static readonly Version s_MicrosoftCodeAnalysisMinVersion = new Version(RequiredMicrosoftCodeAnalysisVersion);

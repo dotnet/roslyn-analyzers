@@ -9,8 +9,8 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Test.Utilities;
 using Xunit;
 
 namespace MetaCompilation.Analyzers.UnitTests
@@ -21,12 +21,12 @@ namespace MetaCompilation.Analyzers.UnitTests
 
         protected async Task VerifyRefactoringAsync(string sourceWithMarkup, string expected, CancellationToken cancellationToken = default)
         {
-            MarkupTestFile.GetPositionAndSpan(sourceWithMarkup, out string source, cursorPosition: out _, out TextSpan? textSpan);
-            Assert.True(textSpan.HasValue, "Input source is missing span markup '[||]'");
+            TestFileMarkupParser.GetPositionAndSpans(sourceWithMarkup, out string source, cursorPosition: out _, out IList<TextSpan> textSpans);
+            var textSpan = Assert.Single(textSpans);
 
             var document = CreateDocument(source, LanguageNames.CSharp);
             var actions = new List<CodeAction>();
-            var context = new CodeRefactoringContext(document, textSpan.Value, (a) => actions.Add(a), cancellationToken);
+            var context = new CodeRefactoringContext(document, textSpan, (a) => actions.Add(a), cancellationToken);
             var codeRefactoringProvider = GetCodeRefactoringProvider();
             await codeRefactoringProvider.ComputeRefactoringsAsync(context);
             var codeAction = actions.First();

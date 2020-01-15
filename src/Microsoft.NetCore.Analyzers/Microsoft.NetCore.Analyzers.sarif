@@ -407,6 +407,26 @@
             ]
           }
         },
+        "CA2215": {
+          "id": "CA2215",
+          "shortDescription": "Dispose methods should call base class dispose",
+          "fullDescription": "A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2215",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DisposeMethodsShouldCallBaseClassDispose",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2216": {
           "id": "CA2216",
           "shortDescription": "Disposable types should declare finalizer",

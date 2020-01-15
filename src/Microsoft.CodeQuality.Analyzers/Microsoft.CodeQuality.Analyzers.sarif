@@ -179,6 +179,26 @@
             ]
           }
         },
+        "CA1021": {
+          "id": "CA1021",
+          "shortDescription": "Avoid out parameters",
+          "fullDescription": "Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1021",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "AvoidOutParameters",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1024": {
           "id": "CA1024",
           "shortDescription": "Use properties where appropriate",
@@ -688,6 +708,25 @@
             "category": "Design",
             "isEnabledByDefault": true,
             "typeName": "CancellationTokenParametersMustComeLastAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1069": {
+          "id": "CA1069",
+          "shortDescription": "Enums values should not be duplicated",
+          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1069",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "EnumShouldNotHaveDuplicatedValues",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1280,6 +1319,7 @@
           "shortDescription": "Avoid infinite recursion",
           "fullDescription": "Do not assign the property within its setter. This call might result in an infinite recursion.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2011",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,

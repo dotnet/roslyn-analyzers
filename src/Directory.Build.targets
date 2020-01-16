@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
+    <AdditionalFiles Include="$(BannedSymbolsDir)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
   </ItemGroup>
 
   <PropertyGroup>

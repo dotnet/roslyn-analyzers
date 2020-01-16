@@ -8,6 +8,9 @@
 
     <DefineConstants Condition="'$(BUILDING_VSIX)' == 'true'">$(DefineConstants),BUILDING_VSIX</DefineConstants>
     <DefineConstants Condition="'$(LEGACY_CODE_METRICS_MODE)' == 'true'">$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
+
+    <!-- Directory for BannedSymbols.txt -->
+    <BannedSymbolsDir Condition="'$(BannedSymbolsDir)' == ''">$(MSBuildThisFileDirectory)</BannedSymbolsDir>
   </PropertyGroup>
 
   <!-- Test runner configuration -->

@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "MetaCompilation.Analyzers",
-        "version": "2.9.9",
+        "version": "3.0.0",
         "language": "en-US"
       },
       "rules": {

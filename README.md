@@ -87,11 +87,15 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 
 # Getting Started
 
-1. Clone this repository
-2. Open the command prompt or PowerShell
-3. Go to the directory of the Roslyn Analyzer Repo
-4. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
-5. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
+1. Install Visual Studio 2019 or later, with at least the following workloads:
+   1. .NET desktop development
+   2. .NET Core cross-platform development
+   3. Visual Studio extension development
+2. Clone this repository
+3. Open the VS developer command prompt or PowerShell
+4. Go to the directory of the Roslyn Analyzer Repo
+5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
+6. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
 
 # Submitting Pull Requests
 

@@ -38,7 +38,7 @@ This section documents the list of supported .editorconfig key-value options for
 ### Analyzed API surface
 Option Name: `api_surface`
 
-Configurable Rules: [CA1000](https://docs.microsoft.com/visualstudio/code-quality/ca1000-do-not-declare-static-members-on-generic-types), [CA1003](https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances), [CA1008](https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value), [CA1010](https://docs.microsoft.com/visualstudio/code-quality/ca1010-collections-should-implement-generic-interface), [CA1012](https://docs.microsoft.com/visualstudio/code-quality/ca1012-abstract-types-should-not-have-constructors), [CA1024](https://docs.microsoft.com/visualstudio/code-quality/ca1024-use-properties-where-appropriate), [CA1027](https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute), [CA1028](https://docs.microsoft.com/visualstudio/code-quality/ca1028-enum-storage-should-be-int32), [CA1030](https://docs.microsoft.com/visualstudio/code-quality/ca1030-use-events-where-appropriate), [CA1036](https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types), [CA1040](https://docs.microsoft.com/visualstudio/code-quality/ca1040-avoid-empty-interfaces), [CA1041](https://docs.microsoft.com/visualstudio/code-quality/ca1041-provide-obsoleteattribute-message), [CA1043](https://docs.microsoft.com/visualstudio/code-quality/ca1043-use-integral-or-string-argument-for-indexers), [CA1044](https://docs.microsoft.com/visualstudio/code-quality/ca1044-properties-should-not-be-write-only), [CA1051](https://docs.microsoft.com/visualstudio/code-quality/ca1051-do-not-declare-visible-instance-fields), [CA1052](https://docs.microsoft.com/visualstudio/code-quality/ca1052-static-holder-types-should-be-sealed), [CA1054](https://docs.microsoft.com/visualstudio/code-quality/ca1054-uri-parameters-should-not-be-strings), [CA1055](https://docs.microsoft.com/visualstudio/code-quality/ca1055-uri-return-values-should-not-be-strings), [CA1056](https://docs.microsoft.com/visualstudio/code-quality/ca1056-uri-properties-should-not-be-strings), [CA1058](https://docs.microsoft.com/visualstudio/code-quality/ca1058-types-should-not-extend-certain-base-types), [CA1063](https://docs.microsoft.com/visualstudio/code-quality/ca1063-implement-idisposable-correctly), [CA1708](https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case), [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix), [CA1711](https://docs.microsoft.com/visualstudio/code-quality/ca1711-identifiers-should-not-have-incorrect-suffix), [CA1714](https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names), [CA1715](https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix), [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords), [CA1717](https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names), [CA1720](https://docs.microsoft.com/visualstudio/code-quality/ca1720-identifiers-should-not-contain-type-names), [CA1721](https://docs.microsoft.com/visualstudio/code-quality/ca1721-property-names-should-not-match-get-methods), [CA1725](https://docs.microsoft.com/visualstudio/code-quality/ca1725-parameter-names-should-match-base-declaration), [CA1801](https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters), [CA1802](https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate), [CA1815](https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types), [CA1819](https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays), [CA2217](https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute), [CA2225](https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates), [CA2226](https://docs.microsoft.com/visualstudio/code-quality/ca2226-operators-should-have-symmetrical-overloads), [CA2231](https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals), [CA2234](https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings)
+Configurable Rules: [CA1000](https://docs.microsoft.com/visualstudio/code-quality/ca1000-do-not-declare-static-members-on-generic-types), [CA1003](https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances), [CA1008](https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value), [CA1010](https://docs.microsoft.com/visualstudio/code-quality/ca1010-collections-should-implement-generic-interface), [CA1012](https://docs.microsoft.com/visualstudio/code-quality/ca1012-abstract-types-should-not-have-constructors), [CA1021](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1021),[CA1024](https://docs.microsoft.com/visualstudio/code-quality/ca1024-use-properties-where-appropriate), [CA1027](https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute), [CA1028](https://docs.microsoft.com/visualstudio/code-quality/ca1028-enum-storage-should-be-int32), [CA1030](https://docs.microsoft.com/visualstudio/code-quality/ca1030-use-events-where-appropriate), [CA1036](https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types), [CA1040](https://docs.microsoft.com/visualstudio/code-quality/ca1040-avoid-empty-interfaces), [CA1041](https://docs.microsoft.com/visualstudio/code-quality/ca1041-provide-obsoleteattribute-message), [CA1043](https://docs.microsoft.com/visualstudio/code-quality/ca1043-use-integral-or-string-argument-for-indexers), [CA1044](https://docs.microsoft.com/visualstudio/code-quality/ca1044-properties-should-not-be-write-only), [CA1051](https://docs.microsoft.com/visualstudio/code-quality/ca1051-do-not-declare-visible-instance-fields), [CA1052](https://docs.microsoft.com/visualstudio/code-quality/ca1052-static-holder-types-should-be-sealed), [CA1054](https://docs.microsoft.com/visualstudio/code-quality/ca1054-uri-parameters-should-not-be-strings), [CA1055](https://docs.microsoft.com/visualstudio/code-quality/ca1055-uri-return-values-should-not-be-strings), [CA1056](https://docs.microsoft.com/visualstudio/code-quality/ca1056-uri-properties-should-not-be-strings), [CA1058](https://docs.microsoft.com/visualstudio/code-quality/ca1058-types-should-not-extend-certain-base-types), [CA1063](https://docs.microsoft.com/visualstudio/code-quality/ca1063-implement-idisposable-correctly), [CA1708](https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case), [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix), [CA1711](https://docs.microsoft.com/visualstudio/code-quality/ca1711-identifiers-should-not-have-incorrect-suffix), [CA1714](https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names), [CA1715](https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix), [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords), [CA1717](https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names), [CA1720](https://docs.microsoft.com/visualstudio/code-quality/ca1720-identifiers-should-not-contain-type-names), [CA1721](https://docs.microsoft.com/visualstudio/code-quality/ca1721-property-names-should-not-match-get-methods), [CA1725](https://docs.microsoft.com/visualstudio/code-quality/ca1725-parameter-names-should-match-base-declaration), [CA1801](https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters), [CA1802](https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate), [CA1815](https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types), [CA1819](https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays), [CA2217](https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute), [CA2225](https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates), [CA2226](https://docs.microsoft.com/visualstudio/code-quality/ca2226-operators-should-have-symmetrical-overloads), [CA2231](https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals), [CA2234](https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings)
 
 Option Values:
 
@@ -409,3 +409,48 @@ Option Values:
 Default Value: `Heuristic`.
 
 Example: `dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue`
+
+### Exclude indirect base types
+Option Name: `exclude_indirect_base_types`
+
+Configurable Rules: [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix)
+
+Option Values: `true` or `false`
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.CA1710.exclude_indirect_base_types = true`
+
+For example, consider the code below:
+```csharp
+// An issue is always raised on this type because the suffix should be 'Exception'.
+public class MyBaseClass : Exception, IEnumerable
+{
+   // code omitted for simplicity
+}
+
+// If the option is enabled no issue is raised on 'MyClass'; otherwise an issue will
+// suggest to add the 'Exception' suffix.
+public class MyClass : MyBaseClass
+{
+   // code omitted for simplicity
+}
+```
+
+### Additional required suffixes
+Option Name: `additional_required_suffixes`
+
+Configurable Rules: [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix)
+
+Option Values: List (separated by '|') of type names with their required suffix (separated by '->').<br/>Allowed type name formats:
+  1. Type name only (includes all types with the name, regardless of the containing type or namespace)
+  2. Fully qualified names in the symbol's documentation ID format: https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format with an optional "T:" prefix.
+
+Default Value: None
+
+Examples:
+
+| Option Value | Summary |
+| --- | --- |
+|`dotnet_code_quality.CA1710.additional_required_suffixes = MyClass->Class` | All types inheriting from MyClass are expected to have the 'Class' suffix |
+|`dotnet_code_quality.CA1710.additional_required_suffixes = MyClass->Class|MyNamespace.IPath->Path` | All types inheriting from 'MyClass' are expected to have the 'Class' suffix AND all types implementing 'MyNamespace.IPath' are expected to have the 'Path' suffix. |

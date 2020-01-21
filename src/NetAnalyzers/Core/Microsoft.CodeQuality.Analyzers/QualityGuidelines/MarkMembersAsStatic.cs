@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -26,15 +25,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1822-mark-members-as-static",
-                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
+                                                                             isPortedFxCopRule: true,
+                                                                             isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -70,7 +68,23 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
-                    if (!(blockStartContext.OwningSymbol is IMethodSymbol methodSymbol) || !ShouldAnalyze(methodSymbol, wellKnownTypeProvider, skippedAttributes))
+                    if (!(blockStartContext.OwningSymbol is IMethodSymbol methodSymbol))
+                    {
+                        return;
+                    }
+
+                    // Whatever the method is, we want to store the not externally visible method calls.
+                    blockStartContext.RegisterOperationAction(operationContext =>
+                    {
+                        var invocation = (IInvocationOperation)operationContext.Operation;
+                        if (!invocation.TargetMethod.IsExternallyVisible())
+                        {
+                            invokedInternalMethods.Add(invocation.TargetMethod);
+                        }
+                    }, OperationKind.Invocation);
+
+                    // Don't run any other check for this method if it isn't a valid analysis context
+                    if (!ShouldAnalyze(methodSymbol, wellKnownTypeProvider, skippedAttributes))
                     {
                         return;
                     }
@@ -84,15 +98,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             isInstanceReferenced = true;
                         }
                     }, OperationKind.InstanceReference);
-
-                    blockStartContext.RegisterOperationAction(operationContext =>
-                    {
-                        var invocation = (IInvocationOperation)operationContext.Operation;
-                        if (!invocation.TargetMethod.IsExternallyVisible())
-                        {
-                            invokedInternalMethods.Add(invocation.TargetMethod);
-                        }
-                    }, OperationKind.Invocation);
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {

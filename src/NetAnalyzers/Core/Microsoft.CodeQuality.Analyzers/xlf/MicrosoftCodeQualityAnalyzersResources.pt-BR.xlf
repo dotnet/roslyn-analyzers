@@ -67,6 +67,21 @@
         <target state="new">Avoid infinite recursion</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidOutParametersDescription">
+        <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
+        <target state="new">Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOutParametersMessage">
+        <source>Avoid 'out' parameters as they are not designed for general audience.</source>
+        <target state="new">Avoid 'out' parameters as they are not designed for general audience.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOutParametersTitle">
+        <source>Avoid out parameters</source>
+        <target state="new">Avoid out parameters</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Uma exceção geral, como System.Exception ou System.SystemException, ou uma exceção não permitida foi capturada em uma instrução catch ou uma cláusula catch geral foi usada. As exceções gerais e não permitidas não devem ser capturadas.</target>
@@ -125,6 +140,21 @@
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Não armazenar lambdas assíncronas como tipos delegados que retornam void</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart">
+        <source>The field reference '{0}' is duplicated in this bitwise initialization.</source>
+        <target state="new">The field reference '{0}' is duplicated in this bitwise initialization.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedValue">
+        <source>The enum member '{0}' has the same constant value '{1}' as member '{2}'.</source>
+        <target state="new">The enum member '{0}' has the same constant value '{1}' as member '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnumShouldNotHaveDuplicatedValuesTitle">
+        <source>Enums values should not be duplicated</source>
+        <target state="new">Enums values should not be duplicated</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">

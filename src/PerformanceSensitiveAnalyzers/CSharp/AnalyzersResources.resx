@@ -166,7 +166,7 @@
     <value>Possible allocation of reference type enumerator</value>
   </data>
   <data name="StringConcatenationAllocationRuleMessage" xml:space="preserve">
-    <value>Considering using StringBuilder</value>
+    <value>Considering using 'StringBuilder'</value>
   </data>
   <data name="StringConcatenationAllocationRuleTitle" xml:space="preserve">
     <value>Implicit string concatenation allocation</value>

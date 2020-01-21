@@ -145,31 +145,31 @@
     <value>Set locale for data types</value>
   </data>
   <data name="DoNotMarkServicedComponentsWithWebMethodTitle" xml:space="preserve">
-    <value>Do not mark serviced components with WebMethod</value>
+    <value>Do not mark serviced components with 'WebMethod'</value>
   </data>
   <data name="DoNotMarkServicedComponentsWithWebMethodDescription" xml:space="preserve">
-    <value>A method in a type that inherits from System.EnterpriseServices.ServicedComponent is marked by using System.Web.Services.WebMethodAttribute. Because WebMethodAttribute and a ServicedComponent method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios.</value>
+    <value>A method in a type that inherits from 'System.EnterpriseServices.ServicedComponent' is marked by using 'System.Web.Services.WebMethod' attribute. Because 'WebMethod' attribute and a 'ServicedComponent' method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios.</value>
   </data>
   <data name="DoNotMarkServicedComponentsWithWebMethodMessage" xml:space="preserve">
-    <value>Do not mark serviced components with WebMethod</value>
+    <value>Do not mark serviced components with 'WebMethod'</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadTitle" xml:space="preserve">
-    <value>Mark Windows Forms entry points with 'STAThreadAttribute'</value>
+    <value>Mark Windows Forms entry points with 'STAThread' attribute</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadDescription" xml:space="preserve">
-    <value>'STAThreadAttribute' indicates that the COM threading model for the application is a single-threaded apartment. This attribute must be present on the entry point of any application that uses Windows Forms; if it is omitted, the Windows components might not work correctly.</value>
+    <value>'STAThread' attribute indicates that the COM threading model for the application is a single-threaded apartment. This attribute must be present on the entry point of any application that uses Windows Forms; if it is omitted, the Windows components might not work correctly.</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadMessage" xml:space="preserve">
-    <value>Mark Windows Forms entry points with 'STAThreadAttribute'</value>
+    <value>Mark Windows Forms entry points with 'STAThread' attribute</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesTitle" xml:space="preserve">
-    <value>Call base class methods on ISerializable types</value>
+    <value>Call base class methods on 'ISerializable' types</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesDescription" xml:space="preserve">
-    <value>To fix a violation of this rule, call the base type GetObjectData method or serialization constructor from the corresponding derived type method or constructor.</value>
+    <value>To fix a violation of this rule, call the base type 'GetObjectData' method or serialization constructor from the corresponding derived type method or constructor.</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesMessage" xml:space="preserve">
-    <value>Call base class methods on ISerializable types</value>
+    <value>Call base class methods on 'ISerializable' types</value>
   </data>
   <data name="UseXmlReaderForDataSetReadXmlTitle" xml:space="preserve">
     <value>Use 'XmlReader' for 'DataSet' 'ReadXml'</value>
@@ -217,7 +217,7 @@
     <value>Use 'XmlReader' for 'DataTable' 'ReadXmlSchema'</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptions" xml:space="preserve">
-    <value>Do Not Catch Corrupted State Exceptions</value>
+    <value>Do not catch corrupted state exceptions</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsDescription" xml:space="preserve">
     <value>Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception</value>
@@ -359,18 +359,18 @@
     <value>The 'ValidateAntiForgeryAttribute' is defined with 'HttpVerbs.Get' and at least one of 'HttpVerbs.Post', 'HttpVerbs.Put', 'HttpVerbs.Delete', or 'HttpVerbs.Patch' on controller action '{0}'. The attribute will not be used when GET verb is used.</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage" xml:space="preserve">
-    <value>Using 'HttpVerbs.GET' and 'ValidateAntiForgeryTokenAttribute' is not supported by MVC on controller action '{0}'.</value>
+    <value>Using 'HttpVerbs.GET' and 'ValidateAntiForgeryToken' attribute is not supported by MVC on controller action '{0}'.</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage" xml:space="preserve">
-    <value>HTTP verb attributes attributes are missing on controller action '{0}'. The 'ValidateAntiForgeryTokenAttribute' will not be used when GET verb is used.</value>
+    <value>HTTP verb attributes attributes are missing on controller action '{0}'. The 'ValidateAntiForgeryToken' attribute will not be used when GET verb is used.</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage" xml:space="preserve">
-    <value>Missing 'ValidateAntiForgeryTokenAttribute' on MVC controller action '{0}' which by default accepts POST requests.</value>
+    <value>Missing 'ValidateAntiForgeryToken' attribute on MVC controller action '{0}' which by default accepts POST requests.</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenTitle" xml:space="preserve">
-    <value>Mark Verb Handlers With 'ValidateAntiforgeryTokenAttribute'</value>
+    <value>Mark Verb Handlers With 'ValidateAntiforgeryToken' attribute</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage" xml:space="preserve">
-    <value>Missing 'ValidateAntiForgeryTokenAttribute' on controller action '{0}'.</value>
+    <value>Missing 'ValidateAntiForgeryToken' attribute on controller action '{0}'.</value>
   </data>
 </root>

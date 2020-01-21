@@ -118,40 +118,40 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AvoidAsyncVoidTitle" xml:space="preserve">
-    <value>Avoid Async Void</value>
+    <value>Avoid 'async void'</value>
   </data>
   <data name="AvoidAsyncVoidDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
   <data name="AvoidAsyncVoidMessage" xml:space="preserve">
-    <value>Avoid Async Void</value>
+    <value>Avoid 'async void'</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncTitle" xml:space="preserve">
-    <value>Async Method Names Should End in Async</value>
+    <value>Async method names should end in 'Async'</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
   <data name="AsyncMethodNamesShouldEndInAsyncMessage" xml:space="preserve">
-    <value>Async Method Names Should End in Async</value>
+    <value>Async method names should end in 'Async'</value>
   </data>
   <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
-    <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
+    <value>Do not pass async lambdas as void returning delegate types</value>
   </data>
   <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
   <data name="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
-    <value>Don't Pass Async Lambdas as Void Returning Delegate Types</value>
+    <value>Do not pass async lambdas as void returning delegate types</value>
   </data>
   <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle" xml:space="preserve">
-    <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
+    <value>Do not store async lambdas as void returning delegate types</value>
   </data>
   <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
   <data name="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage" xml:space="preserve">
-    <value>Don't Store Async Lambdas as Void Returning Delegate Types</value>
+    <value>Do not store async lambdas as void returning delegate types</value>
   </data>
   <data name="PropagateCancellationTokensWhenPossibleTitle" xml:space="preserve">
     <value>Propagate 'CancellationTokens' When Possible</value>
@@ -163,13 +163,13 @@
     <value>Propagate 'CancellationTokens' When Possible</value>
   </data>
   <data name="DoNotMixBlockingAndAsyncTitle" xml:space="preserve">
-    <value>Don't Mix Blocking and Async</value>
+    <value>Do not mix blocking and async</value>
   </data>
   <data name="DoNotMixBlockingAndAsyncDescription" xml:space="preserve">
     <value>#N/A</value>
   </data>
   <data name="DoNotMixBlockingAndAsyncMessage" xml:space="preserve">
-    <value>Don't Mix Blocking and Async</value>
+    <value>Do not mix blocking and async</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableTitle" xml:space="preserve">
     <value>Types that own disposable fields should be disposable</value>
@@ -247,7 +247,7 @@
     <value>Mark assemblies with 'ComVisible'</value>
   </data>
   <data name="MarkAssembliesWithComVisibleDescription" xml:space="preserve">
-    <value>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</value>
+    <value>'ComVisible' attribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</value>
   </data>
   <data name="MarkAssembliesWithComVisibleMessageNoAttribute" xml:space="preserve">
     <value>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</value>
@@ -256,10 +256,10 @@
     <value>Consider changing the 'ComVisible' attribute on '{0}' to 'false', and opting in at the type level.</value>
   </data>
   <data name="MarkAttributesWithAttributeUsageTitle" xml:space="preserve">
-    <value>Mark attributes with 'AttributeUsageAttribute'</value>
+    <value>Mark attributes with 'AttributeUsage' attribute</value>
   </data>
   <data name="MarkAttributesWithAttributeUsageDescription" xml:space="preserve">
-    <value>When you define a custom attribute, mark it by using AttributeUsageAttribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</value>
+    <value>When you define a custom attribute, mark it by using 'AttributeUsage' attribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</value>
   </data>
   <data name="MarkAttributesWithAttributeUsageMessageDefault" xml:space="preserve">
     <value>Specify 'AttributeUsage' on '{0}'.</value>
@@ -292,13 +292,13 @@
     <value>Use properties where appropriate</value>
   </data>
   <data name="MarkEnumsWithFlagsTitle" xml:space="preserve">
-    <value>Mark enums with 'FlagsAttribute'</value>
+    <value>Mark enums with 'Flags' attribute</value>
   </data>
   <data name="MarkEnumsWithFlagsDescription" xml:space="preserve">
-    <value>An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.</value>
+    <value>An enumeration is a value type that defines a set of related named constants. Apply 'Flags' attribute to an enumeration when its named constants can be meaningfully combined.</value>
   </data>
   <data name="MarkEnumsWithFlagsMessage" xml:space="preserve">
-    <value>Mark enums with 'FlagsAttribute'</value>
+    <value>Mark enums with 'Flags' attribute</value>
   </data>
   <data name="InterfaceMethodsShouldBeCallableByChildTypesTitle" xml:space="preserve">
     <value>Interface methods should be callable by child types</value>
@@ -362,13 +362,13 @@
     <value>Non-constant fields should not be visible</value>
   </data>
   <data name="DoNotMarkEnumsWithFlagsTitle" xml:space="preserve">
-    <value>Do not mark enums with 'FlagsAttribute'</value>
+    <value>Do not mark enums with 'Flags' attribute</value>
   </data>
   <data name="DoNotMarkEnumsWithFlagsDescription" xml:space="preserve">
     <value>An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</value>
   </data>
   <data name="DoNotMarkEnumsWithFlagsMessage" xml:space="preserve">
-    <value>Do not mark enums with 'FlagsAttribute'</value>
+    <value>Do not mark enums with 'Flags' attribute</value>
   </data>
   <data name="OperatorOverloadsHaveNamedAlternatesTitle" xml:space="preserve">
     <value>Operator overloads have named alternates</value>
@@ -431,7 +431,7 @@
     <value>Implement 'IEquatable' when overriding 'Object.Equals'</value>
   </data>
   <data name="CancellationTokenParametersMustComeLastTitle" xml:space="preserve">
-    <value>CancellationToken parameters must come last</value>
+    <value>'CancellationToken' parameters must come last</value>
   </data>
   <data name="CancellationTokenParametersMustComeLastMessage" xml:space="preserve">
     <value>Method '{0}' should take 'CancellationToken' as the last parameter</value>
@@ -458,7 +458,7 @@
     <value>Create a property accessor.</value>
   </data>
   <data name="MakeGetterPublic" xml:space="preserve">
-    <value>Make the getter of the property public</value>
+    <value>Make the getter of the property 'public'</value>
   </data>
   <data name="MakeSetterNonPublic" xml:space="preserve">
     <value>Make the setter of the property non-public</value>
@@ -467,10 +467,10 @@
     <value>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</value>
   </data>
   <data name="ChangeAssemblyLevelComVisibleToFalse" xml:space="preserve">
-    <value>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</value>
+    <value>Consider changing the 'ComVisible' attribute on {0} to false, and opting in at the type level.</value>
   </data>
   <data name="ImplementComparable" xml:space="preserve">
-    <value>Implement Equality and Comparison methods and operators</value>
+    <value>Implement equality and comparison methods and operators</value>
   </data>
   <data name="ImplementEquatable" xml:space="preserve">
     <value>Implement 'IEquatable'</value>
@@ -482,7 +482,7 @@
     <value>Remove 'FlagsAttribute' from enum.</value>
   </data>
   <data name="MarkEnumsWithFlagsCodeFix" xml:space="preserve">
-    <value>Apply 'FlagsAttribute' to enum.</value>
+    <value>Mark the enum with 'Flags' attribute</value>
   </data>
   <data name="EnumsShouldZeroValueFlagsMultipleZeroCodeFix" xml:space="preserve">
     <value>Remove all members that have the value zero except for one member that is named 'None'.</value>
@@ -515,7 +515,7 @@
     <value>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</value>
   </data>
   <data name="EnumStorageShouldBeInt32Title" xml:space="preserve">
-    <value>Enum Storage should be 'Int32'</value>
+    <value>Enum storage should be 'Int32'</value>
   </data>
   <data name="EnumStorageShouldBeInt32Description" xml:space="preserve">
     <value>An enumeration is a value type that defines a set of related named constants. By default, the System.Int32 data type is used to store the constant value. Although you can change this underlying type, it is not required or recommended for most scenarios.</value>
@@ -953,7 +953,7 @@
     <value>Static holder types should be 'Static' or 'NotInheritable'</value>
   </data>
   <data name="MakeClassStatic" xml:space="preserve">
-    <value>Make Class Static</value>
+    <value>Make class 'static'</value>
   </data>
   <data name="OverrideObjectEqualsMessage" xml:space="preserve">
     <value>Type '{0}' should override 'Equals' because it implements 'IEquatable&lt;T&gt;'</value>
@@ -965,10 +965,10 @@
     <value>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</value>
   </data>
   <data name="UseIntegralOrStringArgumentForIndexersMessage" xml:space="preserve">
-    <value>Use Integral Or String Argument For Indexers</value>
+    <value>Use integral or string argument for indexers</value>
   </data>
   <data name="UseIntegralOrStringArgumentForIndexersTitle" xml:space="preserve">
-    <value>Use Integral Or String Argument For Indexers</value>
+    <value>Use integral or string argument for indexers</value>
   </data>
   <data name="DoNotDirectlyAwaitATaskDescription" xml:space="preserve">
     <value>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</value>
@@ -1008,7 +1008,7 @@
     <comment>1 is a comma-separated list</comment>
   </data>
   <data name="DoNotCatchGeneralExceptionTypesDescription" xml:space="preserve">
-    <value>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</value>
+    <value>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</value>
   </data>
   <data name="DoNotCatchGeneralExceptionTypesMessage" xml:space="preserve">
     <value>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</value>
@@ -1284,10 +1284,10 @@
     <value>Rethrow to preserve stack details.</value>
   </data>
   <data name="MakeDeclaringTypeInternal" xml:space="preserve">
-    <value>Make declaring type internal.</value>
+    <value>Make declaring type 'internal'.</value>
   </data>
   <data name="MakeDeclaringTypeSealed" xml:space="preserve">
-    <value>Make declaring type sealed.</value>
+    <value>Make declaring type 'sealed'.</value>
   </data>
   <data name="MakeMemberNotOverridable" xml:space="preserve">
     <value>Make member not overridable.</value>

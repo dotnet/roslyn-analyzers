@@ -272,8 +272,8 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
 
                 var builder = new StringBuilder();
                 builder.Append(@"
-Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
---------|---------|-------|----------|---------|---------|--------------------------------------------------------------------------------------------------------------|
+Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
+--------|---------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
 ");
 
                 var index = 1;
@@ -296,7 +296,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                         description = descriptor.MessageFormat.ToString();
                     }
 
-                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {hasCodeFix} | {description} |");
+                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {descriptor.DefaultSeverity} | {hasCodeFix} | {description} |");
                     index++;
                 }
 

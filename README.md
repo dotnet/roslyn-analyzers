@@ -78,7 +78,7 @@ This package contains customizable rules for identifying references to banned AP
 
 This package contains rules to help library authors monitoring change to their public APIs. [More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
 
-For instructions on using this analyzer, see [Instructions]((https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md). Also see this [blog post](https://www.natmarchand.fr/prevent-breaking-changes-apis-roslyn/).
+For instructions on using this analyzer, see [Instructions]((https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md).
 
 
 ### MetaCompilation (prototype)

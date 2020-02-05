@@ -239,32 +239,32 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class C1
 {
-    public Foo()
+    public C1()
     {
-        Bar b;
-        FooBar f;
+        C2 b;
+        C3 f;
 
-        f = (b = GetBar()).GetFooBar();
+        f = (b = GetC2()).GetC3();
 
-        f = b.GetFooBar((b = GetBar()));
+        f = b.GetC3((b = GetC2()));
     }
 
-    public Bar GetBar() => new Bar();
+    public C2 GetC2() => new C2();
 }
 
-public class Bar : IDisposable
+public class C2 : IDisposable
 {
     public void Dispose()
     {
     }
 
-    public FooBar GetFooBar() => new FooBar();
-    public FooBar GetFooBar(Bar bar) => new FooBar();
+    public C3 GetC3() => new C3();
+    public C3 GetC3(C2 c) => new C3();
 }
 
-public class FooBar : IDisposable
+public class C3 : IDisposable
 {
     public void Dispose()
     {
@@ -735,27 +735,27 @@ End Class");
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class C1
 {
-    public Foo()
+    public C1()
     {
-        new Bar();
-        new FooBar();
+        new C2();
+        new C3();
     }
 }
 
-public class Bar : IDisposable
+public class C2 : IDisposable
 {
     public void Dispose()
     {
     }
 }
 
-public class FooBar : Bar
+public class C3 : C2
 {
 }",
-                GetCSharpObjectCreationResultAt(8, 9, ".ctor", "Bar"),
-                GetCSharpObjectCreationResultAt(9, 9, ".ctor", "FooBar"));
+                GetCSharpObjectCreationResultAt(8, 9, ".ctor", "C2"),
+                GetCSharpObjectCreationResultAt(9, 9, ".ctor", "C3"));
         }
 
         [Fact]
@@ -764,70 +764,70 @@ public class FooBar : Bar
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class C1
 {
-    public Foo()
+    public C1()
     {
-        GetBar();
-        GetFooBar();
-        GetFooBarAsBar();
+        GetC2();
+        GetC3();
+        GetC3AsC2();
     }
 
-    public Bar GetBar() => new Bar();
-    public FooBar GetFooBar() => new FooBar();
-    public Bar GetFooBarAsBar() => new FooBar();
+    public C2 GetC2() => new C2();
+    public C3 GetC3() => new C3();
+    public C2 GetC3AsC2() => new C3();
 }
 
-public class Bar : IDisposable
+public class C2 : IDisposable
 {
     public void Dispose()
     {
     }
 }
 
-public class FooBar : Bar
+public class C3 : C2
 {
 }",
-                GetCSharpDisposableMethodResultAt(8, 9, ".ctor", "GetBar"),
-                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetFooBar"),
-                GetCSharpDisposableMethodResultAt(10, 9, ".ctor", "GetFooBarAsBar"));
+                GetCSharpDisposableMethodResultAt(8, 9, ".ctor", "GetC2"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetC3"),
+                GetCSharpDisposableMethodResultAt(10, 9, ".ctor", "GetC3AsC2"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-Public Class Foo
+Public Class C1
     Public Sub New()
-        GetBar()
-        GetFooBar()
-        GetFooBarAsBar()
+        GetC2()
+        GetC3()
+        GetC3AsC2()
     End Sub
 
-    Public Function GetBar() As Bar
-        Return New Bar()
+    Public Function GetC2() As C2
+        Return New C2()
     End Function
 
-    Public Function GetFooBar() As FooBar
-        Return New FooBar()
+    Public Function GetC3() As C3
+        Return New C3()
     End Function
 
-    Public Function GetFooBarAsBar() As Bar
-        Return New FooBar()
+    Public Function GetC3AsC2() As C2
+        Return New C3()
     End Function
 End Class
 
-Public Class Bar
+Public Class C2
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class
 
-Public Class FooBar
-    Inherits Bar
+Public Class C3
+    Inherits C2
 End Class",
-                GetBasicDisposableMethodResultAt(6, 9, ".ctor", "GetBar"),
-                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetFooBar"),
-                GetBasicDisposableMethodResultAt(8, 9, ".ctor", "GetFooBarAsBar"));
+                GetBasicDisposableMethodResultAt(6, 9, ".ctor", "GetC2"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetC3"),
+                GetBasicDisposableMethodResultAt(8, 9, ".ctor", "GetC3AsC2"));
         }
 
         [Fact]
@@ -836,89 +836,89 @@ End Class",
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class C1
 {
-    public Foo()
+    public C1()
     {
-        var result = GetBar().GetFooBar();
-        GetBar().GetFooBar();
+        var result = GetC2().GetC3();
+        GetC2().GetC3();
 
-        var b = new Bar();
-        result = b.GetFooBar(GetBar());
-        b.GetFooBar(GetBar());
+        var b = new C2();
+        result = b.GetC3(GetC2());
+        b.GetC3(GetC2());
     }
 
-    public Bar GetBar() => new Bar();
+    public C2 GetC2() => new C2();
 }
 
-public class Bar : IDisposable
+public class C2 : IDisposable
 {
     public void Dispose()
     {
     }
 
-    public FooBar GetFooBar() => new FooBar();
-    public FooBar GetFooBar(Bar bar) => new FooBar();
+    public C3 GetC3() => new C3();
+    public C3 GetC3(C2 bar) => new C3();
 }
 
-public class FooBar : IDisposable
+public class C3 : IDisposable
 {
     public void Dispose()
     {
     }
 }",
-                GetCSharpDisposableMethodResultAt(8, 22, ".ctor", "GetBar"),
-                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetBar"),
-                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetFooBar"),
-                GetCSharpDisposableMethodResultAt(12, 30, ".ctor", "GetBar"),
-                GetCSharpDisposableMethodResultAt(13, 9, ".ctor", "GetFooBar"),
-                GetCSharpDisposableMethodResultAt(13, 21, ".ctor", "GetBar"));
+                GetCSharpDisposableMethodResultAt(8, 22, ".ctor", "GetC2"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetC2"),
+                GetCSharpDisposableMethodResultAt(9, 9, ".ctor", "GetC3"),
+                GetCSharpDisposableMethodResultAt(12, 26, ".ctor", "GetC2"),
+                GetCSharpDisposableMethodResultAt(13, 9, ".ctor", "GetC3"),
+                GetCSharpDisposableMethodResultAt(13, 17, ".ctor", "GetC2"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-Public Class Foo
+Public Class C1
     Public Sub New()
-        Dim result = GetBar.GetFooBar
-        GetBar.GetFooBar
+        Dim result = GetC2.GetC3
+        GetC2.GetC3
 
-        Dim b = New Bar
-        result = b.GetFooBar(GetBar)
-        b.GetFooBar(GetBar)
+        Dim b = New C2
+        result = b.GetC3(GetC2)
+        b.GetC3(GetC2)
     End Sub
 
-    Public Function GetBar() As Bar
-        Return New Bar
+    Public Function GetC2() As C2
+        Return New C2
     End Function
 End Class
 
-Public Class Bar
+Public Class C2
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 
-    Public Function GetFooBar() As FooBar
-        Return New FooBar
+    Public Function GetC3() As C3
+        Return New C3
     End Function
 
-    Public Function GetFooBar(ByVal bar As Bar) As FooBar
-        Return New FooBar
+    Public Function GetC3(ByVal bar As C2) As C3
+        Return New C3
     End Function
 End Class
 
-Public Class FooBar
+Public Class C3
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-                GetBasicDisposableMethodResultAt(6, 22, ".ctor", "GetBar"),
-                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetBar"),
-                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetFooBar"),
-                GetBasicDisposableMethodResultAt(10, 30, ".ctor", "GetBar"),
-                GetBasicDisposableMethodResultAt(11, 9, ".ctor", "GetFooBar"),
-                GetBasicDisposableMethodResultAt(11, 21, ".ctor", "GetBar"));
+                GetBasicDisposableMethodResultAt(6, 22, ".ctor", "GetC2"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetC2"),
+                GetBasicDisposableMethodResultAt(7, 9, ".ctor", "GetC3"),
+                GetBasicDisposableMethodResultAt(10, 26, ".ctor", "GetC2"),
+                GetBasicDisposableMethodResultAt(11, 9, ".ctor", "GetC3"),
+                GetBasicDisposableMethodResultAt(11, 17, ".ctor", "GetC2"));
         }
 
         #endregion

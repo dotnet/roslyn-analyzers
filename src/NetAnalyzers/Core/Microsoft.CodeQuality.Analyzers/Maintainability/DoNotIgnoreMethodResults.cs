@@ -107,7 +107,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
-
         internal static DiagnosticDescriptor TryParseRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTryParse,
@@ -117,15 +116,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
-        internal static DiagnosticDescriptor DisposableRule = new DiagnosticDescriptor(RuleId,
+        internal static DiagnosticDescriptor DisposableRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposable,
                                                                              DiagnosticCategory.Performance,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             isPortedFxCopRule: false,
+                                                                             isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule, PureMethodRule);
 

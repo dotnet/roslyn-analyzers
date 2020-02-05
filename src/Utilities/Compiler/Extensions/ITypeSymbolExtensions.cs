@@ -126,6 +126,12 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Indicates if the given <paramref name="type"/> implements <paramref name="iDisposable"/>.
+        /// </summary>
+        public static bool ImplementsIDisposable(this ITypeSymbol type, INamedTypeSymbol iDisposable)
+            => iDisposable != null && type.AllInterfaces.Contains(iDisposable);
+
+        /// <summary>
         /// Indicates if the given <paramref name="type"/> is a reference type that implements <paramref name="iDisposable"/> or System.IAsyncDisposable or is <see cref="IDisposable"/> or System.IAsyncDisposable type itself.
         /// </summary>
         public static bool IsDisposable(this ITypeSymbol type,

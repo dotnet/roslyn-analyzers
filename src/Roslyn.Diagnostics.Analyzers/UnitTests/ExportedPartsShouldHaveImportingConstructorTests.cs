@@ -34,8 +34,8 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -60,8 +60,8 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -93,8 +93,8 @@ class D : C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -130,8 +130,8 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -173,9 +173,9 @@ class D : C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -224,9 +224,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -256,8 +256,8 @@ class D : C {{ }}
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -286,8 +286,8 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -313,8 +313,8 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -341,8 +341,8 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -370,8 +370,8 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -402,8 +402,8 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -435,9 +435,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -473,9 +473,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -509,9 +509,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -545,9 +545,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -591,9 +591,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -644,9 +644,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -682,9 +682,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 5, 6, 19).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -722,9 +722,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 5, 6, 21).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -758,9 +758,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 5, 4, 19).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -796,9 +796,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 5, 4, 21).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -835,9 +835,9 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -876,9 +876,9 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -910,13 +910,13 @@ class C {{
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics =
                     {
                         VerifyCS.Diagnostic().WithSpan(9, 5, 9, 29).WithArguments("C"),
                         VerifyCS.Diagnostic().WithSpan(11, 5, 11, 25).WithArguments("C"),
                     },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     // No code fix is offered for this case
@@ -952,13 +952,13 @@ End Class
                 TestState =
                 {
                     Sources = { source },
-                    AdditionalReferences = { AdditionalMetadataReferences.SystemCompositionReference, AdditionalMetadataReferences.SystemComponentModelCompositionReference },
                     ExpectedDiagnostics =
                     {
                         VerifyVB.Diagnostic().WithSpan(10, 5, 10, 32).WithArguments("C"),
                         VerifyVB.Diagnostic().WithSpan(13, 5, 13, 34).WithArguments("C"),
                     },
                 },
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     // No code fix is offered for this case

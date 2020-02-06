@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DisposableFieldsShouldBeDisposed,
@@ -385,7 +383,7 @@ End Class");
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
         public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_Disposed_NoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.CSharp + @"
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -409,7 +407,7 @@ class B : IDisposable
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IAsyncDisposable
 
@@ -435,7 +433,7 @@ End Class");
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
         public async Task AsyncDisposableAllocationInConstructor_AssignedDirectly_NotDisposed_Diagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.CSharp + @"
 class A : IAsyncDisposable
 {
     public ValueTask DisposeAsync()
@@ -460,7 +458,7 @@ class B : IDisposable
             // Test0.cs(41,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(41, 24, "B", "a", "A"));
 
-            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IAsyncDisposable
 
@@ -487,7 +485,7 @@ End Class",
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
         public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_Disposed_NoDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.CSharp + @"
 class A : IDisposable
 {
     public void Dispose()
@@ -511,7 +509,7 @@ class B : IAsyncDisposable
 }
 ");
 
-            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
@@ -536,7 +534,7 @@ End Class");
         [Fact, WorkItem(3042, "https://github.com/dotnet/roslyn-analyzers/issues/3042")]
         public async Task DisposableAllocationInAsyncDisposableConstructor_AssignedDirectly_NotDisposed_Diagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(IAsyncDisposable.CSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.CSharp + @"
 class A : IDisposable
 {
     public void Dispose()
@@ -561,7 +559,7 @@ class B : IAsyncDisposable
             // Test0.cs(40,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
             GetCSharpResultAt(40, 24, "B", "a", "A"));
 
-            await VerifyVB.VerifyAnalyzerAsync(IAsyncDisposable.VisualBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(Test.Utilities.MinimalImplementations.IAsyncDisposable.VisualBasic + @"
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose

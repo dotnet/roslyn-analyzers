@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Test.Utilities;
 using Xunit;
@@ -1289,22 +1288,15 @@ class TestClass
 
             ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
-            var defaultReferences = ReferenceAssemblies.NetFramework.Net48.Default;
-            var references = Task.Run(() => defaultReferences.ResolveAsync(LanguageNames.CSharp, CancellationToken.None)).GetAwaiter().GetResult();
+            var references = Task.Run(() => AdditionalMetadataReferences.DefaultForTaintedDataAnalysis.ResolveAsync(LanguageNames.CSharp, CancellationToken.None))
+                .GetAwaiter()
+                .GetResult();
 
 #pragma warning disable CA2000 // Dispose objects before losing scope - Current solution/project takes the dispose ownership of the created AdhocWorkspace
             Project project = new AdhocWorkspace().CurrentSolution
 #pragma warning restore CA2000 // Dispose objects before losing scope
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .AddMetadataReferences(projectId, references)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.CodeAnalysisReference)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.WorkspacesReference)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWebReference)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemRuntimeSerialization)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemDirectoryServices)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemXaml)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.PresentationFramework)
-                .AddMetadataReference(projectId, AdditionalMetadataReferences.SystemWebExtensions)
                 .WithProjectCompilationOptions(projectId, options)
                 .WithProjectParseOptions(projectId, null)
                 .GetProject(projectId);
@@ -1314,12 +1306,6 @@ class TestClass
                 project.ParseOptions.Features.Concat(
                     new[] { new KeyValuePair<string, string>("flow-analysis", "true") }));
             project = project.WithParseOptions(parseOptions);
-
-            MetadataReference symbolsReference = AdditionalMetadataReferences.CSharpSymbolsReference;
-            project = project.AddMetadataReference(symbolsReference);
-
-            project = project.AddMetadataReference(AdditionalMetadataReferences.SystemCollectionsImmutableReference);
-            project = project.AddMetadataReference(AdditionalMetadataReferences.SystemXmlDataReference);
 
             int count = 0;
             foreach (var source in sources)

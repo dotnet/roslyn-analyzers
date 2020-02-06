@@ -31,11 +31,11 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -57,11 +57,11 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -90,11 +90,11 @@ class D : C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -127,11 +127,11 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -170,12 +170,12 @@ class D : C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -221,12 +221,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 17).WithArguments("D") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -253,11 +253,11 @@ class D : C {{ }}
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -283,11 +283,11 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -310,11 +310,11 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -338,11 +338,11 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -367,11 +367,11 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -399,11 +399,11 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -432,12 +432,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -470,12 +470,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -506,12 +506,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -542,12 +542,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(2, 2, 2, mefNamespace.Length + 9).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -588,12 +588,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -641,12 +641,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 2, 4, 8).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -679,12 +679,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 5, 6, 19).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -719,12 +719,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 5, 6, 21).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -755,12 +755,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(4, 5, 4, 19).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -793,12 +793,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(4, 5, 4, 21).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -832,12 +832,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -873,12 +873,12 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -907,6 +907,7 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
@@ -916,7 +917,6 @@ class C {{
                         VerifyCS.Diagnostic().WithSpan(11, 5, 11, 25).WithArguments("C"),
                     },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     // No code fix is offered for this case
@@ -949,6 +949,7 @@ End Class
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
@@ -958,7 +959,6 @@ End Class
                         VerifyVB.Diagnostic().WithSpan(13, 5, 13, 34).WithArguments("C"),
                     },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     // No code fix is offered for this case

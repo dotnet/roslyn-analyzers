@@ -40,11 +40,11 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -75,11 +75,11 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
             }.RunAsync();
         }
 
@@ -127,12 +127,12 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(9, 6, 9, 73).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -186,12 +186,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(9, 6, 9, 66).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -241,12 +241,12 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(7, 6, 7, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -298,12 +298,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(7, 6, 7, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -347,12 +347,12 @@ class C {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source, helperSource },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource, helperSource },
@@ -403,12 +403,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(6, 6, 6, 26).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -459,12 +459,12 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(8, 6, 8, 14).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -517,12 +517,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(8, 6, 8, 14).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -574,12 +574,12 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(9, 6, 9, 59).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -633,12 +633,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(9, 6, 9, 59).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -689,12 +689,12 @@ namespace Microsoft.CodeAnalysis.Host.Mef {{
 
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyCS.Diagnostic().WithSpan(8, 6, 8, 35).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },
@@ -749,12 +749,12 @@ End Namespace
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 TestState =
                 {
                     Sources = { source },
                     ExpectedDiagnostics = { VerifyVB.Diagnostic().WithSpan(8, 6, 8, 35).WithArguments("C") },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithFullComposition,
                 FixedState =
                 {
                     Sources = { fixedSource },

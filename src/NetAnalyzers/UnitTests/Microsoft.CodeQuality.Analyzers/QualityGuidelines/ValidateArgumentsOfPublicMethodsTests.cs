@@ -3916,6 +3916,7 @@ public class C2
         {
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
                 TestState =
                 {
                     Sources =
@@ -4091,7 +4092,6 @@ public class Class1
                     // Test0.cs(156,13): warning CA1062: In externally visible method 'bool Class1.HasUrl(IContext filterContext)', validate parameter 'filterContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
                     GetCSharpResultAt(156, 13, "bool Class1.HasUrl(IContext filterContext)", "filterContext"),
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
             }.RunAsync();
         }
 
@@ -5422,6 +5422,7 @@ public enum Kind
         {
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
                 TestState =
                 {
                     Sources =
@@ -5488,7 +5489,6 @@ namespace MyComments
 "
                     },
                 },
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemWeb,
             }.RunAsync();
         }
 

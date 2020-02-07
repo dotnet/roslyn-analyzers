@@ -174,6 +174,7 @@ Global
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a520f3e-8c5d-43fe-aa03-fe5e3c5f23d1}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{3727e79d-8250-492e-8082-9a5d0c0ad0d9}*SharedItemsImports = 5
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{37f2a7ad-fabe-4aea-ab3d-ce8543d8134e}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13

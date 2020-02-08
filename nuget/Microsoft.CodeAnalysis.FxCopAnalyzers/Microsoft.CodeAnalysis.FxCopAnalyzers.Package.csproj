@@ -30,7 +30,7 @@
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
-    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" TargetFramework="netstandard1.3" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
   </ItemGroup>
 
   <ItemGroup>

@@ -52,7 +52,11 @@ namespace Analyzer.Utilities
 
                 if (parts.SymbolName.Equals(".ctor", StringComparison.Ordinal) ||
                     parts.SymbolName.Equals(".cctor", StringComparison.Ordinal) ||
+#if NETCOREAPP3_1
+                    !parts.SymbolName.Contains(".", StringComparison.Ordinal) && !parts.SymbolName.Contains(":", StringComparison.Ordinal))
+#else
                     !parts.SymbolName.Contains(".") && !parts.SymbolName.Contains(":"))
+#endif
                 {
                     if (!namesBuilder.ContainsKey(parts.SymbolName))
                     {
@@ -119,7 +123,7 @@ namespace Analyzer.Utilities
         public bool TryGetValue(ISymbol symbol, [NotNullWhen(true)] out TValue value) =>
             _symbols.TryGetValue(symbol, out value) || _names.TryGetValue(symbol.Name, out value);
 
-        public override bool Equals(object obj) => Equals(obj as SymbolNamesWithValueOption<TValue>);
+        public override bool Equals(object? obj) => Equals(obj as SymbolNamesWithValueOption<TValue>);
 
         public bool Equals(SymbolNamesWithValueOption<TValue>? other)
             => other != null && _names.IsEqualTo(other._names) && _symbols.IsEqualTo(other._symbols);

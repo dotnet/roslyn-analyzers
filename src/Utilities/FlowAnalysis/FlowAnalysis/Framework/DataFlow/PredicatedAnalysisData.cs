@@ -21,6 +21,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// on the control flow paths where the corresonding <see cref="AnalysisEntity"/> is known to have <see langword="true"/> or <see langword="false"/> value respectively.
     /// </summary>
     public abstract partial class PredicatedAnalysisData<TKey, TValue> : AbstractAnalysisData
+        where TKey : notnull
     {
 #pragma warning disable CA2213 // Disposable fields should be disposed - https://github.com/dotnet/roslyn-analyzers/issues/2182
         private DictionaryAnalysisData<AnalysisEntity, PerEntityPredicatedAnalysisData>? _lazyPredicateDataMap;

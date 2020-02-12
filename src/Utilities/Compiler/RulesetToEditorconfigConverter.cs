@@ -160,7 +160,11 @@ namespace Microsoft.CodeAnalysis.RulesetToEditorconfig
                         }
                         else if (node is XText xtext)
                         {
+#if NETCOREAPP3_1
+                            if (xtext.Value.Contains("\r", StringComparison.Ordinal) || xtext.Value.Contains("\n", StringComparison.Ordinal))
+#else
                             if (xtext.Value.Contains("\r") || xtext.Value.Contains("\n"))
+#endif
                             {
                                 // Indicates start of new Rule/XmlComment.
                                 UpdateCurrentRuleIdPostCommentAndResetState();

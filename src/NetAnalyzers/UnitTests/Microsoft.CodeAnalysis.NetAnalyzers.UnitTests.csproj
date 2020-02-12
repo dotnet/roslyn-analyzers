@@ -13,8 +13,4 @@
     <ProjectReference Include="..\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
 </Project>

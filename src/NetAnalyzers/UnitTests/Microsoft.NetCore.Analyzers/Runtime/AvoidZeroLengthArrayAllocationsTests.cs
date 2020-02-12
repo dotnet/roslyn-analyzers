@@ -3,7 +3,6 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -135,7 +134,13 @@ class C
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15 + 1, 28).WithArguments("Array.Empty<int[][][]>()"),
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17 + 1, 26).WithArguments("Array.Empty<int[,]>()"),
                 },
-                "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty") + arrayEmptySource);
+                "using System;\r\n" +
+#if NETCOREAPP3_1
+                fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal) +
+#else
+                fixedSource.Replace("System.Array.Empty", "Array.Empty") +
+#endif
+                arrayEmptySource);
         }
 
         [Fact]
@@ -224,7 +229,13 @@ End Class";
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14 + 1, 39).WithArguments("Array.Empty(Of Integer()()())()"),
                     VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16 + 1, 37).WithArguments("Array.Empty(Of Integer(,))()"),
                 },
-                "Imports System\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty") + arrayEmptySource);
+                "Imports System\r\n" +
+#if NETCOREAPP3_1
+                fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal) +
+#else
+                fixedSource.Replace("System.Array.Empty", "Array.Empty") +
+#endif
+                arrayEmptySource);
         }
 
         [Fact]
@@ -268,7 +279,12 @@ class C
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6 + 1, 22).WithArguments("Array.Empty<int>()"),
                     VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7 + 1, 25).WithArguments("Array.Empty<double>()"),
                 },
-                "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty"));
+                "using System;\r\n" +
+#if NETCOREAPP3_1
+                fixedSource.Replace("System.Array.Empty", "Array.Empty", StringComparison.Ordinal));
+#else
+                fixedSource.Replace("System.Array.Empty", "Array.Empty"));
+#endif
         }
 
         [WorkItem(10214, "https://github.com/dotnet/roslyn/issues/10214")]

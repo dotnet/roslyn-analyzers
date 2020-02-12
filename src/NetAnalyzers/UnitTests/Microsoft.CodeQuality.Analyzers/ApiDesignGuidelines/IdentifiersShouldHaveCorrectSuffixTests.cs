@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1230,7 +1231,7 @@ public class SomeOtherSubClass : SomeOtherClass {}"},
                 }
             };
 
-            if (editorConfigText.EndsWith("Suffix", System.StringComparison.Ordinal))
+            if (editorConfigText.EndsWith("Suffix", StringComparison.Ordinal))
             {
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1238,11 +1239,11 @@ public class SomeOtherSubClass : SomeOtherClass {}"},
                     GetCA1710CSharpResultAt(10, 18, "MyNamespace.SomeSubSubClass", "FirstSuffix"),
                 });
             }
-            else if (editorConfigText.EndsWith("ABC", System.StringComparison.Ordinal))
+            else if (editorConfigText.EndsWith("ABC", StringComparison.Ordinal))
             {
                 csharpTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(22, 14, "SomeOtherSubClass", "ABC"));
             }
-            else if (editorConfigText.EndsWith("Interface", System.StringComparison.Ordinal))
+            else if (editorConfigText.EndsWith("Interface", StringComparison.Ordinal))
             {
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1298,7 +1299,7 @@ End Class"
                 }
             };
 
-            if (editorConfigText.EndsWith("Suffix", System.StringComparison.Ordinal))
+            if (editorConfigText.EndsWith("Suffix", StringComparison.Ordinal))
             {
                 vbTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1306,11 +1307,11 @@ End Class"
                     GetCA1710BasicResultAt(15, 18, "MyNamespace.SomeSubSubClass", "FirstSuffix"),
                 });
             }
-            else if (editorConfigText.EndsWith("ABC", System.StringComparison.Ordinal))
+            else if (editorConfigText.EndsWith("ABC", StringComparison.Ordinal))
             {
                 vbTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(31, 14, "SomeOtherSubClass", "ABC"));
             }
-            else if (editorConfigText.EndsWith("Interface", System.StringComparison.Ordinal))
+            else if (editorConfigText.EndsWith("Interface", StringComparison.Ordinal))
             {
                 vbTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1756,7 +1757,11 @@ public class SomeSubSubClass : SomeSubClass {}"
                 }
             };
 
+#if NETCOREAPP3_1
+            if (editorConfigText.Contains("exclude_indirect_base_types = false", StringComparison.Ordinal))
+#else
             if (editorConfigText.Contains("exclude_indirect_base_types = false"))
+#endif
             {
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1764,7 +1769,7 @@ public class SomeSubSubClass : SomeSubClass {}"
                     GetCA1710CSharpResultAt(10, 14, "FreezableList", "Collection"),
                 });
 
-                if (editorConfigText.EndsWith("Suffix1", System.StringComparison.Ordinal))
+                if (editorConfigText.EndsWith("Suffix1", StringComparison.Ordinal))
                 {
                     csharpTest.ExpectedDiagnostics.AddRange(new[]
                     {
@@ -1775,7 +1780,7 @@ public class SomeSubSubClass : SomeSubClass {}"
             }
             else
             {
-                if (editorConfigText.EndsWith("Suffix1", System.StringComparison.Ordinal))
+                if (editorConfigText.EndsWith("Suffix1", StringComparison.Ordinal))
                 {
                     csharpTest.ExpectedDiagnostics.Add(GetCA1710CSharpResultAt(18, 14, "SomeSubClass", "Suffix1"));
                 }
@@ -1827,7 +1832,11 @@ End Class"
                 }
             };
 
+#if NETCOREAPP3_1
+            if (editorConfigText.Contains("exclude_indirect_base_types = false", StringComparison.Ordinal))
+#else
             if (editorConfigText.Contains("exclude_indirect_base_types = false"))
+#endif
             {
                 vbTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1835,7 +1844,7 @@ End Class"
                     GetCA1710BasicResultAt(15, 14, "FreezableList", "Collection"),
                 });
 
-                if (editorConfigText.EndsWith("Suffix1", System.StringComparison.Ordinal))
+                if (editorConfigText.EndsWith("Suffix1", StringComparison.Ordinal))
                 {
                     vbTest.ExpectedDiagnostics.AddRange(new[]
                     {
@@ -1846,7 +1855,7 @@ End Class"
             }
             else
             {
-                if (editorConfigText.EndsWith("Suffix1", System.StringComparison.Ordinal))
+                if (editorConfigText.EndsWith("Suffix1", StringComparison.Ordinal))
                 {
                     vbTest.ExpectedDiagnostics.Add(GetCA1710BasicResultAt(26, 14, "SomeSubClass", "Suffix1"));
                 }

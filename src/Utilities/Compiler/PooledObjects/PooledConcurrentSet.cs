@@ -15,6 +15,7 @@ namespace Analyzer.Utilities.PooledObjects
 #pragma warning disable CA1710 // Identifiers should have correct suffix
     internal sealed class PooledConcurrentSet<T> : ICollection<T>, IDisposable
 #pragma warning restore CA1710 // Identifiers should have correct suffix
+        where T : notnull
     {
         private readonly PooledConcurrentDictionary<T, byte> _dictionary;
 

@@ -1374,7 +1374,11 @@ class TestClass
 
                 if (exprFullText.StartsWith(StartString, StringComparison.Ordinal))
                 {
+#if NETCOREAPP3_1
+                    if (exprFullText.Contains(EndString, StringComparison.Ordinal))
+#else
                     if (exprFullText.Contains(EndString))
+#endif
                     {
                         if (exprFullText.EndsWith(EndString, StringComparison.Ordinal))
                         {
@@ -1393,7 +1397,11 @@ class TestClass
 
                 if (exprFullText.EndsWith(EndString, StringComparison.Ordinal))
                 {
+#if NETCOREAPP3_1
+                    if (exprFullText.Contains(StartString, StringComparison.Ordinal))
+#else
                     if (exprFullText.Contains(StartString))
+#endif
                     {
                         if (exprFullText.StartsWith(StartString, StringComparison.Ordinal))
                         {

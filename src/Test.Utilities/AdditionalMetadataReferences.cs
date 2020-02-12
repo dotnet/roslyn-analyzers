@@ -8,35 +8,57 @@ namespace Test.Utilities
 {
     public static class AdditionalMetadataReferences
     {
-        public static ReferenceAssemblies Default { get; } = ReferenceAssemblies.Default
+        private static readonly ReferenceAssemblies _default =
+#if NETCOREAPP3_1
+            ReferenceAssemblies.NetCore.NetCoreApp21;
+#else
+            ReferenceAssemblies.Default;
+#endif
+
+        public static ReferenceAssemblies Default { get; } = _default
+#if !NETCOREAPP3_1
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
+#endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.0.0")));
 
-        public static ReferenceAssemblies DefaultWithoutRoslynSymbols { get; } = ReferenceAssemblies.Default
+        public static ReferenceAssemblies DefaultWithoutRoslynSymbols { get; } = _default
+#if !NETCOREAPP3_1
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
+#endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis.Workspaces.Common", "3.0.0")));
 
         public static ReferenceAssemblies DefaultWithSystemWeb { get; } = Default
-            .AddAssemblies(ImmutableArray.Create("System.Web", "System.Web.Extensions"));
+#if !NETCOREAPP3_1
+            .AddAssemblies(ImmutableArray.Create("System.Web", "System.Web.Extensions"))
+#endif
+            ;
 
         public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = Default
+#if !NETCOREAPP3_1
             .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
             .AddPackages(ImmutableArray.Create(new PackageIdentity("AntiXSS", "4.3.0")))
+#endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
 
         public static ReferenceAssemblies DefaultWithSerialization { get; } = Default
-            .AddAssemblies(ImmutableArray.Create("System.Runtime.Serialization"));
+#if !NETCOREAPP3_1
+            .AddAssemblies(ImmutableArray.Create("System.Runtime.Serialization"))
+#endif
+            ;
 
-        public static ReferenceAssemblies DefaultWithAzureStorage { get; } = ReferenceAssemblies.Default
+        public static ReferenceAssemblies DefaultWithAzureStorage { get; } = _default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("WindowsAzure.Storage", "9.0.0")));
 
         public static ReferenceAssemblies DefaultWithNewtonsoftJson { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Newtonsoft.Json", "10.0.1")));
 
         public static ReferenceAssemblies DefaultWithWinForms { get; } = Default
-            .AddAssemblies(ImmutableArray.Create("System.Windows.Forms"));
+#if !NETCOREAPP3_1
+            .AddAssemblies(ImmutableArray.Create("System.Windows.Forms"))
+#endif
+            ;
 
-        public static ReferenceAssemblies DefaultWithWinHttpHandler { get; } = ReferenceAssemblies.NetStandard.NetStandard20
+        public static ReferenceAssemblies DefaultWithWinHttpHandler { get; } = _default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("System.Net.Http.WinHttpHandler", "4.7.0")));
 
         public static ReferenceAssemblies DefaultWithAspNetCoreMvc { get; } = Default
@@ -58,7 +80,10 @@ namespace Test.Utilities
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
 
         public static ReferenceAssemblies DefaultWithFullComposition { get; } = Default
-            .AddAssemblies(ImmutableArray.Create("System.Composition.AttributedModel", "System.ComponentModel.Composition"));
+#if !NETCOREAPP3_1
+            .AddAssemblies(ImmutableArray.Create("System.Composition.AttributedModel", "System.ComponentModel.Composition"))
+#endif
+            ;
 
         public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
         public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);

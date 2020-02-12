@@ -21,6 +21,7 @@ namespace Test.Utilities
 
         public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = Default
             .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("AntiXSS", "4.3.0")))
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
 
         public static ReferenceAssemblies DefaultWithSerialization { get; } = Default
@@ -35,6 +36,15 @@ namespace Test.Utilities
         public static ReferenceAssemblies DefaultWithWinForms { get; } = Default
             .AddAssemblies(ImmutableArray.Create("System.Windows.Forms"));
 
+        public static ReferenceAssemblies DefaultWithWinHttpHandler { get; } = ReferenceAssemblies.NetStandard.NetStandard20
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("System.Net.Http.WinHttpHandler", "4.7.0")));
+
+        public static ReferenceAssemblies DefaultWithAspNetCoreMvc { get; } = Default
+            .AddPackages(ImmutableArray.Create(
+                new PackageIdentity("Microsoft.AspNetCore", "1.1.7"),
+                new PackageIdentity("Microsoft.AspNetCore.Mvc", "1.1.8"),
+                new PackageIdentity("Microsoft.AspNetCore.Http", "1.1.2")));
+
         public static ReferenceAssemblies DefaultWithNUnit { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("NUnit", "3.12.0")));
 
@@ -47,16 +57,18 @@ namespace Test.Utilities
         public static ReferenceAssemblies DefaultWithAsyncInterfaces { get; } = Default
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
 
-        public static ReferenceAssemblies DefaultWithWinHttpHandler { get; } = Default
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("System.Net.Http.WinHttpHandler", "4.7.0")));
-
-        public static ReferenceAssemblies DefaultWithAspNetCoreMvc { get; } = Default
-            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
-
         public static ReferenceAssemblies DefaultWithFullComposition { get; } = Default
             .AddAssemblies(ImmutableArray.Create("System.Composition.AttributedModel", "System.ComponentModel.Composition"));
 
-
+        public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
+        public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
+        public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);
+        public static MetadataReference SystemXmlDataReference { get; } = MetadataReference.CreateFromFile(typeof(System.Data.Rule).Assembly.Location);
+        public static MetadataReference CodeAnalysisReference { get; } = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        public static MetadataReference CSharpSymbolsReference { get; } = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        public static MetadataReference WorkspacesReference { get; } = MetadataReference.CreateFromFile(typeof(Workspace).Assembly.Location);
+        public static MetadataReference SystemWebReference { get; } = MetadataReference.CreateFromFile(typeof(System.Web.HttpRequest).Assembly.Location);
+        public static MetadataReference SystemRuntimeSerialization { get; } = MetadataReference.CreateFromFile(typeof(System.Runtime.Serialization.NetDataContractSerializer).Assembly.Location);
         public static MetadataReference TestReferenceAssembly { get; } = MetadataReference.CreateFromFile(typeof(OtherDll.OtherDllStaticMethods).Assembly.Location);
     }
 }

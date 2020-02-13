@@ -233,7 +233,7 @@ End Class", useXunit ? XunitApis.VisualBasic : NUnitApis.VisualBasic
             }.RunAsync();
         }
 
-        [Fact]
+        [Fact, WorkItem(1057, "https://github.com/dotnet/roslyn-analyzers/issues/1057")]
         public async Task DoNotReportOnChainedMethodCallsReturningIDisposableWithVariableCreation()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -270,6 +270,46 @@ public class C3 : IDisposable
     {
     }
 }");
+        }
+
+        [Fact, WorkItem(1057, "https://github.com/dotnet/roslyn-analyzers/issues/1057")]
+        public async Task DoNotReportOnChainedMethodCallsReturningIAsyncDisposableWithVariableCreation()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithAsyncInterfaces,
+                TestCode = @"
+using System;
+using System.Threading.Tasks;
+
+public class C1
+{
+    public C1()
+    {
+        C2 b;
+        C3 f;
+
+        f = (b = GetC2()).GetC3();
+
+        f = b.GetC3((b = GetC2()));
+    }
+
+    public C2 GetC2() => new C2();
+}
+
+public class C2 : IAsyncDisposable
+{
+    public ValueTask DisposeAsync() => default(ValueTask);
+
+    public C3 GetC3() => new C3();
+    public C3 GetC3(C2 c) => new C3();
+}
+
+public class C3 : IAsyncDisposable
+{
+    public ValueTask DisposeAsync() => default(ValueTask);
+}"
+            }.RunAsync();
         }
 
         #endregion
@@ -729,7 +769,7 @@ Public Class B
 End Class");
         }
 
-        [Fact]
+        [Fact, WorkItem(1057, "https://github.com/dotnet/roslyn-analyzers/issues/1057")]
         public async Task ReportOnInvocationOfTypeIDisposable()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -758,7 +798,7 @@ public class C3 : C2
                 GetCSharpObjectCreationResultAt(9, 9, ".ctor", "C3"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1057, "https://github.com/dotnet/roslyn-analyzers/issues/1057")]
         public async Task ReportOnSimpleMethodCallReturningIDisposable()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -830,7 +870,7 @@ End Class",
                 GetBasicDisposableMethodResultAt(8, 9, ".ctor", "GetC3AsC2"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1057, "https://github.com/dotnet/roslyn-analyzers/issues/1057")]
         public async Task ReportOnChainedMethodCallsReturningIDisposable()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

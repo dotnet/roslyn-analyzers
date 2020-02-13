@@ -45,6 +45,9 @@ namespace Test.Utilities
                 new PackageIdentity("Microsoft.AspNetCore.Mvc", "1.1.8"),
                 new PackageIdentity("Microsoft.AspNetCore.Http", "1.1.2")));
 
+        public static ReferenceAssemblies DefaultWithAsyncInterfaces { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
+
         public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
         public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
         public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);

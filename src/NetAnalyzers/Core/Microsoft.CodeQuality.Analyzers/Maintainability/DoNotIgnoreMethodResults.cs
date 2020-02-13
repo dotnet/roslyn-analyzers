@@ -139,6 +139,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 INamedTypeSymbol? nunitAssertType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
                 INamedTypeSymbol? xunitAssertType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitAssert);
                 INamedTypeSymbol? disposableType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
+                INamedTypeSymbol? asyncDisposableType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIAsyncDisposable);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -188,7 +189,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     rule = PureMethodRule;
                                 }
                                 else if (disposableType != null &&
-                                    targetMethod.ReturnType.ImplementsIDisposable(disposableType) &&
+                                    targetMethod.ReturnType.IsDisposable(disposableType, asyncDisposableType) &&
                                     // We want to ignore some of the async methods from assertion frameworks
                                     (xunitAssertType == null || !targetMethod.ContainingType.Equals(xunitAssertType)) &&
                                     (nunitAssertType == null || !targetMethod.ContainingType.Equals(nunitAssertType)))
@@ -219,7 +220,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                         if (targetMethod == null ||
                             disposableType == null ||
-                            !targetMethod.ReturnType.ImplementsIDisposable(disposableType) ||
+                            !targetMethod.ReturnType.IsDisposable(disposableType, asyncDisposableType) ||
                             ShouldSkipAnalyzing(opContext, expectedExceptionType, xunitAssertType, nunitAssertType))
                         {
                             return;

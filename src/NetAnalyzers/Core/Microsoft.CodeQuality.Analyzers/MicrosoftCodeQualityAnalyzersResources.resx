@@ -763,9 +763,6 @@
   <data name="IdentifiersShouldNotMatchKeywordsDescription" xml:space="preserve">
     <value>A namespace name or a type name matches a reserved keyword in a programming language. Identifiers for namespaces and types should not match keywords that are defined by languages that target the common language runtime.</value>
   </data>
-  <data name="IdentifiersShouldNotMatchKeywordsMessageMemberParameter" xml:space="preserve">
-    <value>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</value>
-  </data>
   <data name="IdentifiersShouldNotMatchKeywordsMessageMember" xml:space="preserve">
     <value>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</value>
   </data>

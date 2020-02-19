@@ -1142,11 +1142,6 @@
         <target state="translated">Um nome de namespace ou de tipo corresponde a uma palavra-chave reservada em uma linguagem de programação. Os identificadores para namespaces e tipos não devem corresponder a palavras-chaves definidas por linguagens direcionadas ao Common Language Runtime.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">No membro virtual/de interface {0}, renomeie o parâmetro {1} de forma que ele não fique mais em conflito com a palavra-chave reservada de linguagem '{2}'. Se você usar uma palavra-chave reservada como o nome de um parâmetro em um membro virtual/de interface, ficará mais difícil para os consumidores de outras linguagens substituírem/implementarem o membro.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Renomeie o membro virtual/de interface {0} de forma que ele não fique mais em conflito com a palavra-chave reservada de linguagem '{1}'. Se você usar uma palavra-chave reservada como o nome de um membro virtual/de interface, ficará mais difícil para os consumidores de outras linguagens substituírem/implementarem o membro.</target>

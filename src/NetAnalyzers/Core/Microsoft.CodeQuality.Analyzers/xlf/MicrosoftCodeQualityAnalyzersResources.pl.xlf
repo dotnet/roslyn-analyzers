@@ -1142,11 +1142,6 @@
         <target state="translated">Nazwa przestrzeni nazw lub nazwa typu jest taka sama jak zastrzeżone słowo kluczowe języka programowania. Identyfikatory przestrzeni nazw i typów nie powinny być takie same jak słowa kluczowe zdefiniowane przez języki docelowe środowiska uruchomieniowego języka wspólnego.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">W elemencie członkowskim interfejsu lub wirtualnym elemencie członkowskim {0} zmień nazwę parametru {1} tak, aby nie powodowała konfliktu z zastrzeżonym słowem kluczowym języka „{2}”. Użycie zastrzeżonego słowa kluczowego jako nazwy parametru w elemencie członkowskim interfejsu lub wirtualnym elemencie członkowskim utrudnia klientom w innych językach przesłonięcie/zaimplementowanie tego elementu członkowskiego.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Zmień nazwę elementu członkowskiego interfejsu lub wirtualnego elementu członkowskiego {0} tak, aby nie powodowała konfliktu z zastrzeżonym słowem kluczowym języka „{1}”. Użycie zastrzeżonego słowa kluczowego jako nazwy elementu członkowskiego interfejsu lub wirtualnego elementu członkowskiego utrudnia klientom w innych językach przesłonięcie/zaimplementowanie tego elementu członkowskiego.</target>

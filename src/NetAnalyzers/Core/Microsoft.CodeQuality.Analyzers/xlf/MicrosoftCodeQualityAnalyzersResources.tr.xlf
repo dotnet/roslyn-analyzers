@@ -1142,11 +1142,6 @@
         <target state="translated">Bir ad alanı adı veya tür adı, bir programlama dilindeki ayrılmış bir anahtar sözcükle eşleşiyor. Ad alanlarının ve türlerin tanımlayıcıları, ortak dil çalışma zamanını hedefleyen diller tarafından tanımlanmış anahtar sözcüklerle eşleşmemelidir.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">{0} sanal/arabirim üyesinde, {1} parametresini ayrılmış dil anahtar sözcüğü '{2}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesindeki bir parametrenin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">{0} sanal/arabirim üyesini, ayrılmış dil anahtar sözcüğü '{1}' ile çakışmayacak şekilde yeniden adlandırın. Bir sanal/arabirim üyesinin adı olarak ayrılmış bir anahtar sözcüğün kullanılması, diğer dillerde kullanıcıların üyeyi geçersiz kılmasını/uygulamasını zorlaştırır.</target>

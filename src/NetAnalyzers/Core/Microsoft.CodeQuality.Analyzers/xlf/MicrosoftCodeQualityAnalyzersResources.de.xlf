@@ -1142,11 +1142,6 @@
         <target state="translated">Ein Namespacename oder ein Typname entspricht einem reservierten Schlüsselwort in einer Programmiersprache. Bezeichner für Namespaces und Typen dürfen nicht mit Schlüsselwörtern übereinstimmen, die durch Sprachen definiert sind, die auf die Common Language Runtime ausgelegt sind.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">Benennen Sie im virtuellen/Schnittstellenmember "{0}" den Parameter "{1}" so um, dass er keinen Konflikt mit dem reservierten Sprachschlüsselwort "{2}" mehr verursacht. Durch die Verwendung eines reservierten Schlüsselworts als Name eines Parameters für einen virtuellen/Schnittstellenmember ist es für Endverbraucher in anderen Sprachen schwieriger, den Member außer Kraft zu setzen bzw. zu implementieren.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Benennen Sie den virtuellen/Schnittstellenmember "{0}" so um, dass er keinen Konflikt mit dem reservierten Sprachschlüsselwort "{1}" mehr verursacht. Durch die Verwendung eines reservierten Schlüsselworts als Name eines virtuellen/Schnittstellenmembers ist es für Endverbraucher in anderen Sprachen schwieriger, den Member außer Kraft zu setzen bzw. zu implementieren.</target>

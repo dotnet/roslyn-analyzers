@@ -1142,11 +1142,6 @@
         <target state="translated">Имя пространства имен или типа совпадает с зарезервированным ключевым словом в языке программирования. Идентификаторы для пространств имен и типов не должны совпадать с ключевыми словами, определенными в языках, которые ориентированы на среду CLR.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">В виртуальном члене или в члене интерфейса {0} переименуйте параметр {1} так, чтобы он больше не находился в конфликте с зарезервированным ключевым словом языка "{2}". Использование зарезервированного ключевого слова в качестве имени параметра виртуального члена или члена интерфейса затрудняет переопределение или реализацию члена для потребителей в других языках.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Переименуйте виртуальный член или член интерфейса {0}, чтобы он больше не находился в конфликте с зарезервированным ключевым словом языка "{1}". Использование зарезервированного ключевого слова в качестве имени виртуального члена или члена интерфейса затрудняет переопределение или реализацию члена для потребителей в других языках.</target>

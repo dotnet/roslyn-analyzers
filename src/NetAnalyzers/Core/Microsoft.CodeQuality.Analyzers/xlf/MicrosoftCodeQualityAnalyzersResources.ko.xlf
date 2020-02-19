@@ -1142,11 +1142,6 @@
         <target state="translated">프로그래밍 언어에서 네임스페이스 이름 또는 형식 이름이 예약된 키워드와 일치합니다. 네임스페이스와 형식에 대한 식별자는 공용 언어 런타임을 대상으로 하는 언어가 정의하는 키워드와 달라야 합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">가상/인터페이스 멤버 {0}에서 예약된 언어 키워드 '{2}'과(와) 더 이상 충돌하지 않도록 매개 변수 {1}의 이름을 바꾸세요. 가상/인터페이스 멤버에서 예약된 키워드를 매개 변수의 이름으로 사용하면 다른 언어 소비자가 해당 멤버를 재정의/구현하기 어렵습니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">예약된 언어 키워드 '{1}'과(와) 더 이상 충돌하지 않도록 가상/인터페이스 멤버 {0}의 이름을 바꾸세요. 예약된 키워드를 가상/인터페이스 멤버의 이름으로 사용하면 다른 언어 소비자가 해당 멤버를 재정의/구현하기 어렵습니다.</target>

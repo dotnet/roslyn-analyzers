@@ -1142,11 +1142,6 @@
         <target state="translated">名前空間名または型名が、プログラミング言語の予約済みのキーワードと一致します。名前空間と型の識別子は、共通言語ランタイムを対象とする言語で定義されているキーワードと一致しないようにする必要があります。</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">仮想メンバーまたはインターフェイス メンバー {0} のパラメーター {1} の名前を変更して、予約されている言語キーワード '{2}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーのパラメーター名として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">仮想メンバーまたはインターフェイス メンバー {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーの名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>

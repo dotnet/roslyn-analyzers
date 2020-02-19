@@ -1142,11 +1142,6 @@
         <target state="translated">Název názvového prostoru nebo název typu se shoduje s rezervovaným klíčovým slovem programovacího jazyka. Identifikátory názvových prostorů a typů by se neměly shodovat s klíčovými slovy definovanými jazyky, jejichž cílem je modul CLR (Common Language Runtime).</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">Přejmenujte parametr {1} ve virtuálním členovi nebo členovi rozhraní {0} tak, aby už nebyl v konfliktu s rezervovaným klíčovým slovem {2} jazyka. Použití rezervovaného klíčového slova jako názvu parametru u virtuálního člena nebo člena rozhraní znesnadňuje konzumentům v jiných jazycích přepis nebo implementaci tohoto člena.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Přejmenujte virtuálního člena nebo člena rozhraní {0} tak, aby už nebyl v konfliktu s rezervovaným klíčovým slovem {1} jazyka. Použití rezervovaného klíčového slova jako názvu virtuálního člena nebo člena rozhraní znesnadňuje konzumentům v jiných jazycích přepis nebo implementaci tohoto člena.</target>

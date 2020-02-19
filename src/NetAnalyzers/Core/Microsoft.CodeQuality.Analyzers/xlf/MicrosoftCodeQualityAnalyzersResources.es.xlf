@@ -1142,11 +1142,6 @@
         <target state="translated">Un nombre de un espacio de nombres o de un tipo coincide con una palabra clave reservada de un lenguaje de programación. Los identificadores de espacios de nombres y tipos no deben coincidir con las palabras clave definidas por los lenguajes destinados a Common Language Runtime.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">En el miembro virtual o de interfaz {0}, cambie el nombre del parámetro {1} para que deje de estar en conflicto con la palabra clave reservada del lenguaje “{2}”. El uso de una palabra clave reservada como nombre de un parámetro en un miembro virtual o de interfaz dificulta que consumidores de otros lenguajes invaliden o implementen el miembro.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Cambie el nombre del miembro virtual o de interfaz {0} para que deje de estar en conflicto con la palabra clave reservada del lenguaje “{1}”. El uso de una palabra clave reservada como nombre de un miembro virtual o de interfaz dificulta que usuarios de otros lenguajes invaliden o implementen el miembro.</target>

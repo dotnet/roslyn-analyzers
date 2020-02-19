@@ -1142,11 +1142,6 @@
         <target state="translated">命名空間名稱或類型名稱符合程式設計語言中的保留關鍵字。命名空間與類型的識別項，不應與以 Common Language Runtime 為目標之語言所定義的關鍵字相符。</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">在虛擬/介面成員 {0} 中，重新命名參數 {1}，使其不再與保留的語言關鍵字 '{2}' 相衝突。將保留關鍵字用作為虛擬/介面成員上參數的名稱，會讓其他語言的消費者難以覆寫/實作該成員。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">重新命名虛擬/介面成員 {0}，使其不再與保留的語言關鍵字 '{1}' 相衝突。將保留關鍵字用作為虛擬/介面成員的名稱，會讓其他語言的消費者難以覆寫/實作該成員。</target>

@@ -21,20 +21,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageMemberParameter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageMemberParameter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageMember = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageMember), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageType = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageType), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageNamespace = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsMessageNamespace), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotMatchKeywordsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        internal static DiagnosticDescriptor MemberParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageMemberParameter,
-                                                                             DiagnosticCategory.Naming,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
         internal static DiagnosticDescriptor MemberRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMember,
@@ -69,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 .WithMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.None);
 
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberRule, TypeRule, NamespaceRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -88,8 +79,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberRule,
                     SymbolKind.Event, SymbolKind.Method, SymbolKind.Property);
-
-                compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeMemberParameterRule, SymbolKind.Method);
             });
         }
 
@@ -181,34 +170,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         MemberRule,
                         symbol.FormatMemberName(),
                         matchingKeyword));
-            }
-        }
-
-        private void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
-        {
-            var method = (IMethodSymbol)context.Symbol;
-            if (!method.MatchesConfiguredVisibility(context.Options, MemberParameterRule, context.CancellationToken))
-            {
-                return;
-            }
-
-            // IsAbstract returns true for both abstract class members and interface members.
-            if (!method.IsVirtual && !method.IsAbstract)
-            {
-                return;
-            }
-
-            foreach (IParameterSymbol parameter in method.Parameters)
-            {
-                if (IsKeyword(parameter.Name, out string matchingKeyword))
-                {
-                    context.ReportDiagnostic(
-                        parameter.CreateDiagnostic(
-                            MemberParameterRule,
-                            method.FormatMemberName(),
-                            parameter.Name,
-                            matchingKeyword));
-                }
             }
         }
 

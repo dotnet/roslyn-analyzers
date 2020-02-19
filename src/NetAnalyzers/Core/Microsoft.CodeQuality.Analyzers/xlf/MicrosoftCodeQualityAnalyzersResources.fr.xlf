@@ -1142,11 +1142,6 @@
         <target state="translated">Un nom d'espace de noms ou un nom de type correspond à un mot clé réservé dans un langage de programmation. Les identificateurs des espaces de noms et des types ne doivent pas correspondre aux mots clés définis par les langages qui ciblent le Common Language Runtime.</target>
         <note />
       </trans-unit>
-      <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">Dans le membre virtuel/membre d'interface {0}, renommez le paramètre {1} pour qu'il ne soit plus en conflit avec le mot clé de langage réservé '{2}'. L'utilisation d'un mot clé réservé comme nom de paramètre pour un membre virtuel/membre d'interface rend plus difficile le remplacement/l'implémentation du membre par les contrôles serveur consommateurs dans d'autres langages.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
         <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
         <target state="translated">Renommez le membre virtuel/membre d'interface {0} pour qu'il ne soit plus en conflit avec le mot clé de langage réservé '{1}'. L'utilisation d'un mot clé réservé comme nom de membre virtuel/membre d'interface rend plus difficile le remplacement/l'implémentation du membre par les contrôles serveur consommateurs dans d'autres langages.</target>

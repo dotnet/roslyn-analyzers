@@ -22,7 +22,7 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForShippedApisVersion>3.5.0-beta2-20056-01</MicrosoftCodeAnalysisForShippedApisVersion>
-    <MicrosoftNetCompilersVersion>3.4.0-beta2-final</MicrosoftNetCompilersVersion>
+    <MicrosoftNetCompilersVersion>3.5.0-beta3-final</MicrosoftNetCompilersVersion>
     <DogfoodAnalyzersVersion>3.0.0-beta2.19529.2+e119d9cf</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>

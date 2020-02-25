@@ -2,7 +2,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
@@ -98,57 +97,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             CopyAnalysisResult? copyAnalysisResultOpt,
             ValueContentAnalysisResult? valueContentAnalysisResultOpt,
             InterproceduralAnalysisData<TAnalysisData, TAnalysisContext, TAbstractAnalysisValue>? interproceduralAnalysisData);
-
-        public ControlFlowGraph? GetLocalFunctionControlFlowGraph(IMethodSymbol localFunction)
-        {
-            if (localFunction.Equals(OwningSymbol))
-            {
-                return ControlFlowGraph;
-            }
-
-            if (ControlFlowGraph.LocalFunctions.Contains(localFunction))
-            {
-                return ControlFlowGraph.GetLocalFunctionControlFlowGraph(localFunction);
-            }
-
-            if (ParentControlFlowGraphOpt != null && InterproceduralAnalysisDataOpt != null)
-            {
-                var parentAnalysisContext = InterproceduralAnalysisDataOpt.MethodsBeingAnalyzed.FirstOrDefault(context => context.ControlFlowGraph == ParentControlFlowGraphOpt);
-                return parentAnalysisContext?.GetLocalFunctionControlFlowGraph(localFunction);
-            }
-
-            // Unable to find control flow graph for local function.
-            // This can happen for cases where local function creation and invocations are in different interprocedural call trees.
-            // See unit test "DisposeObjectsBeforeLosingScopeTests.InvocationOfLocalFunctionCachedOntoField_InterproceduralAnalysis"
-            // for an example.
-            // Currently, we don't support interprocedural analysis of such local function invocations.
-            return null;
-        }
-
-        public ControlFlowGraph? GetAnonymousFunctionControlFlowGraph(IFlowAnonymousFunctionOperation lambda)
-        {
-            // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1812
-            // Remove the below workaround.
-            try
-            {
-                return ControlFlowGraph.GetAnonymousFunctionControlFlowGraph(lambda);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                if (ParentControlFlowGraphOpt != null && InterproceduralAnalysisDataOpt != null)
-                {
-                    var parentAnalysisContext = InterproceduralAnalysisDataOpt.MethodsBeingAnalyzed.FirstOrDefault(context => context.ControlFlowGraph == ParentControlFlowGraphOpt);
-                    return parentAnalysisContext?.GetAnonymousFunctionControlFlowGraph(lambda);
-                }
-
-                // Unable to find control flow graph for lambda.
-                // This can happen for cases where lambda creation and invocations are in different interprocedural call trees.
-                // See unit test "DisposeObjectsBeforeLosingScopeTests.InvocationOfLambdaCachedOntoField_InterproceduralAnalysis"
-                // for an example.
-                // Currently, we don't support interprocedural analysis of such lambda invocations.
-                return null;
-            }
-        }
 
         protected abstract void ComputeHashCodePartsSpecific(Action<int> builder);
 

@@ -3098,7 +3098,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             IOperation originalOperation,
             TAbstractAnalysisValue defaultValue)
         {
-            ControlFlowGraph? getCfg() => DataFlowAnalysisContext.GetLocalFunctionControlFlowGraph(localFunction);
+            ControlFlowGraph? getCfg() => DataFlowAnalysisContext.ControlFlowGraph.GetLocalFunctionControlFlowGraph(localFunction);
             return PerformInterproceduralAnalysis(getCfg, localFunction, instanceReceiver: null, arguments: visitedArguments,
                 originalOperation: originalOperation, defaultValue: defaultValue, isLambdaOrLocalFunction: true);
         }
@@ -3109,7 +3109,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             IOperation originalOperation,
             TAbstractAnalysisValue defaultValue)
         {
-            ControlFlowGraph? getCfg() => DataFlowAnalysisContext.GetAnonymousFunctionControlFlowGraph(lambda);
+            ControlFlowGraph? getCfg() => DataFlowAnalysisContext.ControlFlowGraph.GetAnonymousFunctionControlFlowGraph(lambda);
             return PerformInterproceduralAnalysis(getCfg, lambda.Symbol, instanceReceiver: null, arguments: visitedArguments,
                 originalOperation: originalOperation, defaultValue: defaultValue, isLambdaOrLocalFunction: true);
         }

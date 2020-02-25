@@ -696,7 +696,19 @@ C.Method() -> void
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.StringComparison))]
 ";
 
-            string shippedText = $@"
+            string shippedText =
+#if NETCOREAPP3_1
+$@"
+System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.CurrentCulture = 0 -> System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.CurrentCultureIgnoreCase = 1 -> System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.InvariantCulture = 2 -> System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.InvariantCultureIgnoreCase = 3 -> System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.Ordinal = 4 -> System.StringComparison (forwarded, contained in netstandard)
+System.StringComparison.OrdinalIgnoreCase = 5 -> System.StringComparison (forwarded, contained in netstandard)
+";
+#else
+$@"
 System.StringComparison (forwarded, contained in mscorlib)
 System.StringComparison.CurrentCulture = 0 -> System.StringComparison (forwarded, contained in mscorlib)
 System.StringComparison.CurrentCultureIgnoreCase = 1 -> System.StringComparison (forwarded, contained in mscorlib)
@@ -705,6 +717,7 @@ System.StringComparison.InvariantCultureIgnoreCase = 3 -> System.StringCompariso
 System.StringComparison.Ordinal = 4 -> System.StringComparison (forwarded, contained in mscorlib)
 System.StringComparison.OrdinalIgnoreCase = 5 -> System.StringComparison (forwarded, contained in mscorlib)
 ";
+#endif
             string unshippedText = $@"";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText);
@@ -716,7 +729,27 @@ System.StringComparison.OrdinalIgnoreCase = 5 -> System.StringComparison (forwar
             var source = @"
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.StringComparer))]
 ";
-            string shippedText = $@"
+            string shippedText =
+#if NETCOREAPP3_1
+$@"
+System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.InvariantCulture.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.InvariantCultureIgnoreCase.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.CurrentCulture.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.CurrentCultureIgnoreCase.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.Ordinal.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.OrdinalIgnoreCase.get -> System.StringComparer (forwarded, contained in netstandard)
+static System.StringComparer.Create(System.Globalization.CultureInfo culture, bool ignoreCase) -> System.StringComparer (forwarded, contained in netstandard)
+System.StringComparer.Compare(object x, object y) -> int (forwarded, contained in netstandard)
+System.StringComparer.Equals(object x, object y) -> bool (forwarded, contained in netstandard)
+System.StringComparer.GetHashCode(object obj) -> int (forwarded, contained in netstandard)
+abstract System.StringComparer.Compare(string x, string y) -> int (forwarded, contained in netstandard)
+abstract System.StringComparer.Equals(string x, string y) -> bool (forwarded, contained in netstandard)
+abstract System.StringComparer.GetHashCode(string obj) -> int (forwarded, contained in netstandard)
+System.StringComparer.StringComparer() -> void (forwarded, contained in netstandard)
+";
+#else
+$@"
 System.StringComparer (forwarded, contained in mscorlib)
 static System.StringComparer.InvariantCulture.get -> System.StringComparer (forwarded, contained in mscorlib)
 static System.StringComparer.InvariantCultureIgnoreCase.get -> System.StringComparer (forwarded, contained in mscorlib)
@@ -733,6 +766,7 @@ abstract System.StringComparer.Equals(string x, string y) -> bool (forwarded, co
 abstract System.StringComparer.GetHashCode(string obj) -> int (forwarded, contained in mscorlib)
 System.StringComparer.StringComparer() -> void (forwarded, contained in mscorlib)
 ";
+#endif
             string unshippedText = $@"";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText);
@@ -885,9 +919,9 @@ C.Method6(string p1) -> void
                 GetCSharpResultAt(32, 17, DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters, "Method6", DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters.HelpLinkUri));
         }
 
-        #endregion
+#endregion
 
-        #region Fix tests
+#region Fix tests
 
         [Fact]
         public async Task TestSimpleMissingMember_Fix()
@@ -1634,6 +1668,6 @@ E.E() -> void";
             await VerifyCSharpAdditionalFileFixAsync(source, shippedApiText: "", oldUnshippedApiText: unshippedText, newUnshippedApiText: expectedUnshippedText);
         }
 
-        #endregion
+#endregion
     }
 }

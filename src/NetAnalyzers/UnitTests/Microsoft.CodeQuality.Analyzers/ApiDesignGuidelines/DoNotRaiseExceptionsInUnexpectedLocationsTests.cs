@@ -501,6 +501,32 @@ End Class
                         GetBasicNoExceptionsResultAt(6, 9, "ToString", "Exception"));
         }
 
+        [Fact, WorkItem(2994, "https://github.com/dotnet/roslyn-analyzers/issues/2994")]
+        public async Task CA1065_ArgumentNullException_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Collections.Generic;
+
+public class SomeEqualityComparer : IEqualityComparer<string>
+{
+    public bool Equals(string x, string y)
+    {
+        return true;
+    }
+
+    public int GetHashCode(string obj)
+    {
+        if (obj == null)
+        {
+            throw new ArgumentNullException(nameof(obj));
+        }
+
+        return 0;
+    }
+}");
+        }
+
         #endregion
 
         #region Constructor and Destructor tests

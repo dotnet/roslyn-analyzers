@@ -16,6 +16,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 {
     public class DeclarePublicApiAnalyzerTests
     {
+        #region Helpers
         private static DiagnosticResult GetAdditionalFileResultAt(int line, int column, string path, DiagnosticDescriptor descriptor, params object[] arguments)
         {
             return new DiagnosticResult(descriptor)
@@ -136,6 +137,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 
             await test.RunAsync();
         }
+        #endregion
 
         #region Diagnostic tests
 
@@ -902,6 +904,105 @@ C.Method6(string p1) -> void
                 GetCSharpResultAt(32, 17, DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters, "Method6", DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters.HelpLinkUri));
         }
 
+        [Fact]
+        public async Task ObliviousMember_Simple()
+        {
+            var source = @"
+public class C
+{
+    public string Field;
+    public string Property { get; set; }
+    public string Method(string x) => throw null!;
+    public string ArrowExpressionProperty => throw null!;
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.ArrowExpressionProperty.get -> string
+C.C() -> void
+C.Field -> string
+C.Method(string x) -> string
+C.Property.get -> string
+C.Property.set -> void";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(4, 19, DeclarePublicApiAnalyzer.AnnotateApiRule, "Field"),
+                GetCSharpResultAt(4, 19, DeclarePublicApiAnalyzer.ObliviousApiRule, "Field"),
+                GetCSharpResultAt(5, 30, DeclarePublicApiAnalyzer.AnnotateApiRule, "Property.get"),
+                GetCSharpResultAt(5, 30, DeclarePublicApiAnalyzer.ObliviousApiRule, "Property.get"),
+                GetCSharpResultAt(5, 35, DeclarePublicApiAnalyzer.AnnotateApiRule, "Property.set"),
+                GetCSharpResultAt(5, 35, DeclarePublicApiAnalyzer.ObliviousApiRule, "Property.set"),
+                GetCSharpResultAt(6, 19, DeclarePublicApiAnalyzer.AnnotateApiRule, "Method"),
+                GetCSharpResultAt(6, 19, DeclarePublicApiAnalyzer.ObliviousApiRule, "Method"),
+                GetCSharpResultAt(7, 46, DeclarePublicApiAnalyzer.AnnotateApiRule, "ArrowExpressionProperty.get"),
+                GetCSharpResultAt(7, 46, DeclarePublicApiAnalyzer.ObliviousApiRule, "ArrowExpressionProperty.get")
+                );
+        }
+
+        [Fact]
+        public async Task ObliviousMember_AlreadyMarkedAsOblivious()
+        {
+            var source = @"
+public class C
+{
+    public string Field;
+    public D<string
+#nullable enable
+        > Field2;
+#nullable disable
+    public string Property { get; set; }
+    public void Method(string x) => throw null!;
+    public string Method2() => throw null!;
+    public string ArrowExpressionProperty => throw null!;
+#nullable enable
+    public D<string>.E<
+#nullable disable
+        string
+#nullable enable
+            > Method3() => throw null!;
+#nullable disable
+    public string this[string x] { get => throw null!; set => throw null!; }
+}
+public class D<T> { public class E<T> { } }
+";
+
+            var shippedText = @"#nullable enable
+C
+~C.ArrowExpressionProperty.get -> string
+C.C() -> void
+~C.Field -> string
+~C.Field2 -> D<string>!
+~C.Method(string x) -> void
+~C.Method2() -> string
+~C.Property.get -> string
+~C.Property.set -> void
+~C.Method3() -> D<string!>.E<string>!
+~C.this[string x].set -> void
+~C.this[string x].get -> string
+D<T>
+D<T>.D() -> void
+D<T>.E<T>
+D<T>.E<T>.E() -> void";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(4, 19, DeclarePublicApiAnalyzer.ObliviousApiRule, "Field"),
+                GetCSharpResultAt(7, 11, DeclarePublicApiAnalyzer.ObliviousApiRule, "Field2"),
+                GetCSharpResultAt(9, 30, DeclarePublicApiAnalyzer.ObliviousApiRule, "Property.get"),
+                GetCSharpResultAt(9, 35, DeclarePublicApiAnalyzer.ObliviousApiRule, "Property.set"),
+                GetCSharpResultAt(10, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "Method"),
+                GetCSharpResultAt(11, 19, DeclarePublicApiAnalyzer.ObliviousApiRule, "Method2"),
+                GetCSharpResultAt(12, 46, DeclarePublicApiAnalyzer.ObliviousApiRule, "ArrowExpressionProperty.get"),
+                GetCSharpResultAt(18, 15, DeclarePublicApiAnalyzer.ObliviousApiRule, "Method3"),
+                GetCSharpResultAt(20, 36, DeclarePublicApiAnalyzer.ObliviousApiRule, "this.get"),
+                GetCSharpResultAt(20, 56, DeclarePublicApiAnalyzer.ObliviousApiRule, "this.set")
+                );
+        }
+
         #endregion
 
         #region Fix tests
@@ -1034,7 +1135,7 @@ C.OldField -> string?";
             var source = @"
 public class C
 {
-    public string {|RS0016:ChangedField|}; // oblivious
+    public string {|RS0039:{|RS0016:ChangedField|}|}; // oblivious
 }
 ";
             var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";
@@ -1043,8 +1144,27 @@ C.C() -> void
 {|RS0017:C.ChangedField -> string?|}";
             var fixedUnshippedText = @"C
 C.C() -> void
-C.ChangedField -> string";
+~C.ChangedField -> string";
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
 
+        [Fact]
+        public async Task TestAddAndRemoveMembers_CSharp_Fix_WithAddedNullability_WithOblivious()
+        {
+            var source = @"
+#nullable enable
+public class C
+{
+    public string? {|RS0016:ChangedField|};
+}
+";
+            var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";
+            var unshippedText = @"C
+C.C() -> void
+{|RS0017:~C.ChangedField -> string|}";
+            var fixedUnshippedText = @"C
+C.C() -> void
+C.ChangedField -> string?";
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }
 

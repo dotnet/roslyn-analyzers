@@ -155,7 +155,7 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class SomeClass
 {
     public string GetDate()
     {
@@ -163,7 +163,7 @@ public class Foo
     }
 }
 
-public class Bar : Foo
+public class SometOtherClass : SomeClass
 {
     public DateTime Date
     {
@@ -180,7 +180,7 @@ public class Bar : Foo
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
-public class Foo
+public class SomeClass
 {
     public DateTime Date
     {
@@ -188,7 +188,7 @@ public class Foo
     }         
 }
 
-public class Bar : Foo
+public class SometOtherClass : SomeClass
 {
     public string GetDate()
     {
@@ -274,14 +274,14 @@ End Class");
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-Public Class Foo
+Public Class SomeClass
     Public Function GetDate() As String
         Return DateTime.Today.ToString()
     End Function
 End Class
 
-Public Class Bar 
-    Inherits Foo
+Public Class SometOtherClass 
+    Inherits SomeClass
     Public ReadOnly Property [Date]() As DateTime
         Get
             Return DateTime.Today
@@ -298,15 +298,15 @@ End Class",
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
-Public Class Foo
+Public Class SomeClass
     Public ReadOnly Property [Date]() As DateTime
         Get
             Return DateTime.Today
         End Get
     End Property
 End Class
-Public Class Bar 
-    Inherits Foo
+Public Class SometOtherClass 
+    Inherits SomeClass
     Public Function GetDate() As String
         Return DateTime.Today.ToString()
     End Function
@@ -519,25 +519,25 @@ End Class
 public class MyBaseClass
 {
     public virtual int GetValue(int i) => i;
-    public virtual int Foo { get; }
+    public virtual int Something { get; }
 }
 
 public class MyClass : MyBaseClass
 {
     public virtual int Value { get; }
-    public virtual int GetFoo(int i) => i;
+    public virtual int GetSomething(int i) => i;
 }
 
 public class MySubClass : MyClass
 {
     public override int GetValue(int i) => 2;
     public override int Value => 2;
-    public override int GetFoo(int i) => 2;
-    public override int Foo => 2;
+    public override int GetSomething(int i) => 2;
+    public override int Something => 2;
 }
 ",
             GetCA1721CSharpResultAt(line: 10, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"),
-            GetCA1721CSharpResultAt(line: 11, column: 24, identifierName: "Foo", otherIdentifierName: "GetFoo"));
+            GetCA1721CSharpResultAt(line: 11, column: 24, identifierName: "Something", otherIdentifierName: "GetSomething"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class MyBaseClass
@@ -545,7 +545,7 @@ Public Class MyBaseClass
         Return i
     End Function
 
-    Public Overridable ReadOnly Property Foo As Integer
+    Public Overridable ReadOnly Property Something As Integer
 End Class
 
 Public Class [MyClass]
@@ -553,7 +553,7 @@ Public Class [MyClass]
 
     Public Overridable ReadOnly Property Value As Integer
 
-    Public Overridable Function GetFoo(ByVal i As Integer) As Integer
+    Public Overridable Function GetSomething(ByVal i As Integer) As Integer
         Return i
     End Function
 End Class
@@ -571,11 +571,11 @@ Public Class MySubClass
         End Get
     End Property
 
-    Public Overrides Function GetFoo(ByVal i As Integer) As Integer
+    Public Overrides Function GetSomething(ByVal i As Integer) As Integer
         Return 2
     End Function
 
-    Public Overrides ReadOnly Property Foo As Integer
+    Public Overrides ReadOnly Property Something As Integer
         Get
             Return 2
         End Get
@@ -583,7 +583,181 @@ Public Class MySubClass
 End Class
 ",
             GetCA1721BasicResultAt(line: 13, column: 42, identifierName: "Value", otherIdentifierName: "GetValue"),
-            GetCA1721BasicResultAt(line: 15, column: 33, identifierName: "Foo", otherIdentifierName: "GetFoo"));
+            GetCA1721BasicResultAt(line: 15, column: 33, identifierName: "Something", otherIdentifierName: "GetSomething"));
+        }
+
+        [Fact, WorkItem(2956, "https://github.com/dotnet/roslyn-analyzers/issues/2956")]
+        public async Task CA1721_Obsolete_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C1
+{
+    [Obsolete(""Use the method."")]
+    public int PropertyValue => 1;
+
+    public int GetPropertyValue()
+    {
+        return 1;
+    }
+}
+
+public class C2
+{
+    public int PropertyValue => 1;
+
+    [Obsolete(""Use the property."")]
+    public int GetPropertyValue()
+    {
+        return 1;
+    }
+}
+
+public class C3
+{
+    [Obsolete(""Deprecated"")]
+    public int PropertyValue => 1;
+
+    [Obsolete(""Deprecated"")]
+    public int GetPropertyValue()
+    {
+        return 1;
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C1
+    <Obsolete(""Use the method."")>
+    Public ReadOnly Property PropertyValue As Integer
+        Get
+            Return 1
+        End Get
+    End Property
+
+    Public Function GetPropertyValue() As Integer
+        Return 1
+    End Function
+End Class
+
+Public Class C2
+    Public ReadOnly Property PropertyValue As Integer
+        Get
+            Return 1
+        End Get
+    End Property
+
+    <Obsolete(""Use the property."")>
+    Public Function GetPropertyValue() As Integer
+        Return 1
+    End Function
+End Class
+
+Public Class C3
+    <Obsolete(""Deprecated"")>
+    Public ReadOnly Property PropertyValue As Integer
+        Get
+            Return 1
+        End Get
+    End Property
+
+    <Obsolete(""Deprecated"")>
+    Public Function GetPropertyValue() As Integer
+        Return 1
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(2956, "https://github.com/dotnet/roslyn-analyzers/issues/2956")]
+        public async Task CA1721_OnlyOneOverloadObsolete_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    public int PropertyValue => 1;
+
+    [Obsolete(""Use the property."")]
+    public int GetPropertyValue()
+    {
+        return 1;
+    }
+
+    public int GetPropertyValue(int i)
+    {
+        return i;
+    }
+}",
+                GetCA1721CSharpResultAt(6, 16, "PropertyValue", "GetPropertyValue"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Public ReadOnly Property PropertyValue As Integer
+        Get
+            Return 1
+        End Get
+    End Property
+
+    <Obsolete(""Use the property."")>
+    Public Function GetPropertyValue() As Integer
+        Return 1
+    End Function
+
+    Public Function GetPropertyValue(i As Integer) As Integer
+        Return i
+    End Function
+End Class",
+                GetCA1721BasicResultAt(5, 30, "PropertyValue", "GetPropertyValue"));
+        }
+
+        [Fact, WorkItem(2956, "https://github.com/dotnet/roslyn-analyzers/issues/2956")]
+        public async Task CA1721_AllOverloadsObsolete_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    public int PropertyValue => 1;
+
+    [Obsolete(""Use the property."")]
+    public int GetPropertyValue()
+    {
+        return 1;
+    }
+
+    [Obsolete(""Use the property."")]
+    public int GetPropertyValue(int i)
+    {
+        return i;
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Public ReadOnly Property PropertyValue As Integer
+        Get
+            Return 1
+        End Get
+    End Property
+
+    <Obsolete(""Use the property."")>
+    Public Function GetPropertyValue() As Integer
+        Return 1
+    End Function
+
+    <Obsolete(""Use the property."")>
+    Public Function GetPropertyValue(i As Integer) As Integer
+        Return i
+    End Function
+End Class");
         }
 
         #region Helpers

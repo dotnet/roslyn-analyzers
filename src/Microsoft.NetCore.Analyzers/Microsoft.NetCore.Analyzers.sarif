@@ -325,6 +325,25 @@
             ]
           }
         },
+        "CA2012": {
+          "id": "CA2012",
+          "shortDescription": "Use ValueTasks correctly",
+          "fullDescription": "ValueTasks must only be consumed once, generally by directly awaiting them.  Attempts to consume a ValueTask multiple times may result in an exception or corruption.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2012",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "UseValueTasksCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA2100": {
           "id": "CA2100",
           "shortDescription": "Review SQL queries for security vulnerabilities",
@@ -356,6 +375,26 @@
             "category": "Globalization",
             "isEnabledByDefault": true,
             "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotRaiseReservedExceptionTypesAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2171,25 +2210,6 @@
             ]
           }
         },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "typeName": "CSharpDoNotRaiseReservedExceptionTypesAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
         "CA2207": {
           "id": "CA2207",
           "shortDescription": "Initialize value type static fields inline",
@@ -2325,25 +2345,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "typeName": "BasicDoNotRaiseReservedExceptionTypesAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }

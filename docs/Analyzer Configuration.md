@@ -171,7 +171,7 @@ Examples:
 ### Excluded symbol names
 Option Name: `excluded_symbol_names`
 
-Configurable Rules: [CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters), [CA1062](https://docs.microsoft.com/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods), CA1508, [CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope), [CA2100](https://docs.microsoft.com/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities), [CA2301](https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder), [CA2302](https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize), [CA2311](https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder), [CA2312](https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing), [CA2321](https://docs.microsoft.com/visualstudio/code-quality/ca2321), [CA2322](https://docs.microsoft.com/visualstudio/code-quality/ca2322), CA2327, CA2328, CA2329, CA2330, [CA3001](https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities), [CA3002](https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities), [CA3003](https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities), [CA3004](https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities), [CA3005](https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities), [CA3006](https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities), [CA3007](https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities), [CA3008](https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities), [CA3009](https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities), [CA3010](https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities), [CA3011](https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities), [CA3012](https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities), CA5361, CA5376, CA5377, CA5378, CA5380, CA5381, CA5382, CA5383, CA5384, CA5387, CA5388, CA5389, CA5390
+Configurable Rules: [CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters), [CA1062](https://docs.microsoft.com/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods), [CA1304](https://docs.microsoft.com/visualstudio/code-quality/ca1304), CA1508, [CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope), [CA2100](https://docs.microsoft.com/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities), [CA2301](https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder), [CA2302](https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize), [CA2311](https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder), [CA2312](https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing), [CA2321](https://docs.microsoft.com/visualstudio/code-quality/ca2321), [CA2322](https://docs.microsoft.com/visualstudio/code-quality/ca2322), CA2327, CA2328, CA2329, CA2330, [CA3001](https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities), [CA3002](https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities), [CA3003](https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities), [CA3004](https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities), [CA3005](https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities), [CA3006](https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities), [CA3007](https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities), [CA3008](https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities), [CA3009](https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities), [CA3010](https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities), [CA3011](https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities), [CA3012](https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities), CA5361, CA5376, CA5377, CA5378, CA5380, CA5381, CA5382, CA5383, CA5384, CA5387, CA5388, CA5389, CA5390
 
 Option Values: Names of symbols (separated by '|') that are excluded for analysis.
 Allowed symbol name formats:
@@ -409,3 +409,68 @@ Option Values:
 Default Value: `Heuristic`.
 
 Example: `dotnet_code_quality.CA1712.enum_values_prefix_trigger = AnyEnumValue`
+
+### Exclude indirect base types
+Option Name: `exclude_indirect_base_types`
+
+Configurable Rules: [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix)
+
+Option Values: `true` or `false`
+
+Default Value: `true`
+
+Example: `dotnet_code_quality.CA1710.exclude_indirect_base_types = true`
+
+For example, consider the code below:
+```csharp
+// An issue is always raised on this type because the suffix should be 'Exception'.
+public class MyBaseClass : Exception, IEnumerable
+{
+   // code omitted for simplicity
+}
+
+// If the option is enabled no issue is raised on 'MyClass'; otherwise an issue will
+// suggest to add the 'Exception' suffix.
+public class MyClass : MyBaseClass
+{
+   // code omitted for simplicity
+}
+```
+
+### Additional required suffixes
+Option Name: `additional_required_suffixes`
+
+Configurable Rules: [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix)
+
+Option Values: List (separated by '|') of type names with their required suffix (separated by '->').<br/>Allowed type name formats:
+  1. Type name only (includes all types with the name, regardless of the containing type or namespace)
+  2. Fully qualified names in the symbol's documentation ID format: https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format with an optional "T:" prefix.
+
+Default Value: None
+
+Examples:
+
+| Option Value | Summary |
+| --- | --- |
+|`dotnet_code_quality.CA1710.additional_required_suffixes = MyClass->Class` | All types inheriting from 'MyClass' are expected to have the 'Class' suffix |
+|`dotnet_code_quality.CA1710.additional_required_suffixes = MyClass->Class|MyNamespace.IPath->Path` | All types inheriting from 'MyClass' are expected to have the 'Class' suffix AND all types implementing 'MyNamespace.IPath' are expected to have the 'Path' suffix. |
+|`dotnet_code_quality.CA1710.additional_required_suffixes = T:System.Data.IDataReader->{}` | Allows to override built-in suffixes, in this case, all types implementing 'IDataReader' are no longer expected to end in 'Collection' |
+
+### Additional required generic interfaces
+Option Name: `additional_required_generic_interfaces`
+
+Configurable Rules: [CA1010](https://docs.microsoft.com/visualstudio/code-quality/ca1010)
+
+Option Values: List (separated by '|') of interface names with their required generic fully qualified interface (separated by '->').
+Allowed interface formats:
+  1. Interface name only (includes all interfaces with the name, regardless of the containing type or namespace)
+  2. Fully qualified names in the symbol's documentation ID format: https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format with an optional "T:" prefix.
+
+Default Value: None
+
+Examples:
+
+| Option Value | Summary |
+| --- | --- |
+|`dotnet_code_quality.CA1010.additional_required_generic_interfaces = ISomething->System.Collections.Generic.IEnumerable`\``1` | All types implementing 'ISomething' regardless of its namespace are expected to also implement 'System.Collections.Generic.IEnumerable`1'. |
+|`dotnet_code_quality.CA1010.additional_required_generic_interfaces = T:System.Collections.IDictionary->T:System.Collections.Generic.IDictionary`\``2` | All types implementing 'System.Collections.Generic.IDictionary' are expected to also implement 'System.Collections.Generic.IDictionary`2'. |

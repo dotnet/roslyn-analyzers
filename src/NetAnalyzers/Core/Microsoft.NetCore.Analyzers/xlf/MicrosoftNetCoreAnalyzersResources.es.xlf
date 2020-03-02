@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro al deserializar datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el gráfico de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetTitle">
@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro al deserializar datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el gráfico de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetTitle">
@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
         <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
-        <target state="translated">La clave de cifrado simétrica usa un vector de inicialización no predeterminado, que puede repetirse.</target>
+        <target state="translated">La clave de cifrado simétrica usa un vector de inicialización no predeterminado, que puede repetirse</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
@@ -1004,7 +1004,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza con JavaScriptSerializer inicializado con SimpleTypeResolver. Asegúrese de que se ha inicializado JavaScriptSerializer sin especificar JavaScriptTypeResolver o de que se ha inicializado con un JavaScriptTypeResolver que limite los tipos de objeto en el grafo de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza con JavaScriptSerializer inicializado con SimpleTypeResolver. Asegúrese de que se ha inicializado JavaScriptSerializer sin especificar JavaScriptTypeResolver o de que se ha inicializado con un elemento JavaScriptTypeResolver que limite los tipos de objetos del grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle">
@@ -1014,7 +1014,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza con JavaScriptSerializer inicializado con SimpleTypeResolver. Inicialice JavaScriptSerializer sin especificar JavaScriptTypeResolver, o bien inicialícelo con un JavaScriptTypeResolver que limite los tipos de objeto en el grafo de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza con JavaScriptSerializer inicializado con SimpleTypeResolver. Inicialice JavaScriptSerializer sin especificar JavaScriptTypeResolver, o bien inicialícelo con un elemento JavaScriptTypeResolver que limite los tipos de objetos del grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverTitle">
@@ -1219,7 +1219,7 @@
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro al deserializar datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el gráfico de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle">
@@ -1229,7 +1229,7 @@
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="translated">El método "{0}" no es seguro al deserializar datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el gráfico de objetos deserializados.</target>
+        <target state="translated">El método "{0}" no es seguro cuando se deserializan datos que no son de confianza sin un elemento SerializationBinder para restringir el tipo de objetos en el grafo de objetos deserializado.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeWithoutBinderSetTitle">
@@ -1790,6 +1790,36 @@
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
         <target state="translated">Considere la posibilidad de usar el control de acceso basado en rol de Azure en lugar de una firma de acceso compartido (SAS), si es posible. Si tiene que usar una firma de acceso compartido, especifique SharedAccessProtocol.HttpsOnly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyDescription">
+        <source>ValueTasks returned from member invocations are intended to be directly awaited.  Attempts to consume a ValueTask multiple times or to directly access one's result before it's known to be completed may result in an exception or corruption.  Ignoring such a ValueTask is likely an indication of a functional bug and may degrade performance.</source>
+        <target state="new">ValueTasks returned from member invocations are intended to be directly awaited.  Attempts to consume a ValueTask multiple times or to directly access one's result before it's known to be completed may result in an exception or corruption.  Ignoring such a ValueTask is likely an indication of a functional bug and may degrade performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyMessage_AccessingIncompleteResult">
+        <source>ValueTask instances should not have their result directly accessed unless the instance has already completed. Unlike Tasks, calling Result or GetAwaiter().GetResult() on a ValueTask is not guaranteed to block until the operation completes. If you can't simply await the instance, consider first checking its IsCompleted property (or asserting it's true if you know that to be the case).</source>
+        <target state="new">ValueTask instances should not have their result directly accessed unless the instance has already completed. Unlike Tasks, calling Result or GetAwaiter().GetResult() on a ValueTask is not guaranteed to block until the operation completes. If you can't simply await the instance, consider first checking its IsCompleted property (or asserting it's true if you know that to be the case).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyMessage_DoubleConsumption">
+        <source>ValueTask instances should only be consumed once, such as via an await. Consuming the same ValueTask instance multiple times can result in exceptions and data corruption.</source>
+        <target state="new">ValueTask instances should only be consumed once, such as via an await. Consuming the same ValueTask instance multiple times can result in exceptions and data corruption.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyMessage_General">
+        <source>ValueTask instances returned from method calls should be directly awaited, returned, or passed as an argument to another method call. Other usage, such as storing an instance into a local or a field, is likely an indication of a bug, as ValueTask instances must only ever be consumed once.</source>
+        <target state="new">ValueTask instances returned from method calls should be directly awaited, returned, or passed as an argument to another method call. Other usage, such as storing an instance into a local or a field, is likely an indication of a bug, as ValueTask instances must only ever be consumed once.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyMessage_Unconsumed">
+        <source>ValueTask instances returned from method calls should always be used, typically awaited. Not doing so often represents a functional bug, but even if it doesn't, it can result in degraded performance if the target method pools objects for use with ValueTasks.</source>
+        <target state="new">ValueTask instances returned from method calls should always be used, typically awaited. Not doing so often represents a functional bug, but even if it doesn't, it can result in degraded performance if the target method pools objects for use with ValueTasks.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseValueTasksCorrectlyTitle">
+        <source>Use ValueTasks correctly</source>
+        <target state="new">Use ValueTasks correctly</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

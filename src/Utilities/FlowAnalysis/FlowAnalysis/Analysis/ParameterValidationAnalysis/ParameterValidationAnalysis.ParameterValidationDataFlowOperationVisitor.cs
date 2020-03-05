@@ -367,8 +367,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                 }
             }
 
-            private readonly ConcurrentDictionary<IArgumentOperation, bool> a = new ConcurrentDictionary<IArgumentOperation, bool>();
-
             private void ProcessLambdaOrLocalFunctionInvocation(IMethodSymbol targetMethod, IOperation invocation)
             {
                 Debug.Assert(targetMethod.MethodKind == MethodKind.LambdaMethod || targetMethod.MethodKind == MethodKind.LocalFunction);

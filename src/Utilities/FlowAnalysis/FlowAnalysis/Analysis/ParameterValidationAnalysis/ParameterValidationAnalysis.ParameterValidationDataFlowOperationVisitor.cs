@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -352,7 +353,21 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
                         }
                     }
                 }
+
+                // Basic workaround to allow use of Guard fluent syntax as per https://github.com/dotnet/roslyn-analyzers/issues/3340
+                if (targetMethod.OriginalDefinition.Name == "NotNull" &&
+                    targetMethod.OriginalDefinition.ContainingType.Name == "Guard" &&
+                    operation is IInvocationOperation notNullInvocation &&
+                    notNullInvocation.Arguments.Length >= 1 &&
+                    notNullInvocation.Arguments[0].Value is IInvocationOperation argumentInvocation &&
+                    argumentInvocation.TargetMethod.Name == "Argument" &&
+                    argumentInvocation.Arguments.Length >= 1)
+                {
+                    MarkValidatedLocations(argumentInvocation.Arguments[0]);
+                }
             }
+
+            private readonly ConcurrentDictionary<IArgumentOperation, bool> a = new ConcurrentDictionary<IArgumentOperation, bool>();
 
             private void ProcessLambdaOrLocalFunctionInvocation(IMethodSymbol targetMethod, IOperation invocation)
             {

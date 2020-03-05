@@ -6222,5 +6222,152 @@ End Module"
             vbTest.ExpectedDiagnostics.AddRange(expected);
             await vbTest.RunAsync();
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(3340, "https://github.com/dotnet/roslyn-analyzers/issues/3340")]
+        public async Task CA1062_Valid_NotNullInvocationOnArgumentInfo_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Linq.Expressions;
+
+public struct ArgumentInfo<T> {}
+
+namespace FirstNamespace
+{
+    public static class Guard
+    {
+        public static ArgumentInfo<T> Argument<T>(T value, string name) => new ArgumentInfo<T>();
+
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo) => argumentInfo;
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo, string message) => argumentInfo;
+    }
+}
+
+namespace Some.Other.NamespacePart
+{
+    public static class Guard
+    {
+        public static ArgumentInfo<T> Argument<T>(T value, string name) => new ArgumentInfo<T>();
+
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo) => argumentInfo;
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo, string message) => argumentInfo;
+    }
+}
+
+namespace A
+{
+    using FirstNamespace;
+
+    public class Class1
+    {
+        public void Method1(string s1, string s2, string s3)
+        {
+            Guard.Argument(s1, nameof(s1)).NotNull();
+            var length = s1.Length;
+
+            Guard.Argument(s2, nameof(s2)).NotNull(""some message"");
+            length = s2.Length;
+
+            Guard.NotNull(Guard.Argument(s3, nameof(s3)));
+            length = s3.Length;
+        }
+    }
+}
+
+namespace B
+{
+    using FirstNamespace;
+
+    public class Class2
+    {
+        public void Method1(string s1, string s2, string s3)
+        {
+            Guard.Argument(s1, nameof(s1)).NotNull();
+            var length = s1.Length;
+
+            Guard.Argument(s2, nameof(s2)).NotNull(""some message"");
+            length = s2.Length;
+
+            Guard.NotNull(Guard.Argument(s3, nameof(s3)));
+            length = s3.Length;
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(3340, "https://github.com/dotnet/roslyn-analyzers/issues/3340")]
+        public async Task CA1062_Invalid_NotNullInvocationOnArgumentInfo_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Linq.Expressions;
+
+public struct ArgumentInfo<T> {}
+
+namespace FirstNamespace
+{
+    public static class Guard
+    {
+        public static ArgumentInfo<T> Argument<T>(T value, string name) => new ArgumentInfo<T>();
+        public static ArgumentInfo<T> Argument<T>(Expression<Func<T>> e) => new ArgumentInfo<T>();
+
+        public static ArgumentInfo<T> Create<T>(T value, string name) => new ArgumentInfo<T>();
+
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo) => argumentInfo;
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo, string message) => argumentInfo;
+
+        public static ArgumentInfo<T> Validate<T>(this ArgumentInfo<T> argumentInfo, Func<T, bool> predicate) => argumentInfo;
+    }
+}
+
+namespace SecondNamespace
+{
+    public static class AnotherGuard
+    {
+        public static ArgumentInfo<T> Argument<T>(T value, string name) => new ArgumentInfo<T>();
+        public static ArgumentInfo<T> NotNull<T>(this ArgumentInfo<T> argumentInfo) => argumentInfo;
+    }
+}
+
+namespace A
+{
+    using FirstNamespace;
+
+    public class Class1
+    {
+        public void Method1(string s1, string s2, string s3)
+        {
+            Guard.Argument(() => s1).NotNull(); // retrieving the parameter in an expression is not handled
+            var length = s1.Length;
+
+            Guard.Create(s2, nameof(s2)).NotNull(); // other invocation is not named 'Argument'
+            length = s2.Length;
+
+            Guard.Create(s3, nameof(s3)).Validate(x => x != null); // invocation is not named 'NotNull'
+            length = s3.Length;
+        }
+    }
+}
+
+namespace B
+{
+    using SecondNamespace;
+
+    public class Class2
+    {
+        public void Method2(string s1)
+        {
+            AnotherGuard.Argument(s1, nameof(s1)).NotNull(); // containing class is not named 'Guard'
+            var length = s1.Length;
+        }
+    }
+}",
+                GetCSharpResultAt(41, 26, "void Class1.Method1(string s1, string s2, string s3)", "s1"),
+                GetCSharpResultAt(44, 22, "void Class1.Method1(string s1, string s2, string s3)", "s2"),
+                GetCSharpResultAt(47, 22, "void Class1.Method1(string s1, string s2, string s3)", "s3"),
+                GetCSharpResultAt(61, 26, "void Class2.Method2(string s1)", "s1"));
+        }
     }
 }

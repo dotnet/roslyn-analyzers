@@ -122,6 +122,9 @@ dotnet_diagnostic.IDE0051.severity = warning
 # IDE0052: Remove unread private members (writes but no reads)
 dotnet_diagnostic.IDE0052.severity = warning
 
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = warning
+
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion
 

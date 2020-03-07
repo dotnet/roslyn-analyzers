@@ -114,7 +114,7 @@ visual_basic_style_unused_value_assignment_preference = unused_local_variable:wa
 dotnet_diagnostic.IDE0004.severity = warning
 
 # IDE0005: Remove unnecessary usings/imports
-dotnet_diagnostic.IDE0005.severity = suggestion
+dotnet_diagnostic.IDE0005.severity = warning
 
 # IDE0051: Remove unused private members (no reads or writes)
 dotnet_diagnostic.IDE0051.severity = suggestion
@@ -124,6 +124,7 @@ dotnet_diagnostic.IDE0052.severity = suggestion
 
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion
+
 
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]

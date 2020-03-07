@@ -128,6 +128,10 @@ dotnet_diagnostic.IDE0055.severity = warning
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion
 
+# IDE0073: File header
+dotnet_diagnostic.IDE0073.severity = warning
+file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]

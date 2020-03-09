@@ -180,6 +180,26 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
+        [Fact, WorkItem(3358, "https://github.com/dotnet/roslyn-analyzers/issues/3358")]
+        public async Task CA1012_ProtectedInternalConstructor_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public abstract class Book
+{
+    protected internal Book()
+    {
+    }
+}",
+                GetCA1012CSharpResultAt(2, 23, "Book"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public MustInherit Class Book
+    Protected Friend Sub New()
+    End Sub
+End Class",
+                GetCA1012CSharpResultAt(2, 26, "Book"));
+        }
+
         private static DiagnosticResult GetCA1012CSharpResultAt(int line, int column, string objectName)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)

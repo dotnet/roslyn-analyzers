@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(
-                        constructor => constructor.DeclaredAccessibility == Accessibility.Public);
+                        constructor => constructor.DeclaredAccessibility == Accessibility.Public || constructor.DeclaredAccessibility == Accessibility.ProtectedOrInternal);
 
                 if (hasAnyPublicConstructors)
                 {

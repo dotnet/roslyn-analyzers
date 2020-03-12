@@ -27,7 +27,7 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
-    <CodeStyleAnalyersVersion>3.3.0-beta2-19376-02</CodeStyleAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.6.0-2.20157.5</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->

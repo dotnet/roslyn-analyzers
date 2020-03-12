@@ -2,13 +2,9 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
 
 namespace MetaCompilation.Analyzers.UnitTests
 {

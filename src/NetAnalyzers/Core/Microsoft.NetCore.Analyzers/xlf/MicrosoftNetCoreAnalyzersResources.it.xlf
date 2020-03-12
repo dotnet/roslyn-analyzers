@@ -737,6 +737,21 @@
         <target state="translated">Chiamata alla funzione di derivazione di chiave obsoleta {0}.{1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseReferenceEqualsWithValueTypesDescription">
+        <source>Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.</source>
+        <target state="new">Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseReferenceEqualsWithValueTypesMessage">
+        <source>The argument for the '{0}' parameter to ReferenceEquals evaluates to the value type '{1}'. Due to value boxing, this call to ReferenceEquals will always return false.</source>
+        <target state="new">The argument for the '{0}' parameter to ReferenceEquals evaluates to the value type '{1}'. Due to value boxing, this call to ReferenceEquals will always return false.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseReferenceEqualsWithValueTypesTitle">
+        <source>Do not use ReferenceEquals with value types</source>
+        <target state="new">Do not use ReferenceEquals with value types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">Non usare l'algoritmo di crittografia non sicuro SHA1.</target>

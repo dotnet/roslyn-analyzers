@@ -743,8 +743,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesMessage">
-        <source>The argument for the '{0}' parameter to ReferenceEquals evaluates to the value type '{1}'. Due to value boxing, this call to ReferenceEquals will always return false.</source>
-        <target state="new">The argument for the '{0}' parameter to ReferenceEquals evaluates to the value type '{1}'. Due to value boxing, this call to ReferenceEquals will always return false.</target>
+        <source>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' will always return 'false'.</source>
+        <target state="new">Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' will always return 'false'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesTitle">

@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1307: Specify StringComparison
+    /// CA2013: Do not use ReferenceEquals with value types.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseReferenceEqualsWithValueTypesAnalyzer : DiagnosticAnalyzer
@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
+            DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
@@ -49,8 +49,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var referenceEqualsMethodGroup = objectType.GetMembers("ReferenceEquals").OfType<IMethodSymbol>();
                 var referenceEqualsMethod = referenceEqualsMethodGroup.GetFirstOrDefaultMemberWithParameterInfos(
-                    GetParameterInfo(objectType),
-                    GetParameterInfo(objectType));
+                    ParameterInfo.GetParameterInfo(objectType),
+                    ParameterInfo.GetParameterInfo(objectType));
 
                 if (referenceEqualsMethod == null)
                 {
@@ -71,28 +71,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         var val = argument.Value;
 
+                        // Only check through one level of conversion,
+                        // which will be either the boxing conversion to object,
+                        // or a reference type implicit conversion to object.
                         if (val is IConversionOperation conversion)
                         {
                             val = conversion.Operand;
                         }
 
-                        if (val.Type.IsValueType)
+                        if (val.Type?.IsValueType == true)
                         {
                             operationContext.ReportDiagnostic(
                                 val.CreateDiagnostic(
                                     Rule,
-                                    argument.Parameter.Name,
                                     val.Type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                         }
                     }
                 },
                 OperationKind.Invocation);
             });
-        }
-
-        private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
-        {
-            return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
         }
     }
 }

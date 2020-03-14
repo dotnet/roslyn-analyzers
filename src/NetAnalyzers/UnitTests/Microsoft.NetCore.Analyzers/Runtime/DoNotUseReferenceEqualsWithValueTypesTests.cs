@@ -59,7 +59,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCSharpResultAt(10, 36, "objA", "System.IntPtr"));
+                GetCSharpResultAt(10, 36, "System.IntPtr"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -71,7 +71,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetVisualBasicResultAt(7, 36, "objA", "System.IntPtr"));
+                GetVisualBasicResultAt(7, 36, "System.IntPtr"));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCSharpResultAt(10, 49, "objB", "int"));
+                GetCSharpResultAt(10, 49, "int"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -102,7 +102,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetVisualBasicResultAt(7, 49, "objB", "Integer"));
+                GetVisualBasicResultAt(7, 49, "Integer"));
         }
 
         [Fact]
@@ -181,7 +181,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCSharpResultAt(11, 36, "objA", "T"));
+                GetCSharpResultAt(11, 36, "T"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -193,7 +193,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetVisualBasicResultAt(7, 36, "objA", "T"));
+                GetVisualBasicResultAt(7, 36, "T"));
         }
 
         [Fact]
@@ -216,8 +216,8 @@ namespace TestNamespace
         }
     }
 }",
-                GetCSharpResultAt(13, 17, "objA", "TLeft"),
-                GetCSharpResultAt(14, 17, "objB", "TRight"));
+                GetCSharpResultAt(13, 17, "TLeft"),
+                GetCSharpResultAt(14, 17, "TRight"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -229,18 +229,122 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-                GetVisualBasicResultAt(7, 36, "objA", "TLeft"),
-                GetVisualBasicResultAt(7, 42, "objB", "TRight"));
+                GetVisualBasicResultAt(7, 36, "TLeft"),
+                GetVisualBasicResultAt(7, 42, "TRight"));
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string paramName, string typeName)
+        [Fact]
+        public async Task LeftArgumentFailsForValueTypeWhenRightIsNull()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace TestNamespace
+{
+    class TestClass
+    {
+        private static bool TestMethod()
+        {
+            return ReferenceEquals(IntPtr.Zero, null);
+        }
+    }
+}",
+                GetCSharpResultAt(10, 36, "System.IntPtr"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace TestNamespace
+    Class TestClass
+        Private Shared Function TestMethod()
+            Return ReferenceEquals(IntPtr.Zero, Nothing)
+        End Function
+    End Class
+End Namespace",
+                GetVisualBasicResultAt(7, 36, "System.IntPtr"));
+        }
+
+        [Fact]
+        public async Task RightArgumentFailsForValueTypeWhenLeftIsNull()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace TestNamespace
+{
+    class TestClass
+    {
+        private static bool TestMethod()
+        {
+            return object.ReferenceEquals(null, 4);
+        }
+    }
+}",
+                GetCSharpResultAt(10, 49, "int"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace TestNamespace
+    Class TestClass
+        Private Shared Function TestMethod()
+            Return Object.ReferenceEquals(Nothing, 4)
+        End Function
+    End Class
+End Namespace",
+                GetVisualBasicResultAt(7, 52, "Integer"));
+        }
+
+        [Fact]
+        public async Task DoNotWarnForUserDefinedConversions()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+namespace TestNamespace
+{
+    class CacheKey
+    {
+        public static explicit operator CacheKey(int value)
+        {
+            return null;
+        }
+    }
+
+    class TestClass
+    {
+        private static bool TestMethod()
+        {
+            return object.ReferenceEquals(null, (CacheKey)4);
+        }
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace TestNamespace
+    Class CacheKey
+        Public Shared Narrowing Operator CType(value as Integer) as CacheKey
+            Return Nothing
+        End Operator
+    End Class
+    Class TestClass
+        Private Shared Function TestMethod()
+            Return Object.ReferenceEquals(Nothing, CType(4, CacheKey))
+        End Function
+    End Class
+End Namespace");
+        }
+
+        private DiagnosticResult GetCSharpResultAt(int line, int column, string typeName)
             => VerifyCS.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithArguments(paramName, typeName);
+                .WithArguments(typeName);
 
-        private DiagnosticResult GetVisualBasicResultAt(int line, int column, string paramName, string callee)
+        private DiagnosticResult GetVisualBasicResultAt(int line, int column, string callee)
             => VerifyVB.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.Rule)
                 .WithLocation(line, column)
-                .WithArguments(paramName, callee);
+                .WithArguments(callee);
     }
 }

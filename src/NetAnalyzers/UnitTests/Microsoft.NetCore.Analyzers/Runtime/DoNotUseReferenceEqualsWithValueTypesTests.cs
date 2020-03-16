@@ -338,12 +338,12 @@ End Namespace");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string typeName)
-            => VerifyCS.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.Rule)
+            => VerifyCS.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.MethodRule)
                 .WithLocation(line, column)
                 .WithArguments(typeName);
 
         private DiagnosticResult GetVisualBasicResultAt(int line, int column, string callee)
-            => VerifyVB.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.Rule)
+            => VerifyVB.Diagnostic(DoNotUseReferenceEqualsWithValueTypesAnalyzer.MethodRule)
                 .WithLocation(line, column)
                 .WithArguments(callee);
     }

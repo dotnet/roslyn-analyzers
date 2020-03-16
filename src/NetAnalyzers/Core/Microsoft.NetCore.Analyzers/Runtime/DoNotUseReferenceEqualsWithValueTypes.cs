@@ -18,19 +18,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleId = "CA2013";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableComparerMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesComparerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMethodMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesMethodMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseReferenceEqualsWithValueTypesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor ComparerRule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
-            s_localizableMessage,
+            s_localizableComparerMessage,
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        internal static readonly DiagnosticDescriptor MethodRule = DiagnosticDescriptorHelper.Create(RuleId,
+            s_localizableTitle,
+            s_localizableMethodMessage,
+            DiagnosticCategory.Reliability,
+            RuleLevel.BuildWarning,
+            description: s_localizableDescription,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MethodRule, ComparerRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -41,28 +51,59 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var objectType = compilationStartContext.Compilation.GetSpecialType(SpecialType.System_Object);
 
-                // Without these symbols the rule cannot run
                 if (objectType == null)
                 {
                     return;
                 }
 
+                var objectObjectParameters = new[]
+                {
+                    ParameterInfo.GetParameterInfo(objectType),
+                    ParameterInfo.GetParameterInfo(objectType)
+                };
+
                 var referenceEqualsMethodGroup = objectType.GetMembers("ReferenceEquals").OfType<IMethodSymbol>();
                 var referenceEqualsMethod = referenceEqualsMethodGroup.GetFirstOrDefaultMemberWithParameterInfos(
-                    ParameterInfo.GetParameterInfo(objectType),
-                    ParameterInfo.GetParameterInfo(objectType));
+                    objectObjectParameters);
 
                 if (referenceEqualsMethod == null)
                 {
                     return;
                 }
 
+                var typeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
+                var referenceEqualityComparer =
+                    typeProvider.GetOrCreateTypeByMetadataName("System.Collections.Generic.ReferenceEqualityComparer");
+
+                IMethodSymbol? comparerEqualsMethod = null;
+
+                if (referenceEqualityComparer != null)
+                {
+                    var equalsMethodGroup = referenceEqualityComparer.GetMembers("Equals").OfType<IMethodSymbol>();
+                    comparerEqualsMethod = equalsMethodGroup.GetFirstOrDefaultMemberWithParameterInfos(
+                        objectObjectParameters);
+                }
+
                 compilationStartContext.RegisterOperationAction(operationContext =>
                 {
                     var invocationExpression = (IInvocationOperation)operationContext.Operation;
                     var targetMethod = invocationExpression.TargetMethod;
+                    DiagnosticDescriptor rule;
 
-                    if (!referenceEqualsMethod.Equals(targetMethod))
+                    if (targetMethod == null)
+                    {
+                        return;
+                    }
+
+                    if (referenceEqualsMethod.Equals(targetMethod))
+                    {
+                        rule = MethodRule;
+                    }
+                    else if (comparerEqualsMethod != null && comparerEqualsMethod.Equals(targetMethod))
+                    {
+                        rule = ComparerRule;
+                    }
+                    else
                     {
                         return;
                     }
@@ -83,7 +124,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             operationContext.ReportDiagnostic(
                                 val.CreateDiagnostic(
-                                    Rule,
+                                    rule,
                                     val.Type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                         }
                     }

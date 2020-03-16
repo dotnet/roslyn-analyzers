@@ -933,7 +933,10 @@
   <data name="DoNotUseReferenceEqualsWithValueTypesDescription" xml:space="preserve">
     <value>Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.</value>
   </data>
-  <data name="DoNotUseReferenceEqualsWithValueTypesMessage" xml:space="preserve">
+  <data name="DoNotUseReferenceEqualsWithValueTypesComparerMessage" xml:space="preserve">
+    <value>Do not pass an argument with value type '{0}' to the 'Equals' method on 'ReferenceEqualityComparer'. Due to value boxing, this call to 'Equals' will always return 'false'.</value>
+  </data>
+  <data name="DoNotUseReferenceEqualsWithValueTypesMethodMessage" xml:space="preserve">
     <value>Do not pass an argument with value type '{0}' to 'ReferenceEquals'. Due to value boxing, this call to 'ReferenceEquals' will always return 'false'.</value>
   </data>
   <data name="DoNotUseReferenceEqualsWithValueTypesTitle" xml:space="preserve">

@@ -2,7 +2,7 @@ resources:
 - repo: self
   clean: true
 queue:
-  name: VSEng-MicroBuildVS2017
+  name: VSEng-MicroBuildVS2019
   demands: Cmd
 variables:
   BuildConfiguration: Release

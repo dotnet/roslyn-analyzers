@@ -9,39 +9,39 @@ namespace Test.Utilities
     public static class AdditionalMetadataReferences
     {
         private static readonly ReferenceAssemblies _default =
-#if NETCOREAPP3_1
+#if NETCOREAPP
             ReferenceAssemblies.NetCore.NetCoreApp21;
 #else
             ReferenceAssemblies.Default;
 #endif
 
         public static ReferenceAssemblies Default { get; } = _default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
 #endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.0.0")));
 
         public static ReferenceAssemblies DefaultWithoutRoslynSymbols { get; } = _default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
 #endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis.Workspaces.Common", "3.0.0")));
 
         public static ReferenceAssemblies DefaultWithSystemWeb { get; } = Default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Web", "System.Web.Extensions"))
 #endif
             ;
 
         public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = Default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
             .AddPackages(ImmutableArray.Create(new PackageIdentity("AntiXSS", "4.3.0")))
 #endif
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
 
         public static ReferenceAssemblies DefaultWithSerialization { get; } = Default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Runtime.Serialization"))
 #endif
             ;
@@ -53,7 +53,7 @@ namespace Test.Utilities
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Newtonsoft.Json", "10.0.1")));
 
         public static ReferenceAssemblies DefaultWithWinForms { get; } = Default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Windows.Forms"))
 #endif
             ;
@@ -80,7 +80,7 @@ namespace Test.Utilities
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
 
         public static ReferenceAssemblies DefaultWithFullComposition { get; } = Default
-#if !NETCOREAPP3_1
+#if !NETCOREAPP
             .AddAssemblies(ImmutableArray.Create("System.Composition.AttributedModel", "System.ComponentModel.Composition"))
 #endif
             ;

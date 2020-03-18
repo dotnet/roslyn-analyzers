@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
         private sealed class Impl
         {
-            private const char obliviousMarker = '~';
+            private const char ObliviousMarker = '~';
 
             private static readonly ImmutableArray<MethodKind> s_ignorableMethodKinds
                 = ImmutableArray.Create(MethodKind.EventAdd, MethodKind.EventRemove);
@@ -192,9 +192,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            static string WithObliviousMarker(string name)
+            private static string WithObliviousMarker(string name)
             {
-                return obliviousMarker + name;
+                return ObliviousMarker + name;
             }
 
             /// <param name="symbol">The symbol to analyze.</param>
@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 bool symbolUsesOblivious = false;
                 if (_useNullability)
                 {
-                    symbolUsesOblivious  = UsesOblivious(symbol);
+                    symbolUsesOblivious = UsesOblivious(symbol);
                     if (symbolUsesOblivious)
                     {
                         reportObliviousApi(symbol);
@@ -544,7 +544,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 return string.Empty;
             }
 
-            static bool UsesOblivious(ISymbol symbol)
+            private static bool UsesOblivious(ISymbol symbol)
             {
                 var detector = new ObliviousDetector();
                 return detector.Visit(symbol);
@@ -599,7 +599,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private static bool ContainsPublicApiName(string apiLineText, string publicApiNameToSearch)
             {
-                apiLineText = apiLineText.Trim(obliviousMarker);
+                apiLineText = apiLineText.Trim(ObliviousMarker);
 
                 // Ensure we don't search in parameter list/return type.
                 var indexOfParamsList = apiLineText.IndexOf('(');
@@ -758,7 +758,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <summary>
             /// Various Visit* methods return true if an oblivious reference type is detected.
             /// </summary>
-            private class ObliviousDetector : SymbolVisitor<bool>
+            private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
                 private bool _isTypeDeclaration = true;
 

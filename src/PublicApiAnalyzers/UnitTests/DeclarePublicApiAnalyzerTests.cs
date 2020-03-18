@@ -1003,6 +1003,72 @@ D<T>.E<T>.E() -> void";
                 );
         }
 
+        [Fact]
+        public async Task ObliviousMember_AlreadyMarkedAsOblivious_TypeParametersWithClassConstraint()
+        {
+            var source = @"
+public class C
+{
+    public void M<T>(T t) where T : class { }
+
+#nullable enable
+    public void M2<T>(T t) where T : class { }
+    public void M3<T>(T t) where T : class? { }
+#nullable disable
+}
+public class D<T> where T : class { }
+public class E { public class F<T> where T : class { } }
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+~C.M<T>(T t) -> void
+C.M2<T>(T! t) -> void
+C.M3<T>(T t) -> void
+~D<T>
+D<T>.D() -> void
+E
+E.E() -> void
+~E.F<T>
+E.F<T>.F() -> void
+";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(4, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M<T>"),
+                GetCSharpResultAt(11, 14, DeclarePublicApiAnalyzer.ObliviousApiRule, "D<T>"),
+                GetCSharpResultAt(12, 31, DeclarePublicApiAnalyzer.ObliviousApiRule, "F<T>")
+                );
+        }
+
+        [Fact]
+        public async Task ObliviousMember_AlreadyMarkedAsOblivious_TypeParametersWithNotNullConstraint()
+        {
+            var source = @"
+public class C
+{
+    public void M<T>(T t) where T : notnull { }
+
+#nullable enable
+    public void M2<T>(T t) where T : notnull { }
+#nullable disable
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+C.M<T>(T t) -> void
+C.M2<T>(T t) -> void
+";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
         #endregion
 
         #region Fix tests
@@ -1015,7 +1081,7 @@ public class C
 {
     public int Field;
     public int Property { get; set; }
-    public void Method() { } 
+    public void Method() { }
     public int ArrowExpressionProperty => 0;
 
     public int {|RS0016:NewField|}; // Newly added field, not in current public API.

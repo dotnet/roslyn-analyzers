@@ -546,8 +546,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private static bool UsesOblivious(ISymbol symbol)
             {
-                var detector = new ObliviousDetector();
-                return detector.Visit(symbol);
+                if (symbol.Kind == SymbolKind.NamedType)
+                {
+                    return ObliviousDetector.TypeDeclarationInstance.Visit(symbol);
+                }
+
+                return ObliviousDetector.Instance.Visit(symbol);
             }
 
             private ApiName GetPublicApiName(ISymbol symbol)
@@ -760,17 +764,23 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
-                private bool _isTypeDeclaration = true;
+                public readonly static ObliviousDetector TypeDeclarationInstance = new ObliviousDetector(forTypeDeclaration: true);
+                public readonly static ObliviousDetector Instance = new ObliviousDetector(forTypeDeclaration: false);
+
+                private readonly bool _forTypeDeclaration;
+
+                private ObliviousDetector(bool forTypeDeclaration)
+                {
+                    _forTypeDeclaration = forTypeDeclaration;
+                }
 
                 public override bool VisitField(IFieldSymbol symbol)
                 {
-                    _isTypeDeclaration = false;
                     return Visit(symbol.Type);
                 }
 
                 public override bool VisitMethod(IMethodSymbol symbol)
                 {
-                    _isTypeDeclaration = false;
                     if (Visit(symbol.ReturnType))
                     {
                         return true;
@@ -784,12 +794,20 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
+                    foreach (var typeParameter in symbol.TypeParameters)
+                    {
+                        if (Visit(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
                     return false;
                 }
 
                 public override bool VisitNamedType(INamedTypeSymbol symbol)
                 {
-                    if (!_isTypeDeclaration)
+                    if (!_forTypeDeclaration)
                     {
                         if (symbol.ContainingType is INamedTypeSymbol containing)
                         {
@@ -814,6 +832,14 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
+                    foreach (var typeParameter in symbol.TypeParameters)
+                    {
+                        if (Instance.Visit(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
                     return false;
                 }
 
@@ -830,6 +856,17 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 public override bool VisitPointerType(IPointerTypeSymbol symbol)
                 {
                     return Visit(symbol.PointedAtType);
+                }
+
+                public override bool VisitTypeParameter(ITypeParameterSymbol symbol)
+                {
+                    if (symbol.IsReferenceType &&
+                        symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 }
             }
         }

@@ -285,6 +285,27 @@ C.C() -> void
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, newShippedApiText: shippedText, fixedUnshippedText);
         }
 
+        [Fact]
+        public async Task LegacyAPIShouldBeAnnotatedWithObliviousMarker_ShippedFile()
+        {
+            var source = @"
+public class C
+{
+    public string {|RS0036:{|RS0039:Field|}|}; // oblivious
+}
+";
+            var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}
+C
+C.C() -> void
+C.Field -> string";
+            var unshippedText = @"";
+            var fixedShippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}
+C
+C.C() -> void
+~C.Field -> string";
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedShippedText, newUnshippedApiText: unshippedText);
+        }
+
         #endregion
     }
 }

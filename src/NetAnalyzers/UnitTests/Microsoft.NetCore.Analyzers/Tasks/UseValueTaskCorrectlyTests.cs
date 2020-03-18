@@ -1111,6 +1111,14 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                         _ = Helpers.ReturnsValueTask();
                         _ = Helpers.ReturnsValueTaskOfT<string>();
                         _ = Helpers.ReturnsValueTaskOfInt();
+
+                        _ = Helpers.ReturnsValueTask().Preserve();
+                        _ = Helpers.ReturnsValueTaskOfT<string>().Preserve();
+                        _ = Helpers.ReturnsValueTaskOfInt().Preserve();
+
+                        _ = Helpers.ReturnsValueTask().AsTask();
+                        _ = Helpers.ReturnsValueTaskOfT<string>().AsTask();
+                        _ = Helpers.ReturnsValueTaskOfInt().AsTask();
                     }
                 }"),
                 GetCSharpResultAt(9, 29, UseValueTasksCorrectlyAnalyzer.GeneralRule),

@@ -80,14 +80,14 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             foreach (string name in newSymbolNames)
             {
-                InsertInList(lines, name);
+                insertInList(lines, name);
             }
 
             SourceText newSourceText = sourceText.Replace(new TextSpan(0, sourceText.Length), string.Join(Environment.NewLine, lines) + GetEndOfFileText(sourceText));
             return newSourceText;
 
             // Insert name at the first suitable position
-            static void InsertInList(List<string> list, string name)
+            static void insertInList(List<string> list, string name)
             {
                 for (int i = 0; i < list.Count; i++)
                 {

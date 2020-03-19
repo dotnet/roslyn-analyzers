@@ -49,5 +49,18 @@ namespace Analyzer.Utilities.Extensions
             // ASCII encoding replaces non-ascii with question marks, so we use UTF8 to see if multi-byte sequences are there
             return Encoding.UTF8.GetByteCount(value) == value.Length;
         }
+
+        /// <summary>
+        /// Simple wrapping helper around the Contains to avoid conditional code.
+        /// </summary>
+        public static bool Contains(this string @string, string value, StringComparison comparisonType)
+        {
+            return @string.Contains(value
+#if NETCOREAPP3_1
+                , StringComparison.Ordinal
+#endif
+                );
+
+        }
     }
 }

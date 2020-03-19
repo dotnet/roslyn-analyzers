@@ -53,11 +53,7 @@ namespace Analyzer.Utilities
 
                 if (parts.SymbolName.Equals(".ctor", StringComparison.Ordinal) ||
                     parts.SymbolName.Equals(".cctor", StringComparison.Ordinal) ||
-#if NETCOREAPP3_1
                     !parts.SymbolName.Contains(".", StringComparison.Ordinal) && !parts.SymbolName.Contains(":", StringComparison.Ordinal))
-#else
-                    !parts.SymbolName.Contains(".") && !parts.SymbolName.Contains(":"))
-#endif
                 {
                     if (!namesBuilder.ContainsKey(parts.SymbolName))
                     {

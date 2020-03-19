@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
+using Analyzer.Utilities.Extensions;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectSuffixAnalyzer,
@@ -1757,11 +1758,7 @@ public class SomeSubSubClass : SomeSubClass {}"
                 }
             };
 
-#if NETCOREAPP3_1
             if (editorConfigText.Contains("exclude_indirect_base_types = false", StringComparison.Ordinal))
-#else
-            if (editorConfigText.Contains("exclude_indirect_base_types = false"))
-#endif
             {
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
@@ -1832,11 +1829,7 @@ End Class"
                 }
             };
 
-#if NETCOREAPP3_1
             if (editorConfigText.Contains("exclude_indirect_base_types = false", StringComparison.Ordinal))
-#else
-            if (editorConfigText.Contains("exclude_indirect_base_types = false"))
-#endif
             {
                 vbTest.ExpectedDiagnostics.AddRange(new[]
                 {

@@ -1069,6 +1069,76 @@ C.M2<T>(T t) -> void
             await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
+        [Fact]
+        public async Task ObliviousMember_AlreadyMarkedAsOblivious_TypeParametersWithMiscConstraints()
+        {
+            var source = @"
+public interface I { }
+public class C
+{
+    public void M1<T>(T t) where T : I { }
+    public void M2<T>(T t) where T : C { }
+    public void M3<T, U>(T t, U u) where T : U where U : class { }
+
+#nullable enable
+    public void M1b<T>(T t) where T : I { }
+    public void M2b<T>(T t) where T : C? { }
+    public void M3b<T, U>(T t, U u) where T : U where U : class { }
+#nullable disable
+}
+";
+
+            var shippedText = @"#nullable enable
+I
+C
+C.C() -> void
+C.M1<T>(T t) -> void
+~C.M2<T>(T t) -> void
+~C.M3<T, U>(T t, U u) -> void
+C.M1b<T>(T t) -> void
+C.M2b<T>(T t) -> void
+C.M3b<T, U>(T t, U! u) -> void
+";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(6, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M2<T>"),
+                GetCSharpResultAt(7, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M3<T, U>")
+                );
+        }
+
+        [Fact]
+        public async Task ObliviousMember_AlreadyMarkedAsOblivious_TypeParametersWithMiscConstraints2()
+        {
+            var source = @"
+public interface I<T> { }
+public class C
+{
+#nullable enable
+    public void M1<T>() where T : I<
+#nullable disable
+        string
+#nullable enable
+            > { }
+#nullable disable
+}
+";
+
+            var shippedText = @"#nullable enable
+I<T>
+C
+C.C() -> void
+~C.M1<T>() -> void
+";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(6, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M1<T>")
+                );
+        }
+
         #endregion
 
         #region Fix tests

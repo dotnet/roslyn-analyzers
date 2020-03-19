@@ -312,6 +312,21 @@
         <target state="translated">在從相對封存項目路徑建立「方法 {1} 中的 {0}」路徑以擷取檔案，而且來源是未受信任的 ZIP 封存時，請務必處理相對封存項目路徑「方法 {3} 中的 {2}」</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesDescription">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesMessage">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesTitle">
+        <source>Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</source>
+        <target state="new">Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">請勿利用 URL 新增結構描述</target>

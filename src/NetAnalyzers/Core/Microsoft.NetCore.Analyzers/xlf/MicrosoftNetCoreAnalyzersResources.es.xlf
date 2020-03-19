@@ -312,6 +312,21 @@
         <target state="translated">Cuando se crea la ruta de acceso para "{0}" en el método {1} desde la ruta de acceso relativa del elemento de archivo para extraer el archivo y el origen es un archivo zip que no es de confianza, asegúrese de corregir la ruta relativa del elemento de archivo "{2}" en el método "{3}".</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesDescription">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesMessage">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesTitle">
+        <source>Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</source>
+        <target state="new">Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">No agregar el esquema por dirección URL</target>

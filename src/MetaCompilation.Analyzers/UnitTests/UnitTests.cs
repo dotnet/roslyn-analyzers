@@ -2,13 +2,9 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<MetaCompilation.Analyzers.MetaCompilationAnalyzer, MetaCompilation.Analyzers.MetaCompilationCodeFixProvider>;
 
 namespace MetaCompilation.Analyzers.UnitTests
 {
@@ -373,7 +369,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
 
@@ -498,7 +494,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(24, 17, 24, 32).WithArguments("defaultSeverity")
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
 
@@ -600,7 +596,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
 
@@ -702,7 +698,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
 
@@ -804,7 +800,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
 
@@ -906,7 +902,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRule).WithSpan(18, 29, 18, 42),
                     },
                 },
-                CodeFixEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
+                CodeActionEquivalenceKey = "Give the diagnostic a unique string ID distinguishing it from other diagnostics",
             }.RunAsync();
         }
         #endregion
@@ -1014,7 +1010,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+                CodeActionEquivalenceKey = "Insert the missing Initialize method",
             }.RunAsync();
         }
 
@@ -1132,7 +1128,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(41, 13, 41, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+                CodeActionEquivalenceKey = "Insert the missing Initialize method",
             }.RunAsync();
         }
 
@@ -1292,7 +1288,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(64, 13, 64, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Insert the missing Initialize method",
+                CodeActionEquivalenceKey = "Insert the missing Initialize method",
             }.RunAsync();
         }
         #endregion
@@ -1409,7 +1405,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(45, 13, 45, 49).WithArguments("context"),
                     },
                 },
-                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+                CodeActionEquivalenceKey = "Register an action to analyze code when changes occur",
             }.RunAsync();
         }
 
@@ -1525,7 +1521,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(45, 13, 45, 49).WithArguments("context"),
                     },
                 },
-                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+                CodeActionEquivalenceKey = "Register an action to analyze code when changes occur",
             }.RunAsync();
         }
 
@@ -1640,7 +1636,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(42, 13, 42, 49).WithArguments("context"),
                     },
                 },
-                CodeFixEquivalenceKey = "Register an action to analyze code when changes occur",
+                CodeActionEquivalenceKey = "Register an action to analyze code when changes occur",
             }.RunAsync();
         }
         #endregion
@@ -1759,7 +1755,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
 
@@ -1873,7 +1869,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
 
@@ -1987,7 +1983,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
 
@@ -2104,7 +2100,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
 
@@ -2221,7 +2217,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(36, 46, 36, 54).WithArguments("Practice"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
 
@@ -2333,7 +2329,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 56, 33, 66).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove multiple registered actions from the Initialize method",
+                CodeActionEquivalenceKey = "Remove multiple registered actions from the Initialize method",
             }.RunAsync();
         }
         #endregion
@@ -2436,7 +2432,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(31, 30, 31, 40).WithArguments("Initialize"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -2546,7 +2542,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -2656,7 +2652,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -2766,7 +2762,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -2876,7 +2872,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -2980,7 +2976,7 @@ namespace SyntaxNodeAnalyzer
                     {
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3096,7 +3092,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 65, 33, 75).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3200,7 +3196,7 @@ namespace SyntaxNodeAnalyzer
                     {
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3312,7 +3308,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3422,7 +3418,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3526,7 +3522,7 @@ namespace SyntaxNodeAnalyzer
                     {
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3636,7 +3632,7 @@ namespace SyntaxNodeAnalyzer
                         DiagnosticResult.CompilerError("CS0103").WithSpan(33, 70, 33, 80).WithArguments("SyntaxKind"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3740,7 +3736,7 @@ namespace SyntaxNodeAnalyzer
                     {
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3852,7 +3848,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(34, 17, 34, 29),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -3952,7 +3948,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingRegisterStatement).WithSpan(31, 34, 31, 44).WithArguments("Initialize"),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -4054,7 +4050,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(33, 17, 33, 29),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
 
@@ -4176,7 +4172,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(35, 17, 35, 29),
                     },
                 },
-                CodeFixEquivalenceKey = "Remove invalid statements from the Initialize method",
+                CodeActionEquivalenceKey = "Remove invalid statements from the Initialize method",
             }.RunAsync();
         }
         #endregion
@@ -4286,7 +4282,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Analyze the correct SyntaxKind",
+                CodeActionEquivalenceKey = "Analyze the correct SyntaxKind",
             }.RunAsync();
         }
         #endregion
@@ -4396,7 +4392,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.MissingAnalysisMethod).WithSpan(35, 46, 35, 64).WithArguments("AnalyzeIfStatement"),
                     },
                 },
-                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+                CodeActionEquivalenceKey = "Add the correct arguments to the Initialize method",
             }.RunAsync();
         }
 
@@ -4511,7 +4507,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(40, 13, 40, 49).WithArguments("context"),
                     },
                 },
-                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+                CodeActionEquivalenceKey = "Add the correct arguments to the Initialize method",
             }.RunAsync();
         }
 
@@ -4626,7 +4622,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.IfStatementIncorrect).WithSpan(40, 13, 40, 49).WithArguments("context"),
                     },
                 },
-                CodeFixEquivalenceKey = "Add the correct arguments to the Initialize method",
+                CodeActionEquivalenceKey = "Add the correct arguments to the Initialize method",
             }.RunAsync();
         }
         #endregion
@@ -4742,7 +4738,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+                CodeActionEquivalenceKey = "Implement the correct signature for the Initialize method",
             }.RunAsync();
         }
 
@@ -4855,7 +4851,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+                CodeActionEquivalenceKey = "Implement the correct signature for the Initialize method",
             }.RunAsync();
         }
 
@@ -4968,7 +4964,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+                CodeActionEquivalenceKey = "Implement the correct signature for the Initialize method",
             }.RunAsync();
         }
 
@@ -5079,7 +5075,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+                CodeActionEquivalenceKey = "Implement the correct signature for the Initialize method",
             }.RunAsync();
         }
 
@@ -5190,7 +5186,7 @@ namespace SyntaxNodeAnalyzer
                         VerifyCS.Diagnostic(MetaCompilationAnalyzer.InvalidStatement).WithSpan(37, 13, 37, 49),
                     },
                 },
-                CodeFixEquivalenceKey = "Implement the correct signature for the Initialize method",
+                CodeActionEquivalenceKey = "Implement the correct signature for the Initialize method",
             }.RunAsync();
         }
         #endregion

@@ -272,11 +272,10 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
 
                 var builder = new StringBuilder();
                 builder.Append(@"
-Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
---------|---------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
+Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
+--------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
 ");
 
-                var index = 1;
                 foreach (var ruleById in allRulesById)
                 {
                     string ruleId = ruleById.Key;
@@ -300,8 +299,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Descriptio
                     // lines don't break the markdown table formatting.
                     description = System.Text.RegularExpressions.Regex.Replace(description, "\r?\n", "<br>");
 
-                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {descriptor.DefaultSeverity} | {hasCodeFix} | {description} |");
-                    index++;
+                    builder.AppendLine($"{ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {descriptor.DefaultSeverity} | {hasCodeFix} | {description} |");
                 }
 
                 File.WriteAllText(fileWithPath, builder.ToString());

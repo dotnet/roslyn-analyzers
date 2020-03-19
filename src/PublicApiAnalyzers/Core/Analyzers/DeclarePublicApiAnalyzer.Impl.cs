@@ -796,7 +796,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     foreach (var typeParameter in symbol.TypeParameters)
                     {
-                        if (TypeDeclarationInstance.Visit(typeParameter))
+                        if (Visit(typeParameter))
                         {
                             return true;
                         }
@@ -834,7 +834,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     foreach (var typeParameter in symbol.TypeParameters)
                     {
-                        if (Instance.Visit(typeParameter))
+                        if (Visit(typeParameter))
                         {
                             return true;
                         }
@@ -860,17 +860,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 public override bool VisitTypeParameter(ITypeParameterSymbol symbol)
                 {
-                    if (!_forTypeDeclaration)
+                    if (symbol.HasReferenceTypeConstraint() && symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
                     {
-                        if (symbol.IsReferenceType && symbol.NullableAnnotation() == NullableAnnotation.None)
-                        {
-                            return true;
-                        }
-
-                        if (symbol.HasReferenceTypeConstraint() && symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
 
                     foreach (var constraintType in symbol.ConstraintTypes)

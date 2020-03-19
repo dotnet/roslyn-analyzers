@@ -1076,14 +1076,14 @@ C.M2<T>(T t) -> void
 public interface I { }
 public class C
 {
-    public void M1<T>(T t) where T : I { }
-    public void M2<T>(T t) where T : C { }
-    public void M3<T, U>(T t, U u) where T : U where U : class { }
+    public void M1<T>() where T : I { }
+    public void M2<T>() where T : C { }
+    public void M3<T, U>() where T : U where U : class { }
 
 #nullable enable
-    public void M1b<T>(T t) where T : I { }
-    public void M2b<T>(T t) where T : C? { }
-    public void M3b<T, U>(T t, U u) where T : U where U : class { }
+    public void M1b<T>() where T : I { }
+    public void M2b<T>() where T : C? { }
+    public void M3b<T, U>() where T : U where U : class { }
 #nullable disable
 }
 ";
@@ -1092,17 +1092,18 @@ public class C
 I
 C
 C.C() -> void
-C.M1<T>(T t) -> void
-~C.M2<T>(T t) -> void
-~C.M3<T, U>(T t, U u) -> void
-C.M1b<T>(T t) -> void
-C.M2b<T>(T t) -> void
-C.M3b<T, U>(T t, U! u) -> void
+~C.M1<T>() -> void
+~C.M2<T>() -> void
+~C.M3<T, U>() -> void
+C.M1b<T>() -> void
+C.M2b<T>() -> void
+C.M3b<T, U>() -> void
 ";
 
             var unshippedText = @"";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText,
+                GetCSharpResultAt(5, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M1<T>"),
                 GetCSharpResultAt(6, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M2<T>"),
                 GetCSharpResultAt(7, 17, DeclarePublicApiAnalyzer.ObliviousApiRule, "M3<T, U>")
                 );

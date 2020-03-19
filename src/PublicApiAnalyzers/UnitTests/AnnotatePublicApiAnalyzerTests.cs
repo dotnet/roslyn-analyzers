@@ -272,7 +272,7 @@ C.ChangedField -> string?";
             var source = @"
 public class C
 {
-    public string {|RS0036:{|RS0039:Field|}|}; // oblivious
+    public string {|RS0036:{|RS0041:Field|}|}; // oblivious
 }
 ";
             var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";
@@ -291,7 +291,7 @@ C.C() -> void
             var source = @"
 public class C
 {
-    public string {|RS0036:{|RS0039:Field|}|}; // oblivious
+    public string {|RS0036:{|RS0041:Field|}|}; // oblivious
 }
 ";
             var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}

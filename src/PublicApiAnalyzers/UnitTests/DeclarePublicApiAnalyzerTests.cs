@@ -1201,7 +1201,7 @@ C.OldField -> string?";
             var source = @"
 public class C
 {
-    public string {|RS0039:{|RS0016:ChangedField|}|}; // oblivious
+    public string {|RS0041:{|RS0016:ChangedField|}|}; // oblivious
 }
 ";
             var shippedText = $@"{DeclarePublicApiAnalyzer.NullableEnable}";

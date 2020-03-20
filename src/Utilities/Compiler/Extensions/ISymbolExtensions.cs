@@ -614,18 +614,6 @@ namespace Analyzer.Utilities.Extensions
             };
         }
 
-        public static bool IsReadOnlyFieldOrProperty([NotNullWhen(returnValue: true)] this ISymbol? symbol)
-        {
-            return symbol switch
-            {
-                IFieldSymbol field => field.IsReadOnly,
-
-                IPropertySymbol property => property.IsReadOnly,
-
-                _ => false,
-            };
-        }
-
         /// <summary>
         /// Returns a value indicating whether the specified symbol has the specified
         /// attribute.

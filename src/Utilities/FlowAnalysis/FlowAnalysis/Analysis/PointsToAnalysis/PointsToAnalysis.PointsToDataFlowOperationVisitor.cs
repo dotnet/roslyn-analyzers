@@ -914,7 +914,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis
             {
                 return symbol.IsStatic &&
                     symbol.Name.Equals("Empty", StringComparison.Ordinal) &&
-                    (symbol.IsReadOnlyFieldOrProperty() || symbol.Kind == SymbolKind.Method) &&
+                    (symbol.IsReadOnly() || symbol.Kind == SymbolKind.Method) &&
                     (symbol.ContainingType.SpecialType != SpecialType.None ||
                      symbol.GetMemberType() is INamedTypeSymbol namedType &&
                      symbol.ContainingType.DerivesFromOrImplementsAnyConstructionOf(namedType.OriginalDefinition));

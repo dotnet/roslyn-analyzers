@@ -162,6 +162,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Anal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.RulesetToEditorconfigConverter.Package", "nuget\Microsoft.CodeAnalysis.RulesetToEditorconfigConverter\Microsoft.CodeAnalysis.RulesetToEditorconfigConverter.Package.csproj", "{64D70469-18B0-446C-80E9-A7C45A747B3E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations", "src\PerformanceSensitiveAnalyzers\Annotations\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations.csproj", "{E4E89BC4-ABD7-427C-B331-CA235BE33426}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations.Package", "nuget\PerformanceSensitiveAnalyzers.Annotations\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Annotations.Package.csproj", "{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
@@ -424,6 +428,14 @@ Global
 		{64D70469-18B0-446C-80E9-A7C45A747B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64D70469-18B0-446C-80E9-A7C45A747B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64D70469-18B0-446C-80E9-A7C45A747B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E89BC4-ABD7-427C-B331-CA235BE33426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E89BC4-ABD7-427C-B331-CA235BE33426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E89BC4-ABD7-427C-B331-CA235BE33426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E89BC4-ABD7-427C-B331-CA235BE33426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -493,6 +505,8 @@ Global
 		{B969F316-815C-47B9-82B3-67FDD9ED694F} = {1A3624C9-EB8A-4F27-98F8-9FAEAB30604E}
 		{3F998217-4174-4AD0-A015-A9BFFADB075F} = {1A3624C9-EB8A-4F27-98F8-9FAEAB30604E}
 		{64D70469-18B0-446C-80E9-A7C45A747B3E} = {02F88961-A08F-451A-93AB-328792A32EBC}
+		{E4E89BC4-ABD7-427C-B331-CA235BE33426} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{B2D8301E-E0D1-4A46-9ECD-671A8DFDB556} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

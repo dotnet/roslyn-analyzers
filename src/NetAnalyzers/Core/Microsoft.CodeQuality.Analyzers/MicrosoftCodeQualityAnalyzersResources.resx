@@ -1370,4 +1370,13 @@
   <data name="EnumShouldNotHaveDuplicatedValuesTitle" xml:space="preserve">
     <value>Enums values should not be duplicated</value>
   </data>
+  <data name="DoNotUseMutableStructInReadonlyFieldDescription" xml:space="preserve">
+    <value>Making a mutable struct a readonly field can result in silent but significant problems as any mutatin to the instance will be done on a compiler-generated copy and thus ignored.</value>
+  </data>
+  <data name="DoNotUseMutableStructInReadonlyFieldMessage" xml:space="preserve">
+    <value>Do not use mutable struct in readonly field</value>
+  </data>
+  <data name="DoNotUseMutableStructInReadonlyFieldTitle" xml:space="preserve">
+    <value>Do not use mutable struct in readonly field</value>
+  </data>
 </root>

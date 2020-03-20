@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Runtime.CompilerServices;
+
 namespace Analyzer.Utilities
 {
     internal static class WellKnownTypeNames
@@ -488,5 +491,7 @@ namespace Analyzer.Utilities
         public const string SystemCollectionsObjectModelReadOnlyDictionary2 = "System.Collections.ObjectModel.ReadOnlyDictionary`2";
         public const string SystemCollectionsObjectModelReadOnlyObservableCollection1 = "System.Collections.ObjectModel.ReadOnlyObservableCollection`1";
         public const string RoslynUtilitiesNonDefaultableAttribute = "Roslyn.Utilities.NonDefaultableAttribute";
+        public const string SystemThreadingSpinLock = "System.Threading.SpinLock";
+        public const string SystemRuntimeInteropServicesGCHandle = "System.Runtime.InteropServices.GCHandle";
     }
 }

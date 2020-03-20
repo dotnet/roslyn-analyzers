@@ -142,6 +142,21 @@
         <target state="translated">不要将异步 Lambda 作为 Void 返回委托类型存储</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseMutableStructInReadonlyFieldDescription">
+        <source>Making a mutable struct a readonly field can result in silent but significant problems as any mutatin to the instance will be done on a compiler-generated copy and thus ignored.</source>
+        <target state="new">Making a mutable struct a readonly field can result in silent but significant problems as any mutatin to the instance will be done on a compiler-generated copy and thus ignored.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseMutableStructInReadonlyFieldMessage">
+        <source>Do not use mutable struct in readonly field</source>
+        <target state="new">Do not use mutable struct in readonly field</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseMutableStructInReadonlyFieldTitle">
+        <source>Do not use mutable struct in readonly field</source>
+        <target state="new">Do not use mutable struct in readonly field</target>
+        <note />
+      </trans-unit>
       <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart">
         <source>The field reference '{0}' is duplicated in this bitwise initialization.</source>
         <target state="translated">此按位初始化中的字段引用 "{0}" 重复。</target>

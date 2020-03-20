@@ -312,21 +312,6 @@
         <target state="translated">从提取文件的相对存档项路径为“方法 {1} 中的 {0}”创建路径时，如果源为不受信任的 ZIP 存档文件，请确保净化相对存档项路径“方法 {3} 中的 {2}”</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesDescription">
-        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</source>
-        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug, as it suggests a native resource that could have been handed out in a Span&lt;T&gt; is getting cleaned up and potentially while it’s still in use by the Span&lt;T&gt;.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesMessage">
-        <source>Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</source>
-        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt; derived type is likely an indication of a bug.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotAddFinalizerToMemoryManagedTDerivedTypesTitle">
-        <source>Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</source>
-        <target state="new">Do not add finilazer for MemoryManaged&lt;T&gt; derived types.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">请勿通过 URL 添加架构</target>
@@ -410,6 +395,21 @@
       <trans-unit id="DoNotCreateTasksWithoutPassingATaskSchedulerTitle">
         <source>Do not create tasks without passing a TaskScheduler</source>
         <target state="translated">不要在未传递 TaskScheduler 的情况下创建任务</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerDescription">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerMessage">
+        <source>Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle">
+        <source>Do not add finilazer to MemoryManaged&lt;T&gt;-derived types.</source>
+        <target state="new">Do not add finilazer to MemoryManaged&lt;T&gt;-derived types.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">

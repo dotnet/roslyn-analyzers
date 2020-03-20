@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -11,16 +12,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// <summary>
     /// CA2014: Do not add finilazer for MemoryManaged&lt;T&gt; derived types.
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class DoNotAddFinalizerToMemoryManagerTDerivedTypes : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotDefineFinalizersToTypesDerivedFromMemoryManager : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2014";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddFinalizerToMemoryManagedTDerivedTypesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddFinalizerToMemoryManagedTDerivedTypesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddFinalizerToMemoryManagedTDerivedTypesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotDefineFinalizersToTypesDerivedFromMemoryManagerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotDefineFinalizersToTypesDerivedFromMemoryManagerDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static readonly DiagnosticDescriptor FinilizerRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Reliability,
@@ -29,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(FinilizerRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -45,9 +46,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (memoryManager1 != null && namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(memoryManager1))
             {
-                if (namedTypeSymbol.HasFinalizer())
+                var finalizerMethod = namedTypeSymbol.GetMembers().FirstOrDefault(m => m is IMethodSymbol method && method.IsFinalizer());
+                if (finalizerMethod != null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(FinilizerRule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name));
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, finalizerMethod.Locations[0], finalizerMethod.Name));
                 }
             }
         }

@@ -6,6 +6,9 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotDefineFinalizersToTypesDerivedFromMemoryManager,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DoNotDefineFinalizersToTypesDerivedFromMemoryManager,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -24,6 +27,16 @@ namespace TestNamespace
         private void TestMethod() { }
     }
 }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace TestNamespace
+    Class TestClass
+        Private Sub TestMethod()
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -46,6 +59,20 @@ namespace TestNamespace
         }
     }
 }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Namespace TestNamespace
+    Class TestClass
+        Private Sub TestMethod()
+        End Sub
+
+        Protected Overrides Sub Finalize()
+            TestMethod()
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -61,8 +88,18 @@ namespace TestNamespace
     {
     }
 }");
-        }
 
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Buffers
+
+Namespace TestNamespace
+    MustInherit Class TestClass(Of T)
+        Inherits MemoryManager(Of T)
+    End Class
+End Namespace
+");
+        }
 
         [Fact]
         public async Task ClassDerivedFromMemoryManagerWithFinilizerWarns()
@@ -93,6 +130,30 @@ using System.Buffers;
     }
 }",
                 GetWarningResultAt(21, 10));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Buffers
+
+Namespace TestNamespace
+    MustInherit Class TestClass(Of T)
+        Inherits MemoryManager(Of T)
+
+        Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Sub Unpin()
+        End Sub
+
+        Protected Overrides Sub Finalize()
+        End Sub
+
+        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        End Sub
+    End Class
+End Namespace",
+                GetVisualBasicWarningResultAt(16, 33));
         }
 
         [Fact]
@@ -127,10 +188,42 @@ using System.Buffers;
     }
 }",
                 GetWarningResultAt(9, 10));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Buffers
+
+Namespace TestNamespace
+        MustInherit Class Deeper(Of T)
+        Inherits Middle(Of T)
+
+        Protected Overrides Sub Finalize()
+        End Sub
+    End Class
+
+    MustInherit Class Middle(Of T)
+        Inherits MemoryManager(Of T)
+
+        Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Sub Unpin()
+        End Sub
+
+        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        End Sub
+    End Class
+End Namespace",
+                GetVisualBasicWarningResultAt(9, 33));
         }
 
         private DiagnosticResult GetWarningResultAt(int line, int column)
-           => VerifyCS.Diagnostic(DoNotDefineFinalizersToTypesDerivedFromMemoryManager.Rule)
-               .WithLocation(line, column);
+            => VerifyCS.Diagnostic(DoNotDefineFinalizersToTypesDerivedFromMemoryManager.Rule)
+                .WithLocation(line, column);
+
+        private DiagnosticResult GetVisualBasicWarningResultAt(int line, int column)
+            => VerifyVB.Diagnostic(DoNotDefineFinalizersToTypesDerivedFromMemoryManager.Rule)
+                .WithLocation(line, column);
     }
 }

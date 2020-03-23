@@ -1084,13 +1084,13 @@
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
   <data name="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerDescription" xml:space="preserve">
-    <value>Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</value>
+    <value>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</value>
   </data>
   <data name="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerMessage" xml:space="preserve">
-    <value>Adding a finalizer to a MemoryManager&lt;T&gt;-derived type creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</value>
+    <value>Adding a finalizer to a type drived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</value>
   </data>
   <data name="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle" xml:space="preserve">
-    <value>Do not add finilazer to MemoryManaged&lt;T&gt;-derived types.</value>
+    <value>Do not define finilazers to types derived from MemoryManaged&lt;T&gt;.</value>
   </data>
   <data name="UseValueTasksCorrectlyTitle" xml:space="preserve">
     <value>Use ValueTasks correctly</value>

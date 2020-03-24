@@ -2359,25 +2359,6 @@
             ]
           }
         },
-		  "CA2014": {
-          "id": "CA2014",
-          "shortDescription": "Do not define finilazers to types derived from MemoryManaged<T>",
-          "fullDescription": "Adding a finalizer to a type derived from MemoryManager<T> creates the possibility that the memory will be freed while it is still in use by a Span<T>.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2014",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
-            "typeName": "DoNotDefineFinalizersToTypesDerivedFromMemoryManager",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
         "CA2100": {
           "id": "CA2100",
           "shortDescription": "Review SQL queries for security vulnerabilities",

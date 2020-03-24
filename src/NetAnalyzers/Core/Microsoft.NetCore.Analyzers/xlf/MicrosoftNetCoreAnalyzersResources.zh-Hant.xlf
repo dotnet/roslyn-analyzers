@@ -403,13 +403,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerMessage">
-        <source>Adding a finalizer to a type drived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
-        <target state="new">Adding a finalizer to a type drived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
+        <source>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle">
-        <source>Do not define finilazers to types derived from MemoryManaged&lt;T&gt;.</source>
-        <target state="new">Do not define finilazers to types derived from MemoryManaged&lt;T&gt;.</target>
+        <source>Do not define finalizers to types derived from MemoryManaged&lt;T&gt;</source>
+        <target state="new">Do not define finalizers to types derived from MemoryManaged&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">

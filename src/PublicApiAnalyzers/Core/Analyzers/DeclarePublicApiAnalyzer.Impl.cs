@@ -208,6 +208,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 ApiName publicApiName = GetPublicApiName(symbol);
                 _visitedApiList.TryAdd(publicApiName.Name, default);
+                _visitedApiList.TryAdd(WithObliviousMarker(publicApiName.Name), default);
                 _visitedApiList.TryAdd(publicApiName.NameWithNullability, default);
                 _visitedApiList.TryAdd(WithObliviousMarker(publicApiName.NameWithNullability), default);
 
@@ -243,7 +244,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     if (!hasPublicApiEntryWithNullability && !hasPublicApiEntryWithNullabilityAndOblivious)
                     {
                         var hasPublicApiEntryWithoutNullability = _publicApiMap.TryGetValue(publicApiName.Name, out foundApiLine);
-                        if (!hasPublicApiEntryWithoutNullability)
+
+                        var hasPublicApiEntryWithoutNullabilityButOblivious =
+                            !hasPublicApiEntryWithoutNullability &&
+                            _publicApiMap.TryGetValue(WithObliviousMarker(publicApiName.Name), out foundApiLine);
+
+                        if (!hasPublicApiEntryWithoutNullability && !hasPublicApiEntryWithoutNullabilityButOblivious)
                         {
                             reportDeclareNewApi(symbol, isImplicitlyDeclaredConstructor, withObliviousIfNeeded(publicApiName.NameWithNullability));
                         }

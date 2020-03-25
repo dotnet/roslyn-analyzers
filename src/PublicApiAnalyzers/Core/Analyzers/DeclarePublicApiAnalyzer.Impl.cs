@@ -548,7 +548,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
-                    return ObliviousDetector.TypeDeclarationInstance.Visit(symbol);
+                    return ObliviousDetector.IgnoreTopLevelNullabilityInstance.Visit(symbol);
                 }
 
                 return ObliviousDetector.Instance.Visit(symbol);
@@ -764,14 +764,14 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
-                public readonly static ObliviousDetector TypeDeclarationInstance = new ObliviousDetector(forTypeDeclaration: true);
-                public readonly static ObliviousDetector Instance = new ObliviousDetector(forTypeDeclaration: false);
+                public readonly static ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+                public readonly static ObliviousDetector Instance = new ObliviousDetector(ignoreTopLevelNullability: false);
 
-                private readonly bool _forTypeDeclaration;
+                private readonly bool _ignoreTopLevelNullability;
 
-                private ObliviousDetector(bool forTypeDeclaration)
+                private ObliviousDetector(bool ignoreTopLevelNullability)
                 {
-                    _forTypeDeclaration = forTypeDeclaration;
+                    _ignoreTopLevelNullability = ignoreTopLevelNullability;
                 }
 
                 public override bool VisitField(IFieldSymbol symbol)
@@ -807,34 +807,34 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                 public override bool VisitNamedType(INamedTypeSymbol symbol)
                 {
-                    if (!_forTypeDeclaration)
+                    if (!_ignoreTopLevelNullability)
                     {
-                        if (symbol.ContainingType is INamedTypeSymbol containing)
-                        {
-                            if (Visit(containing))
-                            {
-                                return true;
-                            }
-                        }
-
                         if (symbol.IsReferenceType &&
                             symbol.NullableAnnotation() == NullableAnnotation.None)
                         {
                             return true;
                         }
+                    }
 
-                        foreach (var typeArgument in symbol.TypeArguments)
+                    if (symbol.ContainingType is INamedTypeSymbol containing)
+                    {
+                        if (IgnoreTopLevelNullabilityInstance.Visit(containing))
                         {
-                            if (Visit(typeArgument))
-                            {
-                                return true;
-                            }
+                            return true;
+                        }
+                    }
+
+                    foreach (var typeArgument in symbol.TypeArguments)
+                    {
+                        if (Instance.Visit(typeArgument))
+                        {
+                            return true;
                         }
                     }
 
                     foreach (var typeParameter in symbol.TypeParameters)
                     {
-                        if (Visit(typeParameter))
+                        if (Instance.Visit(typeParameter))
                         {
                             return true;
                         }

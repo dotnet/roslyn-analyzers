@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2014: Do not add finilazer for MemoryManaged&lt;T&gt; derived types.
+    /// CA2014: Do not define finalizers to types derived from MemoryManager&lt;T&gt;.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotDefineFinalizersToTypesDerivedFromMemoryManager : DiagnosticAnalyzer

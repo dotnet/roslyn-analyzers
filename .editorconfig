@@ -225,6 +225,3 @@ dotnet_code_quality.CA1720.api_surface = public
 # Exclude single letter type parameter names
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
-
-# Skipped due to https://github.com/dotnet/roslyn-analyzers/issues/3414
-dotnet_diagnostic.CA1710.severity = none

@@ -4,7 +4,7 @@
 
 #### Package Version
 
-v2.9.8 (latest release) OR v3.0.0-beta2.final (latest pre-release)
+v2.9.8 (latest release) OR v3.0.0-beta3.final (latest pre-release)
 
 #### Diagnostic ID
 

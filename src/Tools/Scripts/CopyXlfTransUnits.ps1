@@ -16,19 +16,9 @@ $destination.xliff.file.body.ChildNodes | ForEach-Object {
     $sourceTransUnit = $source.xliff.file.body.'trans-unit' | Where-Object { $_.id -eq $destinationTransUnit.Id };
     if ($sourceTransUnit -ne $null)
     {
-        $destText = $destinationTransUnit.target.InnerText;
-        $srcText = $sourceTransUnit.target.InnerText;
-        if ($destText -ne $srcText `
-                -and (($destText.Contains('{') -and $destText.Contains('}') `
-                      -or ($srcText.Contains('{') -and $srcText.Contains('}')))))
-        {
-            Write-Host $destinationTransUnit.id;
-            Write-Host "  Old: $destText";
-            Write-Host "  New: $srcText";
-        }
-
+        $destinationTransUnit.source = $sourceTransUnit.source;
         $destinationTransUnit.target.state = $sourceTransUnit.target.state;
-        $destinationTransUnit.target.InnerText = $srcText;
+        $destinationTransUnit.target.InnerText = $sourceTransUnit.target.InnerText;
     }
 };
 

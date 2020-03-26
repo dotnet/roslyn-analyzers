@@ -4,7 +4,7 @@
 
     <VersionPrefix>3.0.0</VersionPrefix>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
-    <PreReleaseVersionLabel>beta3</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>beta4</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -25,7 +25,7 @@
     <MicrosoftNetCompilersVersion>3.6.0-1.final</MicrosoftNetCompilersVersion>
     <DogfoodAnalyzersVersion>3.0.0-beta2.final</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>3.0.0-beta3.final</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
     <CodeStyleAnalyersVersion>3.6.0-2.20157.5</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

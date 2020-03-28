@@ -23,9 +23,9 @@
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForShippedApisVersion>3.5.0-beta2-20056-01</MicrosoftCodeAnalysisForShippedApisVersion>
     <MicrosoftNetCompilersVersion>3.6.0-1.final</MicrosoftNetCompilersVersion>
-    <DogfoodAnalyzersVersion>3.0.0-beta2.final</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>3.0.0-beta4.20177.1</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>3.0.0-beta3.final</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
     <CodeStyleAnalyersVersion>3.6.0-2.20157.5</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

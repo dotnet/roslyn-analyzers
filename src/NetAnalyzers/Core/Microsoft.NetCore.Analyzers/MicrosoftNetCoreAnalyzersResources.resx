@@ -775,13 +775,13 @@
     <value>Do not use TypeNameHandling values other than None</value>
   </data>
   <data name="ApprovedCipherMode" xml:space="preserve">
-    <value>Do Not Use Unsafe Cipher Modes</value>
+    <value>Review cipher mode usage with cryptography experts</value>
   </data>
   <data name="ApprovedCipherModeDescription" xml:space="preserve">
-    <value>These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</value>
+    <value>These cipher modes might be vulnerable to attacks. Consider using recommended modes (CBC, CTS).</value>
   </data>
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
-    <value>It uses an unsafe Cipher Mode {0}</value>
+    <value>Review the usage of cipher mode '{0}' with cryptography experts. Consider using recommended modes (CBC, CTS).</value>
   </data>
   <data name="DefinitelyInstallRootCert" xml:space="preserve">
     <value>Do Not Add Certificates To Root Store</value>
@@ -1250,5 +1250,14 @@
   </data>
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
     <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsTitle" xml:space="preserve">
+    <value>Do not use stackalloc in loops.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsDescription" xml:space="preserve">
+    <value>Stack space allocated by a stackalloc is only released at the end of the current method's invocation.  Using it in a loop can result in unbounded stack growth and eventual stack overflow conditions.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsMessage" xml:space="preserve">
+    <value>Potential stack overflow. Move the stackalloc out of the loop.</value>
   </data>
 </root>

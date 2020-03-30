@@ -31,37 +31,6 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
 
                 public static void AcceptsTValue<TValue>(TValue t) => throw null;
             }
-
-            namespace System.Threading.Tasks
-            {
-                public readonly struct ValueTask
-                {
-                    public ValueTask(System.Threading.Tasks.Task task) => throw null;
-                    public bool IsCanceled => throw null;
-                    public bool IsCompleted => throw null;
-                    public bool IsCompletedSuccessfully => throw null;
-                    public bool IsFaulted => throw null;
-                    public System.Threading.Tasks.Task AsTask() => throw null;
-                    public System.Runtime.CompilerServices.ConfiguredTaskAwaitable ConfigureAwait(bool continueOnCapturedContext) => throw null;
-                    public System.Runtime.CompilerServices.TaskAwaiter GetAwaiter() => throw null; // returning TaskAwaiter for simplicity
-                    public System.Threading.Tasks.ValueTask Preserve() => throw null;
-                }
-
-                public readonly struct ValueTask<TResult>
-                {
-                    public ValueTask(System.Threading.Tasks.Task<TResult> task) => throw null;
-                    public ValueTask(TResult result) => throw null;
-                    public bool IsCanceled => throw null;
-                    public bool IsCompleted => throw null;
-                    public bool IsCompletedSuccessfully => throw null;
-                    public bool IsFaulted => throw null;
-                    public TResult Result => throw null;
-                    public System.Threading.Tasks.Task<TResult> AsTask() => throw null;
-                    public System.Runtime.CompilerServices.ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) => throw null;
-                    public System.Runtime.CompilerServices.TaskAwaiter<TResult> GetAwaiter() => throw null; // returning TaskAwaiter for simplicity
-                    public System.Threading.Tasks.ValueTask<TResult> Preserve() => throw null;
-                }
-            }
             ";
 
         private static string VBBoilerplate(string s) => s +
@@ -95,111 +64,6 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                     Throw New Exception()
                 End Sub
             End Module
-
-            Namespace System.Threading.Tasks
-                Public Structure ValueTask
-                    Public Sub New(ByVal task As System.Threading.Tasks.Task)
-                        Throw New Exception()
-                    End Sub
-
-                    Public ReadOnly Property IsCanceled As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsCompleted As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsCompletedSuccessfully As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsFaulted As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public Function AsTask() As System.Threading.Tasks.Task
-                        Throw New Exception()
-                    End Function
-
-                    Public Function ConfigureAwait(ByVal continueOnCapturedContext As Boolean) As System.Runtime.CompilerServices.ConfiguredTaskAwaitable
-                        Throw New Exception()
-                    End Function
-
-                    Public Function GetAwaiter() As System.Runtime.CompilerServices.TaskAwaiter
-                        Throw New Exception()
-                    End Function
-
-                    Public Function Preserve() As System.Threading.Tasks.ValueTask
-                        Throw New Exception()
-                    End Function
-                End Structure
-
-                Public Structure ValueTask(Of TResult)
-                    Public Sub New(ByVal task As System.Threading.Tasks.Task(Of TResult))
-                        Throw New Exception()
-                    End Sub
-
-                    Public Sub New(ByVal result As TResult)
-                        Throw New Exception()
-                    End Sub
-
-                    Public ReadOnly Property IsCanceled As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsCompleted As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsCompletedSuccessfully As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property IsFaulted As Boolean
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public ReadOnly Property Result As TResult
-                        Get
-                            Throw New Exception()
-                        End Get
-                    End Property
-
-                    Public Function AsTask() As System.Threading.Tasks.Task(Of TResult)
-                        Throw New Exception()
-                    End Function
-
-                    Public Function ConfigureAwait(ByVal continueOnCapturedContext As Boolean) As System.Runtime.CompilerServices.ConfiguredTaskAwaitable(Of TResult)
-                        Throw New Exception()
-                    End Function
-
-                    Public Function GetAwaiter() As System.Runtime.CompilerServices.TaskAwaiter(Of TResult)
-                        Throw New Exception()
-                    End Function
-
-                    Public Function Preserve() As System.Threading.Tasks.ValueTask(Of TResult)
-                        Throw New Exception()
-                    End Function
-                End Structure
-
-            End Namespace
             ";
 
         public static readonly IEnumerable<object[]> IsCompleteProperties =
@@ -493,6 +357,44 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                         return Helpers.ReturnsValueTaskOfInt();
                     }
 
+                }"));
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_AssignVariableThenReturnValueTask()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(CSBoilerplate(@"
+                using System;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    public ValueTask ReturnValueTaskExpression() => Helpers.ReturnsValueTask();
+
+                    public ValueTask<T> ReturnValueTaskOfTExpression<T>() => Helpers.ReturnsValueTaskOfT<T>();
+
+                    public ValueTask<int> ReturnValueTaskOfIntExpression() => Helpers.ReturnsValueTaskOfInt();
+
+                    public ValueTask ReturnValueTask()
+                    {
+                        var inst = this;
+                        var vt = inst.ReturnValueTaskExpression();
+                        return vt;
+                    }
+
+                    public ValueTask<T> ReturnValueTaskOfT<T>()
+                    {
+                        var inst = this;
+                        var vt = inst.ReturnValueTaskOfTExpression<T>();
+                        return vt;
+                    }
+
+                    public ValueTask<int> ReturnValueTaskOfInt()
+                    {
+                        var inst = this;
+                        var vt = inst.ReturnValueTaskOfIntExpression();
+                        return vt;
+                    }
                 }"));
         }
 
@@ -833,6 +735,61 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                         catch
                         {
                             await t;
+                        }
+                    }
+                }"));
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_ReturnOutOfPropertyExpressionBodied()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(CSBoilerplate(@"
+                using System;
+                using System.Threading;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    public ValueTask Prop => Helpers.ReturnsValueTask();
+                    public ValueTask<string> PropString => Helpers.ReturnsValueTaskOfT<string>();
+                    public ValueTask<int> PropInt => Helpers.ReturnsValueTaskOfInt();
+                }"));
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_ReturnOutOfPropertyStatements()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(CSBoilerplate(@"
+                using System;
+                using System.Threading;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    public ValueTask Prop
+                    {
+                        get
+                        {
+                            var vt = Helpers.ReturnsValueTask();
+                            return vt;
+                        }
+                    }
+
+                    public ValueTask<string> PropString
+                    {
+                        get
+                        {
+                            var vt = Helpers.ReturnsValueTaskOfT<string>();
+                            return vt;
+                        }
+                    }
+
+                    public ValueTask<int> PropInt
+                    {
+                        get
+                        {
+                            var vt = Helpers.ReturnsValueTaskOfInt();
+                            return vt;
                         }
                     }
                 }"));

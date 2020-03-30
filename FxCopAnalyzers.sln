@@ -67,8 +67,16 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
+		src\Utilities\Compiler\Analyzer.Utilities.projitems*{db2a3703-0149-46d4-b575-018346b2f406}*SharedItemsImports = 5
+		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{db2a3703-0149-46d4-b575-018346b2f406}*SharedItemsImports = 5
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{db2a3703-0149-46d4-b575-018346b2f406}*SharedItemsImports = 5
+		src\Utilities\Compiler\Analyzer.Utilities.projitems*{e038e362-efbe-4a81-a93f-cfa5d779fd2e}*SharedItemsImports = 5
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{e038e362-efbe-4a81-a93f-cfa5d779fd2e}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
 		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{fcb56cba-fa35-46a8-86b7-bae5433197d9}*SharedItemsImports = 13
+		src\Utilities\Compiler\Analyzer.Utilities.projitems*{fee46b63-96ac-476e-80c3-4ca964e748e9}*SharedItemsImports = 5
+		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{fee46b63-96ac-476e-80c3-4ca964e748e9}*SharedItemsImports = 5
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{fee46b63-96ac-476e-80c3-4ca964e748e9}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

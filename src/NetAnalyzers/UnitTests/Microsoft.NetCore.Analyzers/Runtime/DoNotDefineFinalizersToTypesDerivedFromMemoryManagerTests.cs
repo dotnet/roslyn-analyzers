@@ -40,7 +40,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task ClassHavingFinalizerButNotDerivedFromMemoryManageOK()
+        public async Task ClassHavingFinalizerButNotDerivedFromMemoryManagerOK()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

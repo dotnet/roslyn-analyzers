@@ -408,8 +408,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle">
-        <source>Do not define finalizers to types derived from MemoryManaged&lt;T&gt;</source>
-        <target state="new">Do not define finalizers to types derived from MemoryManaged&lt;T&gt;</target>
+        <source>Do not define finalizers to types derived from MemoryManager&lt;T&gt;</source>
+        <target state="new">Do not define finalizers to types derived from MemoryManager&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">

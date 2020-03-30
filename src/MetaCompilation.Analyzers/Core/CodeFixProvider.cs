@@ -680,7 +680,7 @@ namespace MetaCompilation.Analyzers
             string name = CodeFixHelper.GetContextParameter(declaration);
             StatementSyntax ifStatement = CodeFixHelper.IfHelper(generator, name) as StatementSyntax;
 
-            var oldBlock = declaration.Body as BlockSyntax;
+            var oldBlock = declaration.Body;
             BlockSyntax newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
@@ -702,7 +702,7 @@ namespace MetaCompilation.Analyzers
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var methodBlock = declaration.Body as BlockSyntax;
+            var methodBlock = declaration.Body;
             var ifKeyword = CodeFixHelper.KeywordHelper(generator, methodBlock) as StatementSyntax;
             BlockSyntax newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
@@ -819,7 +819,7 @@ namespace MetaCompilation.Analyzers
             IfStatementSyntax ifStatement;
             if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -845,7 +845,7 @@ namespace MetaCompilation.Analyzers
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
             if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -891,7 +891,7 @@ namespace MetaCompilation.Analyzers
 
             if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -939,7 +939,7 @@ namespace MetaCompilation.Analyzers
             }
             else
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
 
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
@@ -1335,7 +1335,7 @@ namespace MetaCompilation.Analyzers
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value as SyntaxNode).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            SyntaxNode newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
             return await ReplaceNode(declaration, newFieldDecl, document, cancellationToken).ConfigureAwait(false);
         }
 
@@ -1428,7 +1428,7 @@ namespace MetaCompilation.Analyzers
                 {
                     rule = fieldDeclaration;
 
-                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0];
                     var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
                     ArgumentListSyntax ruleArgumentList = objectCreationSyntax.ArgumentList;
 
@@ -1470,7 +1470,7 @@ namespace MetaCompilation.Analyzers
 
                 if (isPublic && isConst)
                 {
-                    var ruleIdSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var ruleIdSyntax = fieldDeclaration.Declaration.Variables[0];
                     string newIdIdentifier = ruleIdSyntax.Identifier.Text;
                     newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
                 }
@@ -1504,7 +1504,7 @@ namespace MetaCompilation.Analyzers
                 }
             }
 
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+            SyntaxNode insertPointNode = insertPoint;
 
             FieldDeclarationSyntax fieldDeclaration = CodeFixHelper.CreateEmptyRule(generator);
 
@@ -1627,7 +1627,7 @@ namespace MetaCompilation.Analyzers
                 return document;
             }
 
-            var oldBody = firstAccessor.Body as BlockSyntax;
+            var oldBody = firstAccessor.Body;
             SyntaxList<StatementSyntax> oldStatements = oldBody.Statements;
             StatementSyntax oldStatement = null;
             if (oldStatements.Count != 0)
@@ -1725,7 +1725,7 @@ namespace MetaCompilation.Analyzers
                 }
             }
 
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+            SyntaxNode insertPointNode = insertPoint;
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1759,7 +1759,7 @@ namespace MetaCompilation.Analyzers
             {
                 MethodDeclarationSyntax initializeDeclaration = statement.Ancestors().OfType<MethodDeclarationSyntax>().First();
                 MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.RemoveNode(statement, 0);
-                return newInitializeDeclaration as SyntaxNode;
+                return newInitializeDeclaration;
             }
 
             // checks if the statement is a correct regsiter statement
@@ -2003,7 +2003,7 @@ namespace MetaCompilation.Analyzers
             internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
                 MethodDeclarationSyntax methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
-                var methodBlock = methodDecl.Body as BlockSyntax;
+                var methodBlock = methodDecl.Body;
 
                 string variableName = GetIfKeywordName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -2462,7 +2462,7 @@ namespace MetaCompilation.Analyzers
                 var nodeArgs = new SyntaxList<SyntaxNode>();
                 foreach (ArgumentSyntax arg in args)
                 {
-                    nodeArgs = nodeArgs.Add(arg as SyntaxNode);
+                    nodeArgs = nodeArgs.Add(arg);
                 }
 
                 return nodeArgs;

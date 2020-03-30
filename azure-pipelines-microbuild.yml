@@ -2,7 +2,7 @@ resources:
 - repo: self
   clean: true
 queue:
-  name: VSEng-MicroBuildVS2017
+  name: VSEng-MicroBuildVS2019
   demands: Cmd
 variables:
   BuildConfiguration: Release
@@ -40,7 +40,7 @@ steps:
   continueOnError: true
   condition: not(succeeded())
 
-- task: PublishTestResults@1
+- task: PublishTestResults@2
   displayName: Publish Test Results
   inputs:
     testRunner: XUnit

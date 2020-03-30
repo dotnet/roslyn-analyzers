@@ -1382,6 +1382,21 @@
         <target state="new">Prefer strongly-typed Append and Insert method overloads on StringBuilder.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderDescription">
+        <source>Prefer const char over const unit length string in StringBuilder.Append for more performant code</source>
+        <target state="new">Prefer const char over const unit length string in StringBuilder.Append for more performant code</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
+        <source>Prefer const char over const unit length string</source>
+        <target state="new">Prefer const char over const unit length string</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
+        <source>Prefer const char over const unit length string</source>
+        <target state="new">Prefer const char over const unit length string</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsDescription">
         <source>The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.</source>
         <target state="translated">O argumento de formato passado para System.String.Format não contém um item de formato correspondente a cada argumento de objeto ou vice-versa.</target>

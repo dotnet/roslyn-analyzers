@@ -1287,4 +1287,13 @@
   <data name="PreferTypedStringBuilderAppendOverloadsRemoveToString" xml:space="preserve">
     <value>Remove the ToString call</value>
   </data>
+  <data name="PreferConstCharOverConstUnitStringInStringBuilderDescription" xml:space="preserve">
+    <value>Prefer const char over const unit length string in StringBuilder.Append for more performant code</value>
+  </data>
+  <data name="PreferConstCharOverConstUnitStringInStringBuilderMessage" xml:space="preserve">
+    <value>Prefer const char over const unit length string</value>
+  </data>
+  <data name="PreferConstCharOverConstUnitStringInStringBuilderTitle" xml:space="preserve">
+    <value>Prefer const char over const unit length string</value>
+  </data>
 </root>

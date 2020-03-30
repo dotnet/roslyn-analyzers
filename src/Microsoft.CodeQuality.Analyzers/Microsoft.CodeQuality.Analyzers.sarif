@@ -61,8 +61,8 @@
         },
         "CA1010": {
           "id": "CA1010",
-          "shortDescription": "Collections should implement generic interface",
-          "fullDescription": "To broaden the usability of a collection, implement one of the generic collection interfaces. Then the collection can be used to populate generic collection types.",
+          "shortDescription": "Generic interface should also be implemented",
+          "fullDescription": "To broaden the usability of a type, implement one of the generic interfaces. This is especially true for collections as they can then be used to populate generic collection types.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1010",
           "properties": {
@@ -1255,6 +1255,26 @@
             ]
           }
         },
+        "CA1821": {
+          "id": "CA1821",
+          "shortDescription": "Remove empty Finalizers",
+          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "RemoveEmptyFinalizersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1822": {
           "id": "CA1822",
           "shortDescription": "Mark members as static",
@@ -1708,25 +1728,6 @@
             ]
           }
         },
-        "CA1821": {
-          "id": "CA1821",
-          "shortDescription": "Remove empty Finalizers",
-          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpRemoveEmptyFinalizersAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
         "CA2200": {
           "id": "CA2200",
           "shortDescription": "Rethrow to preserve stack details.",
@@ -1901,25 +1902,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1821": {
-          "id": "CA1821",
-          "shortDescription": "Remove empty Finalizers",
-          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicRemoveEmptyFinalizersAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }

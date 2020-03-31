@@ -397,19 +397,19 @@
         <target state="translated">Nie twórz zadań bez przekazania klasy TaskScheduler</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerDescription">
-        <source>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
-        <target state="new">Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
+      <trans-unit id="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerDescription">
+        <source>Adding a finalizer for a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer for a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerMessage">
-        <source>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
-        <target state="new">Adding a finalizer to a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
+      <trans-unit id="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerMessage">
+        <source>Adding a finalizer for a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</source>
+        <target state="new">Adding a finalizer for a type derived from MemoryManager&lt;T&gt; creates the possibility that the memory will be freed while it is still in use by a Span&lt;T&gt;.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDefineFinalizersToTypesDerivedFromMemoryManagerTitle">
-        <source>Do not define finalizers to types derived from MemoryManager&lt;T&gt;</source>
-        <target state="new">Do not define finalizers to types derived from MemoryManager&lt;T&gt;</target>
+      <trans-unit id="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerTitle">
+        <source>Do not define finalizers for types derived from MemoryManager&lt;T&gt;</source>
+        <target state="new">Do not define finalizers for types derived from MemoryManager&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">

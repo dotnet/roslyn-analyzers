@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UseAsSpanInsteadOfRangeIndexerAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpUseAsSpanInsteadOfRangeIndexerFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -393,6 +393,18 @@ public class TestClass
         return TestMethod2(input[3..5]);
     }}
 }}",
+                @$"
+using System;
+
+public class TestClass
+{{
+    private static int TestMethod2(Span<{typeName}> input) => input.Length;
+
+    public int TestMethod({typeName}[] input)
+    {{
+        return TestMethod2(input.AsSpan()[3..5]);
+    }}
+}}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.ArrayReadWriteRule).
                     WithLocation(10, 28).
                     WithArguments("AsSpan", "System.Range", typeName + "[]"));
@@ -669,6 +681,20 @@ public class TestClass
         return TestMethod2((Memory<{typeName}>)input[3..5]);
     }}
 }}");
+        }
+
+        private static Task TestCS(string source, string corrected, params DiagnosticResult[] expected)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = source,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = LanguageVersion.Preview,
+                FixedCode = corrected,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync();
         }
 
         private static Task TestCS(string source, params DiagnosticResult[] expected)

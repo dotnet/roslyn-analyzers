@@ -11,6 +11,9 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
+    /// <summary>
+    /// CA1830, CA1831, CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseAsSpanInsteadOfRangeIndexerAnalyzer : DiagnosticAnalyzer
     {

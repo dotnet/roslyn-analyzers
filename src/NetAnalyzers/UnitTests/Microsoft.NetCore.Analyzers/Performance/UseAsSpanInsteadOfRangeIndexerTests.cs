@@ -123,6 +123,35 @@ public class TestClass
         }
 
         [Fact]
+        public static async Task StringToSpanParameterMultipleTimes()
+        {
+            await TestCS(@"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(ReadOnlySpan<char> input) => input.Length;
+
+    public int TestMethod(string input)
+    {
+        return TestMethod2({|CA1831:input[3..5]|}) + TestMethod2({|CA1831:input[1..^2]|});
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(ReadOnlySpan<char> input) => input.Length;
+
+    public int TestMethod(string input)
+    {
+        return TestMethod2(input.AsSpan()[3..5]) + TestMethod2(input.AsSpan()[1..^2]);
+    }
+}");
+        }
+
+        [Fact]
         public static async Task StringToSpanCastLocal()
         {
             await TestCS(@"
@@ -494,7 +523,20 @@ public class TestClass
     {
         return TestMethod2({|CA1832:input[3..5]|});
     }
-}");
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(ReadOnlyMemory<" + typeName + @"> input) => input.Length;
+
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        return TestMethod2(input.AsMemory()[3..5]);
+    }
+}"
+                );
         }
 
         [Theory]

@@ -20,6 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string StringRuleId = "CA1831";
         internal const string ArrayReadOnlyRuleId = "CA1832";
         internal const string ArrayReadWriteRuleId = "CA1833";
+        internal const string TargetMethodName = nameof(TargetMethodName);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -154,10 +155,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
+                    var methodToUse = spanTypes.Contains(targetType) ? nameof(MemoryExtensions.AsSpan) : nameof(MemoryExtensions.AsMemory);
+                    var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
+                    dictBuilder.Add(TargetMethodName, methodToUse);
+
                     operationContext.ReportDiagnostic(
                         operationContext.Operation.CreateDiagnostic(
                             rule,
-                            spanTypes.Contains(targetType) ? nameof(MemoryExtensions.AsSpan) : nameof(MemoryExtensions.AsMemory),
+                            dictBuilder.ToImmutable(),
+                            methodToUse,
                             rangeOperation.Type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
                             containingType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                 },

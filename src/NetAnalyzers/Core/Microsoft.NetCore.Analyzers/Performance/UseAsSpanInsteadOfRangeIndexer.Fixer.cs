@@ -41,10 +41,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             // The rules are mutually exclusive, so there can't be more than one for the same span:
             var diagnostic = context.Diagnostics.Single();
+            var targetMethod = diagnostic.Properties.GetValueOrDefault(UseAsSpanInsteadOfRangeIndexerAnalyzer.TargetMethodName);
+
+            if (targetMethod == null)
+            {
+                return;
+            }
 
             context.RegisterCodeFix(
                 new UseAsSpanInsteadOfRangeIndexerCodeAction(
                     diagnostic.Id,
+                    targetMethod,
                     context.Document,
                     node,
                     this),
@@ -59,6 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private class UseAsSpanInsteadOfRangeIndexerCodeAction : CodeAction
         {
+            private readonly string _targetMethod;
             private readonly Document _document;
             private readonly SyntaxNode _rootNode;
             private readonly UseAsSpanInsteadOfRangeIndexerFixer _fixer;
@@ -69,10 +77,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public UseAsSpanInsteadOfRangeIndexerCodeAction(
                 string ruleId,
+                string targetMethod,
                 Document document,
                 SyntaxNode rootNode,
                 UseAsSpanInsteadOfRangeIndexerFixer fixer)
             {
+                _targetMethod = targetMethod;
                 _document = document;
                 _rootNode = rootNode;
                 _fixer = fixer;
@@ -86,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (_fixer.TrySplitExpression(_rootNode, out var toReplace, out var target, out var arguments))
                 {
                     // target.AsSpan()
-                    var asSpan = editor.Generator.InvocationExpression(editor.Generator.MemberAccessExpression(target, "AsSpan"));
+                    var asSpan = editor.Generator.InvocationExpression(editor.Generator.MemberAccessExpression(target, _targetMethod));
                     // target.AsSpan()[args]
                     var indexed = editor.Generator.ElementAccessExpression(asSpan, arguments);
 

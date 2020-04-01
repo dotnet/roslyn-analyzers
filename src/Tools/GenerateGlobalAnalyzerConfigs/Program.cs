@@ -73,10 +73,12 @@ namespace GenerateGlobalAnalyzerConfigs
             // Compute descriptors by rule ID and shipped analyzer release versions and shipped data.
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var hasInfoOrHiddenDiagnostic = false;
+            var sawShippedFile = false;
             foreach (string assembly in assemblyList)
             {
                 var assemblyPath = GetAssemblyPath(assembly);
                 var analyzerFileReference = new AnalyzerFileReference(assemblyPath, AnalyzerAssemblyLoader.Instance);
+                analyzerFileReference.AnalyzerLoadFailed += AnalyzerFileReference_AnalyzerLoadFailed;
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
 
                 foreach (var analyzer in analyzers)
@@ -92,13 +94,16 @@ namespace GenerateGlobalAnalyzerConfigs
                 var assemblyDir = Path.GetDirectoryName(assemblyPath);
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
                 var shippedFile = Path.Combine(assemblyDir, "AnalyzerReleases", assemblyName, ReleaseTrackingHelper.ShippedFileName);
-                if (!File.Exists(shippedFile) && !releaseTrackingOptOut)
+                if (File.Exists(shippedFile))
                 {
-                    Console.Error.WriteLine($"'{shippedFile}' does not exist");
-                    return 4;
-                }
-                else
-                {
+                    sawShippedFile = true;
+
+                    if (releaseTrackingOptOut)
+                    {
+                        Console.Error.WriteLine($"'{shippedFile}' exists but was not expected");
+                        return 4;
+                    }
+
                     try
                     {
                         using var fileStream = File.OpenRead(shippedFile);
@@ -118,6 +123,12 @@ namespace GenerateGlobalAnalyzerConfigs
                         return 5;
                     }
                 }
+            }
+
+            if (!releaseTrackingOptOut && !sawShippedFile)
+            {
+                Console.Error.WriteLine($"Could not find any 'AnalyzerReleases.Shipped.md' file");
+                return 6;
             }
 
             // Bail out if following conditions hold for the analyzer package:
@@ -167,6 +178,9 @@ namespace GenerateGlobalAnalyzerConfigs
             return 0;
 
             // Local functions.
+            static void AnalyzerFileReference_AnalyzerLoadFailed(object sender, AnalyzerLoadFailureEventArgs e)
+                => throw e.Exception;
+
             string GetAssemblyPath(string assembly)
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);

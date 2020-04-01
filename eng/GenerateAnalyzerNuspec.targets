@@ -50,9 +50,6 @@
       <PackageTargetsFileDir>$(IntermediateOutputPath)Build</PackageTargetsFileDir>
       <PackageTargetsFileName>$(NuspecPackageId).targets</PackageTargetsFileName>
     </PropertyGroup>
-    <ItemGroup>
-      <AnalyzerNupkgFile Include="$(PackageTargetsFileDir)\$(PackageTargetsFileName)"/>
-    </ItemGroup>
 
     <PropertyGroup Condition="'$(GenerateAnalyzerMdFile)' == 'true'">
       <AnalyzerDocumentationFileDir Condition="'$(AnalyzerDocumentationFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerDocumentationFileDir>
@@ -84,6 +81,10 @@
     </MSBuild>
 
     <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateGlobalAnalyzerConfigsPath)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(NuspecPackageId)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "@(AnalyzerRulesetAssembly)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "$(ReleaseTrackingOptOut)"' />
+
+    <ItemGroup Condition="Exists('$(PackageTargetsFileDir)\$(PackageTargetsFileName)')">
+      <AnalyzerNupkgFile Include="$(PackageTargetsFileDir)\$(PackageTargetsFileName)"/>
+    </ItemGroup>
   </Target>
   
   <Target Name="GenerateAnalyzerNuspecFile"

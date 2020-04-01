@@ -12,14 +12,14 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// CA1830, CA1831, CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
+    /// CA1831, CA1832, CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseAsSpanInsteadOfRangeIndexerAnalyzer : DiagnosticAnalyzer
     {
-        internal const string StringRuleId = "CA1830";
-        internal const string ArrayReadOnlyRuleId = "CA1831";
-        internal const string ArrayReadWriteRuleId = "CA1832";
+        internal const string StringRuleId = "CA1831";
+        internal const string ArrayReadOnlyRuleId = "CA1832";
+        internal const string ArrayReadWriteRuleId = "CA1833";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Performance,
-            RuleLevel.IdeSuggestion,
+            RuleLevel.BuildWarning,
             description: s_localizableStringDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);

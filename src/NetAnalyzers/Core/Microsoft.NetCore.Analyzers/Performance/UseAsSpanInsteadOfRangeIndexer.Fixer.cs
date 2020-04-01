@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// CA1830, CA1831, CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
+    /// CA1831, CA1832, CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
     /// </summary>
     public abstract class UseAsSpanInsteadOfRangeIndexerFixer : CodeFixProvider
     {

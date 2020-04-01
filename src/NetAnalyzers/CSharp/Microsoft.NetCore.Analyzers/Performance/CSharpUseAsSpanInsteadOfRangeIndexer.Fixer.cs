@@ -12,7 +12,7 @@ using Microsoft.NetCore.Analyzers.Performance;
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     /// <summary>
-    /// CA1830, CA1831, CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
+    /// CA1831, CA1832, CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseAsSpanInsteadOfRangeIndexerFixer : UseAsSpanInsteadOfRangeIndexerFixer

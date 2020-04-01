@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotDefineFinalizersForTypesDerivedFromMemoryManager,
@@ -129,7 +128,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     protected override void Dispose(bool disposing) { }
                 }
             }",
-                GetCSharpWarningResultAt(21, 22));
+                VerifyCS.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
+                .WithSpan(21, 22, 21, 31));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -153,7 +153,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     End Sub
                 End Class
             End Namespace",
-                GetVisualBasicWarningResultAt(16, 45));
+                VerifyVB.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
+                .WithSpan(16, 45, 16, 53));
         }
 
         [Fact]
@@ -186,8 +187,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                     protected override void Dispose(bool disposing) { }
                 }
-            }",
-                GetCSharpWarningResultAt(9, 22));
+            }", VerifyCS.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
+                .WithSpan(9, 22, 9, 28));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -215,15 +216,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     End Sub
                 End Class
             End Namespace",
-                GetVisualBasicWarningResultAt(9, 45));
+                VerifyVB.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
+                .WithSpan(9, 45, 9, 53));
         }
-
-        private DiagnosticResult GetCSharpWarningResultAt(int line, int column)
-            => VerifyCS.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithLocation(line, column);
-
-        private DiagnosticResult GetVisualBasicWarningResultAt(int line, int column)
-            => VerifyVB.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithLocation(line, column);
     }
 }

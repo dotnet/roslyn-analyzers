@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2015: Do not define finalizers to types derived from MemoryManager&lt;T&gt;.
+    /// CA2015: Do not define finalizers for types derived from MemoryManager&lt;T&gt;.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotDefineFinalizersForTypesDerivedFromMemoryManager : DiagnosticAnalyzer
@@ -35,8 +35,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            {
+                INamedTypeSymbol? attributeType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
+                if (attributeType == null)
+                {
+                    return;
+                }
+
+                compilationContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            });
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -46,12 +55,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (memoryManager1 != null && namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(memoryManager1))
             {
-                var finalizerMethod = namedTypeSymbol.GetMembers().FirstOrDefault(m => m is IMethodSymbol method && method.IsFinalizer());
-                if (finalizerMethod != null)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, finalizerMethod.Locations[0], finalizerMethod.Name));
-                }
+                namedTypeSymbol.GetMembers().FirstOrDefault(m => CheckMethod(m, context));
             }
+        }
+
+        private static bool CheckMethod(ISymbol m, SymbolAnalysisContext context)
+        {
+            if (m is IMethodSymbol method && method.IsFinalizer())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Rule, method.Locations[0], method.Name));
+                return true;
+            }
+            return false;
         }
     }
 }

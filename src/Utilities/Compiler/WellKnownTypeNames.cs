@@ -38,8 +38,13 @@ namespace Analyzer.Utilities
         public const string SystemInt16 = "System.Int16";
         public const string SystemInt32 = "System.Int32";
         public const string SystemInt64 = "System.Int64";
+        public const string SystemMemory1 = "System.Memory`1";
         public const string SystemNumber = "System.Number";
+        public const string SystemRange = "System.Range";
+        public const string SystemReadOnlyMemory1 = "System.ReadOnlyMemory`1";
+        public const string SystemReadOnlySpan1 = "System.ReadOnlySpan`1";
         public const string SystemSingle = "System.Single";
+        public const string SystemSpan1 = "System.Span`1";
         public const string SystemTimeSpan = "System.TimeSpan";
         public const string SystemWebHttpCookie = "System.Web.HttpCookie";
         public const string SystemWebHttpRequestBase = "System.Web.HttpRequestBase";

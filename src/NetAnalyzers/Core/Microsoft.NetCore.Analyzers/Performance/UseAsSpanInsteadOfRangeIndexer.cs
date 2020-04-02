@@ -73,11 +73,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var compilation = context.Compilation;
             var stringType = compilation.GetSpecialType(SpecialType.System_String);
-            var span = compilation.GetOrCreateTypeByMetadataName("System.Span`1");
-            var readOnlySpan = compilation.GetOrCreateTypeByMetadataName("System.ReadOnlySpan`1");
-            var memory = compilation.GetOrCreateTypeByMetadataName("System.Memory`1");
-            var readOnlyMemory = compilation.GetOrCreateTypeByMetadataName("System.ReadOnlyMemory`1");
-            var range = compilation.GetOrCreateTypeByMetadataName("System.Range");
+            var span = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1);
+            var readOnlySpan = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
+            var memory = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemory1);
+            var readOnlyMemory = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlyMemory1);
+            var range = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRange);
 
             if (stringType == null || span == null || readOnlySpan == null || memory == null || readOnlyMemory == null || range == null)
             {

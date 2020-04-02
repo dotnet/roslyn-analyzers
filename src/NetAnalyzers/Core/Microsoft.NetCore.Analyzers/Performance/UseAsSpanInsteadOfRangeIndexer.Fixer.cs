@@ -48,14 +48,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            context.RegisterCodeFix(
-                new UseAsSpanInsteadOfRangeIndexerCodeAction(
-                    diagnostic.Id,
-                    targetMethod,
-                    context.Document,
-                    node,
-                    this),
-                diagnostic);
+            if (TrySplitExpression(node, out var toReplace, out var target, out var arguments))
+            {
+                context.RegisterCodeFix(
+                    new UseAsSpanInsteadOfRangeIndexerCodeAction(
+                        diagnostic.Id,
+                        targetMethod,
+                        context.Document,
+                        toReplace,
+                        target,
+                        arguments),
+                    diagnostic);
+            }
         }
 
         protected abstract bool TrySplitExpression(
@@ -68,8 +72,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             private readonly string _targetMethod;
             private readonly Document _document;
-            private readonly SyntaxNode _rootNode;
-            private readonly UseAsSpanInsteadOfRangeIndexerFixer _fixer;
+            private readonly SyntaxNode _toReplace;
+            private readonly SyntaxNode _methodTarget;
+            private readonly IEnumerable<SyntaxNode> _rangeArguments;
 
             public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerTitle;
 
@@ -79,13 +84,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 string ruleId,
                 string targetMethod,
                 Document document,
-                SyntaxNode rootNode,
-                UseAsSpanInsteadOfRangeIndexerFixer fixer)
+                SyntaxNode toReplace,
+                SyntaxNode methodTarget,
+                IEnumerable<SyntaxNode> rangeArguments)
             {
                 _targetMethod = targetMethod;
                 _document = document;
-                _rootNode = rootNode;
-                _fixer = fixer;
+                _toReplace = toReplace;
+                _methodTarget = methodTarget;
+                _rangeArguments = rangeArguments;
                 EquivalenceKey = ruleId;
             }
 
@@ -93,18 +100,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var editor = await DocumentEditor.CreateAsync(_document, cancellationToken).ConfigureAwait(false);
 
-                if (_fixer.TrySplitExpression(_rootNode, out var toReplace, out var target, out var arguments))
-                {
-                    // target.AsSpan()
-                    var asSpan = editor.Generator.InvocationExpression(editor.Generator.MemberAccessExpression(target, _targetMethod));
-                    // target.AsSpan()[args]
-                    var indexed = editor.Generator.ElementAccessExpression(asSpan, arguments);
+                // target.AsSpan()
+                var asSpan = editor.Generator.InvocationExpression(
+                    editor.Generator.MemberAccessExpression(_methodTarget, _targetMethod));
 
-                    editor.ReplaceNode(toReplace, indexed);
-                    return editor.GetChangedDocument();
-                }
+                // target.AsSpan()[args]
+                var indexed = editor.Generator.ElementAccessExpression(asSpan, _rangeArguments);
 
-                return _document;
+                editor.ReplaceNode(_toReplace, indexed);
+                return editor.GetChangedDocument();
             }
         }
     }

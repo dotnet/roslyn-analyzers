@@ -122,7 +122,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             return;
                         }
 
-                        if (operationContext.Operation.Syntax.RawKind != (int)Microsoft.CodeAnalysis.CSharp.SyntaxKind.ElementAccessExpression)
+                        // 8635 is (int)Microsoft.CodeAnalysis.CSharp.SyntaxKind.ElementAccessExpression
+                        if (operationContext.Operation.Syntax.RawKind != 8635)
                         {
                             return;
                         }

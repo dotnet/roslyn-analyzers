@@ -2,10 +2,10 @@
 
 using System.Threading.Tasks;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotDefineFinalizersForTypesDerivedFromMemoryManager,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotDefineFinalizersForTypesDerivedFromMemoryManager,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
@@ -17,86 +17,86 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task ClassNotDerivedFromMemoryManagerOK()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-            using System;
+                using System;
 
-            namespace TestNamespace
-            {
-                class TestClass
+                namespace TestNamespace
                 {
-                    private void TestMethod() { }
-                }
-            }");
+                    class TestClass
+                    {
+                        private void TestMethod() { }
+                    }
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-            Imports System
+                Imports System
 
-            Namespace TestNamespace
-                Class TestClass
-                    Private Sub TestMethod()
-                    End Sub
-                End Class
-            End Namespace");
+                Namespace TestNamespace
+                    Class TestClass
+                        Private Sub TestMethod()
+                        End Sub
+                    End Class
+                End Namespace");
         }
 
         [Fact]
         public async Task ClassHavingFinalizerButNotDerivedFromMemoryManagerOK()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-            using System;
+                using System;
 
-            namespace TestNamespace
-            {
-                class TestClass
+                namespace TestNamespace
                 {
-                    private void TestMethod()
+                    class TestClass
                     {
-                    }
+                        private void TestMethod()
+                        {
+                        }
 
-                    ~TestClass() 
-                    {
-                        TestMethod();
+                        ~TestClass() 
+                        {
+                            TestMethod();
+                        }
                     }
-                }
-            }");
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-            Imports System
+                Imports System
 
-            Namespace TestNamespace
-                Class TestClass
-                    Private Sub TestMethod()
-                    End Sub
+                Namespace TestNamespace
+                    Class TestClass
+                        Private Sub TestMethod()
+                        End Sub
 
-                    Protected Overrides Sub Finalize()
-                        TestMethod()
-                    End Sub
-                End Class
-            End Namespace");
+                        Protected Overrides Sub Finalize()
+                            TestMethod()
+                        End Sub
+                    End Class
+                End Namespace");
         }
 
         [Fact]
         public async Task ClassDerivedFromMemoryManagerNoFinilizerOK()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-            using System;
-            using System.Buffers;
+                using System;
+                using System.Buffers;
 
-            namespace TestNamespace
-            {
-                abstract class TestClass<T> : MemoryManager<T>
+                namespace TestNamespace
                 {
-                }
-            }");
+                    abstract class TestClass<T> : MemoryManager<T>
+                    {
+                    }
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-            Imports System
-            Imports System.Buffers
+                Imports System
+                Imports System.Buffers
 
-            Namespace TestNamespace
-                MustInherit Class TestClass(Of T)
-                    Inherits MemoryManager(Of T)
-                End Class
-            End Namespace
+                Namespace TestNamespace
+                    MustInherit Class TestClass(Of T)
+                        Inherits MemoryManager(Of T)
+                    End Class
+                End Namespace
             ");
         }
 
@@ -104,120 +104,113 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task ClassDerivedFromMemoryManagerWithFinilizerWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-            using System;
-            using System.Buffers;
+                using System;
+                using System.Buffers;
 
-             namespace TestNamespace
-             {
-                class TestClass<T> : MemoryManager<T>
-                {
-                    public override Span<T> GetSpan()
+                 namespace TestNamespace
+                 {
+                    class TestClass<T> : MemoryManager<T>
                     {
-                        throw new NotImplementedException();
+                        public override Span<T> GetSpan()
+                        {
+                            throw new NotImplementedException();
+                        }
+
+                        public override MemoryHandle Pin(int elementIndex = 0)
+                        {
+                            throw new NotImplementedException();
+                        }
+
+                        public override void Unpin() { }
+
+                        ~[|TestClass|](){ }
+
+                        protected override void Dispose(bool disposing) { }
                     }
-
-                    public override MemoryHandle Pin(int elementIndex = 0)
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    public override void Unpin() { }
-
-                    ~TestClass() { }
-
-                    protected override void Dispose(bool disposing) { }
-                }
-            }",
-                VerifyCS.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithSpan(21, 22, 21, 31));
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-            Imports System
-            Imports System.Buffers
+                Imports System
+                Imports System.Buffers
 
-            Namespace TestNamespace
-                MustInherit Class TestClass(Of T)
-                    Inherits MemoryManager(Of T)
+                Namespace TestNamespace
+                    MustInherit Class TestClass(Of T)
+                        Inherits MemoryManager(Of T)
 
-                    Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
-                        Throw New NotImplementedException()
-                    End Function
+                        Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
+                            Throw New NotImplementedException()
+                        End Function
 
-                    Public Overrides Sub Unpin()
-                    End Sub
+                        Public Overrides Sub Unpin()
+                        End Sub
 
-                    Protected Overrides Sub Finalize()
-                    End Sub
+                        Protected Overrides Sub [|Finalize|]()
+                        End Sub
 
-                    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-                    End Sub
-                End Class
-            End Namespace",
-                VerifyVB.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithSpan(16, 45, 16, 53));
+                        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+                        End Sub
+                    End Class
+                End Namespace");
         }
 
         [Fact]
         public async Task ClassIndirectlyDerivedFromMemoryManagerWithFinilizerWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-            using System;
-            using System.Buffers;
+                using System;
+                using System.Buffers;
 
-             namespace TestNamespace
-             {
-                class Deeper<T> : Middle<T>
-                {
-                    ~Deeper() { }
-                }
-
-                class Middle<T> : MemoryManager<T>
-                {
-                    public override Span<T> GetSpan()
+                 namespace TestNamespace
+                 {
+                    class Deeper<T> : Middle<T>
                     {
-                        throw new NotImplementedException();
+                        ~[|Deeper|]() { }
                     }
 
-                    public override MemoryHandle Pin(int elementIndex = 0)
+                    class Middle<T> : MemoryManager<T>
                     {
-                        throw new NotImplementedException();
+                        public override Span<T> GetSpan()
+                        {
+                            throw new NotImplementedException();
+                        }
+
+                        public override MemoryHandle Pin(int elementIndex = 0)
+                        {
+                            throw new NotImplementedException();
+                        }
+
+                        public override void Unpin() { }
+
+                        protected override void Dispose(bool disposing) { }
                     }
-
-                    public override void Unpin() { }
-
-                    protected override void Dispose(bool disposing) { }
-                }
-            }", VerifyCS.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithSpan(9, 22, 9, 28));
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-            Imports System
-            Imports System.Buffers
+                Imports System
+                Imports System.Buffers
 
-            Namespace TestNamespace
-                    MustInherit Class Deeper(Of T)
-                    Inherits Middle(Of T)
+                Namespace TestNamespace
+                        MustInherit Class Deeper(Of T)
+                        Inherits Middle(Of T)
 
-                    Protected Overrides Sub Finalize()
-                    End Sub
-                End Class
+                        Protected Overrides Sub [|Finalize|]()
+                        End Sub
+                    End Class
 
-                MustInherit Class Middle(Of T)
-                    Inherits MemoryManager(Of T)
+                    MustInherit Class Middle(Of T)
+                        Inherits MemoryManager(Of T)
 
-                    Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
-                        Throw New NotImplementedException()
-                    End Function
+                        Public Overrides Function Pin(ByVal Optional elementIndex As Integer = 0) As MemoryHandle
+                            Throw New NotImplementedException()
+                        End Function
 
-                    Public Overrides Sub Unpin()
-                    End Sub
+                        Public Overrides Sub Unpin()
+                        End Sub
 
-                    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-                    End Sub
-                End Class
-            End Namespace",
-                VerifyVB.Diagnostic(DoNotDefineFinalizersForTypesDerivedFromMemoryManager.Rule)
-                .WithSpan(9, 45, 9, 53));
+                        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+                        End Sub
+                    End Class
+                End Namespace");
         }
     }
 }

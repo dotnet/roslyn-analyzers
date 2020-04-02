@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -32,41 +32,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+            context.RegisterCompilationStartAction(context =>
             {
-                INamedTypeSymbol? attributeType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                if (attributeType == null)
+                var memoryManager1 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersMemoryManager1);
+                if (memoryManager1 == null)
                 {
                     return;
                 }
 
-                compilationContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+                context.RegisterSymbolAction(context =>
+                {
+                    AnalyzeSymbol((INamedTypeSymbol)context.Symbol, memoryManager1, context.ReportDiagnostic);
+                }
+                , SymbolKind.NamedType);
             });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol memoryManager, Action<Diagnostic> addDiagnostic)
         {
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            var memoryManager1 = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffersMemoryManager1);
-
-            if (memoryManager1 != null && namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(memoryManager1))
+            if (namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(memoryManager))
             {
-                namedTypeSymbol.GetMembers().FirstOrDefault(m => CheckMethod(m, context));
+                foreach (ISymbol symbol in namedTypeSymbol.GetMembers())
+                {
+                    if (symbol is IMethodSymbol method && method.IsFinalizer())
+                    {
+                        addDiagnostic(Diagnostic.Create(Rule, method.Locations[0], method.Name));
+                        break;
+                    }
+                }
             }
-        }
-
-        private static bool CheckMethod(ISymbol m, SymbolAnalysisContext context)
-        {
-            if (m is IMethodSymbol method && method.IsFinalizer())
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, method.Locations[0], method.Name));
-                return true;
-            }
-            return false;
         }
     }
 }

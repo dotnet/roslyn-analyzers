@@ -4,7 +4,7 @@
 
     <VersionPrefix>3.0.0</VersionPrefix>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
-    <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>beta4</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -21,9 +21,10 @@
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.3.1</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisForShippedApisVersion>3.5.0-beta2-20056-01</MicrosoftCodeAnalysisForShippedApisVersion>
-    <MicrosoftNetCompilersVersion>3.5.0-beta4-20153-05</MicrosoftNetCompilersVersion>
-    <DogfoodAnalyzersVersion>3.0.0-beta2.19529.2+e119d9cf</DogfoodAnalyzersVersion>
+    <MicrosoftNetCompilersVersion>3.6.0-1.final</MicrosoftNetCompilersVersion>
+    <DogfoodAnalyzersVersion>3.0.0-beta4.20177.1</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>

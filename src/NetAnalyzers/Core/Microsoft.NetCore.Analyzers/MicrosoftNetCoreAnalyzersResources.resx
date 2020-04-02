@@ -1083,6 +1083,15 @@
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerMessage" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
+  <data name="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerDescription" xml:space="preserve">
+    <value>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; may permit memory to be freed while it is still in use by a Span&lt;T&gt;.</value>
+  </data>
+  <data name="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerMessage" xml:space="preserve">
+    <value>Adding a finalizer to a type derived from MemoryManager&lt;T&gt; may permit memory to be freed while it is still in use by a Span&lt;T&gt;.</value>
+  </data>
+  <data name="DoNotDefineFinalizersForTypesDerivedFromMemoryManagerTitle" xml:space="preserve">
+    <value>Do not define finalizers for types derived from MemoryManager&lt;T&gt;</value>
+  </data>
   <data name="UseValueTasksCorrectlyTitle" xml:space="preserve">
     <value>Use ValueTasks correctly</value>
   </data>
@@ -1241,5 +1250,26 @@
   </data>
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
     <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsTitle" xml:space="preserve">
+    <value>Do not use stackalloc in loops.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsDescription" xml:space="preserve">
+    <value>Stack space allocated by a stackalloc is only released at the end of the current method's invocation.  Using it in a loop can result in unbounded stack growth and eventual stack overflow conditions.</value>
+  </data>
+  <data name="DoNotUseStackallocInLoopsMessage" xml:space="preserve">
+    <value>Potential stack overflow. Move the stackalloc out of the loop.</value>
+  </data>
+  <data name="PreferTypedStringBuilderAppendOverloadsTitle" xml:space="preserve">
+    <value>Prefer strongly-typed Append and Insert method overloads on StringBuilder.</value>
+  </data>
+  <data name="PreferTypedStringBuilderAppendOverloadsDescription" xml:space="preserve">
+    <value>StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.</value>
+  </data>
+  <data name="PreferTypedStringBuilderAppendOverloadsMessage" xml:space="preserve">
+    <value>Remove the ToString call in order to use a strongly-typed StringBuilder overload.</value>
+  </data>
+  <data name="PreferTypedStringBuilderAppendOverloadsRemoveToString" xml:space="preserve">
+    <value>Remove the ToString call</value>
   </data>
 </root>

@@ -10,6 +10,7 @@
     <Summary>Microsoft FxCop Analyzers</Summary>
     <ReleaseNotes>Microsoft FxCop rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
   
   <ItemGroup>
@@ -30,7 +31,7 @@
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
-    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" TargetFramework="netstandard1.3" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,7 +21,7 @@ jobs:
         _codeCoverage: False
   pool:
     name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2017.open
+    queue: BuildPool.Windows.10.Amd64.VS2019.Open
   timeoutInMinutes: 30
 
   steps:
@@ -53,7 +53,7 @@ jobs:
     maxParallel: 4
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
+    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
   timeoutInMinutes: 30
 
   steps:

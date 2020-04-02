@@ -160,7 +160,7 @@ namespace GenerateGlobalAnalyzerConfigs
                 var versionString = version.ToString().Replace(".", "_", StringComparison.Ordinal);
                 CreateGlobalAnalyzerConfig(
                 $"BuildRulesVersion{versionString}",
-                $"All '{version}' build rules with default severity in",
+                $"All '{version}' build rules with default severity",
                 $"All '{version}' build rules (warnings/errors) with default severity. Rules with IsEnabledByDefault = false or first released in a version later then {version} or default severity Suggestion/Hidden are disabled.",
                 EditorConfigKind.CommandLine,
                 (shippedFilesData, version));

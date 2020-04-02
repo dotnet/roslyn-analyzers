@@ -195,13 +195,6 @@ namespace GenerateGlobalAnalyzerConfigs
                 EditorConfigKind editorConfigKind,
                 (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version)? shippedReleaseData = null)
             {
-                // Only generate live analysis specific global analyzer config if we have at least one info or hidden diagnostic
-                // that needs to be skipped during command line build.
-                if (!hasInfoOrHiddenDiagnostic && editorConfigKind == EditorConfigKind.LiveAnalysis)
-                {
-                    return;
-                }
-
                 CreateEditorconfig(outputDir, fileName, title, description, editorConfigKind, allRulesById, shippedReleaseData);
             }
         }

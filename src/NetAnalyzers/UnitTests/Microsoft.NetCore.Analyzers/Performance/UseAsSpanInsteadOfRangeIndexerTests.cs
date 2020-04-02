@@ -74,6 +74,7 @@ public class TestClass
         [Fact]
         public static async Task StringToSpanLocal()
         {
+            // This test is responsible for verifying the placeholders for string to ReadOnlySpan<char>.
             await TestCS(@"
 using System;
 
@@ -254,6 +255,7 @@ public class TestClass
         [MemberData(nameof(ArrayElementTypes))]
         public static async Task ArrayToReadOnlySpanLocal(string typeName)
         {
+            // This test is responsible for verifying the placeholders for T[] to ReadOnlySpan<T>.
             await TestCS(@"
 using System;
 
@@ -359,6 +361,7 @@ public class TestClass
         [MemberData(nameof(ArrayElementTypes))]
         public static async Task ArrayToSpanLocal(string typeName)
         {
+            // This test is responsible for verifying the placeholders for T[] to Span<T>.
             await TestCS(@"
 using System;
 
@@ -476,6 +479,7 @@ public class TestClass
         [MemberData(nameof(ArrayElementTypes))]
         public static async Task ArrayToReadOnlyMemoryLocal(string typeName)
         {
+            // This test is responsible for verifying the placeholders for T[] to ReadOnlyMemory<T>.
             await TestCS(@"
 using System;
 
@@ -594,6 +598,7 @@ public class TestClass
         [MemberData(nameof(ArrayElementTypes))]
         public static async Task ArrayToMemoryLocal(string typeName)
         {
+            // This test is responsible for verifying the placeholders for T[] to Memory<T>.
             await TestCS(@"
 using System;
 

@@ -25,7 +25,7 @@ namespace GenerateGlobalAnalyzerConfigs
 
             if (args.Length != expectedArguments)
             {
-                Console.Error.WriteLine($"Excepted {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}");
+                Console.Error.WriteLine($"Expected {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
             }
 

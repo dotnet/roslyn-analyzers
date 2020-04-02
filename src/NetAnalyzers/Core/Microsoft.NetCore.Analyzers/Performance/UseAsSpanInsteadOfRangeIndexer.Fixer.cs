@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             // The rules are mutually exclusive, so there can't be more than one for the same span:
-            var diagnostic = context.Diagnostics.Single();
+            var diagnostic = context.Diagnostics.FirstOrDefault();
             var targetMethod = diagnostic.Properties.GetValueOrDefault(UseAsSpanInsteadOfRangeIndexerAnalyzer.TargetMethodName);
 
             if (targetMethod == null)

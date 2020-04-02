@@ -170,7 +170,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                     }
 
-                    var targetType = conversionOperation.Type.OriginalDefinition;
+                    var targetType = conversionOperation.Type?.OriginalDefinition;
 
                     if (!targetTypes.Contains(targetType))
                     {

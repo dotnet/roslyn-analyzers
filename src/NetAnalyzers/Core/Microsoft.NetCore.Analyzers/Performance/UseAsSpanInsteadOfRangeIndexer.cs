@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -113,6 +114,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         indexerArgument = elementReference.Indices[0];
                         containingType = elementReference.ArrayReference.Type;
                     }
+                    else if (operationContext.Operation.Kind == OperationKind.None)
+                    {
+                        // The forward support via the "None" operation kind is only available for C#.
+                        if (operationContext.Compilation.Language != LanguageNames.CSharp)
+                        {
+                            return;
+                        }
+
+                        if (operationContext.Operation.Syntax.RawKind != (int)Microsoft.CodeAnalysis.CSharp.SyntaxKind.ElementAccessExpression)
+                        {
+                            return;
+                        }
+
+                        IEnumerator<IOperation> enumerator = operationContext.Operation.Children.GetEnumerator();
+
+                        if (!enumerator.MoveNext())
+                        {
+                            return;
+                        }
+
+                        containingType = enumerator.Current.Type;
+
+                        if (!enumerator.MoveNext())
+                        {
+                            return;
+                        }
+
+                        indexerArgument = enumerator.Current;
+
+                        // Too many children, don't know what this is.
+                        if (enumerator.MoveNext())
+                        {
+                            return;
+                        }
+                    }
                     else
                     {
                         return;
@@ -168,7 +204,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             containingType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
                 },
                 OperationKind.PropertyReference,
-                OperationKind.ArrayElementReference);
+                OperationKind.ArrayElementReference,
+                OperationKind.None);
         }
     }
 }

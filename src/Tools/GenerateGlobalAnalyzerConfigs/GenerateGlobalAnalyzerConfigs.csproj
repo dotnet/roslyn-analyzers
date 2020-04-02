@@ -5,7 +5,10 @@
     <NonShipping>true</NonShipping>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)</MicrosoftCodeAnalysisVersion>
-  </PropertyGroup>
+  </PropertyGroup>  
+  <ItemGroup>
+    <Compile Include="..\..\Microsoft.CodeAnalysis.Analyzers\Core\MetaAnalyzers\ReleaseTrackingHelper.cs" Link="ReleaseTrackingHelper.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>

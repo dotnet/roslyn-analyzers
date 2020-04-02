@@ -223,7 +223,7 @@ namespace GenerateGlobalAnalyzerConfigs
                 shippedReleaseData);
 
             var directory = Directory.CreateDirectory(folder);
-            var editorconfigFilePath = Path.Combine(directory.FullName, $"{ fileName}.editorconfig");
+            var editorconfigFilePath = Path.Combine(directory.FullName, $"{fileName}.editorconfig");
             File.WriteAllText(editorconfigFilePath, text);
             return;
 

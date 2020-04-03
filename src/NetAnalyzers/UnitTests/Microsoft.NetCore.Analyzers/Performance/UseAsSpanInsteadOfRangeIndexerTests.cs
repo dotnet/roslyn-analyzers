@@ -86,8 +86,19 @@ public class TestClass
         return tmp.Length;
     }
 }",
+                @"
+using System;
+
+public class TestClass
+{
+    public int TestMethod(string input)
+    {
+        ReadOnlySpan<char> tmp = input.AsSpan()[3..5];
+        return tmp.Length;
+    }
+}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.StringRule).
-                    WithLocation(8, 34).
+                    WithSpan(8, 34, 8, 34 + 11).
                     WithArguments("AsSpan", "System.Range", "string"));
         }
 
@@ -102,6 +113,16 @@ public class TestClass
     public ReadOnlySpan<char> TestMethod(string input)
     {
         return {|CA1831:input[3..5]|};
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    public ReadOnlySpan<char> TestMethod(string input)
+    {
+        return input.AsSpan()[3..5];
     }
 }");
         }
@@ -119,6 +140,18 @@ public class TestClass
     public int TestMethod(string input)
     {
         return TestMethod2({|CA1831:input[3..5]|});
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(ReadOnlySpan<char> input) => input.Length;
+
+    public int TestMethod(string input)
+    {
+        return TestMethod2(input.AsSpan()[3..5]);
     }
 }");
         }
@@ -267,8 +300,19 @@ public class TestClass
         return tmp.Length;
     }
 }",
+                @"
+using System;
+
+public class TestClass
+{
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        ReadOnlySpan<" + typeName + @"> tmp = input.AsSpan()[3..5];
+        return tmp.Length;
+    }
+}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.ArrayReadOnlyRule).
-                    WithLocation(8, 30 + typeName.Length).
+                    WithSpan(8, 30 + typeName.Length, 8, 30 + 11 + typeName.Length).
                     WithArguments("AsSpan", "System.Range", typeName + "[]"));
         }
 
@@ -284,6 +328,16 @@ public class TestClass
     public ReadOnlySpan<" + typeName + @"> TestMethod(" + typeName + @"[] input)
     {
         return {|CA1832:input[3..5]|};
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    public ReadOnlySpan<" + typeName + @"> TestMethod(" + typeName + @"[] input)
+    {
+        return input.AsSpan()[3..5];
     }
 }");
         }
@@ -302,6 +356,18 @@ public class TestClass
     public int TestMethod(" + typeName + @"[] input)
     {
         return TestMethod2({|CA1832:input[3..5]|});
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(ReadOnlySpan<" + typeName + @"> input) => input.Length;
+
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        return TestMethod2(input.AsSpan()[3..5]);
     }
 }");
         }
@@ -373,8 +439,19 @@ public class TestClass
         return tmp.Length;
     }
 }",
+                @"
+using System;
+
+public class TestClass
+{
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        Span<" + typeName + @"> tmp = input.AsSpan()[3..5];
+        return tmp.Length;
+    }
+}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.ArrayReadWriteRule).
-                    WithLocation(8, 22 + typeName.Length).
+                    WithSpan(8, 22 + typeName.Length, 8, 22 + 11 + typeName.Length).
                     WithArguments("AsSpan", "System.Range", typeName + "[]"));
         }
 
@@ -390,6 +467,16 @@ public class TestClass
     public Span<" + typeName + @"> TestMethod(" + typeName + @"[] input)
     {
         return {|CA1833:input[3..5]|};
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    public Span<" + typeName + @"> TestMethod(" + typeName + @"[] input)
+    {
+        return input.AsSpan()[3..5];
     }
 }");
         }
@@ -491,8 +578,19 @@ public class TestClass
         return tmp.Length;
     }
 }",
+                @"
+using System;
+
+public class TestClass
+{
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        ReadOnlyMemory<" + typeName + @"> tmp = input.AsMemory()[3..5];
+        return tmp.Length;
+    }
+}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.ArrayReadOnlyRule).
-                    WithLocation(8, 32 + typeName.Length).
+                    WithSpan(8, 32 + typeName.Length, 8, 32 + 11 + typeName.Length).
                     WithArguments("AsMemory", "System.Range", typeName + "[]"));
         }
 
@@ -508,6 +606,16 @@ public class TestClass
     public ReadOnlyMemory<" + typeName + @"> TestMethod(" + typeName + @"[] input)
     {
         return {|CA1832:input[3..5]|};
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    public ReadOnlyMemory<" + typeName + @"> TestMethod(" + typeName + @"[] input)
+    {
+        return input.AsMemory()[3..5];
     }
 }");
         }
@@ -610,8 +718,19 @@ public class TestClass
         return tmp.Length;
     }
 }",
+                @"
+using System;
+
+public class TestClass
+{
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        Memory<" + typeName + @"> tmp = input.AsMemory()[3..5];
+        return tmp.Length;
+    }
+}",
                 VerifyCS.Diagnostic(UseAsSpanInsteadOfRangeIndexerAnalyzer.ArrayReadWriteRule).
-                    WithLocation(8, 24 + typeName.Length).
+                    WithSpan(8, 24 + typeName.Length, 8, 24 + 11 + typeName.Length).
                     WithArguments("AsMemory", "System.Range", typeName + "[]"));
         }
 
@@ -627,6 +746,16 @@ public class TestClass
     public Memory<" + typeName + @"> TestMethod(" + typeName + @"[] input)
     {
         return {|CA1833:input[3..5]|};
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    public Memory<" + typeName + @"> TestMethod(" + typeName + @"[] input)
+    {
+        return input.AsMemory()[3..5];
     }
 }");
         }
@@ -645,6 +774,18 @@ public class TestClass
     public int TestMethod(" + typeName + @"[] input)
     {
         return TestMethod2({|CA1833:input[3..5]|});
+    }
+}",
+                @"
+using System;
+
+public class TestClass
+{
+    private static int TestMethod2(Memory<" + typeName + @"> input) => input.Length;
+
+    public int TestMethod(" + typeName + @"[] input)
+    {
+        return TestMethod2(input.AsMemory()[3..5]);
     }
 }");
         }

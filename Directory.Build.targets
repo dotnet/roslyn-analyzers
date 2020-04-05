@@ -23,9 +23,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
-    <!-- https://github.com/tonerdo/coverlet/issues/363 -->
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
-
     <!-- https://github.com/tonerdo/coverlet/issues/618 -->
     <IncludeTestAssembly>true</IncludeTestAssembly>
 
@@ -67,4 +64,7 @@
       ThresholdStat="$(ThresholdStat)"
       InstrumenterState="$(InstrumenterState)"/>
   </Target>
+
+  <!-- Deterministic build workaround -->
+  <Import Project="$(MSBuildThisFileDirectory)DeterministicBuild.targets" />
 </Project>

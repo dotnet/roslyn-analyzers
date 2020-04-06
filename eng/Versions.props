@@ -16,7 +16,7 @@
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <CodecovVersion>1.9.0</CodecovVersion>
-    <CoverletVersion>2.8.1-g15593cedd0</CoverletVersion>
+    <CoverletVersion>2.8.1-g61c134dec1</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
 
     <!-- Roslyn -->

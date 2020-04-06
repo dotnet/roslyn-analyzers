@@ -12,7 +12,7 @@ https://github.com/dotnet/sourcelink/issues/572 -->
     <SourceRoot Include="$(NuGetPackageRoot)" />
   </ItemGroup>
 
-  <Target Name="GetPathMap"
+  <Target Name="CoverletGetPathMap"
           DependsOnTargets="InitializeSourceRootMappedPaths"
           Returns="@(_LocalTopLevelSourceRoot)"
           Condition="'$(DeterministicSourcePaths)' == 'true'"

@@ -10,6 +10,7 @@
     <Summary>MetaCompilation Analyzers</Summary>
     <ReleaseNotes>MetaCompilation Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <NonShipping>true</NonShipping>
   </PropertyGroup>
   
   <ItemGroup>

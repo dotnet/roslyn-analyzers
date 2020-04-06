@@ -61,6 +61,7 @@ namespace GenerateAnalyzerRulesets
                 }
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
+                analyzerFileReference.AnalyzerLoadFailed += AnalyzerFileReference_AnalyzerLoadFailed;
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
 
                 var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[]? languages)>());
@@ -151,6 +152,9 @@ namespace GenerateAnalyzerRulesets
             return 0;
 
             // Local functions.
+            static void AnalyzerFileReference_AnalyzerLoadFailed(object sender, AnalyzerLoadFailureEventArgs e)
+                => throw e.Exception;
+
             void createRulesetAndEditorconfig(
                 string fileName,
                 string title,

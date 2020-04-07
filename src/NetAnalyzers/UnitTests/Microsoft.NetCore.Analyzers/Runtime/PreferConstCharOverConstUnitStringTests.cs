@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-
-// TODO: Add tests for VisualBasic
+    Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -15,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public async Task TestRegularCase()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@" 
+            string input = @" 
 using System; 
 using System.Text;
  
@@ -30,7 +28,25 @@ namespace TestNamespace
             sb.Append(ch);
         } 
     } 
-}", VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"));
+}";
+            string fix = @" 
+using System; 
+using System.Text;
+ 
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            StringBuilder sb = new StringBuilder();
+            const char ch = 'a';
+            sb.Append(ch);
+        } 
+    } 
+}";
+
+            await VerifyCS.VerifyCodeFixAsync(input, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"), fix);
         }
 
         private const string multipleDeclarations = @" 
@@ -55,6 +71,30 @@ namespace TestNamespace
         {
             await VerifyCS.VerifyAnalyzerAsync(multipleDeclarations, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"), VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 36).WithArguments("bb"));
         }
+
+        private const string classFieldInAppend = @"
+using System;
+using System.Text;
+
+namespace RosylnScratch
+{
+    public class Program
+    {
+        public const string SS = ""a"";
+
+        static void Main(string[] args)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(SS);
+        }
+    }
+}";
+        [Fact]
+        public async Task TestClassField()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(classFieldInAppend, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(9, 29).WithArguments("SS"));
+        }
+
 
         private const string nonUnitString = @" 
 using System; 
@@ -162,16 +202,10 @@ namespace TestNamespace
         [InlineData(nonConstUnitString)]
         [InlineData(appendLiteral)]
         [InlineData(methodCallInAppend)]
+        [InlineData(methodParameterInAppend)]
         public async Task TestNonUnitString(string input)
         {
             await VerifyCS.VerifyAnalyzerAsync(input);
         }
-
-        [Fact]
-        public async Task TestCrash()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(methodParameterInAppend);
-        }
-
     }
 }

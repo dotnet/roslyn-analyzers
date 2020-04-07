@@ -26,13 +26,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            var diagnostics = context.Diagnostics;
-            var diagnosticsSpan = diagnostics.First().Location.SourceSpan;
+            ImmutableArray<Diagnostic> diagnostics = context.Diagnostics;
+            CodeAnalysis.Text.TextSpan diagnosticsSpan = diagnostics.First().Location.SourceSpan;
 
-            // Find the type declaration identified by the diagnostic.
-            var declarations = root.FindToken(diagnosticsSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>();
+            // Find the type declaration identified by the diagnostic. Fix only local declarations.
+            IEnumerable<LocalDeclarationStatementSyntax> declarations = root.FindToken(diagnosticsSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>();
+            if (!declarations.Any())
+            {
+                return;
+            }
+
             LocalDeclarationStatementSyntax declaration = declarations.First();
             VariableDeclarationSyntax variableDeclaration = declaration.Declaration;
 

@@ -15,11 +15,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     // TODO: Add VisualBasic to this too?
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PreferConstCharOverConstUnitStringAnalyzer)), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public class PreferConstCharOverConstUnitStringFixer : CodeFixProvider
     {
-        // TODO: 
-        private const string title = "Replace const string with const char";
+        private const string title = "Replace const unit string with const char";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferConstCharOverConstUnitStringAnalyzer.RuleId);
 
@@ -50,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private async Task<Document?> ConvertStringToChar(Document document, VariableDeclarationSyntax variableDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document?> ConvertStringToChar(Document document, VariableDeclarationSyntax variableDeclaration, CancellationToken cancellationToken)
         {
             IEnumerable<SyntaxNode> childNodes = variableDeclaration.ChildNodes();
             if (!(childNodes.First() is PredefinedTypeSyntax predefinedStringType))

@@ -24,7 +24,7 @@ namespace TestNamespace
         private void TestMethod() 
         { 
             StringBuilder sb = new StringBuilder();
-            const string ch = ""a"";
+            const string [|ch = ""a""|];
             sb.Append(ch);
         } 
     } 
@@ -46,10 +46,14 @@ namespace TestNamespace
     } 
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(input, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"), fix);
+            await VerifyCS.VerifyCodeFixAsync(input, fix);
         }
 
-        private const string multipleDeclarations = @" 
+
+        [Fact]
+        public async Task TestMultipleDeclarations()
+        {
+            const string multipleDeclarations = @" 
 using System; 
 using System.Text;
  
@@ -65,14 +69,13 @@ namespace TestNamespace
         } 
     } 
 }";
-
-        [Fact]
-        public async Task TestMultipleDeclarations()
-        {
             await VerifyCS.VerifyAnalyzerAsync(multipleDeclarations, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"), VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 36).WithArguments("bb"));
         }
 
-        private const string classFieldInAppend = @"
+        [Fact]
+        public async Task TestClassField()
+        {
+            const string classFieldInAppend = @"
 using System;
 using System.Text;
 
@@ -89,14 +92,14 @@ namespace RosylnScratch
         }
     }
 }";
-        [Fact]
-        public async Task TestClassField()
-        {
             await VerifyCS.VerifyAnalyzerAsync(classFieldInAppend, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(9, 29).WithArguments("SS"));
         }
 
 
-        private const string nonUnitString = @" 
+        [Fact]
+        public async Task TestNonUnitString()
+        {
+            const string nonUnitString = @" 
 using System; 
 using System.Text;
  
@@ -112,9 +115,13 @@ namespace TestNamespace
         } 
     } 
 }";
+            await VerifyCS.VerifyAnalyzerAsync(nonUnitString);
+        }
 
-
-        private const string noCallToStringAppend = @" 
+        [Fact]
+        public async Task TestNoCallToStringAppend()
+        {
+            const string noCallToStringAppend = @" 
 using System; 
 using System.Text;
  
@@ -129,8 +136,13 @@ namespace TestNamespace
         } 
     } 
 }";
+            await VerifyCS.VerifyAnalyzerAsync(noCallToStringAppend);
+        }
 
-        private const string nonConstUnitString = @" 
+        [Fact]
+        public async Task TestNonConstUnitString()
+        {
+            const string nonConstUnitString = @" 
 using System; 
 using System.Text;
  
@@ -146,7 +158,13 @@ namespace TestNamespace
         } 
     } 
 }";
-        private const string appendLiteral = @" 
+            await VerifyCS.VerifyAnalyzerAsync(nonConstUnitString);
+        }
+
+        [Fact]
+        public async Task TestAppendLiteral()
+        {
+            const string appendLiteral = @" 
 using System; 
 using System.Text;
  
@@ -161,8 +179,13 @@ namespace TestNamespace
         } 
     } 
 }";
+            await VerifyCS.VerifyAnalyzerAsync(appendLiteral);
+        }
 
-        private const string methodCallInAppend = @" 
+        [Fact]
+        public async Task TestMethodCallInAppend()
+        {
+            const string methodCallInAppend = @" 
 using System; 
 using System.Text;
  
@@ -179,8 +202,13 @@ namespace TestNamespace
         } 
     } 
 }";
+            await VerifyCS.VerifyAnalyzerAsync(methodCallInAppend);
+        }
 
-        private const string methodParameterInAppend = @"
+        [Fact]
+        public async Task TestMethodParameterInAppend()
+        {
+            const string methodParameterInAppend = @"
 using System; 
 using System.Text;
  
@@ -195,17 +223,8 @@ namespace TestNamespace
         } 
     } 
 }";
-
-        [Theory]
-        [InlineData(nonUnitString)]
-        [InlineData(noCallToStringAppend)]
-        [InlineData(nonConstUnitString)]
-        [InlineData(appendLiteral)]
-        [InlineData(methodCallInAppend)]
-        [InlineData(methodParameterInAppend)]
-        public async Task TestNonUnitString(string input)
-        {
-            await VerifyCS.VerifyAnalyzerAsync(input);
+            await VerifyCS.VerifyAnalyzerAsync(methodParameterInAppend);
         }
+
     }
 }

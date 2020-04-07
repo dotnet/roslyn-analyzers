@@ -1389,13 +1389,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderMessage">
-        <source>Prefer const char over const unit length string</source>
-        <target state="new">Prefer const char over const unit length string</target>
+        <source>Prefer const char over const unit length string in StringBuilder.Append for more performant code</source>
+        <target state="new">Prefer const char over const unit length string in StringBuilder.Append for more performant code</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferConstCharOverConstUnitStringInStringBuilderTitle">
-        <source>Prefer const char over const unit length string</source>
-        <target state="new">Prefer const char over const unit length string</target>
+        <source>Prefer const char over const unit length string in StringBuilder.Append for more performant code</source>
+        <target state="new">Prefer const char over const unit length string in StringBuilder.Append for more performant code</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsDescription">

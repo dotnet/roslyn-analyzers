@@ -1291,9 +1291,9 @@
     <value>Prefer const char over const unit length string in StringBuilder.Append for more performant code</value>
   </data>
   <data name="PreferConstCharOverConstUnitStringInStringBuilderMessage" xml:space="preserve">
-    <value>Prefer const char over const unit length string</value>
+    <value>Prefer const char over const unit length string in StringBuilder.Append for more performant code</value>
   </data>
   <data name="PreferConstCharOverConstUnitStringInStringBuilderTitle" xml:space="preserve">
-    <value>Prefer const char over const unit length string</value>
+    <value>Prefer const char over const unit length string in StringBuilder.Append for more performant code</value>
   </data>
 </root>

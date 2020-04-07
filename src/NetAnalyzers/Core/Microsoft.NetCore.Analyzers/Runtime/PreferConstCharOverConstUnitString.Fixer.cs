@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    // TODO: Add VisualBasic to this too?
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public class PreferConstCharOverConstUnitStringFixer : CodeFixProvider
     {

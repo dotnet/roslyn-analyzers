@@ -27,7 +27,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root.FindNode(context.Span) is SyntaxNode expression)
             {
-                // Register a code action that will invoke the fix.
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage,

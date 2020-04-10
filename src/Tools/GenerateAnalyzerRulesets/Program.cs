@@ -237,7 +237,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
   -->
   <PropertyGroup>
     <CodeAnalysisRuleSetOverrides>
-      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder.ToString()}
+      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder}
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>";
                     }

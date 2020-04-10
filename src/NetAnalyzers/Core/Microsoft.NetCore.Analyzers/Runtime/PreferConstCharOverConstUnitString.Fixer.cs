@@ -1,92 +1,84 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Composition;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public class PreferConstCharOverConstUnitStringFixer : CodeFixProvider
     {
-        private const string title = "Replace const unit string with const char";
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferConstCharOverConstUnitStringAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-            ImmutableArray<Diagnostic> diagnostics = context.Diagnostics;
-            CodeAnalysis.Text.TextSpan diagnosticsSpan = diagnostics.First().Location.SourceSpan;
-
-            // Find the type declaration identified by the diagnostic. Fix only local declarations.
-            IEnumerable<LocalDeclarationStatementSyntax> declarations = root.FindToken(diagnosticsSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>();
-            if (!declarations.Any())
-            {
-                return;
-            }
-
-            LocalDeclarationStatementSyntax declaration = declarations.First();
-            VariableDeclarationSyntax variableDeclaration = declaration.Declaration;
-
-            // Bail out if there are multiple variable declarations
-            if (variableDeclaration.Variables.Count == 1)
+            Document doc = context.Document;
+            CancellationToken cancellationToken = context.CancellationToken;
+            SyntaxNode root = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            if (root.FindNode(context.Span) is SyntaxNode expression)
             {
                 // Register a code action that will invoke the fix.
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        title: title,
-                        createChangedDocument: c => ConvertStringToChar(context.Document, variableDeclaration, c),
-                        equivalenceKey: title),
-                    diagnostics);
+                        title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage,
+                        createChangedDocument: async c =>
+                        {
+                            SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                            var variableDeclarationOp = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
+                            if (variableDeclarationOp is IVariableDeclaratorOperation variableDeclaratorOperation)
+                            {
+                                IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
+                                if (variableDeclarationOperation == null)
+                                {
+                                    return null;
+                                }
+
+                                IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
+                                if (variableGroupDeclarationOperation.Declarations.Length != 1)
+                                {
+                                    return null;
+                                }
+
+                                if (variableDeclarationOperation.Declarators.Length != 1)
+                                {
+                                    return null;
+                                }
+
+                                DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
+                                SyntaxGenerator generator = editor.Generator;
+                                ILocalSymbol currentSymbol = variableDeclaratorOperation.Symbol;
+                                IVariableInitializerOperation variableInitializerOperation = OperationExtensions.GetVariableInitializer(variableDeclaratorOperation);
+                                if (variableInitializerOperation == null)
+                                {
+                                    return null;
+                                }
+
+                                if (variableInitializerOperation.Value.ConstantValue.HasValue && variableInitializerOperation.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
+                                {
+                                    char charValue = unitString[0];
+                                    SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
+                                    var charTypeNode = generator.TypeExpression(SpecialType.System_Char);
+                                    var charSyntaxNode = generator.LocalDeclarationStatement(charTypeNode, currentSymbol.Name, charLiteralExpressionNode, isConst: true);
+                                    charSyntaxNode = charSyntaxNode.WithTriviaFrom(variableGroupDeclarationOperation.Syntax);
+                                    var newRoot = generator.ReplaceNode(root, variableGroupDeclarationOperation.Syntax, charSyntaxNode);
+                                    return doc.WithSyntaxRoot(newRoot);
+                                }
+                            }
+                            return doc;
+                        },
+                        equivalenceKey: "PreferConstCharOverConstUnitStringInStringBuilderAppend"),
+                    context.Diagnostics);
             }
-        }
-
-        private static async Task<Document?> ConvertStringToChar(Document document, VariableDeclarationSyntax variableDeclaration, CancellationToken cancellationToken)
-        {
-            IEnumerable<SyntaxNode> childNodes = variableDeclaration.ChildNodes();
-            if (!(childNodes.First() is PredefinedTypeSyntax predefinedStringType))
-            {
-                return null;
-            }
-
-            // Replace the string type with char type
-            SyntaxToken charToken = SyntaxFactory.Token(SyntaxKind.CharKeyword);
-            PredefinedTypeSyntax predefinedCharTypeWithTrailingTrivia = SyntaxFactory.PredefinedType(charToken).WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
-            VariableDeclarationSyntax newCharVariableDeclaration = variableDeclaration.ReplaceNode(predefinedStringType, predefinedCharTypeWithTrailingTrivia);
-
-            SeparatedSyntaxList<VariableDeclaratorSyntax> variables = newCharVariableDeclaration.Variables;
-
-            // Replace the string value with a char value
-            VariableDeclaratorSyntax variable = variables.First();
-            string? stringValue = (variable.Initializer.Value as LiteralExpressionSyntax)?.Token.ValueText;
-            if (stringValue == null)
-            {
-                return null;
-            }
-
-            char charValue = stringValue[0];
-            EqualsValueClauseSyntax equalsValueClause = variable.Initializer;
-            ExpressionSyntax? stringLiteralExpression = equalsValueClause.Value;
-            LiteralExpressionSyntax? charLiteralExpression = SyntaxFactory.LiteralExpression(SyntaxKind.CharacterLiteralExpression, SyntaxFactory.Literal(charValue));
-            newCharVariableDeclaration = newCharVariableDeclaration.ReplaceNode(stringLiteralExpression, charLiteralExpression);
-
-            SyntaxNode oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode newRoot = oldRoot.ReplaceNode(variableDeclaration, newCharVariableDeclaration);
-
-            // Return document with transformed tree.
-            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

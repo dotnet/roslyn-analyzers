@@ -5,6 +5,9 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringAnalyzer,
     Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.PreferConstCharOverConstUnitStringFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -13,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public async Task TestRegularCase()
         {
-            string input = @" 
+            string csInput = @" 
 using System; 
 using System.Text;
  
@@ -24,12 +27,12 @@ namespace TestNamespace
         private void TestMethod() 
         { 
             StringBuilder sb = new StringBuilder();
-            const string [|ch = ""a""|];
+            const string [|ch|] = ""a"";
             sb.Append(ch);
         } 
     } 
 }";
-            string fix = @" 
+            string csFix = @" 
 using System; 
 using System.Text;
  
@@ -46,14 +49,41 @@ namespace TestNamespace
     } 
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(input, fix);
-        }
+            await VerifyCS.VerifyCodeFixAsync(csInput, csFix);
 
+            string vbInput = @" 
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Const [|aa|] As String = ""a""
+        Dim builder As New System.Text.StringBuilder
+        builder.Append(aa)
+
+    End Sub
+End Module
+";
+
+            string vbFix = @" 
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Const aa As Char = ""a""c
+        Dim builder As New System.Text.StringBuilder
+        builder.Append(aa)
+
+    End Sub
+End Module
+";
+
+            await VerifyVB.VerifyCodeFixAsync(vbInput, vbFix);
+        }
 
         [Fact]
         public async Task TestMultipleDeclarations()
         {
-            const string multipleDeclarations = @" 
+            const string multipleDeclarations_cs = @" 
 using System; 
 using System.Text;
  
@@ -69,13 +99,27 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(multipleDeclarations, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 26).WithArguments("ch"), VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(12, 36).WithArguments("bb"));
+            await VerifyCS.VerifyAnalyzerAsync(multipleDeclarations_cs);
+            const string multipleDeclarations_vb = @" 
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Const [|aa|] As String = ""a""
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(aa)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(multipleDeclarations_vb);
         }
 
         [Fact]
         public async Task TestClassField()
         {
-            const string classFieldInAppend = @"
+            const string classFieldInAppend_cs = @"
 using System;
 using System.Text;
 
@@ -92,14 +136,28 @@ namespace RosylnScratch
         }
     }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(classFieldInAppend, VerifyCS.Diagnostic(PreferConstCharOverConstUnitStringAnalyzer.Rule).WithLocation(9, 29).WithArguments("SS"));
+            await VerifyCS.VerifyAnalyzerAsync(classFieldInAppend_cs);
+            const string classFieldInAppend_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Const str As String = ""a""
+        Public Sub Main(args As String())
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(str)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(classFieldInAppend_vb);
         }
 
 
         [Fact]
         public async Task TestNonUnitString()
         {
-            const string nonUnitString = @" 
+            const string nonUnitString_cs = @" 
 using System; 
 using System.Text;
  
@@ -115,13 +173,27 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(nonUnitString);
+            await VerifyCS.VerifyAnalyzerAsync(nonUnitString_cs);
+            const string nonUnitString_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Const ch As String = ""ab""
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(ch)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(nonUnitString_vb);
         }
 
         [Fact]
         public async Task TestNoCallToStringAppend()
         {
-            const string noCallToStringAppend = @" 
+            const string noCallToStringAppend_cs = @" 
 using System; 
 using System.Text;
  
@@ -136,13 +208,27 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(noCallToStringAppend);
+            await VerifyCS.VerifyAnalyzerAsync(noCallToStringAppend_cs);
+
+            const string noCallToStringAppend_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Const ch As String = ""a""
+            Dim builder As New System.Text.StringBuilder
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(noCallToStringAppend_vb);
         }
 
         [Fact]
         public async Task TestNonConstUnitString()
         {
-            const string nonConstUnitString = @" 
+            const string nonConstUnitString_cs = @" 
 using System; 
 using System.Text;
  
@@ -158,13 +244,28 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(nonConstUnitString);
+            await VerifyCS.VerifyAnalyzerAsync(nonConstUnitString_cs);
+
+            const string nonConstUnitString_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Dim ch As String = ""a""
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(ch)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(nonConstUnitString_vb);
         }
 
         [Fact]
         public async Task TestAppendLiteral()
         {
-            const string appendLiteral = @" 
+            const string appendLiteral_cs = @" 
 using System; 
 using System.Text;
  
@@ -179,13 +280,27 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(appendLiteral);
+            await VerifyCS.VerifyAnalyzerAsync(appendLiteral_cs);
+
+            const string appendLiteral_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Dim builder As New System.Text.StringBuilder
+            builder.Append("","")
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(appendLiteral_vb);
         }
 
         [Fact]
         public async Task TestMethodCallInAppend()
         {
-            const string methodCallInAppend = @" 
+            const string methodCallInAppend_cs = @" 
 using System; 
 using System.Text;
  
@@ -202,7 +317,25 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(methodCallInAppend);
+            await VerifyCS.VerifyAnalyzerAsync(methodCallInAppend_cs);
+
+            const string methodCallInAppend_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Function AString() As String
+            Return ""A""
+        End Function
+
+        Public Sub Main(args As String())
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(AString())
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(methodCallInAppend_vb);
         }
 
         [Fact]
@@ -224,6 +357,20 @@ namespace TestNamespace
     } 
 }";
             await VerifyCS.VerifyAnalyzerAsync(methodParameterInAppend);
+
+            const string methodParameterInAppend_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(arg As Int32)
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(arg)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(methodParameterInAppend_vb);
         }
 
     }

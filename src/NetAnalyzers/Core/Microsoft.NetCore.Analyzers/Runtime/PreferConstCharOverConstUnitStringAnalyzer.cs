@@ -5,9 +5,8 @@ using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -42,97 +41,75 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void AnalyzeSymbol(OperationAnalysisContext context)
         {
-            if (!(context.Operation.Syntax is InvocationExpressionSyntax invocationExpression))
-            {
-                return;
-            }
-
-            if (!(invocationExpression.Expression is MemberAccessExpressionSyntax memberAccessExpression))
-            {
-                return;
-            }
-
-            // Verify that the current call is to Append
-            if (memberAccessExpression.Name.Identifier.Text != "Append")
-            {
-                return;
-            }
-
-            // Check that we've called Append on an instance of StringBuilder
-            SemanticModel semanticModel = context.Operation.SemanticModel;
-            if (semanticModel == null)
+            IInvocationOperation invocationOperation = (IInvocationOperation)context.Operation;
+            if (invocationOperation.Arguments.Length < 1)
             {
                 return;
             }
 
             // Check that the object is a StringBuilder
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder, out INamedTypeSymbol? stringBuilder))
+            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder, out INamedTypeSymbol? stringBuilderType))
             {
                 return;
             }
 
-            ISymbol memberSymbol = semanticModel.GetSymbolInfo(memberAccessExpression).Symbol;
-            if (memberSymbol == null)
+            IMethodSymbol appendStringMethod = stringBuilderType
+                .GetMembers("Append")
+                .OfType<IMethodSymbol>()
+                .WhereAsArray(s =>
+                    s.Parameters.Length == 1 &&
+                    s.Parameters[0].Type.SpecialType == SpecialType.System_String)
+                .FirstOrDefault();
+            if (appendStringMethod is null)
             {
                 return;
             }
 
-            INamedTypeSymbol memberSymbolContainingType = memberSymbol.ContainingType;
-            bool? memberObjectExists = stringBuilder?.Equals(memberSymbolContainingType);
-            if (memberObjectExists == null || memberObjectExists == false)
+            if (!invocationOperation.TargetMethod.Equals(appendStringMethod))
             {
                 return;
             }
 
-            // Find the argument and eventually it's declaration
-            ArgumentListSyntax argumentList = invocationExpression.ArgumentList;
-            SeparatedSyntaxList<ArgumentSyntax> arguments = argumentList.Arguments;
-            if (arguments.Count < 1)
+            ImmutableArray<IArgumentOperation> arguments = invocationOperation.Arguments;
+            IArgumentOperation firstArgument = arguments[0];
+
+            // We don't handle class fields. Only local declarations
+            if (!(firstArgument.Value is ILocalReferenceOperation argumentValue))
             {
                 return;
             }
 
-            ArgumentSyntax firstArgument = arguments.First();
-            ExpressionSyntax expr = firstArgument.Expression;
-            SymbolInfo exprSymbolInfo = semanticModel.GetSymbolInfo(expr);
-            ISymbol exprSymbol = exprSymbolInfo.Symbol;
-            if (exprSymbol == null)
-            {
-                return;
-            }
+            ILocalSymbol localArgumentDeclaration = argumentValue.Local;
 
-            ImmutableArray<SyntaxReference> syntaxReferences = exprSymbol.DeclaringSyntaxReferences;
-            if (syntaxReferences.IsEmpty)
+            // If there are multiple declarations, bail
+            var semanticModel = context.Operation.SemanticModel;
+            var cancellationToken = context.CancellationToken;
+            SyntaxReference declaringSyntaxReference = localArgumentDeclaration.DeclaringSyntaxReferences.First();
+            var variableDeclarator = semanticModel.GetOperationWalkingUpParentChain(declaringSyntaxReference.GetSyntax(cancellationToken), cancellationToken);
+            if (variableDeclarator is IVariableDeclaratorOperation variableDeclaratorOperation)
             {
-                return;
-            }
-
-            SyntaxReference declaration = syntaxReferences.First();
-            if (!(declaration.GetSyntax() is VariableDeclaratorSyntax variableDeclarator))
-            {
-                return;
-            }
-
-            if (!(variableDeclarator.Parent is VariableDeclarationSyntax localDeclaration))
-            {
-                return;
-            }
-
-            SeparatedSyntaxList<VariableDeclaratorSyntax> variables = localDeclaration.Variables;
-            foreach (VariableDeclaratorSyntax variable in variables)
-            {
-                Location declarationLocation = variable.GetLocation();
-
-                Optional<object> constant = semanticModel.GetConstantValue(expr);
-                if (constant.HasValue)
+                IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
+                if (variableDeclarationOperation == null)
                 {
-                    object value = constant.Value;
-                    if (value is string stringValue && stringValue.Length == 1)
-                    {
-                        // Single char string. 
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, declarationLocation, variable.Identifier.ValueText));
-                    }
+                    return;
                 }
+
+                IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
+                if (variableGroupDeclarationOperation.Declarations.Length != 1)
+                {
+                    return;
+                }
+
+                if (variableDeclarationOperation.Declarators.Length != 1)
+                {
+                    return;
+                }
+            }
+
+            // Ok, single variable declaration
+            if (localArgumentDeclaration.HasConstantValue && localArgumentDeclaration.ConstantValue is string unitString && unitString.Length == 1)
+            {
+                context.ReportDiagnostic(localArgumentDeclaration.CreateDiagnostic(Rule));
             }
         }
     }

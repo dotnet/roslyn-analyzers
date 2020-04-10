@@ -189,6 +189,9 @@ dotnet_diagnostic.IDE0066.severity = suggestion
 # IDE0073: File header
 file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+# IDE0003: Name can be simplified
+dotnet_diagnostic.IDE0003.severity = silent
+
 # IDE005_gen: Remove unnecessary usings in generated code
 dotnet_diagnostic.IDE0005_gen.severity = silent
 
@@ -212,6 +215,10 @@ dotnet_diagnostic.IDE0048.severity = silent
 
 # IDE0058: Expression value is never used
 dotnet_diagnostic.IDE0058.severity = silent
+
+# IDE0065: Using directives must be placed outside of a namespace declaration
+# Can remove the below entry and turn it into a warning once https://github.com/dotnet/roslyn/issues/43271 is resolved.
+dotnet_diagnostic.IDE0065.severity = silent
 
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent

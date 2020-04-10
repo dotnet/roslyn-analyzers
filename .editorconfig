@@ -198,6 +198,9 @@ dotnet_diagnostic.IDE0007.severity = silent
 # IDE0010: Add missing cases in switch statement
 dotnet_diagnostic.IDE0010.severity = silent
 
+# IDE0017: Object initialization can be simplified
+dotnet_diagnostic.IDE0017.severity = silent
+
 # IDE0045: 'if' statement can be simplified
 dotnet_diagnostic.IDE0045.severity = silent
 

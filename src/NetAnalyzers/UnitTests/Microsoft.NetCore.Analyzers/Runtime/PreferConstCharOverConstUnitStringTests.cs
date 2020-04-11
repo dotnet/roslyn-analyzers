@@ -265,7 +265,7 @@ End Module
         [Fact]
         public async Task TestAppendLiteral()
         {
-            const string appendLiteral_cs = @" 
+            const string appendLiteralInput_cs = @" 
 using System; 
 using System.Text;
  
@@ -276,25 +276,53 @@ namespace TestNamespace
         private void TestMethod() 
         { 
             StringBuilder sb = new StringBuilder();
-            sb.Append("","");
+            sb.Append([|"",""|]);
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(appendLiteral_cs);
+            const string appendLiteralFix_cs = @" 
+using System; 
+using System.Text;
+ 
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            StringBuilder sb = new StringBuilder();
+            sb.Append(',');
+        } 
+    } 
+}";
+            await VerifyCS.VerifyCodeFixAsync(appendLiteralInput_cs, appendLiteralFix_cs);
 
-            const string appendLiteral_vb = @"
+            const string appendLiteralInput_vb = @"
 Imports System
 
 Module Program
     Class TestClass
         Public Sub Main(args As String())
             Dim builder As New System.Text.StringBuilder
-            builder.Append("","")
+            builder.Append([|"",""|])
         End Sub
     End Class
 End Module
 ";
-            await VerifyVB.VerifyAnalyzerAsync(appendLiteral_vb);
+
+            const string appendLiteralFix_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Dim builder As New System.Text.StringBuilder
+            builder.Append("",""c)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyCodeFixAsync(appendLiteralInput_vb, appendLiteralFix_vb);
         }
 
         [Fact]

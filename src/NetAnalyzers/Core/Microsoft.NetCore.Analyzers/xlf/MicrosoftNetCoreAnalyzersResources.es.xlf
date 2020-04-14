@@ -1407,6 +1407,21 @@
         <target state="new">Prefer 'ReadOnlyMemory&lt;Byte&gt;' overload for 'WriteAsync'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferStringContainsOverIndexOfDescription">
+        <source>Calls to 'String.IndexOf' where the result is then just compared to -1 can instead be replaced by 'String.Contains'</source>
+        <target state="new">Calls to 'String.IndexOf' where the result is then just compared to -1 can instead be replaced by 'String.Contains'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferStringContainsOverIndexOfMessage">
+        <source>Use 'String.Contains' instead of 'String.IndexOf' to improve readability</source>
+        <target state="new">Use 'String.Contains' instead of 'String.IndexOf' to improve readability</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferStringContainsOverIndexOfTitle">
+        <source>Consider using 'String.Contains' instead of 'String.IndexOf'</source>
+        <target state="new">Consider using 'String.Contains' instead of 'String.IndexOf'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsDescription">
         <source>StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.</source>
         <target state="translated">StringBuilder.Append y StringBuilder.Insert proporcionan sobrecargas para varios tipos aparte de System.String. Cuando sea posible, elija preferentemente las sobrecargas fuertemente tipadas frente al uso de ToString() y la sobrecarga basada en cadenas.</target>

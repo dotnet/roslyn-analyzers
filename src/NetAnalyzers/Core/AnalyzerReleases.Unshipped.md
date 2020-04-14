@@ -27,3 +27,4 @@ CA2247 | Usage | Warning | DoNotCreateTaskCompletionSourceWithWrongArguments, [D
 Rule ID | New Category | New Severity | Old Category | Old Severity | Notes
 --------|--------------|--------------|--------------|--------------|-------
 CA2208 | Usage | Info | Usage | Hidden | InstantiateArgumentExceptionsCorrectlyAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2208)
+CA2248 | Usage | Info | PreferStringContainsOverIndexOf, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2247)

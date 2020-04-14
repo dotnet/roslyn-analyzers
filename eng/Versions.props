@@ -24,7 +24,7 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>2.9.8</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.8</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>3.0.0-beta4.20177.1+98090363</MicrosoftCodeAnalysisAnalyersVersion>
-    <CodeStyleAnalyersVersion>3.6.0-2.20157.5</CodeStyleAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.7.0-1.20210.7</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->

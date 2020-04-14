@@ -181,28 +181,53 @@ visual_basic_style_unused_value_assignment_preference = unused_local_variable:wa
 ### Configuration for IDE code style by diagnostic IDs ###
 [*.{cs,vb}]
 
-# IDE0004: Remove unnecessary cast
-dotnet_diagnostic.IDE0004.severity = warning
-
-# IDE0005: Remove unnecessary usings/imports
-dotnet_diagnostic.IDE0005.severity = warning
-
-# IDE0051: Remove unused private members (no reads or writes)
-dotnet_diagnostic.IDE0051.severity = warning
-
-# IDE0052: Remove unread private members (writes but no reads)
-dotnet_diagnostic.IDE0052.severity = warning
-
-# IDE0055: Fix formatting
-dotnet_diagnostic.IDE0055.severity = warning
+dotnet_analyzer_diagnostic.category-Style.severity = warning
 
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion
 
 # IDE0073: File header
-dotnet_diagnostic.IDE0073.severity = warning
 file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+# IDE0001: Name can be simplified
+dotnet_diagnostic.IDE0001.severity = silent
+
+# IDE0002: Name can be simplified
+dotnet_diagnostic.IDE0002.severity = silent
+
+# IDE0003: Name can be simplified
+dotnet_diagnostic.IDE0003.severity = silent
+
+# IDE005_gen: Remove unnecessary usings in generated code
+dotnet_diagnostic.IDE0005_gen.severity = silent
+
+# IDE0007: Use 'var' instead of explicit type
+dotnet_diagnostic.IDE0007.severity = silent
+
+# IDE0010: Add missing cases in switch statement
+dotnet_diagnostic.IDE0010.severity = silent
+
+# IDE0017: Object initialization can be simplified
+dotnet_diagnostic.IDE0017.severity = silent
+
+# IDE0045: 'if' statement can be simplified
+dotnet_diagnostic.IDE0045.severity = silent
+
+# IDE0046: 'if' statement can be simplified
+dotnet_diagnostic.IDE0046.severity = silent
+
+# IDE0048: Parentheses should be added for clarity
+dotnet_diagnostic.IDE0048.severity = silent
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = silent
+
+# IDE0065: Using directives must be placed outside of a namespace declaration
+# Can remove the below entry and turn it into a warning once https://github.com/dotnet/roslyn/issues/43271 is resolved.
+dotnet_diagnostic.IDE0065.severity = silent
+
+# IDE0072: Populate switch
+dotnet_diagnostic.IDE0072.severity = silent
 
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]

@@ -237,7 +237,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
   -->
   <PropertyGroup>
     <CodeAnalysisRuleSetOverrides>
-      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder.ToString()}
+      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder}
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>";
                     }
@@ -587,8 +587,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Descriptio
             SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             Debug.Assert(categoryOpt == null || customTagOpt == null);
-            Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
-            Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
+            Debug.Assert(categoryOpt != null == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
+            Debug.Assert(customTagOpt != null == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
 
             var result = new StringBuilder();
             startRulesetOrEditorconfig(result);

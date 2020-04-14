@@ -67,7 +67,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage,
+                            title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderTitle,
                             createChangedDocument: async c =>
                             {
                                 if (argumentOperation.Value is ILiteralOperation argumentLiteral)

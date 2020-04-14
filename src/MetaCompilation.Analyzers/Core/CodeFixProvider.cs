@@ -757,7 +757,7 @@ namespace MetaCompilation.Analyzers
 
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
             SyntaxTriviaList leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Checks that there is only one piece of trailing trivia").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
-            SyntaxList<SyntaxNode> localDeclaration = new SyntaxList<SyntaxNode>().Add((CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements)).WithLeadingTrivia(leadingTrivia));
+            SyntaxList<SyntaxNode> localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements).WithLeadingTrivia(leadingTrivia));
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
@@ -1675,7 +1675,7 @@ namespace MetaCompilation.Analyzers
 
                 SyntaxList<SyntaxNode> nodeArgs = CodeFixHelper.CreateRuleList(ruleNames);
                 SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-                SyntaxNode newInvocationExpression = (generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs));
+                SyntaxNode newInvocationExpression = generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs);
                 SyntaxTriviaList leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
                 SyntaxNode newReturnStatement = generator.ReturnStatement(newInvocationExpression).WithLeadingTrivia(leadingTrivia);
                 AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();

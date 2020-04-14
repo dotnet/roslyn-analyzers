@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
-                    IInvocationOperation invocationOperation = (IInvocationOperation)operationContext.Operation;
+                    var invocationOperation = (IInvocationOperation)operationContext.Operation;
                     if (invocationOperation.Arguments.Length < 1)
                     {
                         return;
@@ -74,70 +74,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IArgumentOperation firstArgument = arguments[0];
 
                     // We don't handle class fields. Only local declarations
-                    IOperation firstArgumentValue = firstArgument.Value;
-                    if (firstArgumentValue is ILocalReferenceOperation argumentValue)
+                    if (!IsConstVar(firstArgument))
                     {
-                        HandleLocalReferenceOperation(argumentValue, operationContext);
                         return;
                     }
-                    else if (firstArgumentValue is ILiteralOperation literalArgumentValue)
+
+                    if (firstArgument.Value is ILocalReferenceOperation argumentValue)
                     {
-                        HandleLiteralReferenceOpearion(literalArgumentValue, operationContext);
-                        return;
+                        operationContext.ReportDiagnostic(argumentValue.CreateDiagnostic(Rule));
                     }
-                    return;
+                    else if (firstArgument.Value is ILiteralOperation literalArgumentValue)
+                    {
+                        operationContext.ReportDiagnostic(literalArgumentValue.CreateDiagnostic(Rule));
+                    }
                 }
                 , OperationKind.Invocation);
             });
         }
 
-        private static void HandleLiteralReferenceOpearion(ILiteralOperation literalArgumentValue, OperationAnalysisContext operationContext)
+        private static bool IsConstVar(IArgumentOperation argument)
         {
-            if (literalArgumentValue.ConstantValue.HasValue && literalArgumentValue.ConstantValue.Value is string unitString && unitString.Length == 1)
+            if (argument.Value.ConstantValue.HasValue && argument.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
             {
-                operationContext.ReportDiagnostic(literalArgumentValue.CreateDiagnostic(Rule));
+                return true;
             }
+            return false;
         }
 
-        private static void HandleLocalReferenceOperation(ILocalReferenceOperation argumentValue, OperationAnalysisContext operationContext)
-        {
-            ILocalSymbol localArgumentDeclaration = argumentValue.Local;
-
-            // If there are multiple declarations, bail
-            var semanticModel = operationContext.Operation.SemanticModel;
-            var cancellationToken = operationContext.CancellationToken;
-            SyntaxReference declaringSyntaxReference = localArgumentDeclaration.DeclaringSyntaxReferences.FirstOrDefault();
-            if (declaringSyntaxReference is null)
-            {
-                return;
-            }
-
-            var variableDeclarator = semanticModel.GetOperationWalkingUpParentChain(declaringSyntaxReference.GetSyntax(cancellationToken), cancellationToken);
-            if (variableDeclarator is IVariableDeclaratorOperation variableDeclaratorOperation)
-            {
-                IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
-                if (variableDeclarationOperation == null)
-                {
-                    return;
-                }
-
-                IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
-                if (variableGroupDeclarationOperation.Declarations.Length != 1)
-                {
-                    return;
-                }
-
-                if (variableDeclarationOperation.Declarators.Length != 1)
-                {
-                    return;
-                }
-            }
-
-            // Ok, single variable declaration
-            if (localArgumentDeclaration.HasConstantValue && localArgumentDeclaration.ConstantValue is string unitString && unitString.Length == 1)
-            {
-                operationContext.ReportDiagnostic(localArgumentDeclaration.CreateDiagnostic(Rule));
-            }
-        }
     }
 }

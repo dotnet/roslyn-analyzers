@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Operations;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Editing;
+using System.Linq;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -27,85 +28,96 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root.FindNode(context.Span) is SyntaxNode expression)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage,
-                        createChangedDocument: async c =>
+                SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
+                if (operation is IArgumentOperation argumentOperation)
+                {
+                    IVariableDeclaratorOperation? cachedVariableDeclaratorOperation = default;
+                    if (argumentOperation.Value is ILocalReferenceOperation localReferenceOperation)
+                    {
+                        ILocalSymbol localArgumentDeclaration = localReferenceOperation.Local;
+                        SyntaxReference declaringSyntaxReference = localArgumentDeclaration.DeclaringSyntaxReferences.FirstOrDefault();
+                        if (declaringSyntaxReference is null)
                         {
-                            SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                            var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
-                            if (operation is IVariableDeclaratorOperation variableDeclaratorOperation)
+                            return;
+                        }
+                        var variableDeclarator = semanticModel.GetOperationWalkingUpParentChain(declaringSyntaxReference.GetSyntax(cancellationToken), cancellationToken);
+
+                        if (variableDeclarator is IVariableDeclaratorOperation variableDeclaratorOperation)
+                        {
+                            cachedVariableDeclaratorOperation = variableDeclaratorOperation;
+                            IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
+                            if (variableDeclarationOperation == null)
                             {
-                                return await HandleVariableDeclarator(variableDeclaratorOperation, doc, root, cancellationToken).ConfigureAwait(false);
+                                return;
                             }
-                            else if (operation is IArgumentOperation argumentOperation)
+
+                            IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
+                            if (variableGroupDeclarationOperation.Declarations.Length != 1)
+                            {
+                                return;
+                            }
+
+                            if (variableDeclarationOperation.Declarators.Length != 1)
+                            {
+                                return;
+                            }
+                        }
+                    }
+
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            title: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage,
+                            createChangedDocument: async c =>
                             {
                                 if (argumentOperation.Value is ILiteralOperation argumentLiteral)
                                 {
                                     return await HandleStringLiteral(argumentLiteral, doc, root, cancellationToken).ConfigureAwait(false);
                                 }
-                            }
-                            return doc;
-                        },
-                        equivalenceKey: "PreferConstCharOverConstUnitStringInStringBuilderAppend"),
-                    context.Diagnostics);
+                                else
+                                {
+                                    return await HandleVariableDeclarator(cachedVariableDeclaratorOperation!, doc, root, cancellationToken).ConfigureAwait(false);
+                                }
+                            },
+                            equivalenceKey: MicrosoftNetCoreAnalyzersResources.PreferConstCharOverConstUnitStringInStringBuilderMessage),
+                        context.Diagnostics);
+                }
             }
         }
 
         private static async Task<Document?> HandleStringLiteral(ILiteralOperation argumentLiteral, Document doc, SyntaxNode root, CancellationToken cancellationToken)
         {
-            if (argumentLiteral.ConstantValue.HasValue && argumentLiteral.ConstantValue.Value is string unitString && unitString.Length == 1)
-            {
-                DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
-                SyntaxGenerator generator = editor.Generator;
-                char charValue = unitString[0];
-                SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
-                var newRoot = generator.ReplaceNode(root, argumentLiteral.Syntax, charLiteralExpressionNode);
-                return doc.WithSyntaxRoot(newRoot);
-            }
-            return doc;
+            var unitString = (string)argumentLiteral.ConstantValue.Value;
+            DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
+            char charValue = unitString[0];
+            SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
+            var newRoot = generator.ReplaceNode(root, argumentLiteral.Syntax, charLiteralExpressionNode);
+            return doc.WithSyntaxRoot(newRoot);
         }
 
         private static async Task<Document?> HandleVariableDeclarator(IVariableDeclaratorOperation variableDeclaratorOperation, Document doc, SyntaxNode root, CancellationToken cancellationToken)
         {
             IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
-            if (variableDeclarationOperation == null)
-            {
-                return null;
-            }
-
             IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
-            if (variableGroupDeclarationOperation.Declarations.Length != 1)
-            {
-                return null;
-            }
-
-            if (variableDeclarationOperation.Declarators.Length != 1)
-            {
-                return null;
-            }
 
             DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             ILocalSymbol currentSymbol = variableDeclaratorOperation.Symbol;
-            IVariableInitializerOperation variableInitializerOperation = OperationExtensions.GetVariableInitializer(variableDeclaratorOperation);
+            var variableInitializerOperation = OperationExtensions.GetVariableInitializer(variableDeclaratorOperation);
             if (variableInitializerOperation == null)
             {
                 return null;
             }
 
-            if (variableInitializerOperation.Value.ConstantValue.HasValue && variableInitializerOperation.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
-            {
-                char charValue = unitString[0];
-                SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
-                var charTypeNode = generator.TypeExpression(SpecialType.System_Char);
-                var charSyntaxNode = generator.LocalDeclarationStatement(charTypeNode, currentSymbol.Name, charLiteralExpressionNode, isConst: true);
-                charSyntaxNode = charSyntaxNode.WithTriviaFrom(variableGroupDeclarationOperation.Syntax);
-                var newRoot = generator.ReplaceNode(root, variableGroupDeclarationOperation.Syntax, charSyntaxNode);
-                return doc.WithSyntaxRoot(newRoot);
-            }
-
-            return null;
+            string unitString = (string)variableInitializerOperation.Value.ConstantValue.Value;
+            char charValue = unitString[0];
+            SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
+            var charTypeNode = generator.TypeExpression(SpecialType.System_Char);
+            var charSyntaxNode = generator.LocalDeclarationStatement(charTypeNode, currentSymbol.Name, charLiteralExpressionNode, isConst: true);
+            charSyntaxNode = charSyntaxNode.WithTriviaFrom(variableGroupDeclarationOperation.Syntax);
+            var newRoot = generator.ReplaceNode(root, variableGroupDeclarationOperation.Syntax, charSyntaxNode);
+            return doc.WithSyntaxRoot(newRoot);
         }
     }
 }

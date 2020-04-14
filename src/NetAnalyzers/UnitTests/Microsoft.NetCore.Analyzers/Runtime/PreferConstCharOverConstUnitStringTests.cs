@@ -27,8 +27,8 @@ namespace TestNamespace
         private void TestMethod() 
         { 
             StringBuilder sb = new StringBuilder();
-            const string [|ch|] = ""a"";
-            sb.Append(ch);
+            const string ch = ""a"";
+            sb.Append([|ch|]);
         } 
     } 
 }";
@@ -56,9 +56,9 @@ Imports System
 
 Module Program
     Sub Main(args As String())
-        Const [|aa|] As String = ""a""
+        Const aa As String = ""a""
         Dim builder As New System.Text.StringBuilder
-        builder.Append(aa)
+        builder.Append([|aa|])
 
     End Sub
 End Module
@@ -95,7 +95,7 @@ namespace TestNamespace
         { 
             StringBuilder sb = new StringBuilder();
             const string ch = ""a"", bb = ""b"";
-            sb.Append(ch);
+            sb.Append([|ch|]);
         } 
     } 
 }";
@@ -106,9 +106,9 @@ Imports System
 Module Program
     Class TestClass
         Public Sub Main(args As String())
-            Const [|aa|] As String = ""a""
+            Const aa As String = ""a"", bb As String = ""b""
             Dim builder As New System.Text.StringBuilder
-            builder.Append(aa)
+            builder.Append([|aa|])
         End Sub
     End Class
 End Module

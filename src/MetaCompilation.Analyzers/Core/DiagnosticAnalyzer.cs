@@ -350,7 +350,7 @@ namespace MetaCompilation.Analyzers
             private readonly List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
 
             //"main" method, performs the analysis once state has been collected
-            internal protected void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
+            protected internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
             {
                 //supported main branches for tutorial
                 _branchesDict.Add("RegisterSyntaxNodeAction", "SyntaxNode");
@@ -2850,7 +2850,7 @@ namespace MetaCompilation.Analyzers
 
             #region symbol collectors
             // Stores a method in state
-            internal protected void AddMethod(SymbolAnalysisContext context)
+            protected internal void AddMethod(SymbolAnalysisContext context)
             {
                 var sym = (IMethodSymbol)context.Symbol;
 
@@ -2902,7 +2902,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a property in state
-            internal protected void AddProperty(SymbolAnalysisContext context)
+            protected internal void AddProperty(SymbolAnalysisContext context)
             {
                 var sym = (IPropertySymbol)context.Symbol;
 
@@ -2951,7 +2951,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a field in state
-            internal protected void AddField(SymbolAnalysisContext context)
+            protected internal void AddField(SymbolAnalysisContext context)
             {
                 var sym = (IFieldSymbol)context.Symbol;
 
@@ -2984,7 +2984,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a class in state
-            internal protected void AddClass(SymbolAnalysisContext context)
+            protected internal void AddClass(SymbolAnalysisContext context)
             {
                 var sym = (INamedTypeSymbol)context.Symbol;
 
@@ -3039,7 +3039,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to SuppDiagReturnSymbol method
-            internal protected class SuppDiagReturnSymbolInfo
+            protected internal class SuppDiagReturnSymbolInfo
             {
                 public InvocationExpressionSyntax ValueClause
                 {
@@ -3060,7 +3060,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to InitializeBody method
-            internal protected class InitializeBodyInfo
+            protected internal class InitializeBodyInfo
             {
                 public InvocationExpressionSyntax InvocationExpr
                 {
@@ -3081,7 +3081,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to CheckInitialize method
-            internal protected class CheckInitializeInfo
+            protected internal class CheckInitializeInfo
             {
                 public IMethodSymbol RegisterMethod
                 {

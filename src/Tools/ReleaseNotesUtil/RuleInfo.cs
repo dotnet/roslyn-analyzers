@@ -56,9 +56,9 @@ namespace ReleaseNotesUtil
         {
             get
             {
-                return !String.IsNullOrWhiteSpace(this.HelpLink)
+                return !string.IsNullOrWhiteSpace(this.HelpLink)
                     ? $"[{this.Id}]({this.HelpLink})"
-                    : this.Id ?? String.Empty;
+                    : this.Id ?? string.Empty;
             }
         }
 
@@ -67,10 +67,10 @@ namespace ReleaseNotesUtil
             get
             {
                 return
-                    (!String.IsNullOrWhiteSpace(this.Description)
+                    (!string.IsNullOrWhiteSpace(this.Description)
                         ? this.Description
                         : this.MessageFormat)
-                    ?? String.Empty;
+                    ?? string.Empty;
             }
         }
     }

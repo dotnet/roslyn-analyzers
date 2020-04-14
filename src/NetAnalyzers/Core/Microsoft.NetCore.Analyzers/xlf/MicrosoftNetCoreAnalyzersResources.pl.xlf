@@ -1039,7 +1039,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the  {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">Wywołaj konstruktor {0}, który zawiera komunikat i/lub parametr paramName.</target>
         <note />
       </trans-unit>

@@ -1038,7 +1038,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the  {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">請呼叫包含 message 及 (或) paramName 參數的 {0} 建構函式。</target>
         <note />
       </trans-unit>

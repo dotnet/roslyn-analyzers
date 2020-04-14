@@ -13,5 +13,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     Public NotInheritable Class BasicInstantiateArgumentExceptionsCorrectlyFixer
         Inherits InstantiateArgumentExceptionsCorrectlyFixer
 
+        Protected Overrides Sub PopulateCodeFix(context As CodeFixContext, diagnostic As Diagnostic, paramPositionString As String, node As SyntaxNode)
+            Throw New NotImplementedException()
+        End Sub
     End Class
 End Namespace

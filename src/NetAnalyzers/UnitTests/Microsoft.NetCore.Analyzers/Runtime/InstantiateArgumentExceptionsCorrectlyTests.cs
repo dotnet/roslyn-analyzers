@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentException()
                     End Sub
                 End Class",
-              GetBasicNoArgumentsExpectedResult(4, 31, "ArgumentException"));
+                GetBasicNoArgumentsExpectedResult(4, 31, "ArgumentException"));
         }
 
         [Fact]
@@ -123,8 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(null, nameof(first));
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -132,8 +131,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentException(""first"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
         }
 
         [Fact]
@@ -154,8 +152,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(""first is incorrect"", nameof(first));
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -163,8 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentException(""first"", ""first is incorrect"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
         }
 
         [Fact]
@@ -186,8 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(null, nameof(first));
                     }
-                }"
-            );
+                }");
         }
 
         [Fact]
@@ -208,8 +203,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(""first is incorrect"", nameof(first));
                     }
-                }"
-            );
+                }");
         }
 
         [Fact]
@@ -230,8 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(""first is incorrect"", nameof(first), null);
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -239,8 +232,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentException(""first"", ""first is incorrect"", Nothing)
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
         }
 
         [Fact]
@@ -297,8 +289,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentNullException(nameof(first), ""first is null"");
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -306,8 +297,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentNullException(""first is null"", ""first"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentNullException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentNullException"));
         }
 
         [Fact]
@@ -372,8 +362,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentOutOfRangeException(nameof(first), ""first is out of range"");
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -381,8 +370,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.ArgumentOutOfRangeException(""first is out of range"", ""first"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentOutOfRangeException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentOutOfRangeException"));
         }
 
         [Fact]
@@ -394,7 +382,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public void Test(string first)
                     {
                         var val = new object();
-                        throw new System.ArgumentOutOfRangeException(""first is incorrect"", val, ""first"");
+                        throw new System.ArgumentOutOfRangeException(""first is out of range"", val, ""first"");
                     }
                 }",
                 GetCSharpIncorrectMessageExpectedResult(7, 31, "Test", "first", "message", "ArgumentOutOfRangeException"), @"
@@ -405,17 +393,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         var val = new object();
                         throw new System.ArgumentOutOfRangeException(nameof(first), val, ""first is out of range"");
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
                     Public Sub Test(first As String)
-                        Throw New System.ArgumentOutOfRangeException(""first is out of range"", ""first"")
+                        Dim val = New Object()
+                        Throw New System.ArgumentOutOfRangeException(""first is out of range"", val, ""first"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentOutOfRangeException")
-            );
+                GetBasicIncorrectMessageExpectedResult(5, 31, "Test", "first", "message", "ArgumentOutOfRangeException"));
         }
 
         [Fact]
@@ -480,8 +467,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.DuplicateWaitObjectException(nameof(first), ""first is duplicate"");
                     }
-                }"
-            );
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class [MyClass]
@@ -489,12 +475,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Throw New System.DuplicateWaitObjectException(""first is duplicate"", ""first"")
                     End Sub
                 End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "DuplicateWaitObjectException")
-            );
+                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "DuplicateWaitObjectException"));
         }
 
         [Fact]
-        public async Task ArgumentNullException_ParentHasNoParameter_Not_Warns()
+        public async Task ArgumentNullException_ParentHasNoParameter_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -503,12 +488,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentNullException(""Invalid argument"");
                     }
-                }"
-             );
+                }");
         }
 
         [Fact]
-        public async Task ArgumentException_ParentHasNoParameter_Not_Warns()
+        public async Task ArgumentException_ParentHasNoParameter_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -517,12 +501,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(""Invalid argument"", ""test"");
                     }
-                }"
-             );
+                }");
         }
 
         [Fact]
-        public async Task ArgumentException_VariableUsed_Not_Warns()
+        public async Task ArgumentException_VariableUsed_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -531,8 +514,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentException(paramName, message);
                     }
-                }"
-             );
+                }");
         }
 
         [Fact]
@@ -616,7 +598,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task ArgumentNullException_VariableUsed_Not_Warns()
+        public async Task ArgumentNullException_VariableUsed_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -626,8 +608,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new System.ArgumentNullException(str);
                     }
-                }"
-             );
+                }");
         }
 
         [Fact]

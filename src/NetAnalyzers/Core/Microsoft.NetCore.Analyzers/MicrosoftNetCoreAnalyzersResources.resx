@@ -460,7 +460,7 @@
     <value>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyMessageNoArguments" xml:space="preserve">
-    <value>Please use overload of the  {0} constructor that contains a message and/or paramName parameter.</value>
+    <value>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage" xml:space="preserve">
     <value>Method {0} passes parameter name '{1}' as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position.</value>

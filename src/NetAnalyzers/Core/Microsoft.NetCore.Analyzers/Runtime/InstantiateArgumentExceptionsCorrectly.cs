@@ -108,11 +108,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         continue;
                     }
+
                     string? value = argument.Value.ConstantValue.HasValue ? argument.Value.ConstantValue.Value as string : null;
                     if (value == null)
                     {
                         continue;
                     }
+
                     diagnostic = CheckArgument(owningSymbol, creation, argument.Parameter, value, context);
                     if (diagnostic != null && !diagnostic.Properties.IsEmpty)
                     {

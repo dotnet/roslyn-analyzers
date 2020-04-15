@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            var title = MicrosoftNetCoreAnalyzersResources.UseIndexer;
+            var title = MicrosoftNetCoreAnalyzersResources.UseIndexerCodeFixTitle;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         ct => UseCollectionDirectly(context.Document, root, invocationNode, collectionSyntax, method),

@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5403",
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificate),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificateTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificateMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

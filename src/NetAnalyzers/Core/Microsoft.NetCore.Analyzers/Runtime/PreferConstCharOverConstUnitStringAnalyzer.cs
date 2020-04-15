@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// Test for single character strings passed in to String.Append
+    /// Test for single character strings passed in to StringBuilder.Append
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferConstCharOverConstUnitStringAnalyzer : DiagnosticAnalyzer

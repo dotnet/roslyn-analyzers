@@ -30,25 +30,11 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             SyntaxNode root = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SemanticModel model = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            // If we're able to get the required types
-            if (model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskCompletionSource, out var tcsType) &&
-                model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskContinuationOptions, out var taskContinutationOptionsType) &&
-                model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskCreationOptions, out var taskCreationOptionsType) &&
-
-                // and the provided expression is an argument
-                root.FindNode(context.Span) is SyntaxNode expression &&
-                model.GetOperationWalkingUpParentChain(expression, cancellationToken) is IArgumentOperation arg &&
-
-                // and it wraps a conversion from a TaskContinuationOptions member
-                arg.Value is IConversionOperation convert &&
-                convert.Operand is IFieldReferenceOperation field &&
-                field.Type.Equals(taskContinutationOptionsType) &&
-                taskContinutationOptionsType.Equals(field.Field.ContainingType) &&
-
-                // and that option also exists on TaskCreationOptions
-                taskCreationOptionsType.GetMembers(field.Field.Name).FirstOrDefault() is IFieldSymbol taskCreationOptionsField)
+            // If we're able to make the desired substitution...
+            var (targetNode, replacementField) = GetTaskCreationOptionsField(context, root, model, cancellationToken);
+            if (replacementField != null)
             {
-                // then offer the fix.
+                // ...then offer it.
                 string title = MicrosoftNetCoreAnalyzersResources.DoNotCreateTaskCompletionSourceWithWrongArgumentsFix;
                 context.RegisterCodeFix(
                     new MyCodeAction(title,
@@ -56,14 +42,43 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                         {
                             // Replace "TaskContinuationOptions.Value" with "TaskCreationOptions.Value"
                             DocumentEditor editor = await DocumentEditor.CreateAsync(doc, ct).ConfigureAwait(false);
-                            editor.ReplaceNode(expression,
+                            editor.ReplaceNode(targetNode,
                                 editor.Generator.Argument(
                                     editor.Generator.MemberAccessExpression(
-                                        editor.Generator.TypeExpressionForStaticMemberAccess(taskCreationOptionsType), taskCreationOptionsField.Name)));
+                                        editor.Generator.TypeExpressionForStaticMemberAccess(replacementField.ContainingType), replacementField.Name)));
                             return editor.GetChangedDocument();
                         },
                         equivalenceKey: title),
                     context.Diagnostics);
+            }
+
+            static (SyntaxNode Expression, IFieldSymbol? ReplacementField) GetTaskCreationOptionsField(
+                CodeFixContext context, SyntaxNode root, SemanticModel model, CancellationToken cancellationToken)
+            {
+                if (// If we can get all the necessary types,
+                    model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskCompletionSource, out var tcsType) &&
+                    model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskContinuationOptions, out var taskContinutationOptionsType) &&
+                    model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskCreationOptions, out INamedTypeSymbol? taskCreationOptionsType) &&
+
+                    // and the provided expression is an argument,
+                    root.FindNode(context.Span) is SyntaxNode expression &&
+                    model.GetOperationWalkingUpParentChain(expression, cancellationToken) is IArgumentOperation arg &&
+
+                    // and it wraps a conversion from a TaskContinuationOptions member
+                    arg.Value is IConversionOperation convert &&
+                    convert.Operand is IFieldReferenceOperation field &&
+                    field.Type.Equals(taskContinutationOptionsType) &&
+                    taskContinutationOptionsType.Equals(field.Field.ContainingType) &&
+
+                    // and that option also exists on TaskCreationOptions,
+                    taskCreationOptionsType.GetMembers(field.Field.Name).FirstOrDefault() is IFieldSymbol taskCreationOptionsField)
+                {
+                    // then hand back the found SyntaxNode and desired TaskCreationOptions field to be substituted.
+                    return (expression, taskCreationOptionsField);
+                }
+
+                // Otherwise, nothing to fix.
+                return default;
             }
         }
 

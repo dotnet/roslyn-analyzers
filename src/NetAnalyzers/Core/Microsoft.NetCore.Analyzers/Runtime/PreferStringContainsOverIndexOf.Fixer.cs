@@ -1,18 +1,18 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Composition;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.Operations;
-using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Editing;
-using System.Linq;
-using System.Collections.Generic;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                 var compilation = semanticModel.Compilation;
-                var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
+                var operation = semanticModel.GetOperation(expression, cancellationToken);
                 if (operation is IBinaryOperation binaryOperation)
                 {
                     var leftOperand = binaryOperation.LeftOperand;

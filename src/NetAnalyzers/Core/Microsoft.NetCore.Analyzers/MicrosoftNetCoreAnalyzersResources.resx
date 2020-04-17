@@ -1291,7 +1291,7 @@
     <value>Calls to String.IndexOf where the result is then just compared to -1 can instead be replaced by calls to String.Contains</value>
   </data>
   <data name="PreferStringContainsOverIndexOfMessage" xml:space="preserve">
-    <value />
+    <value>Use String.Contains instead of String.IndexOf to check for membership</value>
   </data>
   <data name="PreferStringContainsOverIndexOfTitle" xml:space="preserve">
     <value>Consider using String.Contains instead of String.IndexOf</value>

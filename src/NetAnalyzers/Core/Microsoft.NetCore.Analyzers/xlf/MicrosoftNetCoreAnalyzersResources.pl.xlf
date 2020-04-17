@@ -1368,6 +1368,11 @@
         <target state="new">Calls to String.IndexOf where the result is then just compared to -1 can instead be replaced by calls to String.Contains</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferStringContainsOverIndexOfMessage">
+        <source>Use String.Contains instead of String.IndexOf to check for membership</source>
+        <target state="new">Use String.Contains instead of String.IndexOf to check for membership</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfTitle">
         <source>Consider using String.Contains instead of String.IndexOf</source>
         <target state="new">Consider using String.Contains instead of String.IndexOf</target>

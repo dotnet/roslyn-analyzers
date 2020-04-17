@@ -10,6 +10,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Operations;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Editing;
+using System.Linq;
+using System.Collections.Generic;
+using Analyzer.Utilities;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -24,88 +27,103 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             Document doc = context.Document;
             CancellationToken cancellationToken = context.CancellationToken;
+            var diagnostics = context.Diagnostics;
             SyntaxNode root = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (root.FindNode(context.Span) is SyntaxNode expression)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
-                        createChangedDocument: async c =>
+                SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                var compilation = semanticModel.Compilation;
+                var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
+                if (operation is IBinaryOperation binaryOperation)
+                {
+                    var leftOperand = binaryOperation.LeftOperand;
+                    if (leftOperand is ILocalReferenceOperation localReferenceOperation)
+                    {
+                        SyntaxNode localDeclarationStatement = root.FindNode(diagnostics.First().AdditionalLocations[0].SourceSpan);
+                        var variableDeclarationGroupOperation = (IVariableDeclarationGroupOperation)semanticModel.GetOperation(localDeclarationStatement, cancellationToken);
+                        var invocationOperation = (IInvocationOperation)variableDeclarationGroupOperation.Declarations.First().Declarators.First().GetVariableInitializer().Value;
+                        HandleInvocationOperation(invocationOperation, variableDeclarationGroupOperation);
+                    }
+                    else if (leftOperand is IInvocationOperation invocationOperation)
+                    {
+                        HandleInvocationOperation(invocationOperation);
+                    }
+
+                    void HandleInvocationOperation(IInvocationOperation invocationOperation, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null)
+                    {
+                        var instanceOperation = invocationOperation.Instance;
+                        if (!(instanceOperation is ILocalReferenceOperation localReferenceOperation))
                         {
-                            SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                            var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
-                            if (operation is IVariableDeclaratorOperation variableDeclaratorOperation)
+                            return;
+                        }
+
+                        var argumentsForContainsInvocation = invocationOperation.Arguments.Select(argument => argument.Syntax);
+                        if (argumentsForContainsInvocation.Count() == 1)
+                        {
+                            if (!semanticModel.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
                             {
-                                return await HandleVariableDeclarator(variableDeclaratorOperation, doc, root, cancellationToken).ConfigureAwait(false);
+                                return;
                             }
-                            else if (operation is IArgumentOperation argumentOperation)
+
+                            var ordinalIgnoreCase = stringComparisonType.GetMembers("Ordinal").FirstOrDefault();
+                            var currentCulture = stringComparisonType.GetMembers("CurrentCulture").FirstOrDefault();
+                            if (ordinalIgnoreCase == null || currentCulture == null)
                             {
-                                if (argumentOperation.Value is ILiteralOperation argumentLiteral)
-                                {
-                                    return await HandleStringLiteral(argumentLiteral, doc, root, cancellationToken).ConfigureAwait(false);
-                                }
+                                return;
                             }
-                            return doc;
-                        },
-                        equivalenceKey: "PreferConstCharOverConstUnitStringInStringBuilderAppend"),
-                    context.Diagnostics);
+
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, ordinalIgnoreCase),
+                                    equivalenceKey: "PreferStringContainsOrdinalOverIndexOfFixer"),
+                                context.Diagnostics);
+
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, currentCulture),
+                                    equivalenceKey: "PreferStringContainsCurrentCultureOverIndexOfFixer"),
+                                context.Diagnostics);
+                        }
+                        else
+                        {
+                            context.RegisterCodeFix(
+                                CodeAction.Create(
+                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation),
+                                    equivalenceKey: "PreferStringContainsOverIndexOfFixer"),
+                                context.Diagnostics);
+                        }
+
+                    }
+
+                }
             }
         }
 
-        private static async Task<Document?> HandleStringLiteral(ILiteralOperation argumentLiteral, Document doc, SyntaxNode root, CancellationToken cancellationToken)
+        private static async Task<Document?> ReplaceBinaryOperationWithContains(Document document, ILocalReferenceOperation localReferenceOperation, SyntaxNode treeRoot, IEnumerable<SyntaxNode> argumentsForContainsInvocation, SyntaxNode binaryOperationSyntaxNode, CancellationToken cancellationToken, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null, ISymbol? stringComparisonArgumentToContainsInvocation = null)
         {
-            if (argumentLiteral.ConstantValue.HasValue && argumentLiteral.ConstantValue.Value is string unitString && unitString.Length == 1)
-            {
-                DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
-                SyntaxGenerator generator = editor.Generator;
-                char charValue = unitString[0];
-                SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
-                var newRoot = generator.ReplaceNode(root, argumentLiteral.Syntax, charLiteralExpressionNode);
-                return doc.WithSyntaxRoot(newRoot);
-            }
-            return doc;
-        }
-
-        private static async Task<Document?> HandleVariableDeclarator(IVariableDeclaratorOperation variableDeclaratorOperation, Document doc, SyntaxNode root, CancellationToken cancellationToken)
-        {
-            IVariableDeclarationOperation variableDeclarationOperation = (IVariableDeclarationOperation)variableDeclaratorOperation.Parent;
-            if (variableDeclarationOperation == null)
-            {
-                return null;
-            }
-
-            IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
-            if (variableGroupDeclarationOperation.Declarations.Length != 1)
-            {
-                return null;
-            }
-
-            if (variableDeclarationOperation.Declarators.Length != 1)
-            {
-                return null;
-            }
-
-            DocumentEditor editor = await DocumentEditor.CreateAsync(doc, cancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            SyntaxEditor syntaxEditor = new SyntaxEditor(treeRoot, document.Project.Solution.Workspace);
             SyntaxGenerator generator = editor.Generator;
-            ILocalSymbol currentSymbol = variableDeclaratorOperation.Symbol;
-            IVariableInitializerOperation variableInitializerOperation = OperationExtensions.GetVariableInitializer(variableDeclaratorOperation);
-            if (variableInitializerOperation == null)
+            var memberAccessExpression = generator.MemberAccessExpression(localReferenceOperation.Syntax, "Contains");
+            if (stringComparisonArgumentToContainsInvocation != null)
             {
-                return null;
+                var systemIdentifier = generator.IdentifierName("System");
+                var stringComparisonIdentifier = generator.MemberAccessExpression(systemIdentifier, "StringComparison");
+                var stringComparisonArgument = generator.MemberAccessExpression(stringComparisonIdentifier, stringComparisonArgumentToContainsInvocation.Name);
+                argumentsForContainsInvocation = argumentsForContainsInvocation.Concat(stringComparisonArgument);
             }
-
-            if (variableInitializerOperation.Value.ConstantValue.HasValue && variableInitializerOperation.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
+            var containsInvocation = generator.InvocationExpression(memberAccessExpression, argumentsForContainsInvocation);
+            var newIfCondition = generator.LogicalNotExpression(containsInvocation);
+            syntaxEditor.ReplaceNode(binaryOperationSyntaxNode, newIfCondition);
+            if (variableDeclarationGroupOperation != null)
             {
-                char charValue = unitString[0];
-                SyntaxNode charLiteralExpressionNode = generator.LiteralExpression(charValue);
-                var charTypeNode = generator.TypeExpression(SpecialType.System_Char);
-                var charSyntaxNode = generator.LocalDeclarationStatement(charTypeNode, currentSymbol.Name, charLiteralExpressionNode, isConst: true);
-                charSyntaxNode = charSyntaxNode.WithTriviaFrom(variableGroupDeclarationOperation.Syntax);
-                var newRoot = generator.ReplaceNode(root, variableGroupDeclarationOperation.Syntax, charSyntaxNode);
-                return doc.WithSyntaxRoot(newRoot);
+                syntaxEditor.RemoveNode(variableDeclarationGroupOperation.Syntax);
             }
-
-            return null;
+            var newRoot = syntaxEditor.GetChangedRoot();
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

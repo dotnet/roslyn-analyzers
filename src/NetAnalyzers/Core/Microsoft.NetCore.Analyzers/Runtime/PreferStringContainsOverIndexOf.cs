@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -12,7 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// Test for single character strings passed in to String.Append
+    /// Prefer string.Contains over string.IndexOf when the result is compared to -1
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferStringContainsOverIndexOfAnalyzer : DiagnosticAnalyzer
@@ -71,27 +70,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ParameterInfo.GetParameterInfo(charType),
                         ParameterInfo.GetParameterInfo(stringComparisonType));
 
-                var overloadMapBuilder = ImmutableDictionary.CreateBuilder<IMethodSymbol, IMethodSymbol>();
-                compilationContext.RegisterOperationAction(operationContext =>
-                {
-                    IInvocationOperation invocationOperation = (IInvocationOperation)operationContext.Operation;
-                    var targetMethod = invocationOperation.TargetMethod;
-                    //if (targetMethod.Equals(stringArgumentIndexOfMethod) || targetMethod.Equals(charArgumentIndexOfMethod) || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod) || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod))
-                    //{
-                    //    operationContext.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule));
-                    //}
-
-                    // Get the variable declarator from the invocation.
-                    if (invocationOperation.Parent is IVariableInitializerOperation variableInitializerOperation)
-                    {
-                        if (variableInitializerOperation.Parent is IVariableDeclaratorOperation variableDeclaratorOperation)
-                        {
-                            var variableName = variableDeclaratorOperation.Symbol;
-                        }
-                    }
-                },
-                OperationKind.Invocation);
-
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
                     IBinaryOperation blockOperation = (IBinaryOperation)operationContext.Operation;
@@ -100,6 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (rightOperand is IUnaryOperation unaryOperation && rightOperand.ConstantValue.HasValue && rightOperand.ConstantValue.Value is int intValue && intValue == -1)
                     {
                         var leftOperand = blockOperation.LeftOperand;
+                        var blockLocation = blockOperation.Syntax.GetLocation();
                         if (leftOperand is ILocalReferenceOperation localReferenceOperation)
                         {
                             var variableName = localReferenceOperation.Local;
@@ -124,15 +103,42 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                             return;
                                         }
 
-                                        operationContext.ReportDiagnostic(blockOperation.CreateDiagnostic(Rule));
+                                        // Check that the variable is initialized to the result of string.IndexOf
+                                        IVariableInitializerOperation variableInitializer = variableDeclaratorOperation.GetVariableInitializer();
+                                        if (variableInitializer is null)
+                                        {
+                                            return;
+                                        }
+                                        var declarationGroupLocation = declarationGroupOperation.Syntax.GetLocation();
+                                        var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
+
+                                        if (variableInitializer.Value is IInvocationOperation invocationOperation)
+                                        {
+                                            HandleInvocationOperation(invocationOperation, operationContext, locations);
+                                        }
                                     }
                                 }
                             }
                         }
+                        else if (leftOperand is IInvocationOperation leftInvocationOperation)
+                        {
+                            var locations = ImmutableArray.Create(blockLocation);
+                            HandleInvocationOperation(leftInvocationOperation, operationContext, locations);
+                        }
                     }
                 },
                 OperationKind.Binary);
+
+                void HandleInvocationOperation(IInvocationOperation invocationOperation, OperationAnalysisContext operationContext, ImmutableArray<Location> locations)
+                {
+                    var targetMethod = invocationOperation.TargetMethod;
+                    if (targetMethod.Equals(stringArgumentIndexOfMethod) || targetMethod.Equals(charArgumentIndexOfMethod) || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod) || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod))
+                    {
+                        operationContext.ReportDiagnostic(locations.CreateDiagnostic(Rule));
+                    }
+                }
             });
         }
+
     }
 }

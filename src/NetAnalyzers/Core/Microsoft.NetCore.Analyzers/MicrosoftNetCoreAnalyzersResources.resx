@@ -460,7 +460,7 @@
     <value>A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyMessageNoArguments" xml:space="preserve">
-    <value>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</value>
+    <value>Call the {0} constructor that contains a message and/or paramName parameter.</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage" xml:space="preserve">
     <value>Method {0} passes parameter name '{1}' as the {2} argument to a {3} constructor. Replace this argument with a descriptive message and pass the parameter name in the correct position.</value>
@@ -1275,10 +1275,10 @@
   <data name="DoNotUseStackallocInLoopsMessage" xml:space="preserve">
     <value>Potential stack overflow. Move the stackalloc out of the loop.</value>
   </data>
-  <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgument" xml:space="preserve">
+  <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle" xml:space="preserve">
     <value>Change to call the two argument constructor, pass null for the message.</value>
   </data>
-  <data name="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrder" xml:space="preserve">
+  <data name="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle" xml:space="preserve">
     <value>Swap the arguments order</value>
   </data>
   <data name="PreferTypedStringBuilderAppendOverloadsTitle" xml:space="preserve">

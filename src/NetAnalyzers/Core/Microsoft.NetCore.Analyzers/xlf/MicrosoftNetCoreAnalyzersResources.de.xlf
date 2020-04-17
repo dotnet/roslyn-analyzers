@@ -1027,7 +1027,7 @@
         <target state="translated">Statische Felder für Werttyp inline initialisieren</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgument">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle">
         <source>Change to call the two argument constructor, pass null for the message.</source>
         <target state="new">Change to call the two argument constructor, pass null for the message.</target>
         <note />
@@ -1037,7 +1037,7 @@
         <target state="translated">Ein Aufruf erfolgt an den (parameterlosen) Standardkonstruktur eines Ausnahmetyps, der einer ArgumentException entspricht oder von dieser ableitet, oder ein falsches Zeichenfolgenargument wurde an einen parametrisierten Konstruktor eines Ausnahmetyps übergeben, der einer ArgumentException entspricht oder von dieser ableitet.</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrder">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle">
         <source>Swap the arguments order</source>
         <target state="new">Swap the arguments order</target>
         <note />
@@ -1053,7 +1053,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">Rufen Sie den Konstruktur "{0}" auf, der eine Nachricht und/oder einen paramName-Parameter enthält.</target>
         <note />
       </trans-unit>

@@ -6,10 +6,10 @@ using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInstantiateArgumentExceptionsCorrectlyFixer>;
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicInstantiateArgumentExceptionsCorrectlyFixer>;
+     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -125,13 +125,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.ArgumentException(""first"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(""first"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "ArgumentException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(Nothing, NameOf(first))
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -154,13 +159,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.ArgumentException(""first"", ""first is incorrect"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(""first"", ""first is incorrect"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "ArgumentException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(""first is incorrect"", NameOf(first))
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -226,13 +236,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.ArgumentException(""first"", ""first is incorrect"", Nothing)
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(""first"", ""first is incorrect"", Nothing)
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "ArgumentException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentException(""first is incorrect"", NameOf(first), Nothing)
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -291,13 +306,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.ArgumentNullException(""first is null"", ""first"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentNullException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentNullException(""first is null"", ""first"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "ArgumentNullException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentNullException(NameOf(first), ""first is null"")
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -364,13 +384,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.ArgumentOutOfRangeException(""first is out of range"", ""first"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "ArgumentOutOfRangeException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentOutOfRangeException(""first is out of range"", ""first"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "ArgumentOutOfRangeException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.ArgumentOutOfRangeException(NameOf(first), ""first is out of range"")
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -395,14 +420,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Dim val = New Object()
-                        Throw New System.ArgumentOutOfRangeException(""first is out of range"", val, ""first"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(5, 31, "Test", "first", "message", "ArgumentOutOfRangeException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Dim val = New Object()
+        Throw New System.ArgumentOutOfRangeException(""first is out of range"", val, ""first"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(5, 15, "Test", "first", "message", "ArgumentOutOfRangeException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Dim val = New Object()
+        Throw New System.ArgumentOutOfRangeException(NameOf(first), val, ""first is out of range"")
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -469,13 +500,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub Test(first As String)
-                        Throw New System.DuplicateWaitObjectException(""first is duplicate"", ""first"")
-                    End Sub
-                End Class",
-                GetBasicIncorrectMessageExpectedResult(4, 31, "Test", "first", "message", "DuplicateWaitObjectException"));
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.DuplicateWaitObjectException(""first is duplicate"", ""first"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "first", "message", "DuplicateWaitObjectException"), @"
+Public Class [MyClass]
+    Public Sub Test(first As String)
+        Throw New System.DuplicateWaitObjectException(NameOf(first), ""first is duplicate"")
+    End Sub
+End Class");
         }
 
         [Fact]
@@ -518,7 +554,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task ArgumentException_NoArgumentss_ParentMethod_HasNoParameter_DoesNotWarn()
+        public async Task ArgumentException_NoArguments_ParentMethod_HasNoParameter_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class

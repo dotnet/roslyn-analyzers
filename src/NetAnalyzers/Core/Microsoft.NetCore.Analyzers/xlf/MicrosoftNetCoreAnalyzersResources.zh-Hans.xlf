@@ -1027,7 +1027,7 @@
         <target state="translated">以内联方式初始化值类型的静态字段</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgument">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle">
         <source>Change to call the two argument constructor, pass null for the message.</source>
         <target state="new">Change to call the two argument constructor, pass null for the message.</target>
         <note />
@@ -1037,7 +1037,7 @@
         <target state="translated">调用了 ArgumentException 异常类型或其派生异常类型的默认(无参数)构造函数，或将不正确的字符串参数传递给 ArgumentException. 异常类型或其派生异常类型的参数化构造函数。</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrder">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle">
         <source>Swap the arguments order</source>
         <target state="new">Swap the arguments order</target>
         <note />
@@ -1053,7 +1053,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">调用 {0} 构造函数，该函数包含 message 和/或 paramName 参数。</target>
         <note />
       </trans-unit>

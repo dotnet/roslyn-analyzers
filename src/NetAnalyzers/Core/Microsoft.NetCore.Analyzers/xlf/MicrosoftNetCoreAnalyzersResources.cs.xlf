@@ -1027,7 +1027,7 @@
         <target state="translated">Inicializujte statická pole typu hodnot jako vložená</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgument">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle">
         <source>Change to call the two argument constructor, pass null for the message.</source>
         <target state="new">Change to call the two argument constructor, pass null for the message.</target>
         <note />
@@ -1037,7 +1037,7 @@
         <target state="translated">Zavolal se výchozí konstruktor (bez parametrů) typu výjimky, který je třídou ArgumentException nebo je z ní odvozený, nebo se do jeho konstruktoru s parametry předal nesprávný argument řetězce.</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrder">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle">
         <source>Swap the arguments order</source>
         <target state="new">Swap the arguments order</target>
         <note />
@@ -1053,7 +1053,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">Zavolejte konstruktor {0}, který obsahuje zprávu a/nebo parametr paramName.</target>
         <note />
       </trans-unit>

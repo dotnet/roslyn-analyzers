@@ -1028,7 +1028,7 @@
         <target state="translated">Zainicjuj pola statyczne typu wartości w deklaracji pól</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgument">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle">
         <source>Change to call the two argument constructor, pass null for the message.</source>
         <target state="new">Change to call the two argument constructor, pass null for the message.</target>
         <note />
@@ -1038,7 +1038,7 @@
         <target state="translated">Wywołano domyślny (bezparametrowy) konstruktor typu wyjątku ArgumentException lub typu pochodzącego od niego albo przekazano niepoprawny argument ciągu do konstruktora parametryzowanego typu wyjątku ArgumentException lub typu pochodzącego od niego.</target>
         <note />
       </trans-unit>
-      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrder">
+      <trans-unit id="InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle">
         <source>Swap the arguments order</source>
         <target state="new">Swap the arguments order</target>
         <note />
@@ -1054,7 +1054,7 @@
         <note />
       </trans-unit>
       <trans-unit id="InstantiateArgumentExceptionsCorrectlyMessageNoArguments">
-        <source>Please use overload of the {0} constructor that contains a message and/or paramName parameter.</source>
+        <source>Call the {0} constructor that contains a message and/or paramName parameter.</source>
         <target state="needs-review-translation">Wywołaj konstruktor {0}, który zawiera komunikat i/lub parametr paramName.</target>
         <note />
       </trans-unit>

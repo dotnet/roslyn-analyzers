@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (rule != null)
             {
-                return context.Operation.Syntax.CreateDiagnostic(rule, dictBuilder.ToImmutable(), targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
+                return context.Operation.CreateDiagnostic(rule, dictBuilder.ToImmutable(), targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
             }
 
             return null;

@@ -18,6 +18,10 @@
     <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true' or '$(FxCopAnalyzersProject)' == 'true'">
+    <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
     <!-- https://github.com/tonerdo/coverlet/issues/363 -->
     <DeterministicSourcePaths>false</DeterministicSourcePaths>

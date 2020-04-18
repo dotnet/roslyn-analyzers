@@ -124,7 +124,7 @@
     <value>To correctly display a message box for cultures that use a right-to-left reading order, the 'RightAlign' and 'RtlReading' members of the 'MessageBoxOptions' enumeration must be passed to the 'Show' method.</value>
   </data>
   <data name="SpecifyMessageBoxOptionsMessage" xml:space="preserve">
-    <value>Specify 'MessageBoxOptions'</value>
+    <value>Specify 'MessageBoxOptions'.</value>
   </data>
   <data name="AvoidDuplicateAcceleratorsTitle" xml:space="preserve">
     <value>Avoid duplicate accelerators</value>
@@ -133,7 +133,7 @@
     <value>An access key, also known as an accelerator, enables keyboard access to a control by using the ALT key. When multiple controls have duplicate access keys, the behavior of the access key is not well defined.</value>
   </data>
   <data name="AvoidDuplicateAcceleratorsMessage" xml:space="preserve">
-    <value>Avoid duplicate accelerators</value>
+    <value>Avoid duplicate accelerators.</value>
   </data>
   <data name="SetLocaleForDataTypesTitle" xml:space="preserve">
     <value>Set locale for data types</value>
@@ -142,7 +142,7 @@
     <value>The locale determines culture-specific presentation elements for data, such as formatting that is used for numeric values, currency symbols, and sort order. When you create a 'DataTable' or 'DataSet', you should explicitly set the locale.</value>
   </data>
   <data name="SetLocaleForDataTypesMessage" xml:space="preserve">
-    <value>Set locale for data types</value>
+    <value>Set locale for data types.</value>
   </data>
   <data name="DoNotMarkServicedComponentsWithWebMethodTitle" xml:space="preserve">
     <value>Do not mark serviced components with 'WebMethod'</value>
@@ -151,16 +151,16 @@
     <value>A method in a type that inherits from 'System.EnterpriseServices.ServicedComponent' is marked by using 'System.Web.Services.WebMethodAttribute'. Because 'WebMethodAttribute' and a 'ServicedComponent' method have conflicting behavior and requirements for context and transaction flow, the behavior of the method will be incorrect in some scenarios.</value>
   </data>
   <data name="DoNotMarkServicedComponentsWithWebMethodMessage" xml:space="preserve">
-    <value>Do not mark serviced components with 'WebMethod'</value>
+    <value>Do not mark serviced components with 'System.Web.Services.WebMethodAttribute'.</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadTitle" xml:space="preserve">
-    <value>Mark Windows Forms entry points with 'STAThread'</value>
+    <value>Mark Windows Forms entry points with 'STAThreadAttribute'</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadDescription" xml:space="preserve">
     <value>'STAThreadAttribute' indicates that the COM threading model for the application is a single-threaded apartment. This attribute must be present on the entry point of any application that uses Windows Forms; if it is omitted, the Windows components might not work correctly.</value>
   </data>
   <data name="MarkWindowsFormsEntryPointsWithStaThreadMessage" xml:space="preserve">
-    <value>Mark Windows Forms entry points with 'STAThread'</value>
+    <value>Mark Windows Forms entry points with 'System.STAThread'.</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesTitle" xml:space="preserve">
     <value>Call base class methods on 'ISerializable' types</value>
@@ -169,7 +169,7 @@
     <value>To fix a violation of this rule, call the base type 'GetObjectData' method or serialization constructor from the corresponding derived type method or constructor.</value>
   </data>
   <data name="CallBaseClassMethodsOnISerializableTypesMessage" xml:space="preserve">
-    <value>Call base class methods on 'ISerializable' types</value>
+    <value>Call base class methods on 'ISerializable' types.</value>
   </data>
   <data name="UseXmlReaderForDataSetReadXmlTitle" xml:space="preserve">
     <value>Use 'XmlReader' for 'DataSet.ReadXml'</value>
@@ -178,7 +178,7 @@
     <value>Do not use unsafe overloads of 'System.Data.DataSet.ReadXml'. This API internally enables DTD processing on the XML reader instance used, and uses 'UrlResolver' for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
   </data>
   <data name="UseXmlReaderForDataSetReadXmlMessage" xml:space="preserve">
-    <value>Use 'XmlReader' for 'DataSet.ReadXml'</value>
+    <value>Use 'XmlReader' for 'DataSet.ReadXml'.</value>
   </data>
   <data name="UseXmlReaderForDataSetReadXmlSchemaTitle" xml:space="preserve">
     <value>Use 'XmlReader' for 'DataSet.ReadXmlSchema'</value>
@@ -187,16 +187,16 @@
     <value>Do not use unsafe overloads of 'System.Data.DataSet.ReadXmlSchema'. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
   </data>
   <data name="UseXmlReaderForDataSetReadXmlSchemaMessage" xml:space="preserve">
-    <value>Use 'XmlReader' for 'DataSet.ReadXmlSchema'</value>
+    <value>Use 'XmlReader' for 'DataSet.ReadXmlSchema'.</value>
   </data>
   <data name="ReviewDataViewCollectionStringTitle" xml:space="preserve">
-    <value>Review DataView CollectionString</value>
+    <value>Review 'DataViewSettingCollectionString'</value>
   </data>
   <data name="ReviewDataViewCollectionStringDescription" xml:space="preserve">
     <value>Review code to insure that usage of 'System.Data.DataViewManager.DataViewSettingCollectionString' input is sanitized to not contain DTD. Enabling DTD processing on the XML reader and using 'UrlResolver' for resolving external XML entities may lead to information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
   </data>
   <data name="ReviewDataViewCollectionStringMessage" xml:space="preserve">
-    <value>Review DataView CollectionString</value>
+    <value>Review 'DataViewSettingCollectionString'.</value>
   </data>
   <data name="UseXmlReaderForDataTableReadXmlTitle" xml:space="preserve">
     <value>Use 'XmlReader' for 'DataTable.ReadXml'</value>
@@ -205,7 +205,7 @@
     <value>Do not use unsafe overloads of 'System.Data.DataTable.ReadXml'. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
   </data>
   <data name="UseXmlReaderForDataTableReadXmlMessage" xml:space="preserve">
-    <value>Use 'XmlReader' for 'DataTable.ReadXml'</value>
+    <value>Use 'XmlReader' for 'DataTable.ReadXml'.</value>
   </data>
   <data name="UseXmlReaderForDataTableReadXmlSchemaTitle" xml:space="preserve">
     <value>Use 'XmlReader' for 'DataTable.ReadXmlSchema'</value>
@@ -214,7 +214,7 @@
     <value>Checks for usage of an unsafe overload of  'System.Data.DataTable.ReadXmlSchema'. This API internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
   </data>
   <data name="UseXmlReaderForDataTableReadXmlSchemaMessage" xml:space="preserve">
-    <value>Use 'XmlReader' for 'DataTable.ReadXmlSchema'</value>
+    <value>Use 'XmlReader' for 'DataTable.ReadXmlSchema'.</value>
   </data>
   <data name="DoNotCatchCorruptedStateExceptionsTitle" xml:space="preserve">
     <value>Do not catch corrupted state exceptions</value>
@@ -260,7 +260,7 @@
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloadsMessage" xml:space="preserve">
-    <value>Unsafe overload of '{0}' method</value>
+    <value>Unsafe overload of '{0}' method.</value>
     <comment>CA3075</comment>
   </data>
   <data name="DoNotUseDtdProcessingOverloads" xml:space="preserve">

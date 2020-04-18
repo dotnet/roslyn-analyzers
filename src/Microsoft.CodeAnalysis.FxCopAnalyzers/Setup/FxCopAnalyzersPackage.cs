@@ -10,7 +10,7 @@ namespace FxCopAnalyzersSetup
     // Package is used by VS
 #pragma warning disable CA1812
     [Guid(PackageGuid)]
-    class FxCopAnalyzersPackage : Package
+    internal class FxCopAnalyzersPackage : Package
     {
         private const string PackageGuid = "4A41D270-A97F-4639-A352-28732FC410E4";
     }

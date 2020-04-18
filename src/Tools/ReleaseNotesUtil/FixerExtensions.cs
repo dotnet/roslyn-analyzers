@@ -89,7 +89,7 @@ namespace ReleaseNotesUtil
             {
                 if (!BitConverter.IsLittleEndian)
                 {
-                    Array.Reverse<byte>(methodBodyIL, 1, sizeof(Int32));
+                    Array.Reverse<byte>(methodBodyIL, 1, sizeof(int));
                 }
 
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);

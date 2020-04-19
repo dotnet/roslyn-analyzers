@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
     public class AvoidNonPureMethodCallOnReadonlyValueSymbolTests
     {
         [Fact]
-        public async Task CSharpInvocingNonPureMethod()
+        public async Task CSharpInvokingNonPureMethod()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Mutable
@@ -34,7 +34,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvocingNonPureMethodInCoustructor()
+        public async Task CSharpInvokingNonPureMethodInCoustructor()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Mutable
@@ -55,7 +55,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvocingNonPureMethodInStaticCoustructor()
+        public async Task CSharpInvokingNonPureMethodInStaticCoustructor()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Mutable
@@ -101,7 +101,7 @@ public class Test
         }
 
         [Fact(Skip = "C# 8 is needed")]
-        public async Task CSharpInvocingPureMethod()
+        public async Task CSharpInvokingPureMethod()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Mutable
@@ -122,7 +122,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvocingMethodWithPureAttribute()
+        public async Task CSharpInvokingMethodWithPureAttribute()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Diagnostics.Contracts;
@@ -146,7 +146,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvocingMethodFromImmutableType()
+        public async Task CSharpInvokingMethodFromImmutableType()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public readonly struct Immutable
@@ -167,7 +167,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvocingNonPureMethodFromReferenceType()
+        public async Task CSharpInvokingNonPureMethodFromReferenceType()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class Mutable

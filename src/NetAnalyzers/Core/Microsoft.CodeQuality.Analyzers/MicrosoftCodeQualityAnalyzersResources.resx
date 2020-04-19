@@ -1427,4 +1427,13 @@
   <data name="EventsShouldNotHaveBeforeOrAfterPrefixTitle" xml:space="preserve">
     <value>Events should not have 'Before' or 'After' prefix</value>
   </data>
+  <data name="AvoidNonPureMethodCallOnReadonlyValueSymbolDescription" xml:space="preserve">
+    <value>When accessing a readonly field outside a constructor, a copy of it is created to prevent the caller from mutating the field.</value>
+  </data>
+  <data name="AvoidNonPureMethodCallOnReadonlyValueSymbolMessage" xml:space="preserve">
+    <value>Any changes made to '{0}''s state will be lost, since it's marked as readonly. Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</value>
+  </data>
+  <data name="AvoidNonPureMethodCallOnReadonlyValueSymbolTitle" xml:space="preserve">
+    <value>Don't use non-pure methods from readonly value-type fields</value>
+  </data>
 </root>

@@ -82,6 +82,21 @@
         <target state="translated">Evitar a recursão infinita</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidNonPureMethodCallOnReadonlyValueSymbolDescription">
+        <source>When accessing a readonly field outside a constructor, a copy of it is created to prevent the caller from mutating the field.</source>
+        <target state="new">When accessing a readonly field outside a constructor, a copy of it is created to prevent the caller from mutating the field.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidNonPureMethodCallOnReadonlyValueSymbolMessage">
+        <source>Any changes made to '{0}''s state will be lost, since it's marked as readonly. Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</source>
+        <target state="new">Any changes made to '{0}''s state will be lost, since it's marked as readonly. Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidNonPureMethodCallOnReadonlyValueSymbolTitle">
+        <source>Don't use non-pure methods from readonly value-type fields</source>
+        <target state="new">Don't use non-pure methods from readonly value-type fields</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="translated">Passar tipos por referência (usando 'out' ou 'ref') requer experiência com ponteiros, reconhecimento de como os tipos de valor e tipos de referência diferem e manipulação de métodos com vários valores retornados. Além disso, a diferença entre os parâmetros 'out' e 'ref' não é amplamente compreendida.</target>

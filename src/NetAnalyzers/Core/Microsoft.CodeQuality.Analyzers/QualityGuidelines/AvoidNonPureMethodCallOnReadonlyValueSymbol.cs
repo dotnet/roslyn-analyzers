@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
-    /// CAXXXX: Prevent invokation of non-pure methods for readonly value-type variables
+    /// CAXXXX: Prevent invocation of non-pure methods from readonly value-type fields
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidNonPureMethodCallOnReadonlyValueSymbol : DiagnosticAnalyzer
@@ -19,29 +19,19 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         internal const string RuleId = "CAXXXX";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableReferenceMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolReferenceMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableInvocationMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolInvacationMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        internal static DiagnosticDescriptor ReferenceRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
-            s_localizableReferenceMessage,
+            s_localizableMessage,
             DiagnosticCategory.Usage,
             RuleLevel.IdeSuggestion,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor InvocationRule = DiagnosticDescriptorHelper.Create(RuleId,
-            s_localizableTitle,
-            s_localizableInvocationMessage,
-            DiagnosticCategory.Usage,
-            RuleLevel.IdeSuggestion,
-            description: s_localizableDescription,
-            isPortedFxCopRule: false,
-            isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ReferenceRule, InvocationRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -62,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            var diagnostic = Diagnostic.Create(ReferenceRule, referenceOperation.Syntax.GetLocation(), referenceOperation.Instance.Syntax, referenceOperation.Method.Name);
+            var diagnostic = Diagnostic.Create(Rule, referenceOperation.Syntax.GetLocation(), referenceOperation.Instance.Syntax, referenceOperation.Method.Name);
             context.ReportDiagnostic(diagnostic);
         }
 
@@ -95,7 +85,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            var diagnostic = Diagnostic.Create(InvocationRule, callOperation.Syntax.GetLocation(), callOperation.Instance.Syntax, callOperation.TargetMethod.Name);
+            var diagnostic = Diagnostic.Create(Rule, callOperation.Syntax.GetLocation(), callOperation.Instance.Syntax, callOperation.TargetMethod.Name);
             context.ReportDiagnostic(diagnostic);
         }
 

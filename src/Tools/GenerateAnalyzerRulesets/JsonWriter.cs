@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 // https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/InternalUtilities/JsonWriter.cs
 
 using System;
@@ -244,7 +245,7 @@ namespace Roslyn.Utilities
             return c < ' ' ||
                 c >= (char)0xfffe || // max char 
                 (c >= (char)0xd800 && c <= (char)0xdfff) || // between high and low surrogate 
-                (c == '\u0085' || c == '\u2028' || c == '\u2029'); // Unicode new line characters 
+                c == '\u0085' || c == '\u2028' || c == '\u2029'; // Unicode new line characters 
         }
     }
 }

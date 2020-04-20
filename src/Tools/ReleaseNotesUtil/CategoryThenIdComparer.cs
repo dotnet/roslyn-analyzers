@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 
 namespace ReleaseNotesUtil
@@ -12,13 +14,13 @@ namespace ReleaseNotesUtil
 
         public int Compare(RuleInfo x, RuleInfo y)
         {
-            int c = String.Compare(x.Category, y.Category, StringComparison.InvariantCulture);
+            int c = string.Compare(x.Category, y.Category, StringComparison.InvariantCulture);
             if (c != 0)
             {
                 return c;
             }
 
-            return String.Compare(x.Id, y.Id, StringComparison.InvariantCulture);
+            return string.Compare(x.Id, y.Id, StringComparison.InvariantCulture);
         }
     }
 }

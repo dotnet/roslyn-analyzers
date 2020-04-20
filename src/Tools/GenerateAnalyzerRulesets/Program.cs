@@ -61,6 +61,7 @@ namespace GenerateAnalyzerRulesets
                 }
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
+                analyzerFileReference.AnalyzerLoadFailed += AnalyzerFileReference_AnalyzerLoadFailed;
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
 
                 var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[]? languages)>());
@@ -151,6 +152,9 @@ namespace GenerateAnalyzerRulesets
             return 0;
 
             // Local functions.
+            static void AnalyzerFileReference_AnalyzerLoadFailed(object sender, AnalyzerLoadFailureEventArgs e)
+                => throw e.Exception;
+
             void createRulesetAndEditorconfig(
                 string fileName,
                 string title,
@@ -237,7 +241,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
   -->
   <PropertyGroup>
     <CodeAnalysisRuleSetOverrides>
-      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder.ToString()}
+      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder}
     </CodeAnalysisRuleSetOverrides>
   </PropertyGroup>";
                     }
@@ -272,11 +276,10 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
 
                 var builder = new StringBuilder();
                 builder.Append(@"
-Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
---------|---------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
+Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
+--------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
 ");
 
-                var index = 1;
                 foreach (var ruleById in allRulesById)
                 {
                     string ruleId = ruleById.Key;
@@ -300,8 +303,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Descriptio
                     // lines don't break the markdown table formatting.
                     description = System.Text.RegularExpressions.Regex.Replace(description, "\r?\n", "<br>");
 
-                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {descriptor.DefaultSeverity} | {hasCodeFix} | {description} |");
-                    index++;
+                    builder.AppendLine($"{ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {descriptor.DefaultSeverity} | {hasCodeFix} | {description} |");
                 }
 
                 File.WriteAllText(fileWithPath, builder.ToString());
@@ -591,8 +593,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Descriptio
             SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             Debug.Assert(categoryOpt == null || customTagOpt == null);
-            Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
-            Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
+            Debug.Assert(categoryOpt != null == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
+            Debug.Assert(customTagOpt != null == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
 
             var result = new StringBuilder();
             startRulesetOrEditorconfig(result);

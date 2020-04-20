@@ -16,7 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidNonPureMethodCallOnReadonlyValueSymbol : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CAXXXX";
+        internal const string RuleId = "CA2248";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidNonPureMethodCallOnReadonlyValueSymbolMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
@@ -89,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             context.ReportDiagnostic(diagnostic);
         }
 
-        private bool AnalizeMethod(IOperation instance, IMethodSymbol method)
+        private static bool AnalizeMethod(IOperation instance, IMethodSymbol method)
         {
             // This analyzer makes sense only for value type objects
             if (instance?.Type?.IsReferenceType != false)

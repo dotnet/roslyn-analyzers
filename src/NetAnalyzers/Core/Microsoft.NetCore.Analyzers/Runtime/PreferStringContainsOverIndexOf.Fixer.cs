@@ -52,7 +52,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     void HandleInvocationOperation(IInvocationOperation invocationOperation, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null)
                     {
                         var instanceOperation = invocationOperation.Instance;
-                        if (!(instanceOperation is ILocalReferenceOperation localReferenceOperation))
+                        SyntaxNode syntaxNode = null;
+                        if (instanceOperation is ILocalReferenceOperation localReferenceOperation)
+                        {
+                            syntaxNode = localReferenceOperation.Syntax;
+                        }
+                        else if (instanceOperation is IParameterReferenceOperation parameterReferenceOperation)
+                        {
+                            syntaxNode = parameterReferenceOperation.Syntax;
+                        }
+                        else
                         {
                             return;
                         }
@@ -65,9 +74,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 return;
                             }
 
-                            var ordinalIgnoreCase = stringComparisonType.GetMembers("Ordinal").FirstOrDefault();
+                            var ordinal = stringComparisonType.GetMembers("Ordinal").FirstOrDefault();
                             var currentCulture = stringComparisonType.GetMembers("CurrentCulture").FirstOrDefault();
-                            if (ordinalIgnoreCase == null || currentCulture == null)
+                            if (ordinal == null || currentCulture == null)
                             {
                                 return;
                             }
@@ -75,23 +84,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             context.RegisterCodeFix(
                                 CodeAction.Create(
                                     title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
-                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, ordinalIgnoreCase),
-                                    equivalenceKey: "PreferStringContainsOrdinalOverIndexOfFixer"),
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, syntaxNode, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, currentCulture),
+                                    equivalenceKey: "PreferStringContainsCurrentCultureOverIndexOfFixer"),
                                 context.Diagnostics);
 
                             context.RegisterCodeFix(
                                 CodeAction.Create(
                                     title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
-                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, currentCulture),
-                                    equivalenceKey: "PreferStringContainsCurrentCultureOverIndexOfFixer"),
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, syntaxNode, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, ordinal),
+                                    equivalenceKey: "PreferStringContainsOrdinalOverIndexOfFixer"),
                                 context.Diagnostics);
+
                         }
                         else
                         {
                             context.RegisterCodeFix(
                                 CodeAction.Create(
                                     title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
-                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, localReferenceOperation, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation),
+                                    createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, syntaxNode, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation),
                                     equivalenceKey: "PreferStringContainsOverIndexOfFixer"),
                                 context.Diagnostics);
                         }
@@ -102,12 +112,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static async Task<Document?> ReplaceBinaryOperationWithContains(Document document, ILocalReferenceOperation localReferenceOperation, SyntaxNode treeRoot, IEnumerable<SyntaxNode> argumentsForContainsInvocation, SyntaxNode binaryOperationSyntaxNode, CancellationToken cancellationToken, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null, ISymbol? stringComparisonArgumentToContainsInvocation = null)
+        private static async Task<Document?> ReplaceBinaryOperationWithContains(Document document, SyntaxNode localReferenceOrParameterNode, SyntaxNode treeRoot, IEnumerable<SyntaxNode> argumentsForContainsInvocation, SyntaxNode binaryOperationSyntaxNode, CancellationToken cancellationToken, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null, ISymbol? stringComparisonArgumentToContainsInvocation = null)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxEditor syntaxEditor = new SyntaxEditor(treeRoot, document.Project.Solution.Workspace);
             SyntaxGenerator generator = editor.Generator;
-            var memberAccessExpression = generator.MemberAccessExpression(localReferenceOperation.Syntax, "Contains");
+            var memberAccessExpression = generator.MemberAccessExpression(localReferenceOrParameterNode, "Contains");
             if (stringComparisonArgumentToContainsInvocation != null)
             {
                 var systemIdentifier = generator.IdentifierName("System");

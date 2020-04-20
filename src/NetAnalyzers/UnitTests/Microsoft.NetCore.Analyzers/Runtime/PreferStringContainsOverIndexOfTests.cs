@@ -72,7 +72,7 @@ namespace TestNamespace
             {
                 TestState = { Sources = { csInput } },
                 FixedState = { Sources = { csFixOrdinal } },
-                CodeActionIndex = 0,
+                CodeActionIndex = 1,
                 CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
@@ -82,7 +82,7 @@ namespace TestNamespace
             {
                 TestState = { Sources = { csInput } },
                 FixedState = { Sources = { csFixCulture } },
-                CodeActionIndex = 1,
+                CodeActionIndex = 0,
                 CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
@@ -135,7 +135,7 @@ End Class
             {
                 TestState = { Sources = { vbInput } },
                 FixedState = { Sources = { vbFixOrdinal } },
-                CodeActionIndex = 0,
+                CodeActionIndex = 1,
                 CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
             };
@@ -144,7 +144,7 @@ End Class
             {
                 TestState = { Sources = { vbInput } },
                 FixedState = { Sources = { vbFixCulture } },
-                CodeActionIndex = 1,
+                CodeActionIndex = 0,
                 CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
             };
@@ -294,7 +294,7 @@ namespace TestNamespace
             {
                 TestState = { Sources = { csInput } },
                 FixedState = { Sources = { csFixOrdinal } },
-                CodeActionIndex = 0,
+                CodeActionIndex = 1,
                 CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
@@ -304,7 +304,7 @@ namespace TestNamespace
             {
                 TestState = { Sources = { csInput } },
                 FixedState = { Sources = { csFixCulture } },
-                CodeActionIndex = 1,
+                CodeActionIndex = 0,
                 CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
@@ -354,7 +354,7 @@ End Class
             {
                 TestState = { Sources = { vbInput } },
                 FixedState = { Sources = { vbFixOrdinal } },
-                CodeActionIndex = 0,
+                CodeActionIndex = 1,
                 CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
             };
@@ -363,7 +363,7 @@ End Class
             {
                 TestState = { Sources = { vbInput } },
                 FixedState = { Sources = { vbFixCulture } },
-                CodeActionIndex = 1,
+                CodeActionIndex = 0,
                 CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
             };
@@ -403,6 +403,185 @@ namespace TestNamespace
     } 
 }";
             await VerifyCS.VerifyAnalyzerAsync(csInput);
+        }
+
+        [Theory]
+        [InlineData("This", false)]
+        [InlineData("a", true)]
+        public async Task TestIndexWrittenTo(string input, bool isCharTest)
+        {
+            string quotes = isCharTest ? "'" : "\"";
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            int index = str.IndexOf(" + quotes + input + quotes + @");
+            index += 2;
+            if (index == -1)
+            {
+
+            }
+        } 
+    } 
+}";
+            await VerifyCS.VerifyAnalyzerAsync(csInput);
+
+            quotes = "\"";
+            string vbCharLiteral = isCharTest ? "c" : "";
+            string vbInput = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+            Dim index As Integer = Str.IndexOf(" + quotes + input + quotes + vbCharLiteral + @")
+            index += 2
+            If index = -1 Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+            await VerifyVB.VerifyAnalyzerAsync(vbInput);
+        }
+
+        [Fact]
+        public async Task TestNonSupportedTarget()
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private bool TestMethod() 
+        { 
+            string str = ""This is a string"";
+            return str.IndexOf(""This"") == -1;
+        } 
+    } 
+}";
+            var test = new VerifyCS.Test
+            {
+                TestCode = csInput,
+                ReferenceAssemblies = ReferenceAssemblies.NetStandard.NetStandard20
+            };
+            await test.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestNonEqualsOperationKind()
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            string str = ""This is a string"";
+            int index = str.IndexOf(""This"");
+            if (index != -1)
+            {
+            }
+        } 
+    } 
+}";
+            await VerifyCS.VerifyAnalyzerAsync(csInput);
+        }
+
+        [Fact]
+        public async Task TestReadOutside()
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            string str = ""This is a string"";
+            int index = str.IndexOf(""This"");
+            if (index == -1)
+            {
+            }
+            int foo = index;
+        } 
+    } 
+}";
+            var test = new VerifyCS.Test
+            {
+                TestCode = csInput,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50
+            };
+            await test.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestFunctionParameter()
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(string str) 
+        { 
+            if ([|str.IndexOf(""This"") == -1|])
+            {
+            }
+        } 
+    } 
+}";
+            string csFixCulture = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(string str) 
+        { 
+            if (!str.Contains(""This"", System.StringComparison.CurrentCulture))
+            {
+            }
+        } 
+    } 
+}";
+            string csFixOrdinal = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(string str) 
+        { 
+            if (!str.Contains(""This"", System.StringComparison.Ordinal))
+            {
+            }
+        } 
+    } 
+}";
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                FixedState = { Sources = { csFixOrdinal } },
+                CodeActionIndex = 1,
+                CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testOrdinal.RunAsync();
+            var testCulture = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                FixedState = { Sources = { csFixCulture } },
+                CodeActionIndex = 0,
+                CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testCulture.RunAsync();
         }
     }
 }

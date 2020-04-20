@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -70,9 +71,48 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ParameterInfo.GetParameterInfo(charType),
                         ParameterInfo.GetParameterInfo(stringComparisonType));
 
+                // Check that the contains methods that take 2 parameters exist
+                var stringContainsMethods = stringType
+                    .GetMembers("Contains")
+                    .OfType<IMethodSymbol>()
+                    .WhereAsArray(s =>
+                        s.Parameters.Length == 2);
+                var stringAndComparisonTypeArgumentContainsMethod = stringContainsMethods.GetFirstOrDefaultMemberWithParameterInfos(
+                        ParameterInfo.GetParameterInfo(stringType),
+                        ParameterInfo.GetParameterInfo(stringComparisonType));
+                var charAndComparisonTypeArgumentContainsMethod = stringContainsMethods.GetFirstOrDefaultMemberWithParameterInfos(
+                        ParameterInfo.GetParameterInfo(charType),
+                        ParameterInfo.GetParameterInfo(stringComparisonType));
+                if (stringAndComparisonTypeArgumentContainsMethod == null ||
+                    charAndComparisonTypeArgumentContainsMethod == null)
+                {
+                    return;
+                }
+
+                Dictionary<string, int> localSymbolsToNumberOfReferences = new Dictionary<string, int>();
+                compilationContext.RegisterOperationAction(referenceContext =>
+                {
+                    ILocalReferenceOperation localReference = (ILocalReferenceOperation)referenceContext.Operation;
+                    ILocalSymbol symbol = localReference.Local;
+                    if (localSymbolsToNumberOfReferences.TryGetValue(symbol.Name, out int numberOfReferences))
+                    {
+                        localSymbolsToNumberOfReferences[symbol.Name] = ++numberOfReferences;
+                    }
+                    else
+                    {
+                        localSymbolsToNumberOfReferences.Add(symbol.Name, 1);
+                    }
+
+                },
+                OperationKind.LocalReference);
+
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
                     IBinaryOperation blockOperation = (IBinaryOperation)operationContext.Operation;
+                    if (blockOperation.OperatorKind != BinaryOperatorKind.Equals)
+                    {
+                        return;
+                    }
                     // Check that the right hand side is a -1
                     var rightOperand = blockOperation.RightOperand;
                     if (rightOperand is IUnaryOperation unaryOperation && rightOperand.ConstantValue.HasValue && rightOperand.ConstantValue.Value is int intValue && intValue == -1)
@@ -97,8 +137,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 {
                                     if (variableDeclarationOperation.Parent is IVariableDeclarationGroupOperation declarationGroupOperation)
                                     {
-                                        var dataFlowAnalysis = semanticModel.AnalyzeDataFlow(declarationGroupOperation.Syntax);
+                                        DataFlowAnalysis dataFlowAnalysis = semanticModel.AnalyzeDataFlow(declarationGroupOperation.Syntax);
                                         if (dataFlowAnalysis.WrittenOutside.Contains(variableName))
+                                        {
+                                            return;
+                                        }
+
+                                        if (localSymbolsToNumberOfReferences.TryGetValue(variableName.Name, out int numberOfReferences))
+                                        {
+                                            if (numberOfReferences > 2)
+                                            {
+                                                // The variable is read in more than 1 place
+                                                return;
+                                            }
+                                        }
+                                        else
                                         {
                                             return;
                                         }

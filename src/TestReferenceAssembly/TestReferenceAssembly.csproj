@@ -3,5 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net46</TargetFrameworks>
     <RootNamespace>OtherDll</RootNamespace>
+    <NonShipping>true</NonShipping>
   </PropertyGroup>
 </Project>

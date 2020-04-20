@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -30,7 +29,7 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
             {
             }
 
-            internal static async Task<AssemblyMetricData> ComputeAsync(IAssemblySymbol assembly, SemanticModelProvider semanticModelProvider, CancellationToken cancellationToken)
+            internal static async Task<AssemblyMetricData> ComputeAsync(IAssemblySymbol assembly, CodeMetricsAnalysisContext context)
             {
                 var coupledTypesBuilder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
                 long linesOfCode = 0;
@@ -39,9 +38,9 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
                 int depthOfInheritance = 0;
                 int grandChildCount = 0;
 
-                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(semanticModelProvider.Compilation);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
 
-                ImmutableArray<CodeAnalysisMetricData> children = await ComputeAsync(GetChildSymbols(assembly), semanticModelProvider, cancellationToken).ConfigureAwait(false);
+                ImmutableArray<CodeAnalysisMetricData> children = await ComputeAsync(GetChildSymbols(assembly), context).ConfigureAwait(false);
                 foreach (CodeAnalysisMetricData child in children)
                 {
                     MetricsHelper.AddCoupledNamedTypes(coupledTypesBuilder, wellKnownTypeProvider, child.CoupledNamedTypes);
@@ -53,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CodeMetrics
                     Debug.Assert(child.Symbol.Kind == SymbolKind.Namespace);
                     Debug.Assert(child.Children.Length > 0);
                     Debug.Assert(child.Children.All(grandChild => grandChild.Symbol.Kind == SymbolKind.NamedType));
-                    maintainabilityIndexTotal += (child.MaintainabilityIndex * child.Children.Length);
+                    maintainabilityIndexTotal += child.MaintainabilityIndex * child.Children.Length;
                     grandChildCount += child.Children.Length;
                 }
 

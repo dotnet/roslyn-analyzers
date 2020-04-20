@@ -106,6 +106,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 },
                 OperationKind.LocalReference);
 
+                compilationContext.RegisterOperationBlockStartAction(context =>
+                {
+                    context.
+                })
+
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
                     IBinaryOperation blockOperation = (IBinaryOperation)operationContext.Operation;

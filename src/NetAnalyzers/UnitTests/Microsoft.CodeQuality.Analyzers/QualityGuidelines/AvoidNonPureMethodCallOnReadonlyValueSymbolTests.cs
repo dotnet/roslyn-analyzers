@@ -211,6 +211,41 @@ public class Test
 ");
         }
 
+        [Fact]
+        public async Task CSharpInvokingNonPureStaticMethod()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public struct Mutable
+{
+    public static void A() { }
+}
+
+public class Test
+{
+    public void Method()
+    {
+        Mutable.A();
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CSharpInvokingRegularMethod()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class Test
+{
+    public void Method()
+    {
+        Method2();
+    }
+
+    public void Method2() { }
+}
+");
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)

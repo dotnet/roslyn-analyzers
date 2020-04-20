@@ -88,8 +88,10 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidNonPureMethodCallOnReadonlyValueSymbolMessage">
-        <source>Any changes made to '{0}''s state will be lost, since it's marked as readonly. Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</source>
-        <target state="new">Any changes made to '{0}''s state will be lost, since it's marked as readonly. Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</target>
+        <source>Any changes made to '{0}''s state will be lost, since it's marked as readonly.
+Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</source>
+        <target state="new">Any changes made to '{0}''s state will be lost, since it's marked as readonly.
+Consider marking method '{1}' as readonly if it is pure or removing readonly modifier from '{0}' if you want to preserve state changes made by method '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidNonPureMethodCallOnReadonlyValueSymbolTitle">

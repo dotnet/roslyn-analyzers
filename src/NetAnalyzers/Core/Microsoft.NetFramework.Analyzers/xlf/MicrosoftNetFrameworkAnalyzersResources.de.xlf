@@ -18,7 +18,7 @@
         <note />
       </trans-unit>
       <trans-unit id="SpecifyMessageBoxOptionsMessage">
-        <source>Specify 'MessageBoxOptions'</source>
+        <source>Specify 'MessageBoxOptions'.</source>
         <target state="needs-review-translation">MessageBoxOptions angeben</target>
         <note />
       </trans-unit>
@@ -33,8 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateAcceleratorsMessage">
-        <source>Avoid duplicate accelerators</source>
-        <target state="translated">Doppelte Zugriffstasten vermeiden</target>
+        <source>Avoid duplicate accelerators.</source>
+        <target state="needs-review-translation">Doppelte Zugriffstasten vermeiden</target>
         <note />
       </trans-unit>
       <trans-unit id="SetLocaleForDataTypesTitle">
@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetLocaleForDataTypesMessage">
-        <source>Set locale for data types</source>
-        <target state="translated">Gebietsschema für Datentypen festlegen</target>
+        <source>Set locale for data types.</source>
+        <target state="needs-review-translation">Gebietsschema für Datentypen festlegen</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkServicedComponentsWithWebMethodTitle">
@@ -63,12 +63,12 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkServicedComponentsWithWebMethodMessage">
-        <source>Do not mark serviced components with 'WebMethod'</source>
+        <source>Do not mark serviced components with 'System.Web.Services.WebMethodAttribute'.</source>
         <target state="needs-review-translation">ServicedComponents nicht mit WebMethod markieren</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
-        <source>Mark Windows Forms entry points with 'STAThread'</source>
+        <source>Mark Windows Forms entry points with 'STAThreadAttribute'</source>
         <target state="needs-review-translation">Windows Forms-Einstiegspunkte mit STAThread markieren</target>
         <note />
       </trans-unit>
@@ -78,7 +78,7 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadMessage">
-        <source>Mark Windows Forms entry points with 'STAThread'</source>
+        <source>Mark Windows Forms entry points with 'System.STAThread'.</source>
         <target state="needs-review-translation">Windows Forms-Einstiegspunkte mit STAThread markieren</target>
         <note />
       </trans-unit>
@@ -93,7 +93,7 @@
         <note />
       </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
-        <source>Call base class methods on 'ISerializable' types</source>
+        <source>Call base class methods on 'ISerializable' types.</source>
         <target state="needs-review-translation">Basisklassenmethoden bei ISerializable-Typen aufrufen</target>
         <note />
       </trans-unit>
@@ -108,7 +108,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlMessage">
-        <source>Use 'XmlReader' for 'DataSet.ReadXml'</source>
+        <source>Use 'XmlReader' for 'DataSet.ReadXml'.</source>
         <target state="needs-review-translation">XmlReader für DataSet ReadXml verwenden</target>
         <note />
       </trans-unit>
@@ -123,13 +123,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlSchemaMessage">
-        <source>Use 'XmlReader' for 'DataSet.ReadXmlSchema'</source>
+        <source>Use 'XmlReader' for 'DataSet.ReadXmlSchema'.</source>
         <target state="needs-review-translation">XmlReader für DataSet ReadXmlSchema verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringTitle">
-        <source>Review DataView CollectionString</source>
-        <target state="translated">DataView CollectionString prüfen</target>
+        <source>Review 'DataViewSettingCollectionString'</source>
+        <target state="needs-review-translation">DataView CollectionString prüfen</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringDescription">
@@ -138,8 +138,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringMessage">
-        <source>Review DataView CollectionString</source>
-        <target state="translated">DataView CollectionString prüfen</target>
+        <source>Review 'DataViewSettingCollectionString'.</source>
+        <target state="needs-review-translation">DataView CollectionString prüfen</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlTitle">
@@ -153,7 +153,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlMessage">
-        <source>Use 'XmlReader' for 'DataTable.ReadXml'</source>
+        <source>Use 'XmlReader' for 'DataTable.ReadXml'.</source>
         <target state="needs-review-translation">XmlReader für DataTable ReadXml verwenden</target>
         <note />
       </trans-unit>
@@ -168,7 +168,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlSchemaMessage">
-        <source>Use 'XmlReader' for 'DataTable.ReadXmlSchema'</source>
+        <source>Use 'XmlReader' for 'DataTable.ReadXmlSchema'.</source>
         <target state="needs-review-translation">XmlReader für DataTable ReadXmlSchema verwenden</target>
         <note />
       </trans-unit>
@@ -238,8 +238,8 @@
         <note>CA3075</note>
       </trans-unit>
       <trans-unit id="DoNotUseDtdProcessingOverloadsMessage">
-        <source>Unsafe overload of '{0}' method</source>
-        <target state="translated">Unsichere Überladung der Methode "{0}"</target>
+        <source>Unsafe overload of '{0}' method.</source>
+        <target state="needs-review-translation">Unsichere Überladung der Methode "{0}"</target>
         <note>CA3075</note>
       </trans-unit>
       <trans-unit id="DoNotUseDtdProcessingOverloads">

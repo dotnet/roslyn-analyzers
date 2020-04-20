@@ -18,7 +18,7 @@
         <note />
       </trans-unit>
       <trans-unit id="SpecifyMessageBoxOptionsMessage">
-        <source>Specify 'MessageBoxOptions'</source>
+        <source>Specify 'MessageBoxOptions'.</source>
         <target state="needs-review-translation">MessageBoxOptions를 지정하세요.</target>
         <note />
       </trans-unit>
@@ -33,8 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidDuplicateAcceleratorsMessage">
-        <source>Avoid duplicate accelerators</source>
-        <target state="translated">중복 액셀러레이터 키를 사용하지 마세요.</target>
+        <source>Avoid duplicate accelerators.</source>
+        <target state="needs-review-translation">중복 액셀러레이터 키를 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetLocaleForDataTypesTitle">
@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetLocaleForDataTypesMessage">
-        <source>Set locale for data types</source>
-        <target state="translated">데이터 형식에 맞는 로캘을 설정하세요.</target>
+        <source>Set locale for data types.</source>
+        <target state="needs-review-translation">데이터 형식에 맞는 로캘을 설정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkServicedComponentsWithWebMethodTitle">
@@ -63,12 +63,12 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkServicedComponentsWithWebMethodMessage">
-        <source>Do not mark serviced components with 'WebMethod'</source>
+        <source>Do not mark serviced components with 'System.Web.Services.WebMethodAttribute'.</source>
         <target state="needs-review-translation">서비스 구성 요소를 WebMethod를 사용하여 표시하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
-        <source>Mark Windows Forms entry points with 'STAThread'</source>
+        <source>Mark Windows Forms entry points with 'STAThreadAttribute'</source>
         <target state="needs-review-translation">Windows Forms 진입점을 STAThread를 사용하여 표시하세요.</target>
         <note />
       </trans-unit>
@@ -78,7 +78,7 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadMessage">
-        <source>Mark Windows Forms entry points with 'STAThread'</source>
+        <source>Mark Windows Forms entry points with 'System.STAThread'.</source>
         <target state="needs-review-translation">Windows Forms 진입점을 STAThread를 사용하여 표시하세요.</target>
         <note />
       </trans-unit>
@@ -93,7 +93,7 @@
         <note />
       </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
-        <source>Call base class methods on 'ISerializable' types</source>
+        <source>Call base class methods on 'ISerializable' types.</source>
         <target state="needs-review-translation">ISerializable 형식에서 기본 클래스 메서드를 호출하세요.</target>
         <note />
       </trans-unit>
@@ -108,7 +108,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlMessage">
-        <source>Use 'XmlReader' for 'DataSet.ReadXml'</source>
+        <source>Use 'XmlReader' for 'DataSet.ReadXml'.</source>
         <target state="needs-review-translation">DataSet ReadXml에 대해 XmlReader를 사용하세요.</target>
         <note />
       </trans-unit>
@@ -123,13 +123,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlSchemaMessage">
-        <source>Use 'XmlReader' for 'DataSet.ReadXmlSchema'</source>
+        <source>Use 'XmlReader' for 'DataSet.ReadXmlSchema'.</source>
         <target state="needs-review-translation">DataSet ReadXmlSchema에 대해 XmlReader를 사용하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringTitle">
-        <source>Review DataView CollectionString</source>
-        <target state="translated">DataView CollectionString을 검토하세요.</target>
+        <source>Review 'DataViewSettingCollectionString'</source>
+        <target state="needs-review-translation">DataView CollectionString을 검토하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringDescription">
@@ -138,8 +138,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewDataViewCollectionStringMessage">
-        <source>Review DataView CollectionString</source>
-        <target state="translated">DataView CollectionString을 검토하세요.</target>
+        <source>Review 'DataViewSettingCollectionString'.</source>
+        <target state="needs-review-translation">DataView CollectionString을 검토하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlTitle">
@@ -153,7 +153,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlMessage">
-        <source>Use 'XmlReader' for 'DataTable.ReadXml'</source>
+        <source>Use 'XmlReader' for 'DataTable.ReadXml'.</source>
         <target state="needs-review-translation">DataTable ReadXml에 대해 XmlReader를 사용하세요.</target>
         <note />
       </trans-unit>
@@ -168,7 +168,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataTableReadXmlSchemaMessage">
-        <source>Use 'XmlReader' for 'DataTable.ReadXmlSchema'</source>
+        <source>Use 'XmlReader' for 'DataTable.ReadXmlSchema'.</source>
         <target state="needs-review-translation">DataTable ReadXmlSchema에 대해 XmlReader를 사용하세요.</target>
         <note />
       </trans-unit>
@@ -238,8 +238,8 @@
         <note>CA3075</note>
       </trans-unit>
       <trans-unit id="DoNotUseDtdProcessingOverloadsMessage">
-        <source>Unsafe overload of '{0}' method</source>
-        <target state="translated">'{0}' 메서드의 안전하지 않은 오버로드</target>
+        <source>Unsafe overload of '{0}' method.</source>
+        <target state="needs-review-translation">'{0}' 메서드의 안전하지 않은 오버로드</target>
         <note>CA3075</note>
       </trans-unit>
       <trans-unit id="DoNotUseDtdProcessingOverloads">

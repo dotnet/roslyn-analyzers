@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor DefinitelyUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5382",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseSecureCookiesASPNetCore),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseSecureCookiesASPNetCoreTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5383",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseSecureCookiesASPNetCore),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseSecureCookiesASPNetCoreTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseSecureCookiesASPNetCoreMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

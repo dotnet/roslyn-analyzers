@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            string title = MicrosoftNetCoreAnalyzersResources.UseArrayEmpty;
+            string title = MicrosoftNetCoreAnalyzersResources.UseArrayEmptyCodeFixTitle;
             context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await ConvertToArrayEmpty(context.Document, nodeToFix, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),

@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5385";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySize),
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(

@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5361",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCrypto),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

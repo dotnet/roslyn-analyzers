@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             RuleId,
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPath),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

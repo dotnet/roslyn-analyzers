@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5363";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidation),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidationTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(

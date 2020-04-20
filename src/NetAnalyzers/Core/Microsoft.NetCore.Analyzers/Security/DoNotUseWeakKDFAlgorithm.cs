@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5379";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFAlgorithm),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFAlgorithmTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(

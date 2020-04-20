@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return Task.CompletedTask;
             }
 
-            var title = MicrosoftNetCoreAnalyzersResources.UseIndexer;
+            var title = MicrosoftNetCoreAnalyzersResources.UseIndexerCodeFixTitle;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),

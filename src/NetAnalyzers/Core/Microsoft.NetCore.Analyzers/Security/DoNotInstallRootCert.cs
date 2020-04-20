@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor DefinitelyInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5380",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCert),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCertTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCertMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor MaybeInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5381",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCert),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCertTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCertMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

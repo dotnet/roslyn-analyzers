@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor UseAutoValidateAntiforgeryTokenRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5391",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryToken),
+            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor MissHttpVerbAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5395",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttribute),
+            nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

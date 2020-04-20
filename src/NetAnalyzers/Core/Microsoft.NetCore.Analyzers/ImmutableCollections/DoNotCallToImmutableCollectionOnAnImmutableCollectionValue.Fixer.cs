@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                 return;
             }
 
-            var title = MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall;
+            var title = MicrosoftNetCoreAnalyzersResources.RemoveRedundantCallTitle;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async cancellationToken => await RemoveRedundantCall(document, root, invocationNode, invocationOperation).ConfigureAwait(false),

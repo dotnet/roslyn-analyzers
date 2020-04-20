@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5390",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKey),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKeyTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKeyMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

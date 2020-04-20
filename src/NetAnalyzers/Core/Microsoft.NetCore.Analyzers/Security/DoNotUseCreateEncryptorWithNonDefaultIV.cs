@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DefinitelyUseCreateEncryptorWithNonDefaultIVRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5401",
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseCreateEncryptorWithNonDefaultIV),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseCreateEncryptorWithNonDefaultIVTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseCreateEncryptorWithNonDefaultIVMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCreateEncryptorWithNonDefaultIVDescription));
         internal static DiagnosticDescriptor MaybeUseCreateEncryptorWithNonDefaultIVRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5402",
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseCreateEncryptorWithNonDefaultIV),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseCreateEncryptorWithNonDefaultIVTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseCreateEncryptorWithNonDefaultIVMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

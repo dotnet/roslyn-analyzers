@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5396",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookie),
+            nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieMessage),
             RuleLevel.Disabled,
             isPortedFxCopRule: false,

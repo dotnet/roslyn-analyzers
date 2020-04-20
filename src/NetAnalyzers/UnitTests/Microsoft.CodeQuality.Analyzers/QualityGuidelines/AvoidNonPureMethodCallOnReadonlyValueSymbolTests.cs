@@ -34,7 +34,7 @@ public class Test
         }
 
         [Fact]
-        public async Task CSharpInvokingNonPureMethodInCoustructor()
+        public async Task CSharpInvokingNonPureMethodInConstructor()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public struct Mutable
@@ -49,6 +49,30 @@ public class Test
     public Test()
     {
         a.A();
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task CSharpInvokingNonPureMethodInConstructorInBlock()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public struct Mutable
+{
+    public void A() { }
+}
+
+public class Test
+{
+    readonly Mutable a;
+
+    public Test()
+    {
+        if (true)
+        {
+            a.A();
+        }
     }
 }
 ");

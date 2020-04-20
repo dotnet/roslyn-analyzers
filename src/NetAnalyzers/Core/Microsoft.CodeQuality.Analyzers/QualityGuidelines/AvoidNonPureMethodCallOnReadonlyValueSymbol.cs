@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             var referenceOperation = (IMethodReferenceOperation)context.Operation;
 
-            bool isViolationFound = AnalizeMethod(referenceOperation.Instance, referenceOperation.Method);
+            bool isViolationFound = AnalyzeMethod(referenceOperation.Instance, referenceOperation.Method);
             if (!isViolationFound)
             {
                 return;
@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             var callOperation = (IInvocationOperation)context.Operation;
 
-            bool isViolationFound = AnalizeMethod(callOperation.Instance, callOperation.TargetMethod);
+            bool isViolationFound = AnalyzeMethod(callOperation.Instance, callOperation.TargetMethod);
             if (!isViolationFound)
             {
                 return;
@@ -89,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             context.ReportDiagnostic(diagnostic);
         }
 
-        private static bool AnalizeMethod(IOperation instance, IMethodSymbol method)
+        private static bool AnalyzeMethod(IOperation instance, IMethodSymbol method)
         {
             // This analyzer makes sense only for value type objects
             if (instance?.Type?.IsReferenceType != false)

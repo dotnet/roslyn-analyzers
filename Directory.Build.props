@@ -4,6 +4,7 @@
     <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
     <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />

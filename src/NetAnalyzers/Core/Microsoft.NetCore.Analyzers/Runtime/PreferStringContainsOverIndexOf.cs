@@ -203,7 +203,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             context.ReportDiagnostic(_locations.CreateDiagnostic(Rule));
                         }
                     });
-
                 });
 
                 bool InvocationOperationIsTargetMethod(IInvocationOperation invocationOperation, OperationAnalysisContext operationContext)

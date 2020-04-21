@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
-    /// CAXXXX: Prevent invocation of non-pure methods from readonly value-type fields
+    /// CA2248: Prevent invocation of non-pure methods from readonly value-type fields
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidNonPureMethodCallOnReadonlyValueSymbol : DiagnosticAnalyzer
@@ -52,7 +52,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            var diagnostic = Diagnostic.Create(Rule, referenceOperation.Syntax.GetLocation(), referenceOperation.Instance.Syntax, referenceOperation.Method.Name);
+            var diagnostic = Diagnostic.Create(Rule,
+                referenceOperation.Syntax.GetLocation(),
+                GetMemberFullName(((IMemberReferenceOperation)referenceOperation.Instance).Member),
+                referenceOperation.Method.Name);
             context.ReportDiagnostic(diagnostic);
         }
 
@@ -85,8 +88,16 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            var diagnostic = Diagnostic.Create(Rule, callOperation.Syntax.GetLocation(), callOperation.Instance.Syntax, callOperation.TargetMethod.Name);
+            var diagnostic = Diagnostic.Create(Rule,
+                callOperation.Syntax.GetLocation(),
+                GetMemberFullName(((IMemberReferenceOperation)callOperation.Instance).Member),
+                callOperation.TargetMethod.Name);
             context.ReportDiagnostic(diagnostic);
+        }
+
+        private static string GetMemberFullName(ISymbol member)
+        {
+            return $"{member.ContainingType.Name}.{member.Name}";
         }
 
         private static bool AnalyzeMethod(IOperation instance, IMethodSymbol method)

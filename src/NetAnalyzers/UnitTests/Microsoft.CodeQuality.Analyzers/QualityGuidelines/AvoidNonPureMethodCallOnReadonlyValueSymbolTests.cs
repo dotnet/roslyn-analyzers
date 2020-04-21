@@ -30,7 +30,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "a", "A"));
+            GetCSharpResultAt(13, 9, "Test.a", "A"));
         }
 
         [Fact]
@@ -52,7 +52,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "a", "A"));
+            GetCSharpResultAt(13, 9, "Test.a", "A"));
         }
 
         [Fact]
@@ -143,7 +143,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(15, 20, "a", "A"));
+            GetCSharpResultAt(15, 20, "Test.a", "A"));
         }
 
         [Fact(Skip = "C# 8 is needed")]

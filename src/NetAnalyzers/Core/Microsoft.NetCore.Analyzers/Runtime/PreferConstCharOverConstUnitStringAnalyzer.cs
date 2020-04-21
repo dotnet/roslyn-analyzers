@@ -55,9 +55,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                compilationContext.RegisterOperationAction(operationContext =>
+                compilationContext.RegisterOperationAction(context =>
                 {
-                    var invocationOperation = (IInvocationOperation)operationContext.Operation;
+                    var invocationOperation = (IInvocationOperation)context.Operation;
                     if (invocationOperation.Arguments.Length < 1)
                     {
                         return;
@@ -71,10 +71,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ImmutableArray<IArgumentOperation> arguments = invocationOperation.Arguments;
                     IArgumentOperation firstArgument = arguments[0];
 
-                    // We don't handle class fields. Only local declarations
                     if (firstArgument.Value.ConstantValue.HasValue && firstArgument.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
                     {
-                        operationContext.ReportDiagnostic(firstArgument.Value.CreateDiagnostic(Rule));
+                        context.ReportDiagnostic(firstArgument.Value.CreateDiagnostic(Rule));
                     }
                 },
                 OperationKind.Invocation);

@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                // Check that the object is a StringBuilder
+                // Check that StringBuilder is defined in this compilation
                 if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextStringBuilder, out INamedTypeSymbol? stringBuilderType))
                 {
                     return;
@@ -47,10 +47,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 IMethodSymbol appendStringMethod = stringBuilderType
                     .GetMembers("Append")
                     .OfType<IMethodSymbol>()
-                    .WhereAsArray(s =>
+                    .FirstOrDefault(s =>
                         s.Parameters.Length == 1 &&
-                        s.Parameters[0].Type.SpecialType == SpecialType.System_String)
-                    .FirstOrDefault();
+                        s.Parameters[0].Type.SpecialType == SpecialType.System_String);
                 if (appendStringMethod is null)
                 {
                     return;
@@ -64,7 +63,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-
                     if (!invocationOperation.TargetMethod.Equals(appendStringMethod))
                     {
                         return;
@@ -74,32 +72,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     IArgumentOperation firstArgument = arguments[0];
 
                     // We don't handle class fields. Only local declarations
-                    if (!IsConstVar(firstArgument))
+                    if (firstArgument.Value.ConstantValue.HasValue && firstArgument.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
                     {
-                        return;
+                        operationContext.ReportDiagnostic(firstArgument.Value.CreateDiagnostic(Rule));
                     }
-
-                    if (firstArgument.Value is ILocalReferenceOperation argumentValue)
-                    {
-                        operationContext.ReportDiagnostic(argumentValue.CreateDiagnostic(Rule));
-                    }
-                    else if (firstArgument.Value is ILiteralOperation literalArgumentValue)
-                    {
-                        operationContext.ReportDiagnostic(literalArgumentValue.CreateDiagnostic(Rule));
-                    }
-                }
-                , OperationKind.Invocation);
+                },
+                OperationKind.Invocation);
             });
         }
 
-        private static bool IsConstVar(IArgumentOperation argument)
-        {
-            if (argument.Value.ConstantValue.HasValue && argument.Value.ConstantValue.Value is string unitString && unitString.Length == 1)
-            {
-                return true;
-            }
-            return false;
-        }
 
     }
 }

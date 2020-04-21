@@ -29,12 +29,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (root.FindNode(context.Span) is SyntaxNode expression)
             {
                 SemanticModel semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                var operation = semanticModel.GetOperationWalkingUpParentChain(expression, cancellationToken);
+                var operation = semanticModel.GetOperation(expression, cancellationToken);
                 if (operation is IArgumentOperation argumentOperation)
                 {
-                    IVariableDeclaratorOperation? cachedVariableDeclaratorOperation = default;
-                    if (argumentOperation.Value is ILocalReferenceOperation localReferenceOperation)
+                    IOperation? isLocalReferenceOperation = argumentOperation.Value as ILocalReferenceOperation;
+                    IOperation? isLiteralOperation = argumentOperation.Value as ILiteralOperation;
+                    if (isLocalReferenceOperation == null && isLiteralOperation == null)
                     {
+                        return;
+                    }
+
+                    IVariableDeclaratorOperation? cachedVariableDeclaratorOperation = default;
+                    if (isLocalReferenceOperation != null)
+                    {
+                        ILocalReferenceOperation localReferenceOperation = (ILocalReferenceOperation)argumentOperation.Value;
                         ILocalSymbol localArgumentDeclaration = localReferenceOperation.Local;
                         SyntaxReference declaringSyntaxReference = localArgumentDeclaration.DeclaringSyntaxReferences.FirstOrDefault();
                         if (declaringSyntaxReference is null)

@@ -99,7 +99,7 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(multipleDeclarations_cs);
+            await VerifyCS.VerifyCodeFixAsync(multipleDeclarations_cs, multipleDeclarations_cs);
             const string multipleDeclarations_vb = @" 
 Imports System
 
@@ -113,7 +113,7 @@ Module Program
     End Class
 End Module
 ";
-            await VerifyVB.VerifyAnalyzerAsync(multipleDeclarations_vb);
+            await VerifyVB.VerifyCodeFixAsync(multipleDeclarations_vb, multipleDeclarations_vb);
         }
 
         [Fact]
@@ -132,11 +132,11 @@ namespace RosylnScratch
         static void Main(string[] args)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(SS);
+            sb.Append([|SS|]);
         }
     }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(classFieldInAppend_cs);
+            await VerifyCS.VerifyCodeFixAsync(classFieldInAppend_cs, classFieldInAppend_cs);
             const string classFieldInAppend_vb = @"
 Imports System
 
@@ -145,12 +145,12 @@ Module Program
         Public Const str As String = ""a""
         Public Sub Main(args As String())
             Dim builder As New System.Text.StringBuilder
-            builder.Append(str)
+            builder.Append([|str|])
         End Sub
     End Class
 End Module
 ";
-            await VerifyVB.VerifyAnalyzerAsync(classFieldInAppend_vb);
+            await VerifyVB.VerifyCodeFixAsync(classFieldInAppend_vb, classFieldInAppend_vb);
         }
 
 

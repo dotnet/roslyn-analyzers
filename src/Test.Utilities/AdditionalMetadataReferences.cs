@@ -10,7 +10,7 @@ namespace Test.Utilities
     {
         private static readonly ReferenceAssemblies _default =
 #if NETCOREAPP
-            ReferenceAssemblies.NetCore.NetCoreApp21;
+            ReferenceAssemblies.NetCore.NetCoreApp31;
 #else
             ReferenceAssemblies.Default;
 #endif
@@ -80,8 +80,16 @@ namespace Test.Utilities
             .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
 
         public static ReferenceAssemblies DefaultWithFullComposition { get; } = Default
-#if !NETCOREAPP
+#if NETCOREAPP
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("System.ComponentModel.Composition", "4.7.0")))
+#else
             .AddAssemblies(ImmutableArray.Create("System.Composition.AttributedModel", "System.ComponentModel.Composition"))
+#endif
+            ;
+
+        public static ReferenceAssemblies DefaultWithSecurity { get; } = Default
+#if NETCOREAPP
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("System.Security.Permissions", "4.7.0")))
 #endif
             ;
 

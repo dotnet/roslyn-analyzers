@@ -22,6 +22,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSecurity,
                 TestState =
                 {
                     Sources =
@@ -253,7 +254,10 @@ public class DataTableWithWrongSuffix : DataTable
         [Fact]
         public async Task CA1710_NoDiagnostics_CSharp()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSecurity,
+                TestCode = @"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -425,7 +429,8 @@ public class MyCollectionDataTable : DataTable, IEnumerable
     {
         return null;
     }
-}");
+}",
+            }.RunAsync();
         }
 
         [Fact]
@@ -433,6 +438,7 @@ public class MyCollectionDataTable : DataTable, IEnumerable
         {
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSecurity,
                 TestState =
                 {
                     Sources =
@@ -795,7 +801,10 @@ End Class",
         [Fact]
         public async Task CA1710_NoDiagnostics_VisualBasic()
         {
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await new VerifyVB.Test
+            {
+                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSecurity,
+                TestCode = @"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -1098,7 +1107,9 @@ End Class
 Public NotInheritable Class VerifiableAttribute
     Inherits Attribute
 
-End Class");
+End Class",
+            }
+            .RunAsync();
         }
 
         [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -34,8 +35,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         private ImmutableArray<Location> _locations;
-
-        private readonly Dictionary<string, int> localSymbolsToNumberOfReferences = new Dictionary<string, int>();
+        private readonly PooledConcurrentDictionary<string, int> variableNameToNumberOfReferences = PooledConcurrentDictionary<string, int>.GetInstance();
+        private readonly PooledConcurrentDictionary<string, ImmutableArray<Location>> variableNameToLocationsMap = PooledConcurrentDictionary<string, ImmutableArray<Location>>.GetInstance();
 
         public override void Initialize(AnalysisContext context)
         {
@@ -103,14 +104,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         ILocalReferenceOperation localReference = (ILocalReferenceOperation)context.Operation;
                         ILocalSymbol symbol = localReference.Local;
-                        if (localSymbolsToNumberOfReferences.TryGetValue(symbol.Name, out int numberOfReferences))
+                        variableNameToNumberOfReferences.AddOrUpdate(symbol.Name, 1, (name, addValue) =>
                         {
-                            localSymbolsToNumberOfReferences[symbol.Name] = ++numberOfReferences;
-                        }
-                        else
-                        {
-                            localSymbolsToNumberOfReferences.Add(symbol.Name, 1);
-                        }
+                            return addValue + 1;
+                        });
+                        //if (localSymbolsToNumberOfReferences.TryGetValue(symbol.Name, out int numberOfReferences))
+                        //{
+                        //    localSymbolsToNumberOfReferences[symbol.Name] = ++numberOfReferences;
+                        //}
+                        //else
+                        //{
+                        //    localSymbolsToNumberOfReferences.Add(symbol.Name, 1);
+                        //}
                     },
                     OperationKind.LocalReference);
 
@@ -151,25 +156,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                 return;
                                             }
 
-                                            if (localSymbolsToNumberOfReferences.TryGetValue(variableName.Name, out int numberOfReferences))
-                                            {
-                                                if (numberOfReferences > 2)
-                                                {
-                                                    // The variable is read in more than 1 place
-                                                    return;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                return;
-                                            }
-
                                             // Check that the variable is initialized to the result of string.IndexOf
                                             IVariableInitializerOperation variableInitializer = variableDeclaratorOperation.GetVariableInitializer();
                                             if (variableInitializer is null)
                                             {
                                                 return;
                                             }
+
                                             var declarationGroupLocation = declarationGroupOperation.Syntax.GetLocation();
                                             var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
 
@@ -177,7 +170,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                             {
                                                 if (InvocationOperationIsTargetMethod(invocationOperation, context))
                                                 {
-                                                    _locations = locations;
+                                                    variableNameToLocationsMap.TryAdd(variableDeclaratorOperation.Symbol.Name, locations);
+                                                    //Diagnostic diagnostic = locations.CreateDiagnostic(Rule);
+                                                    //context.ReportDiagnostic(diagnostic);
                                                 }
                                             }
                                         }
@@ -201,6 +196,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (_locations != null)
                         {
                             context.ReportDiagnostic(_locations.CreateDiagnostic(Rule));
+                        }
+                        else if (variableNameToLocationsMap.Count > 0)
+                        {
+                            List<Location> locations = new List<Location>();
+                            foreach (KeyValuePair<string, ImmutableArray<Location>> variableNameAndLocation in variableNameToLocationsMap)
+                            {
+                                string variableName = variableNameAndLocation.Key;
+                                if (!variableNameToNumberOfReferences.TryGetValue(variableName, out int numberOfReferences))
+                                {
+                                    continue;
+                                }
+
+                                if (numberOfReferences > 2)
+                                {
+                                    continue;
+                                }
+
+                                for (int i = 0; i < variableNameAndLocation.Value.Length; i++)
+                                {
+                                    locations.Add(variableNameAndLocation.Value[i]);
+                                }
+                            }
+
+                            Diagnostic diagnostic = locations.CreateDiagnostic(Rule);
+                            //var diagnostic = Diagnostic.Create(Rule, locations.First(), locations[1]);
+                            context.ReportDiagnostic(diagnostic);
                         }
                     });
                 });

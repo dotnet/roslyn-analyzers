@@ -184,7 +184,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 CheckConversionInUnsupportedContext(operation, operation.InConversion);
                 CheckConversionInUnsupportedContext(operation, operation.OutConversion);
 
-                var value = operation.Value;
+                IOperation? value = operation.Value;
                 var parameterRefKind = operation.Parameter.RefKind;
                 var sourceRefKind = Acquire(operation.Value);
                 if (!CanAssign(sourceRefKind, parameterRefKind))
@@ -616,7 +616,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     CheckTypeInUnsupportedContext(operation);
                 }
 
-                var instance = operation.Instance;
+                IOperation? instance = operation.Instance;
                 if (instance is object
                     && _cache.IsNonCopyableType(operation.TargetMethod.ReceiverType)
                     && !operation.TargetMethod.IsReadOnly
@@ -784,7 +784,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     CheckTypeInUnsupportedContext(operation);
                 }
 
-                var instance = operation.Instance;
+                IOperation? instance = operation.Instance;
                 if (instance is object
                     && _cache.IsNonCopyableType(operation.Property.ContainingType)
                     && Acquire(instance) == RefKind.In)
@@ -852,7 +852,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
             public override void VisitReturn(IReturnOperation operation)
             {
-                var returnedValue = operation.ReturnedValue;
+                IOperation? returnedValue = operation.ReturnedValue;
                 if (Acquire(returnedValue) != RefKind.None)
                 {
                     if (returnedValue is ILocalReferenceOperation { Local: { IsRef: false } })
@@ -878,8 +878,8 @@ namespace Roslyn.Diagnostics.Analyzers
 
             public override void VisitSimpleAssignment(ISimpleAssignmentOperation operation)
             {
-                var target = operation.Target;
-                var value = operation.Value;
+                IOperation? target = operation.Target;
+                IOperation? value = operation.Value;
 
                 var targetRefKind = Acquire(target);
                 var sourceRefKind = Acquire(value);
@@ -1040,7 +1040,7 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 CheckLocalSymbolInUnsupportedContext(operation, operation.Symbol);
 
-                var initializer = operation.Initializer;
+                IVariableInitializerOperation? initializer = operation.Initializer;
                 var localRefKind = operation.Symbol.RefKind;
                 var sourceRefKind = Acquire(operation.Initializer?.Value);
                 if (!CanAssign(sourceRefKind, localRefKind))

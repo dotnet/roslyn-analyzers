@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 #pragma warning disable CA1031 // Do not catch general exception types
 
-namespace GenerateAnalyzerRulesets
+namespace GenerateDocumentationAndConfigFiles
 {
     public static class FixerExtensions
     {

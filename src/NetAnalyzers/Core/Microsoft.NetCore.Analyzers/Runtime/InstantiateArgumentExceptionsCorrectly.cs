@@ -131,7 +131,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context)
         {
-            return owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
+            return owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, 
+                context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
         }
 
         private static bool HasParameters(ISymbol owningSymbol)
@@ -147,26 +148,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             OperationAnalysisContext context)
         {
             bool matchesParameter = MatchesParameter(targetSymbol, creation, stringArgument);
-            DiagnosticDescriptor? rule = null;
-            var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
 
             if (IsMessage(parameter) && matchesParameter)
             {
-                rule = RuleIncorrectMessage;
+                var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
                 dictBuilder.Add(MessagePosition, parameter.Ordinal.ToString(CultureInfo.InvariantCulture));
+                return context.Operation.CreateDiagnostic(RuleIncorrectMessage, dictBuilder.ToImmutable(), targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
             }
             else if (HasParameters(targetSymbol) && IsParameterName(parameter) && !matchesParameter)
             {
                 // Allow argument exceptions in accessors to use the associated property symbol name.
                 if (!MatchesAssociatedSymbol(targetSymbol, stringArgument))
                 {
-                    rule = RuleIncorrectParameterName;
+                    return context.Operation.CreateDiagnostic(RuleIncorrectParameterName, targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
                 }
-            }
-
-            if (rule != null)
-            {
-                return context.Operation.CreateDiagnostic(rule, dictBuilder.ToImmutable(), targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
             }
 
             return null;

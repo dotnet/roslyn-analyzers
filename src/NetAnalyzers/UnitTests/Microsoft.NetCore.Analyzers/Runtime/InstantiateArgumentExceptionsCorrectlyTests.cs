@@ -9,7 +9,7 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
-     Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyFixer>;
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {

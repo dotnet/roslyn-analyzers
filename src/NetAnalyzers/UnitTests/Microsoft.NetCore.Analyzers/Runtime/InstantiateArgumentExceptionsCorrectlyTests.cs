@@ -617,7 +617,7 @@ End Class");
         [Theory]
         [InlineData("public", "dotnet_code_quality.api_surface = private", false)]
         [InlineData("private", "dotnet_code_quality.api_surface = internal, public", false)]
-        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = private, piblic", true)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = private, public", true)]
         [InlineData("public", "dotnet_code_quality.CA2208.api_surface = internal, private", false)]
         [InlineData("public", "dotnet_code_quality.CA2208.api_surface = Friend, Private", false)]
         [InlineData("public", @"dotnet_code_quality.api_surface = all
@@ -629,7 +629,7 @@ End Class");
         [InlineData("public", "dotnet_code_quality.CA2208.api_surface = public, private", true)]
         [InlineData("public", @"dotnet_code_quality.api_surface = internal
                                         dotnet_code_quality.CA2208.api_surface = public", true)]
-        public async Task EditorConfigConfiguration_ApiSurfaceOption_CsTest(string accessibility, string editorConfigText, bool expectDiagnostic)
+        public async Task EditorConfigConfiguration_ApiSurfaceOption_Test(string accessibility, string editorConfigText, bool expectDiagnostic)
         {
             var exception = expectDiagnostic ? @"[|new System.ArgumentNullException(""first is null"")|]" : @"new System.ArgumentNullException(""first is null"")";
 
@@ -675,7 +675,7 @@ public class C
         }
 
         [Fact]
-        public async Task EditorConfigConfiguration_Private_MethodArgumentException_DoesNotWarn()
+        public async Task EditorConfigConfiguredPublic_PrivateMethods_TriggeringOtherRules_DoesNotWarn()
         {
             await new VerifyCS.Test
             {
@@ -686,9 +686,14 @@ public class C
                         $@"
                         public class C
                         {{
-                            private void Mmmmmm(string fisrt)
+                            private void Test(string first)
                             {{
                                  throw new System.ArgumentNullException();
+                            }}
+
+                            private void TestFlipped(string first)
+                            {{
+                                 throw new System.ArgumentException(nameof(first), ""message"");
                             }}
                         }}"
                     },

@@ -130,7 +130,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context)
-        { // Should add for all rules?
+        {
             return owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
         }
 

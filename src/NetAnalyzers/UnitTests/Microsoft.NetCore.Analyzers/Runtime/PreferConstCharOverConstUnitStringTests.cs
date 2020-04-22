@@ -153,6 +153,41 @@ End Module
             await VerifyVB.VerifyCodeFixAsync(classFieldInAppend_vb, classFieldInAppend_vb);
         }
 
+        [Fact]
+        public async Task TestNullInitializer()
+        {
+            const string nullInitializer_cs = @" 
+using System; 
+using System.Text;
+ 
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            StringBuilder sb = new StringBuilder();
+            const string ch = null;
+            sb.Append(ch);
+        } 
+    } 
+}";
+            await VerifyCS.VerifyAnalyzerAsync(nullInitializer_cs);
+            const string nullInitializer_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Const ch As String = Nothing
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(ch)
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(nullInitializer_vb);
+        }
 
         [Fact]
         public async Task TestNonUnitString()
@@ -263,7 +298,7 @@ End Module
         }
 
         [Fact]
-        public async Task TestAppendLiteral()
+        public async Task TestAppendLiteralWithFix()
         {
             const string appendLiteralInput_cs = @" 
 using System; 
@@ -401,5 +436,82 @@ End Module
             await VerifyVB.VerifyAnalyzerAsync(methodParameterInAppend_vb);
         }
 
+        [Theory]
+        [InlineData("ab")]
+        [InlineData("(string)null")]
+        public async Task TestAppendLiteral(string input)
+        {
+            string quotes = input == "(string)null" ? "" : "\"";
+            string methodParameterInAppend = @"
+using System; 
+using System.Text;
+ 
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(int value) 
+        { 
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" + quotes + input + quotes + @");
+        } 
+    } 
+}";
+            await VerifyCS.VerifyAnalyzerAsync(methodParameterInAppend);
+
+            if (input == "(string)null")
+            {
+                input = "CType(Nothing, String)";
+            }
+            string methodParameterInAppend_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(arg As Int32)
+            Dim builder As New System.Text.StringBuilder
+            builder.Append(" + quotes + input + quotes + @")
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(methodParameterInAppend_vb);
+        }
+
+        [Fact]
+        public async Task TestInterpolatedString()
+        {
+            const string interpolatedString_cs = @"
+using System; 
+using System.Text;
+ 
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(int value) 
+        { 
+            StringBuilder sb = new StringBuilder();
+            const string ch = ""a"";
+            sb.Append($""{ch}"");
+        } 
+    } 
+}";
+            await VerifyCS.VerifyAnalyzerAsync(interpolatedString_cs);
+            const string interpolatedString_vb = @"
+Imports System
+
+Module Program
+    Class TestClass
+        Public Sub Main(args As String())
+            Const ch As String = ""a""
+            Dim builder As New System.Text.StringBuilder
+            builder.Append($""{ch}"")
+        End Sub
+    End Class
+End Module
+";
+            await VerifyVB.VerifyAnalyzerAsync(interpolatedString_vb);
+        }
     }
 }

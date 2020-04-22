@@ -594,6 +594,111 @@ End Class");
         }
 
         [Fact]
+        public async Task ArgumentException_GenericParameterName_DoesNotWarn()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+                public class Class
+                {
+                    public void Test<TEnum>(TEnum first)
+                    {
+                        throw new System.ArgumentException(""first is incorrect"", nameof(TEnum));
+                    }
+                }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+                Public Class [MyClass]
+                    Public Sub Test(Of TEnum)(ByVal first As TEnum)
+                        Throw New System.ArgumentException(""first is incorrect"", NameOf(TEnum))
+                    End Sub
+                End Class");
+        }
+
+
+        [Theory]
+        [InlineData("public", "dotnet_code_quality.api_surface = private", false)]
+        [InlineData("private", "dotnet_code_quality.api_surface = internal, public", false)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = private, piblic", true)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = internal, private", false)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = Friend, Private", false)]
+        [InlineData("public", @"dotnet_code_quality.api_surface = all
+                                        dotnet_code_quality.CA2208.api_surface = private", false)]
+        [InlineData("public", "dotnet_code_quality.api_surface = public", true)]
+        [InlineData("public", "dotnet_code_quality.api_surface = internal, public", true)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = public", true)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = all", true)]
+        [InlineData("public", "dotnet_code_quality.CA2208.api_surface = public, private", true)]
+        [InlineData("public", @"dotnet_code_quality.api_surface = internal
+                                        dotnet_code_quality.CA2208.api_surface = public", true)]
+        public async Task EditorConfigConfiguration_ApiSurfaceOption_CsTest(string accessibility, string editorConfigText, bool expectDiagnostic)
+        {
+            var exception = expectDiagnostic ? @"[|new System.ArgumentNullException(""first is null"")|]" : @"new System.ArgumentNullException(""first is null"")";
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+public class C
+{{
+    {accessibility} void Test(string first)
+    {{
+         throw {exception};
+    }}
+}}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
+            }.RunAsync();
+
+            exception = expectDiagnostic ? @"[|New System.ArgumentNullException(""first is null"")|]" : @"New System.ArgumentNullException(""first is null"")";
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                    $@"
+ Public Class C
+    {accessibility} Sub Test(first As String)
+        Throw {exception}
+     End Sub
+ End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task EditorConfigConfiguration_Private_MethodArgumentException_DoesNotWarn()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+                        public class C
+                        {{
+                            private void Mmmmmm(string fisrt)
+                            {{
+                                 throw new System.ArgumentNullException();
+                            }}
+                        }}"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA2208.api_surface = public") }
+                },
+                MarkupOptions = MarkupOptions.UseFirstDescriptor
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task ArgumentException_CorrectMessageAndParameterName_DoesNotWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol argumentExceptionType)
         {
             var creation = (IObjectCreationOperation)context.Operation;
-            if (!creation.Type.Inherits(argumentExceptionType))
+            if (!creation.Type.Inherits(argumentExceptionType) || !MatchesConfiguredVisibility(owningSymbol, context))
             {
                 return;
             }
@@ -121,11 +121,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         break;
                     }
                 }
+
                 if (diagnostic != null)
                 {
                     context.ReportDiagnostic(diagnostic);
                 }
             }
+        }
+
+        private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context)
+        { // Should add for all rules?
+            return owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
         }
 
         private static bool HasParameters(ISymbol owningSymbol)
@@ -241,6 +247,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
+            if (symbol is IMethodSymbol method)
+            {
+                if (method.IsGenericMethod)
+                {
+                    foreach (ITypeParameterSymbol parameter in method.TypeParameters)
+                    {
+                        if (parameter.Name == stringArgumentValue)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+            }
             return false;
         }
 

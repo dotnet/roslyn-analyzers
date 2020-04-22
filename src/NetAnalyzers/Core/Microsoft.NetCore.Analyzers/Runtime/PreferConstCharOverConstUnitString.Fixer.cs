@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var operation = semanticModel.GetOperation(expression, cancellationToken);
                 if (operation is IArgumentOperation argumentOperation)
                 {
-                    IOperation? isLocalReferenceOperation = argumentOperation.Value as ILocalReferenceOperation;
+                    var localReferenceOperation = argumentOperation.Value as ILocalReferenceOperation;
                     IOperation? isLiteralOperation = argumentOperation.Value as ILiteralOperation;
                     if (isLocalReferenceOperation == null && isLiteralOperation == null)
                     {

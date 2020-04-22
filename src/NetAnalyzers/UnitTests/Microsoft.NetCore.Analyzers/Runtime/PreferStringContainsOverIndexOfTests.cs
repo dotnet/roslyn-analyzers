@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Theory]
         [InlineData("This", "This", false)]
         [InlineData("a", "a", true)]
-        public async Task TestSingleStringAndChar(string input, string fix, bool isCharTest)
+        public async Task TestStringAndChar(string input, string fix, bool isCharTest)
         {
             string quotes = isCharTest ? "'" : "\"";
             string csInput = @"
@@ -124,6 +124,191 @@ Public Class StringOf
         Public Sub Main()
             Dim Str As String = ""This is a statement""
 
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.CurrentCulture) Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+            var testOrdinal_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                FixedState = { Sources = { vbFixOrdinal } },
+                CodeActionIndex = 1,
+                CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal_vb.RunAsync();
+            var testCulture_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                FixedState = { Sources = { vbFixCulture } },
+                CodeActionIndex = 0,
+                CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testCulture_vb.RunAsync();
+
+        }
+
+        [Theory]
+        [InlineData("This", "This", false)]
+        [InlineData("a", "a", true)]
+        public async Task TestStringAndCharWithMultipleDiagnostics(string input, string fix, bool isCharTest)
+        {
+            string quotes = isCharTest ? "'" : "\"";
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            int index1 = str.IndexOf(" + quotes + input + quotes + @");
+            if ([|index1 == -1|])
+            {
+
+            }
+            int index2 = str.IndexOf(" + quotes + input + quotes + @");
+            if ([|index2 == -1|])
+            {
+
+            }
+            if ([|str.IndexOf(" + quotes + input + quotes + @") == -1|])
+            {
+
+            }
+        } 
+    } 
+}";
+            string csFixOrdinal = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.Ordinal))
+            {
+
+            }
+
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.Ordinal))
+            {
+
+            }
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.Ordinal))
+            {
+
+            }
+        } 
+    } 
+}";
+            string csFixCulture = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.CurrentCulture))
+            {
+
+            }
+
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.CurrentCulture))
+            {
+
+            }
+            if (!str.Contains(" + quotes + fix + quotes + @", System.StringComparison.CurrentCulture))
+            {
+
+            }
+        } 
+    } 
+}";
+
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                FixedState = { Sources = { csFixOrdinal } },
+                CodeActionIndex = 1,
+                CodeActionEquivalenceKey = "PreferStringContainsOrdinalOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testOrdinal.RunAsync();
+            var testCulture = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                FixedState = { Sources = { csFixCulture } },
+                CodeActionIndex = 0,
+                CodeActionEquivalenceKey = "PreferStringContainsCurrentCultureOverIndexOfFixer",
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testCulture.RunAsync();
+
+            quotes = "\"";
+            string vbCharLiteral = isCharTest ? "c" : "";
+            string vbInput = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+            Dim index1 As Integer = Str.IndexOf(" + quotes + input + quotes + vbCharLiteral + @")
+            If [|index1 = -1|] Then
+
+            End If
+            Dim index2 As Integer = Str.IndexOf(" + quotes + input + quotes + vbCharLiteral + @")
+            If [|index2 = -1|] Then
+
+            End If
+            If [|Str.IndexOf(" + quotes + input + quotes + vbCharLiteral + @") = -1|] Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+
+            string vbFixOrdinal = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.Ordinal) Then
+
+            End If
+
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.Ordinal) Then
+
+            End If
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.Ordinal) Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+            string vbFixCulture = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.CurrentCulture) Then
+
+            End If
+
+            If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.CurrentCulture) Then
+
+            End If
             If Not Str.Contains(" + quotes + fix + quotes + vbCharLiteral + @", System.StringComparison.CurrentCulture) Then
 
             End If

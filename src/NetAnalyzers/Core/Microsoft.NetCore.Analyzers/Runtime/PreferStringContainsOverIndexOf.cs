@@ -34,25 +34,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private ImmutableArray<Location> _locations;
-        private readonly PooledConcurrentDictionary<string, int> variableNameToNumberOfReferences = PooledConcurrentDictionary<string, int>.GetInstance();
-        private readonly PooledConcurrentDictionary<string, ImmutableArray<Location>> variableNameToLocationsMap = PooledConcurrentDictionary<string, ImmutableArray<Location>>.GetInstance();
-
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilation =>
             {
-                if (!compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemString, out INamedTypeSymbol? stringType))
-                {
-                    return;
-                }
-                if (!compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemChar, out INamedTypeSymbol? charType))
-                {
-                    return;
-                }
-                if (!compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
+                if (!compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemString, out INamedTypeSymbol? stringType) ||
+                    !compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemChar, out INamedTypeSymbol? charType) ||
+                    !compilation.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison, out INamedTypeSymbol? stringComparisonType))
                 {
                     return;
                 }
@@ -93,6 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                // Roslyn doesn't yet support "FindAllReferences" at a file/block level. So instead, find references to local variables in this block.
                 compilation.RegisterOperationBlockStartAction(context =>
                 {
                     ISymbol symbol = context.OwningSymbol;
@@ -100,6 +91,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         return;
                     }
+
+                    List<Location>? leftOperandInvocationLocations = null;
+                    PooledConcurrentDictionary<string, int> variableNameToNumberOfReferences = PooledConcurrentDictionary<string, int>.GetInstance();
+                    PooledConcurrentDictionary<string, ImmutableArray<Location>> variableNameToLocationsMap = PooledConcurrentDictionary<string, ImmutableArray<Location>>.GetInstance();
+
                     context.RegisterOperationAction(context =>
                     {
                         ILocalReferenceOperation localReference = (ILocalReferenceOperation)context.Operation;
@@ -108,14 +104,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             return addValue + 1;
                         });
-                        //if (localSymbolsToNumberOfReferences.TryGetValue(symbol.Name, out int numberOfReferences))
-                        //{
-                        //    localSymbolsToNumberOfReferences[symbol.Name] = ++numberOfReferences;
-                        //}
-                        //else
-                        //{
-                        //    localSymbolsToNumberOfReferences.Add(symbol.Name, 1);
-                        //}
                     },
                     OperationKind.LocalReference);
 
@@ -164,15 +152,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                             }
 
                                             var declarationGroupLocation = declarationGroupOperation.Syntax.GetLocation();
-                                            var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
-
                                             if (variableInitializer.Value is IInvocationOperation invocationOperation)
                                             {
-                                                if (InvocationOperationIsTargetMethod(invocationOperation, context))
+                                                if (InvocationOperationHasTargetMethod(invocationOperation))
                                                 {
+                                                    var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
                                                     variableNameToLocationsMap.TryAdd(variableDeclaratorOperation.Symbol.Name, locations);
-                                                    //Diagnostic diagnostic = locations.CreateDiagnostic(Rule);
-                                                    //context.ReportDiagnostic(diagnostic);
                                                 }
                                             }
                                         }
@@ -181,10 +166,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             }
                             else if (leftOperand is IInvocationOperation leftInvocationOperation)
                             {
-                                var locations = ImmutableArray.Create(blockLocation);
-                                if (InvocationOperationIsTargetMethod(leftInvocationOperation, context))
+                                var blockLocationList = new List<Location> { blockLocation };
+                                if (InvocationOperationHasTargetMethod(leftInvocationOperation))
                                 {
-                                    _locations = locations;
+                                    leftOperandInvocationLocations = blockLocationList;
                                 }
                             }
                         }
@@ -193,11 +178,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     context.RegisterOperationBlockEndAction(context =>
                     {
-                        if (_locations != null)
+                        if (leftOperandInvocationLocations != null)
                         {
-                            context.ReportDiagnostic(_locations.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(leftOperandInvocationLocations.CreateDiagnostic(Rule));
                         }
-                        else if (variableNameToLocationsMap.Count > 0)
+                        if (variableNameToLocationsMap.Count > 0)
                         {
                             List<Location> locations = new List<Location>();
                             foreach (KeyValuePair<string, ImmutableArray<Location>> variableNameAndLocation in variableNameToLocationsMap)
@@ -208,25 +193,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     continue;
                                 }
 
-                                if (numberOfReferences > 2)
+                                if (numberOfReferences > 1)
                                 {
                                     continue;
                                 }
 
-                                for (int i = 0; i < variableNameAndLocation.Value.Length; i++)
-                                {
-                                    locations.Add(variableNameAndLocation.Value[i]);
-                                }
+                                context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
                             }
-
-                            Diagnostic diagnostic = locations.CreateDiagnostic(Rule);
-                            //var diagnostic = Diagnostic.Create(Rule, locations.First(), locations[1]);
-                            context.ReportDiagnostic(diagnostic);
                         }
                     });
                 });
 
-                bool InvocationOperationIsTargetMethod(IInvocationOperation invocationOperation, OperationAnalysisContext operationContext)
+                bool InvocationOperationHasTargetMethod(IInvocationOperation invocationOperation)
                 {
                     var targetMethod = invocationOperation.TargetMethod;
                     return targetMethod.Equals(stringArgumentIndexOfMethod) || targetMethod.Equals(charArgumentIndexOfMethod) || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod) || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod);

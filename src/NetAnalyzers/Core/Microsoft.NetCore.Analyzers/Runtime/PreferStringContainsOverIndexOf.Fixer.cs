@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public class PreferStringContainsOverIndexOfFixer : CodeFixProvider
+    public sealed class PreferStringContainsOverIndexOfFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferStringContainsOverIndexOfAnalyzer.RuleId);
 
@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     void HandleInvocationOperation(IInvocationOperation invocationOperation, IVariableDeclarationGroupOperation? variableDeclarationGroupOperation = null)
                     {
                         var instanceOperation = invocationOperation.Instance;
-                        SyntaxNode syntaxNode = null;
+                        SyntaxNode? syntaxNode = null;
                         if (instanceOperation is ILocalReferenceOperation localReferenceOperation)
                         {
                             syntaxNode = localReferenceOperation.Syntax;
@@ -83,14 +83,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                             context.RegisterCodeFix(
                                 CodeAction.Create(
-                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
+                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitleCurrentCulture,
                                     createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, syntaxNode, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, currentCulture),
                                     equivalenceKey: "PreferStringContainsCurrentCultureOverIndexOfFixer"),
                                 context.Diagnostics);
 
                             context.RegisterCodeFix(
                                 CodeAction.Create(
-                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitle,
+                                    title: MicrosoftNetCoreAnalyzersResources.PreferStringContainsOverIndexOfTitleOrdinal,
                                     createChangedDocument: c => ReplaceBinaryOperationWithContains(doc, syntaxNode, root, argumentsForContainsInvocation, binaryOperation.Syntax, c, variableDeclarationGroupOperation, ordinal),
                                     equivalenceKey: "PreferStringContainsOrdinalOverIndexOfFixer"),
                                 context.Diagnostics);
@@ -107,7 +107,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                     }
-
                 }
             }
         }

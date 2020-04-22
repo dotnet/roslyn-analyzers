@@ -1288,12 +1288,18 @@
     <value>Remove the ToString call</value>
   </data>
   <data name="PreferStringContainsOverIndexOfDescription" xml:space="preserve">
-    <value>Calls to String.IndexOf where the result is then just compared to -1 can instead be replaced by calls to String.Contains</value>
+    <value>Calls to 'String.IndexOf' where the result is then just compared to -1 can instead be replaced by 'String.Contains'</value>
   </data>
   <data name="PreferStringContainsOverIndexOfMessage" xml:space="preserve">
-    <value>Use String.Contains instead of String.IndexOf to check for membership</value>
+    <value>Use 'String.Contains' instead of 'String.IndexOf' to check for membership</value>
   </data>
   <data name="PreferStringContainsOverIndexOfTitle" xml:space="preserve">
-    <value>Consider using String.Contains instead of String.IndexOf</value>
+    <value>Consider using 'String.Contains' instead of 'String.IndexOf'</value>
+  </data>
+  <data name="PreferStringContainsOverIndexOfTitleCurrentCulture" xml:space="preserve">
+    <value>Consider using 'String.Contains(string, StringComparison.CurrentCulture)` instead of 'String.IndexOf(string)'</value>
+  </data>
+  <data name="PreferStringContainsOverIndexOfTitleOrdinal" xml:space="preserve">
+    <value>Consider using 'String.Contains(string, StringComparison.Ordinal)` instead of 'String.IndexOf(string)'</value>
   </data>
 </root>

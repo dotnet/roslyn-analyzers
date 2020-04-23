@@ -1308,4 +1308,13 @@
   <data name="PreferConstCharOverConstUnitStringInStringBuilderTitle" xml:space="preserve">
     <value>Consider using 'StringBuilder.Append(char)' when applicable.</value>
   </data>
+  <data name="PreferContainsKeyOrContainsValueDescription" xml:space="preserve">
+    <value>Prefer calls to 'ContainsKey' or 'ContainsValue' over 'Keys.Contains' or 'Values.Contains' as they are known to have a smaller complexity (O(1) compared to O(N)).</value>
+  </data>
+  <data name="PreferContainsKeyOrContainsValueMessage" xml:space="preserve">
+    <value>Prefer 'ContainsKey' or 'ContainsValue'</value>
+  </data>
+  <data name="PreferContainsKeyOrContainsValueTitle" xml:space="preserve">
+    <value>Prefer 'ContainsKey' or 'ContainsValue'</value>
+  </data>
 </root>

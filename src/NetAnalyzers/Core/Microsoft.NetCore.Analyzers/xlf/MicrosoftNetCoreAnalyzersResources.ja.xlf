@@ -1382,6 +1382,21 @@
         <target state="translated">P/Invokes は参照可能にすることはできません</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferContainsKeyOrContainsValueDescription">
+        <source>Prefer calls to 'ContainsKey' or 'ContainsValue' over 'Keys.Contains' or 'Values.Contains' as they are known to have a smaller complexity (O(1) compared to O(N)).</source>
+        <target state="new">Prefer calls to 'ContainsKey' or 'ContainsValue' over 'Keys.Contains' or 'Values.Contains' as they are known to have a smaller complexity (O(1) compared to O(N)).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferContainsKeyOrContainsValueMessage">
+        <source>Prefer 'ContainsKey' or 'ContainsValue'</source>
+        <target state="new">Prefer 'ContainsKey' or 'ContainsValue'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferContainsKeyOrContainsValueTitle">
+        <source>Prefer 'ContainsKey' or 'ContainsValue'</source>
+        <target state="new">Prefer 'ContainsKey' or 'ContainsValue'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferTypedStringBuilderAppendOverloadsDescription">
         <source>StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.</source>
         <target state="translated">StringBuilder.Append および StringBuilder.Insert では、System.String 以外の複数の型に対してオーバーロードが提供されます。可能であれば、ToString () と文字列ベースのオーバーロードを使用するよりも、厳密に型指定されたオーバーロードを優先して使用することをお勧めします。</target>

@@ -116,7 +116,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     diagnostic = CheckArgument(owningSymbol, creation, argument.Parameter, value, context);
-                    if (diagnostic != null && !diagnostic.Properties.IsEmpty)
+
+                    // RuleIncorrectMessage is the highest priority rule, no need to check other rules
+                    if (diagnostic != null && diagnostic.Descriptor.Equals(RuleIncorrectMessage))
                     {
                         break;
                     }
@@ -129,16 +131,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context)
-        {
-            return owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName,
-                context.Compilation, context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
-        }
+        private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context) =>
+             owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation,
+                 context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
 
-        private static bool HasParameters(ISymbol owningSymbol)
-        {
-            return owningSymbol.GetParameters().Length > 0;
-        }
+        private static bool HasParameters(ISymbol owningSymbol) => owningSymbol.GetParameters().Length > 0;
 
         private static Diagnostic? CheckArgument(
             ISymbol targetSymbol,

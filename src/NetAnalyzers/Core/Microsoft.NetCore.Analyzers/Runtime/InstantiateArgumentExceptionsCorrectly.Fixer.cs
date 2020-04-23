@@ -2,10 +2,10 @@
 
 using System.Collections.Immutable;
 using System.Composition;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -32,7 +32,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(context.Span, getInnermostNodeForTie: true);
-                await PopulateCodeFixAsync(context, diagnostic, paramPositionString, node).ConfigureAwait(false);
+                if (node != null)
+                {
+                    await PopulateCodeFixAsync(context, diagnostic, paramPositionString, node).ConfigureAwait(false);
+                }
             }
         }
 
@@ -42,29 +45,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var operation = model.GetOperation(node, context.CancellationToken);
             if (operation is IObjectCreationOperation creation)
             {
-                int paramPosition = int.Parse(paramPositionString, CultureInfo.InvariantCulture);
-                CodeAction? codeAction = null;
-                if (creation.Arguments.Length == 1)
+                if (int.TryParse(paramPositionString, out int paramPosition))
                 {
-                    // Add null message
-                    codeAction = CodeAction.Create(
-                        title: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle,
-                        createChangedDocument: c => AddNullMessageToArgumentList(context.Document, creation, c),
-                        equivalenceKey: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle);
+                    CodeAction? codeAction = null;
+                    if (creation.Arguments.Length == 1)
+                    {
+                        // Add null message
+                        codeAction = CodeAction.Create(
+                            title: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle,
+                            createChangedDocument: c => AddNullMessageToArgumentListAsync(context.Document, creation, c),
+                            equivalenceKey: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle);
+                    }
+                    else
+                    {
+                        // Swap message and paramete name
+                        codeAction = CodeAction.Create(
+                            title: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle,
+                            createChangedDocument: c => SwapArgumentsOrderAsync(context.Document, creation, paramPosition, creation.Arguments.Length, c),
+                            equivalenceKey: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle);
+                    }
+                    context.RegisterCodeFix(codeAction, diagnostic);
                 }
-                else
-                {
-                    // Swap message and paramete name
-                    codeAction = CodeAction.Create(
-                        title: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle,
-                        createChangedDocument: c => SwapArgumentsOrder(context.Document, creation, paramPosition, creation.Arguments.Length, c),
-                        equivalenceKey: MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyFlipArgumentOrderCodeFixTitle);
-                }
-                context.RegisterCodeFix(codeAction, diagnostic);
             }
         }
 
-        private static async Task<Document> SwapArgumentsOrder(Document document, IObjectCreationOperation creation, int paramPosition, int argumentCount, CancellationToken token)
+        private static async Task<Document> SwapArgumentsOrderAsync(Document document, IObjectCreationOperation creation, int paramPosition, int argumentCount, CancellationToken token)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, token).ConfigureAwait(false);
             SyntaxNode parameter = AddNameOfIfLiteral(creation.Arguments[paramPosition].Value, editor.Generator);
@@ -80,8 +85,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     newCreation = editor.Generator.ObjectCreationExpression(creation.Type, parameter, creation.Arguments[0].Syntax);
                 }
             }
-            else // 3 arguments
+            else
             {
+                Debug.Assert(argumentCount == 3);
                 if (paramPosition == 0)
                 {
                     newCreation = editor.Generator.ObjectCreationExpression(creation.Type, creation.Arguments[1].Syntax, parameter, creation.Arguments[2].Syntax);
@@ -95,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> AddNullMessageToArgumentList(Document document, IObjectCreationOperation creation, CancellationToken token)
+        private static async Task<Document> AddNullMessageToArgumentListAsync(Document document, IObjectCreationOperation creation, CancellationToken token)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, token).ConfigureAwait(false);
             SyntaxNode argument = AddNameOfIfLiteral(creation.Arguments[0].Value, editor.Generator);

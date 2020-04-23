@@ -613,6 +613,39 @@ End Class");
                 End Class");
         }
 
+        [Fact]
+        public async Task ArgumentException_GenericParameterName_WrongPosition_WarnsAndCodeFixes()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+                public class Class
+                {
+                    public void Test<TEnum>(TEnum first)
+                    {
+                        throw new System.ArgumentException(""TEnum"");
+                    }
+                }",
+                GetCSharpIncorrectMessageExpectedResult(6, 31, "Test", "TEnum", "message", "ArgumentException"), @"
+                public class Class
+                {
+                    public void Test<TEnum>(TEnum first)
+                    {
+                        throw new System.ArgumentException(null, nameof(TEnum));
+                    }
+                }");
+
+            await VerifyVB.VerifyCodeFixAsync(@"
+Public Class [MyClass]
+    Public Sub Test(Of TEnum)(ByVal first As TEnum)
+        Throw New System.ArgumentException(""TEnum"")
+    End Sub
+End Class",
+                GetBasicIncorrectMessageExpectedResult(4, 15, "Test", "TEnum", "message", "ArgumentException"), @"
+Public Class [MyClass]
+    Public Sub Test(Of TEnum)(ByVal first As TEnum)
+        Throw New System.ArgumentException(Nothing, NameOf(TEnum))
+    End Sub
+End Class");
+        }
 
         [Theory]
         [InlineData("public", "dotnet_code_quality.api_surface = private", false)]
@@ -629,6 +662,10 @@ End Class");
         [InlineData("public", "dotnet_code_quality.CA2208.api_surface = public, private", true)]
         [InlineData("public", @"dotnet_code_quality.api_surface = internal
                                         dotnet_code_quality.CA2208.api_surface = public", true)]
+        [InlineData("public", "", true)]
+        [InlineData("protected", "", true)]
+        [InlineData("private", "", true)]
+        [InlineData("protected", "dotnet_code_quality.CA2208.api_surface = public", true)]
         public async Task EditorConfigConfiguration_ApiSurfaceOption_Test(string accessibility, string editorConfigText, bool expectDiagnostic)
         {
             var exception = expectDiagnostic ? @"[|new System.ArgumentNullException(""first is null"")|]" : @"new System.ArgumentNullException(""first is null"")";

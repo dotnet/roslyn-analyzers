@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "3.0.0",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {
@@ -246,6 +246,82 @@
             ]
           }
         },
+        "CA1830": {
+          "id": "CA1830",
+          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder.",
+          "fullDescription": "StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1830",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferTypedStringBuilderAppendOverloads",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1831": {
+          "id": "CA1831",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on string values produces a copy of requested portion of the string. This copy is usually unnecessary when it is implicitly used as a ReadOnlySpan or ReadOnlyMemory value. Use the AsSpan method to avoid the unnecessary copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1831",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1832": {
+          "id": "CA1832",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on array values produces a copy of requested portion of the array. This copy is usually unnecessary when it is implicitly used as a ReadOnlySpan or ReadOnlyMemory value. Use the AsSpan method to avoid the unnecessary copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1832",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1833": {
+          "id": "CA1833",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on array values produces a copy of requested portion of the array. This copy is often unwanted when it is implicitly used as a Span or Memory value. Use the AsSpan method to avoid the copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1833",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -375,6 +451,25 @@
             "typeName": "DoNotUseStackallocInLoopsAnalyzer",
             "languages": [
               "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2015": {
+          "id": "CA2015",
+          "shortDescription": "Do not define finalizers for types derived from MemoryManager<T>",
+          "fullDescription": "Adding a finalizer to a type derived from MemoryManager<T> may permit memory to be freed while it is still in use by a Span<T>.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2015",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotDefineFinalizersForTypesDerivedFromMemoryManager",
+            "languages": [
+              "C#",
+              "Visual Basic"
             ],
             "tags": [
               "Telemetry"
@@ -639,6 +734,25 @@
             ],
             "tags": [
               "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2247": {
+          "id": "CA2247",
+          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum.",
+          "fullDescription": "TaskCompletionSource has constructors that take TaskCreationOptions that control the underlying Task, and constructors that take object state that's stored in the task.  Accidentally passing a TaskContinuationOptions instead of a TaskCreationOptions will result in the call treating the options as state.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2247",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCreateTaskCompletionSourceWithWrongArguments",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry"
             ]
           }
@@ -2132,7 +2246,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "3.0.0",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {
@@ -2271,7 +2385,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "3.0.0",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {

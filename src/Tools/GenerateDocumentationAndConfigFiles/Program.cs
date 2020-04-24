@@ -13,7 +13,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace GenerateAnalyzerRulesets
+namespace GenerateDocumentationAndConfigFiles
 {
     public static class Program
     {

@@ -51,3 +51,4 @@ CA5399 | https://docs.microsoft.com/visualstudio/code-quality/ca5399 | HttpClien
 CA5400 | https://docs.microsoft.com/visualstudio/code-quality/ca5400 | Ensure HttpClient certificate revocation list check is not disabled |
 CA5401 | https://docs.microsoft.com/visualstudio/code-quality/ca5401 | Do not use CreateEncryptor with non-default IV |
 CA5402 | https://docs.microsoft.com/visualstudio/code-quality/ca5402 | Use CreateEncryptor with the default IV  |
+CA9999 |  | Analyzer version mismatch |

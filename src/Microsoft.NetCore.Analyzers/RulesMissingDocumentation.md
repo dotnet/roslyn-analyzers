@@ -2,14 +2,11 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA1826 | https://docs.microsoft.com/visualstudio/code-quality/ca1826 | Do not use Enumerable methods on indexable collections. Instead use the collection directly |
-CA1827 | https://docs.microsoft.com/visualstudio/code-quality/ca1827 | Do not use Count() or LongCount() when Any() can be used |
-CA1828 | https://docs.microsoft.com/visualstudio/code-quality/ca1828 | Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used |
-CA1829 | https://docs.microsoft.com/visualstudio/code-quality/ca1829 | Use Length/Count property instead of Count() when available |
 CA1830 | https://docs.microsoft.com/visualstudio/code-quality/ca1830 | Prefer strongly-typed Append and Insert method overloads on StringBuilder. |
 CA1831 | https://docs.microsoft.com/visualstudio/code-quality/ca1831 | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1832 | https://docs.microsoft.com/visualstudio/code-quality/ca1832 | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
 CA1833 | https://docs.microsoft.com/visualstudio/code-quality/ca1833 | Use AsSpan or AsMemory instead of Range-based indexers when appropriate |
+CA1834 | https://docs.microsoft.com/visualstudio/code-quality/ca1834 | Consider using 'StringBuilder.Append(char)' when applicable. |
 CA2008 | https://docs.microsoft.com/visualstudio/code-quality/ca2008 | Do not create tasks without passing a TaskScheduler |
 CA2009 | https://docs.microsoft.com/visualstudio/code-quality/ca2009 | Do not call ToImmutableCollection on an ImmutableCollection value |
 CA2010 | https://docs.microsoft.com/visualstudio/code-quality/ca2010 | Always consume the value returned by methods marked with PreserveSigAttribute |

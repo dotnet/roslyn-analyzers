@@ -1,7 +1,5 @@
 <Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
     <VersionPrefix>3.3.0</VersionPrefix>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>

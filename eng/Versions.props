@@ -42,13 +42,4 @@
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <RestoreSources>
-      $(RestoreSources);
-      https://dotnet.myget.org/F/roslyn/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-analyzers/api/v3/index.json
-    </RestoreSources>
-  </PropertyGroup>
 </Project>

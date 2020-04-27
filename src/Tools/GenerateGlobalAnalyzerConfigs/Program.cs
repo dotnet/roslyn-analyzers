@@ -72,7 +72,6 @@ namespace GenerateGlobalAnalyzerConfigs
 
             // Compute descriptors by rule ID and shipped analyzer release versions and shipped data.
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
-            var hasInfoOrHiddenDiagnostic = false;
             var sawShippedFile = false;
             foreach (string assembly in assemblyList)
             {
@@ -86,8 +85,6 @@ namespace GenerateGlobalAnalyzerConfigs
                     foreach (var rule in analyzer.SupportedDiagnostics)
                     {
                         allRulesById[rule.Id] = rule;
-                        hasInfoOrHiddenDiagnostic = hasInfoOrHiddenDiagnostic ||
-                            rule.IsEnabledByDefault && (rule.DefaultSeverity == DiagnosticSeverity.Info || rule.DefaultSeverity == DiagnosticSeverity.Hidden);
                     }
                 }
 
@@ -131,45 +128,24 @@ namespace GenerateGlobalAnalyzerConfigs
                 return 6;
             }
 
-            // Bail out if following conditions hold for the analyzer package:
-            //  1. No Info/Hidden diagnostic in the package: No need for have different global analyzer config for build and live analysis.
-            //  2. No shipped releases: User cannot choose a version specific global analyzer config.
-            if (!hasInfoOrHiddenDiagnostic && versionsBuilder.Count == 0)
+            // Bail out if there are no shipped releases: User cannot choose a version specific global analyzer config.
+            if (versionsBuilder.Count == 0)
             {
                 return 0;
             }
 
             var shippedFilesData = shippedFilesDataBuilder.ToImmutable();
 
-            // Generate build and live analysis global analyzer config files for latest/unshipped version.
-            CreateGlobalAnalyzerConfig(
-                "BuildRules",
-                "All build rules with default severity",
-                "All build rules (warnings/errors) with default severity. Rules with IsEnabledByDefault = false or default severity Suggestion/Hidden are disabled.",
-                EditorConfigKind.CommandLine);
-
-            CreateGlobalAnalyzerConfig(
-                "LiveAnalysisRules",
-                "All rules with default severity",
-                "All rules are enabled with default severity. Rules with IsEnabledByDefault = false are disabled.",
-                EditorConfigKind.LiveAnalysis);
-
-            // Generate build and live analysis global analyzer config files for each shipped version.
+            // Generate global analyzer config files for each shipped version, if required.
             foreach (var version in versionsBuilder)
             {
                 var versionString = version.ToString().Replace(".", "_", StringComparison.Ordinal);
-                CreateGlobalAnalyzerConfig(
-                $"BuildRulesVersion{versionString}",
-                $"All '{version}' build rules with default severity",
-                $"All '{version}' build rules (warnings/errors) with default severity. Rules with IsEnabledByDefault = false or first released in a version later then {version} or default severity Suggestion/Hidden are disabled.",
-                EditorConfigKind.CommandLine,
-                (shippedFilesData, version));
-
-                CreateGlobalAnalyzerConfig(
-                    $"LiveAnalysisRules{versionString}",
-                    $"All '{version}' rules with default severity",
-                    $"All '{version}' rules are enabled with default severity. Rules with IsEnabledByDefault = false or first released in a version later then {version} are disabled.",
-                    EditorConfigKind.LiveAnalysis,
+                CreateEditorconfigIfRequired(
+                    outputDir,
+                    $"RulesVersion{versionString}",
+                    $"Rules from '{version}' release",
+                    $"Rules with default severity and enabled state from '{version}' release. Rules that are first released in a version later then '{version}' are disabled.",
+                    allRulesById,
                     (shippedFilesData, version));
             }
 
@@ -187,80 +163,88 @@ namespace GenerateGlobalAnalyzerConfigs
                 var assemblyDir = Path.Combine(binDirectory, assemblyName, configuration, tfm);
                 return Path.Combine(assemblyDir, assembly);
             }
-
-            void CreateGlobalAnalyzerConfig(
-                string fileName,
-                string title,
-                string description,
-                EditorConfigKind editorConfigKind,
-                (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version)? shippedReleaseData = null)
-            {
-                CreateEditorconfig(outputDir, fileName, title, description, editorConfigKind, allRulesById, shippedReleaseData);
-            }
         }
 
-        private static void CreateEditorconfig(
+        private static void CreateEditorconfigIfRequired(
             string folder,
-            string fileName,
+            string subFolder,
             string editorconfigTitle,
             string editorconfigDescription,
-            EditorConfigKind editorConfigKind,
             SortedList<string, DiagnosticDescriptor> sortedRulesById,
-            (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version)? shippedReleaseData)
+            (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version) shippedReleaseData)
         {
             var text = GetEditorconfigText(
                 editorconfigTitle,
                 editorconfigDescription,
-                editorConfigKind,
                 sortedRulesById,
                 shippedReleaseData);
+            if (text == null)
+            {
+                // Identical set of rules + default severity and enabled state for rules between this release and latest.
+                // We don't need to generate a global editor config.
+                return;
+            }
 
-            var directory = Directory.CreateDirectory(folder);
-            var editorconfigFilePath = Path.Combine(directory.FullName, $"{fileName}.editorconfig");
+            var directory = Directory.CreateDirectory(Path.Combine(folder, subFolder));
+            var editorconfigFilePath = Path.Combine(directory.FullName, ".editorconfig");
             File.WriteAllText(editorconfigFilePath, text);
             return;
 
             // Local functions
-            static string GetEditorconfigText(
+            static string? GetEditorconfigText(
                 string editorconfigTitle,
                 string editorconfigDescription,
-                EditorConfigKind editorConfigKind,
                 SortedList<string, DiagnosticDescriptor> sortedRulesById,
                 (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version)? shippedReleaseData)
             {
                 var result = new StringBuilder();
                 StartEditorconfig();
-                AddRules();
-                return result.ToString();
+                var added = AddRules();
+                return added ? result.ToString() : null;
 
                 void StartEditorconfig()
                 {
-                    result.AppendLine(@"# NOTE: Requires **VS2019 16.3** or later");
+                    result.AppendLine(@"# NOTE: Requires **VS2019 16.7** or later");
                     result.AppendLine();
                     result.AppendLine($@"# {editorconfigTitle}");
                     result.AppendLine($@"# Description: {editorconfigDescription}");
                     result.AppendLine();
+                    result.AppendLine($@"is_global = true");
+                    result.AppendLine();
                 }
 
-                void AddRules()
+                bool AddRules()
                 {
                     Debug.Assert(sortedRulesById.Count > 0);
 
+                    var addedRule = false;
                     foreach (var rule in sortedRulesById)
                     {
-                        AddRule(rule.Value);
+                        if (AddRule(rule.Value))
+                        {
+                            addedRule = true;
+                        }
                     }
 
-                    return;
+                    return addedRule;
 
-                    void AddRule(DiagnosticDescriptor rule)
+                    bool AddRule(DiagnosticDescriptor rule)
                     {
                         var (isEnabledByDefault, severity) = GetEnabledByDefaultAndSeverity(rule);
+                        if (rule.IsEnabledByDefault == isEnabledByDefault &&
+                            severity == rule.DefaultSeverity)
+                        {
+                            // Rule had the same default severity and enabled state in the release.
+                            // We do not need to generate any entry.
+                            return false;
+                        }
+
                         string severityString = GetRuleSeverity(isEnabledByDefault, severity);
 
                         result.AppendLine();
                         result.AppendLine($"# {rule.Id}: {rule.Title}");
                         result.AppendLine($@"dotnet_diagnostic.{rule.Id}.severity = {severityString}");
+                        return true;
                     }
 
                     (bool isEnabledByDefault, DiagnosticSeverity effectiveSeverity) GetEnabledByDefaultAndSeverity(DiagnosticDescriptor rule)
@@ -288,28 +272,15 @@ namespace GenerateGlobalAnalyzerConfigs
                         return (isEnabledByDefault, effectiveSeverity);
                     }
 
-                    string GetRuleSeverity(bool isEnabledByDefault, DiagnosticSeverity defaultSeverity)
+                    static string GetRuleSeverity(bool isEnabledByDefault, DiagnosticSeverity defaultSeverity)
                     {
-                        return editorConfigKind switch
+                        if (isEnabledByDefault)
                         {
-                            EditorConfigKind.CommandLine => GetRuleSeverityCore(enable: isEnabledByDefault &&
-                                (defaultSeverity == DiagnosticSeverity.Warning || defaultSeverity == DiagnosticSeverity.Error)),
-
-                            EditorConfigKind.LiveAnalysis => GetRuleSeverityCore(enable: isEnabledByDefault),
-
-                            _ => throw new InvalidProgramException(),
-                        };
-
-                        string GetRuleSeverityCore(bool enable)
+                            return GetSeverityString(defaultSeverity);
+                        }
+                        else
                         {
-                            if (enable)
-                            {
-                                return GetSeverityString(defaultSeverity);
-                            }
-                            else
-                            {
-                                return GetSeverityString(null);
-                            }
+                            return GetSeverityString(null);
                         }
 
                         static string GetSeverityString(DiagnosticSeverity? severityOpt)
@@ -333,12 +304,6 @@ namespace GenerateGlobalAnalyzerConfigs
             }
         }
 
-        private enum EditorConfigKind
-        {
-            CommandLine,
-            LiveAnalysis
-        }
-
         private static void CreateTargetsFile(string targetsFileDir, string targetsFileName, string packageName)
         {
             if (string.IsNullOrEmpty(targetsFileDir) || string.IsNullOrEmpty(targetsFileName))
@@ -355,25 +320,20 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
             static string GetCommonContents(string packageName)
             {
-                string packageVersionPropName = packageName.Replace(".", string.Empty, StringComparison.Ordinal) + "Version";
+                string packageVersionPropName = packageName.Replace(".", string.Empty, StringComparison.Ordinal) + "RulesVersion";
                 return $@"
-  <Target Name=""AddGlobalAnalyzerConfigForPackage"" BeforeTargets=""Build""  Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
+  <Target Name=""AddGlobalAnalyzerConfigForPackage"" BeforeTargets=""CoreCompile"" Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
     <!-- PropertyGroup to compute global analyzer config file to be used -->
     <PropertyGroup>
-      <!-- Use 'BuildRules' for command line build and 'LiveAnalysisRules' for live analysis -->
-      <_GlobalAnalyzerConfigFileNamePrefix Condition=""'$(DesignTimeBuild)' == 'true' or '$(BuildingProject)' != 'true'"">LiveAnalysisRules</_GlobalAnalyzerConfigFileNamePrefix>
-      <_GlobalAnalyzerConfigFileNamePrefix Condition=""'$(_GlobalAnalyzerConfigFileNamePrefix)' == ''"">BuildRules</_GlobalAnalyzerConfigFileNamePrefix>
-  
-      <!-- Optional suffix based on user specified version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
-      <_GlobalAnalyzerConfigFileNameSuffix Condition=""'$({packageVersionPropName})' != ''"">Version$({packageVersionPropName}.Replace(""."",""_""))</_GlobalAnalyzerConfigFileNameSuffix>
-
-      <_GlobalAnalyzerConfigFileName Condition=""'$(_GlobalAnalyzerConfigFileName)' == ''"">$(_GlobalAnalyzerConfigFileNamePrefix)$(_GlobalAnalyzerConfigFileNameSuffix).editorconfig</_GlobalAnalyzerConfigFileName>
-      <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir>
-      <_GlobalAnalyzerConfigFile Condition=""'$(_GlobalAnalyzerConfigFile)' == ''"">$(_GlobalAnalyzerConfigDir)\$(_GlobalAnalyzerConfigFileName)</_GlobalAnalyzerConfigFile>
+      <!-- GlobalAnalyzerConfig folder name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
+      <_GlobalAnalyzerConfigFolderName Condition=""'$({packageVersionPropName})' != ''"">RulesVersion$({packageVersionPropName}.Replace(""."",""_""))</_GlobalAnalyzerConfigFolderName>
+      
+      <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config\$(_GlobalAnalyzerConfigFolderName)</_GlobalAnalyzerConfigDir>
+      <_GlobalAnalyzerConfigFile>$(_GlobalAnalyzerConfigDir)\.editorconfig</_GlobalAnalyzerConfigFile>
     </PropertyGroup>
 
     <ItemGroup Condition=""Exists('$(_GlobalAnalyzerConfigFile)')"">
-      <GlobalAnalyzerConfigFiles Include=""$(_GlobalAnalyzerConfigFile)"" />
+      <EditorConfigFiles Include=""$(_GlobalAnalyzerConfigFile)"" />
     </ItemGroup>
   </Target>";
             }

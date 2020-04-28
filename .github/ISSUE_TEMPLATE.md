@@ -4,7 +4,7 @@
 
 #### Package Version
 
-v2.9.8 (Latest)
+v3.0.0 (Latest)
 
 #### Diagnostic ID
 

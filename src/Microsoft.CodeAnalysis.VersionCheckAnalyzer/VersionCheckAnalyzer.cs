@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
         private static readonly Version s_MicrosoftCodeAnalysisVersion = typeof(AnalysisContext).GetTypeInfo().Assembly.GetName().Version;
 
         // Analyzers will only execute fine if we are either using dogfood bits of Microsoft.CodeAnalysis or its version is >= s_MicrosoftCodeAnalysisMinVersion
-        private static bool s_ShouldExecuteAnalyzers =>
+        private static bool ShouldExecuteAnalyzers =>
             s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisDogfoodVersion ||
             s_MicrosoftCodeAnalysisVersion >= s_MicrosoftCodeAnalysisMinVersion;
 
@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
             {
                 compilationStartContext.RegisterCompilationEndAction(compilationContext =>
                 {
-                    if (!s_ShouldExecuteAnalyzers)
+                    if (!ShouldExecuteAnalyzers)
                     {
                         // Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed.
                         var arg1 = RequiredMicrosoftCodeAnalysisVersion;

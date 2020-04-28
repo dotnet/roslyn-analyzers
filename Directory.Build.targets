@@ -22,6 +22,11 @@
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(ReleaseTrackingOptOut)' == 'true'">
+    <!-- RS2008: Enable analyzer release tracking -->
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
     <!-- https://github.com/tonerdo/coverlet/issues/363 -->
     <DeterministicSourcePaths>false</DeterministicSourcePaths>

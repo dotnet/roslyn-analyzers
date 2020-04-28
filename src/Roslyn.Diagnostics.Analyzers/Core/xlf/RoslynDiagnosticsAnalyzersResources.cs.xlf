@@ -32,6 +32,21 @@
         <target state="translated">Typy, které se dají nastavit jako výchozí, by měly mít pole, která se tak dají nastavit taky</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyDescription">
+        <source>Define resource entry correctly.</source>
+        <target state="new">Define resource entry correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyMessage">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyTitle">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallGetTestAccessorDescription">
         <source>'GetTestAccessor()' is a helper method reserved for testing. Production code must not call this member.</source>
         <target state="needs-review-translation">GetTestAccessor() je pomocná metoda vyhrazená pro testování. Produkční kód tento člen nesmí volat.</target>

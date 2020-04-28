@@ -32,6 +32,21 @@
         <target state="translated">可設定預設值的類型應要有可設定預設值的欄位</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyDescription">
+        <source>Define resource entry correctly.</source>
+        <target state="new">Define resource entry correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyMessage">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyTitle">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallGetTestAccessorDescription">
         <source>'GetTestAccessor()' is a helper method reserved for testing. Production code must not call this member.</source>
         <target state="needs-review-translation">GetTestAccessor() 是留待測試用的協助程式方法。實際執行程式碼不可呼叫此成員。</target>

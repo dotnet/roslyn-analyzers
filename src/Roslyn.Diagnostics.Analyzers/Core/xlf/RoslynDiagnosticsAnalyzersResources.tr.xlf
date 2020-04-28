@@ -32,6 +32,21 @@
         <target state="translated">Varsayılan değer atanabilir türler varsayılan değer atanabilir alanlara sahip olmalıdır</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyDescription">
+        <source>Define resource entry correctly.</source>
+        <target state="new">Define resource entry correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyMessage">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyTitle">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallGetTestAccessorDescription">
         <source>'GetTestAccessor()' is a helper method reserved for testing. Production code must not call this member.</source>
         <target state="needs-review-translation">GetTestAccessor(), test için ayrılmış bir yardımcı metottur. Üretim kodu bu üyeyi çağırmamalıdır.</target>

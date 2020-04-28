@@ -339,4 +339,13 @@
   <data name="ExposeMemberForTestingTitle" xml:space="preserve">
     <value>Expose member for testing</value>
   </data>
+  <data name="DefineResourceEntryCorrectlyDescription" xml:space="preserve">
+    <value>Define resource entry correctly.</value>
+  </data>
+  <data name="DefineResourceEntryCorrectlyMessage" xml:space="preserve">
+    <value>Define resource entry correctly</value>
+  </data>
+  <data name="DefineResourceEntryCorrectlyTitle" xml:space="preserve">
+    <value>Define resource entry correctly</value>
+  </data>
 </root>

@@ -32,6 +32,21 @@
         <target state="translated">I tipi defaultable devono avere campi defaultable</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyDescription">
+        <source>Define resource entry correctly.</source>
+        <target state="new">Define resource entry correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyMessage">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyTitle">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallGetTestAccessorDescription">
         <source>'GetTestAccessor()' is a helper method reserved for testing. Production code must not call this member.</source>
         <target state="needs-review-translation">GetTestAccessor() è un metodo helper riservato per il test. IL codice di produzione non deve chiamare questo membro.</target>

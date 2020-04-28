@@ -32,6 +32,21 @@
         <target state="translated">기본값 설정 가능 형식에는 기본값 설정 가능 필드가 있어야 함</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyDescription">
+        <source>Define resource entry correctly.</source>
+        <target state="new">Define resource entry correctly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyMessage">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefineResourceEntryCorrectlyTitle">
+        <source>Define resource entry correctly</source>
+        <target state="new">Define resource entry correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallGetTestAccessorDescription">
         <source>'GetTestAccessor()' is a helper method reserved for testing. Production code must not call this member.</source>
         <target state="needs-review-translation">GetTestAccessor()는 테스트용으로 예약된 도우미 메서드입니다. 프로덕션 코드는 이 멤버를 호출해서는 안 됩니다.</target>

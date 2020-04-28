@@ -11,8 +11,11 @@
     <ExcludeCodeMetricsUtilities>true</ExcludeCodeMetricsUtilities>
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
 
-    <!-- RS0026: Avoud public API overloads with differences in optional parameters -->
+    <!-- RS0026: Avoid public API overloads with differences in optional parameters -->
     <NoWarn>$(NoWarn);RS0026</NoWarn>
+
+    <!-- RS2008: 'Enable analyzer release tracking' is not applicable for this project -->
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
   </PropertyGroup>
   <Import Project="..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
   <Import Project="..\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems" Label="Shared" />

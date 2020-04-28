@@ -23,6 +23,11 @@
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true' or '$(FxCopAnalyzersProject)' == 'true'">
     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ReleaseTrackingOptOut)' == 'true'">
+    <!-- RS2008: Enable analyzer release tracking -->
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />

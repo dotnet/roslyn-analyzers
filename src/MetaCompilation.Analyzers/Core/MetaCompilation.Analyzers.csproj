@@ -8,9 +8,6 @@
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
     <NoWarn>$(NoWarn);IDE0019</NoWarn>
-
-    <!-- RS2008: 'Enable analyzer release tracking' is not applicable for this project -->
-    <NoWarn>$(NoWarn);RS2008</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />

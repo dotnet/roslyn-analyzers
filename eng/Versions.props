@@ -17,6 +17,10 @@
     <CoverletVersion>2.7.0</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
 
+    <!-- Use the correct compiler version -->
+    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
+    <MicrosoftNetCompilersToolsetVersion>3.6.0-3.final</MicrosoftNetCompilersToolsetVersion>
+
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>

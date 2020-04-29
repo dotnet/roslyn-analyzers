@@ -27,6 +27,11 @@
     <NoWarn>$(NoWarn);RS2008</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Clear out 'RootNamespace' for VB projects. Otherwise, it prepends the RootNamespace to declared namespace for the types in the project. -->
+    <RootNamespace Condition="'$(Language)' == 'VB'"></RootNamespace>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
     <!-- https://github.com/tonerdo/coverlet/issues/363 -->
     <DeterministicSourcePaths>false</DeterministicSourcePaths>

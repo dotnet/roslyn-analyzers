@@ -21,6 +21,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
     {
         #region RS1007 (UseLocalizableStringsInDescriptorRuleId) and RS1015 (ProvideHelpUriInDescriptorRuleId)
 
+        private static readonly DiagnosticDescriptor[] RS1007_RS1015_Descriptors = new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, };
+
         [Fact]
         public async Task RS1007_RS1015_CSharp_VerifyDiagnostic()
         {
@@ -48,7 +50,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
+                RS1007_RS1015_Descriptors,
                 GetCSharpRS1007ExpectedDiagnostic(11, 9),
                 GetCSharpRS1015ExpectedDiagnostic(11, 9));
         }
@@ -77,7 +79,7 @@ Class MyAnalyzer
     End Sub
 End Class
 ",
-                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
+                RS1007_RS1015_Descriptors,
                 GetBasicRS1007ExpectedDiagnostic(10, 66),
                 GetBasicRS1015ExpectedDiagnostic(10, 70));
         }
@@ -112,7 +114,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
+                RS1007_RS1015_Descriptors,
                 GetCSharpRS1007ExpectedDiagnostic(11, 9),
                 GetCSharpRS1015ExpectedDiagnostic(11, 118),
                 GetCSharpRS1007ExpectedDiagnostic(14, 9),
@@ -144,7 +146,7 @@ Class MyAnalyzer
     End Sub
 End Class
 ",
-                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
+                RS1007_RS1015_Descriptors,
                 GetBasicRS1007ExpectedDiagnostic(10, 66),
                 GetBasicRS1015ExpectedDiagnostic(10, 137),
                 GetBasicRS1007ExpectedDiagnostic(11, 67),
@@ -225,6 +227,8 @@ End Class
 
         #region RS1017 (DiagnosticIdMustBeAConstantRuleId) and RS1019 (UseUniqueDiagnosticIdRuleId)
 
+        private static readonly DiagnosticDescriptor[] RS1017_RS1019_Descriptors = new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, };
+
         [Fact]
         public async Task RS1017_RS1019_CSharp_VerifyDiagnostic()
         {
@@ -280,7 +284,7 @@ class MyAnalyzer2 : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
+                RS1017_RS1019_Descriptors,
                 GetCSharpRS1017ExpectedDiagnostic(14, 34, "descriptor"),
                 GetCSharpRS1019ExpectedDiagnostic(38, 34, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -340,7 +344,7 @@ class MyAnalyzer2 : DiagnosticAnalyzer
     {
     }
 }" + CSharpDiagnosticDescriptorCreationHelper,
-                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
+                RS1017_RS1019_Descriptors,
                 GetCSharpRS1017ExpectedDiagnostic(14, 43, "descriptor"),
                 GetCSharpRS1019ExpectedDiagnostic(38, 43, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -388,7 +392,7 @@ Class MyAnalyzer2
     End Sub
 End Class
 ",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
+                RS1017_RS1019_Descriptors,
                 GetBasicRS1017ExpectedDiagnostic(12, 91, "descriptor"),
                 GetBasicRS1019ExpectedDiagnostic(29, 91, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -436,7 +440,7 @@ Class MyAnalyzer2
     End Sub
 End Class
 " + VisualBasicDiagnosticDescriptorCreationHelper,
-                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
+                RS1017_RS1019_Descriptors,
                 GetBasicRS1017ExpectedDiagnostic(12, 100, "descriptor"),
                 GetBasicRS1019ExpectedDiagnostic(29, 100, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -591,6 +595,8 @@ End Class
 
         #region RS1018 (DiagnosticIdMustBeInSpecifiedFormatRuleId) and RS1020 (UseCategoriesFromSpecifiedRangeRuleId)
 
+        private static readonly DiagnosticDescriptor[] RS1018_RS1020_Descriptors = new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, };
+
         [Fact]
         public async Task RS1018_RS1020_CSharp_VerifyDiagnostic()
         {
@@ -663,7 +669,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetCSharpRS1018ExpectedDiagnostic(28, 34, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName)
                     }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -739,7 +745,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetCSharpRS1018ExpectedDiagnostic(28, 43, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName)
                     }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -801,7 +807,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetBasicRS1018ExpectedDiagnostic(17, 92, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
                     }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -864,7 +870,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetBasicRS1018ExpectedDiagnostic(17, 101, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
                     }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -936,7 +942,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -1008,7 +1014,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -1063,7 +1069,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
@@ -1119,13 +1125,15 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1018_RS1020_Descriptors) },
             }.RunAsync();
         }
 
         #endregion
 
         #region RS1021 (AnalyzerCategoryAndIdRangeFileInvalidRuleId)
+
+        private static readonly DiagnosticDescriptor[] RS1021_Descriptor = new[] { DiagnosticDescriptorCreationAnalyzer.AnalyzerCategoryAndIdRangeFileInvalidRule, };
 
         [Fact]
         public async Task RS1021_VerifyDiagnostic()
@@ -1221,13 +1229,16 @@ CategoryWithBadId5: Prefix000-DifferentPrefix099
                         GetCSharpRS1021ExpectedDiagnostic(27, 1, "CategoryWithBadId5: Prefix000-DifferentPrefix099", AdditionalFileName),
                     }
                 },
-                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.AnalyzerCategoryAndIdRangeFileInvalidRule, }) },
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1021_Descriptor) },
             }.RunAsync();
         }
 
         #endregion
 
         #region RS1028 (ProvideCustomTagsInDescriptorRuleId)
+
+        private static readonly DiagnosticDescriptor[] RS1028_Descriptor = new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, };
+
         [Fact]
         public async Task ReportOnMissingCustomTags()
         {
@@ -1243,7 +1254,7 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false);
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, },
+                RS1028_Descriptor,
                 GetCSharpRS1028ResultAt(5, 50),
                 GetCSharpRS1028ResultAt(6, 50));
 
@@ -1256,7 +1267,7 @@ Public Class MyAnalyzer
         Dim diag = New DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, False)
     End Sub
 End Class",
-                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, },
+                RS1028_Descriptor,
                 GetBasicRS1028ResultAt(4, 55),
                 GetBasicRS1028ResultAt(5, 55));
         }
@@ -1276,7 +1287,7 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false, customTags: """");
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
+                RS1028_Descriptor);
 
             // Named arguments are incompatible with ParamArray in VB.NET
         }
@@ -1299,7 +1310,7 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false, null, null, """");
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
+                RS1028_Descriptor);
 
             await VerifyBasicAnalyzerAsync(@"
 Imports Microsoft.CodeAnalysis
@@ -1312,11 +1323,13 @@ Public Class MyAnalyzer
         Dim diag = New DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, False, Nothing, Nothing, """")
     End Sub
 End Class",
-                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
+                RS1028_Descriptor);
         }
         #endregion
 
         #region RS1029 (DoNotUseReservedDiagnosticIdRuleId)
+
+        private static readonly DiagnosticDescriptor[] RS1029_Descriptor = new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, };
 
         [Fact, WorkItem(1727, "https://github.com/dotnet/roslyn-analyzers/issues/1727")]
         public async Task RS1029_AlreadyUsedId_Diagnostic()
@@ -1362,7 +1375,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, },
+                RS1029_Descriptor,
                 GetCSharpRS1029ResultAt(13, 34, "CA0"),
                 GetCSharpRS1029ResultAt(16, 34, "CS0"),
                 GetCSharpRS1029ResultAt(19, 34, "BC0"),
@@ -1397,7 +1410,7 @@ Class MyAnalyzer
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
 End Class",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, },
+                RS1029_Descriptor,
                 GetBasicRS1029ResultAt(12, 92, "CA0"),
                 GetBasicRS1029ResultAt(13, 92, "CS0"),
                 GetBasicRS1029ResultAt(14, 92, "BC0"),
@@ -1450,7 +1463,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
+                RS1029_Descriptor);
 
             await VerifyBasicAnalyzerAsync(@"
 Imports System
@@ -1479,7 +1492,7 @@ Class MyAnalyzer
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
 End Class",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
+                RS1029_Descriptor);
         }
 
         [Fact, WorkItem(1727, "https://github.com/dotnet/roslyn-analyzers/issues/1727")]
@@ -1517,7 +1530,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
+                RS1029_Descriptor);
 
             await VerifyBasicAnalyzerAsync(@"
 Imports System
@@ -1543,7 +1556,7 @@ Class MyAnalyzer
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
 End Class",
-                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
+                RS1029_Descriptor);
         }
 
         [Theory, WorkItem(1727, "https://github.com/dotnet/roslyn-analyzers/issues/1727")]
@@ -1596,7 +1609,7 @@ class MyAnalyzer : DiagnosticAnalyzer
                 SolutionTransforms =
                 {
                     (solution, projectId) => solution.GetProject(projectId).WithAssemblyName(assemblyName).Solution,
-                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, }),
+                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1029_Descriptor),
                 },
             }.RunAsync();
 
@@ -1627,7 +1640,7 @@ End Class",
                 SolutionTransforms =
                 {
                     (solution, projectId) => solution.GetProject(projectId).WithAssemblyName(assemblyName).Solution,
-                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, }),
+                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, RS1029_Descriptor),
                 }
             }.RunAsync();
         }

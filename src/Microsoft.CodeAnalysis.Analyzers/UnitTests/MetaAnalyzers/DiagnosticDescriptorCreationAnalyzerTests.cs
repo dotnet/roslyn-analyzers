@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers;
@@ -47,9 +48,9 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
                 GetCSharpRS1007ExpectedDiagnostic(11, 9),
-                GetCSharpRS1015ExpectedDiagnostic(11, 9),
-                GetCSharpRS1028ResultAt(11, 9));
+                GetCSharpRS1015ExpectedDiagnostic(11, 9));
         }
 
         [Fact]
@@ -63,22 +64,22 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(""MyDiagnosticId"", ""MyDiagnosticTitle"", ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:= true)
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 ",
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
                 GetBasicRS1007ExpectedDiagnostic(10, 66),
-                GetBasicRS1015ExpectedDiagnostic(10, 70),
-                GetBasicRS1028ResultAt(10, 70));
+                GetBasicRS1015ExpectedDiagnostic(10, 70));
         }
 
         [Fact]
@@ -111,12 +112,11 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
                 GetCSharpRS1007ExpectedDiagnostic(11, 9),
-                GetCSharpRS1028ResultAt(11, 9),
                 GetCSharpRS1015ExpectedDiagnostic(11, 118),
                 GetCSharpRS1007ExpectedDiagnostic(14, 9),
-                GetCSharpRS1015ExpectedDiagnostic(14, 9),
-                GetCSharpRS1028ResultAt(14, 9));
+                GetCSharpRS1015ExpectedDiagnostic(14, 9));
         }
 
         [Fact]
@@ -130,26 +130,25 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(""MyDiagnosticId"", title:=""MyDiagnosticTitle"", helpLinkUri:=Nothing, messageFormat:=""MyDiagnosticMessage"", category:=""MyDiagnosticCategory"", defaultSeverity:=DiagnosticSeverity.Warning, isEnabledByDefault:= true)
     Private Shared ReadOnly descriptor2 As DiagnosticDescriptor = new DiagnosticDescriptor(""MyDiagnosticId"", title:=""MyDiagnosticTitle"", messageFormat:=""MyDiagnosticMessage"", category:=""MyDiagnosticCategory"", defaultSeverity:=DiagnosticSeverity.Warning, isEnabledByDefault:= true)
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 ",
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, },
                 GetBasicRS1007ExpectedDiagnostic(10, 66),
-                GetBasicRS1028ResultAt(10, 70),
                 GetBasicRS1015ExpectedDiagnostic(10, 137),
                 GetBasicRS1007ExpectedDiagnostic(11, 67),
-                GetBasicRS1015ExpectedDiagnostic(11, 71),
-                GetBasicRS1028ResultAt(11, 71));
+                GetBasicRS1015ExpectedDiagnostic(11, 71));
         }
 
         [Fact]
@@ -188,9 +187,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     }
 }
 ",
-                GetCSharpRS1028ResultAt(13, 9),
-                GetCSharpRS1028ResultAt(16, 9),
-                GetCSharpRS1028ResultAt(19, 9));
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, });
         }
 
         [Fact]
@@ -204,26 +201,24 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
 
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = new LocalizableResourceString(""dummyName"", Nothing, Nothing)
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(""MyDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
     Private Shared ReadOnly descriptor2 As DiagnosticDescriptor = new DiagnosticDescriptor(""MyDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, True, ""MyDiagnosticDescription"", ""HelpLink"")
     Private Shared ReadOnly descriptor3 As DiagnosticDescriptor = new DiagnosticDescriptor(helpLinkUri:=""HelpLink"", id:=""MyDiagnosticId"", title:=dummyLocalizableTitle, messageFormat:=""MyDiagnosticMessage"", category:=""MyDiagnosticCategory"", defaultSeverity:=DiagnosticSeverity.Warning, isEnabledByDefault:=true)
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 ",
-                GetBasicRS1028ResultAt(12, 70),
-                GetBasicRS1028ResultAt(13, 71),
-                GetBasicRS1028ResultAt(14, 71));
+                new[] { DiagnosticDescriptorCreationAnalyzer.UseLocalizableStringsInDescriptorRule, DiagnosticDescriptorCreationAnalyzer.ProvideHelpUriInDescriptorRule, });
         }
 
         #endregion
@@ -285,10 +280,8 @@ class MyAnalyzer2 : DiagnosticAnalyzer
     {
     }
 }",
-                GetCSharpRS1028ResultAt(14, 9),
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
                 GetCSharpRS1017ExpectedDiagnostic(14, 34, "descriptor"),
-                GetCSharpRS1028ResultAt(17, 9),
-                GetCSharpRS1028ResultAt(38, 9),
                 GetCSharpRS1019ExpectedDiagnostic(38, 34, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
 
@@ -347,6 +340,7 @@ class MyAnalyzer2 : DiagnosticAnalyzer
     {
     }
 }" + CSharpDiagnosticDescriptorCreationHelper,
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
                 GetCSharpRS1017ExpectedDiagnostic(14, 43, "descriptor"),
                 GetCSharpRS1019ExpectedDiagnostic(38, 43, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -362,42 +356,40 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly NonConstantDiagnosticId = ""NonConstantDiagnosticId""
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(NonConstantDiagnosticId, dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
     Private Shared ReadOnly descriptor2 As DiagnosticDescriptor = new DiagnosticDescriptor(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor, descriptor2)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor, descriptor2)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer2
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 ",
-                GetBasicRS1028ResultAt(12, 70),
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
                 GetBasicRS1017ExpectedDiagnostic(12, 91, "descriptor"),
-                GetBasicRS1028ResultAt(13, 71),
-                GetBasicRS1028ResultAt(29, 70),
                 GetBasicRS1019ExpectedDiagnostic(29, 91, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
 
@@ -412,38 +404,39 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly NonConstantDiagnosticId = ""NonConstantDiagnosticId""
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(NonConstantDiagnosticId, dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"")
     Private Shared ReadOnly descriptor2 As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor, descriptor2)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor, descriptor2)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer2
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 " + VisualBasicDiagnosticDescriptorCreationHelper,
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, },
                 GetBasicRS1017ExpectedDiagnostic(12, 100, "descriptor"),
                 GetBasicRS1019ExpectedDiagnostic(29, 100, "DuplicateDiagnosticId", "MyAnalyzer"));
         }
@@ -486,9 +479,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     }
 }
 ",
-                GetBasicRS1028ResultAt(14, 9),
-                GetBasicRS1028ResultAt(17, 9),
-                GetBasicRS1028ResultAt(21, 9));
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, });
         }
 
         [Fact]
@@ -528,7 +519,8 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }
-" + CSharpDiagnosticDescriptorCreationHelper);
+" + CSharpDiagnosticDescriptorCreationHelper,
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, });
         }
 
         [Fact]
@@ -542,7 +534,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Const ConstantDiagnosticId As String = ""ConstantDiagnosticId""
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = new DiagnosticDescriptor(ConstantDiagnosticId, dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
@@ -550,19 +542,17 @@ Class MyAnalyzer
     ' Allow multiple descriptors with same rule ID in the same analyzer.
     Private Shared ReadOnly descriptor3 As DiagnosticDescriptor = new DiagnosticDescriptor(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage2"", ""MyDiagnosticCategory"", DiagnosticSeverity.Warning, isEnabledByDefault:=true, helpLinkUri:=""HelpLink"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor, descriptor2, descriptor3)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor, descriptor2, descriptor3)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
 ",
-                GetBasicRS1028ResultAt(12, 70),
-                GetBasicRS1028ResultAt(13, 71),
-                GetBasicRS1028ResultAt(15, 71));
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, });
         }
 
         [Fact]
@@ -576,7 +566,7 @@ Imports Microsoft.CodeAnalysis.Diagnostics
 
 <DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)>
 Class MyAnalyzer
-	Inherits DiagnosticAnalyzer
+    Inherits DiagnosticAnalyzer
     Const ConstantDiagnosticId As String = ""ConstantDiagnosticId""
     Private Shared ReadOnly dummyLocalizableTitle As LocalizableString = Nothing
     Private Shared ReadOnly descriptor As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(ConstantDiagnosticId, dummyLocalizableTitle, ""MyDiagnosticMessage"", ""MyDiagnosticCategory"")
@@ -584,16 +574,17 @@ Class MyAnalyzer
     ' Allow multiple descriptors with same rule ID in the same analyzer.
     Private Shared ReadOnly descriptor3 As DiagnosticDescriptor = DiagnosticDescriptorHelper.Create(""DuplicateDiagnosticId"", dummyLocalizableTitle, ""MyDiagnosticMessage2"", ""MyDiagnosticCategory"")
 
-	Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
-		Get
-			Return ImmutableArray.Create(descriptor, descriptor2, descriptor3)
-		End Get
-	End Property
+    Public Overrides ReadOnly Property SupportedDiagnostics() As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Return ImmutableArray.Create(descriptor, descriptor2, descriptor3)
+        End Get
+    End Property
 
-	Public Overrides Sub Initialize(context As AnalysisContext)
-	End Sub
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
 End Class
-" + VisualBasicDiagnosticDescriptorCreationHelper);
+" + VisualBasicDiagnosticDescriptorCreationHelper,
+                new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeAConstantRule, DiagnosticDescriptorCreationAnalyzer.UseUniqueDiagnosticIdRule, });
         }
 
         #endregion
@@ -664,21 +655,15 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
                     ExpectedDiagnostics =
                     {
-                        GetCSharpRS1028ResultAt(13, 9),
                         GetCSharpRS1020ExpectedDiagnostic(13, 87, "NotAllowedCategory", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(16, 9),
                         GetCSharpRS1018ExpectedDiagnostic(16, 34, "DifferentPrefixId", "CategoryWithPrefix", "PrefixXXXX", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(19, 9),
                         GetCSharpRS1018ExpectedDiagnostic(19, 34, "Prefix200", "CategoryWithRange", "Prefix0-Prefix99", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(22, 9),
                         GetCSharpRS1018ExpectedDiagnostic(22, 34, "Prefix101", "CategoryWithId", "Prefix100-Prefix100", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(25, 9),
                         GetCSharpRS1018ExpectedDiagnostic(25, 34, "MySecondPrefix400", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(28, 9),
                         GetCSharpRS1018ExpectedDiagnostic(28, 34, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName)
                     }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -754,7 +739,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetCSharpRS1018ExpectedDiagnostic(28, 43, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName)
                     }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -808,21 +793,15 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
                     ExpectedDiagnostics =
                     {
-                        GetBasicRS1028ResultAt(12, 70),
                         GetBasicRS1020ExpectedDiagnostic(12, 144, "NotAllowedCategory", AdditionalFileName),
-                        GetBasicRS1028ResultAt(13, 71),
                         GetBasicRS1018ExpectedDiagnostic(13, 92, "DifferentPrefixId", "CategoryWithPrefix", "PrefixXXXX", AdditionalFileName),
-                        GetBasicRS1028ResultAt(14, 71),
                         GetBasicRS1018ExpectedDiagnostic(14, 92, "Prefix200", "CategoryWithRange", "Prefix0-Prefix99", AdditionalFileName),
-                        GetBasicRS1028ResultAt(15, 71),
                         GetBasicRS1018ExpectedDiagnostic(15, 92, "Prefix101", "CategoryWithId", "Prefix100-Prefix100", AdditionalFileName),
-                        GetBasicRS1028ResultAt(16, 71),
                         GetBasicRS1018ExpectedDiagnostic(16, 92, "MySecondPrefix400", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
-                        GetBasicRS1028ResultAt(17, 71),
                         GetBasicRS1018ExpectedDiagnostic(17, 92, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
                     }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -885,7 +864,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                         GetBasicRS1018ExpectedDiagnostic(17, 101, "MyThirdPrefix", "CategoryWithPrefixRangeAndId", "MyFirstPrefixXXXX, MySecondPrefix0-MySecondPrefix99, MySecondPrefix300-MySecondPrefix300", AdditionalFileName),
                     }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -956,19 +935,8 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                 {
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
-                    ExpectedDiagnostics =
-                    {
-                        GetCSharpRS1028ResultAt(13, 9),
-                        GetCSharpRS1028ResultAt(16, 9),
-                        GetCSharpRS1028ResultAt(19, 9),
-                        GetCSharpRS1028ResultAt(22, 9),
-                        GetCSharpRS1028ResultAt(25, 9),
-                        GetCSharpRS1028ResultAt(28, 9),
-                        GetCSharpRS1028ResultAt(31, 9),
-                        GetCSharpRS1028ResultAt(34, 9),
-                    }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -1040,7 +1008,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -1094,19 +1062,8 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                 {
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) },
-                    ExpectedDiagnostics =
-                    {
-                        GetBasicRS1028ResultAt(12, 70),
-                        GetBasicRS1028ResultAt(13, 71),
-                        GetBasicRS1028ResultAt(14, 73),
-                        GetBasicRS1028ResultAt(15, 71),
-                        GetBasicRS1028ResultAt(16, 71),
-                        GetBasicRS1028ResultAt(17, 71),
-                        GetBasicRS1028ResultAt(18, 71),
-                        GetBasicRS1028ResultAt(19, 71),
-                    }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -1162,7 +1119,7 @@ CategoryWithPrefixRangeAndId: MyFirstPrefix, MySecondPrefix000-MySecondPrefix099
                     Sources = { source },
                     AdditionalFiles = { (AdditionalFileName, additionalText) }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DiagnosticIdMustBeInSpecifiedFormatRule, DiagnosticDescriptorCreationAnalyzer.UseCategoriesFromSpecifiedRangeRule, }) },
             }.RunAsync();
         }
 
@@ -1262,15 +1219,9 @@ CategoryWithBadId5: Prefix000-DifferentPrefix099
                         GetCSharpRS1021ExpectedDiagnostic(23, 1, "CategoryWithBadId3: Prefix000NotAllowed", AdditionalFileName),
                         GetCSharpRS1021ExpectedDiagnostic(24, 1, "CategoryWithBadId4: Prefix000NotAllowed-Prefix099NotAllowed", AdditionalFileName),
                         GetCSharpRS1021ExpectedDiagnostic(27, 1, "CategoryWithBadId5: Prefix000-DifferentPrefix099", AdditionalFileName),
-                        GetCSharpRS1028ResultAt(13, 9),
-                        GetCSharpRS1028ResultAt(16, 9),
-                        GetCSharpRS1028ResultAt(19, 9),
-                        GetCSharpRS1028ResultAt(22, 9),
-                        GetCSharpRS1028ResultAt(25, 9),
-                        GetCSharpRS1028ResultAt(28, 9),
                     }
                 },
-                SolutionTransforms = { WithoutEnableReleaseTrackingWarning }
+                SolutionTransforms = { (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.AnalyzerCategoryAndIdRangeFileInvalidRule, }) },
             }.RunAsync();
         }
 
@@ -1292,10 +1243,8 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false);
     }
 }",
-                GetCSharpRS1007ExpectedDiagnostic(5, 50),
-                GetCSharpRS1015ExpectedDiagnostic(5, 50),
+                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, },
                 GetCSharpRS1028ResultAt(5, 50),
-                GetCSharpRS1015ExpectedDiagnostic(6, 50),
                 GetCSharpRS1028ResultAt(6, 50));
 
             await VerifyBasicAnalyzerAsync(@"
@@ -1307,10 +1256,8 @@ Public Class MyAnalyzer
         Dim diag = New DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, False)
     End Sub
 End Class",
-                GetBasicRS1007ExpectedDiagnostic(4, 51),
-                GetBasicRS1015ExpectedDiagnostic(4, 55),
+                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, },
                 GetBasicRS1028ResultAt(4, 55),
-                GetBasicRS1015ExpectedDiagnostic(5, 55),
                 GetBasicRS1028ResultAt(5, 55));
         }
 
@@ -1329,9 +1276,7 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false, customTags: """");
     }
 }",
-                GetCSharpRS1007ExpectedDiagnostic(5, 50),
-                GetCSharpRS1015ExpectedDiagnostic(5, 50),
-                GetCSharpRS1015ExpectedDiagnostic(6, 50));
+                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
 
             // Named arguments are incompatible with ParamArray in VB.NET
         }
@@ -1354,10 +1299,7 @@ public class MyAnalyzer
         var diag = new DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, false, null, null, """");
     }
 }",
-                GetCSharpRS1007ExpectedDiagnostic(5, 50),
-                GetCSharpRS1015ExpectedDiagnostic(5, 132),
-                GetCSharpRS1007ExpectedDiagnostic(8, 50),
-                GetCSharpRS1015ExpectedDiagnostic(8, 132));
+                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
 
             await VerifyBasicAnalyzerAsync(@"
 Imports Microsoft.CodeAnalysis
@@ -1370,10 +1312,7 @@ Public Class MyAnalyzer
         Dim diag = New DiagnosticDescriptor("""", """", """", """", DiagnosticSeverity.Warning, False, Nothing, Nothing, """")
     End Sub
 End Class",
-                GetBasicRS1007ExpectedDiagnostic(4, 51),
-                GetBasicRS1015ExpectedDiagnostic(4, 136),
-                GetBasicRS1007ExpectedDiagnostic(6, 51),
-                GetBasicRS1015ExpectedDiagnostic(6, 136));
+                new[] { DiagnosticDescriptorCreationAnalyzer.ProvideCustomTagsInDescriptorRule, });
         }
         #endregion
 
@@ -1423,6 +1362,7 @@ class MyAnalyzer : DiagnosticAnalyzer
     {
     }
 }",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, },
                 GetCSharpRS1029ResultAt(13, 34, "CA0"),
                 GetCSharpRS1029ResultAt(16, 34, "CS0"),
                 GetCSharpRS1029ResultAt(19, 34, "BC0"),
@@ -1457,6 +1397,7 @@ Class MyAnalyzer
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
 End Class",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, },
                 GetBasicRS1029ResultAt(12, 92, "CA0"),
                 GetBasicRS1029ResultAt(13, 92, "CS0"),
                 GetBasicRS1029ResultAt(14, 92, "BC0"),
@@ -1508,7 +1449,8 @@ class MyAnalyzer : DiagnosticAnalyzer
     public override void Initialize(AnalysisContext context)
     {
     }
-}");
+}",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
 
             await VerifyBasicAnalyzerAsync(@"
 Imports System
@@ -1536,7 +1478,8 @@ Class MyAnalyzer
 
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
-End Class");
+End Class",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
         }
 
         [Fact, WorkItem(1727, "https://github.com/dotnet/roslyn-analyzers/issues/1727")]
@@ -1573,7 +1516,8 @@ class MyAnalyzer : DiagnosticAnalyzer
     public override void Initialize(AnalysisContext context)
     {
     }
-}");
+}",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
 
             await VerifyBasicAnalyzerAsync(@"
 Imports System
@@ -1598,7 +1542,8 @@ Class MyAnalyzer
 
     Public Overrides Sub Initialize(ByVal context As AnalysisContext)
     End Sub
-End Class");
+End Class",
+                new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, });
         }
 
         [Theory, WorkItem(1727, "https://github.com/dotnet/roslyn-analyzers/issues/1727")]
@@ -1651,7 +1596,7 @@ class MyAnalyzer : DiagnosticAnalyzer
                 SolutionTransforms =
                 {
                     (solution, projectId) => solution.GetProject(projectId).WithAssemblyName(assemblyName).Solution,
-                    WithoutEnableReleaseTrackingWarning,
+                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, }),
                 },
             }.RunAsync();
 
@@ -1682,7 +1627,7 @@ End Class",
                 SolutionTransforms =
                 {
                     (solution, projectId) => solution.GetProject(projectId).WithAssemblyName(assemblyName).Solution,
-                    WithoutEnableReleaseTrackingWarning,
+                    (solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, new[] { DiagnosticDescriptorCreationAnalyzer.DoNotUseReservedDiagnosticIdRule, }),
                 }
             }.RunAsync();
         }
@@ -1772,7 +1717,7 @@ End Class",
                 .WithLocation(line, column)
                 .WithArguments(ruleId);
 
-        private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        private static async Task VerifyCSharpAnalyzerAsync(string source, DiagnosticDescriptor[] enabledDiagnostics, params DiagnosticResult[] expected)
         {
             var test = new VerifyCS.Test
             {
@@ -1784,12 +1729,12 @@ End Class",
                 TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck
             };
 
-            test.SolutionTransforms.Add(WithoutEnableReleaseTrackingWarning);
+            test.SolutionTransforms.Add((solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, enabledDiagnostics));
             test.ExpectedDiagnostics.AddRange(expected);
             await test.RunAsync();
         }
 
-        private static async Task VerifyBasicAnalyzerAsync(string source, params DiagnosticResult[] expected)
+        private static async Task VerifyBasicAnalyzerAsync(string source, DiagnosticDescriptor[] enabledDiagnostics, params DiagnosticResult[] expected)
         {
             var test = new VerifyVB.Test
             {
@@ -1801,18 +1746,27 @@ End Class",
                 TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck
             };
 
-            test.SolutionTransforms.Add(WithoutEnableReleaseTrackingWarning);
+            test.SolutionTransforms.Add((solution, projectId) => WithoutOtherDiagnosticDescriptorRules(solution, projectId, enabledDiagnostics));
             test.ExpectedDiagnostics.AddRange(expected);
             await test.RunAsync();
         }
 
-        private static readonly ImmutableDictionary<string, ReportDiagnostic> s_enableReleaseTrackingWarningDisabled = ImmutableDictionary<string, ReportDiagnostic>.Empty
-            .Add(DiagnosticDescriptorCreationAnalyzer.EnableAnalyzerReleaseTrackingRule.Id, ReportDiagnostic.Suppress);
-
-        private static Solution WithoutEnableReleaseTrackingWarning(Solution solution, ProjectId projectId)
+        private static Solution WithoutOtherDiagnosticDescriptorRules(Solution solution, ProjectId projectId, DiagnosticDescriptor[] enabledDiagnostics)
         {
             var compilationOptions = solution.GetProject(projectId)!.CompilationOptions!;
-            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(compilationOptions.SpecificDiagnosticOptions.SetItems(s_enableReleaseTrackingWarningDisabled));
+
+            var enabledIds = new HashSet<string>(enabledDiagnostics.Select(x => x.Id));
+            var disabledRules = new Dictionary<string, ReportDiagnostic>();
+            foreach (var diagnostic in new DiagnosticDescriptorCreationAnalyzer().SupportedDiagnostics)
+            {
+                if (!enabledIds.Contains(diagnostic.Id))
+                {
+                    // We can have multiple descriptors with the same ID
+                    disabledRules[diagnostic.Id] = ReportDiagnostic.Suppress;
+                }
+            }
+
+            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(compilationOptions.SpecificDiagnosticOptions.SetItems(disabledRules));
             return solution.WithProjectCompilationOptions(projectId, compilationOptions);
         }
 

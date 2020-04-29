@@ -25,6 +25,12 @@ To enable support for [nullable reference types](https://docs.microsoft.com/dotn
 #nullable enable
 ```
 
+At that point, reference types in annotated code will need to be annotated with either a `?` (nullable) or a `!` (non-nullable). For instance, `C.AnnotatedMethod(string! nonNullableParameter, string? nullableParameter, int valueTypeParameter) -> void`.
+
+Any public API that uses an oblivious reference type (in `#nullable disable` or legacy code) will be tracked with a `~` marker. The marker lets you track how many public APIs still lack annotations. For instance, `~C.ObliviousMethod() -> string`.
+
+If you start with a fresh project or you reach 100% annotation on your public API on an existing project, the RS0041 warning ("Symbol uses some oblivious reference types") ensures that all public APIs remain annotated. If you are in the process of annotating an existing project, it is recommended to disable this warning (for instance in `.editorconfig` with `dotnet_diagnostic.RS0041.severity = none`) until you completely annotate the project.
+
 ## Conditional API Differences
 
 Sometimes APIs vary by compilation symbol such as target framework.

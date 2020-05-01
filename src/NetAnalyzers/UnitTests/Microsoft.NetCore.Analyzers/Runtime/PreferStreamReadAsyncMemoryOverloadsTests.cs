@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
@@ -19,10 +20,10 @@ class C
 {
     public void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            fs.Read(buffer, 0, (int)fs.Length);
+            byte[] buffer = new byte[s.Length];
+            s.Read(buffer, 0, (int)s.Length);
         }
     }
 }
@@ -40,11 +41,11 @@ class C
 {
     public async void M()
     {
-        using (FileStream fs = new FileStream(""path.txt"", FileMode.Create))
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
-            byte[] buffer = new byte[fs.Length];
+            byte[] buffer = new byte[s.Length];
             Memory<byte> memory = new Memory<byte>(buffer);
-            await fs.ReadAsync(memory, new CancellationToken()).ConfigureAwait(false);
+            await s.ReadAsync(memory, new CancellationToken()).ConfigureAwait(false);
         }
     }
 }
@@ -62,10 +63,10 @@ class C
 {
     public async void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer.AsMemory(), new CancellationToken());
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer.AsMemory(), new CancellationToken());
         }
     }
 }
@@ -84,10 +85,10 @@ class C
 {
     public void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            Task t = fs.ReadAsync(buffer, 0, (int)fs.Length);
+            byte[] buffer = new byte[s.Length];
+            Task t = s.ReadAsync(buffer, 0, (int)s.Length);
         }
     }
 }
@@ -104,9 +105,9 @@ using System.Threading;
 using System.Threading.Tasks;
 class C
 {
-    public Task M(FileStream fs, byte[] buffer)
+    public Task M(FileStream s, byte[] buffer)
     {
-        return fs.ReadAsync(buffer, 0, (int)fs.Length);
+        return s.ReadAsync(buffer, 0, (int)s.Length);
     }
 }
             ");
@@ -162,7 +163,7 @@ using System.Threading;
 using System.Threading.Tasks;
 class C
 {
-    public Task M(FileStream fs, byte[] buffer) => fs.ReadAsync(buffer, 0, (int)fs.Length);
+    public Task M(FileStream s, byte[] buffer) => s.ReadAsync(buffer, 0, (int)s.Length);
 }
             ");
         }
@@ -178,10 +179,10 @@ class C
 {
     public async void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length).ContinueWith(c => {}).ConfigureAwait(false);
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer, 0, (int)s.Length).ContinueWith(c => {}).ConfigureAwait(false);
         }
     }
 }
@@ -199,10 +200,52 @@ class C
 {
     public async void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length).ContinueWith(c => {}).ContinueWith(c => {}).ConfigureAwait(false);
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer, 0, (int)s.Length).ContinueWith(c => {}).ContinueWith(c => {}).ConfigureAwait(false);
+        }
+    }
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_Analyzer_NoDiagnostic_AutoCastedToMemory()
+        {
+            return AnalyzeCSAsync(@"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer);
+        }
+    }
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_Analyzer_NoDiagnostic_AutoCastedToMemory_CancellationToken()
+        {
+            return AnalyzeCSAsync(@"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer, new CancellationToken());
         }
     }
 }
@@ -220,10 +263,10 @@ class C
 {
     public async void M()
     {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
         {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length);
+            byte[] buffer = new byte[s.Length];
+            await s.ReadAsync(buffer, 0, (int)s.Length);
         }
     }
 }
@@ -241,9 +284,9 @@ class C
 Imports System.IO
 Class C
     Public Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) { }
-            fs.Read(buffer, 0, fs.Length)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            s.Read(buffer, 0, s.Length)
         End Using
     End Sub
 End Class
@@ -259,10 +302,10 @@ Imports System.IO
 Imports System.Threading
 Class C
     Public Async Sub M()
-        Using fs As FileStream = New FileStream("", path.txt, "", FileMode.Create)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {}
             Dim memory As Memory(Of Byte) = New Memory(Of Byte)(buffer)
-            Await fs.ReadAsync(memory, New CancellationToken()).ConfigureAwait(False)
+            Await s.ReadAsync(memory, New CancellationToken()).ConfigureAwait(False)
         End Using
     End Sub
 End Class
@@ -278,9 +321,9 @@ Imports System.IO
 Imports System.Threading
 Class C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) { }
-            Await fs.ReadAsync(buffer.AsMemory(), New CancellationToken())
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync(buffer.AsMemory(), New CancellationToken())
         End Using
     End Sub
 End Class
@@ -297,9 +340,9 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Public Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) { }
-            Dim t As Task = fs.ReadAsync(buffer, 0, CInt(fs.Length))
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Dim t As Task = s.ReadAsync(buffer, 0, CInt(s.Length))
         End Using
     End Sub
 End Class
@@ -315,8 +358,8 @@ Imports System.IO
 Imports System.Threading
 Imports System.Threading.Tasks
 Friend Class C
-    Public Function M(ByVal fs As FileStream, ByVal buffer As Byte()) As Task
-        Return fs.ReadAsync(buffer, 0, fs.Length)
+    Public Function M(ByVal s As FileStream, ByVal buffer As Byte()) As Task
+        Return s.ReadAsync(buffer, 0, s.Length)
     End Function
 End Class
             ");
@@ -369,9 +412,9 @@ Imports System.IO
 Imports System.Threading
 Class C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, fs.Length).ContinueWith(Sub(c)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {}
+            Await s.ReadAsync(buffer, 0, s.Length).ContinueWith(Sub(c)
                                                                         End Sub).ConfigureAwait(False)
         End Using
     End Sub
@@ -388,11 +431,47 @@ Imports System.IO
 Imports System.Threading
 Class C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, fs.Length).ContinueWith(Sub(c)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {}
+            Await s.ReadAsync(buffer, 0, s.Length).ContinueWith(Sub(c)
                                                                         End Sub).ContinueWith(Sub(c)
                                                                                               End Sub).ConfigureAwait(False)
+        End Using
+    End Sub
+End Class
+            ");
+        }
+
+        [Fact]
+        public Task VB_Analyzer_NoDiagnostic_AutoCastedToMemory()
+        {
+            return AnalyzeVBAsync(@"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {}
+            Await s.ReadAsync(buffer)
+        End Using
+    End Sub
+End Class
+            ");
+        }
+
+        [Fact]
+        public Task VB_Analyzer_NoDiagnostic_AutoCastedToMemory_CancellationToken()
+        {
+            return AnalyzeVBAsync(@"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {}
+            Await s.ReadAsync(buffer, New CancellationToken())
         End Using
     End Sub
 End Class
@@ -408,9 +487,9 @@ Imports System.IO
 Imports System.Threading
 Class C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) { }
-            Await fs.ReadAsync(buffer, 0, fs.Length)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync(buffer, 0, s.Length)
         End Using
     End Sub
 End Class
@@ -421,213 +500,166 @@ End Class
 
         #region C# - Diagnostic - Analyzer
 
-        [Fact]
-        public Task CS_Analyzer_Diagnostic_ByteArray()
+        [Theory]
+        [InlineData("buffer, 0, (int)s.Length",
+                    "buffer.AsMemory(0, (int)s.Length)",
+                    false, 56)]
+        [InlineData("buffer, 0, (int)s.Length",
+                    "buffer.AsMemory(0, (int)s.Length)",
+                    true, 56)]
+        [InlineData("buffer, 0, (int)s.Length, new CancellationToken()",
+                    "buffer.AsMemory(0, (int)s.Length), new CancellationToken()",
+                    false, 81)]
+        [InlineData("buffer, 0, (int)s.Length, new CancellationToken()",
+                    "buffer.AsMemory(0, (int)s.Length), new CancellationToken()",
+                    true, 81)]
+        public Task CS_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
         {
-            return AnalyzeCSAsync(@"
+            string source = @"
 using System;
 using System.IO;
 using System.Threading;
 class C
-{
+{{
     public async void M()
-    {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
-        {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length);
-        }
-    }
-}
-            ", GetCSResult(12, 19, 12, 58));
+    {{
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
+        {{
+            byte[] buffer = new byte[s.Length];
+            await {0};
+        }}
+    }}
+}}
+            ";
+            return GetCSReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
         }
 
-        [Fact]
-        public Task CS_Analyzer_Diagnostic_Inline()
+        [Theory]
+        [InlineData("new byte[s.Length], 0, (int)s.Length",
+                    "(new byte[s.Length]).AsMemory(0, (int)s.Length)",
+                    false, 68)]
+        [InlineData("new byte[s.Length], 0, (int)s.Length",
+                    "(new byte[s.Length]).AsMemory(0, (int)s.Length)",
+                    true, 68)]
+        [InlineData("new byte[s.Length], 0, (int)s.Length, new CancellationToken()",
+                    "(new byte[s.Length]).AsMemory(0, (int)s.Length), new CancellationToken()",
+                    false, 93)]
+        [InlineData("new byte[s.Length], 0, (int)s.Length, new CancellationToken()",
+                    "(new byte[s.Length]).AsMemory(0, (int)s.Length), new CancellationToken()",
+                    true, 93)]
+        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
         {
-            return AnalyzeCSAsync(@"
+            string source = @"
 using System;
 using System.IO;
 using System.Threading;
 class C
-{
+{{
     public async void M()
-    {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
-        {
-            await fs.ReadAsync(new byte[fs.Length], 0, (int)fs.Length);
-        }
-    }
-}
-            ", GetCSResult(11, 19, 11, 71));
-        }
-
-        [Fact]
-        public Task CS_Analyzer_Diagnostic_CancellationToken()
-        {
-            return AnalyzeCSAsync(@"
-using System;
-using System.IO;
-using System.Threading;
-class C
-{
-    public async void M()
-    {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
-        {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length, new CancellationToken());
-        }
-    }
-}
-            ", GetCSResult(12, 19, 12, 83));
-        }
-
-        [Fact]
-        public Task CS_Analyzer_Diagnostic_ConfigureAwait()
-        {
-            return AnalyzeCSAsync(@"
-using System;
-using System.IO;
-using System.Threading;
-class C
-{
-    public async void M()
-    {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
-        {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length).ConfigureAwait(false);
-        }
-    }
-}
-            ", GetCSResult(12, 19, 12, 80));
-        }
-
-        [Fact]
-        public Task CS_Analyzer_Diagnostic_CancellationToken_ConfigureAwait()
-        {
-            return AnalyzeCSAsync(@"
-using System;
-using System.IO;
-using System.Threading;
-class C
-{
-    public async void M()
-    {
-        using (FileStream fs = File.Open(""file.txt"", FileMode.Open))
-        {
-            byte[] buffer = new byte[fs.Length];
-            await fs.ReadAsync(buffer, 0, (int)fs.Length, new CancellationToken()).ConfigureAwait(false);
-        }
-    }
-}
-            ", GetCSResult(12, 19, 12, 105));
+    {{
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
+        {{
+            await {0};
+        }}
+    }}
+}}
+            ";
+            return GetCSReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 11, 19, 11, endColumn);
         }
 
         #endregion
 
         #region VB - Diagnostic - Analyzer
 
-        [Fact]
-        public Task VB_Analyzer_Diagnostic_ByteArray()
+        [Theory]
+        [InlineData("buffer, 0, s.Length",
+                    "buffer.AsMemory(0, s.Length)",
+                    false, 51)]
+        [InlineData("buffer, 0, s.Length",
+                    "buffer.AsMemory(0, s.Length)",
+                    true, 51)]
+        [InlineData("buffer, 0, s.Length, New CancellationToken()",
+                    "buffer.AsMemory(0, s.Length), New CancellationToken()",
+                    false, 76)]
+        [InlineData("buffer, 0, s.Length, New CancellationToken()",
+                    "buffer.AsMemory(0, s.Length), New CancellationToken()",
+                    true, 76)]
+        public Task VB_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
         {
-            return AnalyzeVBAsync(@"
+            string source = @"
 Imports System
 Imports System.IO
 Imports System.Threading
-Class C
+Public Module C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, fs.Length)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = New Byte(s.Length - 1) {{}}
+            Await {0}
         End Using
     End Sub
-End Class
-            ", GetVBResult(9, 19, 9, 53));
+End Module
+            ";
+            return GetVBReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
         }
 
-        [Fact]
-        public Task VB_Analyzer_Diagnostic_Inline()
+        [Theory]
+        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length",
+                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length)",
+                    false, 70)]
+        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length",
+                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length)",
+                    true, 70)]
+        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length, New CancellationToken()",
+                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length), New CancellationToken()",
+                    false, 95)]
+        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length, New CancellationToken()",
+                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length), New CancellationToken()",
+                    true, 95)]
+        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
         {
-            return AnalyzeVBAsync(@"
+            string source = @"
 Imports System
 Imports System.IO
 Imports System.Threading
-Class C
+Public Module C
     Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Await fs.ReadAsync(New Byte(fs.Length - 1) {}, 0, fs.Length)
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Await {0}
         End Using
     End Sub
-End Class
-            ", GetVBResult(8, 19, 8, 73));
-        }
-
-        [Fact]
-        public Task VB_Analyzer_Diagnostic_CancellationToken()
-        {
-            return AnalyzeVBAsync(@"
-Imports System
-Imports System.IO
-Imports System.Threading
-Class C
-    Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, fs.Length, New CancellationToken())
-        End Using
-    End Sub
-End Class
-            ", GetVBResult(9, 19, 9, 78));
-        }
-
-        [Fact]
-        public Task VB_Analyzer_Diagnostic_ConfigureAwait()
-        {
-            return AnalyzeVBAsync(@"
-Imports System
-Imports System.IO
-Imports System.Threading
-Class C
-    Public Async Sub M()
-        Using fs As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, fs.Length).ConfigureAwait(False)
-        End Using
-    End Sub
-End Class
-            ", GetVBResult(9, 19, 9, 75));
-        }
-
-        [Fact]
-        public Task VB_Analyzer_Diagnostic_CancellationToken_ConfigureAwait()
-        {
-            return AnalyzeVBAsync(@"
-Imports System
-Imports System.IO
-Imports System.Threading
-Class C
-    Public Async Sub M()
-        Using fs As FileStream = File.Open("", file.txt, "", FileMode.Open)
-            Dim buffer As Byte() = New Byte(fs.Length - 1) {}
-            Await fs.ReadAsync(buffer, 0, CInt(fs.Length), New CancellationToken()).ConfigureAwait(False)
-        End Using
-    End Sub
-End Class
-            ", GetVBResult(9, 19, 9, 106));
+End Module
+            ";
+            return GetVBReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 8, 19, 8, endColumn);
         }
 
         #endregion
 
         #region Helpers
 
-        protected static DiagnosticResult GetCSResult(int startLine, int startColumn, int endLine, int endColumn)
+        private const string AsyncMethodName = "Read";
+
+        private Task GetCSReadAsyncDiagnostic(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
+        {
+            return FixCSAsync(
+                GetFormattedSourceCode(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.CSharp),
+                GetFormattedSourceCode(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.CSharp),
+                GetCSResult(startLine, startColumn, endLine, endColumn));
+        }
+
+        private Task GetVBReadAsyncDiagnostic(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
+        {
+            return FixVBAsync(
+                GetFormattedSourceCode(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.VisualBasic),
+                GetFormattedSourceCode(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.VisualBasic),
+                GetVBResult(startLine, startColumn, endLine, endColumn));
+        }
+
+        private static DiagnosticResult GetCSResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetCSResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,
                 "ReadAsync", "System.IO.Stream.ReadAsync(System.Memory<byte>, System.Threading.CancellationToken)");
 
-        protected static DiagnosticResult GetVBResult(int startLine, int startColumn, int endLine, int endColumn)
+        private static DiagnosticResult GetVBResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetVBResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,
                 "ReadAsync", "System.IO.Stream.ReadAsync(System.Memory(Of Byte), System.Threading.CancellationToken)");

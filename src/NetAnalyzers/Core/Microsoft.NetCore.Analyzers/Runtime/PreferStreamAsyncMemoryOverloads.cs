@@ -32,13 +32,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1835";
 
-        private static readonly LocalizableString s_localizableTitleRead = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamReadAsyncMemoryOverloadsTitle),
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsMessage),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsMessage),
+        private static readonly LocalizableString s_localizableTitleRead = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamReadAsyncMemoryOverloadsTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
@@ -100,6 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 return;
             }
+
             if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemory1, out INamedTypeSymbol? memoryType))
             {
                 return;
@@ -139,21 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 ParameterInfo.GetParameterInfo(cancellationTokenType)
             };
 
-            // Create the arrays with the exact parameter order of the desired methods
-            var preferredReadAsyncParameters = new[]
-            {
-                ParameterInfo.GetParameterInfo(readOnlyMemoryType),  // ReadOnlyMemory<byte> buffer
-                ParameterInfo.GetParameterInfo(cancellationTokenType), // CancellationToken
-            };
-
-            var preferredWriteAsyncParameters = new[]
-            {
-                ParameterInfo.GetParameterInfo(memoryType),  // ReadOnlyMemory<byte> buffer
-                ParameterInfo.GetParameterInfo(cancellationTokenType), // CancellationToken
-            };
-
             // Retrieve the ReadAsync/WriteSync methods available in Stream
-            // If we don't find them all, the Memory based overloads are not supported in this .NET version
             IEnumerable<IMethodSymbol> readAsyncMethodGroup = streamType.GetMembers("ReadAsync").OfType<IMethodSymbol>();
             IEnumerable<IMethodSymbol> writeAsyncMethodGroup = streamType.GetMembers("WriteAsync").OfType<IMethodSymbol>();
 
@@ -184,14 +171,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Retrieve the preferred methods, which are used for constructing the rule message
             IMethodSymbol? preferredReadAsyncMethod = readAsyncMethodGroup.FirstOrDefault(x =>
-                x.Parameters.Count() == 2 && x.Parameters[0].Type is INamedTypeSymbol type && type.ConstructedFrom.Equals(memoryType));
+                x.Parameters.Count() == 2 &&
+                x.Parameters[0].Type is INamedTypeSymbol type &&
+                type.ConstructedFrom.Equals(memoryType));
             if (preferredReadAsyncMethod == null)
             {
                 return;
             }
 
             IMethodSymbol? preferredWriteAsyncMethod = writeAsyncMethodGroup.FirstOrDefault(x =>
-                x.Parameters.Count() == 2 && x.Parameters[0].Type is INamedTypeSymbol type && type.ConstructedFrom.Equals(readOnlyMemoryType));
+                x.Parameters.Count() == 2 &&
+                x.Parameters[0].Type is INamedTypeSymbol type &&
+                type.ConstructedFrom.Equals(readOnlyMemoryType));
             if (preferredWriteAsyncMethod == null)
             {
                 return;
@@ -227,20 +218,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterOperationAction(context =>
             {
                 IAwaitOperation awaitOperation = (IAwaitOperation)context.Operation;
-                if (ShouldAnalyze(awaitOperation, configureAwaitMethod, genericConfigureAwaitMethod, streamType, out IMethodSymbol? method) && method != null)
+
+                if (ShouldAnalyze(
+                        awaitOperation,
+                        configureAwaitMethod,
+                        genericConfigureAwaitMethod,
+                        streamType,
+                        out IInvocationOperation? invocation,
+                        out IMethodSymbol? method) &&
+                    invocation != null &&
+                    method != null)
                 {
                     DiagnosticDescriptor rule;
                     string ruleMessageMethod;
                     string ruleMessagePreferredMethod;
 
                     // Verify if the method is an undesired Async overload
-                    if (method.Equals(undesiredReadAsyncMethod) || method.Equals(undesiredReadAsyncMethodWithCancellationToken))
+                    if (method.Equals(undesiredReadAsyncMethod) ||
+                        method.Equals(undesiredReadAsyncMethodWithCancellationToken))
                     {
                         rule = PreferStreamReadAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredReadAsyncMethod.Name;
                         ruleMessagePreferredMethod = preferredReadAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                     }
-                    else if (method.Equals(undesiredWriteAsyncMethod) || method.Equals(undesiredWriteAsyncMethodWithCancellationToken))
+                    else if (method.Equals(undesiredWriteAsyncMethod) ||
+                             method.Equals(undesiredWriteAsyncMethodWithCancellationToken))
                     {
                         rule = PreferStreamWriteAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredWriteAsyncMethod.Name;
@@ -252,7 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    context.ReportDiagnostic(awaitOperation.Operation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod));
                 }
             },
             OperationKind.Await);
@@ -263,26 +265,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IMethodSymbol configureAwaitMethod,
             IMethodSymbol genericConfigureAwaitMethod,
             INamedTypeSymbol streamType,
+            out IInvocationOperation? actualInvocation,
             out IMethodSymbol? actualMethod)
         {
+            actualInvocation = null;
             actualMethod = null;
 
             // The await should have a known operation child, check its kind
-            if (!(awaitOperation.Operation is IInvocationOperation invocation))
+            if (!(awaitOperation.Operation is IInvocationOperation childOperation))
             {
                 return false;
             }
 
-            IMethodSymbol method = invocation.TargetMethod;
+            actualInvocation = childOperation;
+            IMethodSymbol method = childOperation.TargetMethod;
 
             // Check if the child operation of the await is ConfigureAwait
             // in which case we should analyze the grandchild operation
             if (method.OriginalDefinition.Equals(configureAwaitMethod) ||
                 method.OriginalDefinition.Equals(genericConfigureAwaitMethod))
             {
-                if (invocation.Instance is IInvocationOperation instanceInvocation)
+                if (childOperation.Instance is IInvocationOperation instanceOperation)
                 {
-                    method = instanceInvocation.TargetMethod;
+                    actualInvocation = instanceOperation;
+                    method = instanceOperation.TargetMethod;
                 }
                 else
                 {

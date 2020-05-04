@@ -681,6 +681,25 @@ namespace TestNamespace
                 ReferenceAssemblies = ReferenceAssemblies.NetStandard.NetStandard20
             };
             await test.RunAsync();
+
+            string csCharInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private bool TestMethod() 
+        { 
+            string str = ""This is a string"";
+            return str.IndexOf('T') == -1;
+        } 
+    } 
+}";
+            test = new VerifyCS.Test
+            {
+                TestCode = csCharInput,
+                ReferenceAssemblies = ReferenceAssemblies.NetStandard.NetStandard20
+            };
+            await test.RunAsync();
         }
 
         [Theory]
@@ -792,6 +811,80 @@ Public Class StringOf
     Class TestClass
         Public Sub AMethod(arg As String)
             If" + notString + @" arg.Contains(""This"", System.StringComparison.CurrentCulture) Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+            var testOrdinal_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                FixedState = { Sources = { vbFixOrdinal } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal_vb.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(" == ", " -1", "!")]
+        [InlineData(" >= ", " 0", "")]
+        public async Task TestFunctionParameterWithStringComparisonArgument(string operatorKind, string value, string notString)
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(string str, System.StringComparison comparison) 
+        { 
+            if ([|str.IndexOf(""This"", comparison)" + operatorKind + value + @"|])
+            {
+            }
+        } 
+    } 
+}";
+            string csFixCulture = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod(string str, System.StringComparison comparison) 
+        { 
+            if (" + notString + @"str.Contains(""This"", comparison))
+            {
+            }
+        } 
+    } 
+}";
+            var testCulture = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                FixedState = { Sources = { csFixCulture } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testCulture.RunAsync();
+
+            operatorKind = operatorKind == " == " ? " = " : operatorKind;
+            notString = notString == "!" ? " Not" : notString;
+            string vbInput = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub AMethod(arg As String, comparison As System.StringComparison)
+            If [|arg.IndexOf(""This"", comparison)" + operatorKind + value + @"|] Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+
+            string vbFixOrdinal = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub AMethod(arg As String, comparison As System.StringComparison)
+            If" + notString + @" arg.Contains(""This"", comparison) Then
 
             End If
         End Sub

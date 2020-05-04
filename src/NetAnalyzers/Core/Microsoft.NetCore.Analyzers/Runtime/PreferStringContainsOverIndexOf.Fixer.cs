@@ -121,8 +121,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     containsInvocation = generator.InvocationExpression(containsExpression, indexOfMethodArguments[0].Syntax, indexOfMethodArguments[1].Syntax);
                                 }
                             }
+                            else
+                            {
+                                containsInvocation = generator.InvocationExpression(containsExpression, indexOfMethodArguments[0].Syntax, indexOfMethodArguments[1].Syntax);
+                            }
                         }
-                        SyntaxNode newIfCondition = containsInvocation!;
+                        SyntaxNode newIfCondition = containsInvocation;
                         var rightOperand = binaryOperation.RightOperand;
                         int rightValue = (int)rightOperand.ConstantValue.Value;
                         if (rightValue == -1)

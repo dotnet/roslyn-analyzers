@@ -66,17 +66,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ParameterInfo.GetParameterInfo(stringComparisonType));
 
                 // Check that the contains methods that take 2 parameters exist
+                // string.Contains(char) is also .NETStandard2.1+
                 var stringContainsMethods = stringType
                     .GetMembers("Contains")
                     .OfType<IMethodSymbol>()
                     .WhereAsArray(s =>
-                        s.Parameters.Length == 2);
+                        s.Parameters.Length <= 2);
                 var stringAndComparisonTypeArgumentContainsMethod = stringContainsMethods.GetFirstOrDefaultMemberWithParameterInfos(
                         ParameterInfo.GetParameterInfo(stringType),
                         ParameterInfo.GetParameterInfo(stringComparisonType));
                 var charAndComparisonTypeArgumentContainsMethod = stringContainsMethods.GetFirstOrDefaultMemberWithParameterInfos(
                         ParameterInfo.GetParameterInfo(charType),
                         ParameterInfo.GetParameterInfo(stringComparisonType));
+                var charArgumentContainsMethod = stringContainsMethods.GetFirstOrDefaultMemberWithParameterInfos(
+                        ParameterInfo.GetParameterInfo(charType));
+                if (stringAndComparisonTypeArgumentContainsMethod == null ||
+                    charAndComparisonTypeArgumentContainsMethod == null ||
+                    charArgumentContainsMethod == null)
+                {
+                    return;
+                }
 
                 // Roslyn doesn't yet support "FindAllReferences" at a file/block level. So instead, find references to local variables in this block.
                 context.RegisterOperationBlockStartAction(context =>
@@ -154,7 +163,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                             var declarationGroupLocation = declarationGroupOperation.Syntax.GetLocation();
                                             if (variableInitializer.Value is IInvocationOperation invocationOperation)
                                             {
-                                                if (InvocationOperationHasTargetMethod(invocationOperation))
+                                                if (IsDesiredTargetMethod(invocationOperation.TargetMethod))
                                                 {
                                                     var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
                                                     variableNameToLocationsMap.TryAdd(variableDeclaratorOperation.Symbol.Name, locations);
@@ -167,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             else if (leftOperand is IInvocationOperation leftInvocationOperation)
                             {
                                 var blockLocationList = new List<Location> { blockLocation };
-                                if (InvocationOperationHasTargetMethod(leftInvocationOperation))
+                                if (IsDesiredTargetMethod(leftInvocationOperation.TargetMethod))
                                 {
                                     leftOperandInvocationLocations = blockLocationList;
                                 }
@@ -205,26 +214,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 });
 
-                bool InvocationOperationHasTargetMethod(IInvocationOperation invocationOperation)
-                {
-                    IMethodSymbol targetMethod = invocationOperation.TargetMethod;
-                    bool isStringArgumentIndexOfMethod = targetMethod.Equals(stringArgumentIndexOfMethod);
-                    bool isCharArgumentIndexOfMethod = targetMethod.Equals(charArgumentIndexOfMethod);
-                    bool isStringAndComparisonTypeArgumentIndexOfMethod = targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod);
-                    bool isCharAndComparisonTypeArgumentIndexOfMethod = targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod);
-
-                    if (isStringArgumentIndexOfMethod || isStringAndComparisonTypeArgumentIndexOfMethod || isCharAndComparisonTypeArgumentIndexOfMethod)
-                    {
-                        if (stringAndComparisonTypeArgumentContainsMethod == null ||
-                            charAndComparisonTypeArgumentContainsMethod == null)
-                        {
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    return isCharArgumentIndexOfMethod;
-                }
+                bool IsDesiredTargetMethod(IMethodSymbol targetMethod) =>
+                     targetMethod.Equals(stringArgumentIndexOfMethod)
+                     || targetMethod.Equals(charArgumentIndexOfMethod)
+                     || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod)
+                     || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod);
             });
         }
     }

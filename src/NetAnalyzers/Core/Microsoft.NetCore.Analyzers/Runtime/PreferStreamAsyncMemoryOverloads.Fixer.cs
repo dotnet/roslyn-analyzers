@@ -71,14 +71,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode offsetNode = invocation.Arguments[1].Syntax; // int offset
             SyntaxNode countNode = invocation.Arguments[2].Syntax;  // int count
 
-            // Generate an invocation of the AsMemory() methdo from the byte array object
-            SyntaxNode asMemoryExtensionMethodNode = generator.IdentifierName("AsMemory");
-            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferInstanceNode, asMemoryExtensionMethodNode);
+            // Generate an invocation of the AsMemory() method from the byte array object
+            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferInstanceNode, "AsMemory");
             SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(asMemoryExpressionNode, offsetNode, countNode);
 
             // Create a new async method call for the stream object, no arguments yet
-            SyntaxNode asyncMethodIdentifierNode = generator.IdentifierName(methodName);
-            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(instanceNode, asyncMethodIdentifierNode);
+            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(instanceNode, methodName);
 
             // Add the arguments to the async method call, with or without CancellationToken
             SyntaxNode newInvocationExpression;

@@ -159,18 +159,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                     {
-                        if (variableNameToOperationsMap.Count > 0)
+                        foreach (KeyValuePair<ISymbol, IInvocationOperation> variableNameAndLocation in variableNameToOperationsMap)
                         {
-                            foreach (KeyValuePair<ISymbol, IInvocationOperation> variableNameAndLocation in variableNameToOperationsMap)
+                            ISymbol variable = variableNameAndLocation.Key;
+                            if (!localsToBailOut.Contains(variable))
                             {
-                                ISymbol variable = variableNameAndLocation.Key;
-                                if (!localsToBailOut.Contains(variable))
-                                {
-                                    context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
-                                }
+                                context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
                             }
                         }
                         variableNameToOperationsMap.Free();
+                        localsToBailOut.Free();
                     }
 
                     bool IsDesiredTargetMethod(IMethodSymbol targetMethod) =>

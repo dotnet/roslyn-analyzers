@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -87,138 +86,93 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                // Roslyn doesn't yet support "FindAllReferences" at a file/block level. So instead, find references to local variables in this block.
-                context.RegisterOperationBlockStartAction(context =>
+                // Roslyn doesn't yet support "FindAllReferences" at a file/block level. So instead, find references to local int variables in this block.
+                context.RegisterOperationBlockStartAction(OnOperationBlockStart);
+
+                void OnOperationBlockStart(OperationBlockStartAnalysisContext context)
                 {
                     if (!(context.OwningSymbol is IMethodSymbol method))
                     {
                         return;
                     }
 
-                    List<Location>? leftOperandInvocationLocations = null;
-                    PooledConcurrentDictionary<string, int> variableNameToNumberOfReferences = PooledConcurrentDictionary<string, int>.GetInstance();
-                    PooledConcurrentDictionary<string, ImmutableArray<Location>> variableNameToLocationsMap = PooledConcurrentDictionary<string, ImmutableArray<Location>>.GetInstance();
+                    PooledConcurrentSet<ISymbol> localsToBailOut = PooledConcurrentSet<ISymbol>.GetInstance();
+                    PooledConcurrentDictionary<ISymbol, IInvocationOperation> variableNameToOperationsMap = PooledConcurrentDictionary<ISymbol, IInvocationOperation>.GetInstance();
 
-                    context.RegisterOperationAction(context =>
+                    context.RegisterOperationAction(PopulateLocalReferencesSet, OperationKind.LocalReference);
+
+                    context.RegisterOperationAction(AnalyzeInvocationOperation, OperationKind.Invocation);
+
+                    context.RegisterOperationBlockEndAction(OnOperationBlockEnd);
+
+                    // Local Functions
+                    void PopulateLocalReferencesSet(OperationAnalysisContext context)
                     {
                         ILocalReferenceOperation localReference = (ILocalReferenceOperation)context.Operation;
-                        ILocalSymbol symbol = localReference.Local;
-                        variableNameToNumberOfReferences.AddOrUpdate(symbol.Name, 1, (name, addValue) =>
-                        {
-                            return addValue + 1;
-                        });
-                    },
-                    OperationKind.LocalReference);
-
-                    context.RegisterOperationAction(HandleStringIndexOfMethod, OperationKind.Binary);
-
-                    context.RegisterOperationBlockEndAction(CheckInvocationOrNumberOfReferencesAndReportDiagnostic);
-
-                    void HandleStringIndexOfMethod(OperationAnalysisContext context)
-                    {
-                        IBinaryOperation blockOperation = (IBinaryOperation)context.Operation;
-                        var operatorKind = blockOperation.OperatorKind;
-                        if (operatorKind != BinaryOperatorKind.Equals && operatorKind != BinaryOperatorKind.GreaterThanOrEqual)
+                        if (localReference.Local.Type.SpecialType != SpecialType.System_Int32)
                         {
                             return;
                         }
 
-                        // Check that the right hand side is a -1(IUnary Operation) or 0(ILiteralOperation)
-                        var rightOperand = blockOperation.RightOperand;
-                        if ((rightOperand is IUnaryOperation unaryOperation || rightOperand is ILiteralOperation literalOperation) && rightOperand.ConstantValue.HasValue && rightOperand.ConstantValue.Value is int intValue && (intValue == -1 || intValue == 0))
+                        var parent = localReference.Parent;
+                        if (!(parent is IBinaryOperation binaryOperation))
                         {
-                            var leftOperand = blockOperation.LeftOperand;
-                            var blockLocation = blockOperation.Syntax.GetLocation();
-                            if (leftOperand is ILocalReferenceOperation localReferenceOperation)
-                            {
-                                var variableName = localReferenceOperation.Local;
-                                SyntaxReference declaration = variableName.DeclaringSyntaxReferences.FirstOrDefault();
-                                if (declaration is null)
-                                {
-                                    return;
-                                }
-
-                                var semanticModel = context.Operation.SemanticModel;
-                                SyntaxNode declarationNode = declaration.GetSyntax(context.CancellationToken);
-                                var operation = semanticModel.GetOperation(declarationNode, context.CancellationToken);
-                                if (operation is IVariableDeclaratorOperation variableDeclaratorOperation)
-                                {
-                                    if (variableDeclaratorOperation.Parent is IVariableDeclarationOperation variableDeclarationOperation)
-                                    {
-                                        if (variableDeclarationOperation.Parent is IVariableDeclarationGroupOperation declarationGroupOperation)
-                                        {
-                                            DataFlowAnalysis dataFlowAnalysis = semanticModel.AnalyzeDataFlow(declarationGroupOperation.Syntax);
-                                            if (dataFlowAnalysis.WrittenOutside.Contains(variableName))
-                                            {
-                                                return;
-                                            }
-
-                                            // Check that the variable is initialized to the result of string.IndexOf
-                                            IVariableInitializerOperation variableInitializer = variableDeclaratorOperation.GetVariableInitializer();
-                                            if (variableInitializer is null)
-                                            {
-                                                return;
-                                            }
-
-                                            var declarationGroupLocation = declarationGroupOperation.Syntax.GetLocation();
-                                            if (variableInitializer.Value is IInvocationOperation invocationOperation)
-                                            {
-                                                if (IsDesiredTargetMethod(invocationOperation.TargetMethod))
-                                                {
-                                                    var locations = ImmutableArray.Create(blockLocation, declarationGroupLocation);
-                                                    variableNameToLocationsMap.TryAdd(variableDeclaratorOperation.Symbol.Name, locations);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else if (leftOperand is IInvocationOperation leftInvocationOperation)
-                            {
-                                var blockLocationList = new List<Location> { blockLocation };
-                                if (IsDesiredTargetMethod(leftInvocationOperation.TargetMethod))
-                                {
-                                    leftOperandInvocationLocations = blockLocationList;
-                                }
-                            }
+                            localsToBailOut.Add(localReference.Local);
                         }
                     }
 
-                    void CheckInvocationOrNumberOfReferencesAndReportDiagnostic(OperationBlockAnalysisContext context)
+                    void AnalyzeInvocationOperation(OperationAnalysisContext context)
                     {
-                        if (leftOperandInvocationLocations != null)
+                        var invocationOperation = (IInvocationOperation)context.Operation;
+                        if (!IsDesiredTargetMethod(invocationOperation.TargetMethod))
                         {
-                            context.ReportDiagnostic(leftOperandInvocationLocations.CreateDiagnostic(Rule));
+                            return;
                         }
-                        if (variableNameToLocationsMap.Count > 0)
+
+                        var parent = invocationOperation.Parent;
+                        if (parent is IBinaryOperation blockOperation)
                         {
-                            List<Location> locations = new List<Location>();
-                            foreach (KeyValuePair<string, ImmutableArray<Location>> variableNameAndLocation in variableNameToLocationsMap)
+                            var operatorKind = blockOperation.OperatorKind;
+                            if (operatorKind != BinaryOperatorKind.Equals && operatorKind != BinaryOperatorKind.GreaterThanOrEqual)
                             {
-                                string variableName = variableNameAndLocation.Key;
-                                if (!variableNameToNumberOfReferences.TryGetValue(variableName, out int numberOfReferences))
-                                {
-                                    continue;
-                                }
+                                return;
+                            }
 
-                                if (numberOfReferences > 1)
-                                {
-                                    continue;
-                                }
-
-                                context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
+                            var rightOperand = blockOperation.RightOperand;
+                            if (rightOperand.ConstantValue.HasValue && rightOperand.ConstantValue.Value is int intValue && (intValue == -1 || intValue == 0))
+                            {
+                                context.ReportDiagnostic(blockOperation.CreateDiagnostic(Rule));
                             }
                         }
-                        variableNameToLocationsMap.Free();
+                        else if (parent is IVariableDeclaratorOperation variableDeclaratorOperation)
+                        {
+                            variableNameToOperationsMap.TryAdd(variableDeclaratorOperation.Symbol, invocationOperation);
+                        }
                     }
 
-                });
+                    void OnOperationBlockEnd(OperationBlockAnalysisContext context)
+                    {
+                        if (variableNameToOperationsMap.Count > 0)
+                        {
+                            foreach (KeyValuePair<ISymbol, IInvocationOperation> variableNameAndLocation in variableNameToOperationsMap)
+                            {
+                                ISymbol variable = variableNameAndLocation.Key;
+                                if (!localsToBailOut.Contains(variable))
+                                {
+                                    context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));
+                                }
+                            }
+                        }
+                        variableNameToOperationsMap.Free();
+                    }
 
-                bool IsDesiredTargetMethod(IMethodSymbol targetMethod) =>
-                     targetMethod.Equals(stringArgumentIndexOfMethod)
-                     || targetMethod.Equals(charArgumentIndexOfMethod)
-                     || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod)
-                     || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod);
+                    bool IsDesiredTargetMethod(IMethodSymbol targetMethod) =>
+                         targetMethod.Equals(stringArgumentIndexOfMethod)
+                         || targetMethod.Equals(charArgumentIndexOfMethod)
+                         || targetMethod.Equals(stringAndComparisonTypeArgumentIndexOfMethod)
+                         || targetMethod.Equals(charAndComparisonTypeArgumentIndexOfMethod);
+                }
+
             });
         }
     }

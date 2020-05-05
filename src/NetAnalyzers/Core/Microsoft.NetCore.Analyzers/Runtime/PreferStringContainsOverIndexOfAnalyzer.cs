@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// Prefer string.Contains over string.IndexOf when the result is compared to 1 or -1
+    /// Prefer string.Contains over string.IndexOf when the result is compared to 0 or -1
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferStringContainsOverIndexOfAnalyzer : DiagnosticAnalyzer

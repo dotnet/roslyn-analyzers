@@ -1315,7 +1315,7 @@
     <value>Remove the ToString call</value>
   </data>
   <data name="PreferStringContainsOverIndexOfDescription" xml:space="preserve">
-    <value>Calls to 'String.IndexOf' where the result is then just compared to -1 can instead be replaced by 'String.Contains'</value>
+    <value>Calls to 'String.IndexOf' where the result is compared to 0 or -1 can be replaced by 'String.Contains'</value>
   </data>
   <data name="PreferStringContainsOverIndexOfMessage" xml:space="preserve">
     <value>Use 'String.Contains' instead of 'String.IndexOf' to improve readability</value>

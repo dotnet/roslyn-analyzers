@@ -144,9 +144,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 context.ReportDiagnostic(blockOperation.CreateDiagnostic(Rule));
                             }
                         }
-                        else if (parent is IVariableDeclaratorOperation variableDeclaratorOperation)
+                        else if (parent is IVariableInitializerOperation variableInitializer)
                         {
-                            variableNameToOperationsMap.TryAdd(variableDeclaratorOperation.Symbol, invocationOperation);
+                            if (variableInitializer.Parent is IVariableDeclaratorOperation variableDeclaratorOperation)
+                            {
+                                variableNameToOperationsMap.TryAdd(variableDeclaratorOperation.Symbol, invocationOperation);
+                            }
+                            else if (variableInitializer.Parent is IVariableDeclarationOperation variableDeclarationOperation)
+                            {
+                                variableNameToOperationsMap.TryAdd(variableDeclarationOperation.Declarators[0].Symbol, invocationOperation);
+                            }
                         }
                     }
 

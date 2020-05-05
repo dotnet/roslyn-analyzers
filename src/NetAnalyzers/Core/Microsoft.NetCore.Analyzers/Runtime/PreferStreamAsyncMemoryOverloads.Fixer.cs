@@ -12,8 +12,24 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    /// <summary>
+    /// CA1835: Prefer Memory/ReadOnlyMemory overloads for Stream ReadAsync/WriteAsync methods.
+    ///
+    /// Undesired methods (available since .NET Framework 4.5):
+    ///
+    /// - Stream.WriteAsync(Byte[], Int32, Int32)
+    /// - Stream.WriteAsync(Byte[], Int32, Int32, CancellationToken)
+    /// - Stream.ReadAsync(Byte[], Int32, Int32)
+    /// - Stream.ReadAsync(Byte[], Int32, Int32, CancellationToken)
+    ///
+    /// Preferred methods (available since .NET Standard 2.1 and .NET Core 2.1):
+    ///
+    /// - Stream.WriteAsync(ReadOnlyMemory{Byte}, CancellationToken)
+    /// - Stream.ReadAsync(Memory{Byte}, CancellationToken)
+    ///
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider
+    public sealed class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);
@@ -26,35 +42,33 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Document doc = context.Document;
             CancellationToken ct = context.CancellationToken;
             SyntaxNode root = await doc.GetSyntaxRootAsync(ct).ConfigureAwait(false);
-            if (root.FindNode(context.Span) is SyntaxNode node)
+
+            if (!(root.FindNode(context.Span, getInnermostNodeForTie: true) is SyntaxNode node))
             {
-                SemanticModel model = await doc.GetSemanticModelAsync(ct).ConfigureAwait(false);
-                if (model.GetOperation(node, ct) is IInvocationOperation invocation)
-                {
-                    string methodName = invocation.TargetMethod.Name;
-
-                    string title;
-                    if (methodName == "ReadAsync")
-                    {
-                        title = MicrosoftNetCoreAnalyzersResources.PreferStreamReadAsyncMemoryOverloadsTitle;
-                    }
-                    else if (methodName == "WriteAsync")
-                    {
-                        title = MicrosoftNetCoreAnalyzersResources.PreferStreamWriteAsyncMemoryOverloadsTitle;
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            title: title,
-                            createChangedDocument: c => FixInvocation(doc, root, invocation, methodName),
-                            equivalenceKey: MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsMessage),
-                        context.Diagnostics);
-                }
+                return;
             }
+
+            SemanticModel model = await doc.GetSemanticModelAsync(ct).ConfigureAwait(false);
+
+            if (!(model.GetOperation(node, ct) is IInvocationOperation invocation))
+            {
+                return;
+            }
+
+            // Defensive check to ensure the fix is only attempted on one of the 4 specific undesired overloads
+            if (invocation.Arguments.Length < 3 || invocation.Arguments.Length > 4)
+            {
+                return;
+            }
+
+            string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
+
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: title,
+                    createChangedDocument: c => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name),
+                    equivalenceKey: title),
+                context.Diagnostics);
         }
 
         private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName)
@@ -71,18 +85,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode offsetNode = invocation.Arguments[1].Syntax; // int offset
             SyntaxNode countNode = invocation.Arguments[2].Syntax;  // int count
 
-            // Generate an invocation of the AsMemory() methdo from the byte array object
-            SyntaxNode asMemoryExtensionMethodNode = generator.IdentifierName("AsMemory");
-            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferInstanceNode, asMemoryExtensionMethodNode);
+            // Generate an invocation of the AsMemory() method from the byte array object
+            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferInstanceNode, "AsMemory");
             SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(asMemoryExpressionNode, offsetNode, countNode);
 
             // Create a new async method call for the stream object, no arguments yet
-            SyntaxNode asyncMethodIdentifierNode = generator.IdentifierName(methodName);
-            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(instanceNode, asyncMethodIdentifierNode);
+            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(instanceNode, methodName);
 
             // Add the arguments to the async method call, with or without CancellationToken
             SyntaxNode newInvocationExpression;
-            if (invocation.Arguments.Length > 3)
+            if (invocation.Arguments.Length == 4)
             {
                 newInvocationExpression = generator.InvocationExpression(
                     asyncMethodNode, asMemoryInvocationNode,
@@ -93,8 +105,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newInvocationExpression = generator.InvocationExpression(asyncMethodNode, asMemoryInvocationNode);
             }
 
-            SyntaxNode newInvocation = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression);
-            return Task.FromResult(doc.WithSyntaxRoot(newInvocation));
+            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression);
+            return Task.FromResult(doc.WithSyntaxRoot(newRoot));
         }
     }
 }

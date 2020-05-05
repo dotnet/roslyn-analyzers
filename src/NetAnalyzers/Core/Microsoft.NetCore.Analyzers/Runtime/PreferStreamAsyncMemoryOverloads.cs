@@ -37,43 +37,33 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleRead = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamReadAsyncMemoryOverloadsTitle),
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableDescriptionRead = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamReadAsyncMemoryOverloadsDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableTitleWrite = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamWriteAsyncMemoryOverloadsTitle),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-
-        private static readonly LocalizableString s_localizableDescriptionWrite = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamWriteAsyncMemoryOverloadsDescription),
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
+            nameof(MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsDescription),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor PreferStreamReadAsyncMemoryOverloadsRule = DiagnosticDescriptorHelper.Create(
                                                                                         RuleId,
-                                                                                        s_localizableTitleRead,
+                                                                                        s_localizableTitle,
                                                                                         s_localizableMessage,
                                                                                         DiagnosticCategory.Performance,
                                                                                         RuleLevel.IdeSuggestion,
-                                                                                        s_localizableDescriptionRead,
+                                                                                        s_localizableDescription,
                                                                                         isPortedFxCopRule: false,
                                                                                         isDataflowRule: false);
 
         internal static DiagnosticDescriptor PreferStreamWriteAsyncMemoryOverloadsRule = DiagnosticDescriptorHelper.Create(
                                                                                         RuleId,
-                                                                                        s_localizableTitleWrite,
+                                                                                        s_localizableTitle,
                                                                                         s_localizableMessage,
                                                                                         DiagnosticCategory.Performance,
                                                                                         RuleLevel.IdeSuggestion,
-                                                                                        s_localizableDescriptionWrite,
+                                                                                        s_localizableDescription,
                                                                                         isPortedFxCopRule: false,
                                                                                         isDataflowRule: false);
 
@@ -272,20 +262,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             actualMethod = null;
 
             // The await should have a known operation child, check its kind
-            if (!(awaitOperation.Operation is IInvocationOperation childOperation))
+            if (!(awaitOperation.Operation is IInvocationOperation awaitedInvocation))
             {
                 return false;
             }
 
-            actualInvocation = childOperation;
-            IMethodSymbol method = childOperation.TargetMethod;
+            actualInvocation = awaitedInvocation;
+            IMethodSymbol method = awaitedInvocation.TargetMethod;
 
             // Check if the child operation of the await is ConfigureAwait
             // in which case we should analyze the grandchild operation
             if (method.OriginalDefinition.Equals(configureAwaitMethod) ||
                 method.OriginalDefinition.Equals(genericConfigureAwaitMethod))
             {
-                if (childOperation.Instance is IInvocationOperation instanceOperation)
+                if (awaitedInvocation.Instance is IInvocationOperation instanceOperation)
                 {
                     actualInvocation = instanceOperation;
                     method = instanceOperation.TargetMethod;

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -61,6 +62,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
+            IArgumentOperation bufferArgumentOperation = invocation.Arguments.FirstOrDefault(a => a.Value.Type.Equals(SpecialType.System_Byte));
+            if (bufferArgumentOperation == null)
+            {
+                return;
+            }
+            IArgumentOperation offsetArgumentOperation = invocation.Arguments.FirstOrDefault(a => a.Value.Type.Equals(SpecialType.System_Int32));
+
             string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
 
             context.RegisterCodeFix(
@@ -79,9 +87,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode instanceNode = invocation.Instance.Syntax;
 
             // Need the byte array object so we can invoke its AsMemory() method
+            
             SyntaxNode bufferInstanceNode = invocation.Arguments[0].Value.Syntax; // byte[] buffer
 
-            // These arguments are not modified, just moved inside AsMemory
             SyntaxNode offsetNode = invocation.Arguments[1].Syntax; // int offset
             SyntaxNode countNode = invocation.Arguments[2].Syntax;  // int count
 

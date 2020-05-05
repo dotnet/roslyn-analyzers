@@ -14,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_Read()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System.IO;
 class C
 {
@@ -33,7 +33,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_ReadAsync_ByteMemory()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -55,7 +55,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_ReadAsync_AsMemory()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -76,7 +76,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_NoAwait_SaveAsTask()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -98,7 +98,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_FileStream_NoAwait_ReturnMethod()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -116,7 +116,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_Stream_NoAwait_VoidMethod()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -134,7 +134,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_Stream_NoAwait_VoidMethod_InvokeGetBufferMethod()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -156,7 +156,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_NoAwait_ExpressionBodyMethod()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -171,7 +171,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_ContinueWith_ConfigureAwait()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -192,7 +192,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_ContinueWith_ContinueWith_ConfigureAwait()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -213,7 +213,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_AutoCastedToMemory()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -234,7 +234,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_AutoCastedToMemory_CancellationToken()
         {
-            return AnalyzeCSAsync(@"
+            return CSharpVerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -255,7 +255,7 @@ class C
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_UnsupportedVersion()
         {
-            return AnalyzeCSUnsupportedAsync(@"
+            return CSharpVerifyAnalyzerForUnsupportedVersionAsync(@"
 using System;
 using System.IO;
 using System.Threading;
@@ -280,7 +280,7 @@ class C
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_Read()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System.IO
 Class C
     Public Sub M()
@@ -296,7 +296,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_ReadAsync_ByteMemory()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -315,7 +315,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_ReadAsync_AsMemory()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -333,7 +333,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_NoAwait_SaveAsTask()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -352,7 +352,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_FileStream_NoAwait_ReturnMethod()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -368,7 +368,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_Stream_NoAwait_VoidMethod()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -384,7 +384,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_Stream_NoAwait_VoidMethod_InvokeGetBufferMethod()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -406,7 +406,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_ContinueWith_ConfigureAwait()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -425,7 +425,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_ContinueWith_ContinueWith_ConfigureAwait()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -445,7 +445,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_AutoCastedToMemory()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -463,7 +463,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_AutoCastedToMemory_CancellationToken()
         {
-            return AnalyzeVBAsync(@"
+            return VisualBasicVerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -481,7 +481,7 @@ End Class
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_UnsupportedVersion()
         {
-            return AnalyzeVBUnsupportedAsync(@"
+            return VisualBasicVerifyAnalyzerForUnsupportedVersionAsync(@"
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -531,7 +531,7 @@ class C
     }}
 }}
             ";
-            return GetCSReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
+            return CSharpVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
         }
 
         [Theory]
@@ -564,7 +564,7 @@ class C
     }}
 }}
             ";
-            return GetCSReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 11, 19, 11, endColumn);
+            return CSharpVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 11, 19, 11, endColumn);
         }
 
         #endregion
@@ -599,7 +599,7 @@ Public Module C
     End Sub
 End Module
             ";
-            return GetVBReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
+            return VisualBasicVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
         }
 
         [Theory]
@@ -629,7 +629,7 @@ Public Module C
     End Sub
 End Module
             ";
-            return GetVBReadAsyncDiagnostic(source, originalArgs, fixedArgs, withConfigureAwait, 8, 19, 8, endColumn);
+            return VisualBasicVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 8, 19, 8, endColumn);
         }
 
         #endregion
@@ -638,27 +638,31 @@ End Module
 
         private const string AsyncMethodName = "Read";
 
-        private Task GetCSReadAsyncDiagnostic(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
+        // Verifies that the fixer generates the fixes for the specified C# diagnostic result configuration for the ReadAsync method.
+        private Task CSharpVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
         {
-            return FixCSAsync(
-                GetFormattedSourceCode(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.CSharp),
-                GetFormattedSourceCode(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.CSharp),
+            return CSharpVerifyCodeFixAsync(
+                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.CSharp),
+                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.CSharp),
                 GetCSResult(startLine, startColumn, endLine, endColumn));
         }
 
-        private Task GetVBReadAsyncDiagnostic(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
+        // Verifies that the fixer generates the fixes for the specified VB diagnostic result configuration for the ReadAsync method.
+        private Task VisualBasicVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
         {
-            return FixVBAsync(
-                GetFormattedSourceCode(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.VisualBasic),
-                GetFormattedSourceCode(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.VisualBasic),
+            return VisualBasicVerifyCodeFixAsync(
+                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.VisualBasic),
+                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.VisualBasic),
                 GetVBResult(startLine, startColumn, endLine, endColumn));
         }
 
+        // Returns a C# diagnostic result using the specified rule, lines, columns and preferred method signature for the ReadAsync method.
         private static DiagnosticResult GetCSResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetCSResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,
                 "ReadAsync", "System.IO.Stream.ReadAsync(System.Memory<byte>, System.Threading.CancellationToken)");
 
+        // Returns a VB diagnostic result using the specified rule, lines, columns and preferred method signature for the ReadAsync method.
         private static DiagnosticResult GetVBResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetVBResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,

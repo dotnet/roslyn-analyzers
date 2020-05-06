@@ -646,6 +646,94 @@ class C
                 GetCSharpResult(12, columnsBeforeStreamInvocation, 12, columnsBeforeArguments + originalArgs.Length));
         }
 
+        [Fact]
+        public Task CS_Fixer_Diagnostic_WithTrivia()
+        {
+            // Notes:
+            // The invocation trivia is not part of the squiggle
+            // If trivia is added before a method argument, it does not get saved as "leading trivia" for the argument, which is why this test only verifies argument trailing trivia
+            // Trivia from await should remain untouched
+            string originalSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        {
+            byte[] buffer = new byte[s.Length];
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            string fixedSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        {
+            byte[] buffer = new byte[s.Length];
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 254));
+        }
+
+        [Fact]
+        public Task CS_Fixer_Diagnostic_WithTrivia_WithConfigureAwait()
+        {
+            // Notes:
+            // The invocation trivia is not part of the squiggle
+            // If trivia is added before a method argument, it does not get saved as "leading trivia" for the argument, which is why this test only verifies argument trailing trivia
+            // Trivia from await and ConfigureAwait should remain untouched
+            string originalSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        {
+            byte[] buffer = new byte[s.Length];
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            string fixedSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        {
+            byte[] buffer = new byte[s.Length];
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 254));
+        }
+
         #endregion
 
         #region VB - Diagnostic
@@ -737,6 +825,96 @@ End Class
                 string.Format(originalSource, originalArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
                 string.Format(originalSource, fixedArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
                 GetVisualBasicResult(9, columnsBeforeStreamInvocation, 9, columnsBeforeArguments + originalArgs.Length));
+        }
+
+        [Fact]
+        public Task VB_Fixer_Diagnostic_WithTrivia()
+        {
+            // Notes:
+            // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
+            // - Only the last comment in the arguments section remains ("CancellationTokenComment"), the rest get discarded
+            string originalSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync( ' OpeningParenthesisComment
+                buffer, ' BufferComment
+                0, ' OffsetComment
+                buffer.Length, ' CountComment
+                New CancellationToken() ' CancellationTokenComment
+                ) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            string fixedSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetVisualBasicResult(9, 19, 14, 18));
+        }
+
+        [Fact]
+        public Task VB_Fixer_Diagnostic_WithTrivia_WithConfigureAwait()
+        {
+            // Notes:
+            // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
+            // - Only the last comment in the arguments section remains ("CancellationTokenComment"), the rest get discarded
+            string originalSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync( ' OpeningParenthesisComment
+                buffer, ' BufferComment
+                0, ' OffsetComment
+                buffer.Length, ' CountComment
+                New CancellationToken() ' CancellationTokenComment
+                ).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            string fixedSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetVisualBasicResult(9, 19, 14, 18));
         }
 
         #endregion

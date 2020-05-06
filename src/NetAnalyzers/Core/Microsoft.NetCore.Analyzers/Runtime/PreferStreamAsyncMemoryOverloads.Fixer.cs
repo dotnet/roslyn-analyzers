@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -114,15 +113,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // buffer.AsMemory(int start, int length)
             // offset should become start
             // count should become length
-            SyntaxNode namedStartNode = isOffsetNamed ? generator.Argument("start", RefKind.None, offsetValueNode) : offsetValueNode;
-            SyntaxNode namedLengthNode = isCountNamed ? generator.Argument("length", RefKind.None, countValueNode) : countValueNode;
+            SyntaxNode namedStartNode = isOffsetNamed ? generator.Argument(name: "start", RefKind.None, offsetValueNode) : offsetValueNode;
+            SyntaxNode namedLengthNode = isCountNamed ? generator.Argument(name: "length", RefKind.None, countValueNode) : countValueNode;
 
             // Generate an invocation of the AsMemory() method from the byte array object, using the correct named arguments
-            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferValueNode, "AsMemory");
-            SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(asMemoryExpressionNode, namedStartNode, namedLengthNode);
+            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferValueNode.WithoutTrivia(), memberName: "AsMemory");
+            SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(
+                asMemoryExpressionNode,
+                namedStartNode.WithTriviaFrom(offsetValueNode),
+                namedLengthNode.WithTriviaFrom(countValueNode));
 
             // Generate the new buffer argument, ensuring we include the argument name if the user originally indicated one
-            SyntaxNode namedBufferNode = isBufferNamed ? generator.Argument("buffer", RefKind.None, asMemoryInvocationNode) : asMemoryInvocationNode;
+            SyntaxNode namedBufferWithAsMemoryInvocationNode =
+                    (isBufferNamed ? generator.Argument(name: "buffer", RefKind.None, asMemoryInvocationNode) : asMemoryInvocationNode)
+                .WithTriviaFrom(bufferValueNode);
 
             // Create an async method call for the stream object with no arguments
             SyntaxNode asyncMethodNode = generator.MemberAccessExpression(streamInstanceNode, methodName);
@@ -131,84 +135,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode[] nodeArguments;
             if (cancellationTokenValueNode != null)
             {
-                SyntaxNode namedCancellationTokenNode = isCancellationTokenNamed ? generator.Argument("cancellationToken", RefKind.None, cancellationTokenValueNode) : cancellationTokenValueNode;
-                nodeArguments = new SyntaxNode[] { namedBufferNode, namedCancellationTokenNode };
+                SyntaxNode namedCancellationTokenNode = isCancellationTokenNamed ? generator.Argument(name: "cancellationToken", RefKind.None, cancellationTokenValueNode) : cancellationTokenValueNode;
+                nodeArguments = new SyntaxNode[] { namedBufferWithAsMemoryInvocationNode, namedCancellationTokenNode.WithTriviaFrom(cancellationTokenValueNode) };
             }
             else
             {
-                nodeArguments = new SyntaxNode[] { namedBufferNode };
+                nodeArguments = new SyntaxNode[] { namedBufferWithAsMemoryInvocationNode };
             }
-            SyntaxNode newInvocationExpression = generator.InvocationExpression(asyncMethodNode, nodeArguments);
+            SyntaxNode newInvocationExpression = generator.InvocationExpression(asyncMethodNode, nodeArguments).WithTriviaFrom(streamInstanceNode);
 
-            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression);
+            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression.WithTriviaFrom(invocation.Syntax));
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
-        }
-    }
-
-    [ExportCodeFixProvider(LanguageNames.CSharp)]
-    public sealed class PreferStreamAsyncMemoryOverloadsCSharpFixer : PreferStreamAsyncMemoryOverloadsFixer
-    {
-        protected override IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed)
-        {
-            isNamed = false;
-
-            // The expected position is beyond the total arguments, so we don't expect to find the argument in the array
-            if (index >= args.Length)
-            {
-                return null;
-            }
-            // If the argument in the specified index does not have a name, then it is in its expected position
-            else if (args[index].Syntax is CodeAnalysis.CSharp.Syntax.ArgumentSyntax argNode && argNode.NameColon == null)
-            {
-                return args[index];
-            }
-            // Otherwise, find it by name
-            else
-            {
-                isNamed = true;
-                return args.FirstOrDefault(argOperation =>
-                {
-                    return argOperation.Syntax is CodeAnalysis.CSharp.Syntax.ArgumentSyntax argNode &&
-                           argNode.NameColon != null &&
-                           argNode.NameColon.Name != null &&
-                           argNode.NameColon.Name.Identifier != null &&
-                           argNode.NameColon.Name.Identifier.ValueText == name;
-                });
-            }
-        }
-
-    }
-
-    [ExportCodeFixProvider(LanguageNames.VisualBasic)]
-    public sealed class PreferStreamAsyncMemoryOverloadsVisualBasicFixer : PreferStreamAsyncMemoryOverloadsFixer
-    {
-        protected override IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed)
-        {
-            isNamed = false;
-
-            // The expected position is beyond the total arguments, so we don't expect to find the argument in the array
-            if (index >= args.Length)
-            {
-                return null;
-            }
-            // If the argument in the specified index does not have a name, then it is in its expected position
-            else if (args[index].Syntax is CodeAnalysis.VisualBasic.Syntax.SimpleArgumentSyntax argNode && argNode.NameColonEquals == null)
-            {
-                return args[index];
-            }
-            // Otherwise, find it by name
-            else
-            {
-                isNamed = true;
-                return args.FirstOrDefault(argOperation =>
-                {
-                    return argOperation.Syntax is CodeAnalysis.VisualBasic.Syntax.SimpleArgumentSyntax simpleArgNode &&
-                           simpleArgNode.NameColonEquals != null &&
-                           simpleArgNode.NameColonEquals.Name != null &&
-                           simpleArgNode.NameColonEquals.Name.Identifier != null &&
-                           simpleArgNode.NameColonEquals.Name.Identifier.ValueText == name;
-                });
-            }
         }
     }
 }

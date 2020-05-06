@@ -606,6 +606,94 @@ class C
         public Task CS_Fixer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
             => CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
+        [Fact]
+        public Task CS_Fixer_Diagnostic_WithTrivia()
+        {
+            // Notes:
+            // The invocation trivia is not part of the squiggle
+            // If trivia is added before a method argument, it does not get saved as "leading trivia" for the argument, which is why this test only verifies argument trailing trivia
+            // Trivia from await should remain untouched
+            string originalSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.WriteAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            string fixedSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.WriteAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 255));
+        }
+
+        [Fact]
+        public Task CS_Fixer_Diagnostic_WithTrivia_WithConfigureAwait()
+        {
+            // Notes:
+            // The invocation trivia is not part of the squiggle
+            // If trivia is added before a method argument, it does not get saved as "leading trivia" for the argument, which is why this test only verifies argument trailing trivia
+            // Trivia from await and ConfigureAwait should remain untouched
+            string originalSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.WriteAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            string fixedSource = @"
+using System;
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.WriteAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+        }
+    }
+}
+            ";
+
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 255));
+        }
+
         #endregion
 
         #region VB - Diagnostic
@@ -670,6 +758,96 @@ End Module
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
         public Task VB_Fixer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
             => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+
+        [Fact]
+        public Task VB_Fixer_Diagnostic_WithTrivia()
+        {
+            // Notes:
+            // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
+            // - Only the last comment in the arguments section remains ("CancellationTokenComment"), the rest get discarded
+            string originalSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync( ' OpeningParenthesisComment
+                buffer, ' BufferComment
+                0, ' OffsetComment
+                buffer.Length, ' CountComment
+                New CancellationToken() ' CancellationTokenComment
+                ) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            string fixedSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetVisualBasicResult(9, 19, 14, 18));
+        }
+
+        [Fact]
+        public Task VB_Fixer_Diagnostic_WithTrivia_WithConfigureAwait()
+        {
+            // Notes:
+            // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
+            // - Only the last comment in the arguments section remains ("CancellationTokenComment"), the rest get discarded
+            string originalSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync( ' OpeningParenthesisComment
+                buffer, ' BufferComment
+                0, ' OffsetComment
+                buffer.Length, ' CountComment
+                New CancellationToken() ' CancellationTokenComment
+                ).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            string fixedSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetVisualBasicResult(9, 19, 14, 18));
+        }
 
         #endregion
 

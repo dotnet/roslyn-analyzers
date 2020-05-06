@@ -11,7 +11,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferStringContainsOverIndexOfAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-// The following pragmas be removed when the fixer is implemented. 
+// The following pragmas should be removed when the fixer is implemented. 
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters

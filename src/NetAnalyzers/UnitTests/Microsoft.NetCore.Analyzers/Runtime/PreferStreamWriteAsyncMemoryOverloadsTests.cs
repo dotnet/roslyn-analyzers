@@ -585,39 +585,39 @@ End Module
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
         public Task VB_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
-            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
         public Task VB_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
-            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
         public Task VB_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
-            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
         public Task VB_Analyzer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
-            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
 
         [Theory]
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
         public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
-            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
+            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
         public Task VB_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
-            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
+            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         #endregion
 

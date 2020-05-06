@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class PreferStreamWriteAsyncMemoryOverloadsTest : PreferStreamAsyncMemoryOverloadsTestBase
     {
-        #region C# - No diagnostic - Analyzer
+        #region C# - No diagnostic
 
         [Fact]
         public Task CS_Analyzer_NoDiagnostic_Write()
@@ -259,6 +259,33 @@ class C
         }
 
         [Fact]
+        public Task CS_Analyzer_NoDiagnostic_AwaitInvocationOutsideStreamInvocation()
+        {
+            return CSharpVerifyAnalyzerAsync(@"
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            await ProcessTask(s.WriteAsync(buffer, 0, buffer.Length, new CancellationToken())).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProcessTask(Task writeAsyncTask)
+    {
+        await writeAsyncTask.ConfigureAwait(false);
+    }
+}
+            ");
+        }
+
+        [Fact]
         public Task CS_Analyzer_NoDiagnostic_UnsupportedVersion()
         {
             return CSharpVerifyAnalyzerForUnsupportedVersionAsync(@"
@@ -281,7 +308,7 @@ class C
 
         #endregion
 
-        #region VB - No diagnostic - Analyzer
+        #region VB - No diagnostic
 
         [Fact]
         public Task VB_Analyzer_NoDiagnostic_Write()
@@ -470,6 +497,31 @@ End Class
         }
 
         [Fact]
+        public Task VB_Analyzer_NoDiagnostic_AwaitInvocationOutsideStreamInvocation()
+        {
+            return VisualBasicVerifyAnalyzerAsync(@"
+Imports System
+Imports System.IO
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
+            Dim buffer As Byte() = { &HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await ProcessTask(s.WriteAsync(buffer, 0, buffer.Length, New CancellationToken())).ConfigureAwait(False)
+        End Using
+    End Sub
+
+    Private Async Function ProcessTask(ByVal writeAsyncTask As Task) As Task
+        Await writeAsyncTask.ConfigureAwait(False)
+    End Function
+End Class
+
+            ");
+        }
+
+        [Fact]
         public Task VB_Analyzer_NoDiagnostic_UnsupportedVersion()
         {
             return VisualBasicVerifyAnalyzerForUnsupportedVersionAsync(@"
@@ -489,7 +541,7 @@ End Class
 
         #endregion
 
-        #region C# - Diagnostic - Analyzer
+        #region C# - Diagnostic
 
         private const string _sourceCSharp = @"
 using System;
@@ -520,43 +572,43 @@ class C
         [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+        public Task CS_Fixer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+        public Task CS_Fixer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
         [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
+        public Task CS_Fixer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+        public Task CS_Fixer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
         [MemberData(nameof(CSharpInlinedByteArrayTestData))]
-        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
+        public Task CS_Fixer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
             => CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(CSharpInlinedByteArrayTestData))]
-        public Task CS_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
+        public Task CS_Fixer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
             => CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         #endregion
 
-        #region VB - Diagnostic - Analyzer
+        #region VB - Diagnostic
 
         private const string _sourceVisualBasic = @"
 Imports System
@@ -584,58 +636,59 @@ End Module
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
-        public Task VB_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+        public Task VB_Fixer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
-        public Task VB_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+        public Task VB_Fixer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
-        public Task VB_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
+        public Task VB_Fixer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
-        public Task VB_Analyzer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+        public Task VB_Fixer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
 
         [Theory]
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
-        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
+        public Task VB_Fixer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
             => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
-        public Task VB_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
+        public Task VB_Fixer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
             => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         #endregion
 
         #region Helpers
 
-        private const int _columnsBeforeDiagnostic = 33;
+        private const int _columnBeforeStreamInvocation = 19;
+        private readonly int _columnsBeforeArguments = _columnBeforeStreamInvocation + " s.WriteAsync(".Length;
 
         private Task CSharpVerifyCodeFixAsync(string originalArgs, string fixedArgs, string streamTypeName, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
             CSharpVerifyExpectedCodeFixDiagnosticsAsync(
                 string.Format(_sourceCSharp, streamTypeName, GetByteArrayWithDataCSharp(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
                 string.Format(_sourceCSharp, streamTypeName, GetByteArrayWithDataCSharp(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
-                GetCSharpResult(12, 19, 12, _columnsBeforeDiagnostic + originalArgs.Length));
+                GetCSharpResult(12, _columnBeforeStreamInvocation, 12, _columnsBeforeArguments + originalArgs.Length));
 
         private Task VisualBasicVerifyCodeFixAsync(string originalArgs, string fixedArgs, string streamTypeName, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
             VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(
                 string.Format(_sourceVisualBasic, streamTypeName, GetByteArrayWithDataVisualBasic(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
                 string.Format(_sourceVisualBasic, streamTypeName, GetByteArrayWithDataVisualBasic(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
-                GetVisualBasicResult(9, 19, 9, _columnsBeforeDiagnostic + originalArgs.Length));
+                GetVisualBasicResult(9, _columnBeforeStreamInvocation, 9, _columnsBeforeArguments + originalArgs.Length));
 
         // Returns a C# diagnostic result using the specified rule, lines, columns and preferred method signature for the WriteAsync method.
         protected DiagnosticResult GetCSharpResult(int startLine, int startColumn, int endLine, int endColumn)

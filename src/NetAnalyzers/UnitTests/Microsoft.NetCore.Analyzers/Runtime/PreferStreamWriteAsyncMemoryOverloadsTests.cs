@@ -2,9 +2,12 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+
+#pragma warning disable CA1305 // Specify IFormatProvider in string.Format
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -488,7 +491,7 @@ End Class
 
         #region C# - Diagnostic - Analyzer
 
-        private const string _sourceWithPredeclaredByteArrayCSharp = @"
+        private const string _sourceCSharp = @"
 using System;
 using System.IO;
 using System.Threading;
@@ -496,311 +499,152 @@ class C
 {{
     public async void M()
     {{
-        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        using ({0} s = new FileStream(""path.txt"", FileMode.Create))
         {{
-            byte[] buffer = {{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }};
-            await {0};
+            {1}
+            await s.WriteAsync({2}){3};
         }}
     }}
 }}
             ";
 
-        [Theory]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    false, 57)]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    true, 57)]
-        [InlineData("buffer, 0, buffer.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), new CancellationToken()",
-                    false, 82)]
-        [InlineData("buffer, 0, buffer.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), new CancellationToken()",
-                    true, 82)]
-        public Task CS_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
+        public static IEnumerable<object[]> CSharpInlinedByteArrayTestData()
         {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
+            yield return new object[] { "new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8",
+                                        "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8)" };
+            yield return new object[] { "new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8, new CancellationToken()",
+                                        "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8), new CancellationToken()" };
         }
 
         [Theory]
-        [InlineData("new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8",
-                    "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8)",
-                    false, 99)]
-        [InlineData("new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8",
-                    "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8)",
-                    true, 99)]
-        [InlineData("new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8, new CancellationToken()",
-                    "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8), new CancellationToken()",
-                    false, 124)]
-        [InlineData("new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }, 0, 8, new CancellationToken()",
-                    "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8), new CancellationToken()",
-                    true, 124)]
-        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
-using System;
-using System.IO;
-using System.Threading;
-class C
-{{
-    public async void M()
-    {{
-        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
-        {{
-            await {0};
-        }}
-    }}
-}}
-            ";
-            return CSharpVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 11, 19, 11, endColumn);
-        }
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    false, 57)]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    true, 57)]
-        [InlineData("buffer, 0, buffer.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), new CancellationToken()",
-                    false, 82)]
-        [InlineData("buffer, 0, buffer.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), new CancellationToken()",
-                    true, 82)]
-        public Task CS_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
-        }
-
-        public static IEnumerable<object[]> NamedArgumentsTestData()
-        {
-            // Normal argument order is: (byte[] buffer, int offset, int count)
-            yield return new object[] { "buffer: buffer, offset: 0, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length)" };
-            yield return new object[] { "buffer: buffer, count: buffer.Length, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0)" };
-            yield return new object[] { "count: buffer.Length, offset: 0, buffer: buffer",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0)" };
-            yield return new object[] { "count: buffer.Length, buffer: buffer, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0)" };
-            yield return new object[] { "offset: 0, buffer: buffer, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length)" };
-            yield return new object[] { "offset: 0, count: buffer.Length, buffer: buffer",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length)" };
-        }
-
-        public static IEnumerable<object[]> NamedArgumentsWithCancellationTokenTestData()
-        {
-            // Normal argument order is: (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-            // Cancellation token as fourth argument
-            yield return new object[] { "buffer: buffer, offset: 0, count: buffer.Length, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "buffer: buffer, count: buffer.Length, offset: 0, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, offset: 0, buffer: buffer, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, buffer: buffer, offset: 0, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, buffer: buffer, count: buffer.Length, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, count: buffer.Length, buffer: buffer, cancellationToken: new CancellationToken()",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            // Cancellation token as third argument
-            yield return new object[] { "buffer: buffer, offset: 0, cancellationToken: new CancellationToken(), count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "buffer: buffer, count: buffer.Length, cancellationToken: new CancellationToken(), offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, offset: 0, cancellationToken: new CancellationToken(), buffer: buffer",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, buffer: buffer, cancellationToken: new CancellationToken(), offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, buffer: buffer, cancellationToken: new CancellationToken(), count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, count: buffer.Length, cancellationToken: new CancellationToken(), buffer: buffer",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            // Cancellation token as second argument
-            yield return new object[] { "buffer: buffer, cancellationToken: new CancellationToken(), offset: 0, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "buffer: buffer, cancellationToken: new CancellationToken(), count: buffer.Length, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, cancellationToken: new CancellationToken(), offset: 0, buffer: buffer",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "count: buffer.Length, cancellationToken: new CancellationToken(), buffer: buffer, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, cancellationToken: new CancellationToken(), buffer: buffer, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "offset: 0, cancellationToken: new CancellationToken(), count: buffer.Length, buffer: buffer",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            // Cancellation token as first argument
-            yield return new object[] { "cancellationToken: new CancellationToken(), buffer: buffer, offset: 0, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "cancellationToken: new CancellationToken(), buffer: buffer, count: buffer.Length, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "cancellationToken: new CancellationToken(), count: buffer.Length, offset: 0, buffer: buffer",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "cancellationToken: new CancellationToken(), count: buffer.Length, buffer: buffer, offset: 0",
-                                        "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "cancellationToken: new CancellationToken(), offset: 0, buffer: buffer, count: buffer.Length",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-            yield return new object[] { "cancellationToken: new CancellationToken(), offset: 0, count: buffer.Length, buffer: buffer",
-                                        "buffer.AsMemory(start: 0, length: buffer.Length), cancellationToken: new CancellationToken()" };
-        }
-
-        [Fact]
-        public Task Test()
-        {
-            string originalArgs = "count: buffer.Length, cancellationToken: new CancellationToken(), buffer: buffer, offset: 0";
-            string fixedArgs = "buffer.AsMemory(length: buffer.Length, start: 0), cancellationToken: new CancellationToken()";
-
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait: false, 12, 19, 12, 80);
-        }
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
-        [MemberData(nameof(NamedArgumentsTestData))]
-        public Task CS_Analyzer_Diagnostic_NamedArguments(string originalArgs, string fixedArgs)
-        {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait: false, 12, 19, 12, 80);
-        }
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(NamedArgumentsTestData))]
-        public Task CS_Analyzer_Diagnostic_NamedArguments_WithConfigureAwait(string originalArgs, string fixedArgs)
-        {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait: true, 12, 19, 12, 80);
-        }
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
-        [MemberData(nameof(NamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_NamedArguments_CancellationToken(string originalArgs, string fixedArgs)
-        {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait: false, 12, 19, 12, 124);
-        }
+        [MemberData(nameof(CSharpInlinedByteArrayTestData))]
+        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
+            => CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(NamedArgumentsWithCancellationTokenTestData))]
-        public Task CS_Analyzer_Diagnostic_NamedArguments_CancellationToken_WithConfigureAwait(string originalArgs, string fixedArgs)
-        {
-            return CSharpVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayCSharp, originalArgs, fixedArgs, withConfigureAwait: true, 12, 19, 12, 124);
-        }
+        [MemberData(nameof(CSharpInlinedByteArrayTestData))]
+        public Task CS_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
+            => CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         #endregion
 
         #region VB - Diagnostic - Analyzer
 
-        private const string _sourceWithPredeclaredByteArrayVisualBasic = @"
+        private const string _sourceVisualBasic = @"
 Imports System
 Imports System.IO
 Imports System.Threading
 Public Module C
     Public Async Sub M()
-        Using s As FileStream = New FileStream(""file.txt"", FileMode.Create)
-            Dim buffer As Byte() = {{&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}}
-            Await {0}
+        Using s As {0} = New FileStream(""file.txt"", FileMode.Create)
+            {1}
+            Await s.WriteAsync({2}){3}
         End Using
     End Sub
 End Module
             ";
 
-        [Theory]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    false, 57)]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    true, 57)]
-        [InlineData("buffer, 0, buffer.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), New CancellationToken()",
-                    false, 82)]
-        [InlineData("buffer, 0, buffer.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), New CancellationToken()",
-                    true, 82)]
-        public Task VB_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
+        public static IEnumerable<object[]> VisualBasicInlinedByteArrayTestData()
         {
-            return VisualBasicVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayVisualBasic, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
+            yield return new object[] { @"New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8",
+                                        @"(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8)" };
+            yield return new object[] { @"New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8, New CancellationToken()",
+                                        @"(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8), New CancellationToken()" };
         }
 
         [Theory]
-        [InlineData("New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8",
-                    "(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8)",
-                    false, 98)]
-        [InlineData("New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8",
-                    "(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8)",
-                    true, 98)]
-        [InlineData("New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8, New CancellationToken()",
-                    "(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8), New CancellationToken()",
-                    false, 123)]
-        [InlineData("New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}, 0, 8, New CancellationToken()",
-                    "(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8), New CancellationToken()",
-                    true, 123)]
-        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
-Imports System
-Imports System.IO
-Imports System.Threading
-Public Module C
-    Public Async Sub M()
-        Using s As FileStream = New FileStream(""file.txt"", FileMode.Create)
-            Await {0}
-        End Using
-    End Sub
-End Module
-            ";
-            return VisualBasicVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 8, 19, 8, endColumn);
-        }
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    false, 57)]
-        [InlineData("buffer, 0, buffer.Length",
-                    "buffer.AsMemory(0, buffer.Length)",
-                    true, 57)]
-        [InlineData("buffer, 0, buffer.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), New CancellationToken()",
-                    false, 82)]
-        [InlineData("buffer, 0, buffer.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, buffer.Length), New CancellationToken()",
-                    true, 82)]
-        public Task VB_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            return VisualBasicVerifyCodeFixAsync(_sourceWithPredeclaredByteArrayVisualBasic, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
-        }
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_AsStream(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+
+
+        [Theory]
+        [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
+        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs)
+            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
+        public Task VB_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs)
+            => VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "FileStream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         #endregion
 
         #region Helpers
 
-        private const string AsyncMethodName = "Write";
+        private const int _columnsBeforeDiagnostic = 33;
 
-        // Verifies that the fixer generates the fixes for the specified C# diagnostic result configuration for the WriteAsync method.
-        private Task CSharpVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
-        {
-            return CSharpVerifyCodeFixAsync(
-                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.CSharp),
-                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.CSharp),
-                GetCSResult(startLine, startColumn, endLine, endColumn));
-        }
+        private Task CSharpVerifyCodeFixAsync(string originalArgs, string fixedArgs, string streamTypeName, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
+            CSharpVerifyExpectedCodeFixDiagnosticsAsync(
+                string.Format(_sourceCSharp, streamTypeName, GetByteArrayWithDataCSharp(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
+                string.Format(_sourceCSharp, streamTypeName, GetByteArrayWithDataCSharp(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
+                GetCSharpResult(12, 19, 12, _columnsBeforeDiagnostic + originalArgs.Length));
 
-        // Verifies that the fixer generates the fixes for the specified VB diagnostic result configuration for the WriteAsync method.
-        private Task VisualBasicVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
-        {
-            return VisualBasicVerifyCodeFixAsync(
-                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.VisualBasic),
-                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.VisualBasic),
-                GetVBResult(startLine, startColumn, endLine, endColumn));
-        }
+        private Task VisualBasicVerifyCodeFixAsync(string originalArgs, string fixedArgs, string streamTypeName, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
+            VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(
+                string.Format(_sourceVisualBasic, streamTypeName, GetByteArrayWithDataVisualBasic(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
+                string.Format(_sourceVisualBasic, streamTypeName, GetByteArrayWithDataVisualBasic(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
+                GetVisualBasicResult(9, 19, 9, _columnsBeforeDiagnostic + originalArgs.Length));
 
         // Returns a C# diagnostic result using the specified rule, lines, columns and preferred method signature for the WriteAsync method.
-        protected static DiagnosticResult GetCSResult(int startLine, int startColumn, int endLine, int endColumn)
+        protected DiagnosticResult GetCSharpResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetCSResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamWriteAsyncMemoryOverloadsRule,
                 "WriteAsync", "System.IO.Stream.WriteAsync(System.ReadOnlyMemory<byte>, System.Threading.CancellationToken)");
 
         // Returns a VB diagnostic result using the specified rule, lines, columns and preferred method signature for the WriteAsync method.
-        protected static DiagnosticResult GetVBResult(int startLine, int startColumn, int endLine, int endColumn)
+        protected DiagnosticResult GetVisualBasicResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetVBResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamWriteAsyncMemoryOverloadsRule,
                 "WriteAsync", "System.IO.Stream.WriteAsync(System.ReadOnlyMemory(Of Byte), System.Threading.CancellationToken)");

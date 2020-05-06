@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,8 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// - Stream.ReadAsync(Memory{Byte}, CancellationToken)
     ///
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider
+    public abstract class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);
@@ -62,59 +60,155 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            IArgumentOperation bufferArgumentOperation = invocation.Arguments.FirstOrDefault(a => a.Value.Type.Equals(SpecialType.System_Byte));
-            if (bufferArgumentOperation == null)
+            IArgumentOperation? bufferOperation = GetArgumentByPositionOrName(invocation.Arguments, 0, "buffer", out bool isBufferNamed);
+            if (bufferOperation == null)
             {
                 return;
             }
-            IArgumentOperation offsetArgumentOperation = invocation.Arguments.FirstOrDefault(a => a.Value.Type.Equals(SpecialType.System_Int32));
+
+            IArgumentOperation? offsetOperation = GetArgumentByPositionOrName(invocation.Arguments, 1, "offset", out bool isOffsetNamed);
+            if (offsetOperation == null)
+            {
+                return;
+            }
+
+            IArgumentOperation? countOperation = GetArgumentByPositionOrName(invocation.Arguments, 2, "count", out bool isCountNamed);
+            if (countOperation == null)
+            {
+                return;
+            }
+
+            // No nullcheck for this, because there is an overload that may not contain it
+            IArgumentOperation? cancellationTokenOperation = GetArgumentByPositionOrName(invocation.Arguments, 3, "cancellationToken", out bool isCancellationTokenNamed);
 
             string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
+
+            Task<Document> fixInvocation = FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
+                                                         bufferOperation.Value.Syntax, isBufferNamed,
+                                                         offsetOperation.Value.Syntax, isOffsetNamed,
+                                                         countOperation.Value.Syntax, isCountNamed,
+                                                         cancellationTokenOperation?.Value.Syntax, isCancellationTokenNamed);
 
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedDocument: c => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name),
+                    createChangedDocument: c => fixInvocation,
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName)
+        // Checks if the argument in the specified index has a name. If it doesn't, returns that arguments. If it does, then looks for the argument using the specified name, and returns it, or null if not found.
+        protected abstract IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed);
+
+        private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName,
+            SyntaxNode bufferValueNode, bool isBufferNamed,
+            SyntaxNode offsetValueNode, bool isOffsetNamed,
+            SyntaxNode countValueNode, bool isCountNamed,
+            SyntaxNode? cancellationTokenValueNode, bool isCancellationTokenNamed)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
             // The stream object
-            SyntaxNode instanceNode = invocation.Instance.Syntax;
+            SyntaxNode streamInstanceNode = invocation.Instance.Syntax;
 
-            // Need the byte array object so we can invoke its AsMemory() method
-            
-            SyntaxNode bufferInstanceNode = invocation.Arguments[0].Value.Syntax; // byte[] buffer
+            // buffer.AsMemory(int start, int length)
+            // offset should become start
+            // count should become length
+            SyntaxNode namedStartNode = isOffsetNamed ? generator.Argument("start", RefKind.None, offsetValueNode) : offsetValueNode;
+            SyntaxNode namedLengthNode = isCountNamed ? generator.Argument("length", RefKind.None, countValueNode) : countValueNode;
 
-            SyntaxNode offsetNode = invocation.Arguments[1].Syntax; // int offset
-            SyntaxNode countNode = invocation.Arguments[2].Syntax;  // int count
+            // Generate an invocation of the AsMemory() method from the byte array object, using the correct named arguments
+            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferValueNode, "AsMemory");
+            SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(asMemoryExpressionNode, namedStartNode, namedLengthNode);
 
-            // Generate an invocation of the AsMemory() method from the byte array object
-            SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferInstanceNode, "AsMemory");
-            SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(asMemoryExpressionNode, offsetNode, countNode);
+            // Generate the new buffer argument, ensuring we include the argument name if the user originally indicated one
+            SyntaxNode namedBufferNode = isBufferNamed ? generator.Argument("buffer", RefKind.None, asMemoryInvocationNode) : asMemoryInvocationNode;
 
-            // Create a new async method call for the stream object, no arguments yet
-            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(instanceNode, methodName);
+            // Create an async method call for the stream object with no arguments
+            SyntaxNode asyncMethodNode = generator.MemberAccessExpression(streamInstanceNode, methodName);
 
             // Add the arguments to the async method call, with or without CancellationToken
-            SyntaxNode newInvocationExpression;
-            if (invocation.Arguments.Length == 4)
+            SyntaxNode[] nodeArguments;
+            if (cancellationTokenValueNode != null)
             {
-                newInvocationExpression = generator.InvocationExpression(
-                    asyncMethodNode, asMemoryInvocationNode,
-                    invocation.Arguments[3].Syntax /* CancellationToken */);
+                SyntaxNode namedCancellationTokenNode = isCancellationTokenNamed ? generator.Argument("cancellationToken", RefKind.None, cancellationTokenValueNode) : cancellationTokenValueNode;
+                nodeArguments = new SyntaxNode[] { namedBufferNode, namedCancellationTokenNode };
             }
             else
             {
-                newInvocationExpression = generator.InvocationExpression(asyncMethodNode, asMemoryInvocationNode);
+                nodeArguments = new SyntaxNode[] { namedBufferNode };
             }
+            SyntaxNode newInvocationExpression = generator.InvocationExpression(asyncMethodNode, nodeArguments);
 
             SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression);
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
+        }
+    }
+
+    [ExportCodeFixProvider(LanguageNames.CSharp)]
+    public sealed class PreferStreamAsyncMemoryOverloadsCSharpFixer : PreferStreamAsyncMemoryOverloadsFixer
+    {
+        protected override IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed)
+        {
+            isNamed = false;
+
+            // The expected position is beyond the total arguments, so we don't expect to find the argument in the array
+            if (index >= args.Length)
+            {
+                return null;
+            }
+            // If the argument in the specified index does not have a name, then it is in its expected position
+            else if (args[index].Syntax is CodeAnalysis.CSharp.Syntax.ArgumentSyntax argNode && argNode.NameColon == null)
+            {
+                return args[index];
+            }
+            // Otherwise, find it by name
+            else
+            {
+                isNamed = true;
+                return args.FirstOrDefault(argOperation =>
+                {
+                    return argOperation.Syntax is CodeAnalysis.CSharp.Syntax.ArgumentSyntax argNode &&
+                           argNode.NameColon != null &&
+                           argNode.NameColon.Name != null &&
+                           argNode.NameColon.Name.Identifier != null &&
+                           argNode.NameColon.Name.Identifier.ValueText == name;
+                });
+            }
+        }
+
+    }
+
+    [ExportCodeFixProvider(LanguageNames.VisualBasic)]
+    public sealed class PreferStreamAsyncMemoryOverloadsVisualBasicFixer : PreferStreamAsyncMemoryOverloadsFixer
+    {
+        protected override IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed)
+        {
+            isNamed = false;
+
+            // The expected position is beyond the total arguments, so we don't expect to find the argument in the array
+            if (index >= args.Length)
+            {
+                return null;
+            }
+            // If the argument in the specified index does not have a name, then it is in its expected position
+            else if (args[index].Syntax is CodeAnalysis.VisualBasic.Syntax.SimpleArgumentSyntax argNode && argNode.NameColonEquals == null)
+            {
+                return args[index];
+            }
+            // Otherwise, find it by name
+            else
+            {
+                isNamed = true;
+                return args.FirstOrDefault(argOperation =>
+                {
+                    return argOperation.Syntax is CodeAnalysis.VisualBasic.Syntax.SimpleArgumentSyntax simpleArgNode &&
+                           simpleArgNode.NameColonEquals != null &&
+                           simpleArgNode.NameColonEquals.Name != null &&
+                           simpleArgNode.NameColonEquals.Name.Identifier != null &&
+                           simpleArgNode.NameColonEquals.Name.Identifier.ValueText == name;
+                });
+            }
         }
     }
 }

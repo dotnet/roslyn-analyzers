@@ -222,6 +222,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     DiagnosticDescriptor rule;
                     string ruleMessageMethod;
                     string ruleMessagePreferredMethod;
+                    string ruleMessageMemoryType;
 
                     // Verify if the method is an undesired Async overload
                     if (method.Equals(undesiredReadAsyncMethod) ||
@@ -230,6 +231,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         rule = PreferStreamReadAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredReadAsyncMethod.Name;
                         ruleMessagePreferredMethod = preferredReadAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessageMemoryType = memoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                     }
                     else if (method.Equals(undesiredWriteAsyncMethod) ||
                              method.Equals(undesiredWriteAsyncMethodWithCancellationToken))
@@ -237,6 +239,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         rule = PreferStreamWriteAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredWriteAsyncMethod.Name;
                         ruleMessagePreferredMethod = preferredWriteAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessageMemoryType = readOnlyMemoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                     }
                     else
                     {
@@ -244,7 +247,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod, ruleMessageMemoryType));
                 }
             },
             OperationKind.Await);

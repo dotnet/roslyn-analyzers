@@ -1,9 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+
+#pragma warning disable CA1305 // Specify IFormatProvider in string.Format
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -500,22 +504,7 @@ End Class
 
         #region C# - Diagnostic - Analyzer
 
-        [Theory]
-        [InlineData("buffer, 0, (int)s.Length",
-                    "buffer.AsMemory(0, (int)s.Length)",
-                    false, 56)]
-        [InlineData("buffer, 0, (int)s.Length",
-                    "buffer.AsMemory(0, (int)s.Length)",
-                    true, 56)]
-        [InlineData("buffer, 0, (int)s.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, (int)s.Length), new CancellationToken()",
-                    false, 81)]
-        [InlineData("buffer, 0, (int)s.Length, new CancellationToken()",
-                    "buffer.AsMemory(0, (int)s.Length), new CancellationToken()",
-                    true, 81)]
-        public Task CS_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
+        private const string _sourceCSharp = @"
 using System;
 using System.IO;
 using System.Threading;
@@ -523,147 +512,123 @@ class C
 {{
     public async void M()
     {{
-        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
         {{
-            byte[] buffer = new byte[s.Length];
-            await {0};
+            {0}
+            await s.ReadAsync({1}){2};
         }}
     }}
 }}
             ";
-            return CSharpVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 12, 19, 12, endColumn);
+
+        public static IEnumerable<object[]> CSharpInlineByteArrayTestData()
+        {
+            yield return new object[] { "new byte[s.Length], 0, (int)s.Length",
+                                        "(new byte[s.Length]).AsMemory(0, (int)s.Length)" };
+            yield return new object[] { "new byte[s.Length], 0, (int)s.Length, new CancellationToken()",
+                                        "(new byte[s.Length]).AsMemory(0, (int)s.Length), new CancellationToken()" };
         }
 
         [Theory]
-        [InlineData("new byte[s.Length], 0, (int)s.Length",
-                    "(new byte[s.Length]).AsMemory(0, (int)s.Length)",
-                    false, 68)]
-        [InlineData("new byte[s.Length], 0, (int)s.Length",
-                    "(new byte[s.Length]).AsMemory(0, (int)s.Length)",
-                    true, 68)]
-        [InlineData("new byte[s.Length], 0, (int)s.Length, new CancellationToken()",
-                    "(new byte[s.Length]).AsMemory(0, (int)s.Length), new CancellationToken()",
-                    false, 93)]
-        [InlineData("new byte[s.Length], 0, (int)s.Length, new CancellationToken()",
-                    "(new byte[s.Length]).AsMemory(0, (int)s.Length), new CancellationToken()",
-                    true, 93)]
-        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
-using System;
-using System.IO;
-using System.Threading;
-class C
-{{
-    public async void M()
-    {{
-        using (FileStream s = File.Open(""file.txt"", FileMode.Open))
-        {{
-            await {0};
-        }}
-    }}
-}}
-            ";
-            return CSharpVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 11, 19, 11, endColumn);
-        }
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
+
+        [Theory]
+        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        public Task CS_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
+
+        [Theory]
+        [MemberData(nameof(CSharpInlineByteArrayTestData))]
+        public Task CS_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
+
+        [Theory]
+        [MemberData(nameof(CSharpInlineByteArrayTestData))]
+        public Task CS_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         #endregion
 
         #region VB - Diagnostic - Analyzer
 
-        [Theory]
-        [InlineData("buffer, 0, s.Length",
-                    "buffer.AsMemory(0, s.Length)",
-                    false, 51)]
-        [InlineData("buffer, 0, s.Length",
-                    "buffer.AsMemory(0, s.Length)",
-                    true, 51)]
-        [InlineData("buffer, 0, s.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, s.Length), New CancellationToken()",
-                    false, 76)]
-        [InlineData("buffer, 0, s.Length, New CancellationToken()",
-                    "buffer.AsMemory(0, s.Length), New CancellationToken()",
-                    true, 76)]
-        public Task VB_Analyzer_Diagnostic_VarByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
+        private const string _sourceVisualBasic = @"
 Imports System
 Imports System.IO
 Imports System.Threading
 Public Module C
     Public Async Sub M()
         Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Dim buffer As Byte() = New Byte(s.Length - 1) {{}}
-            Await {0}
+            {0}
+            Await s.ReadAsync({1}){2}
         End Using
     End Sub
 End Module
             ";
-            return VisualBasicVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 9, 19, 9, endColumn);
+
+        public static IEnumerable<object[]> VisualBasicInlineByteArrayTestData()
+        {
+            yield return new object[] { @"New Byte(s.Length - 1) {}, 0, s.Length",
+                                        @"(New Byte(s.Length - 1) {}).AsMemory(0, s.Length)" };
+            yield return new object[] { @"New Byte(s.Length - 1) {}, 0, s.Length, New CancellationToken()",
+                                        @"(New Byte(s.Length - 1) {}).AsMemory(0, s.Length), New CancellationToken()" };
         }
 
         [Theory]
-        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length",
-                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length)",
-                    false, 70)]
-        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length",
-                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length)",
-                    true, 70)]
-        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length, New CancellationToken()",
-                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length), New CancellationToken()",
-                    false, 95)]
-        [InlineData("New Byte(s.Length - 1) {}, 0, s.Length, New CancellationToken()",
-                    "(New Byte(s.Length - 1) {}).AsMemory(0, s.Length), New CancellationToken()",
-                    true, 95)]
-        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs, bool withConfigureAwait, int endColumn)
-        {
-            string source = @"
-Imports System
-Imports System.IO
-Imports System.Threading
-Public Module C
-    Public Async Sub M()
-        Using s As FileStream = File.Open(""file.txt"", FileMode.Open)
-            Await {0}
-        End Using
-    End Sub
-End Module
-            ";
-            return VisualBasicVerifyCodeFixAsync(source, originalArgs, fixedArgs, withConfigureAwait, 8, 19, 8, endColumn);
-        }
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        public Task VB_Analyzer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicInlineByteArrayTestData))]
+        public Task VB_Analyzer_Diagnostic_InlineByteArray(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
+
+        [Theory]
+        [MemberData(nameof(VisualBasicInlineByteArrayTestData))]
+        public Task VB_Analyzer_Diagnostic_InlineByteArray_WithConfigureAwait(string originalArgs, string fixedArgs) =>
+            VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         #endregion
 
         #region Helpers
 
-        private const string AsyncMethodName = "Read";
+        private const int _columnsBeforeDiagnostic = 32;
 
-        // Verifies that the fixer generates the fixes for the specified C# diagnostic result configuration for the ReadAsync method.
-        private Task CSharpVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
-        {
-            return CSharpVerifyCodeFixAsync(
-                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.CSharp),
-                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.CSharp),
-                GetCSResult(startLine, startColumn, endLine, endColumn));
-        }
+        private Task CSharpVerifyCodeFixAsync(string originalArgs, string fixedArgs, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
+            CSharpVerifyExpectedCodeFixDiagnosticsAsync(
+                string.Format(_sourceCSharp, GetByteArrayWithoutDataCSharp(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
+                string.Format(_sourceCSharp, GetByteArrayWithoutDataCSharp(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitCSharp(isEmptyConfigureAwait)),
+                GetCSharpResult(12, 19, 12, _columnsBeforeDiagnostic + originalArgs.Length));
 
-        // Verifies that the fixer generates the fixes for the specified VB diagnostic result configuration for the ReadAsync method.
-        private Task VisualBasicVerifyCodeFixAsync(string source, string originalArgs, string fixedArgs, bool withConfigureAwait, int startLine, int startColumn, int endLine, int endColumn)
-        {
-            return VisualBasicVerifyCodeFixAsync(
-                GetSourceCodeForInvocation(source, AsyncMethodName, originalArgs, withConfigureAwait, LanguageNames.VisualBasic),
-                GetSourceCodeForInvocation(source, AsyncMethodName, fixedArgs, withConfigureAwait, LanguageNames.VisualBasic),
-                GetVBResult(startLine, startColumn, endLine, endColumn));
-        }
+        private Task VisualBasicVerifyCodeFixAsync(string originalArgs, string fixedArgs, bool isEmptyByteDeclaration, bool isEmptyConfigureAwait) =>
+            VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(
+                string.Format(_sourceVisualBasic, GetByteArrayWithoutDataVisualBasic(isEmptyByteDeclaration), originalArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
+                string.Format(_sourceVisualBasic, GetByteArrayWithoutDataVisualBasic(isEmptyByteDeclaration), fixedArgs, GetConfigureAwaitVisualBasic(isEmptyConfigureAwait)),
+                GetVisualBasicResult(9, 19, 9, _columnsBeforeDiagnostic + originalArgs.Length));
 
         // Returns a C# diagnostic result using the specified rule, lines, columns and preferred method signature for the ReadAsync method.
-        private static DiagnosticResult GetCSResult(int startLine, int startColumn, int endLine, int endColumn)
+        private DiagnosticResult GetCSharpResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetCSResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,
                 "ReadAsync", "System.IO.Stream.ReadAsync(System.Memory<byte>, System.Threading.CancellationToken)");
 
         // Returns a VB diagnostic result using the specified rule, lines, columns and preferred method signature for the ReadAsync method.
-        private static DiagnosticResult GetVBResult(int startLine, int startColumn, int endLine, int endColumn)
+        private DiagnosticResult GetVisualBasicResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetVBResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamReadAsyncMemoryOverloadsRule,
                 "ReadAsync", "System.IO.Stream.ReadAsync(System.Memory(Of Byte), System.Threading.CancellationToken)");

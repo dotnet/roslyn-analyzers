@@ -39,8 +39,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ["Cast"] = "System.Linq.Enumerable.Cast`1",
         }.ToImmutableDictionary();
 
-        public static ImmutableArray<string> ToOfTypeMethodNames => OfTypeMetadataNames.Keys.ToImmutableArray();
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
@@ -50,9 +48,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                // var compilation = compilationStartContext.Compilation;
-                //  var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
-
                 var enumerableType = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
                 var genericIEnumerableType = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
 
@@ -60,7 +55,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     return;
                 }
-
 
                 compilationStartContext.RegisterOperationAction(operationContext =>
                 {
@@ -77,8 +71,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var argumentsToSkip = invocation.IsExtensionMethodAndHasNoInstance() ? 1 : 0;
-                    if (invocation.Arguments.Skip(argumentsToSkip).Any(arg => arg.ArgumentKind == ArgumentKind.Explicit))
+                    var numberOfArguments = invocation.IsExtensionMethodAndHasNoInstance() ? 1 : 0;
+                    if (!invocation.Arguments.HasExactly(numberOfArguments))
                     {
                         return;
                     }
@@ -92,6 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
+                    // should explicit conversion supress?
                     //if (!conversionOperation.IsImplicit)
                     //return;
 
@@ -102,13 +97,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     var castFrom = ienumerable.TypeArguments.Single();
+                    // what if this is alias or type param?
 
                     if (castFrom.TypeKind == TypeKind.Interface)
                         return;
 
                     var castToType = invocation.TargetMethod.TypeArguments.Single();
+                    // what if this is alias or type param?
 
-                    if (castToType.TypeKind == TypeKind.Interface && !castFrom.IsSealed)
+                    if (castToType.OriginalDefinition.TypeKind == TypeKind.Interface
+                    && !castFrom.IsSealed
+                    && castFrom.OriginalDefinition.IsExternallyVisible()
+                    && castToType.OriginalDefinition.IsExternallyVisible()
+                    )
                     {
                         return;
                     }
@@ -123,7 +124,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.MetadataName, castToType.MetadataName));
+                    operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.ToDisplayString(), castToType.ToDisplayString()));
                 }, OperationKind.Invocation);
             });
         }

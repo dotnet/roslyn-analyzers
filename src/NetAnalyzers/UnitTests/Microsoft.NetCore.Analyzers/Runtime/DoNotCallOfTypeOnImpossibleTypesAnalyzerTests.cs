@@ -47,7 +47,7 @@ End Interface
 Class Fruit
 End Class
 
-Class Orange
+Public Class Orange
     Inherits Fruit
 End Class
 
@@ -71,31 +71,31 @@ Module M
         Dim g = (New Object(){}).OfType(Of Orange)
         Dim h = (New Object(){}).OfType(Of IApple)
         Dim i = (New Object(){}).OfType(Of Apple)
-        Dim i = (New Object(){}).OfType(Of Salad)
+        Dim z1 = (New Object(){}).OfType(Of Salad)
 
         Dim j = (New Fruit(){}).OfType(Of Fruit)
         Dim k = (New Fruit(){}).OfType(Of Orange)
         Dim l = (New Fruit(){}).OfType(Of IApple)
         Dim m = (New Fruit(){}).OfType(Of Apple)
-        Dim i = (New Fruit(){}).OfType(Of Salad)
+        Dim z2 = (New Fruit(){}).OfType(Of Salad)
 
         Dim n = (New Orange(){}).OfType(Of Fruit)
         Dim o = (New Orange(){}).OfType(Of Orange)
         Dim p = (New Orange(){}).OfType(Of IApple)
         Dim q = (New Orange(){}).OfType(Of Apple)
-        Dim i = (New Orange(){}).OfType(Of Salad)
+        Dim z3 = (New Orange(){}).OfType(Of Salad)
         
         Dim r = (New IApple(){}).OfType(Of Fruit)
         Dim s = (New IApple(){}).OfType(Of Orange)
         Dim t = (New IApple(){}).OfType(Of IApple)
         Dim u = (New IApple(){}).OfType(Of Apple)
-        Dim i = (New IApple(){}).OfType(Of Salad)
+        Dim z4 = (New IApple(){}).OfType(Of Salad)
         
         Dim v = (New Apple(){}).OfType(Of Fruit)
         Dim w = (New Apple(){}).OfType(Of Orange)
         Dim x = (New Apple(){}).OfType(Of IApple)
         Dim y = (New Apple(){}).OfType(Of Apple)
-        Dim i = (New Apple(){}).OfType(Of Salad)
+        Dim z5 = (New Apple(){}).OfType(Of Salad)
 	End Sub
 End Module
 ",

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -88,6 +87,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 // Roslyn doesn't yet support "FindAllReferences" at a file/block level. So instead, find references to local int variables in this block.
                 context.RegisterOperationBlockStartAction(OnOperationBlockStart);
+                return;
 
                 void OnOperationBlockStart(OperationBlockStartAnalysisContext context)
                 {
@@ -96,14 +96,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    PooledConcurrentSet<ISymbol> localsToBailOut = PooledConcurrentSet<ISymbol>.GetInstance();
-                    PooledConcurrentDictionary<ISymbol, IInvocationOperation> variableNameToOperationsMap = PooledConcurrentDictionary<ISymbol, IInvocationOperation>.GetInstance();
+                    // Algorithm:
+                    // We aim to change string.IndexOf -> string.Contains
+                    // 1. We register 1 callback for invocations of IndexOf.
+                    //      1a. Check if invocation.Parent is a binary operation we care about (string.IndexOf >= 0 OR string.IndexOf == -1). If so, report a diagnostic and return from the callback.
+                    //      1b. Otherwise, check if invocation.Parent is a variable declarator. If so, add the invocation as a potential violation to track into variableNameToOperationsMap.
+                    // 2. We register another callback for local references
+                    //      2a. If the local reference is not a type int, bail out.
+                    //      2b. If the local reference operation's parent is not a binary operation, add it to "localsToBailOut".
+                    // 3. In an operation block end, we check if entries in "variableNameToOperationsMap" exist in "localToBailOut". If an entry is NOT present, we report a diagnostic at that invocation.
+                    PooledConcurrentSet<ILocalSymbol> localsToBailOut = PooledConcurrentSet<ILocalSymbol>.GetInstance();
+                    PooledConcurrentDictionary<ILocalSymbol, IInvocationOperation> variableNameToOperationsMap = PooledConcurrentDictionary<ILocalSymbol, IInvocationOperation>.GetInstance();
 
                     context.RegisterOperationAction(PopulateLocalReferencesSet, OperationKind.LocalReference);
 
                     context.RegisterOperationAction(AnalyzeInvocationOperation, OperationKind.Invocation);
 
                     context.RegisterOperationBlockEndAction(OnOperationBlockEnd);
+
+                    return;
 
                     // Local Functions
                     void PopulateLocalReferencesSet(OperationAnalysisContext context)
@@ -130,18 +141,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                         var parent = invocationOperation.Parent;
-                        if (parent is IBinaryOperation blockOperation)
+                        if (parent is IBinaryOperation binaryOperation)
                         {
-                            var operatorKind = blockOperation.OperatorKind;
+                            var operatorKind = binaryOperation.OperatorKind;
                             if (operatorKind != BinaryOperatorKind.Equals && operatorKind != BinaryOperatorKind.GreaterThanOrEqual)
                             {
                                 return;
                             }
 
-                            var rightOperand = blockOperation.RightOperand;
-                            if (rightOperand.ConstantValue.HasValue && rightOperand.ConstantValue.Value is int intValue && (intValue == -1 || intValue == 0))
+                            var otherOperand = binaryOperation.LeftOperand is IInvocationOperation ? binaryOperation.RightOperand : binaryOperation.LeftOperand;
+                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue && (intValue == -1 || intValue == 0))
                             {
-                                context.ReportDiagnostic(blockOperation.CreateDiagnostic(Rule));
+                                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
                             }
                         }
                         else if (parent is IVariableInitializerOperation variableInitializer)
@@ -150,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 variableNameToOperationsMap.TryAdd(variableDeclaratorOperation.Symbol, invocationOperation);
                             }
-                            else if (variableInitializer.Parent is IVariableDeclarationOperation variableDeclarationOperation)
+                            else if (variableInitializer.Parent is IVariableDeclarationOperation variableDeclarationOperation && variableDeclarationOperation.Declarators.Length == 1)
                             {
                                 variableNameToOperationsMap.TryAdd(variableDeclarationOperation.Declarators[0].Symbol, invocationOperation);
                             }
@@ -159,9 +170,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                     {
-                        foreach (KeyValuePair<ISymbol, IInvocationOperation> variableNameAndLocation in variableNameToOperationsMap)
+                        foreach (var variableNameAndLocation in variableNameToOperationsMap)
                         {
-                            ISymbol variable = variableNameAndLocation.Key;
+                            ILocalSymbol variable = variableNameAndLocation.Key;
                             if (!localsToBailOut.Contains(variable))
                             {
                                 context.ReportDiagnostic(variableNameAndLocation.Value.CreateDiagnostic(Rule));

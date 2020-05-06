@@ -35,7 +35,6 @@ namespace TestNamespace
             int index = [|str.IndexOf(" + startQuote + input + endQuote + @")|];
             if (index" + operatorKind + value + @")
             {
-
             }
         } 
     } 
@@ -199,12 +198,8 @@ namespace TestNamespace
         { 
             const string str = ""This is a string"";
             int index1 = [|str.IndexOf(" + startQuote + input + endQuote + @")|];
-            if (index1 == -1)
-            {
-
-            }
             int index2 = [|str.IndexOf(" + startQuote + input + endQuote + @")|];
-            if (index2 == -1)
+            if (index2 == -1 || -1 == index1)
             {
 
             }
@@ -233,11 +228,8 @@ Public Class StringOf
         Public Sub Main()
             Dim Str As String = ""This is a statement""
             Dim index1 As Integer = [|Str.IndexOf(" + startQuote + input + startQuote + vbCharLiteral + stringComparison + @")|]
-            If index1 = -1 Then
-
-            End If
             Dim index2 As Integer = [|Str.IndexOf(" + startQuote + input + startQuote + vbCharLiteral + stringComparison + @")|]
-            If index2 = -1 Then
+            If index2 = -1 OR -1 = index1 Then
 
             End If
             If [|Str.IndexOf(" + startQuote + input + startQuote + vbCharLiteral + stringComparison + @") = -1|] Then
@@ -314,7 +306,7 @@ End Class
         [Theory]
         [InlineData("This", "This", false)]
         [InlineData("a", "a", true)]
-        public async Task TestLeftOperandInvocation(string input, string fix, bool isCharTest)
+        public async Task TestLeftAndRightOperandInvocations(string input, string fix, bool isCharTest)
         {
             string startQuote = isCharTest ? "'" : "\"";
             string endQuote = isCharTest ? "'" : "\", System.StringComparison.Ordinal";
@@ -327,6 +319,10 @@ namespace TestNamespace
         { 
             const string str = ""This is a string"";
             if ([|str.IndexOf(" + startQuote + input + endQuote + @") == -1|])
+            {
+
+            }
+            if ([|-1 == str.IndexOf(" + startQuote + input + endQuote + @")|])
             {
 
             }
@@ -350,6 +346,9 @@ Public Class StringOf
         Public Sub Main()
             Dim Str As String = ""This is a statement""
             If [|Str.IndexOf(" + startQuote + input + startQuote + vbCharLiteral + stringComparison + @") = -1|] Then
+
+            End If
+            If [|-1 = Str.IndexOf(" + startQuote + input + startQuote + vbCharLiteral + stringComparison + @")|] Then
 
             End If
         End Sub
@@ -397,7 +396,12 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(csInput);
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal.RunAsync();
         }
 
         [Theory]
@@ -423,7 +427,12 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(csInput);
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal.RunAsync();
 
             quotes = "\"";
             string vbCharLiteral = isCharTest ? "c" : "";
@@ -441,7 +450,66 @@ Public Class StringOf
     End Class
 End Class
 ";
-            await VerifyVB.VerifyAnalyzerAsync(vbInput);
+            var testOrdinal_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal_vb.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("This", false)]
+        [InlineData("a", true)]
+        public async Task TestIndexWrittenToAfter(string input, bool isCharTest)
+        {
+            string quotes = isCharTest ? "'" : "\"";
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            int index = str.IndexOf(" + quotes + input + quotes + @");
+            if (index == -1)
+            {
+
+            }
+            index += 2;
+        } 
+    } 
+}";
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal.RunAsync();
+
+            quotes = "\"";
+            string vbCharLiteral = isCharTest ? "c" : "";
+            string vbInput = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+            Dim index As Integer = Str.IndexOf(" + quotes + input + quotes + vbCharLiteral + @")
+            If index = -1 Then
+
+            End If
+            index += 2
+        End Sub
+    End Class
+End Class
+";
+            var testOrdinal_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal_vb.RunAsync();
         }
 
         [Fact]
@@ -525,7 +593,12 @@ namespace TestNamespace
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(csInput);
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal.RunAsync();
         }
 
         [Fact]
@@ -636,6 +709,59 @@ Public Class StringOf
     Class TestClass
         Public Sub AMethod(arg As String, comparison As System.StringComparison)
             If [|arg.IndexOf(""This"", comparison)" + operatorKind + value + @"|] Then
+
+            End If
+        End Sub
+    End Class
+End Class
+";
+
+            var testOrdinal_vb = new VerifyVB.Test
+            {
+                TestState = { Sources = { vbInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal_vb.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(" == ", " -1", "!")]
+        [InlineData(" >= ", " 0", "")]
+        public async Task TestReversedMultipleDeclarations(string operatorKind, string value, string notString)
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            const string str = ""This is a string"";
+            int a = 5, index = [|str.IndexOf('a', System.StringComparison.Ordinal)|];
+            if (index" + operatorKind + value + @")
+            {
+
+            }
+        } 
+    } 
+}";
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.Preview,
+            };
+            await testOrdinal.RunAsync();
+
+            operatorKind = operatorKind == " == " ? " = " : operatorKind;
+            notString = notString == "!" ? " Not" : notString;
+            string vbInput = @"
+Public Class StringOf
+    Class TestClass
+        Public Sub Main()
+            Dim Str As String = ""This is a statement""
+            Dim a As Integer = 5, index = [|Str.IndexOf(""a""c, System.StringComparison.Ordinal)|]
+            If index" + operatorKind + value + @" Then
 
             End If
         End Sub

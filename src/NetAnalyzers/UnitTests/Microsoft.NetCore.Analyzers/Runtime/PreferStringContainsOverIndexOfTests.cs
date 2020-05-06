@@ -580,9 +580,11 @@ namespace TestNamespace
         }
 
         [Theory]
-        [InlineData(" != ")]
-        [InlineData(" > ")]
-        public async Task TestNonSupportedOperationKind(string operatorKind)
+        [InlineData(" != ", "-1")]
+        [InlineData(" != ", "3")]
+        [InlineData(" > ", "2")]
+        [InlineData(" >= ", "2")]
+        public async Task TestNonSupportedOperationKind(string operatorKind, string right)
         {
             string csInput = @"
 namespace TestNamespace 
@@ -593,7 +595,34 @@ namespace TestNamespace
         { 
             string str = ""This is a string"";
             int index = str.IndexOf(""This"");
-            if (index" + operatorKind + @"-1)
+            if (index" + operatorKind + right + @")
+            {
+            }
+        } 
+    } 
+}";
+            var testOrdinal = new VerifyCS.Test
+            {
+                TestState = { Sources = { csInput } },
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+            await testOrdinal.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestRightOperandIsVariable()
+        {
+            string csInput = @"
+namespace TestNamespace 
+{ 
+    class TestClass 
+    { 
+        private void TestMethod() 
+        { 
+            string str = ""This is a string"";
+            int compare = 5;
+            int index = str.IndexOf(""This"");
+            if (index == compare)
             {
             }
         } 

@@ -126,10 +126,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                         var parent = localReference.Parent;
-                        if (!(parent is IBinaryOperation binaryOperation))
+                        if (parent is IBinaryOperation binaryOperation)
                         {
-                            localsToBailOut.Add(localReference.Local);
+                            var operatorKind = binaryOperation.OperatorKind;
+                            var otherOperand = binaryOperation.LeftOperand is ILocalReferenceOperation ? binaryOperation.RightOperand : binaryOperation.LeftOperand;
+                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue)
+                            {
+                                if ((operatorKind == BinaryOperatorKind.Equals && intValue < 0) ||
+                                    (operatorKind == BinaryOperatorKind.GreaterThanOrEqual && intValue == 0))
+                                {
+                                    // Do nothing. This is a valid case to the tagged in the analyzer
+                                    return;
+                                }
+                            }
                         }
+                        localsToBailOut.Add(localReference.Local);
                     }
 
                     void AnalyzeInvocationOperation(OperationAnalysisContext context)
@@ -150,9 +161,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             }
 
                             var otherOperand = binaryOperation.LeftOperand is IInvocationOperation ? binaryOperation.RightOperand : binaryOperation.LeftOperand;
-                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue && (intValue == -1 || intValue == 0))
+                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue)
                             {
-                                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
+                                if ((operatorKind == BinaryOperatorKind.Equals && intValue < 0) ||
+                                    (operatorKind == BinaryOperatorKind.GreaterThanOrEqual && intValue == 0))
+                                {
+                                    context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
+                                }
                             }
                         }
                         else if (parent is IVariableInitializerOperation variableInitializer)

@@ -15,6 +15,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters
+#pragma warning disable CA1801 // Unused parameter
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {

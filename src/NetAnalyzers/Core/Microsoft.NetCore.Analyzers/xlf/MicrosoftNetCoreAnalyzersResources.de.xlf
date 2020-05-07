@@ -327,14 +327,29 @@
         <target state="translated">Wenn eine Instanz der Klasse {0} deserialisiert wird, kann die Methode {1} die gefährliche Methode {2} aufrufen.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
+      <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage">
+        <source>Type '{0}' will never be type '{1}'.</source>
+        <target state="new">Type '{0}' will never be type '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle">
+        <source>The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</source>
+        <target state="new">The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailDescription">
         <source>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</source>
         <target state="new">If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
+        <source>Casting type '{0}' to type '{1}' fail.</source>
+        <target state="new">Casting type '{0}' to type '{1}' fail.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">
-        <source>Casting '{0}' to '{1}' will never succeed.</source>
-        <target state="new">Casting '{0}' to '{1}' will never succeed.</target>
+        <source>Do not call Enumerable.Cast&lt;T&gt; with incompatible types.</source>
+        <target state="new">Do not call Enumerable.Cast&lt;T&gt; with incompatible types.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">

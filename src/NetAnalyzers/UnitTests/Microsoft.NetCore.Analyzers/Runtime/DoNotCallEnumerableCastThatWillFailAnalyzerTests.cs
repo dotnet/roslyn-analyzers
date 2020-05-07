@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -17,6 +18,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public async Task DiagnosticCasesCSharp()
         {
+            var ofTypeRule = DoNotCallEnumerableCastThatWillFailAnalyzer.OfTypeRule;
+
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Linq;
 
@@ -30,21 +33,23 @@ class C
     }
 }
 ",
-                // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetCSharpResultAt(8, 17, "OfType"));
-
+    // /0/Test0.cs(9,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyCS.Diagnostic(ofTypeRule).WithSpan(9, 17, 9, 46).WithArguments("int", "string")
+    );
         }
 
         [Fact]
         public async Task DiagnosticCasesVB()
         {
+            var castRule = DoNotCallEnumerableCastThatWillFailAnalyzer.CastRule;
+  
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Linq
 
 Interface IApple
 End Interface
 
-Class Fruit
+Public Class Fruit
 End Class
 
 Public Class Orange
@@ -61,46 +66,64 @@ End Class
 
 Module M    
 	Sub S
-		Dim a = (New Integer(){}).OfType(Of Object)
-        Dim b = (New Object(){}).OfType(Of String)
-        Dim c = (New Object(){}).OfType(Of Integer)
-        Dim d = (New Integer(){}).OfType(Of String)
-        Dim e = (New String(){}).OfType(Of Integer)
+		Dim a = (New Integer(){}).Cast(Of Object)
+        Dim b = (New Object(){}).Cast(Of String)
+        Dim c = (New Object(){}).Cast(Of Integer)
+        Dim d = (New Integer(){}).Cast(Of String)
+        Dim e = (New String(){}).Cast(Of Integer)
         
-        Dim f = (New Object(){}).OfType(Of Fruit)
-        Dim g = (New Object(){}).OfType(Of Orange)
-        Dim h = (New Object(){}).OfType(Of IApple)
-        Dim i = (New Object(){}).OfType(Of Apple)
-        Dim z1 = (New Object(){}).OfType(Of Salad)
+        Dim f = (New Object(){}).Cast(Of Fruit)
+        Dim g = (New Object(){}).Cast(Of Orange)
+        Dim h = (New Object(){}).Cast(Of IApple)
+        Dim i = (New Object(){}).Cast(Of Apple)
+        Dim z1 = (New Object(){}).Cast(Of Salad)
 
-        Dim j = (New Fruit(){}).OfType(Of Fruit)
-        Dim k = (New Fruit(){}).OfType(Of Orange)
-        Dim l = (New Fruit(){}).OfType(Of IApple)
-        Dim m = (New Fruit(){}).OfType(Of Apple)
-        Dim z2 = (New Fruit(){}).OfType(Of Salad)
+        Dim j = (New Fruit(){}).Cast(Of Fruit)
+        Dim k = (New Fruit(){}).Cast(Of Orange)
+        Dim l = (New Fruit(){}).Cast(Of IApple)
+        Dim m = (New Fruit(){}).Cast(Of Apple)
+        Dim z2 = (New Fruit(){}).Cast(Of Salad)
 
-        Dim n = (New Orange(){}).OfType(Of Fruit)
-        Dim o = (New Orange(){}).OfType(Of Orange)
-        Dim p = (New Orange(){}).OfType(Of IApple)
-        Dim q = (New Orange(){}).OfType(Of Apple)
-        Dim z3 = (New Orange(){}).OfType(Of Salad)
+        Dim n = (New Orange(){}).Cast(Of Fruit)
+        Dim o = (New Orange(){}).Cast(Of Orange)
+        Dim p = (New Orange(){}).Cast(Of IApple)
+        Dim q = (New Orange(){}).Cast(Of Apple)
+        Dim z3 = (New Orange(){}).Cast(Of Salad)
         
-        Dim r = (New IApple(){}).OfType(Of Fruit)
-        Dim s = (New IApple(){}).OfType(Of Orange)
-        Dim t = (New IApple(){}).OfType(Of IApple)
-        Dim u = (New IApple(){}).OfType(Of Apple)
-        Dim z4 = (New IApple(){}).OfType(Of Salad)
+        Dim r = (New IApple(){}).Cast(Of Fruit)
+        Dim s = (New IApple(){}).Cast(Of Orange)
+        Dim t = (New IApple(){}).Cast(Of IApple)
+        Dim u = (New IApple(){}).Cast(Of Apple)
+        Dim z4 = (New IApple(){}).Cast(Of Salad)
         
-        Dim v = (New Apple(){}).OfType(Of Fruit)
-        Dim w = (New Apple(){}).OfType(Of Orange)
-        Dim x = (New Apple(){}).OfType(Of IApple)
-        Dim y = (New Apple(){}).OfType(Of Apple)
-        Dim z5 = (New Apple(){}).OfType(Of Salad)
+        Dim v = (New Apple(){}).Cast(Of Fruit)
+        Dim w = (New Apple(){}).Cast(Of Orange)
+        Dim x = (New Apple(){}).Cast(Of IApple)
+        Dim y = (New Apple(){}).Cast(Of Apple)
+        Dim z5 = (New Apple(){}).Cast(Of Salad)
 	End Sub
 End Module
 ",
-    // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-    GetBasicResultAt(8, 17, "OfType"));
+
+    // /0/Test0.vb(26, 17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(26, 17, 26, 50).WithArguments("Object", "Integer"),
+    // /0/Test0.vb(27,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(27, 17, 27, 50).WithArguments("Integer", "String"),
+    // /0/Test0.vb(28,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(28, 17, 28, 50).WithArguments("String", "Integer"),
+    // /0/Test0.vb(40,18): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(40, 18, 40, 48).WithArguments("Fruit", "Salad"),
+    // /0/Test0.vb(45,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(45, 17, 45, 48).WithArguments("Orange", "Apple"),
+    // /0/Test0.vb(46,18): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(46, 18, 46, 49).WithArguments("Orange", "Salad"),
+    // /0/Test0.vb(52,18): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(52, 18, 52, 49).WithArguments("IApple", "Salad"),
+    // /0/Test0.vb(55,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(55, 17, 55, 48).WithArguments("Apple", "Orange"),
+    // /0/Test0.vb(58,18): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
+    VerifyVB.Diagnostic(castRule).WithSpan(58, 18, 58, 48).WithArguments("Apple", "Salad")
+   );
 
         }
 
@@ -108,12 +131,12 @@ End Module
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodName)
         {
-            return VerifyCS.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
+            return VerifyCS.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.OfTypeRule).WithLocation(line, column).WithArguments(methodName, methodName);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string methodName)
         {
-            return VerifyVB.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
+            return VerifyVB.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.OfTypeRule).WithLocation(line, column).WithArguments(methodName, methodName);
         }
     }
 }

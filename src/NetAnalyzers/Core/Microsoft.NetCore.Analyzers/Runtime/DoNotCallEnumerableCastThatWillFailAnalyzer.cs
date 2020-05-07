@@ -13,32 +13,45 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CAxxxx: Do not call Enumerable.Cast that will fail at runtime
+    /// CAxxxx: Do not call Enumerable.Cast with incompatible types.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallEnumerableCastThatWillFailAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA9999";
+        private static readonly LocalizableString s_localizableCastTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableCastMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableCastDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableOfTypeTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableOfTypeMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
+        internal static DiagnosticDescriptor CastRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                             s_localizableCastTitle,
+                                                                             s_localizableCastMessage,
+                                                                             DiagnosticCategory.Reliability,
+                                                                             RuleLevel.IdeSuggestion,
+                                                                             s_localizableCastDescription,
+                                                                             isPortedFxCopRule: false,
+                                                                             isDataflowRule: false);
+
+        internal static DiagnosticDescriptor OfTypeRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                             s_localizableOfTypeTitle,
+                                                                             s_localizableOfTypeMessage,
                                                                              DiagnosticCategory.Reliability,
                                                                              RuleLevel.IdeSuggestion,
                                                                              description: null,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
-        private static readonly ImmutableDictionary<string, string> methodMetadataNames = new Dictionary<string, string>
+        private static readonly ImmutableDictionary<string, DiagnosticDescriptor> methodMetadataNames = new Dictionary<string, DiagnosticDescriptor>
         {
-            ["OfType"] = "System.Linq.Enumerable.OfType`1",
-            ["Cast"] = "System.Linq.Enumerable.Cast`1",
+            ["OfType"] = OfTypeRule,
+            ["Cast"] = CastRule,
         }.ToImmutableDictionary();
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            => methodMetadataNames.Values.ToImmutableArray();
 
         public override void Initialize(AnalysisContext context)
         {
@@ -60,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
                     var targetMethod = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
-                    if (targetMethod == null || !methodMetadataNames.TryGetValue(targetMethod.Name, out string metadataName))
+                    if (targetMethod == null || !methodMetadataNames.TryGetValue(targetMethod.Name, out var rule))
                     {
                         return;
                     }
@@ -96,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (CastWillAlwaysFail(castFrom, castTo))
                     {
-                        operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
+                        operationContext.ReportDiagnostic(invocation.CreateDiagnostic(rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
                     }
 
                 }, OperationKind.Invocation);
@@ -120,7 +133,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     case (TypeKind.Struct, TypeKind.Struct):
                     case (TypeKind.Struct, TypeKind.Enum):
                     case (TypeKind.Enum, TypeKind.Struct):
-
                         if (castFrom.DerivesFrom(castTo))
                         {
                             return false;

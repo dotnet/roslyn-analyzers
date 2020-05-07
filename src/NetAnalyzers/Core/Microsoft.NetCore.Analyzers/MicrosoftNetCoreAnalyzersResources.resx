@@ -1279,10 +1279,10 @@
     <value>Potential stack overflow. Move the stackalloc out of the loop.</value>
   </data>
   <data name="PreferStreamAsyncMemoryOverloadsTitle" xml:space="preserve">
-    <value>Prefer the memory based overloads for 'ReadAsync' and 'WriteAsync'.</value>
+    <value>Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'.</value>
   </data>
   <data name="PreferStreamAsyncMemoryOverloadsDescription" xml:space="preserve">
-    <value>All 'Stream' based classes provide a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Whenever possible, prefer the memory based overloads, which are more efficient.</value>
+    <value>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</value>
   </data>
   <data name="PreferStreamAsyncMemoryOverloadsMessage" xml:space="preserve">
     <value>Change the '{0}' method call to the overload that receives a '{1}'.</value>

@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DoNotCallOfTypeOnImpossibleTypesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.DoNotCallEnumerableCastThatWillFailAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DoNotCallOfTypeOnImpossibleTypesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.DoNotCallEnumerableCastThatWillFailAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class DoNotCallOfTypeOnImpossibleTypesAnalyzerTests
+    public class DoNotCallEnumerableCastThatWillFailAnalyzerTests
     {
         [Fact]
         public async Task DiagnosticCasesCSharp()
@@ -108,12 +108,12 @@ End Module
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodName)
         {
-            return VerifyCS.Diagnostic(DoNotCallOfTypeOnImpossibleTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
+            return VerifyCS.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string methodName)
         {
-            return VerifyVB.Diagnostic(DoNotCallOfTypeOnImpossibleTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
+            return VerifyVB.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.Rule).WithLocation(line, column).WithArguments(methodName, methodName);
         }
     }
 }

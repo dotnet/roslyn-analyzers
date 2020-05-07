@@ -327,6 +327,16 @@
         <target state="translated">{0} 클래스의 인스턴스를 deserialize할 때 {1} 메서드가 위험한 {2} 메서드를 호출할 수 있습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
+        <source>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</source>
+        <target state="new">If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">
+        <source>Casting '{0}' to '{1}' will never succeed.</source>
+        <target state="new">Casting '{0}' to '{1}' will never succeed.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
         <target state="translated">생성자에서 가상 메서드를 호출하면 메서드를 호출하는 인스턴스에 대한 생성자가 실행되지 않을 수 있습니다.</target>

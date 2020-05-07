@@ -327,6 +327,16 @@
         <target state="translated">Ao desserializar uma instância de classe {0}, o método {1} pode chamar o método perigoso {2}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
+        <source>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</source>
+        <target state="new">If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">
+        <source>Casting '{0}' to '{1}' will never succeed.</source>
+        <target state="new">Casting '{0}' to '{1}' will never succeed.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
         <target state="translated">Quando um construtor chama um método virtual, o construtor para a instância que invoca o método pode não ter sido executado.</target>

@@ -2,9 +2,8 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Http.Headers;
+
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -14,15 +13,15 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CAxxxx: Do not call ToImmutableCollection on an ImmutableCollection value
+    /// CAxxxx: Do not call Enumerable.Cast that will fail at runtime
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotCallOfTypeOnImpossibleTypesAnalyzer : DiagnosticAnalyzer
+    public sealed class DoNotCallEnumerableCastThatWillFailAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA9999";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
@@ -33,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
-        private static readonly ImmutableDictionary<string, string> OfTypeMetadataNames = new Dictionary<string, string>
+        private static readonly ImmutableDictionary<string, string> methodMetadataNames = new Dictionary<string, string>
         {
             ["OfType"] = "System.Linq.Enumerable.OfType`1",
             ["Cast"] = "System.Linq.Enumerable.Cast`1",
@@ -61,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
                     var targetMethod = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
-                    if (targetMethod == null || !OfTypeMetadataNames.TryGetValue(targetMethod.Name, out string metadataName))
+                    if (targetMethod == null || !methodMetadataNames.TryGetValue(targetMethod.Name, out string metadataName))
                     {
                         return;
                     }
@@ -99,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var castFrom = ienumerable.TypeArguments.Single();
                     var castTo = invocation.TargetMethod.TypeArguments.Single();
 
-                    if (CastWillFail(castFrom, castTo))
+                    if (CastWillAlwaysFail(castFrom, castTo))
                     {
                         operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
                     }
@@ -107,45 +106,54 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }, OperationKind.Invocation);
             });
 
-            static bool CastWillFail(ITypeSymbol castFrom, ITypeSymbol castTo)
+            static bool CastWillAlwaysFail(ITypeSymbol castFrom, ITypeSymbol castTo)
             {
+                if (castTo.SpecialType == SpecialType.System_Object)
+                {
+                    return false;
+                }
+
                 if (castFrom.Equals(castTo))
                 {
                     return false;
                 }
 
-                if (castFrom.OriginalDefinition.TypeKind == TypeKind.Interface)
+                switch (castFrom.OriginalDefinition.TypeKind, castTo.OriginalDefinition.TypeKind)
                 {
-                    return false;
+                    case (TypeKind.Class, TypeKind.Class):
+                    case (TypeKind.Struct, TypeKind.Struct):
+                    case (TypeKind.Struct, TypeKind.Enum):
+
+                        if (castFrom.DerivesFrom(castTo))
+                        {
+                            return false;
+                        }
+
+                        if (castTo.DerivesFrom(castFrom))
+                        {
+                            return false;
+                        }
+
+                        return true;
+
+                    case (TypeKind.Interface, TypeKind.Class):
+                        return castTo.IsSealed && !castTo.AllInterfaces.Contains(castFrom);
+
+                    case (TypeKind.Class, TypeKind.Interface):
+                        return castFrom.IsSealed && !castFrom.AllInterfaces.Contains(castTo);
+
+                    case (TypeKind.Enum, TypeKind.Enum):
+                        // todo
+                        return false;
+
+                    case (_, TypeKind.Enum):
+                    case (TypeKind.Class, TypeKind.Struct):
+                    case (TypeKind.Struct, TypeKind.Class):
+                        return true;
+
+                    default:
+                        return false; // we don't *know* it'll fail...
                 }
-
-                if (castFrom.OriginalDefinition.Equals(castTo.OriginalDefinition))
-                {
-                    return false;
-                }
-
-                // what if this is alias or type param?
-
-                if (castTo.OriginalDefinition.TypeKind == TypeKind.Interface
-                && !castFrom.IsSealed
-                && castFrom.OriginalDefinition.IsExternallyVisible()
-                && castTo.OriginalDefinition.IsExternallyVisible()
-                )
-                {
-                    return false;
-                }
-
-                if (castTo.DerivesFrom(castFrom))
-                {
-                    return false;
-                }
-
-                if (castFrom.DerivesFrom(castTo))
-                {
-                    return false;
-                }
-
-                return true;
             }
         }
     }

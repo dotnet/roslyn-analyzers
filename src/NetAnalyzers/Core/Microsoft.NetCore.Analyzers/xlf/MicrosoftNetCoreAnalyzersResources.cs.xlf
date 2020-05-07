@@ -1378,8 +1378,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfDescription">
-        <source>Calls to 'String.IndexOf' where the result is compared to 0 or -1 can be replaced by 'String.Contains'</source>
-        <target state="new">Calls to 'String.IndexOf' where the result is compared to 0 or -1 can be replaced by 'String.Contains'</target>
+        <source>Calls to 'String.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'String.Contains'</source>
+        <target state="new">Calls to 'String.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'String.Contains'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfMessage">

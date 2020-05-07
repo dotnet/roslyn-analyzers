@@ -97,36 +97,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     var castFrom = ienumerable.TypeArguments.Single();
-                    // what if this is alias or type param?
+                    var castTo = invocation.TargetMethod.TypeArguments.Single();
 
-                    if (castFrom.TypeKind == TypeKind.Interface)
-                        return;
-
-                    var castToType = invocation.TargetMethod.TypeArguments.Single();
-                    // what if this is alias or type param?
-
-                    if (castToType.OriginalDefinition.TypeKind == TypeKind.Interface
-                    && !castFrom.IsSealed
-                    && castFrom.OriginalDefinition.IsExternallyVisible()
-                    && castToType.OriginalDefinition.IsExternallyVisible()
-                    )
+                    if (CastWillFail(castFrom, castTo))
                     {
-                        return;
+                        operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
                     }
 
-                    if (castToType.DerivesFrom(castFrom))
-                    {
-                        return;
-                    }
-
-                    if (castFrom.DerivesFrom(castToType))
-                    {
-                        return;
-                    }
-
-                    operationContext.ReportDiagnostic(invocation.CreateDiagnostic(Rule, castFrom.ToDisplayString(), castToType.ToDisplayString()));
                 }, OperationKind.Invocation);
             });
+
+            static bool CastWillFail(ITypeSymbol castFrom, ITypeSymbol castTo)
+            {
+                if (castFrom.Equals(castTo))
+                {
+                    return false;
+                }
+
+                if (castFrom.OriginalDefinition.TypeKind == TypeKind.Interface)
+                {
+                    return false;
+                }
+
+                if (castFrom.OriginalDefinition.Equals(castTo.OriginalDefinition))
+                {
+                    return false;
+                }
+
+                // what if this is alias or type param?
+
+                if (castTo.OriginalDefinition.TypeKind == TypeKind.Interface
+                && !castFrom.IsSealed
+                && castFrom.OriginalDefinition.IsExternallyVisible()
+                && castTo.OriginalDefinition.IsExternallyVisible()
+                )
+                {
+                    return false;
+                }
+
+                if (castTo.DerivesFrom(castFrom))
+                {
+                    return false;
+                }
+
+                if (castFrom.DerivesFrom(castTo))
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 }

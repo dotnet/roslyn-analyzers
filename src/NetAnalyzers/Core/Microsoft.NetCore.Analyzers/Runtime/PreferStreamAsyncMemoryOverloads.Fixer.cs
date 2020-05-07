@@ -86,18 +86,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
 
-            Func<CancellationToken, Task<Document>> createChangedDocument = _ => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
                                                          bufferOperation.Value.Syntax, isBufferNamed,
                                                          offsetOperation.Value.Syntax, isOffsetNamed,
                                                          countOperation.Value.Syntax, isCountNamed,
                                                          cancellationTokenOperation?.Value.Syntax, isCancellationTokenNamed);
 
-            var action = new MyCodeAction(
+            context.RegisterCodeFix(
+                new MyCodeAction(
                     title: title,
                     createChangedDocument,
-                    equivalenceKey: title + invocation.TargetMethod.Name);
-
-            context.RegisterCodeFix(action, context.Diagnostics);
+                    equivalenceKey: title + invocation.TargetMethod.Name),
+                context.Diagnostics);
         }
 
         private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName,

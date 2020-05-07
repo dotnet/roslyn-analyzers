@@ -85,10 +85,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // should explicit conversion supress?
-                    //if (!conversionOperation.IsImplicit)
-                    //return;
-
                     var ienumerable = conversionOperation.Operand.Type.AllInterfaces.SingleOrDefault(t => t.OriginalDefinition.Equals(genericIEnumerableType));
                     if (ienumerable is null)
                     {
@@ -123,6 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     case (TypeKind.Class, TypeKind.Class):
                     case (TypeKind.Struct, TypeKind.Struct):
                     case (TypeKind.Struct, TypeKind.Enum):
+                    case (TypeKind.Enum, TypeKind.Struct):
 
                         if (castFrom.DerivesFrom(castTo))
                         {
@@ -142,8 +139,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     case (TypeKind.Class, TypeKind.Interface):
                         return castFrom.IsSealed && !castFrom.AllInterfaces.Contains(castTo);
 
-                    case (TypeKind.Enum, TypeKind.Enum):
-                        // todo
+                    case (TypeKind.Enum, TypeKind.Enum)
+                    when castFrom.OriginalDefinition is INamedTypeSymbol fromEnum
+                      && castTo.OriginalDefinition is INamedTypeSymbol toEnum
+                      && fromEnum.EnumUnderlyingType.Equals(toEnum.EnumUnderlyingType):
                         return false;
 
                     case (_, TypeKind.Enum):

@@ -84,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // No nullcheck for this, because there is an overload that may not contain it
             IArgumentOperation? cancellationTokenOperation = GetArgumentByPositionOrName(invocation.Arguments, 3, "cancellationToken", out bool isCancellationTokenNamed);
 
-            string titleAndMethodName = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle + invocation.TargetMethod.Name;
+            string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
 
             Func<CancellationToken, Task<Document>> createChangedDocument = _ => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
                                                          bufferOperation.Value.Syntax, isBufferNamed,
@@ -92,12 +92,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                          countOperation.Value.Syntax, isCountNamed,
                                                          cancellationTokenOperation?.Value.Syntax, isCancellationTokenNamed);
 
-            context.RegisterCodeFix(
-                MyCodeAction.Create(
-                    title: titleAndMethodName,
+            var action = new MyCodeAction(
+                    title: title,
                     createChangedDocument,
-                    equivalenceKey: titleAndMethodName),
-                context.Diagnostics);
+                    equivalenceKey: title + invocation.TargetMethod.Name);
+
+            context.RegisterCodeFix(action, context.Diagnostics);
         }
 
         private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName,

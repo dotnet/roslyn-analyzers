@@ -31,7 +31,7 @@
 	- Review each of the failures in those repositories and determine the course of action for each. 
 - Document for review: severity, default, categorization, numbering, titles, messages, and descriptions.
 - Document for review: matching and non-matching scenarios, including any discovered nuance. 
-- Document for the new analyzer and rules on [MicrosoftDocs](https://github.com/microsoftDocs/visualstudio-docs-pr/). (need permission, [instructions](#Adding-documentation-for-new-CA-rules)). Documentation PR must be submitted within **ONE WEEK** of the rule implementation being merged. 
+- Create the appropriate documentation for [docs.microsoft.com](https://github.com/MicrosoftDocs/visualstudio-docs-pr/tree/master/docs/code-quality) within **ONE WEEK** [instructions on OneNote](https://microsoft.sharepoint.com/teams/netfx/corefx/_layouts/15/Doc.aspx?sourcedoc={0cfbc196-0645-4781-84c6-5dffabd76bee}&action=edit&wd=target%28Engineering.one%7Cab467035-bb64-4353-b933-97f5877d508b%2FAdding%20documentation%20for%20new%20CA%20rules%7C9e44fc32-5cd8-4f7f-bbf8-3600653ca9b9%2F%29&wdorigin=703). External contributors should create an issue at https://github.com/microsoftDocs/visualstudio-docs/issues with a subject 'Add documentation for analyzer rule [Your Rule ID]'. 
 - PR merged into `dotnet/roslyn-analyzers`. 
 - Failures in `dotnet/runtime` addressed. 
 
@@ -59,13 +59,3 @@
 	- `.\artifacts\bin\AnalyzerRunner\Release\netcoreapp3.1\AnalyzerRunner.exe ..\roslyn-analyzers\artifacts\bin\Microsoft.NetCore.Analyzers.Package\Debug\netstandard2.0 .\Roslyn.sln /stats /concurrent /a AnalyzerNameToTest /log Output.txt` 
 	- Do not forget change value after `/a` option with your testing analyzer name.
 The diagnostics reported by the analyzer will be listed in Output.txt. 
-
-## Adding documentation for new CA rules 
-
-1. Documentation PRs are submitted to [microsoftDocs/visualstudio-docs-pr](https://github.com/microsoftDocs/visualstudio-docs-pr/), which is a private repo with some extra validation as compared to the [public](https://github.com/microsoftDocs/visualstudio-docs) one. We are required to submit PRs to the former. Docs team will flow these changes into the public repo and get them published. 
-2. Getting permissions to the repo: [here](https://repos.opensource.microsoft.com/MicrosoftDocs). 
-3. All existing CA rules are documented [here](https://github.com/MicrosoftDocs/visualstudio-docs-pr/tree/master/docs/code-quality) 
-	1. You can see this folder has a separate files for each CA rule. For example, for `CA1000` we have [ca1000.md](https://github.com/MicrosoftDocs/visualstudio-docs-pr/blob/master/docs/code-quality/ca1000.md), which gets published at [VS code analysis doc](https://docs.microsoft.com/visualstudio/code-quality/ca1000) 
-	2. Each PR can clone an existing CA file and update it appropriately. Most of the doc PRs would have similar file changes. 
-	3. The rule ID needs to be added to couple of existing tables for categorized grouping and easy user navigation. [Example PR](https://github.com/MicrosoftDocs/visualstudio-docs-pr/pull/5405/files).
-	4. Roslyn-analyzers repo is already setup so that each new analyzer implementation `CAxxxx` will automatically link to https://docs.microsoft.com/visualstudio/code-quality/caxxxx for its help link. 

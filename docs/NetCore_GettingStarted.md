@@ -29,7 +29,7 @@
 	- Use the failures to discover nuance and guide the implementation details. 
 	- Run the analyzer against `dotnet/roslyn` [instruction](#Testing-against-the-Roslyn-repo), and with `dotnet/aspnetcore` if feasable. 
 	- Review each of the failures in those repositories and determine the course of action for each. 
-- Document for review: severity, default, categorization, numbering, titles, messages, and descriptions.. 
+- Document for review: severity, default, categorization, numbering, titles, messages, and descriptions.
 - Document for review: matching and non-matching scenarios, including any discovered nuance. 
 - Document for the new analyzer and rules on [MicrosoftDocs](https://github.com/microsoftDocs/visualstudio-docs-pr/). (need permission, [instructions](#Adding-documentation-for-new-CA-rules)). Documentation PR must be submitted within **ONE WEEK** of the rule implementation being merged. 
 - PR merged into `dotnet/roslyn-analyzers`. 
@@ -51,13 +51,13 @@
 
 ## Testing against the Roslyn repo 
 
-1. Build Roslyn with this command: 
+1. Clone `dotnet/roslyn` and build it with this command: 
 	- `Build.cmd -restore -Configuration Release`
-2. Build roslyn-analyzers in `debug` mode. 
+2. Build `dotnet/roslyn-analyzers` in debug mode:
 	- `Build.cmd -Configuration Debug`
 3. Run AnalyzerRunner from the Roslyn root directory to get the diagnostics. 
 	- `.\artifacts\bin\AnalyzerRunner\Release\netcoreapp3.1\AnalyzerRunner.exe ..\roslyn-analyzers\artifacts\bin\Microsoft.NetCore.Analyzers.Package\Debug\netstandard2.0 .\Roslyn.sln /stats /concurrent /a AnalyzerNameToTest /log Output.txt` 
-	- Do not forget change value after `/a` option with your testing analyzer name
+	- Do not forget change value after `/a` option with your testing analyzer name.
 The diagnostics reported by the analyzer will be listed in Output.txt. 
 
 ## Adding documentation for new CA rules 

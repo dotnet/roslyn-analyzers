@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -79,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     int numberOfArguments = indexOfMethodArguments.Length;
                     if (numberOfArguments == 1)
                     {
-                        var firstArgument = indexOfMethodArguments.First();
+                        var firstArgument = indexOfMethodArguments[0];
                         if (firstArgument.Parameter.Type.Equals(charType))
                         {
                             containsInvocation = generator.InvocationExpression(containsExpression, firstArgument.Syntax);

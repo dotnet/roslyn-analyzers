@@ -128,6 +128,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                                         "buffer: buffer.AsMemory(start: 0, length: buffer.Length)" };
             yield return new object[] { "offset: 0, count: buffer.Length, buffer: buffer",
                                         "buffer: buffer.AsMemory(start: 0, length: buffer.Length)" };
+            // Skipping naming
+            yield return new object[] { "buffer: buffer, 0, buffer.Length",
+                                        "buffer: buffer.AsMemory(0, buffer.Length)" };
+            yield return new object[] { "buffer, offset: 0, buffer.Length",
+                                        "buffer.AsMemory(start: 0, buffer.Length)" };
+            yield return new object[] { "buffer, 0, count: buffer.Length",
+                                        "buffer.AsMemory(0, count: buffer.Length)" };
+            yield return new object[] { "buffer: buffer, 0, count: buffer.Length",
+                                        "buffer: buffer.AsMemory(0, count: buffer.Length)" };
         }
 
         public static IEnumerable<object[]> CSharpNamedArgumentsWithCancellationTokenTestData()

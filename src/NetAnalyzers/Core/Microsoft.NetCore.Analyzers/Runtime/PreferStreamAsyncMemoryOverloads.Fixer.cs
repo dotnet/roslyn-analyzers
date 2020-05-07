@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -29,6 +30,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// </summary>
     public abstract class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider
     {
+        // Checks if the argument in the specified index has a name. If it doesn't, returns that arguments. If it does, then looks for the argument using the specified name, and returns it, or null if not found.
+        protected abstract IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed);
+
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);
 
@@ -80,24 +84,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // No nullcheck for this, because there is an overload that may not contain it
             IArgumentOperation? cancellationTokenOperation = GetArgumentByPositionOrName(invocation.Arguments, 3, "cancellationToken", out bool isCancellationTokenNamed);
 
-            string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
+            string titleAndMethodName = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle + invocation.TargetMethod.Name;
 
-            Task<Document> fixInvocation = FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
+            Func<CancellationToken, Task<Document>> createChangedDocument = _ => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
                                                          bufferOperation.Value.Syntax, isBufferNamed,
                                                          offsetOperation.Value.Syntax, isOffsetNamed,
                                                          countOperation.Value.Syntax, isCountNamed,
                                                          cancellationTokenOperation?.Value.Syntax, isCancellationTokenNamed);
 
             context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: title,
-                    createChangedDocument: c => fixInvocation,
-                    equivalenceKey: title),
+                MyCodeAction.Create(
+                    title: titleAndMethodName,
+                    createChangedDocument,
+                    equivalenceKey: titleAndMethodName),
                 context.Diagnostics);
         }
-
-        // Checks if the argument in the specified index has a name. If it doesn't, returns that arguments. If it does, then looks for the argument using the specified name, and returns it, or null if not found.
-        protected abstract IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed);
 
         private static Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName,
             SyntaxNode bufferValueNode, bool isBufferNamed,
@@ -146,6 +147,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression.WithTriviaFrom(invocation.Syntax));
             return Task.FromResult(doc.WithSyntaxRoot(newRoot));
+        }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
     }
 }

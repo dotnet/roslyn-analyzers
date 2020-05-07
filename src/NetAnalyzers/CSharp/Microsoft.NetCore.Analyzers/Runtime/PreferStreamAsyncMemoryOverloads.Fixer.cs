@@ -34,10 +34,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return args.FirstOrDefault(argOperation =>
                 {
                     return argOperation.Syntax is ArgumentSyntax argNode &&
-                           argNode.NameColon != null &&
-                           argNode.NameColon.Name != null &&
-                           argNode.NameColon.Name.Identifier != null &&
-                           argNode.NameColon.Name.Identifier.ValueText == name;
+                           argNode.NameColon?.Name?.Identifier.ValueText == name;
                 });
             }
         }

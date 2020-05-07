@@ -27,10 +27,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                     Return args.FirstOrDefault(
                         Function(argOperation)
                             argNode = TryCast(argOperation.Syntax, SimpleArgumentSyntax)
-                            Return argNode.NameColonEquals IsNot Nothing AndAlso
-                                    argNode.NameColonEquals.Name IsNot Nothing AndAlso
-                                    argNode.NameColonEquals.Name.Identifier <> Nothing AndAlso
-                                    argNode.NameColonEquals.Name.Identifier.ValueText = name
+                            Return argNode.NameColonEquals?.Name?.Identifier.ValueText = name
                         End Function)
                 End If
             End If

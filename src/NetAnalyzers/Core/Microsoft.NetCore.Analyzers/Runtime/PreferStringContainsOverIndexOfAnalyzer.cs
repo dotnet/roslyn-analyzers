@@ -128,16 +128,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         var parent = localReference.Parent;
                         if (parent is IBinaryOperation binaryOperation)
                         {
-                            var operatorKind = binaryOperation.OperatorKind;
                             var otherOperand = binaryOperation.LeftOperand is ILocalReferenceOperation ? binaryOperation.RightOperand : binaryOperation.LeftOperand;
-                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue)
+                            if (CheckOperatorKindAndOperand(binaryOperation, otherOperand))
                             {
-                                if ((operatorKind == BinaryOperatorKind.Equals && intValue < 0) ||
-                                    (operatorKind == BinaryOperatorKind.GreaterThanOrEqual && intValue == 0))
-                                {
-                                    // Do nothing. This is a valid case to the tagged in the analyzer
-                                    return;
-                                }
+                                // Do nothing. This is a valid case to the tagged in the analyzer
+                                return;
                             }
                         }
                         localsToBailOut.Add(localReference.Local);
@@ -154,20 +149,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         var parent = invocationOperation.Parent;
                         if (parent is IBinaryOperation binaryOperation)
                         {
-                            var operatorKind = binaryOperation.OperatorKind;
-                            if (operatorKind != BinaryOperatorKind.Equals && operatorKind != BinaryOperatorKind.GreaterThanOrEqual)
-                            {
-                                return;
-                            }
-
                             var otherOperand = binaryOperation.LeftOperand is IInvocationOperation ? binaryOperation.RightOperand : binaryOperation.LeftOperand;
-                            if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue)
+                            if (CheckOperatorKindAndOperand(binaryOperation, otherOperand))
                             {
-                                if ((operatorKind == BinaryOperatorKind.Equals && intValue < 0) ||
-                                    (operatorKind == BinaryOperatorKind.GreaterThanOrEqual && intValue == 0))
-                                {
-                                    context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
-                                }
+                                context.ReportDiagnostic(binaryOperation.CreateDiagnostic(Rule));
                             }
                         }
                         else if (parent is IVariableInitializerOperation variableInitializer)
@@ -181,6 +166,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 variableNameToOperationsMap.TryAdd(variableDeclarationOperation.Declarators[0].Symbol, invocationOperation);
                             }
                         }
+                    }
+
+                    static bool CheckOperatorKindAndOperand(IBinaryOperation binaryOperation, IOperation otherOperand)
+                    {
+                        var operatorKind = binaryOperation.OperatorKind;
+                        if (otherOperand.ConstantValue.HasValue && otherOperand.ConstantValue.Value is int intValue)
+                        {
+                            if ((operatorKind == BinaryOperatorKind.Equals && intValue < 0) ||
+                                (operatorKind == BinaryOperatorKind.GreaterThanOrEqual && intValue == 0))
+                            {
+                                // This is the only case we are targeting in this analyzer
+                                return true;
+                            }
+                        }
+                        return false;
                     }
 
                     void OnOperationBlockEnd(OperationBlockAnalysisContext context)

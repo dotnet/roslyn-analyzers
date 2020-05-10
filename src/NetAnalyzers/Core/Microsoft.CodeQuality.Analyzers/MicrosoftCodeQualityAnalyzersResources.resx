@@ -424,10 +424,10 @@
   <data name="PassSystemUriObjectsInsteadOfStringsMessage" xml:space="preserve">
     <value>Modify '{0}' to call '{1}' instead of '{2}'.</value>
   </data>
-  <data name="ImplementIEquatableWhenOverridingObjectEqualsTitle" xml:space="preserve">
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsMessage" xml:space="preserve">
     <value>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</value>
   </data>
-  <data name="ImplementIEquatableWhenOverridingObjectEqualsMessage" xml:space="preserve">
+  <data name="ImplementIEquatableWhenOverridingObjectEqualsTitle" xml:space="preserve">
     <value>Implement IEquatable when overriding Object.Equals</value>
   </data>
   <data name="CancellationTokenParametersMustComeLastTitle" xml:space="preserve">
@@ -1308,10 +1308,13 @@
     <value>Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</value>
   </data>
   <data name="AvoidDuplicateElementInitializationMessage" xml:space="preserve">
-    <value>The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</value>
+    <value>Redundant element initialization at index '{0}'. Object initializer has another element initializer with the same index that overwrites this value.</value>
   </data>
   <data name="AvoidDuplicateElementInitializationTitle" xml:space="preserve">
     <value>Do not duplicate indexed element initializations</value>
+  </data>
+  <data name="RemoveRedundantElementInitializationCodeFixTitle" xml:space="preserve">
+    <value>Remove redundant element initializer</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsDescription" xml:space="preserve">
     <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
@@ -1435,5 +1438,8 @@
   </data>
   <data name="EventsShouldNotHaveBeforeOrAfterPrefixTitle" xml:space="preserve">
     <value>Events should not have 'Before' or 'After' prefix</value>
+  </data>
+  <data name="DoNotIgnoreMethodResultsMessageUserDefinedMethod" xml:space="preserve">
+    <value>'{0}' calls '{1}' but does not use the value the method returns. This method is defined as a user-option. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</value>
   </data>
 </root>

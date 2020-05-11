@@ -7,6 +7,7 @@ queue:
 variables:
   BuildConfiguration: Release
   TeamName: Roslyn
+  _DotNetArtifactsCategory: .NETCore
 
 steps:
 - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
@@ -22,6 +23,12 @@ steps:
             /p:DotNetSignType=$(SignType)
             /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
             /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+            /p:PublishToSymbolServer=true
+            /p:DotNetPublishToBlobFeed=true
+            /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+            /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+            /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+            /p:DotnetPublishUsingPipelines=true
   displayName: Build
 
 - task: NuGetPublisher@0

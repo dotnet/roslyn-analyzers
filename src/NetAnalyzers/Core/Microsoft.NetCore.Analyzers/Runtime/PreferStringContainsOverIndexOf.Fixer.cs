@@ -47,9 +47,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 IInvocationOperation invocationOperation;
                 IOperation otherOperation;
-                if (binaryOperation.LeftOperand is IInvocationOperation)
+                if (binaryOperation.LeftOperand is IInvocationOperation invocationOperationOperand)
                 {
-                    invocationOperation = (IInvocationOperation)binaryOperation.LeftOperand;
+                    invocationOperation = invocationOperationOperand;
                     otherOperation = binaryOperation.RightOperand;
                 }
                 else
@@ -115,6 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         newIfCondition = generator.LogicalNotExpression(containsInvocation);
                     }
+                    newIfCondition = newIfCondition.WithTriviaFrom(binaryOperation.Syntax);
                     syntaxEditor.ReplaceNode(binaryOperation.Syntax, newIfCondition);
                     var newRoot = syntaxEditor.GetChangedRoot();
                     return document.WithSyntaxRoot(newRoot);

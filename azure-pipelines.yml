@@ -37,7 +37,7 @@ jobs:
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
-    - script: $(Build.SourcesDirectory)/.dotnet/dotnet msbuild -restore eng/CodeCoverage.proj
+    - script: $(Build.SourcesDirectory)/.dotnet/dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
       displayName: Upload coverage to codecov.io
       condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1

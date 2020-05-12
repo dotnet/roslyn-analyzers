@@ -21,7 +21,6 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableTelemetry: true
-      helixRepo: dotnet/symreader
       jobs:
       - job: Signed_Build
         pool:

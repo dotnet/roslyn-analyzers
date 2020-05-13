@@ -38,7 +38,6 @@ stages:
           clean: true
         - script: eng\common\CIBuild.cmd 
                     -configuration $(_BuildConfig)
-                    -binaryLog
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                     /p:DotNetSignType=$(_SignType)
                     /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)

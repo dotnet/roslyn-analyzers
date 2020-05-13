@@ -29,7 +29,7 @@ stages:
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
-          - name: BuildConfiguration
+          - name: _BuildConfig
             value: Release
           - name: _SignType
             value: real
@@ -37,7 +37,7 @@ stages:
         - checkout: self
           clean: true
         - script: eng\common\CIBuild.cmd 
-                    -configuration $(BuildConfiguration)
+                    -configuration $(_BuildConfig)
                     -binaryLog
                     /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                     /p:DotNetSignType=$(_SignType)
@@ -55,7 +55,7 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: Publish Artifact Packages
           inputs:
-            PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
+            PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
             ArtifactName: 'Packages'
           condition: succeeded()
 
@@ -63,7 +63,7 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: Publish Artifact VSIXes
           inputs:
-            PathtoPublish: 'artifacts\VSSetup\$(BuildConfiguration)'
+            PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
             ArtifactName: 'VSIXes'
           condition: succeeded()
 

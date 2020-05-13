@@ -5,6 +5,7 @@
     <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+    <NoWarn>$(NoWarn);NU5119</NoWarn>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />

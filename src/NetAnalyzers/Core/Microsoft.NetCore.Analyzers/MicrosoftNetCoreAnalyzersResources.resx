@@ -1287,6 +1287,15 @@
   <data name="PreferStreamAsyncMemoryOverloadsMessage" xml:space="preserve">
     <value>Change the '{0}' method call to use the '{1}' overload</value>
   </data>
+  <data name="ForwardCancellationTokenToAsyncMethodsDescription" xml:space="preserve">
+    <value>Description - Forward cancellation token to async methods</value>
+  </data>
+  <data name="ForwardCancellationTokenToAsyncMethodsMessage" xml:space="preserve">
+    <value>Message - Forward cancellation token to async methods</value>
+  </data>
+  <data name="ForwardCancellationTokenToAsyncMethodsTitle" xml:space="preserve">
+    <value>Title - Forward cancellation token to async methods</value>
+  </data>
   <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle" xml:space="preserve">
     <value>Change to call the two argument constructor, pass null for the message.</value>
   </data>

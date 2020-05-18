@@ -877,6 +877,21 @@
         <target state="translated">Los finalizadores deben llamar al finalizador de la clase base</target>
         <note />
       </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
+        <source>Description - Forward cancellation token to async methods</source>
+        <target state="new">Description - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
+        <source>Message - Forward cancellation token to async methods</source>
+        <target state="new">Message - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
+        <source>Title - Forward cancellation token to async methods</source>
+        <target state="new">Title - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
         <target state="translated">Evite codificar SecurityProtocolType {0} de forma rígida y, en su lugar, use SecurityProtocolType.SystemDefault para permitir que el sistema operativo elija el mejor protocolo de Seguridad de la capa de transporte que se puede usar.</target>

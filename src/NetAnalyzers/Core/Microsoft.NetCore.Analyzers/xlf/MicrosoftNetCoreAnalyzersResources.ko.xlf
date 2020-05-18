@@ -877,6 +877,21 @@
         <target state="translated">종료자가 기본 클래스 종료자를 호출해야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
+        <source>Description - Forward cancellation token to async methods</source>
+        <target state="new">Description - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
+        <source>Message - Forward cancellation token to async methods</source>
+        <target state="new">Message - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
+        <source>Title - Forward cancellation token to async methods</source>
+        <target state="new">Title - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
         <target state="translated">운영 체제에서 사용할 최상의 전송 계층 보안 프로토콜을 선택할 수 있게 하려면 SecurityProtocolType {0}을(를) 하드 코딩하지 말고 대신 SecurityProtocolType.SystemDefault를 사용하세요.</target>

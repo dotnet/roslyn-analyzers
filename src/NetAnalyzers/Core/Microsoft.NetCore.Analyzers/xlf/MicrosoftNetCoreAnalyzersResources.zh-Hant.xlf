@@ -877,6 +877,21 @@
         <target state="translated">完成項應呼叫基底類別完成項</target>
         <note />
       </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
+        <source>Description - Forward cancellation token to async methods</source>
+        <target state="new">Description - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
+        <source>Message - Forward cancellation token to async methods</source>
+        <target state="new">Message - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
+        <source>Title - Forward cancellation token to async methods</source>
+        <target state="new">Title - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
         <target state="translated">請避免對 SecurityProtocolType {0} 進行硬式編碼，並改為使用 SecurityProtocolType.SystemDefault 以便作業系統針對要使用的傳輸層安全性通訊協定進行最佳選擇。</target>

@@ -877,6 +877,21 @@
         <target state="translated">Les finaliseurs doivent appeler un finaliseur de classe de base</target>
         <note />
       </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
+        <source>Description - Forward cancellation token to async methods</source>
+        <target state="new">Description - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
+        <source>Message - Forward cancellation token to async methods</source>
+        <target state="new">Message - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
+        <source>Title - Forward cancellation token to async methods</source>
+        <target state="new">Title - Forward cancellation token to async methods</target>
+        <note />
+      </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
         <target state="translated">Évitez tout codage en dur du SecurityProtocolType {0}, et utilisez plutôt SecurityProtocolType.SystemDefault pour permettre au système d'exploitation de choisir le meilleur protocole TLS à utiliser.</target>

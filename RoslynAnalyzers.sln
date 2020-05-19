@@ -128,10 +128,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics.Legacy", "src\Tools
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Metrics.Package", "nuget\Microsoft.CodeAnalysis.Metrics\Microsoft.CodeAnalysis.Metrics.Package.csproj", "{C96D2F95-3090-4376-942C-2C934C55283B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenerateAnalyzerRulesets", "GenerateAnalyzerRulesets", "{1B75E62D-E35D-4FF0-B5A4-78D60D3A3388}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateAnalyzerRulesets", "src\Tools\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj", "{3727E79D-8250-492E-8082-9A5D0C0AD0D9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseNotesUtil", "ReleaseNotesUtil", "{6AAE1FC7-D96E-40CB-8B52-EA87EF9BF00A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReleaseNotesUtil", "src\Tools\ReleaseNotesUtil\ReleaseNotesUtil.csproj", "{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}"
@@ -166,6 +162,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenerateGlobalAnalyzerConfi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateGlobalAnalyzerConfigs", "src\Tools\GenerateGlobalAnalyzerConfigs\GenerateGlobalAnalyzerConfigs.csproj", "{3DD9D249-13D4-4DD2-B043-1F025F550013}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenerateDocumentationAndConfigFiles", "GenerateDocumentationAndConfigFiles", "{DB2DD702-8301-4FC6-B8C0-029C7DCC2931}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateDocumentationAndConfigFiles", "src\Tools\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj", "{563654BA-4C05-4EA2-91D3-28A14723B7D5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
@@ -177,8 +177,6 @@ Global
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a520f3e-8c5d-43fe-aa03-fe5e3c5f23d1}*SharedItemsImports = 5
-		src\Utilities\Compiler\Analyzer.Utilities.projitems*{3727e79d-8250-492e-8082-9a5d0c0ad0d9}*SharedItemsImports = 5
-		src\Utilities\Compiler\Analyzer.Utilities.projitems*{3dd9d249-13d4-4dd2-b043-1f025f550013}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
@@ -377,10 +375,6 @@ Global
 		{C96D2F95-3090-4376-942C-2C934C55283B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C96D2F95-3090-4376-942C-2C934C55283B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C96D2F95-3090-4376-942C-2C934C55283B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3727E79D-8250-492E-8082-9A5D0C0AD0D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3727E79D-8250-492E-8082-9A5D0C0AD0D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3727E79D-8250-492E-8082-9A5D0C0AD0D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3727E79D-8250-492E-8082-9A5D0C0AD0D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -433,6 +427,10 @@ Global
 		{3DD9D249-13D4-4DD2-B043-1F025F550013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DD9D249-13D4-4DD2-B043-1F025F550013}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DD9D249-13D4-4DD2-B043-1F025F550013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -486,8 +484,6 @@ Global
 		{CADE5623-CC57-43A2-9D2A-B7AB29225406} = {50FB229D-38DB-4A34-8588-D33671AB68DE}
 		{2A4AF3A4-307B-4252-888E-E6546244585A} = {50FB229D-38DB-4A34-8588-D33671AB68DE}
 		{C96D2F95-3090-4376-942C-2C934C55283B} = {50FB229D-38DB-4A34-8588-D33671AB68DE}
-		{1B75E62D-E35D-4FF0-B5A4-78D60D3A3388} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
-		{3727E79D-8250-492E-8082-9A5D0C0AD0D9} = {1B75E62D-E35D-4FF0-B5A4-78D60D3A3388}
 		{6AAE1FC7-D96E-40CB-8B52-EA87EF9BF00A} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F} = {6AAE1FC7-D96E-40CB-8B52-EA87EF9BF00A}
 		{1C62A2F6-7A44-4030-9D1A-7E7A966736E5} = {31F86414-C34B-462A-AFB5-BDA7724904F3}
@@ -504,6 +500,8 @@ Global
 		{64D70469-18B0-446C-80E9-A7C45A747B3E} = {02F88961-A08F-451A-93AB-328792A32EBC}
 		{0194F644-14D0-4AF4-8FA1-5CEA07DC7F5F} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{3DD9D249-13D4-4DD2-B043-1F025F550013} = {0194F644-14D0-4AF4-8FA1-5CEA07DC7F5F}
+		{DB2DD702-8301-4FC6-B8C0-029C7DCC2931} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
+		{563654BA-4C05-4EA2-91D3-28A14723B7D5} = {DB2DD702-8301-4FC6-B8C0-029C7DCC2931}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

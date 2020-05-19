@@ -222,11 +222,12 @@ if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
 
 if (globalAnalyzerConfigsDir.Length > 0 && Directory.Exists(globalAnalyzerConfigsDir))
 {
-    foreach (string editorconfig in Directory.EnumerateFiles(globalAnalyzerConfigsDir))
+    foreach (string directory in Directory.EnumerateDirectories(globalAnalyzerConfigsDir))
     {
-        if (Path.GetExtension(editorconfig) == ".editorconfig")
+        var directoryName = new DirectoryInfo(directory).Name;
+        foreach (string editorconfig in Directory.EnumerateFiles(directory))
         {
-            result.AppendLine(FileElement(Path.Combine(globalAnalyzerConfigsDir, editorconfig), "build\\config\\"));
+            result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"build\\config\\{directoryName}"));
         }
     }
 }

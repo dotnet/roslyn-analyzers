@@ -18,17 +18,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// </summary>
     public abstract class ForwardCancellationTokenToAsyncMethodsFixer : CodeFixProvider
     {
+        protected const string CancellationTokenName = "CancellationToken";
+
         // Looks for a ct parameter in the ancestor method or function declaration. If one is found, retrieve the name of the parameter.
         // Returns true if a ct parameter was found and parameterName is not null or empty. Returns false otherwise.
-        protected abstract bool TryGetAncestorDeclarationCancellationTokenParameterName(SyntaxNode node, out string? parameterName);
+        protected abstract bool TryGetAncestorDeclarationCancellationTokenParameterName(SemanticModel model, SyntaxNode node, out string? parameterName);
+
+        protected static bool IsCancellationTokenParameter(SemanticModel model, SyntaxNode parameter)
+        {
+            return model.GetDeclaredSymbol(parameter) is IParameterSymbol parameterSymbol &&
+                   parameterSymbol.Type.Name.Equals(CancellationTokenName, StringComparison.Ordinal);
+        }
 
         public override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(ForwardCancellationTokenToAsyncMethodsAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
-
-        protected const string CancellationTokenName = "CancellationToken";
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -47,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (!TryGetAncestorDeclarationCancellationTokenParameterName(node, out string? parameterName))
+            if (!TryGetAncestorDeclarationCancellationTokenParameterName(model, node, out string? parameterName))
             {
                 return;
             }

@@ -12,38 +12,35 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         Inherits ForwardCancellationTokenToAsyncMethodsFixer
 
-        Private Shared Function IsCancellationTokenParameter(parameter As ParameterSyntax) As Boolean
-            Dim type As SimpleNameSyntax = TryCast(parameter.AsClause.Type, SimpleNameSyntax)
-            Return type IsNot Nothing AndAlso type.Identifier.ValueText.Equals(CancellationTokenName, StringComparison.Ordinal)
+        Private Shared Function GetCancellationTokenName(model As SemanticModel, parameters As IEnumerable(Of ParameterSyntax)) As String
+            Return parameters.FirstOrDefault(Function(p) IsCancellationTokenParameter(model, p))?.Identifier.Identifier.ValueText
         End Function
 
-        Private Shared Function GetCancellationTokenName(parameterList As SeparatedSyntaxList(Of ParameterSyntax)) As String
-            Return parameterList.FirstOrDefault(Function(p) IsCancellationTokenParameter(p))?.Identifier.Identifier.ValueText
-        End Function
-
-        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(node As SyntaxNode, ByRef parameterName As String) As Boolean
+        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(model As SemanticModel, node As SyntaxNode, ByRef parameterName As String) As Boolean
 
             parameterName = Nothing
 
             Dim currentNode As SyntaxNode = node.Parent
+            Dim parameters As IEnumerable(Of ParameterSyntax) = Nothing
             While currentNode IsNot Nothing
 
-                Dim singleLineLambdaNode As SingleLineLambdaExpressionSyntax = TryCast(currentNode, SingleLineLambdaExpressionSyntax)
-                Dim multiLineLambdaNode As MultiLineLambdaExpressionSyntax = TryCast(currentNode, MultiLineLambdaExpressionSyntax)
-                Dim methodNode As MethodStatementSyntax = TryCast(currentNode, MethodStatementSyntax)
-                Dim methodBlockNode As MethodBlockSyntax = TryCast(currentNode, MethodBlockSyntax)
+                Dim singleLineLambda As SingleLineLambdaExpressionSyntax = TryCast(currentNode, SingleLineLambdaExpressionSyntax)
+                Dim multiLineLambda As MultiLineLambdaExpressionSyntax = TryCast(currentNode, MultiLineLambdaExpressionSyntax)
+                Dim methodStatement As MethodStatementSyntax = TryCast(currentNode, MethodStatementSyntax)
+                Dim methodBlock As MethodBlockSyntax = TryCast(currentNode, MethodBlockSyntax)
 
-                If singleLineLambdaNode IsNot Nothing Then
-                    parameterName = GetCancellationTokenName(singleLineLambdaNode.SubOrFunctionHeader.ParameterList.Parameters)
-                    Exit While
-                ElseIf multiLineLambdaNode IsNot Nothing Then
-                    parameterName = GetCancellationTokenName(multiLineLambdaNode.SubOrFunctionHeader.ParameterList.Parameters)
-                    Exit While
-                ElseIf methodNode IsNot Nothing Then
-                    parameterName = GetCancellationTokenName(methodNode.ParameterList.Parameters)
-                    Exit While
-                ElseIf methodBlockNode IsNot Nothing Then
-                    parameterName = GetCancellationTokenName(methodBlockNode.SubOrFunctionStatement.ParameterList.Parameters)
+                If singleLineLambda IsNot Nothing Then
+                    parameters = singleLineLambda.SubOrFunctionHeader.ParameterList.Parameters
+                ElseIf multiLineLambda IsNot Nothing Then
+                    parameters = multiLineLambda.SubOrFunctionHeader.ParameterList.Parameters
+                ElseIf methodStatement IsNot Nothing Then
+                    parameters = methodStatement.ParameterList.Parameters
+                ElseIf methodBlock IsNot Nothing Then
+                    parameters = methodBlock.SubOrFunctionStatement.ParameterList.Parameters
+                End If
+
+                If parameters IsNot Nothing Then
+                    parameterName = GetCancellationTokenName(model, parameters)
                     Exit While
                 End If
 

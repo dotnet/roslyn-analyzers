@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -12,32 +13,33 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     [ExportCodeFixProvider(LanguageNames.CSharp)]
     public sealed class CSharpForwardCancellationTokenToAsyncMethodsFixer : ForwardCancellationTokenToAsyncMethodsFixer
     {
-        private static bool IsCancellationTokenParameter(ParameterSyntax parameter) =>
-            parameter.Type is IdentifierNameSyntax typeIdentifier && typeIdentifier.Identifier.ValueText.Equals(CancellationTokenName, StringComparison.Ordinal);
+        private static string? GetCancellationTokenName(SemanticModel model, IEnumerable<ParameterSyntax> parameters) =>
+            parameters.FirstOrDefault(p => IsCancellationTokenParameter(model, p))?.Identifier.ValueText;
 
-        private static string? GetCancellationTokenName(SeparatedSyntaxList<ParameterSyntax> parameters) =>
-            parameters.FirstOrDefault(p => IsCancellationTokenParameter(p))?.Identifier.ValueText;
-
-        protected override bool TryGetAncestorDeclarationCancellationTokenParameterName(SyntaxNode node, out string? parameterName)
+        protected override bool TryGetAncestorDeclarationCancellationTokenParameterName(SemanticModel model, SyntaxNode node, out string? parameterName)
         {
             parameterName = null;
 
             SyntaxNode currentNode = node.Parent;
+            IEnumerable<ParameterSyntax>? parameters = null;
             while (currentNode != null)
             {
                 if (currentNode is ParenthesizedLambdaExpressionSyntax lambdaNode)
                 {
-                    parameterName = GetCancellationTokenName(lambdaNode.ParameterList.Parameters);
-                    break;
+                    parameters = lambdaNode.ParameterList.Parameters;
                 }
                 else if (currentNode is LocalFunctionStatementSyntax localNode)
                 {
-                    parameterName = GetCancellationTokenName(localNode.ParameterList.Parameters);
-                    break;
+                    parameters = localNode.ParameterList.Parameters;
                 }
                 else if (currentNode is MethodDeclarationSyntax methodNode)
                 {
-                    parameterName = GetCancellationTokenName(methodNode.ParameterList.Parameters);
+                    parameters = methodNode.ParameterList.Parameters;
+                }
+
+                if (parameters != null)
+                {
+                    parameterName = GetCancellationTokenName(model, parameters);
                     break;
                 }
 

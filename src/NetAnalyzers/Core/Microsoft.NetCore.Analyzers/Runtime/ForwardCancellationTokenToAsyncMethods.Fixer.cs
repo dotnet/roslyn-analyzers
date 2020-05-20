@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsTitle;
 
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(doc, root, invocation, parameterName);
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(doc, root, invocation, parameterName!);
 
             context.RegisterCodeFix(
                 new MyCodeAction(

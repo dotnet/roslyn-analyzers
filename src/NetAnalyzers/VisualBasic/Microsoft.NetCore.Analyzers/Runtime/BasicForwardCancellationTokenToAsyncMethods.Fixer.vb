@@ -1,6 +1,5 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
@@ -13,12 +12,12 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         Inherits ForwardCancellationTokenToAsyncMethodsFixer
 
-        Private Function IsCancellationTokenParameter(parameter As ParameterSyntax) As Boolean
+        Private Shared Function IsCancellationTokenParameter(parameter As ParameterSyntax) As Boolean
             Dim type As SimpleNameSyntax = TryCast(parameter.AsClause.Type, SimpleNameSyntax)
             Return type IsNot Nothing AndAlso type.Identifier.ValueText.Equals(CancellationTokenName, StringComparison.Ordinal)
         End Function
 
-        Private Function GetCancellationTokenName(parameterList As SeparatedSyntaxList(Of ParameterSyntax)) As String
+        Private Shared Function GetCancellationTokenName(parameterList As SeparatedSyntaxList(Of ParameterSyntax)) As String
             Return parameterList.FirstOrDefault(Function(p) IsCancellationTokenParameter(p))?.Identifier.Identifier.ValueText
         End Function
 
@@ -54,7 +53,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             Return Not String.IsNullOrEmpty(parameterName)
         End Function
+
     End Class
+
 End Namespace
 
 

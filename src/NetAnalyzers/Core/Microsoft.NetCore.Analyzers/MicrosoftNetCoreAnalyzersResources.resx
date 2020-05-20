@@ -1288,13 +1288,13 @@
     <value>Change the '{0}' method call to use the '{1}' overload</value>
   </data>
   <data name="ForwardCancellationTokenToAsyncMethodsDescription" xml:space="preserve">
-    <value>Description - Forward cancellation token to async methods</value>
+    <value>Consider forwarding the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated.</value>
   </data>
   <data name="ForwardCancellationTokenToAsyncMethodsMessage" xml:space="preserve">
-    <value>Message - Forward cancellation token to async methods</value>
+    <value>Consider forwarding the '{0}' parameter to the '{1}' method.</value>
   </data>
   <data name="ForwardCancellationTokenToAsyncMethodsTitle" xml:space="preserve">
-    <value>Title - Forward cancellation token to async methods</value>
+    <value>Consider forwarding the 'CancellationToken' parameter to methods that take one.</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle" xml:space="preserve">
     <value>Change to call the two argument constructor, pass null for the message.</value>

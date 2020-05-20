@@ -879,18 +879,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
-        <source>Description - Forward cancellation token to async methods</source>
-        <target state="new">Description - Forward cancellation token to async methods</target>
+        <source>Consider forwarding the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated.</source>
+        <target state="new">Consider forwarding the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated.</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
-        <source>Message - Forward cancellation token to async methods</source>
-        <target state="new">Message - Forward cancellation token to async methods</target>
+        <source>Consider forwarding the '{0}' parameter to the '{1}' method.</source>
+        <target state="new">Consider forwarding the '{0}' parameter to the '{1}' method.</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
-        <source>Title - Forward cancellation token to async methods</source>
-        <target state="new">Title - Forward cancellation token to async methods</target>
+        <source>Consider forwarding the 'CancellationToken' parameter to methods that take one.</source>
+        <target state="new">Consider forwarding the 'CancellationToken' parameter to methods that take one.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">

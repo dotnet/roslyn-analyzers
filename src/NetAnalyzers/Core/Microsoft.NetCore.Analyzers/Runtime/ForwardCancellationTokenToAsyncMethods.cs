@@ -15,22 +15,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA2016: Forward CancellationToken to async methods.
     /// 
     /// Conditions for positive cases:
-    ///     - The node to analyze is an awaited invocation, or is the origin invocation of a ConfigureAwait.
-    ///     - The parent method signature has a ct parameter.
-    ///     - The invocation is not receiving a ct argument.
+    ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
+    ///     - The invocation is not receiving a ct argument, and...
     ///     - The invocation method either:
-    ///         - Only has one method version, but the signature has one ct, set to default.
+    ///         - Has no overloads but its current signature receives an optional ct=default, being used right now, or...
     ///         - Has a method overload with the exact same arguments in the same order, plus one ct parameter at the end.
-    ///     - An Action/Func instance that receives a ct, and there's an awaited invocation inside.
     ///         
     /// Conditions for negative cases:
-    ///     - The parent method signature does not have a ct parameter.
-    ///     - The node to analyze is not an awaited invocation.
-    ///     - The awaited invocation is already receiving a ct argument.
-    ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct.
-    ///         - Includes the case where the user is *not* passing the parent method ct argument, but rather creating a new ct inside the method and passing that as argument, like with CancellationTokenSource.
-    ///         - Includes the case where the user is explicitly passing `default`, `default(CancellationToken)` or `CancellationToken.None` to the invocation.
-    ///         - If the overload that receives a ct receives more than one ct, do not suggest it.
+    ///     - The containing method signature does not receive a ct parameter.
+    ///     - The invocation is explicitly receiving a ct argument.
+    ///     - The invocation method signature receives a ct but one is already being explicitly passed, or...
+    ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
+    ///     - The invocation method has overloads that receive more than one ct.
     ///
     /// Future improvements:
     ///     - Finding an overload with one ct parameter, but not in last position.
@@ -86,80 +82,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            // Retrieve the ConfigureAwait methods that could also be detected, which can come from:
-            // - A Task
-            // - A generic Task
-            // - A ValueTask
-            // - A generic ValueTask
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out INamedTypeSymbol? taskType) ||
-                !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask, out INamedTypeSymbol? valueTaskType) ||
-                !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask, out INamedTypeSymbol? genericTaskType) ||
-                !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericValueTask, out INamedTypeSymbol? genericValueTaskType))
-            {
-                return;
-            }
-
-            const string configureAwaitName = "ConfigureAwait";
-            if (!(taskType.GetMembers(configureAwaitName).OfType<IMethodSymbol>().FirstOrDefault() is IMethodSymbol taskConfigureAwaitMethod) ||
-                !(genericTaskType.GetMembers(configureAwaitName).OfType<IMethodSymbol>().FirstOrDefault() is IMethodSymbol genericTaskConfigureAwaitMethod) ||
-                !(valueTaskType.GetMembers(configureAwaitName).OfType<IMethodSymbol>().FirstOrDefault() is IMethodSymbol valueTaskConfigureAwaitMethod) ||
-                !(genericValueTaskType.GetMembers(configureAwaitName).OfType<IMethodSymbol>().FirstOrDefault() is IMethodSymbol genericValueTaskConfigureAwaitMethod))
-            {
-                return;
-            }
-
             context.RegisterOperationAction(context =>
             {
-                if (ShouldAnalyze(
-                    (IAwaitOperation)context.Operation,
+                if (!ShouldAnalyze(
+                    (IInvocationOperation)context.Operation,
                     cancellationTokenType,
-                    taskConfigureAwaitMethod,
-                    genericTaskConfigureAwaitMethod,
-                    valueTaskConfigureAwaitMethod,
-                    genericValueTaskConfigureAwaitMethod,
-                    out IInvocationOperation? invocation))
+                    out string? cancellationTokenParameterName,
+                    out string? methodName))
                 {
-                    context.ReportDiagnostic(invocation!.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule));
+                    return;
                 }
+
+                context.ReportDiagnostic(context.Operation.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName!, methodName!));
             },
-            OperationKind.Await);
+            OperationKind.Invocation);
         }
 
-        private static bool ShouldAnalyze(IAwaitOperation awaitOperation, INamedTypeSymbol cancellationTokenType,
-            IMethodSymbol taskConfigureAwaitMethod,
-            IMethodSymbol genericTaskConfigureAwaitMethod,
-            IMethodSymbol valueTaskConfigureAwaitMethod,
-            IMethodSymbol genericValueTaskConfigureAwaitMethod,
-            out IInvocationOperation? invocation)
+        private static bool ShouldAnalyze(
+            IInvocationOperation invocation,
+            INamedTypeSymbol cancellationTokenType,
+            out string? cancellationTokenParameterName,
+            out string? methodName)
         {
-            invocation = null;
+            IMethodSymbol method = invocation.TargetMethod;
 
-            if (!(awaitOperation.Operation is IInvocationOperation awaitedInvocation))
-            {
-                return false;
-            }
-            invocation = awaitedInvocation;
-            IMethodSymbol method = awaitedInvocation.TargetMethod;
+            cancellationTokenParameterName = null;
+            methodName = method.Name;
 
-            // Check if the child operation of the await is ConfigureAwait
-            // in which case we should analyze the grandchild operation
-            if (method.OriginalDefinition.Equals(taskConfigureAwaitMethod) ||
-                method.OriginalDefinition.Equals(genericTaskConfigureAwaitMethod) ||
-                method.OriginalDefinition.Equals(valueTaskConfigureAwaitMethod) ||
-                method.OriginalDefinition.Equals(genericValueTaskConfigureAwaitMethod))
-            {
-                if (awaitedInvocation.Instance is IInvocationOperation instanceOperation)
-                {
-                    invocation = instanceOperation;
-                    method = instanceOperation.TargetMethod;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            // If the invocation has an optional implicit ct or an overload that takes a ct, continue
+            // Check if the invocation has an optional implicit ct or an overload that takes one ct
             if (!InvocationIgnoresOptionalCancellationToken(cancellationTokenType, invocation, method) &&
                 !MethodHasCancellationTokenOverload(cancellationTokenType, method))
             {
@@ -173,12 +123,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Check if the ancestor method has a ct that we can pass to the invocation
-            if (!VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, methodDeclaration!))
+            if (!VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, methodDeclaration!, out cancellationTokenParameterName))
             {
                 return false;
             }
 
-            return true;
+            return cancellationTokenParameterName != null && methodName != null;
         }
 
         // Looks for an ancestor that could be a method or function declaration.
@@ -226,15 +176,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Check if the method only takes one ct and is the last parameter in the method signature.
         // We want to compare the current method signature to any others with the exact same arguments in the exact same order.
-        private static bool VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(ITypeSymbol cancellationTokenType, IMethodSymbol methodDeclaration)
+        private static bool VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(
+            INamedTypeSymbol cancellationTokenType,
+            IMethodSymbol methodDeclaration,
+            out string? cancellationTokenParameterName)
         {
-            return methodDeclaration.Parameters.Count(x => x.Type.Equals(cancellationTokenType)) == 1 &&
-                methodDeclaration.Parameters.Last().Type.Equals(cancellationTokenType);
+            cancellationTokenParameterName = null;
+
+            if (methodDeclaration.Parameters.Count(x => x.Type.Equals(cancellationTokenType)) == 1 &&
+                methodDeclaration.Parameters.Last() is IParameterSymbol lastParameter &&
+                lastParameter.Type.Equals(cancellationTokenType))
+            {
+                cancellationTokenParameterName = lastParameter.Name;
+            }
+
+            return cancellationTokenParameterName != null;
         }
 
         // Check if the currently used overload is the one that takes the ct, but is utilizing the default value offered in the method signature.
         // We want to offer a diagnostic for this case, so the user explicitly passes the ancestor's ct.
-        private static bool InvocationIgnoresOptionalCancellationToken(ITypeSymbol cancellationTokenType, IInvocationOperation invocation, IMethodSymbol method)
+        private static bool InvocationIgnoresOptionalCancellationToken(INamedTypeSymbol cancellationTokenType, IInvocationOperation invocation, IMethodSymbol method)
         {
             if (method.Parameters.Any() && method.Parameters.Last() is IParameterSymbol lastParameter && lastParameter.Type.Equals(cancellationTokenType))
             {

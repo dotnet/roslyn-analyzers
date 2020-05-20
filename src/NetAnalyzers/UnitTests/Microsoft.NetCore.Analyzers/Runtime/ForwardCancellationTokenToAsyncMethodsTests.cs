@@ -67,40 +67,6 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_NoAwait()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        MethodAsync();
-    }
-    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_SaveTask()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        Task t = MethodAsync();
-    }
-    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
         public Task CS_NoDiagnostic_OverloadArgumentsDontMatch()
         {
             return VerifyCS.VerifyAnalyzerAsync(@"
@@ -192,7 +158,7 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_PassingExpliciCancellationTokenNone()
+        public Task CS_NoDiagnostic_PassingExplicitCancellationTokenNone()
         {
             return VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -202,92 +168,6 @@ class C
     async void M(CancellationToken ct)
     {
         await MethodAsync(CancellationToken.None);
-    }
-    Task MethodAsync() => Task.CompletedTask;
-    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_ActionDelegateNoAwait()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        Action<CancellationToken> a = (CancellationToken c) => MethodAsync();
-        a(ct);
-    }
-    Task MethodAsync() => Task.CompletedTask;
-    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_FuncDelegateAwaitOutside()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    async void M(CancellationToken ct)
-    {
-        Func<CancellationToken, Task> f = (CancellationToken c) => MethodAsync();
-        await f(ct);
-    }
-    Task MethodAsync() => Task.CompletedTask;
-    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_NestedFunctionNoAwait()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        void LocalMethod(CancellationToken token)
-        {
-            MethodAsync();
-        }
-        LocalMethod(ct);
-    }
-    Task MethodAsync() => Task.CompletedTask;
-    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_NestedFunctionAwaitOutside()
-        {
-            return VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-class C
-{
-    async void M(CancellationToken ct)
-    {
-        Task LocalMethod(CancellationToken token)
-        {
-            return MethodAsync();
-        }
-        await LocalMethod(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -406,6 +286,66 @@ class C
     async void M(CancellationToken ct)
     {
         await MethodAsync(ct).ConfigureAwait(false);
+    }
+    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_NoAwait()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        [|MethodAsync()|];
+    }
+    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        MethodAsync(ct);
+    }
+    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_SaveTask()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        Task t = [|MethodAsync()|];
+    }
+    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        Task t = MethodAsync(ct);
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -922,6 +862,42 @@ class C
         }
 
         [Fact]
+        public Task CS_NoDiagnostic_ActionDelegateNoAwait()
+        {
+            string originalCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        Action<CancellationToken> a = (CancellationToken c) => [|MethodAsync()|];
+        a(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        Action<CancellationToken> a = (CancellationToken c) => MethodAsync(c);
+        a(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
         public Task CS_Diagnostic_ActionDelegateAwait_WithConfigureAwait()
         {
             string originalCode = @"
@@ -958,7 +934,7 @@ class C
         }
 
         [Fact]
-        public Task CS_Diagnostic_FuncDelegateAwaitInside()
+        public Task CS_Diagnostic_FuncDelegateAwait()
         {
             string originalCode = @"
 using System;
@@ -1002,7 +978,7 @@ class C
         }
 
         [Fact]
-        public Task CS_Diagnostic_FuncDelegateAwaitInside_WithConfigureAwait()
+        public Task CS_Diagnostic_FuncDelegateAwait_WithConfigureAwait()
         {
             string originalCode = @"
 using System;
@@ -1046,6 +1022,42 @@ class C
         }
 
         [Fact]
+        public Task CS_Diagnostic_FuncDelegateAwaitOutside()
+        {
+            string originalCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        Func<CancellationToken, Task> f = (CancellationToken c) => [|MethodAsync()|];
+        await f(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        Func<CancellationToken, Task> f = (CancellationToken c) => MethodAsync(c);
+        await f(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
         public Task CS_Diagnostic_NestedFunctionAwait()
         {
             string originalCode = @"
@@ -1079,6 +1091,90 @@ class C
             await MethodAsync(token);
         }
         LocalMethod(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_NestedFunctionNoAwait()
+        {
+            string originalCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        void LocalMethod(CancellationToken token)
+        {
+            [|MethodAsync()|];
+        }
+        LocalMethod(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        void LocalMethod(CancellationToken token)
+        {
+            MethodAsync(token);
+        }
+        LocalMethod(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_NestedFunctionAwaitOutside()
+        {
+            string originalCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        Task LocalMethod(CancellationToken token)
+        {
+            return [|MethodAsync()|];
+        }
+        await LocalMethod(ct);
+    }
+    Task MethodAsync() => Task.CompletedTask;
+    Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        Task LocalMethod(CancellationToken token)
+        {
+            return MethodAsync(token);
+        }
+        await LocalMethod(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -1185,41 +1281,6 @@ End Class
         }
 
         [Fact]
-        public Task VB_NoDiagnostic_NoAwait()
-        {
-            return VerifyVB.VerifyAnalyzerAsync(@"
-Imports System.Threading
-Imports System.Threading.Tasks
-Class C
-    Private Sub M(ByVal ct As CancellationToken)
-        MethodAsync()
-    End Sub
-    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ");
-        }
-
-        [Fact]
-        public Task VB_NoDiagnostic_SaveTask()
-        {
-            return VerifyVB.VerifyAnalyzerAsync(@"
-Imports System.Threading
-Imports System.Threading.Tasks
-
-Class C
-    Private Sub M(ByVal ct As CancellationToken)
-        Dim t As Task = MethodAsync()
-    End Sub
-    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ");
-        }
-
-        [Fact]
         public Task VB_NoDiagnostic_OverloadArgumentsDontMatch()
         {
             return VerifyVB.VerifyAnalyzerAsync(@"
@@ -1303,7 +1364,7 @@ End Class
         }
 
         [Fact]
-        public Task VB_NoDiagnostic_PassingExpliciCancellationTokenNone()
+        public Task VB_NoDiagnostic_PassingExplicitCancellationTokenNone()
         {
             return VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading
@@ -1321,54 +1382,6 @@ Class C
 End Class
             ");
         }
-
-        [Fact]
-        public Task VB_NoDiagnostic_ActionDelegateNoAwait()
-        {
-            return VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-Imports System.Threading
-Imports System.Threading.Tasks
-Class C
-    Private Sub M(ByVal ct As CancellationToken)
-        Dim a As Action(Of CancellationToken) = Sub(ByVal c As CancellationToken) MethodAsync()
-        a(ct)
-    End Sub
-    Private Function MethodAsync() As Task
-        Return Task.CompletedTask
-    End Function
-    Private Function MethodAsync(ByVal c As CancellationToken) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ");
-        }
-
-        [Fact]
-        public Task VB_NoDiagnostic_FuncDelegateAwaitOutside()
-        {
-            return VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-Imports System.Threading
-Imports System.Threading.Tasks
-Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Dim f As Func(Of CancellationToken, Task) = Function(ByVal c As CancellationToken) MethodAsync()
-        Await f(ct)
-    End Sub
-    Private Function MethodAsync() As Task
-        Return Task.CompletedTask
-    End Function
-    Private Function MethodAsync(ByVal c As CancellationToken) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ");
-        }
-
-        // Nested functions not available in VB:
-        // VB_NoDiagnostic_NestedFunctionNoAwait
-        // VB_NoDiagnostic_NestedFunctionAwaitOutside
 
         [Fact]
         public Task VB_NoDiagnostic_OverloadTokenNotLastParameter()
@@ -1464,6 +1477,7 @@ End Class
             return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
+
         [Fact]
         public Task VB_Diagnostic_Class_TokenDefault_WithConfigureAwait()
         {
@@ -1485,6 +1499,68 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Await MethodAsync(ct).ConfigureAwait(False)
+    End Sub
+    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_NoAwait()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        [|MethodAsync()|]
+    End Sub
+    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        MethodAsync(ct)
+    End Sub
+    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_SaveTask()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim t As Task = [|MethodAsync()|]
+    End Sub
+    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim t As Task = MethodAsync(ct)
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2049,6 +2125,46 @@ End Class
         }
 
         [Fact]
+        public Task VB_Diagnostic_ActionDelegateNoAwait()
+        {
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim a As Action(Of CancellationToken) = Sub(ByVal c As CancellationToken) [|MethodAsync()|]
+        a(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim a As Action(Of CancellationToken) = Sub(ByVal c As CancellationToken) MethodAsync(c)
+        a(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
         public Task VB_Diagnostic_ActionDelegateAwait_WithConfigureAwait()
         {
             string originalCode = @"
@@ -2089,7 +2205,7 @@ End Class
         }
 
         [Fact]
-        public Task VB_Diagnostic_FuncDelegateAwaitInside()
+        public Task VB_Diagnostic_FuncDelegateAwait()
         {
             string originalCode = @"
 Imports System
@@ -2135,7 +2251,93 @@ End Class
         }
 
         [Fact]
-        public Task VB_Diagnostic_FuncDelegateAwaitInside_WithConfigureAwait()
+        public Task VB_Diagnostic_FuncDelegateNoAwait()
+        {
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim f As Func(Of CancellationToken, Boolean) = Function(ByVal token As CancellationToken)
+                                                           [|MethodAsync()|]
+                                                           Return True
+                                                        End Function
+        f(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim f As Func(Of CancellationToken, Boolean) = Function(ByVal token As CancellationToken)
+                                                           MethodAsync(token)
+                                                           Return True
+                                                        End Function
+        f(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_FuncDelegateAwaitOutside()
+        {
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Dim f As Func(Of CancellationToken, Task) = Function(ByVal c As CancellationToken) [|MethodAsync()|]
+        Await f(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Dim f As Func(Of CancellationToken, Task) = Function(ByVal c As CancellationToken) MethodAsync(c)
+        Await f(ct)
+    End Sub
+    Private Function MethodAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_FuncDelegateAwait_WithConfigureAwait()
         {
             string originalCode = @"
 Imports System
@@ -2182,6 +2384,8 @@ End Class
 
         // Nested functions not available in VB:
         // VB_Diagnostic_NestedFunctionAwait
+        // VB_Diagnostic_NestedFunctionNoAwait
+        // VB_Diagnostic_NestedFunctionAwaitOutside
         // VB_Diagnostic_NestedFunctionAwait_WithConfigureAwait
 
         #endregion

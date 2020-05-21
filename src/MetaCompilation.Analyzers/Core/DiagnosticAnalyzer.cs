@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+#nullable disable
+
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -308,12 +311,12 @@ namespace MetaCompilation.Analyzers
             MessageRule,
             CategoryRule);
 
-#pragma warning disable RS1025 // Configure generated code analysis
 #pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
 #pragma warning restore RS1026 // Enable concurrent execution
-#pragma warning restore RS1025 // Configure generated code analysis
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(SetupAnalysis);
         }
 
@@ -347,7 +350,7 @@ namespace MetaCompilation.Analyzers
             private readonly List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
 
             //"main" method, performs the analysis once state has been collected
-            internal protected void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
+            protected internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
             {
                 //supported main branches for tutorial
                 _branchesDict.Add("RegisterSyntaxNodeAction", "SyntaxNode");
@@ -502,8 +505,8 @@ namespace MetaCompilation.Analyzers
             // Checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
             private bool CheckIfStatementAnalysis(List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                var methodDeclaration = AnalysisGetStatements(analysisMethodSymbol) as MethodDeclarationSyntax;
-                var body = methodDeclaration.Body as BlockSyntax;
+                var methodDeclaration = AnalysisGetStatements(analysisMethodSymbol);
+                var body = methodDeclaration.Body;
                 if (body == null)
                 {
                     return false;
@@ -515,7 +518,7 @@ namespace MetaCompilation.Analyzers
                     return false;
                 }
 
-                var contextParameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                var contextParameter = methodDeclaration.ParameterList.Parameters[0];
                 if (contextParameter == null)
                 {
                     return false;
@@ -544,7 +547,7 @@ namespace MetaCompilation.Analyzers
                         // HasTrailingTrivia if-statement in user analyzer
                         if (statementCount > 2)
                         {
-                            var triviaBlock = IfStatementAnalysis3(statements, keywordIdentifierToken) as BlockSyntax;
+                            var triviaBlock = IfStatementAnalysis3(statements, keywordIdentifierToken);
                             if (triviaBlock == null)
                             {
                                 IfDiagnostic(context, statements[2], TrailingTriviaCheckIncorrectRule, keywordIdentifierToken.Text);
@@ -961,7 +964,7 @@ namespace MetaCompilation.Analyzers
                 var booleanExpression = statement.Condition as BinaryExpressionSyntax;
                 if (booleanExpression == null)
                 {
-                    var blockResult = WhitespaceKindCheckAlternate(statement, triviaIdentifierToken) as BlockSyntax;
+                    var blockResult = WhitespaceKindCheckAlternate(statement, triviaIdentifierToken);
                     if (blockResult == null)
                     {
                         return emptyResult;
@@ -994,7 +997,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var leftArgumentList = left.ArgumentList as ArgumentListSyntax;
+                var leftArgumentList = left.ArgumentList;
                 if (leftArgumentList == null)
                 {
                     return emptyResult;
@@ -1148,7 +1151,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var leftArgumentList = left.ArgumentList as ArgumentListSyntax;
+                var leftArgumentList = left.ArgumentList;
                 if (leftArgumentList == null)
                 {
                     return emptyResult;
@@ -1628,7 +1631,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+                var argumentList = invocationExpression.ArgumentList;
                 if (argumentList == null)
                 {
                     return emptyResult;
@@ -1640,7 +1643,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var startArg = args[0] as ArgumentSyntax;
+                var startArg = args[0];
                 if (startArg == null)
                 {
                     return emptyResult;
@@ -1652,7 +1655,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var endArg = args[1] as ArgumentSyntax;
+                var endArg = args[1];
                 if (endArg == null)
                 {
                     return emptyResult;
@@ -1714,7 +1717,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+                var argumentList = invocationExpression.ArgumentList;
                 if (argumentList == null)
                 {
                     return emptyResult;
@@ -1726,7 +1729,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var treeArg = args[0] as ArgumentSyntax;
+                var treeArg = args[0];
                 if (treeArg == null)
                 {
                     return emptyResult;
@@ -1750,7 +1753,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var spanArg = args[1] as ArgumentSyntax;
+                var spanArg = args[1];
                 if (spanArg == null)
                 {
                     return emptyResult;
@@ -1812,7 +1815,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+                var argumentList = invocationExpression.ArgumentList;
                 if (argumentList == null)
                 {
                     return emptyResult;
@@ -1824,7 +1827,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var ruleArg = args[0] as ArgumentSyntax;
+                var ruleArg = args[0];
                 if (ruleArg == null)
                 {
                     return emptyResult;
@@ -1836,7 +1839,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var locationArg = args[1] as ArgumentSyntax;
+                var locationArg = args[1];
                 if (locationArg == null)
                 {
                     return emptyResult;
@@ -1884,7 +1887,7 @@ namespace MetaCompilation.Analyzers
                     return false;
                 }
 
-                var argumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
+                var argumentList = invocationExpression.ArgumentList;
                 if (argumentList == null)
                 {
                     return false;
@@ -1896,7 +1899,7 @@ namespace MetaCompilation.Analyzers
                     return false;
                 }
 
-                var diagnosticArg = args[0] as ArgumentSyntax;
+                var diagnosticArg = args[0];
                 if (diagnosticArg == null)
                 {
                     return false;
@@ -1922,7 +1925,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                var variableDeclaration = statement.Declaration;
                 if (variableDeclaration == null)
                 {
                     return emptyResult;
@@ -1934,7 +1937,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                var variableDeclarator = variables[0];
                 if (variableDeclarator == null)
                 {
                     return emptyResult;
@@ -1946,7 +1949,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var equalsValueClause = variableDeclarator.Initializer as EqualsValueClauseSyntax;
+                var equalsValueClause = variableDeclarator.Initializer;
                 if (equalsValueClause == null)
                 {
                     return emptyResult;
@@ -1965,7 +1968,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                var variableDeclaration = statement.Declaration;
                 if (variableDeclaration == null)
                 {
                     return emptyResult;
@@ -1977,7 +1980,7 @@ namespace MetaCompilation.Analyzers
                     return emptyResult;
                 }
 
-                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                var variableDeclarator = variables[0];
                 if (variableDeclarator == null)
                 {
                     return emptyResult;
@@ -2035,7 +2038,7 @@ namespace MetaCompilation.Analyzers
 
                 if (statements.Count > 2)
                 {
-                    AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                    AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList;
                     ReportDiagnostic(context, TooManyStatementsRule, propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
                     return false;
                 }
@@ -2071,7 +2074,7 @@ namespace MetaCompilation.Analyzers
                 if (returnExpression is InvocationExpressionSyntax)
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
-                    var returnDeclaration = returnStatement as ReturnStatementSyntax;
+                    var returnDeclaration = returnStatement;
                     bool suppDiagReturnCheck = SuppDiagReturnCheck(context, valueClause, returnDeclaration, ruleNames, propertyDeclaration);
                     if (!suppDiagReturnCheck)
                     {
@@ -2080,7 +2083,7 @@ namespace MetaCompilation.Analyzers
 
                     if (statements.Count > 1)
                     {
-                        AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                        AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList;
                         ReportDiagnostic(context, TooManyStatementsRule, propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
                         return false;
                     }
@@ -2100,8 +2103,8 @@ namespace MetaCompilation.Analyzers
                         return false;
                     }
 
-                    InvocationExpressionSyntax valueClause = symbolResult.ValueClause as InvocationExpressionSyntax;
-                    ReturnStatementSyntax returnDeclaration = symbolResult.ReturnDeclaration as ReturnStatementSyntax;
+                    InvocationExpressionSyntax valueClause = symbolResult.ValueClause;
+                    ReturnStatementSyntax returnDeclaration = symbolResult.ReturnDeclaration;
                     bool suppDiagReturnCheck = SuppDiagReturnCheck(context, valueClause, returnDeclaration, ruleNames, propertyDeclaration);
                     if (!suppDiagReturnCheck)
                     {
@@ -2174,7 +2177,7 @@ namespace MetaCompilation.Analyzers
                     return null;
                 }
 
-                var accessorBody = getAccessor.Body as BlockSyntax;
+                var accessorBody = getAccessor.Body;
                 if (accessorBody == null)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation());
@@ -2215,7 +2218,7 @@ namespace MetaCompilation.Analyzers
                     return false;
                 }
 
-                var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
+                var valueArguments = valueClause.ArgumentList;
                 if (valueArguments == null)
                 {
                     ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), propertyDeclaration.Identifier.Text);
@@ -2286,7 +2289,7 @@ namespace MetaCompilation.Analyzers
                     return result;
                 }
 
-                var equalsValueClause = variableDeclaration.Initializer as EqualsValueClauseSyntax;
+                var equalsValueClause = variableDeclaration.Initializer;
                 if (equalsValueClause == null)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());
@@ -2353,7 +2356,7 @@ namespace MetaCompilation.Analyzers
                             return emptyRuleNames;
                         }
 
-                        var initializer = declaratorSyntax.Initializer as EqualsValueClauseSyntax;
+                        var initializer = declaratorSyntax.Initializer;
                         if (initializer == null)
                         {
                             return emptyRuleNames;
@@ -2471,7 +2474,7 @@ namespace MetaCompilation.Analyzers
                                         return emptyRuleNames;
                                     }
 
-                                    var ruleName = fieldSymbol.Name as string;
+                                    var ruleName = fieldSymbol.Name;
                                     if (ruleName == null)
                                     {
                                         return emptyRuleNames;
@@ -2607,7 +2610,7 @@ namespace MetaCompilation.Analyzers
                         ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
                     }
-                    else if (analysisMethod.Parameters.Length != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
+                    else if (analysisMethod.Parameters.Length != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
                     {
                         ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
@@ -2708,8 +2711,8 @@ namespace MetaCompilation.Analyzers
                             return new CheckInitializeInfo();
                         }
 
-                        var invocationExpr = bodyResults.InvocationExpr as InvocationExpressionSyntax;
-                        var memberExpr = bodyResults.MemberExpr as MemberAccessExpressionSyntax;
+                        var invocationExpr = bodyResults.InvocationExpr;
+                        var memberExpr = bodyResults.MemberExpr;
                         invocExpr = invocationExpr;
 
                         if (!context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Any())
@@ -2766,7 +2769,7 @@ namespace MetaCompilation.Analyzers
             private BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Length != 1 || !Equals(parameters[0].Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
+                if (parameters.Length != 1 || !Equals(parameters[0].Type, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
                     || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
@@ -2780,7 +2783,7 @@ namespace MetaCompilation.Analyzers
                     return null;
                 }
 
-                var codeBlock = initializeMethod.Body as BlockSyntax;
+                var codeBlock = initializeMethod.Body;
                 if (codeBlock == null)
                 {
                     return null;
@@ -2821,7 +2824,7 @@ namespace MetaCompilation.Analyzers
                 }
 
                 MethodDeclarationSyntax methodDeclaration = statement.Parent.Parent as MethodDeclarationSyntax;
-                ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0];
                 if (memberExprContext.Identifier.Text != parameter.Identifier.ValueText)
                 {
                     ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
@@ -2847,7 +2850,7 @@ namespace MetaCompilation.Analyzers
 
             #region symbol collectors
             // Stores a method in state
-            internal protected void AddMethod(SymbolAnalysisContext context)
+            protected internal void AddMethod(SymbolAnalysisContext context)
             {
                 var sym = (IMethodSymbol)context.Symbol;
 
@@ -2866,9 +2869,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2899,7 +2902,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a property in state
-            internal protected void AddProperty(SymbolAnalysisContext context)
+            protected internal void AddProperty(SymbolAnalysisContext context)
             {
                 var sym = (IPropertySymbol)context.Symbol;
 
@@ -2918,9 +2921,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2948,7 +2951,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a field in state
-            internal protected void AddField(SymbolAnalysisContext context)
+            protected internal void AddField(SymbolAnalysisContext context)
             {
                 var sym = (IFieldSymbol)context.Symbol;
 
@@ -2967,7 +2970,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     return;
                 }
@@ -2981,7 +2984,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Stores a class in state
-            internal protected void AddClass(SymbolAnalysisContext context)
+            protected internal void AddClass(SymbolAnalysisContext context)
             {
                 var sym = (INamedTypeSymbol)context.Symbol;
 
@@ -2995,7 +2998,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     if (sym.ContainingType == null)
                     {
@@ -3007,7 +3010,7 @@ namespace MetaCompilation.Analyzers
                         return;
                     }
 
-                    if (Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                    if (Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                     {
                         if (_otherAnalyzerClassSymbols.Contains(sym))
                         {
@@ -3021,7 +3024,7 @@ namespace MetaCompilation.Analyzers
                     }
                 }
 
-                if (Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (Equals(sym.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     _analyzerClassSymbol = sym;
                 }
@@ -3036,7 +3039,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to SuppDiagReturnSymbol method
-            internal protected class SuppDiagReturnSymbolInfo
+            protected internal class SuppDiagReturnSymbolInfo
             {
                 public InvocationExpressionSyntax ValueClause
                 {
@@ -3057,7 +3060,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to InitializeBody method
-            internal protected class InitializeBodyInfo
+            protected internal class InitializeBodyInfo
             {
                 public InvocationExpressionSyntax InvocationExpr
                 {
@@ -3078,7 +3081,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Provides information to CheckInitialize method
-            internal protected class CheckInitializeInfo
+            protected internal class CheckInitializeInfo
             {
                 public IMethodSymbol RegisterMethod
                 {

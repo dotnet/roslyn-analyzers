@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
         /// </summary>
         private sealed class DisposeDataFlowOperationVisitor : AbstractLocationDataFlowOperationVisitor<DisposeAnalysisData, DisposeAnalysisContext, DisposeAnalysisResult, DisposeAbstractValue>
         {
-            private readonly Dictionary<IFieldSymbol, PointsToAbstractValue> _trackedInstanceFieldLocationsOpt;
+            private readonly Dictionary<IFieldSymbol, PointsToAbstractValue>? _trackedInstanceFieldLocationsOpt;
             private ImmutableHashSet<INamedTypeSymbol> DisposeOwnershipTransferLikelyTypes => DataFlowAnalysisContext.DisposeOwnershipTransferLikelyTypes;
             private bool DisposeOwnershipTransferAtConstructor => DataFlowAnalysisContext.DisposeOwnershipTransferAtConstructor;
             private bool DisposeOwnershipTransferAtMethodCall => DataFlowAnalysisContext.DisposeOwnershipTransferAtMethodCall;
@@ -63,8 +63,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
             {
                 if (!location.IsNull &&
                     location.LocationTypeOpt != null &&
-                    !location.LocationTypeOpt.IsValueType &&
-                    location.LocationTypeOpt.IsDisposable(IDisposableNamedType))
+                    (!location.LocationTypeOpt.IsValueType || location.LocationTypeOpt.IsRefLikeType) &&
+                    IsDisposable(location.LocationTypeOpt))
                 {
                     CurrentAnalysisData[location] = value;
                 }
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 defaultValue = DisposeAbstractValue.NotDisposable;
                 var instanceType = creation.Type;
 
-                if (!instanceType.IsDisposable(IDisposableNamedType) ||
+                if (!IsDisposable(instanceType) ||
                     !IsCurrentBlockReachable())
                 {
                     return defaultValue;
@@ -97,13 +97,26 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                     return defaultValue;
                 }
 
+                // StringReader doesn't need to be disposed: https://docs.microsoft.com/en-us/dotnet/api/system.io.stringreader?view=netframework-4.8
+                if (StringReaderType != null &&
+                    instanceType.Equals(StringReaderType))
+                {
+                    return defaultValue;
+                }
+
+                // Handle user option for additional excluded types
+                if (DataFlowAnalysisContext.ExcludedSymbols.Contains(instanceType))
+                {
+                    return defaultValue;
+                }
+
                 SetAbstractValue(instanceLocation, DisposeAbstractValue.NotDisposed);
                 return DisposeAbstractValue.NotDisposed;
             }
 
-            private void HandleDisposingOperation(IOperation disposingOperation, IOperation disposedInstance)
+            private void HandleDisposingOperation(IOperation disposingOperation, IOperation? disposedInstance)
             {
-                if (disposedInstance.Type?.IsDisposable(IDisposableNamedType) == false)
+                if (disposedInstance == null || !IsDisposable(disposedInstance.Type))
                 {
                     return;
                 }
@@ -111,7 +124,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(disposedInstance);
                 foreach (AbstractLocation location in instanceLocation.Locations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(location, out DisposeAbstractValue currentDisposeValue))
+                    if (CurrentAnalysisData.TryGetValue(location, out var currentDisposeValue))
                     {
                         DisposeAbstractValue disposeValue = currentDisposeValue.WithNewDisposingOperation(disposingOperation);
                         SetAbstractValue(location, disposeValue);
@@ -124,7 +137,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 PointsToAbstractValue instanceLocation = GetPointsToAbstractValue(invalidatedInstance);
                 foreach (AbstractLocation location in instanceLocation.Locations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(location, out DisposeAbstractValue currentDisposeValue) &&
+                    if (CurrentAnalysisData.TryGetValue(location, out var currentDisposeValue) &&
                         currentDisposeValue.Kind != DisposeAbstractValueKind.NotDisposable)
                     {
                         SetAbstractValue(location, DisposeAbstractValue.Invalid);
@@ -136,7 +149,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
             {
                 foreach (AbstractLocation escapedLocation in escapedLocations)
                 {
-                    if (CurrentAnalysisData.TryGetValue(escapedLocation, out DisposeAbstractValue currentDisposeValue) &&
+                    if (CurrentAnalysisData.TryGetValue(escapedLocation, out var currentDisposeValue) &&
                         currentDisposeValue.Kind != DisposeAbstractValueKind.Unknown)
                     {
                         DisposeAbstractValue newDisposeValue = currentDisposeValue.WithNewEscapingOperation(escapingOperation);
@@ -151,7 +164,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 // We do not need to do anything here.
             }
 
-            protected override void SetAbstractValueForAssignment(IOperation target, IOperation assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
+            protected override void SetAbstractValueForAssignment(IOperation target, IOperation? assignedValueOperation, DisposeAbstractValue assignedValue, bool mayBeAssignment = false)
             {
                 // Assignments should automatically transfer PointsTo value.
                 // We do not need to do anything here.
@@ -177,7 +190,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 Debug.Assert(!escapedLocations.IsEmpty);
                 Debug.Assert(parameter.RefKind != RefKind.None);
                 var escapedDisposableLocations =
-                    escapedLocations.Where(l => l.LocationTypeOpt?.IsDisposable(IDisposableNamedType) == true);
+                    escapedLocations.Where(l => IsDisposable(l.LocationTypeOpt));
                 SetAbstractValue(escapedDisposableLocations, ValueDomain.UnknownOrMayBeValue);
             }
 
@@ -213,13 +226,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 => EqualsHelper(value1, value2);
 
             #region Visitor methods
-            public override DisposeAbstractValue DefaultVisit(IOperation operation, object argument)
+            public override DisposeAbstractValue DefaultVisit(IOperation operation, object? argument)
             {
                 _ = base.DefaultVisit(operation, argument);
                 return DisposeAbstractValue.NotDisposable;
             }
 
-            public override DisposeAbstractValue Visit(IOperation operation, object argument)
+            public override DisposeAbstractValue Visit(IOperation operation, object? argument)
             {
                 var value = base.Visit(operation, argument);
                 HandlePossibleEscapingOperation(operation, GetEscapedLocations(operation));
@@ -263,7 +276,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
 
             public override DisposeAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
                 IMethodSymbol targetMethod,
-                IOperation instance,
+                IOperation? instance,
                 ImmutableArray<IArgumentOperation> arguments,
                 bool invokedAsDelegate,
                 IOperation originalOperation,
@@ -272,7 +285,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(targetMethod, instance,
                     arguments, invokedAsDelegate, originalOperation, defaultValue);
 
-                var disposeMethodKind = targetMethod.GetDisposeMethodKind(IDisposableNamedType, TaskNamedType);
+                var disposeMethodKind = GetDisposeMethodKind(targetMethod);
                 switch (disposeMethodKind)
                 {
                     case DisposeMethodKind.Dispose:
@@ -317,7 +330,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 base.ApplyInterproceduralAnalysisResult(resultData, isLambdaOrLocalFunction, hasParameterWithDelegateType, interproceduralResult);
 
                 // Apply the tracked instance field locations from interprocedural analysis.
-                if (_trackedInstanceFieldLocationsOpt != null)
+                if (_trackedInstanceFieldLocationsOpt != null &&
+                    interproceduralResult.TrackedInstanceFieldPointsToMap != null)
                 {
                     foreach (var (field, pointsToValue) in interproceduralResult.TrackedInstanceFieldPointsToMap)
                     {
@@ -399,7 +413,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 }
             }
 
-            public override DisposeAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object argument)
+            public override DisposeAbstractValue VisitFieldReference(IFieldReferenceOperation operation, object? argument)
             {
                 var value = base.VisitFieldReference(operation, argument);
                 if (_trackedInstanceFieldLocationsOpt != null &&
@@ -437,7 +451,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object argument)
+            public override DisposeAbstractValue VisitBinaryOperatorCore(IBinaryOperation operation, object? argument)
             {
                 var value = base.VisitBinaryOperatorCore(operation, argument);
 
@@ -481,7 +495,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
                 return value;
             }
 
-            public override DisposeAbstractValue VisitIsNull(IIsNullOperation operation, object argument)
+            public override DisposeAbstractValue VisitIsNull(IIsNullOperation operation, object? argument)
             {
                 var value = base.VisitIsNull(operation, argument);
 

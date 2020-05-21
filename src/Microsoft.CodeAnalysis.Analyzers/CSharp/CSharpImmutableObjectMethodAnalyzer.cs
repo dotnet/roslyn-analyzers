@@ -24,8 +24,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -50,19 +50,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol solutionSymbol = compilationContext.Compilation.GetTypeByMetadataName(SolutionFullName);
-                INamedTypeSymbol projectSymbol = compilationContext.Compilation.GetTypeByMetadataName(ProjectFullName);
-                INamedTypeSymbol documentSymbol = compilationContext.Compilation.GetTypeByMetadataName(DocumentFullName);
-                INamedTypeSymbol syntaxNodeSymbol = compilationContext.Compilation.GetTypeByMetadataName(SyntaxNodeFullName);
-                INamedTypeSymbol compilationSymbol = compilationContext.Compilation.GetTypeByMetadataName(CompilationFullName);
-
-                ImmutableArray<INamedTypeSymbol> immutableSymbols = ImmutableArray.Create(solutionSymbol, projectSymbol, documentSymbol, syntaxNodeSymbol, compilationSymbol);
-                //Only register our node action if we can find the symbols for our immutable types
-                if (immutableSymbols.Any(n => n == null))
+                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(SolutionFullName, out var solutionSymbol) ||
+                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(ProjectFullName, out var projectSymbol) ||
+                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(DocumentFullName, out var documentSymbol) ||
+                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(SyntaxNodeFullName, out var syntaxNodeSymbol) ||
+                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(CompilationFullName, out var compilationSymbol))
                 {
+                    // Only register our node action if we can find the symbols for our immutable types
                     return;
                 }
 
+                var immutableSymbols = ImmutableArray.Create(solutionSymbol, projectSymbol, documentSymbol, syntaxNodeSymbol, compilationSymbol);
                 compilationContext.RegisterSyntaxNodeAction(sc => AnalyzeInvocationForIgnoredReturnValue(sc, immutableSymbols), SyntaxKind.InvocationExpression);
             });
         }
@@ -73,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             var candidateInvocation = (InvocationExpressionSyntax)context.Node;
 
             //We're looking for invocations that are direct children of expression statements
-            if (!(candidateInvocation.Parent.IsKind(SyntaxKind.ExpressionStatement)))
+            if (!candidateInvocation.Parent.IsKind(SyntaxKind.ExpressionStatement))
             {
                 return;
             }

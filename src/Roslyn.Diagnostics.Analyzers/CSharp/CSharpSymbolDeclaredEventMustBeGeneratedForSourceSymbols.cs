@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -21,9 +22,9 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             "SourceMethodSymbol",
             "SourcePropertySymbol");
 
-        protected override CompilationAnalyzer GetCompilationAnalyzer(Compilation compilation, INamedTypeSymbol symbolType)
+        protected override CompilationAnalyzer? GetCompilationAnalyzer(Compilation compilation, INamedTypeSymbol symbolType)
         {
-            INamedTypeSymbol compilationType = compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisCSharpCSharpCompilation);
+            INamedTypeSymbol? compilationType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisCSharpCSharpCompilation);
             if (compilationType == null)
             {
                 return null;
@@ -42,7 +43,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 
             protected override ImmutableHashSet<string> SymbolTypesWithExpectedSymbolDeclaredEvent => s_symbolTypesWithExpectedSymbolDeclaredEvent;
 
-            protected override SyntaxNode GetFirstArgumentOfInvocation(SyntaxNode node)
+            protected override SyntaxNode? GetFirstArgumentOfInvocation(SyntaxNode node)
             {
                 var invocation = (InvocationExpressionSyntax)node;
                 if (invocation.ArgumentList != null)

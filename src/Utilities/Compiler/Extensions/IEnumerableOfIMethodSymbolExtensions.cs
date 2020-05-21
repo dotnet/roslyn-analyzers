@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
@@ -15,9 +17,14 @@ namespace Analyzer.Utilities.Extensions
         /// <returns>A filtered list of methods.</returns>
         public static IEnumerable<IMethodSymbol> WhereMethodDoesNotContainAttribute(
             this IEnumerable<IMethodSymbol> methods,
-            INamedTypeSymbol attributeType)
+            INamedTypeSymbol? attributeType)
         {
-            return methods.Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Equals(attributeType)));
+            if (attributeType == null)
+            {
+                return methods;
+            }
+
+            return methods.Where(m => !m.HasAttribute(attributeType));
         }
 
         /// <summary>
@@ -100,7 +107,7 @@ namespace Analyzer.Utilities.Extensions
         /// <param name="members"></param>
         /// <param name="expectedParameterTypesInOrder"></param>
         /// <returns></returns>
-        public static IMethodSymbol GetFirstOrDefaultMemberWithParameterInfos(this IEnumerable<IMethodSymbol> members, params ParameterInfo[] expectedParameterTypesInOrder)
+        public static IMethodSymbol? GetFirstOrDefaultMemberWithParameterInfos(this IEnumerable<IMethodSymbol>? members, params ParameterInfo[] expectedParameterTypesInOrder)
         {
             var expectedParameterCount = expectedParameterTypesInOrder.Length;
             return members?.FirstOrDefault(member =>
@@ -158,7 +165,7 @@ namespace Analyzer.Utilities.Extensions
             IsParams = isParams;
         }
 
-        public static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray, int arrayRank, bool isParams)
+        public static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return new ParameterInfo(type, isArray, arrayRank, isParams);
         }

@@ -5,6 +5,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -38,7 +39,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return Task.CompletedTask;
         }
 
-        private async Task<Document> AddPartNotDiscoverableAttributeAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> AddPartNotDiscoverableAttributeAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -47,17 +48,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = exportingAttribute;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Class)
+            var declaration = generator.TryGetContainingDeclaration(exportingAttribute, DeclarationKind.Class);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var exportedType = semanticModel.GetDeclaredSymbol(declaration, cancellationToken);
@@ -66,10 +60,10 @@ namespace Roslyn.Diagnostics.Analyzers
                 return document;
             }
 
-            INamedTypeSymbol partNotDiscoverableAttributeSymbol = null;
+            INamedTypeSymbol? partNotDiscoverableAttributeSymbol = null;
             foreach (var attributeData in exportedType.GetAttributes())
             {
-                INamedTypeSymbol exportAttributeSymbol = null;
+                INamedTypeSymbol? exportAttributeSymbol = null;
                 foreach (var attributeClass in attributeData.AttributeClass.GetBaseTypesAndThis())
                 {
                     if (attributeClass.Name == nameof(ExportAttribute))
@@ -97,7 +91,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 return document;
             }
 
-            var newDeclaration = generator.AddAttributes(declaration, generator.Attribute(generator.TypeExpression(partNotDiscoverableAttributeSymbol)));
+            var newDeclaration = generator.AddAttributes(declaration, generator.Attribute(generator.TypeExpression(partNotDiscoverableAttributeSymbol).WithAddImportsAnnotation()));
             return document.WithSyntaxRoot(root.ReplaceNode(declaration, newDeclaration));
         }
     }

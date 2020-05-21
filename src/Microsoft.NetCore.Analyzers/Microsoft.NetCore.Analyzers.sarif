@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.6",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {
@@ -14,7 +14,7 @@
           "shortDescription": "Do not pass literals as localized parameters",
           "fullDescription": "A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1303",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
@@ -35,7 +35,7 @@
           "shortDescription": "Specify CultureInfo",
           "fullDescription": "A method or constructor calls a member that has an overload that accepts a System.Globalization.CultureInfo parameter, and the method or constructor does not call the overload that takes the CultureInfo parameter. When a CultureInfo or System.IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'CultureInfo' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1304-specify-cultureinfo",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1304",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
@@ -55,7 +55,7 @@
           "shortDescription": "Specify IFormatProvider",
           "fullDescription": "A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1305-specify-iformatprovider",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1305",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
@@ -75,7 +75,7 @@
           "shortDescription": "Specify StringComparison",
           "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1307-specify-stringcomparison",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1307",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
@@ -95,7 +95,7 @@
           "shortDescription": "Normalize strings to uppercase",
           "fullDescription": "Strings should be normalized to uppercase. A small group of characters cannot make a round trip when they are converted to lowercase. To make a round trip means to convert the characters from one locale to another locale that represents character data differently, and then to accurately retrieve the original characters from the converted characters.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1308",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
@@ -115,7 +115,7 @@
           "shortDescription": "P/Invokes should not be visible",
           "fullDescription": "A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1401-p-invokes-should-not-be-visible",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1401",
           "properties": {
             "category": "Interoperability",
             "isEnabledByDefault": true,
@@ -135,7 +135,7 @@
           "shortDescription": "Avoid unsealed attributes",
           "fullDescription": "The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1813-avoid-unsealed-attributes",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1813",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": false,
@@ -155,7 +155,7 @@
           "shortDescription": "Dispose methods should call SuppressFinalize",
           "fullDescription": "A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1816-call-gc-suppressfinalize-correctly",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1816",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -175,7 +175,7 @@
           "shortDescription": "Test for empty strings using string length",
           "fullDescription": "Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1820-test-for-empty-strings-using-string-length",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1820",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -194,6 +194,7 @@
           "shortDescription": "Do not use Enumerable methods on indexable collections. Instead use the collection directly",
           "fullDescription": "This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1826",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -220,6 +221,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -236,6 +240,104 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1830": {
+          "id": "CA1830",
+          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder.",
+          "fullDescription": "StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1830",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferTypedStringBuilderAppendOverloads",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1831": {
+          "id": "CA1831",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on string values produces a copy of requested portion of the string. This copy is usually unnecessary when it is implicitly used as a ReadOnlySpan or ReadOnlyMemory value. Use the AsSpan method to avoid the unnecessary copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1831",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1832": {
+          "id": "CA1832",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on array values produces a copy of requested portion of the array. This copy is usually unnecessary when it is implicitly used as a ReadOnlySpan or ReadOnlyMemory value. Use the AsSpan method to avoid the unnecessary copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1832",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1833": {
+          "id": "CA1833",
+          "shortDescription": "Use AsSpan or AsMemory instead of Range-based indexers when appropriate",
+          "fullDescription": "The Range-based indexer on array values produces a copy of requested portion of the array. This copy is often unwanted when it is implicitly used as a Span or Memory value. Use the AsSpan method to avoid the copy.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1833",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseAsSpanInsteadOfRangeIndexerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1834": {
+          "id": "CA1834",
+          "shortDescription": "Consider using 'StringBuilder.Append(char)' when applicable.",
+          "fullDescription": "'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1834",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferConstCharOverConstUnitStringAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -244,7 +346,7 @@
           "shortDescription": "Dispose objects before losing scope",
           "fullDescription": "If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2000",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
@@ -265,7 +367,7 @@
           "shortDescription": "Do not lock on objects with weak identity",
           "fullDescription": "An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain that has a lock on the same object.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2002-do-not-lock-on-objects-with-weak-identity",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2002",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
@@ -285,6 +387,7 @@
           "shortDescription": "Do not create tasks without passing a TaskScheduler",
           "fullDescription": "Do not create tasks unless you are using one of the overloads that takes a TaskScheduler. The default is to schedule on TaskScheduler.Current, which would lead to deadlocks. Either use TaskScheduler.Default to schedule on the thread pool, or explicitly pass TaskScheduler.Current to make your intentions clear.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2008",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
@@ -303,10 +406,86 @@
           "shortDescription": "Do not call ToImmutableCollection on an ImmutableCollection value",
           "fullDescription": "Do not call {0} on an {1} value",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2009",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
             "typeName": "DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2012": {
+          "id": "CA2012",
+          "shortDescription": "Use ValueTasks correctly",
+          "fullDescription": "ValueTasks returned from member invocations are intended to be directly awaited.  Attempts to consume a ValueTask multiple times or to directly access one's result before it's known to be completed may result in an exception or corruption.  Ignoring such a ValueTask is likely an indication of a functional bug and may degrade performance.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2012",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "UseValueTasksCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2013": {
+          "id": "CA2013",
+          "shortDescription": "Do not use ReferenceEquals with value types",
+          "fullDescription": "Value type typed arguments are uniquely boxed for each call to this method, therefore the result is always false.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2013",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseReferenceEqualsWithValueTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2014": {
+          "id": "CA2014",
+          "shortDescription": "Do not use stackalloc in loops.",
+          "fullDescription": "Stack space allocated by a stackalloc is only released at the end of the current method's invocation.  Using it in a loop can result in unbounded stack growth and eventual stack overflow conditions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2014",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseStackallocInLoopsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2015": {
+          "id": "CA2015",
+          "shortDescription": "Do not define finalizers for types derived from MemoryManager<T>",
+          "fullDescription": "Adding a finalizer to a type derived from MemoryManager<T> may permit memory to be freed while it is still in use by a Span<T>.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2015",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotDefineFinalizersForTypesDerivedFromMemoryManager",
             "languages": [
               "C#",
               "Visual Basic"
@@ -321,7 +500,7 @@
           "shortDescription": "Review SQL queries for security vulnerabilities",
           "fullDescription": "SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2100",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -342,11 +521,31 @@
           "shortDescription": "Specify marshaling for P/Invoke string arguments",
           "fullDescription": "A platform invoke member allows partially trusted callers, has a string parameter, and does not explicitly marshal the string. This can cause a potential security vulnerability.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2101-specify-marshaling-for-p-invoke-string-arguments",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2101",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
             "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotRaiseReservedExceptionTypesAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -362,7 +561,7 @@
           "shortDescription": "Instantiate argument exceptions correctly",
           "fullDescription": "A call is made to the default (parameterless) constructor of an exception type that is or derives from ArgumentException, or an incorrect string argument is passed to a parameterized constructor of an exception type that is or derives from ArgumentException.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2208-instantiate-argument-exceptions-correctly",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2208",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -382,7 +581,7 @@
           "shortDescription": "Disposable fields should be disposed",
           "fullDescription": "A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2213",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -398,12 +597,32 @@
             ]
           }
         },
+        "CA2215": {
+          "id": "CA2215",
+          "shortDescription": "Dispose methods should call base class dispose",
+          "fullDescription": "A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2215",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DisposeMethodsShouldCallBaseClassDispose",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2216": {
           "id": "CA2216",
           "shortDescription": "Disposable types should declare finalizer",
           "fullDescription": "A type that implements System.IDisposable and has fields that suggest the use of unmanaged resources does not implement a finalizer, as described by Object.Finalize.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2216-disposable-types-should-declare-finalizer",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2216",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -423,7 +642,7 @@
           "shortDescription": "Implement serialization constructors",
           "fullDescription": "To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2229-implement-serialization-constructors",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2229",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -443,7 +662,7 @@
           "shortDescription": "Mark all non-serializable fields",
           "fullDescription": "An instance field of a type that is not serializable is declared in a type that is serializable.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2235-mark-all-non-serializable-fields",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2235",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -463,7 +682,7 @@
           "shortDescription": "Mark ISerializable types with serializable",
           "fullDescription": "To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2237-mark-iserializable-types-with-serializableattribute",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2237",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -483,7 +702,7 @@
           "shortDescription": "Provide correct arguments to formatting methods",
           "fullDescription": "The format argument that is passed to System.String.Format does not contain a format item that corresponds to each object argument, or vice versa.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2241-provide-correct-arguments-to-formatting-methods",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2241",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -503,7 +722,7 @@
           "shortDescription": "Test for NaN correctly",
           "fullDescription": "This expression tests a value against Single.Nan or Double.Nan. Use Single.IsNan(Single) or Double.IsNan(Double) to test the value.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2242-test-for-nan-correctly",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2242",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -523,7 +742,7 @@
           "shortDescription": "Attribute string literals should parse correctly",
           "fullDescription": "The string literal parameter of an attribute does not parse correctly for a URL, a GUID, or a version.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2243-attribute-string-literals-should-parse-correctly",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2243",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -538,12 +757,31 @@
             ]
           }
         },
+        "CA2247": {
+          "id": "CA2247",
+          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum.",
+          "fullDescription": "TaskCompletionSource has constructors that take TaskCreationOptions that control the underlying Task, and constructors that take object state that's stored in the task.  Accidentally passing a TaskContinuationOptions instead of a TaskCreationOptions will result in the call treating the options as state.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2247",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCreateTaskCompletionSourceWithWrongArguments",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA2300": {
           "id": "CA2300",
           "shortDescription": "Do not use insecure deserializer BinaryFormatter",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2300-do-not-use-insecure-deserializer-binaryformatter",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2300",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -551,6 +789,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -559,7 +800,7 @@
           "shortDescription": "Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2301",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -579,7 +820,7 @@
           "shortDescription": "Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2302",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -599,7 +840,7 @@
           "shortDescription": "Do not use insecure deserializer LosFormatter",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2305-do-not-use-insecure-deserializer-losformatter",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2305",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -607,6 +848,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -615,7 +859,7 @@
           "shortDescription": "Do not use insecure deserializer NetDataContractSerializer",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect NetDataContractSerializer deserialization without a SerializationBinder set, then disable rule CA2310, and enable rules CA2311 and CA2312.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2310-do-not-use-insecure-deserializer-netdatacontractserializer",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2310",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -623,6 +867,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -631,7 +878,7 @@
           "shortDescription": "Do not deserialize without first setting NetDataContractSerializer.Binder",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2311",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -651,7 +898,7 @@
           "shortDescription": "Ensure NetDataContractSerializer.Binder is set before deserializing",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2312",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -671,7 +918,7 @@
           "shortDescription": "Do not use insecure deserializer ObjectStateFormatter",
           "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2315",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -679,6 +926,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -735,6 +985,9 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -823,7 +1076,7 @@
           "shortDescription": "Review code for SQL injection vulnerabilities",
           "fullDescription": "Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3001",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -831,6 +1084,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -839,7 +1096,7 @@
           "shortDescription": "Review code for XSS vulnerabilities",
           "fullDescription": "Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3002",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -847,6 +1104,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -855,7 +1116,7 @@
           "shortDescription": "Review code for file path injection vulnerabilities",
           "fullDescription": "Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3003",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -863,6 +1124,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -871,7 +1136,7 @@
           "shortDescription": "Review code for information disclosure vulnerabilities",
           "fullDescription": "Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3004",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -879,6 +1144,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -887,7 +1156,7 @@
           "shortDescription": "Review code for LDAP injection vulnerabilities",
           "fullDescription": "Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3005",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -895,6 +1164,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -903,7 +1176,7 @@
           "shortDescription": "Review code for process command injection vulnerabilities",
           "fullDescription": "Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3006",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -911,6 +1184,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -919,7 +1196,7 @@
           "shortDescription": "Review code for open redirect vulnerabilities",
           "fullDescription": "Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3007",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -927,6 +1204,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -935,7 +1216,7 @@
           "shortDescription": "Review code for XPath injection vulnerabilities",
           "fullDescription": "Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3008",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -943,6 +1224,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -951,7 +1236,7 @@
           "shortDescription": "Review code for XML injection vulnerabilities",
           "fullDescription": "Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3009",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -959,6 +1244,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -967,7 +1256,7 @@
           "shortDescription": "Review code for XAML injection vulnerabilities",
           "fullDescription": "Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3010",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -975,6 +1264,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -983,7 +1276,7 @@
           "shortDescription": "Review code for DLL injection vulnerabilities",
           "fullDescription": "Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3011",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -991,6 +1284,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -999,7 +1296,7 @@
           "shortDescription": "Review code for regex injection vulnerabilities",
           "fullDescription": "Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3012",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1007,6 +1304,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -1034,7 +1335,7 @@
           "shortDescription": "Do Not Use Weak Cryptographic Algorithms",
           "fullDescription": "Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5350-do-not-use-weak-cryptographic-algorithms",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5350",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1053,7 +1354,7 @@
           "shortDescription": "Do Not Use Broken Cryptographic Algorithms",
           "fullDescription": "An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5351-do-not-use-broken-cryptographic-algorithms",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5351",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1069,9 +1370,10 @@
         },
         "CA5358": {
           "id": "CA5358",
-          "shortDescription": "Do Not Use Unsafe Cipher Modes",
-          "fullDescription": "These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).",
+          "shortDescription": "Review cipher mode usage with cryptography experts",
+          "fullDescription": "These cipher modes might be vulnerable to attacks. Consider using recommended modes (CBC, CTS).",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5358",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1090,6 +1392,7 @@
           "shortDescription": "Do Not Disable Certificate Validation",
           "fullDescription": "A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5359",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1108,6 +1411,7 @@
           "shortDescription": "Do Not Call Dangerous Methods In Deserialization",
           "fullDescription": "Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5360",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1129,7 +1433,7 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotSetSwitch",
             "languages": [
               "C#",
@@ -1146,6 +1450,7 @@
           "shortDescription": "Do Not Refer Self In Serializable Class",
           "fullDescription": "This can allow an attacker to DOS or exhaust the memory of the process.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5362",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1202,6 +1507,7 @@
           "shortDescription": "Do Not Disable HTTP Header Checking",
           "fullDescription": "HTTP header checking enables encoding of the carriage return and newline characters, \\r and \\n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5365",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1220,6 +1526,7 @@
           "shortDescription": "Use XmlReader For DataSet Read Xml",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5366",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1238,6 +1545,7 @@
           "shortDescription": "Do Not Serialize Types With Pointer Fields",
           "fullDescription": "Pointers are not \"type safe\" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5367",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1256,6 +1564,7 @@
           "shortDescription": "Set ViewStateUserKey For Classes Derived From Page",
           "fullDescription": "Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5368",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1369,6 +1678,7 @@
           "shortDescription": "Do Not Use XslTransform",
           "fullDescription": "Do not use XslTransform. It does not restrict potentially dangerous external references.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5374",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1387,6 +1697,7 @@
           "shortDescription": "Do Not Use Account Shared Access Signature",
           "fullDescription": "Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5375",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1405,9 +1716,10 @@
           "shortDescription": "Use SharedAccessProtocol HttpsOnly",
           "fullDescription": "HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5376",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseSharedAccessProtocolHttpsOnly",
             "languages": [
               "C#",
@@ -1424,9 +1736,10 @@
           "shortDescription": "Use Container Level Access Policy",
           "fullDescription": "No access policy identifier is specified, making tokens non-revocable.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5377",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseContainerLevelAccessPolicy",
             "languages": [
               "C#",
@@ -1446,7 +1759,7 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5378",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotSetSwitch",
             "languages": [
               "C#",
@@ -1463,6 +1776,7 @@
           "shortDescription": "Do Not Use Weak Key Derivation Function Algorithm",
           "fullDescription": "Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5379",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1484,7 +1798,7 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5380",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotInstallRootCert",
             "languages": [
               "C#",
@@ -1504,7 +1818,7 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5381",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotInstallRootCert",
             "languages": [
               "C#",
@@ -1521,6 +1835,7 @@
           "shortDescription": "Use Secure Cookies In ASP.Net Core",
           "fullDescription": "Applications available over HTTPS must use secure cookies.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5382",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1540,6 +1855,7 @@
           "shortDescription": "Ensure Use Secure Cookies In ASP.Net Core",
           "fullDescription": "Applications available over HTTPS must use secure cookies.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5383",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1559,6 +1875,7 @@
           "shortDescription": "Do Not Use Digital Signature Algorithm (DSA)",
           "fullDescription": "DSA is too weak to use.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5384",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1577,6 +1894,7 @@
           "shortDescription": "Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size",
           "fullDescription": "Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5385",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1614,6 +1932,7 @@
           "shortDescription": "Do Not Use Weak Key Derivation Function With Insufficient Iteration Count",
           "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5387",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1633,6 +1952,7 @@
           "shortDescription": "Ensure Sufficient Iteration Count When Using Weak Key Derivation Function",
           "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5388",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1669,9 +1989,10 @@
         },
         "CA5390": {
           "id": "CA5390",
-          "shortDescription": "Do Not Hard Code Encryption Key",
-          "fullDescription": "SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.",
+          "shortDescription": "Do not hard-code encryption key",
+          "fullDescription": "SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5390",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1691,6 +2012,7 @@
           "shortDescription": "Use antiforgery tokens in ASP.NET Core MVC controllers",
           "fullDescription": "Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5391",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1709,6 +2031,7 @@
           "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
           "fullDescription": "By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5392",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1727,6 +2050,7 @@
           "shortDescription": "Do not use unsafe DllImportSearchPath value",
           "fullDescription": "There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5393",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1743,8 +2067,9 @@
         "CA5394": {
           "id": "CA5394",
           "shortDescription": "Do not use insecure randomness",
-          "fullDescription": "{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security",
+          "fullDescription": "Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5394",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1763,6 +2088,7 @@
           "shortDescription": "Miss HttpVerb attribute for action methods",
           "fullDescription": "All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5395",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1781,6 +2107,7 @@
           "shortDescription": "Set HttpOnly to true for HttpCookie",
           "fullDescription": "As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5396",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1835,9 +2162,10 @@
         },
         "CA5399": {
           "id": "CA5399",
-          "shortDescription": "Definitely disable HttpClient certificate revocation list check",
+          "shortDescription": "HttpClients should enable certificate revocation list checks",
           "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5399",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1857,10 +2185,71 @@
           "shortDescription": "Ensure HttpClient certificate revocation list check is not disabled",
           "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5400",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5401": {
+          "id": "CA5401",
+          "shortDescription": "Do not use CreateEncryptor with non-default IV",
+          "fullDescription": "Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5401",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseCreateEncryptorWithNonDefaultIV",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5402": {
+          "id": "CA5402",
+          "shortDescription": "Use CreateEncryptor with the default IV ",
+          "fullDescription": "Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5402",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseCreateEncryptorWithNonDefaultIV",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5403": {
+          "id": "CA5403",
+          "shortDescription": "Do not hard-code certificate",
+          "fullDescription": "Hard-coded certificates in source code are vulnerable to being exploited.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5403",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotHardCodeCertificate",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1876,7 +2265,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.6",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {
@@ -1885,7 +2274,7 @@
           "shortDescription": "Use ordinal stringcomparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": false,
@@ -1904,7 +2293,7 @@
           "shortDescription": "Initialize reference type static fields inline",
           "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -1923,7 +2312,7 @@
           "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
           "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -1942,12 +2331,16 @@
           "shortDescription": "Avoid zero-length array allocations.",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "CSharpAvoidZeroLengthArrayAllocationsAnalyzer",
             "languages": [
               "C#"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -1963,41 +2356,8 @@
             "typeName": "CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
             "languages": [
               "C#"
-            ]
-          }
-        },
-        "CA2010": {
-          "id": "CA2010",
-          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
-          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
-            "languages": [
-              "C#"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "typeName": "CSharpDoNotRaiseReservedExceptionTypesAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2007,7 +2367,7 @@
           "shortDescription": "Initialize value type static fields inline",
           "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
@@ -2026,7 +2386,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.6",
+        "version": "3.3.0",
         "language": "en-US"
       },
       "rules": {
@@ -2035,7 +2395,7 @@
           "shortDescription": "Use ordinal stringcomparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": false,
@@ -2054,7 +2414,7 @@
           "shortDescription": "Initialize reference type static fields inline",
           "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -2073,7 +2433,7 @@
           "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
           "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
@@ -2092,12 +2452,16 @@
           "shortDescription": "Avoid zero-length array allocations.",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "BasicAvoidZeroLengthArrayAllocationsAnalyzer",
             "languages": [
               "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
             ]
           }
         },
@@ -2113,41 +2477,8 @@
             "typeName": "BasicUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
             "languages": [
               "Visual Basic"
-            ]
-          }
-        },
-        "CA2010": {
-          "id": "CA2010",
-          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
-          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
-            "typeName": "BasicAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
-            "languages": [
-              "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "typeName": "BasicDoNotRaiseReservedExceptionTypesAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2157,7 +2488,7 @@
           "shortDescription": "Initialize value type static fields inline",
           "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,

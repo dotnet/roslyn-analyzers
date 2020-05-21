@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,6 +9,8 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -676,7 +680,7 @@ namespace MetaCompilation.Analyzers
             string name = CodeFixHelper.GetContextParameter(declaration);
             StatementSyntax ifStatement = CodeFixHelper.IfHelper(generator, name) as StatementSyntax;
 
-            var oldBlock = declaration.Body as BlockSyntax;
+            var oldBlock = declaration.Body;
             BlockSyntax newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
@@ -698,7 +702,7 @@ namespace MetaCompilation.Analyzers
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var methodBlock = declaration.Body as BlockSyntax;
+            var methodBlock = declaration.Body;
             var ifKeyword = CodeFixHelper.KeywordHelper(generator, methodBlock) as StatementSyntax;
             BlockSyntax newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
@@ -753,7 +757,7 @@ namespace MetaCompilation.Analyzers
 
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
             SyntaxTriviaList leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Checks that there is only one piece of trailing trivia").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
-            SyntaxList<SyntaxNode> localDeclaration = new SyntaxList<SyntaxNode>().Add((CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements)).WithLeadingTrivia(leadingTrivia));
+            SyntaxList<SyntaxNode> localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements).WithLeadingTrivia(leadingTrivia));
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
@@ -815,7 +819,7 @@ namespace MetaCompilation.Analyzers
             IfStatementSyntax ifStatement;
             if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -841,7 +845,7 @@ namespace MetaCompilation.Analyzers
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
             if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -887,7 +891,7 @@ namespace MetaCompilation.Analyzers
 
             if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
             else
             {
@@ -935,7 +939,7 @@ namespace MetaCompilation.Analyzers
             }
             else
             {
-                ifStatement = declaration as IfStatementSyntax;
+                ifStatement = declaration;
             }
 
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
@@ -1183,7 +1187,7 @@ namespace MetaCompilation.Analyzers
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
 
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
             string name = "context";
             SyntaxNode initializeDeclaration = CodeFixHelper.BuildInitialize(generator, notImplementedException, statements, name);
@@ -1331,7 +1335,7 @@ namespace MetaCompilation.Analyzers
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value as SyntaxNode).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            SyntaxNode newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
             return await ReplaceNode(declaration, newFieldDecl, document, cancellationToken).ConfigureAwait(false);
         }
 
@@ -1424,7 +1428,7 @@ namespace MetaCompilation.Analyzers
                 {
                     rule = fieldDeclaration;
 
-                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0];
                     var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
                     ArgumentListSyntax ruleArgumentList = objectCreationSyntax.ArgumentList;
 
@@ -1466,7 +1470,7 @@ namespace MetaCompilation.Analyzers
 
                 if (isPublic && isConst)
                 {
-                    var ruleIdSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var ruleIdSyntax = fieldDeclaration.Declaration.Variables[0];
                     string newIdIdentifier = ruleIdSyntax.Identifier.Text;
                     newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
                 }
@@ -1500,7 +1504,7 @@ namespace MetaCompilation.Analyzers
                 }
             }
 
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+            SyntaxNode insertPointNode = insertPoint;
 
             FieldDeclarationSyntax fieldDeclaration = CodeFixHelper.CreateEmptyRule(generator);
 
@@ -1553,7 +1557,7 @@ namespace MetaCompilation.Analyzers
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
 
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             SyntaxNode[] throwStatement = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
             SyntaxNode type = generator.GetType(declaration);
             PropertyDeclarationSyntax newPropertyDeclaration = generator.PropertyDeclaration("SupportedDiagnostics", type, Accessibility.Public, DeclarationModifiers.Override, throwStatement) as PropertyDeclarationSyntax;
@@ -1623,7 +1627,7 @@ namespace MetaCompilation.Analyzers
                 return document;
             }
 
-            var oldBody = firstAccessor.Body as BlockSyntax;
+            var oldBody = firstAccessor.Body;
             SyntaxList<StatementSyntax> oldStatements = oldBody.Statements;
             StatementSyntax oldStatement = null;
             if (oldStatements.Count != 0)
@@ -1671,7 +1675,7 @@ namespace MetaCompilation.Analyzers
 
                 SyntaxList<SyntaxNode> nodeArgs = CodeFixHelper.CreateRuleList(ruleNames);
                 SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-                SyntaxNode newInvocationExpression = (generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs));
+                SyntaxNode newInvocationExpression = generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs);
                 SyntaxTriviaList leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
                 SyntaxNode newReturnStatement = generator.ReturnStatement(newInvocationExpression).WithLeadingTrivia(leadingTrivia);
                 AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
@@ -1721,12 +1725,12 @@ namespace MetaCompilation.Analyzers
                 }
             }
 
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+            SyntaxNode insertPointNode = insertPoint;
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             PropertyDeclarationSyntax propertyDeclaration = CodeFixHelper.CreateSupportedDiagnostics(generator, notImplementedException);
 
             var newNodes = new SyntaxList<SyntaxNode>();
@@ -1755,7 +1759,7 @@ namespace MetaCompilation.Analyzers
             {
                 MethodDeclarationSyntax initializeDeclaration = statement.Ancestors().OfType<MethodDeclarationSyntax>().First();
                 MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.RemoveNode(statement, 0);
-                return newInitializeDeclaration as SyntaxNode;
+                return newInitializeDeclaration;
             }
 
             // checks if the statement is a correct regsiter statement
@@ -1999,7 +2003,7 @@ namespace MetaCompilation.Analyzers
             internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
                 MethodDeclarationSyntax methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
-                var methodBlock = methodDecl.Body as BlockSyntax;
+                var methodBlock = methodDecl.Body;
 
                 string variableName = GetIfKeywordName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -2379,7 +2383,7 @@ namespace MetaCompilation.Analyzers
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration("context", type) };
                 SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>();
-                INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+                INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
                 statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)));
 
                 SyntaxNode newMethodDeclaration = generator.MethodDeclaration(methodName, parameters: parameters, accessibility: Accessibility.Private, statements: statements);
@@ -2458,7 +2462,7 @@ namespace MetaCompilation.Analyzers
                 var nodeArgs = new SyntaxList<SyntaxNode>();
                 foreach (ArgumentSyntax arg in args)
                 {
-                    nodeArgs = nodeArgs.Add(arg as SyntaxNode);
+                    nodeArgs = nodeArgs.Add(arg);
                 }
 
                 return nodeArgs;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license 
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -17,8 +17,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             SinkKind sinkKind,
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
-            IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters)
+            IEnumerable<string>? sinkProperties,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParameters)
         {
             builder.AddSinkInfo(
                 fullTypeName,
@@ -36,8 +36,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             IEnumerable<SinkKind> sinkKinds,
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
-            IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters)
+            IEnumerable<string>? sinkProperties,
+            IEnumerable<(string Method, string[] Parameters)>? sinkMethodParameters)
         {
             SinkInfo sinkInfo = new SinkInfo(
                 fullTypeName,
@@ -59,27 +59,25 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             this PooledHashSet<SourceInfo> builder,
             string fullTypeName,
             bool isInterface,
-            string[] taintedProperties,
-            IEnumerable<string> taintedMethods)
+            string[]? taintedProperties,
+            IEnumerable<string>? taintedMethods)
         {
             SourceInfo metadata = new SourceInfo(
                 fullTypeName,
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
-                 taintedMethodsNeedsPointsToAnalysis:
+                taintedMethods:
                     taintedMethods
-                        ?.Select<string, (MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)>(o =>
+                        ?.Select<string, (MethodMatcher, ImmutableHashSet<string>)>(o =>
                             (
-                                (methodName, argumets) => methodName == o,
-                                ImmutableHashSet<(PointsToCheck, string)>.Empty.Add(
-                                    (
-                                        SourceInfo.AlwaysTruePointsToCheck,
-                                        TaintedTargetValue.Return
-                                    ))
+                                (methodName, arguments) => methodName == o,
+                                ImmutableHashSet<string>.Empty.Add(TaintedTargetValue.Return)
                             ))
                         ?.ToImmutableHashSet()
-                    ?? ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)>.Empty,
+                    ?? ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
+                taintedMethodsNeedsPointsToAnalysis:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)>.Empty,
                 taintedMethodsNeedsValueContentAnalysis:
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)>.Empty,
                 transferMethods:
@@ -99,20 +97,22 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="taintedMethodsNeedsValueContentAnalysis">Specify the check functions and tainted targets for methods which need ValueContentAnalysis check.</param>
         /// <param name="taintConstantArray"></param>
         public static void AddSourceInfoSpecifyingTaintedTargets(
-        this PooledHashSet<SourceInfo> builder,
-        string fullTypeName,
-        bool isInterface,
-        string[] taintedProperties,
-        IEnumerable<(MethodMatcher methodMatcher, (PointsToCheck pointsToCheck, string taintedTarget)[] pointsToChecksAndTargets)> taintedMethodsNeedsPointsToAnalysis,
-        IEnumerable<(MethodMatcher methodMatcher, (ValueContentCheck valueContentCheck, string taintedTarget)[] valueContentChecksAndTargets)> taintedMethodsNeedsValueContentAnalysis,
-        IEnumerable<(MethodMatcher methodMatcher, (string str, string taintedTargets)[] valueContentChecksAndTargets)> transferMethods,
-        bool taintConstantArray = false)
+            this PooledHashSet<SourceInfo> builder,
+            string fullTypeName,
+            bool isInterface,
+            string[]? taintedProperties,
+            IEnumerable<(MethodMatcher methodMatcher, (PointsToCheck pointsToCheck, string taintedTarget)[] pointsToChecksAndTargets)>? taintedMethodsNeedsPointsToAnalysis,
+            IEnumerable<(MethodMatcher methodMatcher, (ValueContentCheck valueContentCheck, string taintedTarget)[] valueContentChecksAndTargets)>? taintedMethodsNeedsValueContentAnalysis,
+            IEnumerable<(MethodMatcher methodMatcher, (string str, string taintedTargets)[] valueContentChecksAndTargets)>? transferMethods,
+            bool taintConstantArray = false)
         {
             SourceInfo metadata = new SourceInfo(
                 fullTypeName,
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
+                taintedMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
                 taintedMethodsNeedsPointsToAnalysis:
                     taintedMethodsNeedsPointsToAnalysis?.Select(o =>
                             (
@@ -152,9 +152,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             this PooledHashSet<SourceInfo> builder,
             string fullTypeName,
             bool isInterface,
-            string[] taintedProperties,
-            IEnumerable<(MethodMatcher methodMatcher, PointsToCheck[] pointsToChecks)> taintedMethodsNeedsPointsToAnalysis,
-            IEnumerable<(MethodMatcher methodMatcher, ValueContentCheck[] valueContentChecks)> taintedMethodsNeedsValueContentAnalysis,
+            string[]? taintedProperties,
+            IEnumerable<(MethodMatcher methodMatcher, PointsToCheck[] pointsToChecks)>? taintedMethodsNeedsPointsToAnalysis,
+            IEnumerable<(MethodMatcher methodMatcher, ValueContentCheck[] valueContentChecks)>? taintedMethodsNeedsValueContentAnalysis,
             bool taintConstantArray = false)
         {
             SourceInfo metadata = new SourceInfo(
@@ -162,6 +162,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
+                taintedMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
                 taintedMethodsNeedsPointsToAnalysis:
                     taintedMethodsNeedsPointsToAnalysis?.Select(o =>
                             (
@@ -196,8 +198,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             string fullTypeName,
             bool isInterface,
             bool isConstructorSanitizing,
-            string[] sanitizingMethods,
-            string[] sanitizingInstanceMethods = null)
+            string[]? sanitizingMethods,
+            string[]? sanitizingInstanceMethods = null)
         {
             SanitizerInfo info = new SanitizerInfo(
                 fullTypeName,

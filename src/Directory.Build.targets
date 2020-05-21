@@ -20,6 +20,32 @@
     <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
   </ItemGroup>
 
+  <!-- Add analyzer release tracking additional files -->
+  <!-- Unshipped release -->
+  <ItemGroup Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+  <!-- Shipped releases -->
+  <ItemGroup  Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" />
+    <!-- Copy the shipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
+    <!-- Include shipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
+    <None Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>$(OutputDirectory)\AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
+  </ItemGroup>
+
+  <Target Name="BeforeBuild" Condition="'$(ReleaseTrackingOptOut)' != 'true'" >
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')" Text="Create a new empty file named 'AnalyzerReleases.Shipped.md' in the project directory" />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')" Text="Create a new empty file named 'AnalyzerReleases.Unshipped.md' in the project directory" />
+  </Target>
+
   <PropertyGroup>
     <!-- Workaround for https://github.com/dotnet/roslyn/issues/25041 -->
     <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
@@ -37,12 +63,8 @@
       <_TestStdOutPath>$(_TestOutPathNoExt).log</_TestStdOutPath>
       <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
       <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
-      <_TestResultsOpenCoverPath>$(_TestOutPathNoExt).coverage</_TestResultsOpenCoverPath>
       <_RunOnCore>false</_RunOnCore>
       <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
-      
-      <_UseOpenCover>false</_UseOpenCover>
-      <_UseOpenCover Condition="'$(CODECOV_TOKEN)' != '' and '$(Configuration)' == 'Debug' and '$(_RunOnCore)' != 'true'">true</_UseOpenCover>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"
@@ -58,29 +80,6 @@
       <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
     </PropertyGroup>
 
-    <!-- Extract PDBs from binaries -->
-    <ItemGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_BinariesInTestDirectory Include="$(TargetDir)*.dll" />
-      <_BinariesInTestDirectory Update="@(_BinariesInTestDirectory)" IntermediatePdb="%(RootDir)%(Directory)%(Filename).ppdb" />
-    </ItemGroup>
-
-    <PropertyGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_PdbConverterPath>$(NuGetPackageRoot)microsoft.diasymreader.pdb2pdb\$(MicrosoftDiaSymReaderPdb2PdbVersion)\tools\Pdb2Pdb.exe</_PdbConverterPath>
-    </PropertyGroup>
-
-    <Exec Command="&quot;$(_PdbConverterPath)&quot; &quot;%(_BinariesInTestDirectory.Identity)&quot; /out &quot;%(_BinariesInTestDirectory.IntermediatePdb)&quot; /extract"
-          Condition="'$(_UseOpenCover)' == 'true'"
-          IgnoreExitCode="true" />
-
-    <!-- Convert portable PDBs to Windows PDBs for OpenCover -->
-    <ItemGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_PortablePdb Include="$(TargetDir)*.ppdb" />
-      <_PortablePdb Update="@(_PortablePdb)" Binary="%(RootDir)%(Directory)%(Filename).dll" OutputPdb="%(RootDir)%(Directory)%(Filename).pdb" />
-    </ItemGroup>
-
-    <Exec Command="&quot;$(_PdbConverterPath)&quot; &quot;%(_PortablePdb.Binary)&quot; /pdb &quot;%(_PortablePdb.Identity)&quot; /out &quot;%(_PortablePdb.OutputPdb)&quot;"
-          Condition="'$(_UseOpenCover)' == 'true'" />
-
     <PropertyGroup Condition="'$(_RunOnCore)' != 'true'">
       <_XUnitConsoleExe>xunit.console.exe</_XUnitConsoleExe>
       <_XUnitConsoleExe Condition="'$(_TestArchitecture)' == 'x86'">xunit.console.x86.exe</_XUnitConsoleExe>
@@ -88,13 +87,6 @@
       <_XUnitRunnerCommandArgs>"$(TargetPath)" -noshadow -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_XUnitRunnerCommandArgs>
       <_TestRunnerCommand>"$(_XUnitRunnerCommand)" $(_XUnitRunnerCommandArgs)</_TestRunnerCommand>
       <_TestResultsDisplayPath>$(_TestResultsHtmlPath)</_TestResultsDisplayPath>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_OpenCoverConsoleExe>OpenCover.Console.exe</_OpenCoverConsoleExe>
-      <_OpenCoverCommand>$(NuGetPackageRoot)opencover\$(OpenCoverVersion)\tools\$(_OpenCoverConsoleExe)</_OpenCoverCommand>
-      <_OpenCoverCommandArgs>-register:user -returntargetcode -hideskipped:All -filter:"+[*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -output:"$(_TestResultsOpenCoverPath)"</_OpenCoverCommandArgs>
-      <_TestRunnerCommand>"$(_OpenCoverCommand)" $(_OpenCoverCommandArgs) -target:"$(_XUnitRunnerCommand)" -targetargs:"$(_XUnitRunnerCommandArgs.Replace(`"`, `\"`))"</_TestRunnerCommand>
     </PropertyGroup>
 
     <MakeDir Directories="$(ArtifactsTestResultsDir)"/>
@@ -122,4 +114,5 @@
     <Error Text="$(_TestResultsDisplayPath) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(TargetFrameworks)' == ''" File="XUnit" />
   </Target>
 
+  
 </Project>

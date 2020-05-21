@@ -26,8 +26,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             context.RegisterCompilationStartAction(context =>
             {
                 var compilation = context.Compilation;
-                var symbolType = compilation.GetTypeByMetadataName(s_symbolTypeFullName);
+                var symbolType = compilation.GetOrCreateTypeByMetadataName(s_symbolTypeFullName);
                 if (symbolType is null)
                 {
                     return;
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             });
         }
 
-        private void HandleOperation(in OperationAnalysisContext context, INamedTypeSymbol symbolType)
+        private static void HandleOperation(in OperationAnalysisContext context, INamedTypeSymbol symbolType)
         {
             if (context.Operation is IBinaryOperation)
             {
@@ -203,6 +203,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         }
 
         public static bool UseSymbolEqualityComparer(Compilation compilation)
-        => compilation.GetTypeByMetadataName(SymbolEqualityComparerName) is object;
+        => compilation.GetOrCreateTypeByMetadataName(SymbolEqualityComparerName) is object;
     }
 }

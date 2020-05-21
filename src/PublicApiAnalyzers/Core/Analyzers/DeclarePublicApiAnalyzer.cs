@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
@@ -19,20 +19,46 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         internal const string ShippedFileName = "PublicAPI.Shipped.txt";
         internal const string UnshippedFileName = "PublicAPI.Unshipped.txt";
         internal const string PublicApiNamePropertyBagKey = "PublicAPIName";
+        internal const string PublicApiNameWithNullabilityPropertyBagKey = "PublicAPINameWithNullability";
         internal const string MinimalNamePropertyBagKey = "MinimalName";
         internal const string PublicApiNamesOfSiblingsToRemovePropertyBagKey = "PublicApiNamesOfSiblingsToRemove";
         internal const string PublicApiNamesOfSiblingsToRemovePropertyBagValueSeparator = ";;";
         internal const string RemovedApiPrefix = "*REMOVED*";
+        internal const string NullableEnable = "#nullable enable";
         internal const string InvalidReasonShippedCantHaveRemoved = "The shipped API file can't have removed members";
+        internal const string InvalidReasonMisplacedNullableEnable = "The '#nullable enable' marker can only appear as the first line in the shipped API file";
+        internal const string PublicApiIsShippedPropertyBagKey = "PublicAPIIsShipped";
 
         internal static readonly DiagnosticDescriptor DeclareNewApiRule = new DiagnosticDescriptor(
             id: DiagnosticIds.DeclarePublicApiRuleId,
             title: PublicApiAnalyzerResources.DeclarePublicApiTitle,
             messageFormat: PublicApiAnalyzerResources.DeclarePublicApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: PublicApiAnalyzerResources.DeclarePublicApiDescription,
+            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static readonly DiagnosticDescriptor AnnotateApiRule = new DiagnosticDescriptor(
+            id: DiagnosticIds.AnnotatePublicApiRuleId,
+            title: PublicApiAnalyzerResources.AnnotatePublicApiTitle,
+            messageFormat: PublicApiAnalyzerResources.AnnotatePublicApiMessage,
+            category: "ApiDesign",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: PublicApiAnalyzerResources.AnnotatePublicApiDescription,
+            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static readonly DiagnosticDescriptor ObliviousApiRule = new DiagnosticDescriptor(
+            id: DiagnosticIds.ObliviousPublicApiRuleId,
+            title: PublicApiAnalyzerResources.ObliviousPublicApiTitle,
+            messageFormat: PublicApiAnalyzerResources.ObliviousPublicApiMessage,
+            category: "ApiDesign",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: PublicApiAnalyzerResources.ObliviousPublicApiDescription,
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -41,8 +67,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.RemoveDeletedApiTitle,
             messageFormat: PublicApiAnalyzerResources.RemoveDeletedApiMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: PublicApiAnalyzerResources.RemoveDeletedApiDescription,
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -52,8 +78,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.ExposedNoninstantiableTypeTitle,
             messageFormat: PublicApiAnalyzerResources.ExposedNoninstantiableTypeMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -62,8 +88,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.PublicApiFilesInvalidTitle,
             messageFormat: PublicApiAnalyzerResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -72,8 +98,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.DuplicateSymbolsInPublicApiFilesTitle,
             messageFormat: PublicApiAnalyzerResources.DuplicateSymbolsInPublicApiFilesMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -82,8 +108,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.AvoidMultipleOverloadsWithOptionalParametersTitle,
             messageFormat: PublicApiAnalyzerResources.AvoidMultipleOverloadsWithOptionalParametersMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             helpLinkUri: @"https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -92,9 +118,20 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             title: PublicApiAnalyzerResources.OverloadWithOptionalParametersShouldHaveMostParametersTitle,
             messageFormat: PublicApiAnalyzerResources.OverloadWithOptionalParametersShouldHaveMostParametersMessage,
             category: "ApiDesign",
-            defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             helpLinkUri: @"https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md",
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        internal static readonly DiagnosticDescriptor ShouldAnnotateApiFilesRule = new DiagnosticDescriptor(
+            id: DiagnosticIds.ShouldAnnotateApiFilesRuleId,
+            title: PublicApiAnalyzerResources.ShouldAnnotateApiFilesTitle,
+            messageFormat: PublicApiAnalyzerResources.ShouldAnnotateApiFilesMessage,
+            category: "ApiDesign",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: PublicApiAnalyzerResources.ShouldAnnotateApiFilesDescription,
+            helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly SymbolDisplayFormat ShortSymbolNameFormat =
@@ -109,6 +146,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     SymbolDisplayParameterOptions.None,
                 miscellaneousOptions:
                     SymbolDisplayMiscellaneousOptions.None);
+
+        private const int IncludeNullableReferenceTypeModifier = 1 << 6;
+        private const int IncludeNonNullableReferenceTypeModifier = 1 << 8;
 
         private static readonly SymbolDisplayFormat s_publicApiFormat =
             new SymbolDisplayFormat(
@@ -131,10 +171,16 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 miscellaneousOptions:
                     SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
+        private static readonly SymbolDisplayFormat s_publicApiFormatWithNullability =
+            s_publicApiFormat.WithMiscellaneousOptions(
+                SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+                (SymbolDisplayMiscellaneousOptions)IncludeNullableReferenceTypeModifier |
+                (SymbolDisplayMiscellaneousOptions)IncludeNonNullableReferenceTypeModifier);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(DeclareNewApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,
+            ImmutableArray.Create(DeclareNewApiRule, AnnotateApiRule, ObliviousApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,
                 PublicApiFilesInvalid, DuplicateSymbolInApiFiles, AvoidMultipleOverloadsWithOptionalParameters,
-                OverloadWithOptionalParametersShouldHaveMostParameters);
+                OverloadWithOptionalParametersShouldHaveMostParameters, ShouldAnnotateApiFilesRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -183,14 +229,24 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
         private static ApiData ReadApiData(string path, SourceText sourceText, bool isShippedApi)
         {
-            ImmutableArray<ApiLine>.Builder apiBuilder = ImmutableArray.CreateBuilder<ApiLine>();
-            ImmutableArray<RemovedApiLine>.Builder removedBuilder = ImmutableArray.CreateBuilder<RemovedApiLine>();
+            var apiBuilder = ImmutableArray.CreateBuilder<ApiLine>();
+            var removedBuilder = ImmutableArray.CreateBuilder<RemovedApiLine>();
+            var maxNullableRank = -1;
 
+            int rank = -1;
             foreach (TextLine line in sourceText.Lines)
             {
                 string text = line.ToString();
                 if (string.IsNullOrWhiteSpace(text))
                 {
+                    continue;
+                }
+
+                rank++;
+
+                if (text == NullableEnable)
+                {
+                    maxNullableRank = rank;
                     continue;
                 }
 
@@ -206,12 +262,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            return new ApiData(apiBuilder.ToImmutable(), removedBuilder.ToImmutable());
+            return new ApiData(apiBuilder.ToImmutable(), removedBuilder.ToImmutable(), maxNullableRank);
         }
 
         private static bool TryGetApiData(ImmutableArray<AdditionalText> additionalTexts, CancellationToken cancellationToken, out ApiData shippedData, out ApiData unshippedData)
         {
-            if (!TryGetApiText(additionalTexts, cancellationToken, out AdditionalText shippedText, out AdditionalText unshippedText))
+            if (!TryGetApiText(additionalTexts, cancellationToken, out var shippedText, out var unshippedText))
             {
                 shippedData = default;
                 unshippedData = default;
@@ -223,7 +279,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             return true;
         }
 
-        private static bool TryGetApiText(ImmutableArray<AdditionalText> additionalTexts, CancellationToken cancellationToken, out AdditionalText shippedText, out AdditionalText unshippedText)
+        private static bool TryGetApiText(
+            ImmutableArray<AdditionalText> additionalTexts,
+            CancellationToken cancellationToken,
+            [NotNullWhen(returnValue: true)] out AdditionalText? shippedText,
+            [NotNullWhen(returnValue: true)] out AdditionalText? unshippedText)
         {
             shippedText = null;
             unshippedText = null;
@@ -256,6 +316,18 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             if (shippedData.RemovedApiList.Length > 0)
             {
                 errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonShippedCantHaveRemoved));
+            }
+
+            if (shippedData.NullableRank > 0)
+            {
+                // '#nullable enable' must be on the first line
+                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
+            }
+
+            if (unshippedData.NullableRank > 0)
+            {
+                // '#nullable enable' must be on the first line
+                errors.Add(Diagnostic.Create(PublicApiFilesInvalid, Location.None, InvalidReasonMisplacedNullableEnable));
             }
 
             var publicApiMap = new Dictionary<string, ApiLine>(StringComparer.Ordinal);

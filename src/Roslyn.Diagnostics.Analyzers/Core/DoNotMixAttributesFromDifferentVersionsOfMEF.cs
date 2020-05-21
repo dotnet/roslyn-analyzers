@@ -25,9 +25,9 @@ namespace Roslyn.Diagnostics.Analyzers
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RoslynDiagnosticIds.MixedVersionsOfMefAttributesRuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.RoslyDiagnosticsReliability,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             DiagnosticCategory.RoslynDiagnosticsReliability,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -41,22 +41,22 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var mefV1ExportAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
-                var mefV2ExportAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var mefV1ExportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var mefV2ExportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
                 if (mefV1ExportAttribute == null || mefV2ExportAttribute == null)
                 {
                     // We don't need to check assemblies unless they're referencing both versions of MEF, so we're done
                     return;
                 };
 
-                var attributeUsageAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
+                var attributeUsageAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
 
                 var exportAttributes = new List<INamedTypeSymbol>() { mefV1ExportAttribute, mefV2ExportAttribute };
                 compilationContext.RegisterSymbolAction(c => AnalyzeSymbol(c, exportAttributes, attributeUsageAttribute), SymbolKind.NamedType);
             });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext, IEnumerable<INamedTypeSymbol> exportAttributes, INamedTypeSymbol attributeUsageAttribute)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext, IEnumerable<INamedTypeSymbol> exportAttributes, INamedTypeSymbol? attributeUsageAttribute)
         {
             var namedType = (INamedTypeSymbol)symbolContext.Symbol;
             var namedTypeAttributes = namedType.GetApplicableAttributes(attributeUsageAttribute);

@@ -27,9 +27,9 @@ namespace Roslyn.Diagnostics.Analyzers
             RoslynDiagnosticIds.ExportedPartsShouldHaveImportingConstructorRuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.RoslyDiagnosticsReliability,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticCategory.RoslynDiagnosticsReliability,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             helpLinkUri: null,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -43,11 +43,11 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var exportAttributeV1 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
-                var importingConstructorAttributeV1 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportingConstructorAttribute);
-                var exportAttributeV2 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
-                var inheritedExportAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);
-                var importingConstructorAttributeV2 = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportingConstructorAttribute);
+                var exportAttributeV1 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var importingConstructorAttributeV1 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportingConstructorAttribute);
+                var exportAttributeV2 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var inheritedExportAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);
+                var importingConstructorAttributeV2 = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportingConstructorAttribute);
 
                 if (exportAttributeV1 is null && exportAttributeV2 is null)
                 {
@@ -76,7 +76,7 @@ namespace Roslyn.Diagnostics.Analyzers
             });
         }
 
-        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol exportAttributeOpt, INamedTypeSymbol importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
+        private static void AnalyzeSymbolForAttribute(ref SymbolAnalysisContext context, INamedTypeSymbol? exportAttributeOpt, INamedTypeSymbol? importingConstructorAttribute, INamedTypeSymbol namedType, IEnumerable<AttributeData> exportAttributes)
         {
             if (exportAttributeOpt is null)
             {
@@ -89,8 +89,8 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
-            IMethodSymbol importingConstructor = null;
-            ImmutableArray<IMethodSymbol> nonImportingConstructors = ImmutableArray<IMethodSymbol>.Empty;
+            IMethodSymbol? importingConstructor = null;
+            var nonImportingConstructors = ImmutableArray<IMethodSymbol>.Empty;
             foreach (var constructor in namedType.Constructors)
             {
                 if (constructor.IsStatic)
@@ -127,7 +127,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
             }
 
-            IMethodSymbol missingImportingConstructor = null;
+            IMethodSymbol? missingImportingConstructor = null;
             if (importingConstructor is null)
             {
                 missingImportingConstructor = nonImportingConstructors.FirstOrDefault(constructor => constructor.DeclaredAccessibility == Accessibility.Public)

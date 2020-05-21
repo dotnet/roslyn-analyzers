@@ -1,16 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 {
+    using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
+
     internal static class TaintedDataSymbolMapExtensions
     {
         /// <summary>
@@ -19,124 +24,91 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="sourceSymbolMap"></param>
         /// <param name="method"></param>
         /// <param name="arguments"></param>
-        /// <param name="pointsTos"></param>
-        /// <param name="valueContents"></param>
-        /// <param name="taintedTargets"></param>
+        /// <param name="pointsToFactory">If the method needs to do PointsToAnalysis, the PointsToAnalysis result will be produced by the passed value factory.</param>
+        /// <param name="valueContentFactory">If the method needs to do ValueContentAnalysis, the ValueContentAnalysis result will be produced by the passed value factory.</param>
+        /// <param name="allTaintedTargets"></param>
         /// <returns></returns>
         public static bool IsSourceMethod(
             this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap,
             IMethodSymbol method,
             ImmutableArray<IArgumentOperation> arguments,
-            ImmutableArray<PointsToAbstractValue> pointsTos,
-            ImmutableArray<ValueContentAbstractValue> valueContents,
-            out PooledHashSet<string> taintedTargets)
+            Lazy<PointsToAnalysisResult?> pointsToFactory,
+            Lazy<(PointsToAnalysisResult? p, ValueContentAnalysisResult? v)> valueContentFactory,
+            [NotNullWhen(returnValue: true)] out PooledHashSet<string>? allTaintedTargets)
         {
-            taintedTargets = null;
+            allTaintedTargets = null;
+            PointsToAnalysisResult? pointsToAnalysisResult = null;
+            ValueContentAnalysisResult? valueContentAnalysisResult = null;
             foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(method.ContainingType))
             {
-                foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(PointsToCheck pointsToCheck, string)> pointsToTaintedTargets) in sourceInfo.TaintedMethodsNeedsPointsToAnalysis)
+                foreach ((MethodMatcher methodMatcher, ImmutableHashSet<string> taintedTargets) in sourceInfo.TaintedMethods)
                 {
                     if (methodMatcher(method.Name, arguments))
                     {
-                        IEnumerable<(PointsToCheck, string target)> positivePointsToTaintedTargets = pointsToTaintedTargets.Where(s => s.pointsToCheck(pointsTos));
-                        if (positivePointsToTaintedTargets != null)
+                        if (allTaintedTargets == null)
                         {
-                            if (taintedTargets == null)
+                            allTaintedTargets = PooledHashSet<string>.GetInstance();
+                        }
+
+                        allTaintedTargets.UnionWith(taintedTargets);
+                    }
+                }
+
+                foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(PointsToCheck pointsToCheck, string)> pointsToTaintedTargets) in sourceInfo.TaintedMethodsNeedsPointsToAnalysis)
+                {
+                    if (pointsToTaintedTargets.Any() && methodMatcher(method.Name, arguments))
+                    {
+                        pointsToAnalysisResult ??= pointsToFactory.Value;
+                        if (pointsToAnalysisResult == null)
+                        {
+                            break;
+                        }
+
+                        IEnumerable<(PointsToCheck, string target)> positivePointsToTaintedTargets = pointsToTaintedTargets.Where(s =>
+                            s.pointsToCheck(
+                                arguments.Select(o =>
+                                    pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray()));
+                        if (positivePointsToTaintedTargets.Any())
+                        {
+                            if (allTaintedTargets == null)
                             {
-                                taintedTargets = PooledHashSet<string>.GetInstance();
+                                allTaintedTargets = PooledHashSet<string>.GetInstance();
                             }
 
-                            taintedTargets.UnionWith(positivePointsToTaintedTargets.Select(s => s.target));
+                            allTaintedTargets.UnionWith(positivePointsToTaintedTargets.Select(s => s.target));
                         }
                     }
                 }
 
                 foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(ValueContentCheck valueContentCheck, string)> valueContentTaintedTargets) in sourceInfo.TaintedMethodsNeedsValueContentAnalysis)
                 {
-                    if (methodMatcher(method.Name, arguments))
+                    if (valueContentTaintedTargets.Any() && methodMatcher(method.Name, arguments))
                     {
-                        IEnumerable<(ValueContentCheck, string target)> positiveValueContentTaintedTargets = valueContentTaintedTargets.Where(s => s.valueContentCheck(pointsTos, valueContents));
-                        if (positiveValueContentTaintedTargets != null)
+                        pointsToAnalysisResult ??= valueContentFactory.Value.p;
+                        valueContentAnalysisResult ??= valueContentFactory.Value.v;
+                        if (pointsToAnalysisResult == null || valueContentAnalysisResult == null)
                         {
-                            if (taintedTargets == null)
+                            break;
+                        }
+
+                        IEnumerable<(ValueContentCheck, string target)> positiveValueContentTaintedTargets = valueContentTaintedTargets.Where(s =>
+                            s.valueContentCheck(
+                                arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
+                                arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray()));
+                        if (positiveValueContentTaintedTargets.Any())
+                        {
+                            if (allTaintedTargets == null)
                             {
-                                taintedTargets = PooledHashSet<string>.GetInstance();
+                                allTaintedTargets = PooledHashSet<string>.GetInstance();
                             }
 
-                            taintedTargets.UnionWith(positiveValueContentTaintedTargets.Select(s => s.target));
+                            allTaintedTargets.UnionWith(positiveValueContentTaintedTargets.Select(s => s.target));
                         }
                     }
                 }
             }
 
-            return taintedTargets != null;
-        }
-
-        /// <summary>
-        /// Faster IsSourceMethod(), before using PointsToAnalysis or ValueContentAnalysis.
-        /// </summary>
-        /// <param name="sourceSymbolMap">SourceInfos.</param>
-        /// <param name="method">Invoked ethod to be evaluated.</param>
-        /// <param name="arguments">Arguments of the method.</param>
-        /// <param name="isSourceMethod">Indicates that the invoked method is definitely a tainted data source.</param>
-        /// <param name="requiresPointsTo">Indicates that the invoked method requires PointsToAnalysis for further
-        /// evaluation.</param>
-        /// <param name="requiresValueContent">Indicates that the invoked method requires ValueContentAnalysis for further
-        /// evaluation.</param>
-        /// <returns>True if the invoked method is potentially a tainted data source.</returns>
-        public static bool IsSourceMethodFast(
-            this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap,
-            IMethodSymbol method,
-            ImmutableArray<IArgumentOperation> arguments,
-            out bool isSourceMethod,
-            out bool requiresPointsTo,
-            out bool requiresValueContent)
-        {
-            isSourceMethod = false;
-            requiresPointsTo = false;
-            requiresValueContent = false;
-
-            foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(method.ContainingType))
-            {
-                if (!(requiresPointsTo && isSourceMethod))
-                {
-                    foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(PointsToCheck pointsToCheck, string)> pointsToTaintedTargets) in sourceInfo.TaintedMethodsNeedsPointsToAnalysis)
-                    {
-                        if (methodMatcher(method.Name, arguments))
-                        {
-                            foreach ((PointsToCheck pointsToCheck, string) p in pointsToTaintedTargets)
-                            {
-                                if (p.pointsToCheck == SourceInfo.AlwaysTruePointsToCheck)
-                                {
-                                    isSourceMethod = true;
-                                }
-                                else
-                                {
-                                    requiresPointsTo = true;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!requiresValueContent)
-                {
-                    foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(ValueContentCheck valueContentCheck, string)> valueContentTaintedTargets) in sourceInfo.TaintedMethodsNeedsValueContentAnalysis)
-                    {
-                        if (methodMatcher(method.Name, arguments))
-                        {
-                            requiresValueContent = true;
-                        }
-                    }
-                }
-
-                if (requiresPointsTo && requiresValueContent && isSourceMethod)
-                {
-                    break;
-                }
-            }
-
-            return isSourceMethod || requiresPointsTo || requiresValueContent;
+            return allTaintedTargets != null;
         }
 
         /// <summary>
@@ -193,7 +165,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             IMethodSymbol method,
             ImmutableArray<IArgumentOperation> arguments,
             ImmutableArray<string> taintedParameterNames,
-            out PooledHashSet<(string, string)> taintedParameterPairs)
+            [NotNullWhen(returnValue: true)] out PooledHashSet<(string, string)>? taintedParameterPairs)
         {
             taintedParameterPairs = null;
             foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(method.ContainingType))

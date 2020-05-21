@@ -26,13 +26,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
             ControlFlowGraph controlFlowGraph,
             ISymbol owningSymbol,
             AnalyzerOptions analyzerOptions,
-            SymbolNamesOption nullCheckValidationMethods,
+            SymbolNamesWithValueOption<Unit> nullCheckValidationMethods,
             InterproceduralAnalysisConfiguration interproceduralAnalysisConfig,
             bool pessimisticAnalysis,
-            PointsToAnalysisResult pointsToAnalysisResultOpt,
-            Func<ParameterValidationAnalysisContext, ParameterValidationAnalysisResult> tryGetOrComputeAnalysisResult,
-            ControlFlowGraph parentControlFlowGraphOpt,
-            InterproceduralParameterValidationAnalysisData interproceduralAnalysisDataOpt,
+            PointsToAnalysisResult? pointsToAnalysisResultOpt,
+            Func<ParameterValidationAnalysisContext, ParameterValidationAnalysisResult?> tryGetOrComputeAnalysisResult,
+            ControlFlowGraph? parentControlFlowGraphOpt,
+            InterproceduralParameterValidationAnalysisData? interproceduralAnalysisDataOpt,
             bool trackHazardousParameterUsages)
             : base(valueDomain, wellKnownTypeProvider, controlFlowGraph, owningSymbol, analyzerOptions, interproceduralAnalysisConfig,
                   pessimisticAnalysis, predicateAnalysis: false, exceptionPathsAnalysis: false,
@@ -50,11 +50,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
             ControlFlowGraph controlFlowGraph,
             ISymbol owningSymbol,
             AnalyzerOptions analyzerOptions,
-            SymbolNamesOption nullCheckValidationMethods,
+            SymbolNamesWithValueOption<Unit> nullCheckValidationMethods,
             InterproceduralAnalysisConfiguration interproceduralAnalysisConfig,
             bool pessimisticAnalysis,
-            PointsToAnalysisResult pointsToAnalysisResultOpt,
-            Func<ParameterValidationAnalysisContext, ParameterValidationAnalysisResult> tryGetOrComputeAnalysisResult)
+            PointsToAnalysisResult? pointsToAnalysisResultOpt,
+            Func<ParameterValidationAnalysisContext, ParameterValidationAnalysisResult?> tryGetOrComputeAnalysisResult)
         {
             return new ParameterValidationAnalysisContext(
                 valueDomain, wellKnownTypeProvider, controlFlowGraph, owningSymbol,
@@ -67,10 +67,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
             IMethodSymbol invokedMethod,
             ControlFlowGraph invokedCfg,
             IOperation operation,
-            PointsToAnalysisResult pointsToAnalysisResultOpt,
-            CopyAnalysisResult copyAnalysisResultOpt,
-            ValueContentAnalysisResult valueContentAnalysisResultOpt,
-            InterproceduralParameterValidationAnalysisData interproceduralAnalysisData)
+            PointsToAnalysisResult? pointsToAnalysisResultOpt,
+            CopyAnalysisResult? copyAnalysisResultOpt,
+            ValueContentAnalysisResult? valueContentAnalysisResultOpt,
+            InterproceduralParameterValidationAnalysisData? interproceduralAnalysisData)
         {
             Debug.Assert(pointsToAnalysisResultOpt != null);
             Debug.Assert(copyAnalysisResultOpt == null);
@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
 
         public bool TrackHazardousParameterUsages { get; }
 
-        private SymbolNamesOption NullCheckValidationMethodNames { get; }
+        private SymbolNamesWithValueOption<Unit> NullCheckValidationMethodNames { get; }
         public bool IsNullCheckValidationMethod(IMethodSymbol method)
             => NullCheckValidationMethodNames.Contains(method);
 

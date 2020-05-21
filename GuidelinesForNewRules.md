@@ -7,9 +7,13 @@
 
 3. Follow the below steps to choose the appropriate **rule ID** for the new rule:
 
-   1. Choose the **applicable 'category'** for the new rule. See [DiagnosticCategoryAndIdRanges.txt](.//src//Utilities//Compiler//DiagnosticCategoryAndIdRanges.txt) for current diagnostic categories, and the CA IDs reserved for each category.
-   2. Refer to the current [official documentation](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings) for all CA rules by rule category. For example, while adding a new rule in the `Performance` category, you should navigate to the [Performance Rules section](https://docs.microsoft.com/visualstudio/code-quality/performance-warnings). Say you find that `CA1824` is the last documented rule ID in this category, and there are couple of doc issues on that page for very recently added rules `CA1825` and `CA1826` for which we documentation still needs to be added, then you can choose `CA1827` as the ID for your rule.
-   3. Double check that you have chosen an unused CA ID by searching the repo, for example use following query for `CA1827`: https://github.com/dotnet/roslyn-analyzers/search?q=CA1827.
+   1. Choose the **applicable 'category'** for the new rule. See [DiagnosticCategoryAndIdRanges.txt](.//src//Utilities//Compiler//DiagnosticCategoryAndIdRanges.txt) for current diagnostic categories, and the CA IDs currently in use for each category.
+   2. Choose the **next available CA ID** for the chosen 'category' from [DiagnosticCategoryAndIdRanges.txt](.//src//Utilities//Compiler//DiagnosticCategoryAndIdRanges.txt).
+      For example, while adding a new rule in the `Performance` category, if `CA1800-CA1829` represents the current CA ID range in `DiagnosticCategoryAndIdRanges.txt`, then:
+      1. Choose `CA1830` as the rule ID for your rule.
+      2. Update the range for `Performance` in [DiagnosticCategoryAndIdRanges.txt](.//src//Utilities//Compiler//DiagnosticCategoryAndIdRanges.txt) to `CA1800-CA1830`
+
+   You can refer to the [official documentation](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings) for all released CA rules by rule category.
 
 4. Follow the below guidelines to choose the appropriate **analyzer package** for the new rule:
 
@@ -17,4 +21,26 @@
    2. For majority of cases, you would be contributing to either [Microsoft.CodeQuality.Analyzers](https://github.com/dotnet/roslyn-analyzers#microsoftcodequalityanalyzers) or [Microsoft.NetCoreAnalyzers](https://github.com/dotnet/roslyn-analyzers#microsoftnetcoreanalyzers). Analyzers related to pure code quality improvements, which are not specific to any API should go into `Microsoft.CodeQuality.Analyzers`. Analyzers specific to usage of a specific .NetCore/.NetStandard API should go into `Microsoft.NetCore.Analyzers` package.
    3. A good rule of thumb is that if your analyzer needs to invoke `GetTypeByMetadataName`, then most likely it is an API specific analyzer and belongs to `Microsoft.NetCore.Analyzers`.
 
-5. **NOTE:** Once the new rule is merged, it needs to be documented. Either submit a PR on the [official documentation page](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings) for the rule's category (preferred) or [file an issue](https://github.com/MicrosoftDocs/visualstudio-docs/issues). If filing an issue, please include all relevant information in the issue to allow the documentation experts to easily author the documentation. For example, see [this issue](https://github.com/MicrosoftDocs/visualstudio-docs/issues/3454).
+5. Documentation requirements:
+   1. **New CA rule must be documented**: Each rule ID `CAxxxx` is automatically assigned the help link https://docs.microsoft.com/visualstudio/code-quality/caxxxx. The documentation for this page is populated from `caxxxx.md` file at https://github.com/MicrosoftDocs/visualstudio-docs/tree/master/docs/code-quality. For example, `CA1000` is documented at [ca1000.md](https://github.com/MicrosoftDocs/visualstudio-docs/blob/master/docs/code-quality/ca1000.md) file. Documenting a new rule is primarily ensuring a PR is sent to `MicrosoftDocs` repo to add `caxxxx.md` file for the new rule. Detailed steps are given below.
+   2. **Documentation PR must be submitted within ONE WEEK of the rule implementation being merged**. Note that we will communicate this requirement on each PR contributing a new CA rule. We reserve the right to revert the rule implementation PR if this documentation requirement is not met.
+   
+   Steps for creating documentation PR:
+   
+   1. Documentation PR must be submitted to the following repo:
+      1. _External contributors_: https://github.com/MicrosoftDocs/visualstudio-docs
+      2. _Internal contributors_: https://github.com/MicrosoftDocs/visualstudio-docs-pr
+      
+      Please review [CONTRIBUTING.md](https://github.com/MicrosoftDocs/visualstudio-docs/blob/master/CONTRIBUTING.md) for guidelines.
+   2. Documentation PR for a new CA rule must have following changes:
+      1. New `caxxxx.md` file under `/docs/code-quality` sub-folder with rule documentation.
+         
+         `TIP:` Clone an existing `caxxxx.md` file inside `/docs/code-quality` sub-folder in the repo, rename it and update the contents for the new rule.
+      2. Update the following tables in the repo for supported CA rule IDs:
+         1. Add entry in `/docs/code-quality/toc.yml` under appropriate category.
+         2. Add entry in `/docs/code-quality/code-analysis-warnings-for-managed-code-by-checkid.md`
+         3. Add entry in the documentation file `/docs/code-quality/<%category%>-warnings.md` for rule's `Category`. For example:
+            1. For a new rule with category `Design`, add an entry to `/docs/code-quality/design-warnings.md`.
+            2. For a new rule with category `Performance`, add an entry to `/docs/code-quality/performance-warnings.md`, and so on.
+    
+   If for some exceptional reason you are unable to submit a PR, please [file a documentation issue](https://github.com/MicrosoftDocs/visualstudio-docs/issues) to add documentation for the rule in future. Please include all relevant information in the issue to allow the documentation experts to easily author the documentation. For example, see [this issue](https://github.com/MicrosoftDocs/visualstudio-docs/issues/3454).

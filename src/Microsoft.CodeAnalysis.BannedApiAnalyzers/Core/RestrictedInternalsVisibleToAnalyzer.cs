@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
             messageFormat: BannedApiAnalyzerResources.RestrictedInternalsVisibleToMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticSeverity.Error,  // Force build break on invalid external access.
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: true,
             description: BannedApiAnalyzerResources.RestrictedInternalsVisibleToDescription,
             helpLinkUri: null, // TODO: Add help link
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
 
         private static ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>> GetRestrictedInternalsVisibleToMap(Compilation compilation)
         {
-            var restrictedInternalsVisibleToAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRestrictedInternalsVisibleToAttribute);
+            var restrictedInternalsVisibleToAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRestrictedInternalsVisibleToAttribute);
             if (restrictedInternalsVisibleToAttribute == null)
             {
                 return ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>>.Empty;
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         }
 
         private static void VerifySymbol(
-            ISymbol symbol,
+            ISymbol? symbol,
             SyntaxNode node,
             Action<Diagnostic> reportDiagnostic,
             ImmutableDictionary<IAssemblySymbol, ImmutableSortedSet<string>> restrictedInternalsVisibleToMap,
@@ -235,8 +235,8 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         }
 
         private static void MarkIsBanned(
-            INamespaceSymbol startNamespace,
-            INamespaceSymbol uptoNamespace,
+            INamespaceSymbol? startNamespace,
+            INamespaceSymbol? uptoNamespace,
             ConcurrentDictionary<INamespaceSymbol, bool> namespaceToIsBannedMap,
             bool banned)
         {

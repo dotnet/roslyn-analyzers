@@ -1,85 +1,77 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Diagnostics;
-using System.Reflection;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.VisualBasic;
-using TestResources.NetFX;
+using Microsoft.CodeAnalysis.Testing;
 
 namespace Test.Utilities
 {
     public static class AdditionalMetadataReferences
     {
-        private static readonly Lazy<Assembly> s_netstandardAssembly = new Lazy<Assembly>(() => Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51"));
-        private static readonly Lazy<MetadataReference> s_netstandardReference = new Lazy<MetadataReference>(() => MetadataReference.CreateFromFile(s_netstandardAssembly.Value.Location));
+        public static ReferenceAssemblies Default { get; } = ReferenceAssemblies.Default
+            .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.0.0")));
 
-        public static readonly MetadataReference SystemComponentModelCompositionReference = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
-        public static readonly MetadataReference SystemCompositionReference = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);
-        internal static readonly MetadataReference SystemXmlReference = MetadataReference.CreateFromFile(typeof(System.Xml.XmlDocument).Assembly.Location);
-        internal static readonly MetadataReference SystemXmlDataReference = MetadataReference.CreateFromFile(typeof(System.Data.Rule).Assembly.Location);
-        internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
-        internal static readonly MetadataReference VisualBasicSymbolsReference = MetadataReference.CreateFromFile(typeof(VisualBasicCompilation).Assembly.Location);
-        internal static readonly MetadataReference WorkspacesReference = MetadataReference.CreateFromFile(typeof(Workspace).Assembly.Location);
-        internal static readonly MetadataReference SystemDiagnosticsDebugReference = MetadataReference.CreateFromFile(typeof(Debug).Assembly.Location);
-        internal static readonly MetadataReference SystemDataReference = MetadataReference.CreateFromFile(typeof(System.Data.DataSet).Assembly.Location);
-        internal static readonly MetadataReference SystemWebReference = MetadataReference.CreateFromFile(typeof(System.Web.HttpRequest).Assembly.Location);
-        internal static readonly MetadataReference SystemRuntimeSerialization = MetadataReference.CreateFromFile(typeof(System.Runtime.Serialization.NetDataContractSerializer).Assembly.Location);
-        internal static readonly MetadataReference SystemXmlLinq = MetadataReference.CreateFromFile(typeof(System.Xml.Linq.XAttribute).Assembly.Location);
-        internal static readonly MetadataReference TestReferenceAssembly = MetadataReference.CreateFromFile(typeof(OtherDll.OtherDllStaticMethods).Assembly.Location);
-        internal static readonly MetadataReference SystemDirectoryServices = MetadataReference.CreateFromFile(typeof(System.DirectoryServices.DirectoryEntry).Assembly.Location);
-        internal static readonly MetadataReference SystemXaml = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlReader).Assembly.Location);
-        internal static readonly MetadataReference PresentationFramework = MetadataReference.CreateFromFile(typeof(System.Windows.Markup.XamlReader).Assembly.Location);
-        internal static readonly MetadataReference SystemWebExtensions = MetadataReference.CreateFromFile(typeof(System.Web.Script.Serialization.JavaScriptSerializer).Assembly.Location);
-        private static MetadataReference s_systemRuntimeFacadeRef;
-        public static MetadataReference SystemRuntimeFacadeRef
-        {
-            get
-            {
-                if (s_systemRuntimeFacadeRef == null)
-                {
-#pragma warning disable CA2000 // Dispose objects before losing scope - Dispose ownership transfer at 'AssemblyMetadata.GetReference'
-                    s_systemRuntimeFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Runtime).GetReference(display: "System.Runtime.dll");
-#pragma warning restore CA2000 // Dispose objects before losing scope
-                }
+        public static ReferenceAssemblies DefaultWithoutRoslynSymbols { get; } = ReferenceAssemblies.Default
+            .AddAssemblies(ImmutableArray.Create("System.Xml.Data"))
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis.Workspaces.Common", "3.0.0")));
 
-                return s_systemRuntimeFacadeRef;
-            }
-        }
+        public static ReferenceAssemblies DefaultWithSystemWeb { get; } = Default
+            .AddAssemblies(ImmutableArray.Create("System.Web", "System.Web.Extensions"));
 
-        private static MetadataReference s_systemThreadingFacadeRef;
-        public static MetadataReference SystemThreadingFacadeRef
-        {
-            get
-            {
-                if (s_systemThreadingFacadeRef == null)
-                {
-#pragma warning disable CA2000 // Dispose objects before losing scope - Dispose ownership transfer at 'AssemblyMetadata.GetReference'
-                    s_systemThreadingFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Threading).GetReference(display: "System.Threading.dll");
-#pragma warning restore CA2000 // Dispose objects before losing scope
-                }
+        public static ReferenceAssemblies DefaultForTaintedDataAnalysis { get; } = Default
+            .AddAssemblies(ImmutableArray.Create("PresentationFramework", "System.DirectoryServices", "System.Web", "System.Web.Extensions", "System.Xaml"))
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("AntiXSS", "4.3.0")))
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.AspNetCore.Mvc", "2.2.0")));
 
-                return s_systemThreadingFacadeRef;
-            }
-        }
+        public static ReferenceAssemblies DefaultWithSerialization { get; } = Default
+            .AddAssemblies(ImmutableArray.Create("System.Runtime.Serialization"));
 
-        private static MetadataReference s_systemThreadingTasksFacadeRef;
-        public static MetadataReference SystemThreadingTaskFacadeRef
-        {
-            get
-            {
-                if (s_systemThreadingTasksFacadeRef == null)
-                {
-#pragma warning disable CA2000 // Dispose objects before losing scope - Dispose ownership transfer at 'AssemblyMetadata.GetReference'
-                    s_systemThreadingTasksFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Threading_Tasks).GetReference(display: "System.Threading.Tasks.dll");
-#pragma warning restore CA2000 // Dispose objects before losing scope
-                }
+        public static ReferenceAssemblies DefaultWithAzureStorage { get; } = ReferenceAssemblies.Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("WindowsAzure.Storage", "9.0.0")));
 
-                return s_systemThreadingTasksFacadeRef;
-            }
-        }
+        public static ReferenceAssemblies DefaultWithNewtonsoftJson { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Newtonsoft.Json", "10.0.1")));
 
-        public static MetadataReference Netstandard => s_netstandardReference.Value;
+        public static ReferenceAssemblies DefaultWithWinForms { get; } = Default
+            .AddAssemblies(ImmutableArray.Create("System.Windows.Forms"));
+
+        public static ReferenceAssemblies DefaultWithWinHttpHandler { get; } = ReferenceAssemblies.NetStandard.NetStandard20
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("System.Net.Http.WinHttpHandler", "4.7.0")));
+
+        public static ReferenceAssemblies DefaultWithAspNetCoreMvc { get; } = Default
+            .AddPackages(ImmutableArray.Create(
+                new PackageIdentity("Microsoft.AspNetCore", "1.1.7"),
+                new PackageIdentity("Microsoft.AspNetCore.Mvc", "1.1.8"),
+                new PackageIdentity("Microsoft.AspNetCore.Http", "1.1.2")));
+
+        public static ReferenceAssemblies DefaultWithNUnit { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("NUnit", "3.12.0")));
+
+        public static ReferenceAssemblies DefaultWithXUnit { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("xunit", "2.4.1")));
+
+        public static ReferenceAssemblies DefaultWithMSTest { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("MSTest.TestFramework", "2.1.0")));
+
+        public static ReferenceAssemblies DefaultWithAsyncInterfaces { get; } = Default
+            .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.Bcl.AsyncInterfaces", "1.1.0")));
+
+        public static MetadataReference SystemCollectionsImmutableReference { get; } = MetadataReference.CreateFromFile(typeof(ImmutableHashSet<>).Assembly.Location);
+        public static MetadataReference SystemComponentModelCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.ComponentModel.Composition.ExportAttribute).Assembly.Location);
+        public static MetadataReference SystemCompositionReference { get; } = MetadataReference.CreateFromFile(typeof(System.Composition.ExportAttribute).Assembly.Location);
+        public static MetadataReference SystemXmlDataReference { get; } = MetadataReference.CreateFromFile(typeof(System.Data.Rule).Assembly.Location);
+        public static MetadataReference CodeAnalysisReference { get; } = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        public static MetadataReference CSharpSymbolsReference { get; } = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        public static MetadataReference WorkspacesReference { get; } = MetadataReference.CreateFromFile(typeof(Workspace).Assembly.Location);
+        public static MetadataReference SystemWebReference { get; } = MetadataReference.CreateFromFile(typeof(System.Web.HttpRequest).Assembly.Location);
+        public static MetadataReference SystemRuntimeSerialization { get; } = MetadataReference.CreateFromFile(typeof(System.Runtime.Serialization.NetDataContractSerializer).Assembly.Location);
+        public static MetadataReference TestReferenceAssembly { get; } = MetadataReference.CreateFromFile(typeof(OtherDll.OtherDllStaticMethods).Assembly.Location);
+        public static MetadataReference SystemDirectoryServices { get; } = MetadataReference.CreateFromFile(typeof(System.DirectoryServices.DirectoryEntry).Assembly.Location);
+        public static MetadataReference SystemXaml { get; } = MetadataReference.CreateFromFile(typeof(System.Xaml.XamlReader).Assembly.Location);
+        public static MetadataReference PresentationFramework { get; } = MetadataReference.CreateFromFile(typeof(System.Windows.Markup.XamlReader).Assembly.Location);
+        public static MetadataReference SystemWeb { get; } = MetadataReference.CreateFromFile(typeof(System.Web.HttpRequest).Assembly.Location);
+        public static MetadataReference SystemWebExtensions { get; } = MetadataReference.CreateFromFile(typeof(System.Web.Script.Serialization.JavaScriptSerializer).Assembly.Location);
     }
 }

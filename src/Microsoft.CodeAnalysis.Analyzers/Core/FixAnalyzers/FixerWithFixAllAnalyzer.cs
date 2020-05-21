@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -44,9 +43,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.FixAnalyzers
             s_localizableCreateCodeActionWithEquivalenceKeyTitle,
             s_localizableCreateCodeActionWithEquivalenceKeyMessage,
             "Correctness",
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            DiagnosticSeverity.Warning,
             description: s_localizableCodeActionNeedsEquivalenceKeyDescription,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor OverrideCodeActionEquivalenceKeyRule = new DiagnosticDescriptor(
@@ -54,9 +53,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.FixAnalyzers
             s_localizableOverrideCodeActionEquivalenceKeyTitle,
             s_localizableOverrideCodeActionEquivalenceKeyMessage,
             "Correctness",
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            DiagnosticSeverity.Warning,
             description: s_localizableCodeActionNeedsEquivalenceKeyDescription,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor OverrideGetFixAllProviderRule = new DiagnosticDescriptor(
@@ -64,9 +63,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.FixAnalyzers
             s_localizableOverrideGetFixAllProviderTitle,
             s_localizableOverrideGetFixAllProviderMessage,
             "Correctness",
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            DiagnosticSeverity.Warning,
             description: s_localizableOverrideGetFixAllProviderDescription,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
@@ -86,37 +85,33 @@ namespace Microsoft.CodeAnalysis.Analyzers.FixAnalyzers
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
-            INamedTypeSymbol codeFixProviderSymbol = context.Compilation.GetTypeByMetadataName(CodeFixProviderMetadataName);
+            INamedTypeSymbol? codeFixProviderSymbol = context.Compilation.GetOrCreateTypeByMetadataName(CodeFixProviderMetadataName);
             if (codeFixProviderSymbol == null)
             {
                 return;
             }
 
-            IMethodSymbol getFixAllProviderMethod = codeFixProviderSymbol.GetMembers(GetFixAllProviderMethodName).OfType<IMethodSymbol>().FirstOrDefault();
+            IMethodSymbol? getFixAllProviderMethod = codeFixProviderSymbol.GetMembers(GetFixAllProviderMethodName).OfType<IMethodSymbol>().FirstOrDefault();
             if (getFixAllProviderMethod == null)
             {
                 return;
             }
 
-            INamedTypeSymbol codeActionSymbol = context.Compilation.GetTypeByMetadataName(CodeActionMetadataName);
+            INamedTypeSymbol? codeActionSymbol = context.Compilation.GetOrCreateTypeByMetadataName(CodeActionMetadataName);
             if (codeActionSymbol == null)
             {
                 return;
             }
 
-            IEnumerable<IMethodSymbol> createSymbols = codeActionSymbol.GetMembers(CreateMethodName).OfType<IMethodSymbol>();
-            if (createSymbols == null)
-            {
-                return;
-            }
-
-            IPropertySymbol equivalenceKeyProperty = codeActionSymbol.GetMembers(EquivalenceKeyPropertyName).OfType<IPropertySymbol>().FirstOrDefault();
+            IPropertySymbol? equivalenceKeyProperty = codeActionSymbol.GetMembers(EquivalenceKeyPropertyName).OfType<IPropertySymbol>().FirstOrDefault();
             if (equivalenceKeyProperty == null)
             {
                 return;
             }
 
-            CompilationAnalyzer compilationAnalyzer = new CompilationAnalyzer(codeFixProviderSymbol, codeActionSymbol, context.Compilation.Assembly, createMethods: ImmutableHashSet.CreateRange(createSymbols));
+            var createMethods = codeActionSymbol.GetMembers(CreateMethodName).OfType<IMethodSymbol>().ToImmutableHashSet();
+
+            CompilationAnalyzer compilationAnalyzer = new CompilationAnalyzer(codeFixProviderSymbol, codeActionSymbol, context.Compilation.Assembly, createMethods);
 
             context.RegisterSymbolAction(compilationAnalyzer.AnalyzeNamedTypeSymbol, SymbolKind.NamedType);
             context.RegisterOperationBlockStartAction(compilationAnalyzer.OperationBlockStart);

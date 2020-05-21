@@ -3,12 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Helpers;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
@@ -27,73 +28,73 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InvalidReportDiagnosticRule);
 
         [SuppressMessage("AnalyzerPerformance", "RS1012:Start action has no registered actions.", Justification = "Method returns an analyzer that is registered by the caller.")]
-        protected override DiagnosticAnalyzerSymbolAnalyzer GetDiagnosticAnalyzerSymbolAnalyzer(CompilationStartAnalysisContext compilationContext, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
+        protected override DiagnosticAnalyzerSymbolAnalyzer? GetDiagnosticAnalyzerSymbolAnalyzer(CompilationStartAnalysisContext compilationContext, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
         {
             Compilation compilation = compilationContext.Compilation;
 
-            INamedTypeSymbol compilationEndAnalysisContext = compilation.GetTypeByMetadataName(CompilationEndAnalysisContextFullName);
+            INamedTypeSymbol? compilationEndAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsCompilationEndAnalysisContext);
             if (compilationEndAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol codeBlockAnalysisContext = compilation.GetTypeByMetadataName(CodeBlockAnalysisContextFullName);
+            INamedTypeSymbol? codeBlockAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsCodeBlockAnalysisContext);
             if (codeBlockAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationBlockAnalysisContext = compilation.GetTypeByMetadataName(OperationBlockAnalysisContextFullName);
+            INamedTypeSymbol? operationBlockAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsOperationBlockAnalysisContext);
             if (operationBlockAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol operationAnalysisContext = compilation.GetTypeByMetadataName(OperationAnalysisContextFullName);
+            INamedTypeSymbol? operationAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsOperationAnalysisContext);
             if (operationAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol semanticModelAnalysisContext = compilation.GetTypeByMetadataName(SemanticModelAnalysisContextFullName);
+            INamedTypeSymbol? semanticModelAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsSemanticModelAnalysisContext);
             if (semanticModelAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol symbolAnalysisContext = compilation.GetTypeByMetadataName(SymbolAnalysisContextFullName);
+            INamedTypeSymbol? symbolAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsSymbolAnalysisContext);
             if (symbolAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol syntaxNodeAnalysisContext = compilation.GetTypeByMetadataName(SyntaxNodeAnalysisContextFullName);
+            INamedTypeSymbol? syntaxNodeAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsSyntaxNodeAnalysisContext);
             if (syntaxNodeAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol syntaxTreeAnalysisContext = compilation.GetTypeByMetadataName(SyntaxTreeAnalysisContextFullName);
+            INamedTypeSymbol? syntaxTreeAnalysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsSyntaxTreeAnalysisContext);
             if (syntaxTreeAnalysisContext == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol diagnosticType = compilation.GetTypeByMetadataName(DiagnosticFullName);
+            INamedTypeSymbol? diagnosticType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnostic);
             if (diagnosticType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol diagnosticDescriptorType = compilation.GetTypeByMetadataName(DiagnosticDescriptorFullName);
+            INamedTypeSymbol? diagnosticDescriptorType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticDescriptor);
             if (diagnosticDescriptorType == null)
             {
                 return null;
@@ -124,7 +125,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 _supportedDescriptorFieldsMap = ImmutableDictionary<INamedTypeSymbol, ImmutableArray<IFieldSymbol>>.Empty;
             }
 
-            protected abstract IEnumerable<SyntaxNode> GetArgumentExpressions(TInvocationExpressionSyntax invocation);
+            protected abstract IEnumerable<SyntaxNode>? GetArgumentExpressions(TInvocationExpressionSyntax invocation);
             protected virtual SyntaxNode GetPropertyGetterBlockSyntax(SyntaxNode declaringSyntaxRefNode)
             {
                 return declaringSyntaxRefNode;
@@ -148,7 +149,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                 descriptorFields = default;
 
-                if (this.DiagnosticAnalyzer.GetMembers(SupportedDiagnosticsName).FirstOrDefault() is IPropertySymbol supportedDiagnosticBaseProperty)
+                if (this.DiagnosticAnalyzer.GetMembers(DiagnosticWellKnownNames.SupportedDiagnosticsName).FirstOrDefault() is IPropertySymbol supportedDiagnosticBaseProperty)
                 {
                     IPropertySymbol supportedDiagnosticsProperty = analyzer.GetMembers()
                         .OfType<IPropertySymbol>()
@@ -197,14 +198,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 ISymbol symbol = semanticModel.GetSymbolInfo(invocation, symbolContext.CancellationToken).Symbol;
                 if (symbol == null ||
                     symbol.Kind != SymbolKind.Method ||
-                    !symbol.Name.Equals(ReportDiagnosticName, StringComparison.OrdinalIgnoreCase) ||
+                    !symbol.Name.Equals(DiagnosticWellKnownNames.ReportDiagnosticName, StringComparison.OrdinalIgnoreCase) ||
                     !_contextTypes.Contains(symbol.ContainingType))
                 {
                     return;
                 }
 
-                IEnumerable<SyntaxNode> arguments = GetArgumentExpressions(invocation);
-                if (arguments.HasExactly(1))
+                IEnumerable<SyntaxNode>? arguments = GetArgumentExpressions(invocation);
+                if (arguments?.HasExactly(1) == true)
                 {
                     SyntaxNode argument = arguments.First();
                     ITypeSymbol type = semanticModel.GetTypeInfo(argument, symbolContext.CancellationToken).ConvertedType;
@@ -213,7 +214,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                         ISymbol argSymbol = semanticModel.GetSymbolInfo(argument, symbolContext.CancellationToken).Symbol;
                         if (argSymbol != null)
                         {
-                            SyntaxNode diagnosticInitializerOpt = null;
+                            SyntaxNode? diagnosticInitializerOpt = null;
 
                             if (argSymbol is ILocalSymbol local)
                             {

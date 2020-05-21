@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -77,11 +78,11 @@ namespace Roslyn.Diagnostics.Analyzers
             return Task.CompletedTask;
         }
 
-        private async Task<Document> AddObsoleteAttributeAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> AddObsoleteAttributeAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var obsoleteAttributeSymbol = semanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+            var obsoleteAttributeSymbol = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
             if (obsoleteAttributeSymbol is null)
             {
                 return document;
@@ -91,21 +92,14 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = constructor;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Constructor)
+            var declaration = generator.TryGetContainingDeclaration(constructor, DeclarationKind.Constructor);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var obsoleteAttribute = generator.Attribute(
-                generator.TypeExpression(obsoleteAttributeSymbol),
+                generator.TypeExpression(obsoleteAttributeSymbol).WithAddImportsAnnotation(),
                 new[]
                 {
                     GenerateDescriptionArgument(generator, semanticModel),
@@ -116,7 +110,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return document.WithSyntaxRoot(root.ReplaceNode(declaration, newDeclaration));
         }
 
-        private async Task<Document> AddDescriptionAndErrorAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> AddDescriptionAndErrorAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -125,17 +119,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = obsoleteAttributeApplication;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Attribute)
+            var declaration = generator.TryGetContainingDeclaration(obsoleteAttributeApplication, DeclarationKind.Attribute);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var descriptionArgument = GenerateDescriptionArgument(generator, semanticModel);
@@ -144,7 +131,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return document.WithSyntaxRoot(root.ReplaceNode(declaration, newDeclaration));
         }
 
-        private async Task<Document> UpdateDescriptionAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> UpdateDescriptionAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -153,17 +140,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = obsoleteAttributeApplication;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Attribute)
+            var declaration = generator.TryGetContainingDeclaration(obsoleteAttributeApplication, DeclarationKind.Attribute);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var argumentToReplace = generator.GetAttributeArguments(declaration).ElementAtOrDefault(0);
@@ -176,7 +156,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return document.WithSyntaxRoot(root.ReplaceNode(argumentToReplace, descriptionArgument));
         }
 
-        private async Task<Document> AddErrorAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> AddErrorAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
@@ -184,17 +164,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = obsoleteAttributeApplication;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Attribute)
+            var declaration = generator.TryGetContainingDeclaration(obsoleteAttributeApplication, DeclarationKind.Attribute);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var errorArgument = GenerateErrorArgument(generator, allowNamedArgument: document.Project.Language == LanguageNames.CSharp);
@@ -202,7 +175,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return document.WithSyntaxRoot(root.ReplaceNode(declaration, newDeclaration));
         }
 
-        private async Task<Document> SetErrorToTrueAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private static async Task<Document> SetErrorToTrueAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
@@ -210,17 +183,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var declaration = obsoleteAttributeApplication;
-            var declarationKind = generator.GetDeclarationKind(declaration);
-            while (declarationKind != DeclarationKind.Attribute)
+            var declaration = generator.TryGetContainingDeclaration(obsoleteAttributeApplication, DeclarationKind.Attribute);
+            if (declaration is null)
             {
-                declaration = generator.GetDeclaration(declaration.Parent);
-                if (declaration is null)
-                {
-                    return document;
-                }
-
-                declarationKind = generator.GetDeclarationKind(declaration);
+                return document;
             }
 
             var argumentToReplace = generator.GetAttributeArguments(declaration).ElementAtOrDefault(1);
@@ -235,14 +201,12 @@ namespace Roslyn.Diagnostics.Analyzers
 
         private static SyntaxNode GenerateDescriptionArgument(SyntaxGenerator generator, SemanticModel semanticModel)
         {
-            var mefConstructionType = semanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisHostMefMefConstruction);
-            var knownConstant = mefConstructionType?.GetMembers("ImportingConstructorMessage").OfType<IFieldSymbol>().Any();
-
             SyntaxNode attributeArgument;
-            if (knownConstant is object)
+            if (semanticModel.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisHostMefMefConstruction, out var mefConstructionType) &&
+                mefConstructionType.GetMembers("ImportingConstructorMessage").OfType<IFieldSymbol>().Any())
             {
                 attributeArgument = generator.MemberAccessExpression(
-                    generator.TypeExpressionForStaticMemberAccess(mefConstructionType),
+                    generator.TypeExpression(mefConstructionType).WithAddImportsAnnotation(),
                     generator.IdentifierName("ImportingConstructorMessage"));
             }
             else

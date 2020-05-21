@@ -2,7 +2,7 @@
 
 |          |Windows Debug|Windows Release|
 |:--------:|:-----------:|:-------------:|
-|**master**|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/Windows_NT_Debug/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/Windows_NT_Debug/) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers)|[![Build Status](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/Windows_NT_Release/badge/icon)](https://ci.dot.net/job/dotnet_roslyn-analyzers/job/master/job/Windows_NT_Release/)|
+|**master**| [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) |
 
 # What is Roslyn?
 
@@ -37,7 +37,7 @@ This package contains common code quality improvement rules that are not specifi
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)
 
-This package contains rules for correct usage of APIs that are present in _.NetCore/.NetStandard_ framework libraries. For example, [CA1309](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument.
+This package contains rules for correct usage of APIs that are present in _.NetCore/.NetStandard_ framework libraries. For example, [CA1309](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument. [Getting started with NetCore Analyzers](docs/NetCore_GettingStarted.md) 
 
 **NOTE:** This analyzer package is applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in _.NetCore/.NetStandard_ libraries, then the analyzer will bail out silently for _Desktop .NetFramework_ projects. Otherwise, if the API exists in both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ libraries, the analyzer will run correctly for both  _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. [More info about rules in this package](src/Microsoft.NetCore.Analyzers/Microsoft.NetCore.Analyzers.md)
 
@@ -78,6 +78,9 @@ This package contains customizable rules for identifying references to banned AP
 
 This package contains rules to help library authors monitoring change to their public APIs. [More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
 
+For instructions on using this analyzer, see [Instructions](src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md).
+
+
 ### MetaCompilation (prototype)
 Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)
 
@@ -87,11 +90,15 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 
 # Getting Started
 
-1. Clone this repository
-2. Open the command prompt or PowerShell
-3. Go to the directory of the Roslyn Analyzer Repo
-4. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
-5. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
+1. Install Visual Studio 2019 or later, with at least the following workloads:
+   1. .NET desktop development
+   2. .NET Core cross-platform development
+   3. Visual Studio extension development
+2. Clone this repository
+3. Open the VS developer command prompt or PowerShell
+4. Go to the directory of the Roslyn Analyzer Repo
+5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
+6. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
 
 # Submitting Pull Requests
 
@@ -107,13 +114,12 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 # Recommended version of Analyzer Packages
 
-Recommended Visual Studio Version: **Visual Studio 2017 15.9 RTW or later**
+Recommended Visual Studio Version: **Visual Studio 2017 16.0 RTW or later**
 
-Recommended Analyzer Package Version: **Version 2.9.3**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.3
+Recommended Analyzer Package Version: **Version 3.0.0**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/3.0.0
 
 The documentation for FxCopAnalyzers package versions can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers)
 
 You can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects.
 1. For Visual Studio 2017 15.5 or later: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
 2. For Visual Studio 2019 16.0 or later: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2019
-

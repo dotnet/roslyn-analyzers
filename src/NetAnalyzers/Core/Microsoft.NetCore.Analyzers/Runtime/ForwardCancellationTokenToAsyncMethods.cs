@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -84,16 +85,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterOperationAction(context =>
             {
+                IInvocationOperation invocation = (IInvocationOperation)context.Operation;
                 if (!ShouldAnalyze(
-                    (IInvocationOperation)context.Operation,
+                    invocation,
                     cancellationTokenType,
-                    out string? cancellationTokenParameterName,
-                    out string? methodName))
+                    out string? cancellationTokenParameterName))
                 {
                     return;
                 }
 
-                context.ReportDiagnostic(context.Operation.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName!, methodName!));
+                context.ReportDiagnostic(context.Operation.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName, invocation.TargetMethod.Name));
             },
             OperationKind.Invocation);
         }
@@ -101,17 +102,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool ShouldAnalyze(
             IInvocationOperation invocation,
             INamedTypeSymbol cancellationTokenType,
-            out string? cancellationTokenParameterName,
-            out string? methodName)
+            [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
             IMethodSymbol method = invocation.TargetMethod;
 
             cancellationTokenParameterName = null;
-            methodName = method.Name;
 
             // Check if the invocation has an optional implicit ct or an overload that takes one ct
-            if (!InvocationIgnoresOptionalCancellationToken(cancellationTokenType, invocation, method) &&
-                !MethodHasCancellationTokenOverload(cancellationTokenType, method))
+            if (!InvocationIgnoresOptionalCancellationToken(invocation, cancellationTokenType) &&
+                !MethodHasCancellationTokenOverload(method, cancellationTokenType))
             {
                 return false;
             }
@@ -123,16 +122,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Check if the ancestor method has a ct that we can pass to the invocation
-            if (!VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, methodDeclaration!, out cancellationTokenParameterName))
+            if (!VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, methodDeclaration, out cancellationTokenParameterName))
             {
                 return false;
             }
 
-            return cancellationTokenParameterName != null && methodName != null;
+            return cancellationTokenParameterName != null;
         }
 
         // Looks for an ancestor that could be a method or function declaration.
-        private static bool TryGetAncestorDeclaration(IInvocationOperation invocation, out IMethodSymbol? declaration)
+        private static bool TryGetAncestorDeclaration(
+            IInvocationOperation invocation,
+            [NotNullWhen(returnValue: true)] out IMethodSymbol? declaration)
         {
             declaration = null;
 
@@ -179,29 +180,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(
             INamedTypeSymbol cancellationTokenType,
             IMethodSymbol methodDeclaration,
-            out string? cancellationTokenParameterName)
+            [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
-            cancellationTokenParameterName = null;
-
             if (methodDeclaration.Parameters.Count(x => x.Type.Equals(cancellationTokenType)) == 1 &&
                 methodDeclaration.Parameters.Last() is IParameterSymbol lastParameter &&
                 lastParameter.Type.Equals(cancellationTokenType))
             {
                 cancellationTokenParameterName = lastParameter.Name;
+                return true;
             }
 
-            return cancellationTokenParameterName != null;
+            cancellationTokenParameterName = null;
+            return false;
         }
 
         // Check if the currently used overload is the one that takes the ct, but is utilizing the default value offered in the method signature.
         // We want to offer a diagnostic for this case, so the user explicitly passes the ancestor's ct.
-        private static bool InvocationIgnoresOptionalCancellationToken(INamedTypeSymbol cancellationTokenType, IInvocationOperation invocation, IMethodSymbol method)
+        private static bool InvocationIgnoresOptionalCancellationToken(IInvocationOperation invocation, INamedTypeSymbol cancellationTokenType)
         {
-            if (method.Parameters.Any() && method.Parameters.Last() is IParameterSymbol lastParameter && lastParameter.Type.Equals(cancellationTokenType))
+            IMethodSymbol method = invocation.TargetMethod;
+            if (method.Parameters.Length != 0 &&
+                method.Parameters[method.Parameters.Length - 1] is IParameterSymbol lastParameter &&
+                lastParameter.Type.Equals(cancellationTokenType))
             {
                 // If the ct parameter has a default value, return true if a value is not being explicitly passed in the invocation
                 return lastParameter.IsOptional && // Has a default value
-                       invocation.Arguments.Last() is IArgumentOperation lastArgument &&
+                       invocation.Arguments[invocation.Arguments.Length - 1] is IArgumentOperation lastArgument &&
                        lastArgument.IsImplicit; // The default value is being used
             }
 
@@ -209,36 +213,37 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         // Check if there's a method overload with the same parameters as this one, in the same order, plus a ct at the end.
-        private static bool MethodHasCancellationTokenOverload(ITypeSymbol cancellationTokenType, IMethodSymbol method)
+        private static bool MethodHasCancellationTokenOverload(IMethodSymbol method, ITypeSymbol cancellationTokenType)
         {
-            IMethodSymbol? overload = method.ContainingType.GetMembers(method.Name).OfType<IMethodSymbol>().FirstOrDefault(x => HasSameParametersPlusCancellationToken(cancellationTokenType, method, x));
+
+            IMethodSymbol? overload = method.ContainingType.GetMembers(method.Name)
+                                                           .OfType<IMethodSymbol>()
+                                                           .FirstOrDefault(methodToCompare => HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
 
             return overload != null;
-        }
 
-        // Checks if the parameters of the two passed methods only differ in a ct.
-        private static bool HasSameParametersPlusCancellationToken(ITypeSymbol cancellationTokenType, IMethodSymbol originalMethod, IMethodSymbol methodToCompare)
-        {
-            if (!originalMethod.Name.Equals(methodToCompare.Name, StringComparison.Ordinal) ||
-                originalMethod.Equals(methodToCompare) ||
-                methodToCompare.Parameters.Length == 0 ||
-                methodToCompare.Parameters.Length != originalMethod.Parameters.Length + 1 ||
-                !methodToCompare.Parameters[methodToCompare.Parameters.Length - 1].Type.Equals(cancellationTokenType))
+            // Checks if the parameters of the two passed methods only differ in a ct.
+            static bool HasSameParametersPlusCancellationToken(ITypeSymbol cancellationTokenType, IMethodSymbol originalMethod, IMethodSymbol methodToCompare)
             {
-                return false;
-            }
-
-            for (int i = 0; i < originalMethod.Parameters.Length; i++)
-            {
-                IParameterSymbol? originalParameter = originalMethod.Parameters[i];
-                IParameterSymbol? comparedParameter = methodToCompare.Parameters[i];
-                if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type))
+                if (originalMethod.Equals(methodToCompare) ||
+                    methodToCompare.Parameters.Length != originalMethod.Parameters.Length + 1 ||
+                    !methodToCompare.Parameters[methodToCompare.Parameters.Length - 1].Type.Equals(cancellationTokenType))
                 {
                     return false;
                 }
-            }
 
-            return true;
+                for (int i = 0; i < originalMethod.Parameters.Length; i++)
+                {
+                    IParameterSymbol? originalParameter = originalMethod.Parameters[i];
+                    IParameterSymbol? comparedParameter = methodToCompare.Parameters[i];
+                    if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
     }
 }

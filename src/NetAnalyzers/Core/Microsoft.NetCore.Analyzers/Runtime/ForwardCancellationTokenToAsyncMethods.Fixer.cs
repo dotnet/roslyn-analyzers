@@ -100,12 +100,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // The instance is implicit when calling a method from the same type, call the method directly
             else if (invocation.Instance.IsImplicit)
             {
-                newInvocation = invocation.GetInstance(); // GetInstance will return the method name
+                newInvocation = invocation.GetInstanceSyntax()!; // GetInstance will return the method name
             }
             // Calling a method from an object, we must include the instance variable name
             else
             {
-                newInvocation = generator.MemberAccessExpression(invocation.GetInstance(), invocation.TargetMethod.Name);
+                newInvocation = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
             }
             // Insert the new arguments to the new invocation
             SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments);

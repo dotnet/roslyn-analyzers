@@ -862,7 +862,7 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_ActionDelegateNoAwait()
+        public Task CS_Diagnostic_ActionDelegateNoAwait()
         {
             string originalCode = @"
 using System;
@@ -1423,6 +1423,166 @@ class C
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
+        [Fact]
+        public Task CS_Diagnostic_Default_WithAllDefaultParametersImplicit()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    Task M(CancellationToken ct)
+    {
+        return [|MethodAsync()|];
+    }
+    Task MethodAsync(int x = 0, bool y = false, CancellationToken c = default)
+    {
+        return Task.CompletedTask;
+    }
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    Task M(CancellationToken ct)
+    {
+        return MethodAsync(c: ct);
+    }
+    Task MethodAsync(int x = 0, bool y = false, CancellationToken c = default)
+    {
+        return Task.CompletedTask;
+    }
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_Default_WithSomeDefaultParameters()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await [|MethodAsync(5)|];
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await MethodAsync(5, ct: ct);
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_Default_WithNamedParameters()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await [|MethodAsync(x: 5)|];
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await MethodAsync(x: 5, ct: ct);
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_Default_WithAncestorAliasAndNamedParameters()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+using TokenAlias = System.Threading.CancellationToken;
+class C
+{
+    async void M(TokenAlias ct)
+    {
+        await [|MethodAsync(x: 5)|];
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+using TokenAlias = System.Threading.CancellationToken;
+class C
+{
+    async void M(TokenAlias ct)
+    {
+        await MethodAsync(x:5, ct: ct);
+    }
+    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_Default_WithMethodArgumentAliasAndNamedParameters()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+using TokenAlias = System.Threading.CancellationToken;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await [|MethodAsync(x: 5)|];
+    }
+    Task MethodAsync(int x, bool y = default, TokenAlias ct = default) => Task.CompletedTask;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+using TokenAlias = System.Threading.CancellationToken;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await MethodAsync(x: 5, ct: ct);
+    }
+    Task MethodAsync(int x, bool y = default, TokenAlias ct = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
         #endregion
 
         #region No Diagnostic - VB
@@ -1674,7 +1834,6 @@ End Class
             ";
             return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
         }
-
 
         [Fact]
         public Task VB_Diagnostic_Class_TokenDefault_WithConfigureAwait()
@@ -2757,6 +2916,191 @@ Class C
         Return Task.CompletedTask
     End Function
     Private Function MethodAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithAllDefaultParametersImplicit()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodAsync()|]
+    End Sub
+    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithSomeDefaultParameters()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodAsync(5)|]
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(5, ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithNamedParameters()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodAsync(x:=5)|]
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(x:=5, ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithNamedParametersUnordered()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodAsync(y:=true, x:=5)|]
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            // Notice the parameters get reordered in their official position
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(x:=5, y:=true, ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithAncestorAliasAndNamedParameters()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports TokenAlias = System.Threading.CancellationToken
+Class C
+    Private Async Sub M(ByVal ct As TokenAlias)
+        Await [|MethodAsync(x:=5)|]
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports TokenAlias = System.Threading.CancellationToken
+Class C
+    Private Async Sub M(ByVal ct As TokenAlias)
+        Await MethodAsync(x:=5, ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithMethodArgumentAliasAndNamedParameters()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports TokenAlias = System.Threading.CancellationToken
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodAsync(x:=5)|]
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As TokenAlias = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports TokenAlias = System.Threading.CancellationToken
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(x:=5, ct:=ct)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As TokenAlias = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class

@@ -2,6 +2,7 @@
 
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.Operations
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.NetCore.Analyzers.Runtime
 
@@ -12,11 +13,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         Inherits ForwardCancellationTokenToAsyncMethodsFixer
 
-        Private Shared Function GetCancellationTokenName(model As SemanticModel, parameters As IEnumerable(Of ParameterSyntax)) As String
-            Return parameters.FirstOrDefault(Function(p) IsCancellationTokenParameter(model, p))?.Identifier.Identifier.ValueText
-        End Function
-
-        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(model As SemanticModel, node As SyntaxNode, ByRef parameterName As String) As Boolean
+        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(node As SyntaxNode, ByRef parameterName As String) As Boolean
 
             parameterName = Nothing
 
@@ -40,7 +37,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 End If
 
                 If parameters IsNot Nothing Then
-                    parameterName = GetCancellationTokenName(model, parameters)
+                    parameterName = GetCancellationTokenName(parameters)
                     Exit While
                 End If
 
@@ -49,6 +46,15 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             End While
 
             Return Not String.IsNullOrEmpty(parameterName)
+        End Function
+
+        Protected Overrides Function IsArgumentNamed(argumentOperation As IArgumentOperation) As Boolean
+            Dim argument As SimpleArgumentSyntax = TryCast(argumentOperation.Syntax, SimpleArgumentSyntax)
+            Return argument IsNot Nothing AndAlso argument.NameColonEquals IsNot Nothing
+        End Function
+
+        Private Shared Function GetCancellationTokenName(parameters As IEnumerable(Of ParameterSyntax)) As String
+            Return parameters.Last()?.Identifier.Identifier.ValueText
         End Function
 
     End Class

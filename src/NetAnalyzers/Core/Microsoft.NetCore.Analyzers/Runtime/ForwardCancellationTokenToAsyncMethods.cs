@@ -16,21 +16,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// 
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
-    ///     - The invocation is not receiving a ct argument, and...
+    ///     - The invocation method is not receiving a ct argument, and...
     ///     - The invocation method either:
-    ///         - Has no overloads but its current signature receives an optional ct=default, being used right now, or...
+    ///         - Has no overloads but its current signature receives an optional ct=default, currently implicit, or...
     ///         - Has a method overload with the exact same arguments in the same order, plus one ct parameter at the end.
     ///         
     /// Conditions for negative cases:
     ///     - The containing method signature does not receive a ct parameter.
-    ///     - The invocation is explicitly receiving a ct argument.
-    ///     - The invocation method signature receives a ct but one is already being explicitly passed, or...
+    ///     - The invocation method signature receives a ct and one is already being explicitly passed, or...
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
-    ///     - The invocation method has overloads that receive more than one ct.
-    ///
-    /// Future improvements:
-    ///     - Finding an overload with one ct parameter, but not in last position.
-    ///     - Passing a named ct in a different position than default.
+    ///     - The invocation method only has overloads that receive more than one ct.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ForwardCancellationTokenToAsyncMethodsAnalyzer : DiagnosticAnalyzer
@@ -84,9 +79,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterOperationAction(context =>
             {
+                if (!(context.ContainingSymbol is IMethodSymbol containingSymbol))
+                {
+                    return;
+                }
+
                 IInvocationOperation invocation = (IInvocationOperation)context.Operation;
+
                 if (!ShouldAnalyze(
                     invocation,
+                    containingSymbol,
                     cancellationTokenType,
                     out string? cancellationTokenParameterName))
                 {
@@ -100,12 +102,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool ShouldAnalyze(
             IInvocationOperation invocation,
+            IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
-            IMethodSymbol method = invocation.TargetMethod;
-
             cancellationTokenParameterName = null;
+
+            IMethodSymbol method = invocation.TargetMethod;
 
             // Check if the invocation has an optional implicit ct or an overload that takes one ct
             if (!InvocationIgnoresOptionalCancellationToken(invocation, cancellationTokenType) &&
@@ -114,14 +117,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            // Find the ancestor method that contains this invocation
-            if (!TryGetAncestorDeclaration(invocation, out IMethodSymbol? methodDeclaration))
-            {
-                return false;
-            }
-
             // Check if the ancestor method has a ct that we can pass to the invocation
-            if (!VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, methodDeclaration, out cancellationTokenParameterName))
+            if (!VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, containingSymbol, out cancellationTokenParameterName))
             {
                 return false;
             }
@@ -129,61 +126,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return cancellationTokenParameterName != null;
         }
 
-        // Looks for an ancestor that could be a method or function declaration.
-        private static bool TryGetAncestorDeclaration(
-            IInvocationOperation invocation,
-            [NotNullWhen(returnValue: true)] out IMethodSymbol? declaration)
-        {
-            declaration = null;
-
-            IOperation currentOperation = invocation.Parent;
-            while (currentOperation != null)
-            {
-                if (currentOperation.Kind == OperationKind.AnonymousFunction && currentOperation is IAnonymousFunctionOperation anonymousFunction)
-                {
-                    declaration = anonymousFunction.Symbol;
-                    break;
-                }
-                else if (currentOperation.Kind == OperationKind.LocalFunction && currentOperation is ILocalFunctionOperation localFunction)
-                {
-                    declaration = localFunction.Symbol;
-                    break;
-                }
-                else if (currentOperation.Kind == OperationKind.MethodBody && currentOperation is IMethodBodyOperation methodBody)
-                {
-                    if (methodBody.SemanticModel.GetDeclaredSymbol(methodBody.Syntax) is IMethodSymbol method)
-                    {
-                        declaration = method;
-                        break;
-                    }
-                }
-                else if (currentOperation.Kind == OperationKind.Block && currentOperation is IBlockOperation methodBaseBody)
-                {
-                    if (methodBaseBody.SemanticModel.GetDeclaredSymbol(methodBaseBody.Syntax) is IMethodSymbol method)
-                    {
-                        declaration = method;
-                        // There are many kinds of blocks, so only break if we found a method symbol for this block.
-                        // Otherwise, blocks inside anonymous or local functions would not be detected - those would be the parent of the current operation.
-                        break;
-                    }
-                }
-
-                currentOperation = currentOperation.Parent;
-            }
-
-            return declaration != null;
-        }
-
         // Check if the method only takes one ct and is the last parameter in the method signature.
         // We want to compare the current method signature to any others with the exact same arguments in the exact same order.
-        private static bool VerifyMethodOnlyHasOneCancellationTokenAsLastArgument(
+        private static bool VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(
             INamedTypeSymbol cancellationTokenType,
             IMethodSymbol methodDeclaration,
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
             if (methodDeclaration.Parameters.Count(x => x.Type.Equals(cancellationTokenType)) == 1 &&
                 methodDeclaration.Parameters.Last() is IParameterSymbol lastParameter &&
-                lastParameter.Type.Equals(cancellationTokenType))
+                lastParameter.Type.Equals(cancellationTokenType)) // Covers the case when using an alias for ct
             {
                 cancellationTokenParameterName = lastParameter.Name;
                 return true;
@@ -217,7 +169,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             IMethodSymbol? overload = method.ContainingType.GetMembers(method.Name)
                                                            .OfType<IMethodSymbol>()
-                                                           .FirstOrDefault(methodToCompare => HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
+                                                           .FirstOrDefault(methodToCompare =>
+                                                                HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
 
             return overload != null;
 
@@ -226,7 +179,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (originalMethod.Equals(methodToCompare) ||
                     methodToCompare.Parameters.Length != originalMethod.Parameters.Length + 1 ||
-                    !methodToCompare.Parameters[methodToCompare.Parameters.Length - 1].Type.Equals(cancellationTokenType))
+                    !methodToCompare.Parameters[methodToCompare.Parameters.Length - 1].Type.Equals(cancellationTokenType)) // Covers the case when using an alias for ct
                 {
                     return false;
                 }
@@ -235,7 +188,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     IParameterSymbol? originalParameter = originalMethod.Parameters[i];
                     IParameterSymbol? comparedParameter = methodToCompare.Parameters[i];
-                    if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type))
+                    if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type)) // Covers the case when using an alias for ct
                     {
                         return false;
                     }

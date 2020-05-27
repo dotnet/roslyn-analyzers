@@ -533,7 +533,7 @@ namespace Analyzer.Utilities.Extensions
             switch (method.MethodKind)
             {
                 case MethodKind.LambdaMethod:
-                case MethodKindEx.LocalFunction:
+                case MethodKind.LocalFunction:
                 case MethodKind.DelegateInvoke:
                     return true;
 
@@ -547,7 +547,7 @@ namespace Analyzer.Utilities.Extensions
             switch (method.MethodKind)
             {
                 case MethodKind.LambdaMethod:
-                case MethodKindEx.LocalFunction:
+                case MethodKind.LocalFunction:
                     return true;
 
                 default:

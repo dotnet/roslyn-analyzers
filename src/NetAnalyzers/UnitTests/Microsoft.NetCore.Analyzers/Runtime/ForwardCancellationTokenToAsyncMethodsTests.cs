@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.ForwardCancellationTokenToAsyncMethodsAnalyzer,
@@ -229,9 +230,69 @@ class C
             ");
         }
 
+        [Fact]
+        public Task CS_NoDiagnostic_NamedTokenUnordered()
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await MethodAsync(s: ""Hello world"", c: CancellationToken.None, x: 5);
+    }
+    Task MethodAsync(int x, string s, CancellationToken c) => Task.CompletedTask;
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_Overload_NamedTokenUnordered()
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    async void M(CancellationToken ct)
+    {
+        await MethodAsync(s: ""Hello world"", c: CancellationToken.None, x: 5);
+    }
+    Task MethodAsync(int x, string s) => Task.CompletedTask;
+    Task MethodAsync(int x, string s, CancellationToken c) => Task.CompletedTask;
+}
+            ");
+        }
+
         #endregion
 
-        #region Diagnostic = C#
+        #region Diagnostics with no fix = C#
+
+        [Fact]
+        public Task CS_AnalyzerOnlyDiagnostic_OverloadWithNamedParametersUnordered()
+        {
+            // This is a special case that will get a diagnostic but will not get a fix
+            // because the fixer does not currently have a way to know the overload's ct parameter name
+            // If the ct argument got added at the end without a name, compilation would fail
+            return VerifyCS.VerifyAnalyzerAsync(@"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    Task M(CancellationToken ct)
+    {
+        return [|MethodAsync(z: ""Hello world"", x: 5, y: true)|];
+    }
+    Task MethodAsync(int x, bool y = default, string z = """") => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
+}
+            ");
+        }
+
+        #endregion
+
+        #region Diagnostics with Fix = C#
 
         [Fact]
         public Task CS_Diagnostic_Class_TokenDefault()
@@ -1471,7 +1532,7 @@ class C
     {
         await [|MethodAsync(5)|];
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             string fixedCode = @"
@@ -1481,9 +1542,9 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await MethodAsync(5, ct: ct);
+        await MethodAsync(5, c: ct);
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -1501,7 +1562,7 @@ class C
     {
         await [|MethodAsync(x: 5)|];
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             string fixedCode = @"
@@ -1511,9 +1572,9 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await MethodAsync(x: 5, ct: ct);
+        await MethodAsync(x: 5, c: ct);
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -1532,7 +1593,7 @@ class C
     {
         await [|MethodAsync(x: 5)|];
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             string fixedCode = @"
@@ -1543,9 +1604,9 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await MethodAsync(x:5, ct: ct);
+        await MethodAsync(x: 5, c: ct);
     }
-    Task MethodAsync(int x, bool y = default, CancellationToken ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -1564,7 +1625,7 @@ class C
     {
         await [|MethodAsync(x: 5)|];
     }
-    Task MethodAsync(int x, bool y = default, TokenAlias ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, TokenAlias c = default) => Task.CompletedTask;
 }
             ";
             string fixedCode = @"
@@ -1575,9 +1636,40 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await MethodAsync(x: 5, ct: ct);
+        await MethodAsync(x: 5, c: ct);
     }
-    Task MethodAsync(int x, bool y = default, TokenAlias ct = default) => Task.CompletedTask;
+    Task MethodAsync(int x, bool y = default, TokenAlias c = default) => Task.CompletedTask;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_Default_WithNamedParametersUnordered()
+        {
+            string originalCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    Task M(CancellationToken ct)
+    {
+        return [|MethodAsync(z: ""Hello world"", x: 5, y: true)|];
+    }
+    Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
+}
+            ";
+            // Notice the parameters do NOT get reordered to their official position
+            string fixedCode = @"
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{
+    Task M(CancellationToken ct)
+    {
+        return MethodAsync(z: ""Hello world"", x: 5, y: true, c: ct);
+    }
+    Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -1801,9 +1893,76 @@ End Class
             ");
         }
 
+
+        [Fact]
+        public Task VB_NoDiagnostic_NamedTokenUnordered()
+        {
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(s:=""Hello, world"", c:=CancellationToken.None, x:=5)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal s As String, ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ");
+        }
+
+        [Fact]
+        public Task VB_NoDiagnostic_Overload_NamedTokenUnordered()
+        {
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodAsync(s:=""Hello, world"", c:=CancellationToken.None, x:=5)
+    End Sub
+    Private Function MethodAsync(ByVal x As Integer, ByVal s As String) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal x As Integer, ByVal s As String, ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ");
+        }
+
         #endregion
 
-        #region Diagnostic = VB
+        #region Diagnostics with no fix = VB
+
+        [Fact]
+        public Task VB_AnalyzerOnlyDiagnostic_OverloadWithNamedParametersUnordered()
+        {
+            // This is a special case that will get a diagnostic but will not get a fix
+            // because the fixer does not currently have a way to know the overload's ct parameter name
+            // VB arguments get reordered in their official parameter order, so we could add the ct argument at the end
+            // and VB would compile successfully, but that would require separate VB handling in the fixer, so instead
+            // the C# and VB behavior will remain the same
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Function M(ByVal ct As CancellationToken) As Task
+        Return [|MethodAsync(z:=""Hello world"", x:=5, y:=true)|]
+    End Function
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """") As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ");
+        }
+
+        #endregion
+
+        #region Diagnostics with fix = VB
 
         [Fact]
         public Task VB_Diagnostic_Class_TokenDefault()
@@ -2930,10 +3089,10 @@ End Class
 Imports System.Threading
 Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
-    End Sub
-    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function M(ByVal ct As CancellationToken) As Task
+        Return [|MethodAsync()|]
+    End Function
+    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -2942,10 +3101,10 @@ End Class
 Imports System.Threading
 Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(ct:=ct)
-    End Sub
-    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function M(ByVal ct As CancellationToken) As Task
+        Return MethodAsync(c:=ct)
+    End Function
+    Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -2963,7 +3122,7 @@ Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Await [|MethodAsync(5)|]
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -2973,9 +3132,9 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(5, ct:=ct)
+        Await MethodAsync(5, c:=ct)
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -2993,7 +3152,7 @@ Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Await [|MethodAsync(x:=5)|]
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -3003,40 +3162,9 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(x:=5, ct:=ct)
+        Await MethodAsync(x:=5, c:=ct)
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ";
-            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
-        }
-
-        [Fact]
-        public Task VB_Diagnostic_Default_WithNamedParametersUnordered()
-        {
-            string originalCode = @"
-Imports System.Threading
-Imports System.Threading.Tasks
-Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(y:=true, x:=5)|]
-    End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
-    End Function
-End Class
-            ";
-            // Notice the parameters get reordered in their official position
-            string fixedCode = @"
-Imports System.Threading
-Imports System.Threading.Tasks
-Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(x:=5, y:=true, ct:=ct)
-    End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -3055,7 +3183,7 @@ Class C
     Private Async Sub M(ByVal ct As TokenAlias)
         Await [|MethodAsync(x:=5)|]
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -3066,9 +3194,9 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await MethodAsync(x:=5, ct:=ct)
+        Await MethodAsync(x:=5, c:=ct)
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As CancellationToken = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -3087,7 +3215,7 @@ Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Await [|MethodAsync(x:=5)|]
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As TokenAlias = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As TokenAlias = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class
@@ -3098,9 +3226,40 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(x:=5, ct:=ct)
+        Await MethodAsync(x:=5, c:=ct)
     End Sub
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional ct As TokenAlias = Nothing) As Task
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As TokenAlias = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_Default_WithNamedParametersUnordered()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Function M(ByVal ct As CancellationToken) As Task
+        Return [|MethodAsync(z:=""Hello world"", x:=5, y:=true)|]
+    End Function
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+            ";
+            // Notice the parameters get reordered to their official position
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Function M(ByVal ct As CancellationToken) As Task
+        Return MethodAsync(x:=5, y:=true, z:=""Hello world"", c:=ct)
+    End Function
+    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
     End Function
 End Class

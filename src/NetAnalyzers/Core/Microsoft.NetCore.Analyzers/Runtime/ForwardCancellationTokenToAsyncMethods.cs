@@ -152,12 +152,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IMethodSymbol method = invocation.TargetMethod;
             if (method.Parameters.Length != 0 &&
                 method.Parameters[method.Parameters.Length - 1] is IParameterSymbol lastParameter &&
-                lastParameter.Type.Equals(cancellationTokenType))
+                lastParameter.Type.Equals(cancellationTokenType) &&
+                lastParameter.IsOptional) // Has a default value being used
             {
-                // If the ct parameter has a default value, return true if a value is not being explicitly passed in the invocation
-                return lastParameter.IsOptional && // Has a default value
-                       invocation.Arguments[invocation.Arguments.Length - 1] is IArgumentOperation lastArgument &&
-                       lastArgument.IsImplicit; // The default value is being used
+                // Find out if the ct argument is using the default value
+                return invocation.Arguments.Any(x =>
+                    x.Parameter.Type.Equals(cancellationTokenType) &&
+                    x.ArgumentKind == ArgumentKind.DefaultValue); // The default value is being used
             }
 
             return false;

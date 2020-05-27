@@ -15,8 +15,6 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    /// <summary>
-    /// </summary>
     public abstract class ForwardCancellationTokenToAsyncMethodsFixer : CodeFixProvider
     {
         // Looks for a ct parameter in the ancestor method or function declaration. If one is found, retrieve the name of the parameter.
@@ -79,9 +77,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Pass the same arguments and add the ct
             List<SyntaxNode> newArguments = new List<SyntaxNode>();
             bool shouldTokenUseName = false;
+            string paramName = string.Empty;
+
+            // In C#, invocation.Arguments contains the arguments in the order passed by the user
+            // In VB, invocation.Arguments contains the arguments in the official parameter order
             for (int i = 0; i < invocation.Arguments.Length; i++)
             {
                 IArgumentOperation argument = invocation.Arguments[i];
+
+                // The type name is detected even if using an alias
                 if (!argument.Parameter.Type.Name.Equals("CancellationToken", StringComparison.Ordinal))
                 {
                     if (!argument.IsImplicit)
@@ -103,6 +107,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         shouldTokenUseName = true;
                     }
                 }
+                else
+                {
+                    // Only reachable if the current method is the one that contains the ct
+                    // Won't be reached if it's an overload that contains the paramName
+                    paramName = argument.Parameter.Name;
+                }
             }
 
             // Create and append new ct argument to pass to the invocation, using the ancestor method parameter name
@@ -110,7 +120,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode cancellationTokenNode;
             if (shouldTokenUseName)
             {
-                cancellationTokenNode = generator.Argument(cancellationTokenParameterName, RefKind.None, cancellationTokenIdentifier);
+                // If the paramName is unknown at this point, it's because an overload contains the ct parameter
+                // and since it cannot be obtained, no fix will be provided
+                if (string.IsNullOrEmpty(paramName))
+                {
+                    return Task.FromResult(doc);
+                }
+
+                cancellationTokenNode = generator.Argument(paramName, RefKind.None, cancellationTokenIdentifier);
             }
             else
             {

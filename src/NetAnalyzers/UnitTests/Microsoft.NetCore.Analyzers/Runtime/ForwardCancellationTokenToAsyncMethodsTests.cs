@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.ForwardCancellationTokenToAsyncMethodsAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToAsyncMethodsAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToAsyncMethodsFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.ForwardCancellationTokenToAsyncMethodsAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToAsyncMethodsAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToAsyncMethodsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
@@ -274,20 +275,22 @@ class C
         {
             // This is a special case that will get a diagnostic but will not get a fix
             // because the fixer does not currently have a way to know the overload's ct parameter name
-            // If the ct argument got added at the end without a name, compilation would fail
-            return VerifyCS.VerifyAnalyzerAsync(@"
+            // If the ct argument got added at the end without a name, compilation would fail with:
+            // CA8323: Named argument 'z' is used out-of-position but is followed by an unnamed argument
+            string originalCode = @"
 using System.Threading;
 using System.Threading.Tasks;
 class C
 {
     Task M(CancellationToken ct)
     {
-        return [|MethodAsync(z: ""Hello world"", x: 5, y: true)|];
+        return [|MethodAsync|](z: ""Hello world"", x: 5, y: true);
     }
     Task MethodAsync(int x, bool y = default, string z = """") => Task.CompletedTask;
     Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
 }
-            ");
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -304,7 +307,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -334,7 +337,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|].ConfigureAwait(false);
+        await [|MethodAsync|]().ConfigureAwait(false);
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -364,7 +367,7 @@ class C
 {
     void M(CancellationToken ct)
     {
-        [|MethodAsync()|];
+        [|MethodAsync|]();
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -394,7 +397,7 @@ class C
 {
     void M(CancellationToken ct)
     {
-        Task t = [|MethodAsync()|];
+        Task t = [|MethodAsync|]();
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -424,7 +427,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     static Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -454,7 +457,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|].ConfigureAwait(false);
+        await [|MethodAsync|]().ConfigureAwait(false);
     }
     static Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -485,7 +488,7 @@ class C
     async void M(CancellationToken ct)
     {
         O o = new O();
-        await [|o.MethodAsync()|];
+        await [|o.MethodAsync|]();
     }
 }
 class O
@@ -523,7 +526,7 @@ class C
     async void M(CancellationToken ct)
     {
         O o = new O();
-        await [|o.MethodAsync()|];
+        await [|o.MethodAsync|]();
     }
 }
 class O
@@ -562,7 +565,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|O.MethodAsync()|];
+        await [|O.MethodAsync|]();
     }
 }
 class O
@@ -598,7 +601,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|O.MethodAsync()|];
+        await [|O.MethodAsync|]();
     }
 }
 class O
@@ -636,7 +639,7 @@ struct S
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -666,7 +669,7 @@ struct S
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|].ConfigureAwait(false);
+        await [|MethodAsync|]().ConfigureAwait(false);
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -696,7 +699,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -728,7 +731,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -760,7 +763,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
@@ -792,7 +795,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|].ConfigureAwait(false);
+        await [|MethodAsync|]().ConfigureAwait(false);
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
@@ -824,7 +827,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync(5, ""Hello world"")|];
+        await [|MethodAsync|](5, ""Hello world"");
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -860,7 +863,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync(5, ""Hello world"")|].ConfigureAwait(true);
+        await [|MethodAsync|](5, ""Hello world"").ConfigureAwait(true);
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -897,7 +900,7 @@ class C
 {
     void M(CancellationToken ct)
     {
-        Action<CancellationToken> a = async (CancellationToken token) => await [|MethodAsync()|];
+        Action<CancellationToken> a = async (CancellationToken token) => await [|MethodAsync|]();
         a(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
@@ -933,7 +936,7 @@ class C
 {
     void M(CancellationToken ct)
     {
-        Action<CancellationToken> a = (CancellationToken c) => [|MethodAsync()|];
+        Action<CancellationToken> a = (CancellationToken c) => [|MethodAsync|]();
         a(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
@@ -969,7 +972,7 @@ class C
 {
     void M(CancellationToken ct)
     {
-        Action<CancellationToken> a = async (CancellationToken token) => await [|MethodAsync()|].ConfigureAwait(false);
+        Action<CancellationToken> a = async (CancellationToken token) => await [|MethodAsync|]().ConfigureAwait(false);
         a(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
@@ -1007,7 +1010,7 @@ class C
     {
         Func<CancellationToken, Task<bool>> f = async (CancellationToken token) =>
         {
-            await [|MethodAsync()|];
+            await [|MethodAsync|]();
             return true;
         };
         f(ct);
@@ -1051,7 +1054,7 @@ class C
     {
         Func<CancellationToken, Task<bool>> f = async (CancellationToken token) =>
         {
-            await [|MethodAsync()|].ConfigureAwait(true);
+            await [|MethodAsync|]().ConfigureAwait(true);
             return true;
         };
         f(ct);
@@ -1093,7 +1096,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        Func<CancellationToken, Task> f = (CancellationToken c) => [|MethodAsync()|];
+        Func<CancellationToken, Task> f = (CancellationToken c) => [|MethodAsync|]();
         await f(ct);
     }
     Task MethodAsync() => Task.CompletedTask;
@@ -1131,7 +1134,7 @@ class C
     {
         async void LocalMethod(CancellationToken token)
         {
-            await [|MethodAsync()|];
+            await [|MethodAsync|]();
         }
         LocalMethod(ct);
     }
@@ -1173,7 +1176,7 @@ class C
     {
         void LocalMethod(CancellationToken token)
         {
-            [|MethodAsync()|];
+            [|MethodAsync|]();
         }
         LocalMethod(ct);
     }
@@ -1215,7 +1218,7 @@ class C
     {
         Task LocalMethod(CancellationToken token)
         {
-            return [|MethodAsync()|];
+            return [|MethodAsync|]();
         }
         await LocalMethod(ct);
     }
@@ -1257,7 +1260,7 @@ class C
     {
         async void LocalMethod(CancellationToken token)
         {
-            await [|MethodAsync()|].ConfigureAwait(false);
+            await [|MethodAsync|]().ConfigureAwait(false);
         }
         LocalMethod(ct);
     }
@@ -1297,7 +1300,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync(TokenAlias c = default) => Task.CompletedTask;
 }
@@ -1329,7 +1332,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(TokenAlias c) => Task.CompletedTask;
@@ -1363,7 +1366,7 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
 }
@@ -1395,7 +1398,7 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -1429,7 +1432,7 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync(TokenAlias c = default) => Task.CompletedTask;
 }
@@ -1461,7 +1464,7 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await [|MethodAsync()|];
+        await [|MethodAsync|]();
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
@@ -1494,7 +1497,7 @@ class C
 {
     Task M(CancellationToken ct)
     {
-        return [|MethodAsync()|];
+        return [|MethodAsync|]();
     }
     Task MethodAsync(int x = 0, bool y = false, CancellationToken c = default)
     {
@@ -1530,7 +1533,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync(5)|];
+        await [|MethodAsync|](5);
     }
     Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
@@ -1560,7 +1563,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync(x: 5)|];
+        await [|MethodAsync|](x: 5);
     }
     Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
@@ -1591,7 +1594,7 @@ class C
 {
     async void M(TokenAlias ct)
     {
-        await [|MethodAsync(x: 5)|];
+        await [|MethodAsync|](x: 5);
     }
     Task MethodAsync(int x, bool y = default, CancellationToken c = default) => Task.CompletedTask;
 }
@@ -1623,7 +1626,7 @@ class C
 {
     async void M(CancellationToken ct)
     {
-        await [|MethodAsync(x: 5)|];
+        await [|MethodAsync|](x: 5);
     }
     Task MethodAsync(int x, bool y = default, TokenAlias c = default) => Task.CompletedTask;
 }
@@ -1654,7 +1657,7 @@ class C
 {
     Task M(CancellationToken ct)
     {
-        return [|MethodAsync(z: ""Hello world"", x: 5, y: true)|];
+        return [|MethodAsync|](z: ""Hello world"", x: 5, y: true);
     }
     Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
 }
@@ -1941,14 +1944,14 @@ End Class
             // This is a special case that will get a diagnostic but will not get a fix
             // because the fixer does not currently have a way to know the overload's ct parameter name
             // VB arguments get reordered in their official parameter order, so we could add the ct argument at the end
-            // and VB would compile successfully, but that would require separate VB handling in the fixer, so instead
-            // the C# and VB behavior will remain the same
-            return VerifyVB.VerifyAnalyzerAsync(@"
+            // and VB would compile successfully (CA8323 would not be thrown), but that would require separate VB
+            // handling in the fixer, so instead, the C# and VB behavior will remain the same
+            string originalCode = @"
 Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Function M(ByVal ct As CancellationToken) As Task
-        Return [|MethodAsync(z:=""Hello world"", x:=5, y:=true)|]
+        Return [|MethodAsync|](z:=""Hello world"", x:=5, y:=true)
     End Function
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """") As Task
         Return Task.CompletedTask
@@ -1957,7 +1960,8 @@ Class C
         Return Task.CompletedTask
     End Function
 End Class
-            ");
+            ";
+            return VerifyVB.VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -1972,7 +1976,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2002,7 +2006,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|].ConfigureAwait(False)
+        Await [|MethodAsync|]().ConfigureAwait(False)
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2032,7 +2036,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
-        [|MethodAsync()|]
+        [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2063,7 +2067,7 @@ Imports System.Threading.Tasks
 
 Class C
     Private Sub M(ByVal ct As CancellationToken)
-        Dim t As Task = [|MethodAsync()|]
+        Dim t As Task = [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2094,7 +2098,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Shared Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2124,7 +2128,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|].ConfigureAwait(False)
+        Await [|MethodAsync|]().ConfigureAwait(False)
     End Sub
     Private Shared Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2155,7 +2159,7 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync()|]
+        Await [|o.MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2191,7 +2195,7 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync()|]
+        Await [|o.MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2232,7 +2236,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|O.MethodAsync()|]
+        Await [|O.MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2267,7 +2271,7 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync()|]
+        Await [|o.MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2308,7 +2312,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Structure S
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2338,7 +2342,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Structure S
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|].ConfigureAwait(False)
+        Await [|MethodAsync|]().ConfigureAwait(False)
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2368,7 +2372,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2404,7 +2408,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2440,7 +2444,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2476,7 +2480,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|].ConfigureAwait(False)
+        Await [|MethodAsync|]().ConfigureAwait(False)
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2512,7 +2516,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(5, ""Hello, world"")|]
+        Await [|MethodAsync|](5, ""Hello, world"")
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2560,7 +2564,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(5, ""Hello, world"")|].ConfigureAwait(True)
+        Await [|MethodAsync|](5, ""Hello, world"").ConfigureAwait(True)
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2609,7 +2613,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
-        Dim a As Action(Of CancellationToken) = Async Sub(ByVal token As CancellationToken) Await [|MethodAsync()|]
+        Dim a As Action(Of CancellationToken) = Async Sub(ByVal token As CancellationToken) Await [|MethodAsync|]()
         a(ct)
     End Sub
     Private Function MethodAsync() As Task
@@ -2649,7 +2653,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
-        Dim a As Action(Of CancellationToken) = Sub(ByVal c As CancellationToken) [|MethodAsync()|]
+        Dim a As Action(Of CancellationToken) = Sub(ByVal c As CancellationToken) [|MethodAsync|]()
         a(ct)
     End Sub
     Private Function MethodAsync() As Task
@@ -2689,7 +2693,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
-        Dim a As Action(Of CancellationToken) = Async Sub(ByVal token As CancellationToken) Await [|MethodAsync()|].ConfigureAwait(False)
+        Dim a As Action(Of CancellationToken) = Async Sub(ByVal token As CancellationToken) Await [|MethodAsync|]().ConfigureAwait(False)
         a(ct)
     End Sub
     Private Function MethodAsync() As Task
@@ -2730,7 +2734,7 @@ Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
         Dim f As Func(Of CancellationToken, Task(Of Boolean)) = Async Function(ByVal token As CancellationToken)
-                                                                    Await [|MethodAsync()|]
+                                                                    Await [|MethodAsync|]()
                                                                     Return True
                                                                 End Function
         f(ct)
@@ -2776,7 +2780,7 @@ Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
         Dim f As Func(Of CancellationToken, Boolean) = Function(ByVal token As CancellationToken)
-                                                           [|MethodAsync()|]
+                                                           [|MethodAsync|]()
                                                            Return True
                                                         End Function
         f(ct)
@@ -2821,7 +2825,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Dim f As Func(Of CancellationToken, Task) = Function(ByVal c As CancellationToken) [|MethodAsync()|]
+        Dim f As Func(Of CancellationToken, Task) = Function(ByVal c As CancellationToken) [|MethodAsync|]()
         Await f(ct)
     End Sub
     Private Function MethodAsync() As Task
@@ -2862,7 +2866,7 @@ Imports System.Threading.Tasks
 Class C
     Private Sub M(ByVal ct As CancellationToken)
         Dim f As Func(Of CancellationToken, Task(Of Boolean)) = Async Function(ByVal token As CancellationToken)
-                                                                    Await [|MethodAsync()|].ConfigureAwait(True)
+                                                                    Await [|MethodAsync|]().ConfigureAwait(True)
                                                                     Return True
                                                                 End Function
         f(ct)
@@ -2913,7 +2917,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -2951,7 +2955,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -2983,7 +2987,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -3021,7 +3025,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync(ByVal Optional c As TokenAlias = Nothing) As Task
         Return Task.CompletedTask
@@ -3053,7 +3057,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await [|MethodAsync()|]
+        Await [|MethodAsync|]()
     End Sub
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
@@ -3090,7 +3094,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Function M(ByVal ct As CancellationToken) As Task
-        Return [|MethodAsync()|]
+        Return [|MethodAsync|]()
     End Function
     Private Function MethodAsync(ByVal Optional x As Integer = 0, ByVal Optional y As Boolean = False, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -3120,7 +3124,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(5)|]
+        Await [|MethodAsync|](5)
     End Sub
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -3150,7 +3154,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(x:=5)|]
+        Await [|MethodAsync|](x:=5)
     End Sub
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -3181,7 +3185,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As TokenAlias)
-        Await [|MethodAsync(x:=5)|]
+        Await [|MethodAsync|](x:=5)
     End Sub
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask
@@ -3213,7 +3217,7 @@ Imports System.Threading.Tasks
 Imports TokenAlias = System.Threading.CancellationToken
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync(x:=5)|]
+        Await [|MethodAsync|](x:=5)
     End Sub
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional c As TokenAlias = Nothing) As Task
         Return Task.CompletedTask
@@ -3244,7 +3248,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Function M(ByVal ct As CancellationToken) As Task
-        Return [|MethodAsync(z:=""Hello world"", x:=5, y:=true)|]
+        Return [|MethodAsync|](z:=""Hello world"", x:=5, y:=true)
     End Function
     Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
         Return Task.CompletedTask

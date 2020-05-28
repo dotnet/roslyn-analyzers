@@ -28,9 +28,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     - The invocation method only has overloads that receive more than one ct.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class ForwardCancellationTokenToAsyncMethodsAnalyzer : DiagnosticAnalyzer
+    public abstract class ForwardCancellationTokenToAsyncMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2016";
+
+        protected abstract SyntaxNode? GetMethodNameNode(SyntaxNode invocationNode);
 
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
             nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsDescription),
@@ -95,7 +97,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                context.ReportDiagnostic(context.Operation.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName, invocation.TargetMethod.Name));
+                // Only underline the method name, not the whole invocation
+                SyntaxNode? expressionNode = GetMethodNameNode(context.Operation.Syntax);
+                if (expressionNode != null)
+                {
+                    context.ReportDiagnostic(expressionNode.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName, invocation.TargetMethod.Name));
+                }
             },
             OperationKind.Invocation);
         }
@@ -123,7 +130,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return false;
             }
 
-            return cancellationTokenParameterName != null;
+            return true;
         }
 
         // Check if the method only takes one ct and is the last parameter in the method signature.

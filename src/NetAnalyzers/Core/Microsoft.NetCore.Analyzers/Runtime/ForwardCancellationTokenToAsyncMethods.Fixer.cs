@@ -44,7 +44,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SemanticModel model = await doc.GetSemanticModelAsync(ct).ConfigureAwait(false);
 
-            if (!(model.GetOperation(node, ct) is IInvocationOperation invocation))
+            // The analyzer created the diagnostic on the IdentifierNameSyntax, and the parent is the actual invocation
+            if (!(model.GetOperation(node.Parent, ct) is IInvocationOperation invocation))
             {
                 return;
             }
@@ -121,7 +122,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (shouldTokenUseName)
             {
                 // If the paramName is unknown at this point, it's because an overload contains the ct parameter
-                // and since it cannot be obtained, no fix will be provided
+                // and since it cannot be obtained, no fix will be provided or else CA8323 shows up:
+                // CA8323: Named argument 'argName' is used out-of-position but is followed by an unnamed argument
                 if (string.IsNullOrEmpty(paramName))
                 {
                     return Task.FromResult(doc);

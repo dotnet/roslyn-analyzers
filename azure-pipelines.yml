@@ -15,17 +15,19 @@ jobs:
     matrix:
       Debug:
         _configuration: Debug
+        _codeCoverage: True
       Release:
         _configuration: Release
+        _codeCoverage: False
   pool:
     name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2017.open
+    queue: BuildPool.Windows.10.Amd64.VS2019.Open
   timeoutInMinutes: 30
 
   steps:
     - checkout: self
       clean: true
-    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
 
     - task: PublishTestResults@2
@@ -35,6 +37,9 @@ jobs:
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
+    - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
+      displayName: Upload coverage to codecov.io
+      condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
@@ -48,7 +53,7 @@ jobs:
     maxParallel: 4
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
+    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
   timeoutInMinutes: 30
 
   steps:

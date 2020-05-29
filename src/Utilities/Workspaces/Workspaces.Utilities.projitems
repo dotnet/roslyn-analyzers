@@ -9,7 +9,11 @@
     <Import_RootNamespace>Analyzer.Utilities</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AbstractRefactoringHelpers`3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeRefactoringContextExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeRefactoringHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DocumentChangeAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IRefactoringHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SolutionChangeAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyntaxGeneratorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyntaxNodeExtensions.cs" />

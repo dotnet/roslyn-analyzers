@@ -166,6 +166,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenerateDocumentationAndCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateDocumentationAndConfigFiles", "src\Tools\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj", "{563654BA-4C05-4EA2-91D3-28A14723B7D5}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Workspaces.CSharp.Utilities", "src\Utilities\Workspaces.CSharp\Workspaces.CSharp.Utilities.shproj", "{CADD5396-912A-4391-8696-19267F94958F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.CSharp.Utilities", "src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.shproj", "{875F3ADB-B7E2-4773-B00C-922520B9AC25}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.VisualBasic.Utilities", "src\Utilities\Compiler.VisualBasic\Analyzer.VisualBasic.Utilities.shproj", "{63F04A9A-9021-44A6-9BE0-28EE9F37AFD0}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Workspaces.VisualBasic.Utilities", "src\Utilities\Workspaces.VisualBasic\Workspaces.VisualBasic.Utilities.shproj", "{89E407E8-8D6A-4283-BECD-ACD97EAB3211}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
@@ -177,8 +185,15 @@ Global
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a520f3e-8c5d-43fe-aa03-fe5e3c5f23d1}*SharedItemsImports = 5
+		src\Utilities\Compiler.VisualBasic\Analyzer.VisualBasic.Utilities.projitems*{63f04a9a-9021-44a6-9be0-28ee9f37afd0}*SharedItemsImports = 13
+		src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems*{697e2991-39a8-46c2-aa9c-fe576fbbcd90}*SharedItemsImports = 5
+		src\Utilities\Workspaces.CSharp\Workspaces.CSharp.Utilities.projitems*{697e2991-39a8-46c2-aa9c-fe576fbbcd90}*SharedItemsImports = 5
+		src\Utilities\Compiler.VisualBasic\Analyzer.VisualBasic.Utilities.projitems*{70bba457-2cc1-4929-8fee-359ebb7c398a}*SharedItemsImports = 5
+		src\Utilities\Workspaces.VisualBasic\Workspaces.VisualBasic.Utilities.projitems*{70bba457-2cc1-4929-8fee-359ebb7c398a}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
+		src\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems*{875f3adb-b7e2-4773-b00c-922520b9ac25}*SharedItemsImports = 13
+		src\Utilities\Workspaces.VisualBasic\Workspaces.VisualBasic.Utilities.projitems*{89e407e8-8d6a-4283-becd-acd97eab3211}*SharedItemsImports = 13
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{9a3072a5-fc2d-4183-9420-de5de323441e}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{a94f29cc-56bf-4cf6-93b1-3bb13725b776}*SharedItemsImports = 5
@@ -186,6 +201,7 @@ Global
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{b475c173-a39d-4a75-93ff-69c3d2742cad}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
 		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
+		src\Utilities\Workspaces.CSharp\Workspaces.CSharp.Utilities.projitems*{cadd5396-912a-4391-8696-19267f94958f}*SharedItemsImports = 13
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{cade5623-cc57-43a2-9d2a-b7ab29225406}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{cade5623-cc57-43a2-9d2a-b7ab29225406}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{d8762a0a-3832-47be-bcf6-8b1060be6b28}*SharedItemsImports = 5
@@ -502,6 +518,10 @@ Global
 		{3DD9D249-13D4-4DD2-B043-1F025F550013} = {0194F644-14D0-4AF4-8FA1-5CEA07DC7F5F}
 		{DB2DD702-8301-4FC6-B8C0-029C7DCC2931} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{563654BA-4C05-4EA2-91D3-28A14723B7D5} = {DB2DD702-8301-4FC6-B8C0-029C7DCC2931}
+		{CADD5396-912A-4391-8696-19267F94958F} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{875F3ADB-B7E2-4773-B00C-922520B9AC25} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{63F04A9A-9021-44A6-9BE0-28EE9F37AFD0} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{89E407E8-8D6A-4283-BECD-ACD97EAB3211} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

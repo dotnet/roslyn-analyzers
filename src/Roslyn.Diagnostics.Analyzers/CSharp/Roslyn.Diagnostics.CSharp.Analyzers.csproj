@@ -6,4 +6,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Roslyn.Diagnostics.Analyzers.csproj" />
   </ItemGroup>
+  <Import Project="..\..\Utilities\Workspaces.CSharp\Workspaces.CSharp.Utilities.projitems" Label="Shared" />
+  <Import Project="..\..\Utilities\Compiler.CSharp\Analyzer.CSharp.Utilities.projitems" Label="Shared" />
 </Project>

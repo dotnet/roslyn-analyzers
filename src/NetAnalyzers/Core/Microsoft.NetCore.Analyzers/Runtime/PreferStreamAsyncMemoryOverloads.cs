@@ -230,7 +230,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         rule = PreferStreamReadAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredReadAsyncMethod.Name;
-                        ruleMessagePreferredMethod = preferredReadAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessagePreferredMethod = string.Join(", ", preferredReadAsyncMethod.GetParameters());
                         ruleMessageMemoryType = memoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                     }
                     else if (method.Equals(undesiredWriteAsyncMethod) ||
@@ -238,7 +238,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         rule = PreferStreamWriteAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredWriteAsyncMethod.Name;
-                        ruleMessagePreferredMethod = preferredWriteAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessagePreferredMethod = string.Join(", ", preferredWriteAsyncMethod.GetParameters());
                         ruleMessageMemoryType = readOnlyMemoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                     }
                     else

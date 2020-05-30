@@ -56,16 +56,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.Diagnostics.Analyzer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Text.Analyzers.Package", "nuget\Text.Analyzers\Text.Analyzers.Package.csproj", "{0A7C9A18-888A-4028-B88F-989DA6A0140B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MetaCompilation.Analyzers", "MetaCompilation.Analyzers", "{7FEEECAE-4EC2-469C-868A-0B38435C756C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers", "src\MetaCompilation.Analyzers\Core\MetaCompilation.Analyzers.csproj", "{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Setup", "src\MetaCompilation.Analyzers\Setup\MetaCompilation.Analyzers.Setup.csproj", "{D70D8CBB-1AD0-49DE-83A8-07990915A843}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.UnitTests", "src\MetaCompilation.Analyzers\UnitTests\MetaCompilation.Analyzers.UnitTests.csproj", "{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Package", "nuget\MetaCompilation.Analyzers\MetaCompilation.Analyzers.Package.csproj", "{722141A2-91FE-411A-A64F-A2A2A7150122}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Compiler\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{C0B86774-8307-444F-9EE4-98D62C3424F9}"

@@ -57,7 +57,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsTitle;
 
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(doc, root, invocation, parameterName);
+            if (!TryGenerateNewDocumentRoot(doc, root, invocation, parameterName, out SyntaxNode? newRoot))
+            {
+                return;
+            }
+
+            Task<Document> createChangedDocument(CancellationToken _) =>
+                Task.FromResult(doc.WithSyntaxRoot(newRoot));
 
             context.RegisterCodeFix(
                 new MyCodeAction(
@@ -67,12 +73,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.Diagnostics);
         }
 
-        private Task<Document> FixInvocation(
+        private bool TryGenerateNewDocumentRoot(
             Document doc,
             SyntaxNode root,
             IInvocationOperation invocation,
-            string cancellationTokenParameterName)
+            string cancellationTokenParameterName,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? newRoot)
         {
+            newRoot = null;
+
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
             // Pass the same arguments and add the ct
@@ -126,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // CA8323: Named argument 'argName' is used out-of-position but is followed by an unnamed argument
                 if (string.IsNullOrEmpty(paramName))
                 {
-                    return Task.FromResult(doc);
+                    return false;
                 }
 
                 cancellationTokenNode = generator.Argument(paramName, RefKind.None, cancellationTokenIdentifier);
@@ -157,8 +166,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Insert the new arguments to the new invocation
             SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments);
 
-            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
-            return Task.FromResult(doc.WithSyntaxRoot(newRoot));
+            newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
+
+            return true;
+
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 

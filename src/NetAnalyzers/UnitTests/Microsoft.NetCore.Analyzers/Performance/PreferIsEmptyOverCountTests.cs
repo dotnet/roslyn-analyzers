@@ -1,10 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Testing.XUnit;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.CSharp.Analyzers.Performance;
+using Microsoft.NetCore.VisualBasic.Analyzers.Performance;
 using Xunit;
+using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UseCountProperlyAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferIsEmptyOverCountFixer>;
@@ -193,145 +202,225 @@ End Class
                  VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithSpan(11, 20, 11, 20 + condition.Length),
                  fix);
         }
+    }
 
-        [Fact]
-        public async Task TestOperations()
+    public abstract class PreferIsEmptyOverCountTestsBase
+        : DoNotUseCountWhenAnyCanBeUsedTestsBase
+    {
+        protected PreferIsEmptyOverCountTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
+            : base(sourceProvider, verifier, output) { }
+
+        [Theory]
+        [ClassData(typeof(BinaryExpressionTestData))]
+        public Task PropertyOnBinaryOperation(bool noDiagnosis, int literal, BinaryOperatorKind @operator, bool isRightSideExpression, bool shouldNegate)
         {
-            // The operators that we want to test.
-            foreach (OperatorKind @operator in _operators)
+            string testSource = isRightSideExpression ?
+                SourceProvider.GetTargetPropertyBinaryExpressionCode(literal, @operator, SourceProvider.MemberName) :
+                SourceProvider.GetTargetPropertyBinaryExpressionCode(@operator, literal, SourceProvider.MemberName);
+
+            testSource = SourceProvider.GetCodeWithExpression(testSource);
+
+            if (noDiagnosis)
             {
-                // Whether Count {operator} {literal} OR {literal} {operator} Count.
-                foreach (bool isRightSideExpression in new bool[] { false, true })
-                {
-                    // The literals or constants we want to test against.
-                    foreach (int literal in new int[] { 0, 1 })
-                    {
-                        bool resultWhenExpressionEqualsZero = default;
-                        bool noDiagnosis = false;
-                        // Simulate a value that Count might have in order to determine what's the expected behavior in such case.
-                        foreach (int expressionValue in new int[] { 0, 1, 2 })
-                        {
-                            int rightSide = isRightSideExpression ? expressionValue : literal;
-                            int leftSide = isRightSideExpression ? literal : expressionValue;
-
-                            if (expressionValue == 0)
-                            {
-                                resultWhenExpressionEqualsZero = @operator.Operation(leftSide, rightSide);
-                            }
-                            else
-                            {
-                                // If the evaluation for Count {operand} 0 when Count = 1 has the same result as the evaluation 
-                                // when either Count = 1 or Count = 2 then the case does not apply and therefore no diagnosis should be given. 
-                                if (resultWhenExpressionEqualsZero == @operator.Operation(leftSide, rightSide))
-                                {
-                                    noDiagnosis = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        var conditions = GetConditionsAsString(literal, isRightSideExpression, @operator);
-
-                        if (noDiagnosis)
-                        {
-                            // Test that we don't get a diagnosis from this combination.
-                            await CSharpTestNoDiagnosis(conditions.Item1);
-                            await BasicTestNoDiagnosis(conditions.Item2);
-                        }
-                        else if (resultWhenExpressionEqualsZero)
-                        {
-                            // Test replacement of the expression for IsEmpty.
-                            await CSharpTestCodeFix(conditions.Item1, IsEmpty);
-                            await BasicTestCodeFix(conditions.Item2, IsEmpty);
-
-                        }
-                        else
-                        {
-                            // Test replacement of the expression for !IsEmpty.
-                            await CSharpTestCodeFix(conditions.Item1, $"!{IsEmpty}");
-                            await BasicTestCodeFix(conditions.Item2, $"Not {IsEmpty}");
-                        }
-                    }
-                }
-            }
-        }
-
-        private Task CSharpTestNoDiagnosis(string condition)
-        {
-            string csInput = string.Format(CultureInfo.InvariantCulture, csSnippet, condition);
-            return VerifyCS.VerifyAnalyzerAsync(csInput);
-        }
-
-        private Task BasicTestNoDiagnosis(string condition)
-        {
-            string vbInput = string.Format(CultureInfo.InvariantCulture, vbSnippet, condition);
-            return VerifyVB.VerifyAnalyzerAsync(vbInput);
-        }
-
-        private Task CSharpTestCodeFix(string inputCondition, string fixCondition)
-        {
-            string csInput = string.Format(CultureInfo.InvariantCulture, csSnippet, inputCondition);
-            string csFix = string.Format(CultureInfo.InvariantCulture, csSnippet, fixCondition);
-
-            return VerifyCS.VerifyCodeFixAsync(
-                csInput,
-                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithSpan(10, 34, 10, 34 + inputCondition.Length),
-                csFix);
-        }
-
-        private Task BasicTestCodeFix(string inputCondition, string fixCondition)
-        {
-            string vbInput = string.Format(CultureInfo.InvariantCulture, vbSnippet, inputCondition);
-            string vbFix = string.Format(CultureInfo.InvariantCulture, vbSnippet, fixCondition);
-
-            return VerifyVB.VerifyCodeFixAsync(
-                vbInput,
-                VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithSpan(11, 20, 11, 20 + inputCondition.Length),
-                vbFix);
-        }
-
-        private (string, string) GetConditionsAsString(int literal, bool isRightSideExpression, OperatorKind @operator)
-        {
-            string csharpCondition, basicCondition;
-
-            if (isRightSideExpression)
-            {
-                csharpCondition = $"{literal} {@operator.CSharpOperator} {Count}";
-                basicCondition = $"{literal} {@operator.BasicOperator} {Count}";
+                return VerifyAsync(testSource, extensionsSource: null);
             }
             else
             {
-                csharpCondition = $"{Count} {@operator.CSharpOperator} {literal}";
-                basicCondition = $"{Count} {@operator.BasicOperator} {literal}";
-            }
-
-            return (csharpCondition, basicCondition);
-        }
-
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-        private struct OperatorKind
-        {
-            public string CSharpOperator { get; }
-            public string BasicOperator { get; }
-
-            public Func<int, int, bool> Operation { get; }
-
-            public OperatorKind(string csharpOperator, string basicOperator, Func<int, int, bool> operation)
-            {
-                CSharpOperator = csharpOperator;
-                BasicOperator = basicOperator;
-                Operation = operation;
+                string fixedSource = SourceProvider.GetCodeWithExpression(SourceProvider.GetFixedIsEmptyPropertyCode(shouldNegate));
+                return VerifyAsync(methodName: null, testSource, fixedSource, extensionsSource: null);
             }
         }
 
-        private static readonly List<OperatorKind> _operators = new List<OperatorKind>
+        [Fact]
+        public Task PropertyEqualsZero_Fixed()
+            => VerifyAsync(
+                methodName: null,
+                testSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetEqualsTargetPropertyInvocationCode(0, SourceProvider.MemberName)),
+                fixedSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetFixedIsEmptyPropertyCode(negate: false)),
+                extensionsSource: null);
+
+        [Fact]
+        public Task ZeroEqualsProperty_Fixed()
+            => VerifyAsync(
+                methodName: null,
+                testSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetTargetPropertyEqualsInvocationCode(0, SourceProvider.MemberName)),
+                fixedSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetFixedIsEmptyPropertyCode(negate: false)),
+                extensionsSource: null);
+    }
+
+    public abstract class PreferIsEmptyOverCountLinqTestsBase
+        : DoNotUseCountWhenAnyCanBeUsedTestsBase
+    {
+        public static readonly IEnumerable<object[]> DiagnosisOnlyTestData = new BinaryExpressionTestData()
+            .Where(x => (bool)x[0] == false)
+            .Select(x => new object[] { x[1], x[2], x[3], x[4] });
+
+        protected PreferIsEmptyOverCountLinqTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
+            : base(sourceProvider, verifier, output) { }
+
+        /// <summary>
+        /// Scenarios that are not diagnosed with CA1836 should fallback in CA1829 and those are covered in 
+        /// <see cref="UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests.PropertyOnBinaryOperation(int, BinaryOperatorKind, bool)"/>
+        /// </summary>
+        [Theory]
+        [MemberData(nameof(DiagnosisOnlyTestData))]
+        public Task LinqMethodOnBinaryOperation(int literal, BinaryOperatorKind @operator, bool isRightSideExpression, bool shouldNegate)
         {
-            new OperatorKind("==",  "=",    (a,b) => a == b ),
-            new OperatorKind("!=",  "<>",   (a,b) => a != b ),
-            new OperatorKind(">",   ">",    (a,b) => a > b ),
-            new OperatorKind(">=",  ">=",   (a,b) => a >= b ),
-            new OperatorKind("<",   "<",    (a,b) => a < b ),
-            new OperatorKind("<=",  "<=",   (a,b) => a <= b ),
-        };
+            string testSource = SourceProvider.GetCodeWithExpression(
+                isRightSideExpression ?
+                SourceProvider.GetTargetExpressionBinaryExpressionCode(literal, @operator, withPredicate: false, "Count") :
+                SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, literal, withPredicate: false, "Count"),
+                additionalNamspaces: SourceProvider.ExtensionsNamespace);
+
+            string fixedSource = SourceProvider.GetCodeWithExpression(
+                SourceProvider.GetFixedIsEmptyPropertyCode(shouldNegate),
+                additionalNamspaces: SourceProvider.ExtensionsNamespace);
+
+            return VerifyAsync(methodName: null, testSource, fixedSource, extensionsSource: null);
+        }
+
+        [Fact]
+        public Task LinqCountEqualsZero_Fixed()
+            => VerifyAsync(
+                methodName: null,
+                testSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetEqualsTargetExpressionInvocationCode(0, withPredicate: false, "Count"),
+                    additionalNamspaces: SourceProvider.ExtensionsNamespace),
+                fixedSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetFixedIsEmptyPropertyCode(negate: false),
+                    additionalNamspaces: SourceProvider.ExtensionsNamespace),
+                extensionsSource: null);
+
+        [Fact]
+        public Task ZeroEqualsLinqCount_Fixed()
+            => VerifyAsync(
+                methodName: null,
+                testSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetTargetExpressionEqualsInvocationCode(0, withPredicate: false, "Count"),
+                    additionalNamspaces: SourceProvider.ExtensionsNamespace),
+                fixedSource: SourceProvider.GetCodeWithExpression(
+                    SourceProvider.GetFixedIsEmptyPropertyCode(negate: false),
+                    additionalNamspaces: SourceProvider.ExtensionsNamespace),
+                extensionsSource: null);
+
+    }
+
+    public class CSharpPreferIsEmptyOverCountTests_Concurrent
+        : PreferIsEmptyOverCountTestsBase
+    {
+        public CSharpPreferIsEmptyOverCountTests_Concurrent(ITestOutputHelper output)
+            : base(
+                  new CSharpTestsSourceCodeProvider(
+                      "Count",
+                      "global::System.Collections.Concurrent.ConcurrentBag<int>",
+                      extensionsNamespace: null, extensionsClass: null, isAsync: false),
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class BasicPreferIsEmptyOverCountTests_Concurrent
+        : PreferIsEmptyOverCountTestsBase
+    {
+        public BasicPreferIsEmptyOverCountTests_Concurrent(ITestOutputHelper output)
+            : base(
+                  new BasicTestsSourceCodeProvider(
+                      "Count",
+                      "Global.System.Collections.Concurrent.ConcurrentBag(Of Integer)",
+                      extensionsNamespace: null, extensionsClass: null, isAsync: false),
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class CSharpPreferIsEmptyOverCountLinqTests_Concurrent
+        : PreferIsEmptyOverCountLinqTestsBase
+    {
+        public CSharpPreferIsEmptyOverCountLinqTests_Concurrent(ITestOutputHelper output)
+            : base(
+                  new CSharpTestsSourceCodeProvider(
+                      "Count",
+                      "global::System.Collections.Concurrent.ConcurrentBag<int>",
+                      extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
+                      isAsync: false),
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class CSharpPreferIsEmptyOverCountTests_Immutable
+        : PreferIsEmptyOverCountTestsBase
+    {
+        public CSharpPreferIsEmptyOverCountTests_Immutable(ITestOutputHelper output)
+            : base(
+                  new CSharpTestsSourceCodeProvider(
+                      "Length",
+                      "global::System.Collections.Immutable.ImmutableArray<int>",
+                      extensionsNamespace: null, extensionsClass: null, isAsync: false),
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class CSharpPreferIsEmptyOverCountLinqTests_Immutable
+        : PreferIsEmptyOverCountLinqTestsBase
+    {
+        public CSharpPreferIsEmptyOverCountLinqTests_Immutable(ITestOutputHelper output)
+            : base(
+                  new CSharpTestsSourceCodeProvider(
+                      "Length",
+                      "global::System.Collections.Immutable.ImmutableArray<int>",
+                      extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
+                      isAsync: false),
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class BasicPreferIsEmptyOverCountTests_Immutable
+        : PreferIsEmptyOverCountTestsBase
+    {
+        public BasicPreferIsEmptyOverCountTests_Immutable(ITestOutputHelper output)
+            : base(
+                  new BasicTestsSourceCodeProvider(
+                      "Length",
+                      "Global.System.Collections.Immutable.ImmutableArray(Of Integer)",
+                      extensionsNamespace: null, extensionsClass: null, isAsync: false),
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class BasicPreferIsEmptyOverCountLinqTests_Immutable
+        : PreferIsEmptyOverCountLinqTestsBase
+    {
+        public BasicPreferIsEmptyOverCountLinqTests_Immutable(ITestOutputHelper output)
+            : base(
+                  new BasicTestsSourceCodeProvider(
+                      "Length",
+                      "Global.System.Collections.Immutable.ImmutableArray(Of Integer)",
+                      extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
+                      isAsync: false),
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
+    }
+
+    public class CSharpPreferIsEmptyOverCountTests_Span
+        : PreferIsEmptyOverCountTestsBase
+    {
+        public CSharpPreferIsEmptyOverCountTests_Span(ITestOutputHelper output)
+            : base(
+                  new CSharpTestsSourceCodeProvider(
+                      "Length",
+                      "global::System.Span<int>",
+                      extensionsNamespace: null, extensionsClass: null, isAsync: false),
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
+                  output)
+        { }
     }
 }

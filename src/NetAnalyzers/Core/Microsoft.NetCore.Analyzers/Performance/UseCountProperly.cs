@@ -209,34 +209,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             parentOperation = parentOperation.WalkUpParentheses();
             parentOperation = parentOperation.WalkUpConversion();
 
-            bool shouldReplaceParent = false;
-
-            bool useRightSide = default;
-            bool shouldNegateIsEmpty = default;
-            string? operationKey = null;
-
-            // Analyze binary operation.
-            if (parentOperation is IBinaryOperation parentBinaryOperation)
-            {
-                shouldReplaceParent = AnalyzeParentBinaryOperation(parentBinaryOperation, out useRightSide, out shouldNegateIsEmpty);
-                operationKey = useRightSide ? OperationBinaryRight : OperationBinaryLeft;
-            }
-            // Analyze invocation operation, potentially obj.Count().Equals(0).
-            else if (parentOperation is IInvocationOperation parentInvocationOperation)
-            {
-                shouldReplaceParent = AnalyzeParentInvocationOperation(parentInvocationOperation, isInstance: true);
-                operationKey = OperationEqualsInstance;
-            }
-            // Analyze argument operation, potentially 0.Equals(obj.Count()).
-            else if (parentOperation is IArgumentOperation argumentOperation)
-            {
-                parentOperation = argumentOperation.Parent;
-                shouldReplaceParent = AnalyzeParentInvocationOperation((IInvocationOperation)parentOperation, isInstance: false);
-                operationKey = OperationEqualsArgument;
-            }
+            bool shouldReplaceParent = ShouldReplaceParent(ref parentOperation, out string? operationKey, out bool shouldNegateIsEmpty);
 
             DetermineReportForInvocationAnalysis(context, invocationOperation, parentOperation,
-                shouldReplaceParent, isAsync, useRightSide, shouldNegateIsEmpty, hasPredicate, originalDefinition.Name, operationKey);
+                shouldReplaceParent, isAsync, shouldNegateIsEmpty, hasPredicate, originalDefinition.Name, operationKey);
         }
 
         private static void AnalyzePropertyReference(OperationAnalysisContext context)
@@ -254,32 +230,41 @@ namespace Microsoft.NetCore.Analyzers.Performance
             parentOperation = parentOperation.WalkUpParentheses();
             parentOperation = parentOperation.WalkUpConversion();
 
-            bool shouldReplaceParent = false;
+            bool shouldReplaceParent = ShouldReplaceParent(ref parentOperation, out string? operationKey, out bool shouldNegateIsEmpty);
 
-            bool useRightSide = default;
-            bool shouldNegateIsEmpty = default;
+            if (shouldReplaceParent)
+            {
+                DetermineReportForPropertyReference(context, propertyReferenceOperation, parentOperation, operationKey, shouldNegateIsEmpty);
+            }
+        }
+
+        private static bool ShouldReplaceParent(ref IOperation parentOperation, out string? operationKey, out bool shouldNegateIsEmpty)
+        {
+            bool shouldReplace = false;
+            shouldNegateIsEmpty = false;
+            operationKey = null;
 
             // Analyze binary operation.
             if (parentOperation is IBinaryOperation parentBinaryOperation)
             {
-                shouldReplaceParent = AnalyzeParentBinaryOperation(parentBinaryOperation, out useRightSide, out shouldNegateIsEmpty);
+                shouldReplace = AnalyzeParentBinaryOperation(parentBinaryOperation, out bool useRightSide, out shouldNegateIsEmpty);
+                operationKey = useRightSide ? OperationBinaryRight : OperationBinaryLeft;
             }
             // Analyze invocation operation, potentially obj.Count.Equals(0).
             else if (parentOperation is IInvocationOperation parentInvocationOperation)
             {
-                shouldReplaceParent = AnalyzeParentInvocationOperation(parentInvocationOperation, isInstance: true);
+                shouldReplace = AnalyzeParentInvocationOperation(parentInvocationOperation, isInstance: true);
+                operationKey = OperationEqualsInstance;
             }
             // Analyze argument operation, potentially 0.Equals(obj.Count).
             else if (parentOperation is IArgumentOperation argumentOperation)
             {
                 parentOperation = argumentOperation.Parent;
-                shouldReplaceParent = AnalyzeParentInvocationOperation((IInvocationOperation)parentOperation, isInstance: false);
+                shouldReplace = AnalyzeParentInvocationOperation((IInvocationOperation)parentOperation, isInstance: false);
+                operationKey = OperationEqualsArgument;
             }
 
-            if (shouldReplaceParent)
-            {
-                DetermineReportForPropertyReference(context, propertyReferenceOperation, parentOperation, useRightSide, shouldNegateIsEmpty);
-            }
+            return shouldReplace;
         }
 
         private static bool AnalyzeParentBinaryOperation(IBinaryOperation parent, out bool useRightSide, out bool shouldNegate)
@@ -378,14 +363,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     propertyName));
         }
 
-        private static void ReportCA1836(OperationAnalysisContext context, bool useRightSideExpression, bool shouldNegate, IOperation operation)
+        private static void ReportCA1836(OperationAnalysisContext context, string operationKey, bool shouldNegate, IOperation operation)
         {
             ImmutableDictionary<string, string?>.Builder propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string?>(StringComparer.Ordinal);
-
-            if (useRightSideExpression)
-            {
-                propertiesBuilder.Add(UseRightSideExpressionKey, null);
-            }
+            propertiesBuilder.Add(OperationKey, operationKey);
 
             if (shouldNegate)
             {
@@ -398,7 +379,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     properties: propertiesBuilder.ToImmutable()));
         }
 
-        private static void DetermineReportForInvocationAnalysis(OperationAnalysisContext context, IOperation operation, IOperation parent, bool shouldReplaceParent, bool isAsync, bool useRightSide, bool shouldNegateIsEmpty, bool hasPredicate, string methodName, string? operationKey)
+        private static void DetermineReportForInvocationAnalysis(OperationAnalysisContext context, IOperation operation, IOperation parent, bool shouldReplaceParent, bool isAsync, bool shouldNegateIsEmpty, bool hasPredicate, string methodName, string? operationKey)
         {
             if (!shouldReplaceParent)
             {
@@ -429,7 +410,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean))
                         {
-                            ReportCA1836(context, useRightSide, shouldNegateIsEmpty, parent);
+                            ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                         }
                         else if (TypeContainsVisibileProperty(context, type, Length, SpecialType.System_Int32, SpecialType.System_UInt64))
                         {
@@ -449,14 +430,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private static void DetermineReportForPropertyReference(OperationAnalysisContext context, IOperation operation, IOperation parent, bool useRightSide, bool shouldNegateIsEmpty)
+        private static void DetermineReportForPropertyReference(OperationAnalysisContext context, IOperation operation, IOperation parent, string? operationKey, bool shouldNegateIsEmpty)
         {
             ITypeSymbol? type = operation.GetInstanceType();
             if (type != null)
             {
                 if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean))
                 {
-                    ReportCA1836(context, useRightSide, shouldNegateIsEmpty, parent);
+                    ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                 }
             }
         }

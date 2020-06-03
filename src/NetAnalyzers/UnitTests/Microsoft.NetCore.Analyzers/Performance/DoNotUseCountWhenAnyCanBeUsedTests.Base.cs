@@ -65,5 +65,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
+        protected async Task VerifyAsync(string methodName, string testSource, string fixedSource, string extensionsSource, int line, int column)
+        {
+            try
+            {
+                await this.Verifier.VerifyAsync(
+                    methodName,
+                    new string[] { testSource, extensionsSource },
+                    new string[] { fixedSource, extensionsSource },
+                    line, column);
+            }
+            catch
+            {
+                this.Output.WriteLine($"{SourceProvider.CommentPrefix} Source code:{Environment.NewLine}{testSource}");
+
+                this.Output.WriteLine($"{SourceProvider.CommentPrefix} Fixed code for:{Environment.NewLine}{fixedSource}");
+
+                if (!string.IsNullOrEmpty(extensionsSource))
+                {
+                    this.Output.WriteLine($"{SourceProvider.CommentPrefix} Extensions code:{Environment.NewLine}{extensionsSource}");
+                }
+
+                throw;
+            }
+        }
     }
 }

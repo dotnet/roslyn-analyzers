@@ -89,6 +89,10 @@ namespace GenerateGlobalAnalyzerConfigs
                 }
 
                 var assemblyDir = Path.GetDirectoryName(assemblyPath);
+                if (assemblyDir is null)
+                {
+                    continue;
+                }
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
                 var shippedFile = Path.Combine(assemblyDir, "AnalyzerReleases", assemblyName, ReleaseTrackingHelper.ShippedFileName);
                 if (File.Exists(shippedFile))
@@ -154,7 +158,7 @@ namespace GenerateGlobalAnalyzerConfigs
             return 0;
 
             // Local functions.
-            static void AnalyzerFileReference_AnalyzerLoadFailed(object sender, AnalyzerLoadFailureEventArgs e)
+            static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
                 => throw e.Exception;
 
             string GetAssemblyPath(string assembly)

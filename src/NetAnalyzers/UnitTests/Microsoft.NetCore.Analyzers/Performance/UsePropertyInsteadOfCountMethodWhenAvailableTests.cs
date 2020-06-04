@@ -568,8 +568,8 @@ public class SomeClass
     public abstract class UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        protected UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
-            : base(sourceProvider, verifier, output) { }
+        protected UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier)
+            : base(sourceProvider, verifier) { }
 
         [Fact]
         public Task CountEqualsNonZero_WithoutPredicate_Fixed()
@@ -583,7 +583,7 @@ public class SomeClass
                     SourceProvider.ExtensionsNamespace),
                 extensionsSource: null);
 
-        [Fact, WorkItem(3700, "https://github.com/dotnet/roslyn-analyzers/issues/3700")]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/3700"), WorkItem(3700, "https://github.com/dotnet/roslyn-analyzers/issues/3700")]
         public Task NonZeroEqualsCount_WithoutPredicate_Fixed()
             => VerifyAsync(
                 methodName: SourceProvider.MemberName,
@@ -661,7 +661,7 @@ public class SomeClass
     public class CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Concurrent
         : UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests
     {
-        public CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Concurrent(ITestOutputHelper output)
+        public CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Concurrent()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -669,15 +669,14 @@ public class SomeClass
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829))
         { }
     }
 
     public class CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable
         : UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests
     {
-        public CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable(ITestOutputHelper output)
+        public CSharpUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Length",
@@ -685,15 +684,14 @@ public class SomeClass
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829))
         { }
     }
 
     public class BasicUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable
         : UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests
     {
-        public BasicUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable(ITestOutputHelper output)
+        public BasicUsePropertyInsteadOfCountMethodWhenAvailableOverlapTests_Immutable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Length",
@@ -701,8 +699,7 @@ public class SomeClass
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicUsePropertyInsteadOfCountMethodWhenAvailableFixer>(UseCountProperlyAnalyzer.CA1829))
         { }
     }
 }

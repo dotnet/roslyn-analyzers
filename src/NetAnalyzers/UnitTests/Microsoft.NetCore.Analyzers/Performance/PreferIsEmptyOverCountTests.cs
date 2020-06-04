@@ -207,8 +207,8 @@ End Class
     public abstract class PreferIsEmptyOverCountTestsBase
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        protected PreferIsEmptyOverCountTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
-            : base(sourceProvider, verifier, output) { }
+        protected PreferIsEmptyOverCountTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier)
+            : base(sourceProvider, verifier) { }
 
         [Theory]
         [ClassData(typeof(BinaryExpressionTestData))]
@@ -259,8 +259,8 @@ End Class
             .Where(x => (bool)x[0] == false)
             .Select(x => new object[] { x[1], x[2], x[3], x[4] });
 
-        protected PreferIsEmptyOverCountLinqTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
-            : base(sourceProvider, verifier, output) { }
+        protected PreferIsEmptyOverCountLinqTestsBase(TestsSourceCodeProvider sourceProvider, VerifierBase verifier)
+            : base(sourceProvider, verifier) { }
 
         /// <summary>
         /// Scenarios that are not diagnosed with CA1836 should fallback in CA1829 and those are covered in 
@@ -312,115 +312,107 @@ End Class
     public class CSharpPreferIsEmptyOverCountTests_Concurrent
         : PreferIsEmptyOverCountTestsBase
     {
-        public CSharpPreferIsEmptyOverCountTests_Concurrent(ITestOutputHelper output)
+        public CSharpPreferIsEmptyOverCountTests_Concurrent()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
                       "global::System.Collections.Concurrent.ConcurrentBag<int>",
                       extensionsNamespace: null, extensionsClass: null, isAsync: false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class BasicPreferIsEmptyOverCountTests_Concurrent
         : PreferIsEmptyOverCountTestsBase
     {
-        public BasicPreferIsEmptyOverCountTests_Concurrent(ITestOutputHelper output)
+        public BasicPreferIsEmptyOverCountTests_Concurrent()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
                       "Global.System.Collections.Concurrent.ConcurrentBag(Of Integer)",
                       extensionsNamespace: null, extensionsClass: null, isAsync: false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class CSharpPreferIsEmptyOverCountLinqTests_Concurrent
         : PreferIsEmptyOverCountLinqTestsBase
     {
-        public CSharpPreferIsEmptyOverCountLinqTests_Concurrent(ITestOutputHelper output)
+        public CSharpPreferIsEmptyOverCountLinqTests_Concurrent()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
                       "global::System.Collections.Concurrent.ConcurrentBag<int>",
                       extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
                       isAsync: false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class CSharpPreferIsEmptyOverCountTests_Immutable
         : PreferIsEmptyOverCountTestsBase
     {
-        public CSharpPreferIsEmptyOverCountTests_Immutable(ITestOutputHelper output)
+        public CSharpPreferIsEmptyOverCountTests_Immutable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Length",
                       "global::System.Collections.Immutable.ImmutableArray<int>",
                       extensionsNamespace: null, extensionsClass: null, isAsync: false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class CSharpPreferIsEmptyOverCountLinqTests_Immutable
         : PreferIsEmptyOverCountLinqTestsBase
     {
-        public CSharpPreferIsEmptyOverCountLinqTests_Immutable(ITestOutputHelper output)
+        public CSharpPreferIsEmptyOverCountLinqTests_Immutable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Length",
                       "global::System.Collections.Immutable.ImmutableArray<int>",
                       extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
                       isAsync: false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class BasicPreferIsEmptyOverCountTests_Immutable
         : PreferIsEmptyOverCountTestsBase
     {
-        public BasicPreferIsEmptyOverCountTests_Immutable(ITestOutputHelper output)
+        public BasicPreferIsEmptyOverCountTests_Immutable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Length",
                       "Global.System.Collections.Immutable.ImmutableArray(Of Integer)",
                       extensionsNamespace: null, extensionsClass: null, isAsync: false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class BasicPreferIsEmptyOverCountLinqTests_Immutable
         : PreferIsEmptyOverCountLinqTestsBase
     {
-        public BasicPreferIsEmptyOverCountLinqTests_Immutable(ITestOutputHelper output)
+        public BasicPreferIsEmptyOverCountLinqTests_Immutable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Length",
                       "Global.System.Collections.Immutable.ImmutableArray(Of Integer)",
                       extensionsNamespace: "System.Linq", extensionsClass: "Enumerable",
                       isAsync: false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 
     public class CSharpPreferIsEmptyOverCountTests_Span
         : PreferIsEmptyOverCountTestsBase
     {
-        public CSharpPreferIsEmptyOverCountTests_Span(ITestOutputHelper output)
+        public CSharpPreferIsEmptyOverCountTests_Span()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Length",
                       "global::System.Span<int>",
                       extensionsNamespace: null, extensionsClass: null, isAsync: false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpPreferIsEmptyOverCountFixer>(UseCountProperlyAnalyzer.CA1836))
         { }
     }
 }

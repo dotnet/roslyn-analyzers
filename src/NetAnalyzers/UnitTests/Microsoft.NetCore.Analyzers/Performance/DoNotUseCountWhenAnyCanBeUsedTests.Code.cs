@@ -57,7 +57,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             internal string GetFixedExpressionCode(bool withPredicate, bool negate)
                 => $@"{GetLogicalNotText(negate)}{GetTargetExpressionCode(withPredicate, "Any" + this.MethodSuffix)}";
 
-
             internal string GetFixedIsEmptyPropertyCode(bool negate)
                 => $@"{GetLogicalNotText(negate)}{GetTargetPropertyCode("IsEmpty")}";
 
@@ -390,7 +389,6 @@ End Namespace
             public string DiagnosticId { get; }
 
             internal abstract Task VerifyAsync(string[] testSources);
-            internal abstract Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources);
             internal abstract Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources, int line, int column);
 
             public static int GetNumberOfLines(string source)
@@ -426,8 +424,6 @@ End Namespace
 
                 return test.RunAsync();
             }
-            internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources)
-                => VerifyAsync(methodName, testSources, fixedSources, GetNumberOfLines(testSources[0]) - 3, 21);
 
             internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources, int line, int column)
             {
@@ -482,9 +478,6 @@ End Namespace
 
                 return test.RunAsync();
             }
-
-            internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources)
-                => VerifyAsync(methodName, testSources, fixedSources, GetNumberOfLines(testSources[0]) - 3, 21);
 
             internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources, int line, int column)
             {

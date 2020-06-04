@@ -11,8 +11,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public abstract class DoNotUseCountWhenAnyCanBeUsedTests : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        protected DoNotUseCountWhenAnyCanBeUsedTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
-            : base(sourceProvider, verifier, output) { }
+        protected DoNotUseCountWhenAnyCanBeUsedTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier)
+            : base(sourceProvider, verifier) { }
 
         [Theory]
         [InlineData(false)]
@@ -218,7 +218,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     public class CSharpDoNotUseCountWhenAnyCanBeUsedTestsEnumerable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public CSharpDoNotUseCountWhenAnyCanBeUsedTestsEnumerable(ITestOutputHelper output)
+        public CSharpDoNotUseCountWhenAnyCanBeUsedTestsEnumerable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -226,8 +226,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
 
@@ -323,7 +322,7 @@ class C
     public class CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable(ITestOutputHelper output)
+        public CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "LongCount",
@@ -331,8 +330,7 @@ class C
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
 
@@ -428,7 +426,7 @@ class C
     public class BasicDoNotUseCountWhenAnyCanBeUsedTestsEnumerable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseCountWhenAnyCanBeUsedTestsEnumerable(ITestOutputHelper output)
+        public BasicDoNotUseCountWhenAnyCanBeUsedTestsEnumerable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
@@ -436,8 +434,7 @@ class C
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
 
@@ -537,7 +534,7 @@ End Module
     public class BasicDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        public BasicDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable(ITestOutputHelper output)
+        public BasicDoNotUseLongCountWhenAnyCanBeUsedTestsEnumerable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "LongCount",
@@ -545,8 +542,7 @@ End Module
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
 
@@ -646,7 +642,7 @@ End Module
     public class CSharpDoNotUseCountWhenAnyCanBeUsedTestsQueryable
             : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        public CSharpDoNotUseCountWhenAnyCanBeUsedTestsQueryable(ITestOutputHelper output)
+        public CSharpDoNotUseCountWhenAnyCanBeUsedTestsQueryable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -654,8 +650,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
     }
@@ -663,7 +658,7 @@ End Module
     public class CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable(ITestOutputHelper output)
+        public CSharpDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "LongCount",
@@ -671,8 +666,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
     }
@@ -680,7 +674,7 @@ End Module
     public class BasicDoNotUseCountWhenAnyCanBeUsedTestsQueryable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseCountWhenAnyCanBeUsedTestsQueryable(ITestOutputHelper output)
+        public BasicDoNotUseCountWhenAnyCanBeUsedTestsQueryable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
@@ -688,8 +682,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
     }
@@ -697,7 +690,7 @@ End Module
     public class BasicDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable(ITestOutputHelper output)
+        public BasicDoNotUseLongCountWhenAnyCanBeUsedTestsQueryable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "LongCount",
@@ -705,8 +698,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         {
         }
     }
@@ -714,7 +706,7 @@ End Module
     public class CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions(ITestOutputHelper output)
+        public CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -722,8 +714,7 @@ End Module
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
 
@@ -835,7 +826,7 @@ namespace System.Data.Entity
     public class CSharpDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public CSharpDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions(ITestOutputHelper output)
+        public CSharpDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "LongCount",
@@ -843,8 +834,7 @@ namespace System.Data.Entity
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
 
@@ -956,7 +946,7 @@ namespace System.Data.Entity
     public class BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions
             : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions(ITestOutputHelper output)
+        public BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
@@ -964,8 +954,7 @@ namespace System.Data.Entity
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
 
@@ -1091,7 +1080,7 @@ End Namespace
     public class BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions(ITestOutputHelper output)
+        public BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsQueryableExtensions()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "LongCount",
@@ -1099,8 +1088,7 @@ End Namespace
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
 
@@ -1226,7 +1214,7 @@ End Namespace
     public class CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        public CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions(ITestOutputHelper output)
+        public CSharpDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -1234,8 +1222,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
     }
@@ -1243,7 +1230,7 @@ End Namespace
     public class BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions(ITestOutputHelper output)
+        public BasicDoNotUseCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
@@ -1251,8 +1238,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         {
         }
     }
@@ -1260,7 +1246,7 @@ End Namespace
     public class BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions
         : DoNotUseCountWhenAnyCanBeUsedTests
     {
-        public BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions(ITestOutputHelper output)
+        public BasicDoNotUseLongCountAsyncWhenAnyAsyncCanBeUsedTestsEFCoreQueryableExtensions()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "LongCount",
@@ -1268,8 +1254,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1828))
         { }
     }
 
@@ -1278,8 +1263,8 @@ End Namespace
     public abstract class DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
     {
-        protected DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier, ITestOutputHelper output)
-            : base(sourceProvider, verifier, output) { }
+        protected DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests(TestsSourceCodeProvider sourceProvider, VerifierBase verifier)
+            : base(sourceProvider, verifier) { }
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters
         [Fact]
         public Task CountEqualsNonZero_NoDiagnostic()
@@ -1473,7 +1458,7 @@ End Namespace
     public class CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Concurrent
         : DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests
     {
-        public CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Concurrent(ITestOutputHelper output)
+        public CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Concurrent()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -1481,15 +1466,14 @@ End Namespace
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         { }
     }
 
     public class CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable
         : DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests
     {
-        public CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable(ITestOutputHelper output)
+        public CSharpDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable()
             : base(
                   new CSharpTestsSourceCodeProvider(
                       "Count",
@@ -1497,15 +1481,14 @@ End Namespace
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new CSharpVerifier<UseCountProperlyAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         { }
     }
 
     public class BasicDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable
         : DoNotUseCountAsyncWhenAnyCanBeUsedOverlapTests
     {
-        public BasicDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable(ITestOutputHelper output)
+        public BasicDoNotUseCountWhenAnyCanBeUsedOverlapTests_Immutable()
             : base(
                   new BasicTestsSourceCodeProvider(
                       "Count",
@@ -1513,8 +1496,7 @@ End Namespace
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827),
-                  output)
+                  new BasicVerifier<UseCountProperlyAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(UseCountProperlyAnalyzer.CA1827))
         { }
     }
 }

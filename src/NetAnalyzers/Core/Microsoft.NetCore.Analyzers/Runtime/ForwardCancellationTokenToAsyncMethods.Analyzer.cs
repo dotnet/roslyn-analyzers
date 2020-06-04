@@ -27,7 +27,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
     ///     - The invocation method only has overloads that receive more than one ct.
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public abstract class ForwardCancellationTokenToAsyncMethodsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2016";

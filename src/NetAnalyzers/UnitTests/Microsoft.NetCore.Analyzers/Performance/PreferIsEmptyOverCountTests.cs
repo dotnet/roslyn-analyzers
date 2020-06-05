@@ -229,6 +229,28 @@ public class Test
 }}");
 
         [Theory]
+        [InlineData("(uint)Count > 0", true)]
+        [InlineData("(uint)Count == 0", false)]
+        [InlineData("((uint)Count).Equals(0)", false)]
+        [InlineData("0.Equals((uint)Count)", false)]
+        public Task CSharpTestCastExpression(string expression, bool negate)
+            => VerifyCS.VerifyCodeFixAsync(
+                string.Format(CultureInfo.InvariantCulture, csSnippet, expression),
+                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(10, 34),
+                string.Format(CultureInfo.InvariantCulture, csSnippet, $"{(negate ? "!" : "")}IsEmpty"));
+
+        [Theory]
+        [InlineData("CType(Count, UInteger) > 0", true)]
+        [InlineData("CType(Count, UInteger) = 0", false)]
+        [InlineData("CType(Count, UInteger).Equals(0)", false)]
+        [InlineData("0.Equals(CType(Count, UInteger))", false)]
+        public Task BasicTestCastExpression(string expression, bool negate)
+            => VerifyVB.VerifyCodeFixAsync(
+                string.Format(CultureInfo.InvariantCulture, vbSnippet, expression),
+                VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(11, 20),
+                string.Format(CultureInfo.InvariantCulture, vbSnippet, $"{(negate ? "Not " : "")}IsEmpty"));
+
+        [Theory]
         [InlineData("array.Length > 0", true)]
         [InlineData("(array.Length) > 0", true)]
         [InlineData("array.Length > (0)", true)]

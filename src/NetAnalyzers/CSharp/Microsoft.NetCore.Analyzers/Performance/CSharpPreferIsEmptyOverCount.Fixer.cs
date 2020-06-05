@@ -52,10 +52,25 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             RoslynDebug.Assert(countNode != null);
 
-            while (countNode is ParenthesizedExpressionSyntax parenthesizedExpression)
+            bool isParenthesizedOrCastExpression;
+            do
             {
-                countNode = parenthesizedExpression.Expression;
+                isParenthesizedOrCastExpression = true;
+
+                switch (countNode)
+                {
+                    case ParenthesizedExpressionSyntax parenthesizedExpression:
+                        countNode = parenthesizedExpression.Expression;
+                        break;
+                    case CastExpressionSyntax castExpression:
+                        countNode = castExpression.Expression;
+                        break;
+                    default:
+                        isParenthesizedOrCastExpression = false;
+                        break;
+                }
             }
+            while (isParenthesizedOrCastExpression);
 
             if (countNode is InvocationExpressionSyntax invocationExpression3)
             {

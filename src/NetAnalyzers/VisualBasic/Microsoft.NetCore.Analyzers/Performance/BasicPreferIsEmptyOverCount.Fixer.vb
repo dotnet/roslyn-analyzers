@@ -52,9 +52,20 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             RoslynDebug.Assert(Not countNode Is Nothing)
 
-            While TypeOf countNode Is ParenthesizedExpressionSyntax
-                countNode = CType(countNode, ParenthesizedExpressionSyntax).Expression
-            End While
+            Dim isParenthesizedOrCastExpression As Boolean
+            Do
+                isParenthesizedOrCastExpression = True
+
+                If TypeOf countNode Is ParenthesizedExpressionSyntax Then
+                    countNode = CType(countNode, ParenthesizedExpressionSyntax).Expression
+
+                ElseIf TypeOf countNode Is CastExpressionSyntax Then
+                    countNode = CType(countNode, CastExpressionSyntax).Expression
+
+                Else
+                    isParenthesizedOrCastExpression = False
+                End If
+            Loop While isParenthesizedOrCastExpression
 
             Dim invocationExpression3 = TryCast(countNode, InvocationExpressionSyntax)
             If Not invocationExpression3 Is Nothing Then

@@ -1,19 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Testing.XUnit;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.CSharp.Analyzers.Performance;
 using Microsoft.NetCore.VisualBasic.Analyzers.Performance;
 using Xunit;
-using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UseCountProperlyAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Performance.CSharpPreferIsEmptyOverCountFixer>;
@@ -202,6 +196,74 @@ End Class
                  VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithSpan(11, 20, 11, 20 + condition.Length),
                  fix);
         }
+
+        [Theory]
+        [InlineData("array.Length > 0", true)]
+        [InlineData("(array.Length) > 0", true)]
+        [InlineData("array.Length > (0)", true)]
+        [InlineData("array.Count() == 0", false)]
+        [InlineData("(array.Count()) == 0", false)]
+        [InlineData("array.Count() == (0)", false)]
+        [InlineData("array.Length.Equals(0)", false)]
+        [InlineData("0.Equals(array.Length)", false)]
+        [InlineData("array.Count().Equals(0)", false)]
+        [InlineData("0.Equals(array.Count())", false)]
+        public Task CSharpTestExpressionAsArgument(string expression, bool negate)
+            => VerifyCS.VerifyCodeFixAsync(
+    $@"using System;
+using System.Linq;
+
+public class Test
+{{
+    public static void TakeBool(bool isEmpty) {{ }}
+    public static void M(System.Collections.Immutable.ImmutableArray<int> array) => TakeBool({expression});
+}}",
+                VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(7, 94),
+    $@"using System;
+using System.Linq;
+
+public class Test
+{{
+    public static void TakeBool(bool isEmpty) {{ }}
+    public static void M(System.Collections.Immutable.ImmutableArray<int> array) => TakeBool({(negate ? "!" : "")}array.IsEmpty);
+}}");
+
+        [Theory]
+        [InlineData("array.Length > 0", true)]
+        [InlineData("(array.Length) > 0", true)]
+        [InlineData("array.Length > (0)", true)]
+        [InlineData("array.Count() = 0", false)]
+        [InlineData("(array.Count()) = 0", false)]
+        [InlineData("array.Count() = (0)", false)]
+        [InlineData("array.Length.Equals(0)", false)]
+        [InlineData("0.Equals(array.Length)", false)]
+        [InlineData("array.Count().Equals(0)", false)]
+        [InlineData("0.Equals(array.Count())", false)]
+        public Task BasicTestExpressionAsArgument(string expression, bool negate)
+            => VerifyVB.VerifyCodeFixAsync(
+    $@"Imports System
+Imports System.Linq
+
+Public Class Test
+    Public Shared Sub TakeBool(ByVal isEmpty As Boolean)
+    End Sub
+
+    Public Shared Sub M(ByVal array As System.Collections.Immutable.ImmutableArray(Of Integer))
+        TakeBool({expression})
+    End Sub
+End Class",
+                VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(9, 18),
+    $@"Imports System
+Imports System.Linq
+
+Public Class Test
+    Public Shared Sub TakeBool(ByVal isEmpty As Boolean)
+    End Sub
+
+    Public Shared Sub M(ByVal array As System.Collections.Immutable.ImmutableArray(Of Integer))
+        TakeBool({(negate ? "Not " : "")}array.IsEmpty)
+    End Sub
+End Class");
     }
 
     public abstract class PreferIsEmptyOverCountTestsBase

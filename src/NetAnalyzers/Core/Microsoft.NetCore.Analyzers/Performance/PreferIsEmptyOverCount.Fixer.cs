@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode node = root.FindNode(context.Span);
+            SyntaxNode node = root.FindNode(context.Span, getInnermostNodeForTie: true);
             if (node == null)
             {
                 return;

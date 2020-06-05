@@ -1,24 +1,25 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToAsyncMethodsAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToAsyncMethodsFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToInvocationsAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToInvocationsFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToAsyncMethodsAnalyzer,
-    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToAsyncMethodsFixer>;
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToInvocationsAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicForwardCancellationTokenToInvocationsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class ForwardCancellationTokenToAsyncMethodsTests
+    public class ForwardCancellationTokenToInvocationsTests
     {
         #region No Diagnostic - C#
 
         [Fact]
-        public Task CS_NoDiagnostic_NoParentToken_NoToken()
+        public Task CS_NoDiagnostic_NoParentToken_AsyncNoToken()
         {
             return VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -30,6 +31,21 @@ class C
         await MethodAsync();
     }
     Task MethodAsync() => Task.CompletedTask;
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_NoParentToken_SyncNoToken()
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@"
+class C
+{
+    void M()
+    {
+        MyMethod();
+    }
+    void MyMethod() {}
 }
             ");
         }
@@ -266,6 +282,37 @@ class C
             ");
         }
 
+        [Fact]
+        public Task CS_NoDiagnostic_ExtensionMethodTakesToken()
+        {
+            // The extension method is in another class
+            string originalCode = @"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public static void MyMethod(this MyClass mc, CancellationToken c)
+    {
+    }
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        MyClass mc = new MyClass();
+        mc.MyMethod();
+    }
+}
+public class MyClass
+{
+    public void MyMethod()
+    {
+    }
+}
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with no fix = C#
@@ -293,35 +340,62 @@ class C
             return VerifyCS.VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task CS_AnalyzerOnlyDiagnostic_CancellationTokenSource()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            When no ct is passed, because the overload that takes one instance is not setting a default value, then the analyzer considers it the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+
+            In C#, the invocation for a static method includes the type and the dot
+            */
+            string originalCode = @"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CancellationTokenSource cts = [|CancellationTokenSource.CreateLinkedTokenSource|]();
+    }
+}
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
-        #region Diagnostics with Fix = C#
+        #region Diagnostics with fix = C#
 
         [Fact]
         public Task CS_Diagnostic_Class_TokenDefault()
         {
             string originalCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    async void M(CancellationToken ct)
+    void M(CancellationToken ct)
     {
-        await [|MethodAsync|]();
+        [|MyMethod|]();
     }
-    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+    int MyMethod(CancellationToken c = default) => 1;
 }
             ";
             string fixedCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    async void M(CancellationToken ct)
+    void M(CancellationToken ct)
     {
-        await MethodAsync(ct);
+        MyMethod(ct);
     }
-    Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+    int MyMethod(CancellationToken c = default) => 1;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -482,34 +556,32 @@ class C
         {
             string originalCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    async void M(CancellationToken ct)
+    void M(CancellationToken ct)
     {
         O o = new O();
-        await [|o.MethodAsync|]();
+        [|o.MyMethod|]();
     }
 }
 class O
 {
-    public Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+    public int MyMethod(CancellationToken c = default) => 1;
 }
             ";
             string fixedCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    async void M(CancellationToken ct)
+    void M(CancellationToken ct)
     {
         O o = new O();
-        await o.MethodAsync(ct);
+        o.MyMethod(ct);
     }
 }
 class O
 {
-    public Task MethodAsync(CancellationToken c = default) => Task.CompletedTask;
+    public int MyMethod(CancellationToken c = default) => 1;
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -558,6 +630,7 @@ class O
         [Fact]
         public Task CS_Diagnostic_OtherClassStaticMethod_TokenDefault()
         {
+            // The invocation for a static method includes the type and the dot
             string originalCode = @"
 using System.Threading;
 using System.Threading.Tasks;
@@ -594,6 +667,7 @@ class O
         [Fact]
         public Task CS_Diagnostic_OtherClassStaticMethod_TokenDefault_WithConfigureAwait()
         {
+            // The invocation for a static method includes the type and the dot
             string originalCode = @"
 using System.Threading;
 using System.Threading.Tasks;
@@ -1652,27 +1726,169 @@ class C
         {
             string originalCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    Task M(CancellationToken ct)
+    int M(CancellationToken ct)
     {
-        return [|MethodAsync|](z: ""Hello world"", x: 5, y: true);
+        return [|MyMethod|](z: ""Hello world"", x: 5, y: true);
     }
-    Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
+    int MyMethod(int x, bool y = default, string z = """", CancellationToken c = default) => 1;
 }
             ";
             // Notice the parameters do NOT get reordered to their official position
             string fixedCode = @"
 using System.Threading;
-using System.Threading.Tasks;
 class C
 {
-    Task M(CancellationToken ct)
+    int M(CancellationToken ct)
     {
-        return MethodAsync(z: ""Hello world"", x: 5, y: true, c: ct);
+        return MyMethod(z: ""Hello world"", x: 5, y: true, c: ct);
     }
-    Task MethodAsync(int x, bool y = default, string z = """", CancellationToken c = default) => Task.CompletedTask;
+    int MyMethod(int x, bool y = default, string z = """", CancellationToken c = default) => 1;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_WithLock()
+        {
+            string originalCode = @"
+using System.Threading;
+class C
+{
+    private readonly object lockingObject = new object();
+    int M (CancellationToken ct)
+    {
+        int x;
+        lock (lockingObject)
+        {
+            x = [|MyMethod|](5);
+        }
+        return x;
+    }
+    int MyMethod(int x, CancellationToken c = default) => 1;
+}
+            ";
+            string fixedCode = @"
+using System.Threading;
+class C
+{
+    private readonly object lockingObject = new object();
+    int M (CancellationToken ct)
+    {
+        int x;
+        lock (lockingObject)
+        {
+            x = MyMethod(5, ct);
+        }
+        return x;
+    }
+    int MyMethod(int x, CancellationToken c = default) => 1;
+}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_DereferencePossibleNullReference()
+        {
+            string originalCode = @"
+#nullable enable
+using System.Threading;
+class C
+{
+    O? PossiblyNull()
+    {
+        return null;
+    }
+    void M(CancellationToken ct)
+    {
+        O? o = PossiblyNull();
+        o?.[|MyMethod|]();
+    }
+}
+class O
+{
+    public int MyMethod(CancellationToken c = default) => 1;
+}
+            ";
+            string fixedCode = @"
+#nullable enable
+using System.Threading;
+class C
+{
+    O? PossiblyNull()
+    {
+        return null;
+    }
+    void M(CancellationToken ct)
+    {
+        O? o = PossiblyNull();
+        o?.MyMethod(ct);
+    }
+}
+class O
+{
+    public int MyMethod(CancellationToken c = default) => 1;
+}
+            ";
+            // Nullability is available in C# 8.0+
+            return CSharp8VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_LambdaAndExtensionMethod()
+        {
+            // In C#, the invocation for a static method includes the type and the dot
+            string originalCode = @"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public static void Extension(this bool b, Action<int> action)
+    {
+    }
+    public static void MyMethod(this int i, CancellationToken c = default)
+    {
+    }
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        bool b = false;
+        b.Extension((j) =>
+        {
+            Console.WriteLine(""Hello world"");
+            [|j.MyMethod|]();
+        });
+    }
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public static void Extension(this bool b, Action<int> action)
+    {
+    }
+    public static void MyMethod(this int i, CancellationToken c = default)
+    {
+    }
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        bool b = false;
+        b.Extension((j) =>
+        {
+            Console.WriteLine(""Hello world"");
+            j.MyMethod(ct);
+        });
+    }
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -1683,7 +1899,7 @@ class C
         #region No Diagnostic - VB
 
         [Fact]
-        public Task VB_NoDiagnostic_NoParentToken_NoToken()
+        public Task VB_NoDiagnostic_NoParentToken_AsyncNoToken()
         {
             return VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading
@@ -1695,6 +1911,20 @@ Class C
     Private Function MethodAsync() As Task
         Return Task.CompletedTask
     End Function
+End Class
+            ");
+        }
+
+        [Fact]
+        public Task VB_NoDiagnostic_NoParentToken_SyncNoToken()
+        {
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Class C
+    Private Sub M()
+        MyMethod()
+    End Sub
+    Private Sub MyMethod()
+    End Sub
 End Class
             ");
         }
@@ -1934,6 +2164,33 @@ End Class
             ");
         }
 
+        [Fact]
+        public Task VB_NoDiagnostic_LambdaAndExtensionMethod()
+        {
+            // The extension method is in another class
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Runtime.CompilerServices
+Module Extensions
+    <Extension()>
+    Sub MyMethod(ByVal mc As [MyClass], ByVal c As CancellationToken)
+    End Sub
+End Module
+Class C
+    Public Sub M(ByVal ct As CancellationToken)
+        Dim mc As [MyClass] = New [MyClass]()
+        c.MyMethod()
+    End Sub
+End Class
+Public Class [MyClass]
+    Public Sub MyMethod()
+    End Sub
+End Class
+            ";
+            return VerifyVB.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with no fix = VB
@@ -1964,6 +2221,34 @@ End Class
             return VerifyVB.VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task VB_AnalyzerOnlyDiagnostic_CancellationTokenSource()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            When no ct is passed, because the overload that takes one instance is not setting a default value, then the analyzer considers it the `params`.
+            No fix provided.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+
+            Note: Unlinke C#, in VB the invocation for a static method does not include the type and the dot.
+            */
+            string originalCode = @"
+Imports System.Threading
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim cts As CancellationTokenSource = CancellationTokenSource.[|CreateLinkedTokenSource|]()
+    End Sub
+End Class
+            ";
+            return VerifyVB.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with fix = VB
@@ -1973,25 +2258,23 @@ End Class
         {
             string originalCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|MethodAsync|]()
+    Private Sub M(ByVal ct As CancellationToken)
+        [|MyMethod|]()
     End Sub
-    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Private Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
             string fixedCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
-        Await MethodAsync(ct)
+    Private Sub M(ByVal ct As CancellationToken)
+        MyMethod(ct)
     End Sub
-    Private Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Private Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
@@ -2155,31 +2438,29 @@ End Class
         {
             string originalCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
+    Private Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync|]()
+        o.[|MyMethod|]()
     End Sub
 End Class
 Class O
-    Public Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Public Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
             string fixedCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Async Sub M(ByVal ct As CancellationToken)
+    Private Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await o.MethodAsync(ct)
+        o.MyMethod(ct)
     End Sub
 End Class
 Class O
-    Public Function MethodAsync(ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Public Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
@@ -2195,7 +2476,7 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync|]()
+        Await o.[|MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2236,7 +2517,7 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
-        Await [|O.MethodAsync|]()
+        Await O.[|MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -2271,7 +2552,7 @@ Imports System.Threading.Tasks
 Class C
     Private Async Sub M(ByVal ct As CancellationToken)
         Dim o As O = New O()
-        Await [|o.MethodAsync|]()
+        Await o.[|MethodAsync|]()
     End Sub
 End Class
 Class O
@@ -3245,30 +3526,137 @@ End Class
         {
             string originalCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Function M(ByVal ct As CancellationToken) As Task
-        Return [|MethodAsync|](z:=""Hello world"", x:=5, y:=true)
+    Private Function M(ByVal ct As CancellationToken) As Integer
+        Return [|MyMethod|](z:=""Hello world"", x:=5, y:=true)
     End Function
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Private Function MyMethod(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
             // Notice the parameters get reordered to their official position
             string fixedCode = @"
 Imports System.Threading
-Imports System.Threading.Tasks
 Class C
-    Private Function M(ByVal ct As CancellationToken) As Task
-        Return MethodAsync(x:=5, y:=true, z:=""Hello world"", c:=ct)
+    Private Function M(ByVal ct As CancellationToken) As Integer
+        Return MyMethod(x:=5, y:=true, z:=""Hello world"", c:=ct)
     End Function
-    Private Function MethodAsync(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Task
-        Return Task.CompletedTask
+    Private Function MyMethod(ByVal x As Integer, ByVal Optional y As Boolean = false, ByVal Optional z As String = """", ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
     End Function
 End Class
             ";
             return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_WithLock()
+        {
+            string originalCode = @"
+Imports System.Threading
+Class C
+    Private ReadOnly lockingObject As Object = New Object()
+    Private Function M(ByVal ct As CancellationToken) As Integer
+        Dim x As Integer
+        SyncLock lockingObject
+            x = [|MyMethod|](5)
+        End SyncLock
+        Return x
+    End Function
+    Private Function MyMethod(ByVal x As Integer, ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
+    End Function
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Class C
+    Private ReadOnly lockingObject As Object = New Object()
+    Private Function M(ByVal ct As CancellationToken) As Integer
+        Dim x As Integer
+        SyncLock lockingObject
+            x = MyMethod(5, ct)
+        End SyncLock
+        Return x
+    End Function
+    Private Function MyMethod(ByVal x As Integer, ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
+    End Function
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_DereferencePossibleNullReference()
+        {
+            string originalCode = @"
+Imports System.Threading
+Class C
+    Private Function PossiblyNull() As O?
+        Return Nothing
+    End Function
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim o As O? = PossiblyNull()
+        o?.[|MyMethod|]()
+    End Sub
+End Class
+Structure O
+    Public Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
+    End Function
+End Structure
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Class C
+    Private Function PossiblyNull() As O?
+        Return Nothing
+    End Function
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim o As O? = PossiblyNull()
+        o?.MyMethod(ct)
+    End Sub
+End Class
+Structure O
+    Public Function MyMethod(ByVal Optional c As CancellationToken = Nothing) As Integer
+        Return 1
+    End Function
+End Structure
+            ";
+            // Nullability is available in C# 8.0+
+            return VB16VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private static async Task VB16VerifyCodeFixAsync(string originalCode, string fixedCode)
+        {
+            var test = new VerifyVB.Test
+            {
+                TestCode = originalCode,
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16,
+                FixedCode = fixedCode
+            };
+
+            test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);
+            await test.RunAsync();
+        }
+
+        private static async Task CSharp8VerifyCodeFixAsync(string originalCode, string fixedCode)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = originalCode,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                FixedCode = fixedCode
+            };
+
+            test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);
+            await test.RunAsync();
         }
 
         #endregion

@@ -1,5 +1,7 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports System.Diagnostics.CodeAnalysis
+Imports System.Threading
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Operations
@@ -9,11 +11,29 @@ Imports Microsoft.NetCore.Analyzers.Runtime
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
     <ExportCodeFixProvider(LanguageNames.VisualBasic)>
-    Public NotInheritable Class BasicForwardCancellationTokenToAsyncMethodsFixer
+    Public NotInheritable Class BasicForwardCancellationTokenToInvocationsFixer
 
-        Inherits ForwardCancellationTokenToAsyncMethodsFixer
+        Inherits ForwardCancellationTokenToInvocationsFixer
 
-        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(node As SyntaxNode, ByRef parameterName As String) As Boolean
+        Protected Overrides Function TryGetInvocation(model As SemanticModel, node As SyntaxNode, ct As CancellationToken, <NotNullWhen(True)> ByRef invocation As IInvocationOperation) As Boolean
+
+            Dim operation As IOperation
+
+            Dim parentSyntax As MemberAccessExpressionSyntax = TryCast(node.Parent, MemberAccessExpressionSyntax)
+
+            If parentSyntax IsNot Nothing Then
+                operation = model.GetOperation(node.Parent.Parent, ct)
+            Else
+                operation = model.GetOperation(node.Parent, ct)
+            End If
+
+            invocation = TryCast(operation, IInvocationOperation)
+
+            Return invocation IsNot Nothing
+
+        End Function
+
+        Protected Overrides Function TryGetAncestorDeclarationCancellationTokenParameterName(node As SyntaxNode, <NotNullWhen(True)> ByRef parameterName As String) As Boolean
 
             parameterName = Nothing
 
@@ -53,8 +73,17 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Return argument IsNot Nothing AndAlso argument.NameColonEquals IsNot Nothing
         End Function
 
+        Protected Overrides Function GetConditionalOperationInvocationExpression(invocationNode As SyntaxNode) As SyntaxNode
+
+            Dim invocationExpression As InvocationExpressionSyntax = CType(invocationNode, InvocationExpressionSyntax)
+            Return invocationExpression.Expression
+
+        End Function
+
         Private Shared Function GetCancellationTokenName(parameters As IEnumerable(Of ParameterSyntax)) As String
-            Return parameters.Last()?.Identifier.Identifier.ValueText
+            Dim lastParameter As ParameterSyntax = parameters.Last()
+
+            Return lastParameter?.Identifier.Identifier.ValueText
         End Function
 
     End Class

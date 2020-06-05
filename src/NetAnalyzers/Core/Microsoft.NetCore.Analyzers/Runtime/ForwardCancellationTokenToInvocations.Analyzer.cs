@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2016: Forward CancellationToken to async methods.
+    /// CA2016: Forward CancellationToken to invocations.
     /// 
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
@@ -27,30 +27,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
     ///     - The invocation method only has overloads that receive more than one ct.
     /// </summary>
-    public abstract class ForwardCancellationTokenToAsyncMethodsAnalyzer : DiagnosticAnalyzer
+    public abstract class ForwardCancellationTokenToInvocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2016";
 
         protected abstract SyntaxNode? GetMethodNameNode(SyntaxNode invocationNode);
 
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsDescription),
+            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsDescription),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources)
         );
 
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsMessage),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources)
         );
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle),
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources)
         );
-        internal static DiagnosticDescriptor ForwardCancellationTokenToAsyncMethodsRule = DiagnosticDescriptorHelper.Create(
+        internal static DiagnosticDescriptor ForwardCancellationTokenToInvocationsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             s_localizableMessage,
@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         );
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(ForwardCancellationTokenToAsyncMethodsRule);
+            ImmutableArray.Create(ForwardCancellationTokenToInvocationsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -73,6 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
         {
+
             if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken, out INamedTypeSymbol? cancellationTokenType))
             {
                 return;
@@ -100,12 +101,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 SyntaxNode? expressionNode = GetMethodNameNode(context.Operation.Syntax);
                 if (expressionNode != null)
                 {
-                    context.ReportDiagnostic(expressionNode.CreateDiagnostic(ForwardCancellationTokenToAsyncMethodsRule, cancellationTokenParameterName, invocation.TargetMethod.Name));
+                    context.ReportDiagnostic(expressionNode.CreateDiagnostic(ForwardCancellationTokenToInvocationsRule, cancellationTokenParameterName, invocation.TargetMethod.Name));
                 }
             },
             OperationKind.Invocation);
         }
 
+        // Determines if an invocation should trigger a diagnostic for this rule or not.
         private static bool ShouldAnalyze(
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
@@ -116,8 +118,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             IMethodSymbol method = invocation.TargetMethod;
 
-            // Check if the invocation has an optional implicit ct or an overload that takes one ct
-            if (!InvocationIgnoresOptionalCancellationToken(invocation, cancellationTokenType) &&
+            // Check if the invocation's method has either an optional implicit ct or a params ct parameter, as well as an overload that takes one ct
+            if (!InvocationHasCancellationTokenArgument(method, invocation.Arguments, cancellationTokenType) &&
                 !MethodHasCancellationTokenOverload(method, cancellationTokenType))
             {
                 return false;
@@ -151,23 +153,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
+        // Checks if the invocation has an optional ct argument at the end or a params ct array at the end.
+        private static bool InvocationHasCancellationTokenArgument(IMethodSymbol method, ImmutableArray<IArgumentOperation> arguments, INamedTypeSymbol cancellationTokenType)
+        {
+            return
+                !method.Parameters.IsEmpty &&
+                method.Parameters[method.Parameters.Length - 1] is IParameterSymbol lastParameter &&
+                (InvocationIgnoresOptionalCancellationToken(lastParameter, arguments, cancellationTokenType) ||
+                InvocationIsUsingParamsCancellationToken(lastParameter, cancellationTokenType));
+        }
+
         // Check if the currently used overload is the one that takes the ct, but is utilizing the default value offered in the method signature.
         // We want to offer a diagnostic for this case, so the user explicitly passes the ancestor's ct.
-        private static bool InvocationIgnoresOptionalCancellationToken(IInvocationOperation invocation, INamedTypeSymbol cancellationTokenType)
+        private static bool InvocationIgnoresOptionalCancellationToken(IParameterSymbol lastParameter, ImmutableArray<IArgumentOperation> arguments, INamedTypeSymbol cancellationTokenType)
         {
-            IMethodSymbol method = invocation.TargetMethod;
-            if (method.Parameters.Length != 0 &&
-                method.Parameters[method.Parameters.Length - 1] is IParameterSymbol lastParameter &&
-                lastParameter.Type.Equals(cancellationTokenType) &&
+            if (lastParameter.Type.Equals(cancellationTokenType) &&
                 lastParameter.IsOptional) // Has a default value being used
             {
                 // Find out if the ct argument is using the default value
-                return invocation.Arguments.Any(x =>
+                return arguments.Any(x =>
                     x.Parameter.Type.Equals(cancellationTokenType) &&
                     x.ArgumentKind == ArgumentKind.DefaultValue); // The default value is being used
             }
 
             return false;
+        }
+
+        // Checks if the method has a `params CancellationToken[]` argument in the last position.
+        private static bool InvocationIsUsingParamsCancellationToken(IParameterSymbol lastParameter, INamedTypeSymbol cancellationTokenType)
+        {
+            return lastParameter.IsParams &&
+                   lastParameter.Type.Kind == SymbolKind.ArrayType &&
+                   lastParameter.Type is IArrayTypeSymbol arrayTypeSymbol &&
+                   arrayTypeSymbol.ElementType.Equals(cancellationTokenType);
         }
 
         // Check if there's a method overload with the same parameters as this one, in the same order, plus a ct at the end.

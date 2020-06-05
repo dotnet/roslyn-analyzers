@@ -8,15 +8,26 @@ Imports Microsoft.NetCore.Analyzers.Runtime
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
-    Public NotInheritable Class BasicForwardCancellationTokenToAsyncMethodsAnalyzer
+    Public NotInheritable Class BasicForwardCancellationTokenToInvocationsAnalyzer
 
-        Inherits ForwardCancellationTokenToAsyncMethodsAnalyzer
+        Inherits ForwardCancellationTokenToInvocationsAnalyzer
 
         Protected Overrides Function GetMethodNameNode(invocationNode As SyntaxNode) As SyntaxNode
 
             Dim invocationExpression = TryCast(invocationNode, InvocationExpressionSyntax)
+
             If invocationExpression IsNot Nothing Then
+
+                Dim memberBindingExpression = TryCast(invocationExpression.Expression, MemberAccessExpressionSyntax)
+
+                If memberBindingExpression IsNot Nothing Then
+
+                    Return memberBindingExpression.Name
+
+                End If
+
                 Return invocationExpression.Expression
+
             End If
 
             Return Nothing

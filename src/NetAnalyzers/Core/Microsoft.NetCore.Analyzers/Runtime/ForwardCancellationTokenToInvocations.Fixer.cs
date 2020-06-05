@@ -15,18 +15,29 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    public abstract class ForwardCancellationTokenToAsyncMethodsFixer : CodeFixProvider
+    public abstract class ForwardCancellationTokenToInvocationsFixer : CodeFixProvider
     {
+        // Attempts to retrieve the invocation from the current operation.
+        protected abstract bool TryGetInvocation(
+            SemanticModel model,
+            SyntaxNode node,
+            CancellationToken ct,
+            [NotNullWhen(returnValue: true)] out IInvocationOperation? invocation);
+
         // Looks for a ct parameter in the ancestor method or function declaration. If one is found, retrieve the name of the parameter.
         // Returns true if a ct parameter was found and parameterName is not null or empty. Returns false otherwise.
         protected abstract bool TryGetAncestorDeclarationCancellationTokenParameterName(
             SyntaxNode node,
             [NotNullWhen(returnValue: true)] out string? parameterName);
 
+        // Verifies if the specified argument was passed with an explicit name.
         protected abstract bool IsArgumentNamed(IArgumentOperation argumentOperation);
 
+        // Retrieves the invocation expression for a conditional operation, which consists of the dot and the method name.
+        protected abstract SyntaxNode GetConditionalOperationInvocationExpression(SyntaxNode invocationNode);
+
         public override ImmutableArray<string> FixableDiagnosticIds =>
-            ImmutableArray.Create(ForwardCancellationTokenToAsyncMethodsAnalyzer.RuleId);
+            ImmutableArray.Create(ForwardCancellationTokenToInvocationsAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
@@ -45,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SemanticModel model = await doc.GetSemanticModelAsync(ct).ConfigureAwait(false);
 
             // The analyzer created the diagnostic on the IdentifierNameSyntax, and the parent is the actual invocation
-            if (!(model.GetOperation(node.Parent, ct) is IInvocationOperation invocation))
+            if (!TryGetInvocation(model, node, ct, out IInvocationOperation? invocation))
             {
                 return;
             }
@@ -55,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToAsyncMethodsTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle;
 
             if (!TryGenerateNewDocumentRoot(doc, root, invocation, parameterName, out SyntaxNode? newRoot))
             {
@@ -152,6 +163,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 SyntaxNode staticType = generator.TypeExpressionForStaticMemberAccess(invocation.TargetMethod.ContainingType);
                 newInvocation = generator.MemberAccessExpression(staticType, invocation.TargetMethod.Name);
+            }
+            // The method is being invoked with nullability
+            else if (invocation.Instance is IConditionalAccessInstanceOperation)
+            {
+                newInvocation = GetConditionalOperationInvocationExpression(invocation.Syntax);
             }
             // The instance is implicit when calling a method from the same type, call the method directly
             else if (invocation.Instance.IsImplicit)

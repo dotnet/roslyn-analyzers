@@ -877,17 +877,17 @@
         <target state="translated">终结器应调用基类的终结器</target>
         <note />
       </trans-unit>
-      <trans-unit id="ForwardCancellationTokenToAsyncMethodsDescription">
+      <trans-unit id="ForwardCancellationTokenToInvocationsDescription">
         <source>Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</source>
         <target state="new">Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ForwardCancellationTokenToAsyncMethodsMessage">
+      <trans-unit id="ForwardCancellationTokenToInvocationsMessage">
         <source>Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</source>
         <target state="new">Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ForwardCancellationTokenToAsyncMethodsTitle">
+      <trans-unit id="ForwardCancellationTokenToInvocationsTitle">
         <source>Forward the 'CancellationToken' parameter to methods that take one.</source>
         <target state="new">Forward the 'CancellationToken' parameter to methods that take one.</target>
         <note />

@@ -81,12 +81,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterOperationAction(context =>
             {
+                IInvocationOperation invocation = (IInvocationOperation)context.Operation;
+
                 if (!(context.ContainingSymbol is IMethodSymbol containingSymbol))
                 {
                     return;
                 }
-
-                IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
                 if (!ShouldAnalyze(
                     invocation,
@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Check if the ancestor method has a ct that we can pass to the invocation
-            if (!VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, containingSymbol, out cancellationTokenParameterName))
+            if (!VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(cancellationTokenType, GetContainingSymbol(invocation, containingSymbol), out cancellationTokenParameterName))
             {
                 return false;
             }
@@ -134,7 +134,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return true;
         }
 
-        // Check if the method only takes one ct and is the last parameter in the method signature.
+        // Try to find the most immediate containing symbol (anonymous or local function). If none is found, return the context containing symbol.
+        private static IMethodSymbol GetContainingSymbol(IInvocationOperation invocation, IMethodSymbol containingSymbol)
+        {
+            IOperation currentOperation = invocation.Parent;
+
+            while (currentOperation != null)
+            {
+                if (currentOperation.Kind == OperationKind.AnonymousFunction)
+                {
+                    return ((IAnonymousFunctionOperation)currentOperation).Symbol;
+                }
+                else if (currentOperation.Kind == OperationKind.LocalFunction)
+                {
+                    return ((ILocalFunctionOperation)currentOperation).Symbol;
+                }
+
+                currentOperation = currentOperation.Parent;
+            }
+
+            return containingSymbol;
+        }
+
+// Check if the method only takes one ct and is the last parameter in the method signature.
         // We want to compare the current method signature to any others with the exact same arguments in the exact same order.
         private static bool VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(
             INamedTypeSymbol cancellationTokenType,

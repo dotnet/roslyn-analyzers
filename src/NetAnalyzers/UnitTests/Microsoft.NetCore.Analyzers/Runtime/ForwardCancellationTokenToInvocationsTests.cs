@@ -313,6 +313,38 @@ public class MyClass
             return VerifyCS.VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task CS_NoDiagnostic_LambdaAndExtensionMethod()
+        {
+            // Avoid triggering a diagnostic if the immediate ancestor is an anonymous function and the parameter type is not ct
+            string originalCode = @"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public static void Extension(this bool b, Action<int> action)
+    {
+    }
+    public static void MyMethod(this int i, CancellationToken c = default)
+    {
+    }
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        bool b = false;
+        b.Extension((j) =>
+        {
+            Console.WriteLine(""Hello world"");
+            j.MyMethod();
+        });
+    }
+}
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with no fix = C#
@@ -1838,57 +1870,66 @@ class O
         }
 
         [Fact]
-        public Task CS_Diagnostic_LambdaAndExtensionMethod()
+        public Task CS_Diagnostic_WithTrivia()
         {
-            // In C#, the invocation for a static method includes the type and the dot
             string originalCode = @"
-using System;
 using System.Threading;
-public static class Extensions
-{
-    public static void Extension(this bool b, Action<int> action)
-    {
-    }
-    public static void MyMethod(this int i, CancellationToken c = default)
-    {
-    }
-}
+using System.Threading.Tasks;
 class C
 {
-    public void M(CancellationToken ct)
+    async void M(CancellationToken ct)
     {
-        bool b = false;
-        b.Extension((j) =>
-        {
-            Console.WriteLine(""Hello world"");
-            [|j.MyMethod|]();
-        });
+        await /* Prefix1 */ [|MethodDefaultAsync|]() /* Suffix1 */;
+        await /* Prefix2 */ [|MethodOverloadAsync|]() /* Suffix2 */;
+        await /* Prefix3 */ [|MethodOverloadWithArgumentsAsync|](5 /*ArgumentComment0 */) /* Suffix3 */;
+        /* Prefix4 */ [|MethodDefault|]() /* Suffix4 */;
+        /* Prefix5 */ [|MethodOverload|]() /* Suffix5 */;
+        /* Prefix6 */ [|MethodDefaultWithArguments|](5 /* ArgumentComment1 */) /* Suffix6 */;
+        /* Prefix7 */ [|MethodOverloadWithArguments|](5 /* ArgumentComment2 */) /* Suffix7 */;
+        /* Prefix8 */ MethodOverloadWithArguments(x: /*ArgumentComment3 */ 5 /* ArgumentComment4 */, ct) /* Suffix8 */;
+
     }
+    Task MethodDefaultAsync(CancellationToken c = default) => Task.CompletedTask;
+    Task MethodOverloadAsync() => Task.CompletedTask;
+    Task MethodOverloadAsync(CancellationToken c) => Task.CompletedTask;
+    Task MethodOverloadWithArgumentsAsync(int x) => Task.CompletedTask;
+    Task MethodOverloadWithArgumentsAsync(int x, CancellationToken c) => Task.CompletedTask;
+    void MethodDefault(CancellationToken c = default) {}
+    void MethodOverload() {}
+    void MethodOverload(CancellationToken c) {}
+    void MethodDefaultWithArguments(int x, CancellationToken c = default) {}
+    void MethodOverloadWithArguments(int x) {}
+    void MethodOverloadWithArguments(int x, CancellationToken c) {}
 }
             ";
             string fixedCode = @"
-using System;
 using System.Threading;
-public static class Extensions
-{
-    public static void Extension(this bool b, Action<int> action)
-    {
-    }
-    public static void MyMethod(this int i, CancellationToken c = default)
-    {
-    }
-}
+using System.Threading.Tasks;
 class C
 {
-    public void M(CancellationToken ct)
+    async void M(CancellationToken ct)
     {
-        bool b = false;
-        b.Extension((j) =>
-        {
-            Console.WriteLine(""Hello world"");
-            j.MyMethod(ct);
-        });
+        await /* Prefix1 */ MethodDefaultAsync(ct) /* Suffix1 */;
+        await /* Prefix2 */ MethodOverloadAsync(ct) /* Suffix2 */;
+        await /* Prefix3 */ MethodOverloadWithArgumentsAsync(5 /*ArgumentComment0 */, ct) /* Suffix3 */;
+        /* Prefix4 */ MethodDefault(ct) /* Suffix4 */;
+        /* Prefix5 */ MethodOverload(ct) /* Suffix5 */;
+        /* Prefix6 */ MethodDefaultWithArguments(5 /* ArgumentComment1 */, ct) /* Suffix6 */;
+        /* Prefix7 */ MethodOverloadWithArguments(5 /* ArgumentComment2 */, ct) /* Suffix7 */;
+        /* Prefix8 */ MethodOverloadWithArguments(x: /*ArgumentComment3 */ 5 /* ArgumentComment4 */, ct) /* Suffix8 */;
+
     }
+    Task MethodDefaultAsync(CancellationToken c = default) => Task.CompletedTask;
+    Task MethodOverloadAsync() => Task.CompletedTask;
+    Task MethodOverloadAsync(CancellationToken c) => Task.CompletedTask;
+    Task MethodOverloadWithArgumentsAsync(int x) => Task.CompletedTask;
+    Task MethodOverloadWithArgumentsAsync(int x, CancellationToken c) => Task.CompletedTask;
+    void MethodDefault(CancellationToken c = default) {}
+    void MethodOverload() {}
+    void MethodOverload(CancellationToken c) {}
+    void MethodDefaultWithArguments(int x, CancellationToken c = default) {}
+    void MethodOverloadWithArguments(int x) {}
+    void MethodOverloadWithArguments(int x, CancellationToken c) {}
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
@@ -2167,7 +2208,7 @@ End Class
         [Fact]
         public Task VB_NoDiagnostic_LambdaAndExtensionMethod()
         {
-            // The extension method is in another class
+            // Avoid triggering a diagnostic if the immediate ancestor is an anonymous function and the parameter type is not ct
             string originalCode = @"
 Imports System
 Imports System.Threading
@@ -2180,7 +2221,7 @@ End Module
 Class C
     Public Sub M(ByVal ct As CancellationToken)
         Dim mc As [MyClass] = New [MyClass]()
-        c.MyMethod()
+        mc.MyMethod()
     End Sub
 End Class
 Public Class [MyClass]
@@ -3627,6 +3668,96 @@ End Structure
             ";
             // Nullability is available in C# 8.0+
             return VB16VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task VB_Diagnostic_WithTrivia()
+        {
+            string originalCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await [|MethodDefaultAsync|]() ' InvocationComment1
+        Await [|MethodOverloadAsync|]() ' InvocationComment2
+        Await [|MethodOverloadWithArgumentsAsync|](5) ' InvocationComment3
+        [|MethodDefault|]() ' InvocationComment4
+        [|MethodOverload|]() ' InvocationComment5
+        [|MethodDefaultWithArguments|](5) ' InvocationComment6
+        [|MethodOverloadWithArguments|](5) ' InvocationComment7
+    End Sub
+    Private Function MethodDefaultAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadWithArgumentsAsync(ByVal x As Integer) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadWithArgumentsAsync(ByVal x As Integer, ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Sub MethodDefault(ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+    Private Sub MethodOverload()
+    End Sub
+    Private Sub MethodOverload(ByVal c As CancellationToken)
+    End Sub
+    Private Sub MethodDefaultWithArguments(ByVal x As Integer, ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+    Private Sub MethodOverloadWithArguments(ByVal x As Integer)
+    End Sub
+    Private Sub MethodOverloadWithArguments(ByVal x As Integer, ByVal c As CancellationToken)
+    End Sub
+End Class
+            ";
+            string fixedCode = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Class C
+    Private Async Sub M(ByVal ct As CancellationToken)
+        Await MethodDefaultAsync(ct) ' InvocationComment1
+        Await MethodOverloadAsync(ct) ' InvocationComment2
+        Await MethodOverloadWithArgumentsAsync(5, ct) ' InvocationComment3
+        MethodDefault(ct) ' InvocationComment4
+        MethodOverload(ct) ' InvocationComment5
+        MethodDefaultWithArguments(5, ct) ' InvocationComment6
+        MethodOverloadWithArguments(5, ct) ' InvocationComment7
+    End Sub
+    Private Function MethodDefaultAsync(ByVal Optional c As CancellationToken = Nothing) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadAsync() As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadAsync(ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadWithArgumentsAsync(ByVal x As Integer) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Function MethodOverloadWithArgumentsAsync(ByVal x As Integer, ByVal c As CancellationToken) As Task
+        Return Task.CompletedTask
+    End Function
+    Private Sub MethodDefault(ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+    Private Sub MethodOverload()
+    End Sub
+    Private Sub MethodOverload(ByVal c As CancellationToken)
+    End Sub
+    Private Sub MethodDefaultWithArguments(ByVal x As Integer, ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+    Private Sub MethodOverloadWithArguments(ByVal x As Integer)
+    End Sub
+    Private Sub MethodOverloadWithArguments(ByVal x As Integer, ByVal c As CancellationToken)
+    End Sub
+End Class
+            ";
+            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
         #endregion

@@ -180,12 +180,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 newInvocation = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
             }
             // Insert the new arguments to the new invocation
-            SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments);
+            SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments).WithTriviaFrom(invocation.Syntax);
 
             newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
 
             return true;
-
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 

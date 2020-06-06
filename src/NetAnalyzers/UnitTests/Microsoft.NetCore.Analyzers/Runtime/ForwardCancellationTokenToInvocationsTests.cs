@@ -299,37 +299,6 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_ExtensionMethodTakesToken()
-        {
-            // The extension method is in another class
-            string originalCode = @"
-using System;
-using System.Threading;
-public static class Extensions
-{
-    public static void MyMethod(this MyClass mc, CancellationToken c)
-    {
-    }
-}
-class C
-{
-    public void M(CancellationToken ct)
-    {
-        MyClass mc = new MyClass();
-        mc.MyMethod();
-    }
-}
-public class MyClass
-{
-    public void MyMethod()
-    {
-    }
-}
-            ";
-            return VerifyCS.VerifyAnalyzerAsync(originalCode);
-        }
-
-        [Fact]
         public Task CS_NoDiagnostic_LambdaAndExtensionMethod()
         {
             // Avoid triggering a diagnostic if the immediate ancestor is an anonymous function and the parameter type is not ct
@@ -507,6 +476,33 @@ class CTS
     public static void Method(CancellationToken token){}
 }
             ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_ExtensionMethodTakesToken()
+        {
+            // The extension method is in another class, make sure the object mc is not substituted with the static class name
+            string originalCode = @"
+using System;
+using System.Threading;
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        MyClass mc = new MyClass();
+        mc.MyMethod();
+    }
+}
+public class MyClass
+{
+    public void MyMethod() { }
+}
+public static class Extensions
+{
+    public static void MyMethod(this MyClass mc, CancellationToken c) { }
+}
+            ";
+            return CS8VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -2346,7 +2342,6 @@ End Class
             ");
         }
 
-
         [Fact]
         public Task VB_NoDiagnostic_NamedTokenUnordered()
         {
@@ -2434,6 +2429,33 @@ Class C
         Dim cts As CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct)
     End Sub
 End Class
+            ";
+            return VB16VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        public Task VB_NoDiagnostic_ExtensionMethodTakesToken()
+        {
+            // The extension method is in another class, make sure the object mc is not substituted with the static class name
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Runtime.CompilerServices
+Class C
+    Public Sub M(ByVal ct As CancellationToken)
+        Dim mc As [MyClass] = New [MyClass]()
+        mc.MyMethod()
+    End Sub
+End Class
+Public Class [MyClass]
+    Public Sub MyMethod()
+    End Sub
+End Class
+Module Extensions
+    <Extension()>
+    Sub MyMethod(ByVal mc As [MyClass], ByVal c As CancellationToken)
+    End Sub
+End Module
             ";
             return VB16VerifyAnalyzerAsync(originalCode);
         }

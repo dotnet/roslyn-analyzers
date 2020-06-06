@@ -156,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return containingSymbol;
         }
 
-// Check if the method only takes one ct and is the last parameter in the method signature.
+        // Check if the method only takes one ct and is the last parameter in the method signature.
         // We want to compare the current method signature to any others with the exact same arguments in the exact same order.
         private static bool VerifyAncestorOnlyHasOneCancellationTokenAsLastArgument(
             INamedTypeSymbol cancellationTokenType,

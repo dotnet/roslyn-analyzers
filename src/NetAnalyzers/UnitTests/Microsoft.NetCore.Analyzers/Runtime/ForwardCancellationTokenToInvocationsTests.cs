@@ -373,7 +373,7 @@ class C
         }
 
         [Fact]
-        public Task CS_AnalyzerOnlyDiagnostic_CancellationTokenSource()
+        public Task CS_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsEmpty()
         {
             /*
             CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
@@ -395,6 +395,35 @@ class C
     void M(CancellationToken ct)
     {
         CancellationTokenSource cts = [|CancellationTokenSource.CreateLinkedTokenSource|]();
+    }
+}
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        public Task CS_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsUsed()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+
+            In C#, the invocation for a static method includes the type and the dot
+            */
+            string originalCode = @"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
     }
 }
             ";
@@ -2263,7 +2292,7 @@ End Class
         }
 
         [Fact]
-        public Task VB_AnalyzerOnlyDiagnostic_CancellationTokenSource()
+        public Task VB_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsEmpty()
         {
             /*
             CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
@@ -2284,6 +2313,33 @@ Imports System.Threading
 Class C
     Private Sub M(ByVal ct As CancellationToken)
         Dim cts As CancellationTokenSource = CancellationTokenSource.[|CreateLinkedTokenSource|]()
+    End Sub
+End Class
+            ";
+            return VerifyVB.VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        public Task VB_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsUsed()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+
+            Note: Unlinke C#, in VB the invocation for a static method does not include the type and the dot.
+            */
+            string originalCode = @"
+Imports System.Threading
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim cts As CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct)
     End Sub
 End Class
             ";

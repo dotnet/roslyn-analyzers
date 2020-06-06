@@ -88,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (!ShouldAnalyze(
+                if (!ShouldDiagnose(
                     invocation,
                     containingSymbol,
                     cancellationTokenType,
@@ -108,7 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         // Determines if an invocation should trigger a diagnostic for this rule or not.
-        private static bool ShouldAnalyze(
+        private static bool ShouldDiagnose(
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
@@ -182,7 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 !method.Parameters.IsEmpty &&
                 method.Parameters[method.Parameters.Length - 1] is IParameterSymbol lastParameter &&
                 (InvocationIgnoresOptionalCancellationToken(lastParameter, arguments, cancellationTokenType) ||
-                InvocationIsUsingParamsCancellationToken(lastParameter, cancellationTokenType));
+                InvocationIsUsingParamsCancellationToken(lastParameter, arguments, cancellationTokenType));
         }
 
         // Check if the currently used overload is the one that takes the ct, but is utilizing the default value offered in the method signature.
@@ -201,13 +201,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        // Checks if the method has a `params CancellationToken[]` argument in the last position.
-        private static bool InvocationIsUsingParamsCancellationToken(IParameterSymbol lastParameter, INamedTypeSymbol cancellationTokenType)
+        // Checks if the method has a `params CancellationToken[]` argument in the last position and ensure no ct is being passed.
+        private static bool InvocationIsUsingParamsCancellationToken(IParameterSymbol lastParameter, ImmutableArray<IArgumentOperation> arguments, INamedTypeSymbol cancellationTokenType)
         {
-            return lastParameter.IsParams &&
+            if (lastParameter.IsParams &&
                    lastParameter.Type.Kind == SymbolKind.ArrayType &&
                    lastParameter.Type is IArrayTypeSymbol arrayTypeSymbol &&
-                   arrayTypeSymbol.ElementType.Equals(cancellationTokenType);
+                   arrayTypeSymbol.ElementType.Equals(cancellationTokenType))
+            {
+                IArgumentOperation? paramsArgument = arguments.FirstOrDefault(a => a.ArgumentKind == ArgumentKind.ParamArray);
+                if (paramsArgument != null)
+                {
+                    if (paramsArgument.Value is IArrayCreationOperation arrayOperation)
+                    {
+                        // Do not offer a diagnostic if the user already passed a ct to the params
+                        return arrayOperation.Initializer.ElementValues.IsEmpty;
+                    }
+                }
+            }
+
+            return false;
         }
 
         // Check if there's a method overload with the same parameters as this one, in the same order, plus a ct at the end.

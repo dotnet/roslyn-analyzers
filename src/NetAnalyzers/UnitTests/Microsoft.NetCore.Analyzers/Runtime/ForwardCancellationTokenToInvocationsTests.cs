@@ -103,7 +103,7 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_AlreadyPassingToken()
+        public Task CS_NoDiagnostic_Overload_AlreadyPassingToken()
         {
             return VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading;
@@ -116,6 +116,22 @@ class C
     }
     Task MethodAsync() => Task.CompletedTask;
     Task MethodAsync(CancellationToken c) => Task.CompletedTask;
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_Default_AlreadyPassingToken()
+        {
+            return VerifyCS.VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        Method(ct);
+    }
+    void Method(CancellationToken c = default) {}
 }
             ");
         }
@@ -345,6 +361,154 @@ class C
             return VerifyCS.VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order1()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+            */
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(CancellationToken token){}
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+    public static void Method(params CancellationToken[] tokens){}
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order2()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+            */
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(CancellationToken token){}
+    public static void Method(params CancellationToken[] tokens){}
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order3()
+        {
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+    public static void Method(params CancellationToken[] tokens){}
+    public static void Method(CancellationToken token){}
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order4()
+        {
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+    public static void Method(CancellationToken token){}
+    public static void Method(params CancellationToken[] tokens){}
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order5()
+        {
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(params CancellationToken[] tokens){}
+    public static void Method(CancellationToken token){}
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+}
+            ");
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order6()
+        {
+            return CS8VerifyAnalyzerAsync(@"
+using System.Threading;
+class C
+{
+    void M(CancellationToken ct)
+    {
+        CTS.Method(ct); // Don't diagnose
+    }
+}
+class CTS
+{
+    public static void Method(params CancellationToken[] tokens){}
+    public static void Method(CancellationToken token1, CancellationToken token2){}
+    public static void Method(CancellationToken token){}
+}
+            ");
+        }
+
         #endregion
 
         #region Diagnostics with no fix = C#
@@ -398,36 +562,7 @@ class C
     }
 }
             ";
-            return VerifyCS.VerifyAnalyzerAsync(originalCode);
-        }
-
-        [Fact]
-        public Task CS_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsUsed()
-        {
-            /*
-            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
-            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
-
-            public class CancellationTokenSource : IDisposable
-            {
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
-                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
-            }
-
-            In C#, the invocation for a static method includes the type and the dot
-            */
-            string originalCode = @"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-    }
-}
-            ";
-            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+            return CS8VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -1895,7 +2030,7 @@ class O
 }
             ";
             // Nullability is available in C# 8.0+
-            return CSharp8VerifyCodeFixAsync(originalCode, fixedCode);
+            return CS8VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
         [Fact]
@@ -2054,7 +2189,7 @@ End Class
         }
 
         [Fact]
-        public Task VB_NoDiagnostic_AlreadyPassingToken()
+        public Task VB_NoDiagnostic_Overload_AlreadyPassingToken()
         {
             return VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading
@@ -2069,6 +2204,21 @@ Class C
     Private Function MethodAsync(ByVal c As CancellationToken) As Task
         Return Task.CompletedTask
     End Function
+End Class
+            ");
+        }
+
+        [Fact]
+        public Task VB_NoDiagnostic_Default_AlreadyPassingToken()
+        {
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Threading
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Method(ct)
+    End Sub
+    Private Sub Method(ByVal Optional c As CancellationToken = Nothing)
+    End Sub
 End Class
             ");
         }
@@ -2261,6 +2411,33 @@ End Class
             return VerifyVB.VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task VB_NoDiagnostic_CancellationTokenSource_ParamsUsed()
+        {
+            /*
+            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
+            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
+
+            public class CancellationTokenSource : IDisposable
+            {
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
+                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
+                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
+            }
+
+            Note: Unlinke C#, in VB the invocation for a static method does not include the type and the dot.
+            */
+            string originalCode = @"
+Imports System.Threading
+Class C
+    Private Sub M(ByVal ct As CancellationToken)
+        Dim cts As CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct)
+    End Sub
+End Class
+            ";
+            return VB16VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with no fix = VB
@@ -2316,34 +2493,7 @@ Class C
     End Sub
 End Class
             ";
-            return VerifyVB.VerifyAnalyzerAsync(originalCode);
-        }
-
-        [Fact]
-        public Task VB_AnalyzerOnlyDiagnostic_CancellationTokenSource_ParamsUsed()
-        {
-            /*
-            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
-            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
-
-            public class CancellationTokenSource : IDisposable
-            {
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
-                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
-            }
-
-            Note: Unlinke C#, in VB the invocation for a static method does not include the type and the dot.
-            */
-            string originalCode = @"
-Imports System.Threading
-Class C
-    Private Sub M(ByVal ct As CancellationToken)
-        Dim cts As CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct)
-    End Sub
-End Class
-            ";
-            return VerifyVB.VerifyAnalyzerAsync(originalCode);
+            return VB16VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -3820,12 +3970,40 @@ End Class
 
         #region Helpers
 
+        private static async Task CS8VerifyCodeFixAsync(string originalCode, string fixedCode)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = originalCode,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                FixedCode = fixedCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);
+            await test.RunAsync();
+        }
+
+        private static async Task CS8VerifyAnalyzerAsync(string originalCode)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestCode = originalCode,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+            };
+
+            test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);
+            await test.RunAsync();
+        }
+
         private static async Task VB16VerifyCodeFixAsync(string originalCode, string fixedCode)
         {
             var test = new VerifyVB.Test
             {
                 TestCode = originalCode,
                 LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 FixedCode = fixedCode
             };
 
@@ -3833,13 +4011,13 @@ End Class
             await test.RunAsync();
         }
 
-        private static async Task CSharp8VerifyCodeFixAsync(string originalCode, string fixedCode)
+        private static async Task VB16VerifyAnalyzerAsync(string originalCode)
         {
-            var test = new VerifyCS.Test
+            var test = new VerifyVB.Test
             {
                 TestCode = originalCode,
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
-                FixedCode = fixedCode
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
             };
 
             test.ExpectedDiagnostics.AddRange(DiagnosticResult.EmptyDiagnosticResults);

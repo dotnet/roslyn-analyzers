@@ -118,8 +118,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             IMethodSymbol method = invocation.TargetMethod;
 
-            // Check if the invocation's method has either an optional implicit ct or a params ct parameter, as well as an overload that takes one ct
-            if (!InvocationHasCancellationTokenArgument(method, invocation.Arguments, cancellationTokenType) &&
+            // Verify that the current invocation is not passing a token already
+            if (invocation.Arguments.Any(a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
+            {
+                return false;
+            }
+
+            // Check if the invocation's method has either an optional implicit ct not being used or a params ct parameter not being used or an overload that takes a ct
+            if (!InvocationMethodTakesAToken(method, invocation.Arguments, cancellationTokenType) &&
                 !MethodHasCancellationTokenOverload(method, cancellationTokenType))
             {
                 return false;
@@ -176,7 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         // Checks if the invocation has an optional ct argument at the end or a params ct array at the end.
-        private static bool InvocationHasCancellationTokenArgument(IMethodSymbol method, ImmutableArray<IArgumentOperation> arguments, INamedTypeSymbol cancellationTokenType)
+        private static bool InvocationMethodTakesAToken(IMethodSymbol method, ImmutableArray<IArgumentOperation> arguments, INamedTypeSymbol cancellationTokenType)
         {
             return
                 !method.Parameters.IsEmpty &&

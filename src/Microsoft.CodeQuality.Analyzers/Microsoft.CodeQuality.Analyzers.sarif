@@ -519,6 +519,26 @@
             ]
           }
         },
+        "CA1046": {
+          "id": "CA1046",
+          "shortDescription": "Do not overload equality operator on reference types",
+          "fullDescription": "For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1046",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotOverloadOperatorEqualsOnReferenceTypes",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1047": {
           "id": "CA1047",
           "shortDescription": "Do not declare protected member in sealed type",
@@ -838,7 +858,7 @@
         "CA1070": {
           "id": "CA1070",
           "shortDescription": "Do not declare event fields as virtual",
-          "fullDescription": "Do not declare virtual events in a base class and override them in a derived class. The C# compiler does not handle these correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
+          "fullDescription": "Do not declare virtual events in a base class. Overridden events in a derived class have undefined behavior. The C# compiler does not handle this correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1070",
           "properties": {
@@ -1506,6 +1526,26 @@
               "Visual Basic"
             ],
             "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2109": {
+          "id": "CA2109",
+          "shortDescription": "Review visible event handlers",
+          "fullDescription": "A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2109",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "ReviewVisibleEventHandlersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }

@@ -416,6 +416,25 @@ VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(5, 20),
         End Get
     End Property
 End Class");
+
+        [Fact]
+        public Task CSharpTestWhitespaceTrivia()
+            => VerifyCS.VerifyCodeFixAsync(
+$@"class C
+{{
+    private System.Collections.Concurrent.ConcurrentDictionary<string, int> _dictionary;
+    public int GetLength() => _dictionary.Count == 0 
+        ? 0 :
+        _dictionary.Count;
+}}",
+VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(4, 31),
+@"class C
+{
+    private System.Collections.Concurrent.ConcurrentDictionary<string, int> _dictionary;
+    public int GetLength() => _dictionary.IsEmpty
+        ? 0 :
+        _dictionary.Count;
+}");
     }
 
     public abstract class PreferIsEmptyOverCountTestsBase

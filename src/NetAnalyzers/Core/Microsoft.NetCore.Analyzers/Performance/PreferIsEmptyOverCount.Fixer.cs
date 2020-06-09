@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         isEmptyNode = generator.LogicalNotExpression(isEmptyNode);
                     }
 
-                    editor.ReplaceNode(node, isEmptyNode);
+                    editor.ReplaceNode(node, isEmptyNode.WithTriviaFrom(node));
                     return editor.GetChangedDocument();
                 },
                 equivalenceKey: MicrosoftNetCoreAnalyzersResources.PreferIsEmptyOverCountMessage),

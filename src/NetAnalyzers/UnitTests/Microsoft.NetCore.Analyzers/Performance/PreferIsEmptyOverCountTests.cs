@@ -286,6 +286,136 @@ Public Class Test
         TakeBool({(negate ? "Not " : "")}array.IsEmpty)
     End Sub
 End Class");
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public Task CSharpTestIsEmptyGetter_NoDiagnosis(bool useThis)
+            => VerifyCS.VerifyAnalyzerAsync(
+$@"class MyIntList
+{{
+    private System.Collections.Generic.List<int> _list;
+
+    public bool IsEmpty {{
+        get {{
+            return {(useThis ? "this." : "")}Count == 0;
+        }}
+    }}
+    public int Count => _list.Count;
+}}");
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public Task BasicTestIsEmptyGetter_NoDiagnosis(bool useMe)
+            => VerifyVB.VerifyAnalyzerAsync(
+$@"Class MyIntList
+    Private _list As System.Collections.Generic.List(Of Integer)
+    Public ReadOnly Property IsEmpty As Boolean
+        Get
+            Return {(useMe ? "Me." : "")}Count = 0
+        End Get
+    End Property
+    Public ReadOnly Property Count As Integer
+        Get
+            Return _list.Count
+        End Get
+    End Property
+End Class");
+
+        [Fact]
+        public Task CSharpTestIsEmptyGetter_AsLambda_NoDiagnosis()
+            => VerifyCS.VerifyAnalyzerAsync(
+@"class MyIntList
+{
+    private System.Collections.Generic.List<int> _list;
+
+    public bool IsEmpty => Count == 0;
+    public int Count => _list.Count;
+}");
+
+        [Fact]
+        public Task CSharpTestIsEmptyGetter_WithLinq_NoDiagnosis()
+            => VerifyCS.VerifyAnalyzerAsync(
+@"using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+class MyIntList : IEnumerable<int>
+{
+    public bool IsEmpty => this.Count() == 0;
+
+    public IEnumerator<int> GetEnumerator() => default;
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}",
+// Fallback on CA1827.
+VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1827).WithLocation(7, 28).WithArguments("Count"));
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public Task BasicTestIsEmptyGetter_WithLinq_NoDiagnosis(bool useMe)
+            => VerifyVB.VerifyAnalyzerAsync(
+$@"Imports System.Collections
+Imports System.Collections.Generic
+Imports System.Linq
+
+Class MyIntList
+    Implements IEnumerable(Of Integer)
+    Public ReadOnly Property IsEmpty As Boolean
+        Get
+            Return {(useMe ? "Me." : "")}Count() = 0
+        End Get
+    End Property
+
+    Public Function GetEnumerator() As IEnumerator(Of Integer) Implements IEnumerable(Of Integer).GetEnumerator
+        Return Nothing
+    End Function
+
+    Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+        Return GetEnumerator()
+    End Function
+End Class",
+// Fallback on CA1827.
+VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1827).WithLocation(9, 20).WithArguments("Count"));
+
+        [Fact]
+        public Task CSharpTestIsEmptyGetter_NoThis_Fixed()
+            => VerifyCS.VerifyCodeFixAsync(
+@"class MyStringIntDictionary
+{
+    private System.Collections.Concurrent.ConcurrentDictionary<string, int> _dictionary;
+
+    public bool IsEmpty => _dictionary.Count == 0;
+}",
+VerifyCS.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(5, 28),
+@"class MyStringIntDictionary
+{
+    private System.Collections.Concurrent.ConcurrentDictionary<string, int> _dictionary;
+
+    public bool IsEmpty => _dictionary.IsEmpty;
+}");
+
+        [Fact]
+        public Task BasicTestIsEmptyGetter_NoThis_Fixed()
+            => VerifyVB.VerifyCodeFixAsync(
+@"Class MyStringIntDictionary
+    Private _dictionary As System.Collections.Concurrent.ConcurrentDictionary(Of String, Integer)
+    Public ReadOnly Property IsEmpty As Boolean
+        Get
+            Return _dictionary.Count = 0
+        End Get
+    End Property
+End Class",
+VerifyVB.Diagnostic(UseCountProperlyAnalyzer.s_rule_CA1836).WithLocation(5, 20),
+@"Class MyStringIntDictionary
+    Private _dictionary As System.Collections.Concurrent.ConcurrentDictionary(Of String, Integer)
+    Public ReadOnly Property IsEmpty As Boolean
+        Get
+            Return _dictionary.IsEmpty
+        End Get
+    End Property
+End Class");
     }
 
     public abstract class PreferIsEmptyOverCountTestsBase

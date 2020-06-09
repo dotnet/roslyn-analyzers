@@ -304,10 +304,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             ITypeSymbol? type = invocationOperation.GetInstanceType();
 
             string propertyName = Length;
-            if (type != null && !TypeContainsVisibileProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64))
+            if (type != null && !TypeContainsVisibileProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
             {
                 propertyName = Count;
-                if (!TypeContainsVisibileProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64))
+                if (!TypeContainsVisibileProperty(context, type, propertyName, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                 {
                     return;
                 }
@@ -408,15 +408,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                     else
                     {
-                        if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean))
+                        if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
+                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol!))
                         {
                             ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                         }
-                        else if (TypeContainsVisibileProperty(context, type, Length, SpecialType.System_Int32, SpecialType.System_UInt64))
+                        else if (TypeContainsVisibileProperty(context, type, Length, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                         {
                             ReportCA1829(context, Length, operation);
                         }
-                        else if (TypeContainsVisibileProperty(context, type, Count, SpecialType.System_Int32, SpecialType.System_UInt64))
+                        else if (TypeContainsVisibileProperty(context, type, Count, SpecialType.System_Int32, SpecialType.System_UInt64, out _))
                         {
                             ReportCA1829(context, Count, operation);
                         }
@@ -435,7 +436,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             ITypeSymbol? type = operation.GetInstanceType();
             if (type != null)
             {
-                if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean))
+                if (TypeContainsVisibileProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
+                    !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol!))
                 {
                     ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                 }
@@ -556,12 +558,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private static bool TypeContainsVisibileProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType propertyType)
-            => TypeContainsVisibileProperty(context, type, propertyName, propertyType, propertyType);
+        private static bool TypeContainsVisibileProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType propertyType, out ISymbol? propertySymbol)
+            => TypeContainsVisibileProperty(context, type, propertyName, propertyType, propertyType, out propertySymbol);
 
-        private static bool TypeContainsVisibileProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound)
+        private static bool TypeContainsVisibileProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, out ISymbol? propertySymbol)
         {
-            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible))
+            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol!))
             {
                 return isPropertyValidAndVisible;
             }
@@ -571,7 +573,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 foreach (var @interface in type.AllInterfaces)
                 {
-                    if (TypeContainsMember(context, @interface, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible))
+                    if (TypeContainsMember(context, @interface, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol))
                     {
                         return isPropertyValidAndVisible;
                     }
@@ -582,7 +584,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 ITypeSymbol? currentType = type.BaseType;
                 while (currentType != null)
                 {
-                    if (TypeContainsMember(context, currentType, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible))
+                    if (TypeContainsMember(context, currentType, propertyName, lowerBound, upperBound, out isPropertyValidAndVisible, out propertySymbol))
                     {
                         return isPropertyValidAndVisible;
                     }
@@ -594,7 +596,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return false;
 
             static bool TypeContainsMember(
-                OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, out bool isPropertyValidAndVisible)
+                OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound,
+                out bool isPropertyValidAndVisible, out ISymbol? propertySymbol)
             {
                 if (type.GetMembers(propertyName).FirstOrDefault() is IPropertySymbol property)
                 {
@@ -604,10 +607,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         context.Compilation.IsSymbolAccessibleWithin(property, context.ContainingSymbol.ContainingType) &&
                         context.Compilation.IsSymbolAccessibleWithin(property.GetMethod, context.ContainingSymbol.ContainingType);
 
+                    propertySymbol = property;
+
                     return true;
                 }
 
                 isPropertyValidAndVisible = default;
+                propertySymbol = default;
                 return false;
             }
         }
@@ -648,6 +654,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
             };
 
             return constant == 0 || constant == 1;
+        }
+
+        private static bool IsPropertyGetOfIsEmptyUsingThisInstance(OperationAnalysisContext context, IOperation operation, ISymbol isEmptyPropertySymbol)
+        {
+            ISymbol containingSymbol = context.ContainingSymbol;
+
+            return containingSymbol is IMethodSymbol methodSymbol &&
+                // Is within the body of a property getter?
+                methodSymbol.MethodKind == MethodKind.PropertyGet &&
+                // Is the getter of the IsEmpty property.
+                methodSymbol.AssociatedSymbol == isEmptyPropertySymbol &&
+                // Is 'this' instance?
+                operation.GetInstanceType() == containingSymbol.ContainingType;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

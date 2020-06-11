@@ -1828,6 +1828,11 @@
         <target state="translated">Użycie indeksatora opartego na zakresie w przypadku wartości tablicy powoduje utworzenie kopii żądanej części tablicy. Ta kopia jest często niechciana, gdy jest niejawnie używana jako wartość Span lub Memory. Użyj metody AsSpan, aby uniknąć kopiowania.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on {1}</source>
+        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">Użyj metody „{0}” zamiast indeksatora opartego na „{1}” w przypadku wartości „{2}”, aby uniknąć tworzenia niepotrzebnych kopii danych.</target>

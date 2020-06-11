@@ -1827,6 +1827,11 @@
         <target state="translated">Con l'indicizzatore basato su Range su valori di matrice viene prodotta una copia della porzione richiesta della matrice. Questa copia è spesso indesiderata quando viene usata in modo implicito come valore di Span o Memory. Per evitare la copia, usare il metodo AsSpan.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on {1}</source>
+        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">Per evitare la creazione di copie di dati non necessarie, usare '{0}' invece dell'indicizzatore basato su '{1}' su '{2}'.</target>

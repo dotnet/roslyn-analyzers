@@ -1827,6 +1827,11 @@
         <target state="translated">Основанный на диапазонах индексатор для значений массива создает копию запрошенной части массива. Эта копия часто нежелательна, если она неявно используется в качестве значения Span или Memory. Используйте метод AsSpan, чтобы избежать копирования.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on {1}</source>
+        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">Используйте "{0}" вместо индексатора на основе "{1}" в "{2}", чтобы избежать создания ненужных копий данных.</target>

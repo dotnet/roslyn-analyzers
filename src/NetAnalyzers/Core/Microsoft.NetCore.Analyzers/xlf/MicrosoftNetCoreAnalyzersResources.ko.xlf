@@ -1827,6 +1827,11 @@
         <target state="translated">배열 값에 대한 범위 기반 인덱서는 배열의 요청된 부분의 복사본을 생성합니다. 이 복사본은 암시적으로 범위 또는 메모리 값으로 사용될 경우 대개 필요하지 않습니다. 복사본이 생성되지 않도록 하려면 AsSpan 메서드를 사용하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on {1}</source>
+        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">불필요한 데이터 복사본이 만들어지지 않도록 하려면 '{2}'에서 '{1}' 기반 인덱서 대신 '{0}'을(를) 사용하세요.</target>

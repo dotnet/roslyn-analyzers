@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,8 +77,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly SyntaxNode _toReplace;
             private readonly SyntaxNode _methodTarget;
             private readonly IEnumerable<SyntaxNode> _rangeArguments;
+            private const string aString = "a string";
+            private const string anArray = "an array";
 
-            public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerTitle;
+            public override string Title { get; }
 
             public override string EquivalenceKey { get; }
 
@@ -94,6 +98,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 _methodTarget = methodTarget;
                 _rangeArguments = rangeArguments;
                 EquivalenceKey = ruleId;
+                Title = string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerCodeFixTitle, targetMethod,
+                    ruleId.Equals(UseAsSpanInsteadOfRangeIndexerAnalyzer.StringRuleId, StringComparison.InvariantCulture) ? aString : anArray);
             }
 
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)

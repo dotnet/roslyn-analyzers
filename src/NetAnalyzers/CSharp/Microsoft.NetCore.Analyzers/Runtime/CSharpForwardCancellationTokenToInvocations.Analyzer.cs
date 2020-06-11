@@ -4,13 +4,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.NetCore.Analyzers.Runtime;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Operations;
+using System.Linq;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpForwardCancellationTokenToInvocationsAnalyzer : ForwardCancellationTokenToInvocationsAnalyzer
     {
-        protected override SyntaxNode? GetMethodNameNode(SyntaxNode invocationNode)
+        protected override SyntaxNode? GetInvocationMethodNameNode(SyntaxNode invocationNode)
         {
             if (invocationNode is InvocationExpressionSyntax invocationExpression)
             {
@@ -25,5 +28,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
             return null;
         }
+        protected override bool ArgumentsImplicitOrNamed(INamedTypeSymbol cancellationTokenType, ImmutableArray<IArgumentOperation> arguments)
+        {
+            return arguments.Any(a =>
+                (a.IsImplicit && !a.Parameter.Type.Equals(cancellationTokenType)) ||
+                (a.Syntax is ArgumentSyntax argumentNode && argumentNode.NameColon != null));
+        }
+
     }
 }

@@ -44,45 +44,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return invocation != null;
         }
 
-        protected override bool TryGetAncestorDeclarationCancellationTokenParameterName(
-            SyntaxNode node,
-            [NotNullWhen(returnValue: true)] out string? parameterName)
-        {
-            parameterName = null;
-
-            SyntaxNode currentNode = node.Parent;
-            IEnumerable<ParameterSyntax>? parameters = null;
-            while (currentNode != null)
-            {
-                if (currentNode is ParenthesizedLambdaExpressionSyntax lambdaNode)
-                {
-                    parameters = lambdaNode.ParameterList.Parameters;
-                }
-                else if (currentNode is LocalFunctionStatementSyntax localNode)
-                {
-                    parameters = localNode.ParameterList.Parameters;
-                }
-                else if (currentNode is MethodDeclarationSyntax methodNode)
-                {
-                    parameters = methodNode.ParameterList.Parameters;
-                }
-
-                if (parameters != null)
-                {
-                    parameterName = GetCancellationTokenName(parameters);
-                    break;
-                }
-
-                currentNode = currentNode.Parent;
-            }
-
-            // Unexpected CS8752: Parameter 'parameterName' must have a non-null value when exiting with 'true'
-            // Active issue: https://github.com/dotnet/roslyn/issues/44526
-#pragma warning disable CS8762
-            return !string.IsNullOrEmpty(parameterName);
-#pragma warning restore CS8762
-        }
-
         protected override bool IsArgumentNamed(IArgumentOperation argumentOperation)
         {
             return argumentOperation.Syntax is ArgumentSyntax argumentNode && argumentNode.NameColon != null;
@@ -93,7 +54,21 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return ((InvocationExpressionSyntax)invocationNode).Expression;
         }
 
-        private static string? GetCancellationTokenName(IEnumerable<ParameterSyntax> parameters) =>
-            parameters.Last()?.Identifier.ValueText;
+        protected override bool TryGetExpressionAndArguments(
+            SyntaxNode invocationNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
+            [NotNullWhen(returnValue: true)] out List<SyntaxNode>? arguments)
+        {
+            if (invocationNode is InvocationExpressionSyntax invocationExpression)
+            {
+                expression = invocationExpression.Expression;
+                arguments = invocationExpression.ArgumentList.Arguments.Cast<SyntaxNode>().ToList();
+                return true;
+            }
+
+            expression = null;
+            arguments = null;
+            return false;
+        }
     }
 }

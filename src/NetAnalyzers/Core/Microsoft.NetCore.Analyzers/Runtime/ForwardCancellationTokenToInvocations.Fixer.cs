@@ -24,11 +24,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CancellationToken ct,
             [NotNullWhen(returnValue: true)] out IInvocationOperation? invocation);
 
-        // Looks for a ct parameter in the ancestor method or function declaration. If one is found, retrieve the name of the parameter.
-        // Returns true if a ct parameter was found and parameterName is not null or empty. Returns false otherwise.
-        protected abstract bool TryGetAncestorDeclarationCancellationTokenParameterName(
-            SyntaxNode node,
-            [NotNullWhen(returnValue: true)] out string? parameterName);
+        // Retrieves the invocation expression node and the invocation argument list
+        protected abstract bool TryGetExpressionAndArguments(
+            SyntaxNode invocationNode,
+            [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
+            [NotNullWhen(returnValue: true)] out List<SyntaxNode>? arguments);
 
         // Verifies if the specified argument was passed with an explicit name.
         protected abstract bool IsArgumentNamed(IArgumentOperation argumentOperation);
@@ -61,14 +61,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (!TryGetAncestorDeclarationCancellationTokenParameterName(node, out string? parameterName))
+            ImmutableDictionary<string, string>? properties = context.Diagnostics[0].Properties;
+
+            // The name that identifies the object that is to be passed
+            if (!properties.TryGetValue(ForwardCancellationTokenToInvocationsAnalyzer.ArgumentName, out string argumentName) || string.IsNullOrEmpty(argumentName))
+            {
+                return;
+            }
+
+            // If the invocation requires the token to be passed with a name, use this
+            if (!properties.TryGetValue(ForwardCancellationTokenToInvocationsAnalyzer.ParameterName, out string parameterName))
             {
                 return;
             }
 
             string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle;
 
-            if (!TryGenerateNewDocumentRoot(doc, root, invocation, parameterName, out SyntaxNode? newRoot))
+            if (!TryGenerateNewDocumentRoot(doc, root, invocation, argumentName, parameterName, out SyntaxNode? newRoot))
             {
                 return;
             }
@@ -88,81 +97,37 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Document doc,
             SyntaxNode root,
             IInvocationOperation invocation,
-            string cancellationTokenParameterName,
+            string invocationTokenArgumentName,
+            string ancestorTokenParameterName,
             [NotNullWhen(returnValue: true)] out SyntaxNode? newRoot)
         {
             newRoot = null;
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
-            // Pass the same arguments and add the ct
-            List<SyntaxNode> newArguments = new List<SyntaxNode>();
-            bool shouldTokenUseName = false;
-            string paramName = string.Empty;
-
-            // In C#, invocation.Arguments contains the arguments in the order passed by the user
-            // In VB, invocation.Arguments contains the arguments in the official parameter order
-            for (int i = 0; i < invocation.Arguments.Length; i++)
+            if (!TryGetExpressionAndArguments(invocation.Syntax, out SyntaxNode? expression, out List<SyntaxNode>? newArguments))
             {
-                IArgumentOperation argument = invocation.Arguments[i];
-
-                // The type name is detected even if using an alias
-                if (!argument.Parameter.Type.Name.Equals("CancellationToken", StringComparison.Ordinal))
-                {
-                    if (!argument.IsImplicit)
-                    {
-                        SyntaxNode newArg;
-                        if (IsArgumentNamed(argument))
-                        {
-                            newArg = generator.Argument(argument.Parameter.Name, argument.Parameter.RefKind, argument.Value.Syntax);
-                            shouldTokenUseName = true;
-                        }
-                        else
-                        {
-                            newArg = argument.Syntax;
-                        }
-                        newArguments.Add(newArg);
-                    }
-                    else
-                    {
-                        shouldTokenUseName = true;
-                    }
-                }
-                else
-                {
-                    // Only reachable if the current method is the one that contains the ct
-                    // Won't be reached if it's an overload that contains the paramName
-                    paramName = argument.Parameter.Name;
-                }
+                return false;
             }
 
-            // Create and append new ct argument to pass to the invocation, using the ancestor method parameter name
-            SyntaxNode cancellationTokenIdentifier = generator.IdentifierName(cancellationTokenParameterName);
-            SyntaxNode cancellationTokenNode;
-            if (shouldTokenUseName)
+            SyntaxNode identifier = generator.IdentifierName(invocationTokenArgumentName);
+            SyntaxNode cancellationTokenArgument;
+            if (!string.IsNullOrEmpty(ancestorTokenParameterName))
             {
-                // If the paramName is unknown at this point, it's because an overload contains the ct parameter
-                // and since it cannot be obtained, no fix will be provided or else CA8323 shows up:
-                // CA8323: Named argument 'argName' is used out-of-position but is followed by an unnamed argument
-                if (string.IsNullOrEmpty(paramName))
-                {
-                    return false;
-                }
-
-                cancellationTokenNode = generator.Argument(paramName, RefKind.None, cancellationTokenIdentifier);
+                cancellationTokenArgument = generator.Argument(ancestorTokenParameterName, RefKind.None, identifier);
             }
             else
             {
-                cancellationTokenNode = generator.Argument(cancellationTokenIdentifier);
+                cancellationTokenArgument = generator.Argument(identifier);
             }
-            newArguments.Add(cancellationTokenNode);
+
+            newArguments.Add(cancellationTokenArgument);
 
             SyntaxNode newInvocation;
             // The instance is null when calling a static method from another type
             if (invocation.Instance == null)
             {
-                SyntaxNode staticType = generator.TypeExpressionForStaticMemberAccess(invocation.TargetMethod.ContainingType);
-                newInvocation = generator.MemberAccessExpression(staticType, invocation.TargetMethod.Name);
+                newInvocation = expression;
             }
             // The method is being invoked with nullability
             else if (invocation.Instance is IConditionalAccessInstanceOperation)

@@ -1827,14 +1827,19 @@
         <target state="translated">L'indexeur basé sur Range pour les valeurs de tableau produit une copie de la partie demandée du tableau. Cette copie est souvent indésirable quand elle est implicitement utilisée en tant que valeur Span ou Memory. Utilisez la méthode AsSpan pour éviter la copie.</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
-        <source>Use {0} instead of Range-based indexers on {1}</source>
-        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">Utilisez '{0}' à la place de l'indexeur basé sur '{1}' pour '{2}' afin d'éviter la création de copies de données inutiles.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerOnAStringCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on a string</source>
+        <target state="new">Use {0} instead of Range-based indexers on a string</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerOnAnArrayCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on an array</source>
+        <target state="new">Use {0} instead of Range-based indexers on an array</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerTitle">

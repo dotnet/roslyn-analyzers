@@ -1827,14 +1827,19 @@
         <target state="translated">陣列值中以 Range 為基礎的索引子會產生陣列中要求部分的複本。隱含使用此複本作為 Span 或 Memory 值時，通常不需此複本。請使用 AsSpan 方法來避免使用此複本。</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseAsSpanInsteadOfRangeIndexerCodeFixTitle">
-        <source>Use {0} instead of Range-based indexers on {1}</source>
-        <target state="new">Use {0} instead of Range-based indexers on {1}</target>
-        <note />
-      </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerMessage">
         <source>Use '{0}' instead of the '{1}'-based indexer on '{2}' to avoid creating unnecessary data copies.</source>
         <target state="translated">在 '{2}' 上使用 '{0}' 代替以 '{1}' 為基礎的索引子，以避免建立不必要的資料複本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerOnAStringCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on a string</source>
+        <target state="new">Use {0} instead of Range-based indexers on a string</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAsSpanInsteadOfRangeIndexerOnAnArrayCodeFixTitle">
+        <source>Use {0} instead of Range-based indexers on an array</source>
+        <target state="new">Use {0} instead of Range-based indexers on an array</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAsSpanInsteadOfRangeIndexerTitle">

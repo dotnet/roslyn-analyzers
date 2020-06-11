@@ -77,8 +77,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly SyntaxNode _toReplace;
             private readonly SyntaxNode _methodTarget;
             private readonly IEnumerable<SyntaxNode> _rangeArguments;
-            private const string aString = "a string";
-            private const string anArray = "an array";
 
             public override string Title { get; }
 
@@ -98,8 +96,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 _methodTarget = methodTarget;
                 _rangeArguments = rangeArguments;
                 EquivalenceKey = ruleId;
-                Title = string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerCodeFixTitle, targetMethod,
-                    ruleId.Equals(UseAsSpanInsteadOfRangeIndexerAnalyzer.StringRuleId, StringComparison.InvariantCulture) ? aString : anArray);
+                Title = ruleId.Equals(UseAsSpanInsteadOfRangeIndexerAnalyzer.StringRuleId, StringComparison.InvariantCulture) ?
+                    string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerOnAStringCodeFixTitle, targetMethod) :
+                    string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.UseAsSpanInsteadOfRangeIndexerOnAnArrayCodeFixTitle, targetMethod);
             }
 
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)

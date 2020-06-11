@@ -126,7 +126,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 # Recommended version of Analyzer Packages
 
-Recommended Visual Studio Version: **Visual Studio 2017 16.0 RTW or later**
+Recommended Visual Studio Version: **Visual Studio 2019 16.0 RTW or later**
 
 Recommended Analyzer Package Version: **Version 3.0.0**, for example [Microsoft.CodeAnalysis.FxCopAnalyzers 3.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/3.0.0)
 

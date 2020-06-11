@@ -34,7 +34,6 @@
 - Document for review: severity, default, categorization, numbering, titles, messages, and descriptions.
 - Create the appropriate documentation for [docs.microsoft.com](https://github.com/MicrosoftDocs/visualstudio-docs-pr/tree/master/docs/code-quality) within **ONE WEEK**, instructions available on OneNote. External contributors should create an issue at https://github.com/microsoftDocs/visualstudio-docs/issues with a subject `Add documentation for analyzer rule [Your Rule ID]`. 
 - PR merged into `dotnet/roslyn-analyzers`. 
- 
 
 ## Testing against the Runtime and Roslyn-analyzers repo 
 
@@ -45,7 +44,7 @@
 	- `cd artifacts\bin\Microsoft.NetCore.CSharp.Analyzers\Debug\netstandard2.0` 
 2. Copy the two DLLs and replace the NuGet cache entries used by `dotnet/runtime`. They might be in `"runtime/.packages/..."` or `"%USERPROFILE%/.nuget/packages/... "`. You can check the exact path by building something in runtime with /bl and checking the binlog file. Example: 
 	- `copy /y *.dll %USERPROFILE%\.nuget\packages\Microsoft.NetCore.Analyzers\%RUNTIMEPACKAGEVERSION%\analyzers\dotnet\cs`
-3. Build the rolsyn-analyzers with just `build.cmd`, now new analyzers will be used from nuget packages and you would see warnings if it found diagnostics.
+3. Build the rolsyn-analyzers with `build.cmd`, now new analyzers will be used from updated nuget packages and you would see the warnings if diagnostics found.
 4. If failures found, review each of the failures and determine the course of action for each. 
 	- Improve analyzer to reduce false positives, fix valid warnings, in a very rare edge cases suppress them.
 5. Make sure all failures addressed and corresponding PR(s) merged.	
@@ -54,7 +53,6 @@
 8. In case no any failure introduce an error somewhere to prove that the rule ran. 
 	- Be careful about in which project you are producing an error, choose an API not having reference from other APIs, else all dependent API's will fail.
 9. If failures found, repeat step 4-5 to evaluate and address all warnings. 
- 
 
 ## Testing against the Roslyn repo 
 

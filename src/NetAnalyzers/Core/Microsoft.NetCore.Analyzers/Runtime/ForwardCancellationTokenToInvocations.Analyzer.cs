@@ -38,23 +38,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Check if any of the other arguments is implicit or a named argument
         protected abstract bool ArgumentsImplicitOrNamed(INamedTypeSymbol cancellationTokenType, ImmutableArray<IArgumentOperation> arguments);
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources)
-        );
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources)
-        );
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources)
-        );
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor ForwardCancellationTokenToInvocationsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -77,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
+            context.RegisterCompilationStartAction(context => AnalyzeCompilationStart(context));
         }
 
         private void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -91,14 +79,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
-                if (!(context.ContainingSymbol is IMethodSymbol containingSymbol))
+                if (!(context.ContainingSymbol is IMethodSymbol containingMethod))
                 {
                     return;
                 }
 
                 if (!ShouldDiagnose(
                     invocation,
-                    containingSymbol,
+                    containingMethod,
                     cancellationTokenType,
                     out string? cancellationTokenArgumentName,
                     out string? invocationTokenParameterName))
@@ -136,7 +124,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IMethodSymbol method = invocation.TargetMethod;
 
             // Verify that the current invocation is not passing an explicitly token already
-            if (invocation.Arguments.Any(a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
+            if (AnyArgument(invocation.Arguments,
+                            a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
             {
                 return false;
             }
@@ -147,7 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (ArgumentsImplicitOrNamed(cancellationTokenType, invocation.Arguments))
                 {
-                    invocationTokenParameterName = invocation.TargetMethod.Parameters.Last().Name;
+                    invocationTokenParameterName = method.Parameters[^1].Name;
                 }
             }
             // or an overload that takes a ct at the end
@@ -155,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (ArgumentsImplicitOrNamed(cancellationTokenType, invocation.Arguments))
                 {
-                    invocationTokenParameterName = overload.Parameters.Last().Name;
+                    invocationTokenParameterName = overload.Parameters[^1].Name;
                 }
             }
             else
@@ -225,7 +214,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
             if (methodDeclaration.Parameters.Count(x => x.Type.Equals(cancellationTokenType)) == 1 &&
-                methodDeclaration.Parameters.Last() is IParameterSymbol lastParameter &&
+                methodDeclaration.Parameters[^1] is IParameterSymbol lastParameter &&
                 lastParameter.Type.Equals(cancellationTokenType)) // Covers the case when using an alias for ct
             {
                 cancellationTokenParameterName = lastParameter.Name;
@@ -249,6 +238,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 InvocationIsUsingParamsCancellationToken(lastParameter, arguments, cancellationTokenType));
         }
 
+        // Checks if the arguments enumerable has any elements that satisfy the provided condition,
+        // starting the lookup with the last element since tokens tend to be added as the last argument.
+        private static bool AnyArgument(ImmutableArray<IArgumentOperation> arguments, Func<IArgumentOperation, bool> predicate)
+        {
+            for (int i = arguments.Length - 1; i >= 0; i--)
+            {
+                if (predicate(arguments[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // Check if the currently used overload is the one that takes the ct, but is utilizing the default value offered in the method signature.
         // We want to offer a diagnostic for this case, so the user explicitly passes the ancestor's ct.
         private static bool InvocationIgnoresOptionalCancellationToken(
@@ -261,7 +265,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // Find out if the ct argument is using the default value
                 // Need to check among all arguments in case the user is passing them named and unordered (despite the ct being defined as the last parameter)
-                return arguments.Any(a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
+                return AnyArgument(
+                    arguments,
+                    a => a.Parameter.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
             }
             return false;
         }
@@ -273,18 +279,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             INamedTypeSymbol cancellationTokenType)
         {
             if (lastParameter.IsParams &&
-                   lastParameter.Type.Kind == SymbolKind.ArrayType &&
                    lastParameter.Type is IArrayTypeSymbol arrayTypeSymbol &&
                    arrayTypeSymbol.ElementType.Equals(cancellationTokenType))
             {
                 IArgumentOperation? paramsArgument = arguments.FirstOrDefault(a => a.ArgumentKind == ArgumentKind.ParamArray);
-                if (paramsArgument != null)
+                if (paramsArgument?.Value is IArrayCreationOperation arrayOperation)
                 {
-                    if (paramsArgument.Value is IArrayCreationOperation arrayOperation)
-                    {
-                        // Do not offer a diagnostic if the user already passed a ct to the params
-                        return arrayOperation.Initializer.ElementValues.IsEmpty;
-                    }
+                    // Do not offer a diagnostic if the user already passed a ct to the params
+                    return arrayOperation.Initializer.ElementValues.IsEmpty;
                 }
             }
 
@@ -297,10 +299,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol cancellationTokenType,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? overload)
         {
-            overload = method.ContainingType.GetMembers(method.Name)
-                                            .OfType<IMethodSymbol>()
-                                            .FirstOrDefault(methodToCompare =>
-                                                HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
+            ImmutableArray<ISymbol> overloads = method.ContainingType.GetMembers(method.Name);
+            System.Collections.Generic.List<IMethodSymbol> ofType = overloads.OfType<IMethodSymbol>().ToList();
+            overload = ofType.FirstOrDefault(methodToCompare =>
+                HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
 
             return overload != null;
 
@@ -315,11 +317,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return false;
                 }
 
+                IMethodSymbol originalMethodWithAllParameters = originalMethod.ReducedFrom ?? originalMethod.ConstructedFrom ?? originalMethod;
+                IMethodSymbol methodToCompareWithAllParameters = methodToCompare.ReducedFrom ?? methodToCompare.ConstructedFrom ?? methodToCompare;
+
                 // Now compare the types of all parameters before the ct
-                for (int i = 0; i < originalMethod.Parameters.Length; i++)
+                for (int i = 0; i < originalMethodWithAllParameters.Parameters.Length; i++)
                 {
-                    IParameterSymbol? originalParameter = originalMethod.Parameters[i];
-                    IParameterSymbol? comparedParameter = methodToCompare.Parameters[i];
+                    IParameterSymbol? originalParameter = originalMethodWithAllParameters.Parameters[i];
+                    IParameterSymbol? comparedParameter = methodToCompareWithAllParameters.Parameters[i];
                     if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type))
                     {
                         return false;

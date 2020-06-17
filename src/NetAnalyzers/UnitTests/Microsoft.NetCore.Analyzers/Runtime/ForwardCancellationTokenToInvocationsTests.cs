@@ -2019,7 +2019,6 @@ class C
         bool b = false;
         b.Extension((j) =>
         {
-            Console.WriteLine(""Hello world"");
             [|j.MyMethod|]();
         });
     }
@@ -2045,7 +2044,6 @@ class C
         bool b = false;
         b.Extension((j) =>
         {
-            Console.WriteLine(""Hello world"");
             j.MyMethod(c: ct);
         });
     }
@@ -3984,7 +3982,6 @@ Class C
     Public Sub M(ByVal ct As CancellationToken)
         Dim b As Boolean = False
         b.Extension(Sub(j)
-                        Console.WriteLine(""Hello, world"")
                         j.[|MyMethod|]()
                     End Sub)
     End Sub
@@ -4009,7 +4006,6 @@ Class C
     Public Sub M(ByVal ct As CancellationToken)
         Dim b As Boolean = False
         b.Extension(Sub(j)
-                        Console.WriteLine(""Hello, world"")
                         j.MyMethod(ct)
                     End Sub)
     End Sub

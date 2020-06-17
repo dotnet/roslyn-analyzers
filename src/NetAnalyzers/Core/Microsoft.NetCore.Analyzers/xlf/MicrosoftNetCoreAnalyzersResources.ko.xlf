@@ -883,13 +883,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsMessage">
-        <source>Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</source>
-        <target state="new">Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</target>
+        <source>Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token</source>
+        <target state="new">Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token</target>
         <note />
       </trans-unit>
       <trans-unit id="ForwardCancellationTokenToInvocationsTitle">
-        <source>Forward the 'CancellationToken' parameter to methods that take one.</source>
-        <target state="new">Forward the 'CancellationToken' parameter to methods that take one.</target>
+        <source>Forward the 'CancellationToken' parameter to methods that take one</source>
+        <target state="new">Forward the 'CancellationToken' parameter to methods that take one</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
@@ -1418,8 +1418,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsTitle">
-        <source>Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'.</source>
-        <target state="new">Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'.</target>
+        <source>Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'</source>
+        <target state="new">Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStringContainsOverIndexOfDescription">

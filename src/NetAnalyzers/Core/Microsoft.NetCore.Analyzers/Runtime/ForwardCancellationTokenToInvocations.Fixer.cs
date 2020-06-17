@@ -125,24 +125,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SyntaxNode newInvocation;
             // The instance is null when calling a static method from another type
-            if (invocation.Instance == null)
+            switch (invocation.Instance)
             {
-                newInvocation = expression;
-            }
-            // The method is being invoked with nullability
-            else if (invocation.Instance is IConditionalAccessInstanceOperation)
-            {
-                newInvocation = GetConditionalOperationInvocationExpression(invocation.Syntax);
-            }
-            // The instance is implicit when calling a method from the same type, call the method directly
-            else if (invocation.Instance.IsImplicit)
-            {
-                newInvocation = invocation.GetInstanceSyntax()!;
-            }
-            // Calling a method from an object, we must include the instance variable name
-            else
-            {
-                newInvocation = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
+                case null:
+                    newInvocation = expression;
+                    break;
+                case IConditionalAccessInstanceOperation _:
+                    newInvocation = GetConditionalOperationInvocationExpression(invocation.Syntax);
+                    break;
+                default:
+                    if (invocation.Instance.IsImplicit)
+                    {
+                        newInvocation = invocation.GetInstanceSyntax()!;
+                    }
+                    // Calling a method from an object, we must include the instance variable name
+                    else
+                    {
+                        newInvocation = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
+                    }
+                    break;
             }
             // Insert the new arguments to the new invocation
             SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments).WithTriviaFrom(invocation.Syntax);

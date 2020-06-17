@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Runtime;
@@ -21,25 +22,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             CancellationToken ct,
             [NotNullWhen(true)] out IInvocationOperation? invocation)
         {
-            invocation = null;
-
-            IOperation operation;
-
             // If the method was invoked using nullability for the case of attempting to dereference a possibly null reference,
             // then the node.Parent.Parent is the actual invocation (and it will contain the dot as well)
-            if (node.Parent is MemberBindingExpressionSyntax)
-            {
-                operation = model.GetOperation(node.Parent.Parent, ct);
-            }
-            else
-            {
-                operation = model.GetOperation(node.Parent, ct);
-            }
 
-            if (operation is IInvocationOperation invocationOperation)
-            {
-                invocation = invocationOperation;
-            }
+            var operation = node.Parent.IsKind(SyntaxKind.MemberBindingExpression)
+                ? model.GetOperation(node.Parent.Parent, ct)
+                : model.GetOperation(node.Parent, ct);
+
+            invocation = operation as IInvocationOperation;
 
             return invocation != null;
         }

@@ -299,7 +299,7 @@ class C
         }
 
         [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order1()
+        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order()
         {
             /*
             CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
@@ -326,122 +326,6 @@ class CTS
     public static void Method(CancellationToken token){}
     public static void Method(CancellationToken token1, CancellationToken token2){}
     public static void Method(params CancellationToken[] tokens){}
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order2()
-        {
-            /*
-            CancellationTokenSource has 3 different overloads that take CancellationToken arguments.
-            We should detect if a ct is passed and not offer a diagnostic, because it's considered one of the `params`.
-
-            public class CancellationTokenSource : IDisposable
-            {
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token);
-                public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2);
-                public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens);
-            }
-            */
-            return CS8VerifyAnalyzerAsync(@"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CTS.Method(ct); // Don't diagnose
-    }
-}
-class CTS
-{
-    public static void Method(CancellationToken token){}
-    public static void Method(params CancellationToken[] tokens){}
-    public static void Method(CancellationToken token1, CancellationToken token2){}
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order3()
-        {
-            return CS8VerifyAnalyzerAsync(@"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CTS.Method(ct); // Don't diagnose
-    }
-}
-class CTS
-{
-    public static void Method(CancellationToken token1, CancellationToken token2){}
-    public static void Method(params CancellationToken[] tokens){}
-    public static void Method(CancellationToken token){}
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order4()
-        {
-            return CS8VerifyAnalyzerAsync(@"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CTS.Method(ct); // Don't diagnose
-    }
-}
-class CTS
-{
-    public static void Method(CancellationToken token1, CancellationToken token2){}
-    public static void Method(CancellationToken token){}
-    public static void Method(params CancellationToken[] tokens){}
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order5()
-        {
-            return CS8VerifyAnalyzerAsync(@"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CTS.Method(ct); // Don't diagnose
-    }
-}
-class CTS
-{
-    public static void Method(params CancellationToken[] tokens){}
-    public static void Method(CancellationToken token){}
-    public static void Method(CancellationToken token1, CancellationToken token2){}
-}
-            ");
-        }
-
-        [Fact]
-        public Task CS_NoDiagnostic_CancellationTokenSource_ParamsUsed_Order6()
-        {
-            return CS8VerifyAnalyzerAsync(@"
-using System.Threading;
-class C
-{
-    void M(CancellationToken ct)
-    {
-        CTS.Method(ct); // Don't diagnose
-    }
-}
-class CTS
-{
-    public static void Method(params CancellationToken[] tokens){}
-    public static void Method(CancellationToken token1, CancellationToken token2){}
-    public static void Method(CancellationToken token){}
 }
             ");
         }

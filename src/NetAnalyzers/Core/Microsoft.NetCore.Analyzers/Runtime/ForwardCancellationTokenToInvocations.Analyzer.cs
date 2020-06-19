@@ -123,7 +123,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             IMethodSymbol method = invocation.TargetMethod;
 
-            // Verify that the current invocation is not passing an explicitly token already
+            // Verify that the current invocation is not passing an explicit token already
             if (AnyArgument(invocation.Arguments,
                             a => a.Parameter.Type.Equals(cancellationTokenType) && !a.IsImplicit))
             {
@@ -267,7 +267,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Need to check among all arguments in case the user is passing them named and unordered (despite the ct being defined as the last parameter)
                 return AnyArgument(
                     arguments,
-                    a => a.Parameter.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
+                    a => a.Parameter.Type.Equals(cancellationTokenType) && a.ArgumentKind == ArgumentKind.DefaultValue);
             }
             return false;
         }
@@ -299,9 +299,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol cancellationTokenType,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? overload)
         {
-            ImmutableArray<ISymbol> overloads = method.ContainingType.GetMembers(method.Name);
-            System.Collections.Generic.List<IMethodSymbol> ofType = overloads.OfType<IMethodSymbol>().ToList();
-            overload = ofType.FirstOrDefault(methodToCompare =>
+            overload = method.ContainingType
+                                .GetMembers(method.Name)
+                                .OfType<IMethodSymbol>()
+                                .FirstOrDefault(methodToCompare =>
                 HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
 
             return overload != null;
@@ -310,22 +311,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             static bool HasSameParametersPlusCancellationToken(ITypeSymbol cancellationTokenType, IMethodSymbol originalMethod, IMethodSymbol methodToCompare)
             {
                 // Avoid comparing to itself, or when there are no parameters, or when the last parameter is not a ct
-                if (originalMethod.Equals(methodToCompare.Name) ||
+                if (originalMethod.Equals(methodToCompare) ||
                     methodToCompare.Parameters.Count(p => p.Type.Equals(cancellationTokenType)) != 1 ||
                     !methodToCompare.Parameters[^1].Type.Equals(cancellationTokenType))
                 {
                     return false;
                 }
 
-                IMethodSymbol originalMethodWithAllParameters = originalMethod.ReducedFrom ?? originalMethod.ConstructedFrom ?? originalMethod;
-                IMethodSymbol methodToCompareWithAllParameters = methodToCompare.ReducedFrom ?? methodToCompare.ConstructedFrom ?? methodToCompare;
+                IMethodSymbol originalMethodWithAllParameters = (originalMethod.ReducedFrom ?? originalMethod).OriginalDefinition;
+                IMethodSymbol methodToCompareWithAllParameters = (methodToCompare.ReducedFrom ?? methodToCompare).OriginalDefinition;
 
                 // Now compare the types of all parameters before the ct
+                // The largest i is the number of parameters in the method that has fewer parameters
                 for (int i = 0; i < originalMethodWithAllParameters.Parameters.Length; i++)
                 {
-                    IParameterSymbol? originalParameter = originalMethodWithAllParameters.Parameters[i];
-                    IParameterSymbol? comparedParameter = methodToCompareWithAllParameters.Parameters[i];
-                    if (originalParameter == null || comparedParameter == null || !originalParameter.Type.Equals(comparedParameter.Type))
+                    IParameterSymbol originalParameter = originalMethodWithAllParameters.Parameters[i];
+                    IParameterSymbol comparedParameter = methodToCompareWithAllParameters.Parameters[i];
+                    if (!originalParameter.Type.Equals(comparedParameter.Type))
                     {
                         return false;
                     }

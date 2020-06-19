@@ -77,38 +77,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle;
 
-            if (!TryGenerateNewDocumentRoot(doc, root, invocation, argumentName, parameterName, out SyntaxNode? newRoot))
+            if (!TryGetExpressionAndArguments(invocation.Syntax, out SyntaxNode? expression, out List<SyntaxNode>? newArguments))
             {
                 return;
             }
 
-            Task<Document> createChangedDocument(CancellationToken _) =>
-                Task.FromResult(doc.WithSyntaxRoot(newRoot));
+            Task<Document> CreateChangedDocument(CancellationToken _)
+            {
+                SyntaxNode newRoot = TryGenerateNewDocumentRoot(doc, root, invocation, argumentName, parameterName, expression, newArguments);
+                Document newDocument = doc.WithSyntaxRoot(newRoot);
+                return Task.FromResult(newDocument);
+            }
 
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title: title,
-                    createChangedDocument,
+                    CreateChangedDocument,
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private bool TryGenerateNewDocumentRoot(
+        private SyntaxNode TryGenerateNewDocumentRoot(
             Document doc,
             SyntaxNode root,
             IInvocationOperation invocation,
             string invocationTokenArgumentName,
             string ancestorTokenParameterName,
-            [NotNullWhen(returnValue: true)] out SyntaxNode? newRoot)
+            SyntaxNode expression,
+            List<SyntaxNode> newArguments)
         {
-            newRoot = null;
-
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
-
-            if (!TryGetExpressionAndArguments(invocation.Syntax, out SyntaxNode? expression, out List<SyntaxNode>? newArguments))
-            {
-                return false;
-            }
 
             SyntaxNode identifier = generator.IdentifierName(invocationTokenArgumentName);
             SyntaxNode cancellationTokenArgument;
@@ -123,34 +121,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             newArguments.Add(cancellationTokenArgument);
 
-            SyntaxNode newInvocation;
+            SyntaxNode newInstance;
             // The instance is null when calling a static method from another type
             switch (invocation.Instance)
             {
                 case null:
-                    newInvocation = expression;
+                    newInstance = expression;
                     break;
                 case IConditionalAccessInstanceOperation _:
-                    newInvocation = GetConditionalOperationInvocationExpression(invocation.Syntax);
+                    newInstance = GetConditionalOperationInvocationExpression(invocation.Syntax);
                     break;
                 default:
                     if (invocation.Instance.IsImplicit)
                     {
-                        newInvocation = invocation.GetInstanceSyntax()!;
+                        newInstance = invocation.GetInstanceSyntax()!;
                     }
                     // Calling a method from an object, we must include the instance variable name
                     else
                     {
-                        newInvocation = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
+                        newInstance = generator.MemberAccessExpression(invocation.GetInstanceSyntax(), invocation.TargetMethod.Name);
                     }
                     break;
             }
             // Insert the new arguments to the new invocation
-            SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInvocation, newArguments).WithTriviaFrom(invocation.Syntax);
+            SyntaxNode newInvocationWithArguments = generator.InvocationExpression(newInstance, newArguments).WithTriviaFrom(invocation.Syntax);
 
-            newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
-
-            return true;
+            return generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 

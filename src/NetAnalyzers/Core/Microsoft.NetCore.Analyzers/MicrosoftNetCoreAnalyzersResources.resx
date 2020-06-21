@@ -1285,7 +1285,7 @@
     <value>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</value>
   </data>
   <data name="PreferStreamAsyncMemoryOverloadsMessage" xml:space="preserve">
-    <value>Change the '{0}' method call to the overload that receives a '{1}'.</value>
+    <value>Change the '{0}' method call to use the '{1}' overload</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle" xml:space="preserve">
     <value>Change to call the two argument constructor, pass null for the message.</value>
@@ -1343,5 +1343,20 @@
   </data>
   <data name="PreferIsEmptyOverCountTitle" xml:space="preserve">
     <value>Prefer IsEmpty over Count</value>
+  </data>
+  <data name="UseAsSpanInsteadOfRangeIndexerOnAStringCodeFixTitle" xml:space="preserve">
+    <value>Use `{0}` instead of Range-based indexers on a string</value>
+  </data>
+  <data name="UseAsSpanInsteadOfRangeIndexerOnAnArrayCodeFixTitle" xml:space="preserve">
+    <value>Use `{0}` instead of Range-based indexers on an array</value>
+  </data>
+  <data name="RuntimePlatformCheckTitle" xml:space="preserve">
+    <value>TODO</value>
+  </data>
+  <data name="RuntimePlatformCheckMessage" xml:space="preserve">
+    <value>TODO Platform checks:'{0}'</value>
+  </data>
+  <data name="RuntimePlatformCheckDescription" xml:space="preserve">
+    <value>TODO</value>
   </data>
 </root>

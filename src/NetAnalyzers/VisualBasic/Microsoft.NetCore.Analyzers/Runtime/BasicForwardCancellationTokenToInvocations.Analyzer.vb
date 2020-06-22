@@ -14,7 +14,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         Inherits ForwardCancellationTokenToInvocationsAnalyzer
 
-
         Protected Overrides Function GetInvocationMethodNameNode(invocationNode As SyntaxNode) As SyntaxNode
 
             Dim invocationExpression = TryCast(invocationNode, InvocationExpressionSyntax)
@@ -56,7 +55,3 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     End Class
 
 End Namespace
-
-
-
-

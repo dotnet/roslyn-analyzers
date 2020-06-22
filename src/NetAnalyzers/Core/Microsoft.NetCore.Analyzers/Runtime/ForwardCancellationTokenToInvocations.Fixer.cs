@@ -82,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            Task<Document> CreateChangedDocument(CancellationToken _)
+            Task<Document> CreateChangedDocumentAsync(CancellationToken _)
             {
                 SyntaxNode newRoot = TryGenerateNewDocumentRoot(doc, root, invocation, argumentName, parameterName, expression, newArguments);
                 Document newDocument = doc.WithSyntaxRoot(newRoot);
@@ -92,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title: title,
-                    CreateChangedDocument,
+                    CreateChangedDocumentAsync,
                     equivalenceKey: title),
                 context.Diagnostics);
         }

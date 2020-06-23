@@ -28,7 +28,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // Get the target syntax node from the incoming span.  For a field like:
             //     private string _value = null;
-            // the node will be for the `= null;` portion.
+            // the node will be for the `= null;` portion.  For a property like:
+            //     private string Value { get; } = "hello";
+            // the node will be for the `= "hello"`.
             if (root.FindNode(context.Span) is SyntaxNode node)
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.DoNotInitializeUnnecessarilyFix;
@@ -36,11 +38,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     new MyCodeAction(title,
                     async ct =>
                     {
-                        // Simply delete the field or property initializer.  For a property, we also need to
-                        // get rid of the semicolon that follows the initializer.
+                        // Simply delete the field or property initializer.
                         DocumentEditor editor = await DocumentEditor.CreateAsync(doc, ct).ConfigureAwait(false);
                         if (node.Parent is PropertyDeclarationSyntax prop)
                         {
+                            // For a property, we also need to get rid of the semicolon that follows the initializer.
                             editor.ReplaceNode(prop, prop.WithInitializer(default).WithSemicolonToken(default).WithTrailingTrivia(prop.SemicolonToken.TrailingTrivia));
                         }
                         else

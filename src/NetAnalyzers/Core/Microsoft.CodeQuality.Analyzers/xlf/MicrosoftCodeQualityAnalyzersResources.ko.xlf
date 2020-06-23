@@ -138,8 +138,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyFix">
-        <source>Remove the assignment.</source>
-        <target state="new">Remove the assignment.</target>
+        <source>Remove the unnecessary assignment.</source>
+        <target state="new">Remove the unnecessary assignment.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotNameEnumValuesReservedDescription">
@@ -2053,8 +2053,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyMessage">
-        <source>Field '{0}' is explicitly initialized to its default value.</source>
-        <target state="new">Field '{0}' is explicitly initialized to its default value.</target>
+        <source>Member '{0}' is explicitly initialized to its default value.</source>
+        <target state="new">Member '{0}' is explicitly initialized to its default value.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalTitle">

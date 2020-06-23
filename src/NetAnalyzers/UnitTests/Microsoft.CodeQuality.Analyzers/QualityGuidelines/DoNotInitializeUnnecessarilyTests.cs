@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.QualityGuidelines.DoNotInitializeUnnecessarilyAnalyzer,
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.DoNotInitializeUnnecessarilyFixer>;
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.CSharpDoNotInitializeUnnecessarilyFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.DoNotInitializeUnnecessarilyAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
@@ -21,7 +24,7 @@ public class C
     private static object SyncObjStatic = new object();
     private static int? NullableIntStatic = 0;
     private static string EmptyStringValueStatic = """";
-    private static string StringValueStatic = ""hello"";
+    private static string StringValueStatic1 = ""hello"", StringValueStatic2 = ""world"";
     private static char charValueStatic = '\r';
     private static bool s_boolValueStatic = true;
     public static byte ByteValueStatic = 1;
@@ -56,7 +59,55 @@ public class C
 
     public System.DayOfWeek Week1 = (System.DayOfWeek)1;
     public System.DayOfWeek Week2 = System.DayOfWeek.Sunday;
+
+    public int SomeIntProp { get; } = 42;
 }");
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_VB()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class C
+    Private Const SomeConst As Integer = 0
+    Private Shared SyncObjStatic As Object = New Object()
+    Private Shared NullableIntStatic As Integer? = 0
+    Private Shared EmptyStringValueStatic As String = """"
+    Private Shared StringValueStatic1 As String = ""hello"", StringValueStatic2 As String = ""world""
+    Private Shared s_boolValueStatic As Boolean = True
+    Public Shared ByteValueStatic As Byte = 1
+    Protected Friend Shared SByteValueStatic As SByte = -1
+    Protected Shared Int16ValueStatic As Integer = -1
+    Private Protected Shared UInt16ValueStatic As UInteger = 1
+    Public Shared Int32ValueStatic As Integer = -1
+    Friend Shared UInt32ValueStatic As UInteger = 1
+    Public Shared Int64ValueStatic As Long = Long.MaxValue
+    Public Shared UInt64ValueStatic As ULong = ULong.MaxValue
+    Shared s_someFloatStatic As Single = 1.0F
+    Shared ReadOnly s_someDoubleStatic As Double = 1.0
+    Public Shared CurrentTimeStatic As System.DateTime = System.DateTime.Now
+
+    Private SyncObjInstance As Object = New Object()
+    Private NullableIntInstance As Integer ? = 0
+    Private EmptyStringValueInstance As String = """"
+    Private StringValueInstance As String = ""hello""
+    Private _boolValueInstance As Boolean = True
+    Public ByteValueInstance As Byte = 1
+    Protected Friend SByteValueInstance As SByte = -1
+    Protected Int16ValueInstance As Integer = -1
+    Private Protected UInt16ValueInstance As UInteger = 1
+    Public Int32ValueInstance As Integer = -1
+    Friend UInt32ValueInstance As UInteger = 1
+    Public Int64ValueInstance As Long = Long.MaxValue
+    Public UInt64ValueInstance As ULong = ULong.MaxValue
+    Private _someFloatInstance As Single = 1.0F
+    ReadOnly _someDoubleInstance As Double = 1.0
+    Public CurrentTimeInstance As System.DateTime = System.DateTime.Now
+    Public Week1 As System.DayOfWeek = CType(1, System.DayOfWeek)
+    Public Week2 As System.DayOfWeek = System.DayOfWeek.Sunday
+    Public ReadOnly Property SomeIntProp As Integer = 42
+End Class
+");
         }
 
         [Fact]
@@ -82,13 +133,15 @@ public class G<T>
         [Fact]
         public async Task Diagnostics_InitializerRemoved()
         {
-            await VerifyCS.VerifyCodeFixAsync(
-@"public class C
+            await new VerifyCS.Test()
+            {
+                TestCode = @"
+public class C
 {
     private static object SyncObjStatic [|= null|];
     private static int? NullableIntStatic [|= null|];
-    private static string StringValueStatic [|= null|];
-    private static char charValueStatic[|= '\0'|];
+    private static string StringValueStatic1 [|= null|], StringValueStatic2 [|= null|];
+    private static char charValueStatic[|= '\0'|], anotherCharValueStatic = '\n';
     private static bool s_boolValueStatic [|= false|];
     public static byte ByteValueStatic [|= 0|];
     protected internal static sbyte SByteValueStatic     [|= 0|];
@@ -122,13 +175,17 @@ public class G<T>
 
     public System.DayOfWeek Week1 [|= 0|];
     public System.DayOfWeek Week2 [|= (System.DayOfWeek)0|];
+
+    public int SomeIntProp { get; } [|= 0|];
+    public string SomeStringProp { get; set; } [|= null|];
 }",
-@"public class C
+                FixedCode = @"
+public class C
 {
     private static object SyncObjStatic;
     private static int? NullableIntStatic;
-    private static string StringValueStatic;
-    private static char charValueStatic;
+    private static string StringValueStatic1, StringValueStatic2;
+    private static char charValueStatic, anotherCharValueStatic = '\n';
     private static bool s_boolValueStatic;
     public static byte ByteValueStatic;
     protected internal static sbyte SByteValueStatic;
@@ -162,8 +219,23 @@ public class G<T>
 
     public System.DayOfWeek Week1;
     public System.DayOfWeek Week2;
-}"
-);
+
+    public int SomeIntProp { get; }
+    public string SomeStringProp { get; set; }
+}",
+                NumberOfFixAllIterations = 2
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task Diagnostics_VB()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class C
+    Private Shared SyncObjStatic As Object [|= Nothing|]
+    Private SomeInt As System.Int32 [|= 0|]
+End Class
+");
         }
     }
 }

@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>CA1805: Do not initialize unnecessarily.</summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class DoNotInitializeUnnecessarilyFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
+    public sealed class CSharpDoNotInitializeUnnecessarilyFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotInitializeUnnecessarilyAnalyzer.RuleId);
 
@@ -35,9 +36,19 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     new MyCodeAction(title,
                     async ct =>
                     {
-                        // Simply delete the node.
+                        // Simply delete the field or property initializer.  For a property, we also need to
+                        // get rid of the semicolon that follows the initializer.
                         DocumentEditor editor = await DocumentEditor.CreateAsync(doc, ct).ConfigureAwait(false);
-                        editor.RemoveNode(node);
+                        if (node.Parent is PropertyDeclarationSyntax prop)
+                        {
+                            editor.ReplaceNode(prop, prop.WithInitializer(default).WithSemicolonToken(default).WithTrailingTrivia(prop.SemicolonToken.TrailingTrivia));
+                        }
+                        else
+                        {
+                            editor.RemoveNode(node);
+                        }
+
+                        // Return the new doc.
                         return editor.GetChangedDocument();
                     },
                     equivalenceKey: title),

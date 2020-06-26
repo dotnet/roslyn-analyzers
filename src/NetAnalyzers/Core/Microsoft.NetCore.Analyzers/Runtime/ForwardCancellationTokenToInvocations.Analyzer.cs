@@ -193,9 +193,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // When the current ancestor does not contain a ct, will continue with the next ancestor
-                if (ancestor != null && TryGetTokenParamName(ancestor, cancellationTokenType, out cancellationTokenParameterName))
+                if (ancestor != null)
                 {
-                    return true;
+                    if (TryGetTokenParamName(ancestor, cancellationTokenType, out cancellationTokenParameterName))
+                    {
+                        return true;
+                    }
+                    // If no token param was found and the ancestor happens to be an anonymous function, we don't want
+                    // to try to get the ct from the superior ancestor, only with local functions
+                    if (currentOperation.Kind == OperationKind.AnonymousFunction)
+                    {
+                        return false;
+                    }
                 }
 
                 currentOperation = currentOperation.Parent;
@@ -320,6 +329,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 IMethodSymbol originalMethodWithAllParameters = (originalMethod.ReducedFrom ?? originalMethod).OriginalDefinition;
                 IMethodSymbol methodToCompareWithAllParameters = (methodToCompare.ReducedFrom ?? methodToCompare).OriginalDefinition;
+
+                // Ensure parameters only differ by one - the ct
+                if (originalMethodWithAllParameters.Parameters.Length != methodToCompareWithAllParameters.Parameters.Length - 1)
+                {
+                    return false;
+                }
 
                 // Now compare the types of all parameters before the ct
                 // The largest i is the number of parameters in the method that has fewer parameters

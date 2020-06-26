@@ -357,6 +357,59 @@ public static class Extensions
             return CS8VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        public Task CS_NoDiagnostic_ParametersDifferMoreThanOne()
+        {
+            string originalCode = @"
+using System;
+using System.Threading;
+class C
+{
+    void MyMethod(int i){}
+    void MyMethod(int i, bool b){}
+    void MyMethod(int i, bool b, CancellationToken c){}
+
+    public void M(CancellationToken ct)
+    {
+        MyMethod(1);
+    }
+}
+            ";
+            return CS8VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        public Task CS_NoDiagnostic_LambdaAndExtensionMethod_NoTokenInLambda()
+        {
+            // Only for local methods will we look for the ct in the top-most ancestor
+            // For anonymous methods we will only look in the immediate ancestor
+            string originalCode = @"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public static void Extension(this bool b, Action<int> action)
+    {
+    }
+    public static void MyMethod(this int i, CancellationToken c = default)
+    {
+    }
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        bool b = false;
+        b.Extension((j) =>
+        {
+            j.MyMethod();
+        });
+    }
+}
+            ";
+            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with no fix = C#
@@ -1882,61 +1935,6 @@ class O
         }
 
         [Fact]
-        public Task CS_Diagnostic_LambdaAndExtensionMethod()
-        {
-            string originalCode = @"
-using System;
-using System.Threading;
-public static class Extensions
-{
-    public static void Extension(this bool b, Action<int> action)
-    {
-    }
-    public static void MyMethod(this int i, CancellationToken c = default)
-    {
-    }
-}
-class C
-{
-    public void M(CancellationToken ct)
-    {
-        bool b = false;
-        b.Extension((j) =>
-        {
-            [|j.MyMethod|]();
-        });
-    }
-}
-            ";
-            // Notice the ct is passed with a name, because "this int i" is considered implicit
-            string fixedCode = @"
-using System;
-using System.Threading;
-public static class Extensions
-{
-    public static void Extension(this bool b, Action<int> action)
-    {
-    }
-    public static void MyMethod(this int i, CancellationToken c = default)
-    {
-    }
-}
-class C
-{
-    public void M(CancellationToken ct)
-    {
-        bool b = false;
-        b.Extension((j) =>
-        {
-            j.MyMethod(c: ct);
-        });
-    }
-}
-            ";
-            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
-        }
-
-        [Fact]
         public Task CS_Diagnostic_WithTrivia()
         {
             string originalCode = @"
@@ -2002,35 +2000,25 @@ class C
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
-        [Theory]
-        [InlineData("CancellationToken c", "", "", "")]
-        [InlineData("", "CancellationToken c", "", "")]
-        [InlineData("", "", "<CancellationToken>", "c")]
-        public Task CS_Diagnostic_MultiNesting(string topMethodParam, string localMethodParam, string extensionTypeParam, string extensionArg)
+        [Fact]
+        public Task CS_Diagnostic_MultiNesting_TopMethod()
         {
             string originalCode = $@"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-public static class Extensions
-{{
-    public static void Extension(this bool b, Action{extensionTypeParam} action) {{}}
-}}
 class C
 {{
     private readonly object lockingObject = new object();
-    public void TopMethod({topMethodParam})
+    public void TopMethod(CancellationToken c)
     {{
-        void LocalMethod({localMethodParam})
+        void LocalMethod()
         {{
             bool b = false;
-            b.Extension(({extensionArg}) =>
+            lock (lockingObject)
             {{
-                lock (lockingObject)
-                {{
-                    [|TokenMethod|]();
-                }}
-            }});
+                [|TokenMethod|]();
+            }}
         }}
     }}
     void TokenMethod(CancellationToken ct = default) {{}}
@@ -2040,25 +2028,66 @@ class C
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-public static class Extensions
-{{
-    public static void Extension(this bool b, Action{extensionTypeParam} action) {{}}
-}}
 class C
 {{
     private readonly object lockingObject = new object();
-    public void TopMethod({topMethodParam})
+    public void TopMethod(CancellationToken c)
     {{
-        void LocalMethod({localMethodParam})
+        void LocalMethod()
         {{
             bool b = false;
-            b.Extension(({extensionArg}) =>
+            lock (lockingObject)
             {{
-                lock (lockingObject)
-                {{
-                    TokenMethod(c);
-                }}
-            }});
+                TokenMethod(c);
+            }}
+        }}
+    }}
+    void TokenMethod(CancellationToken ct = default) {{}}
+}}
+            ";
+            return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        public Task CS_Diagnostic_MultiNesting_LocalMethod()
+        {
+            string originalCode = $@"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{{
+    private readonly object lockingObject = new object();
+    public void TopMethod()
+    {{
+        void LocalMethod(CancellationToken c)
+        {{
+            bool b = false;
+            lock (lockingObject)
+            {{
+                [|TokenMethod|]();
+            }}
+        }}
+    }}
+    void TokenMethod(CancellationToken ct = default) {{}}
+}}
+            ";
+            string fixedCode = $@"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+class C
+{{
+    private readonly object lockingObject = new object();
+    public void TopMethod()
+    {{
+        void LocalMethod(CancellationToken c)
+        {{
+            bool b = false;
+            lock (lockingObject)
+            {{
+                TokenMethod(c);
+            }}
         }}
     }}
     void TokenMethod(CancellationToken ct = default) {{}}
@@ -2403,6 +2432,38 @@ Module Extensions
 End Module
             ";
             return VB16VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        public Task VB_NoDiagnostic_LambdaAndExtensionMethod_NoTokenInLambda()
+        {
+            // Only for local methods will we look for the ct in the top-most ancestor
+            // For anonymous methods we will only look in the immediate ancestor
+            string originalCode = @"
+Imports System
+Imports System.Threading
+Imports System.Runtime.CompilerServices
+
+Module Extensions
+    <Extension()>
+    Sub Extension(ByVal b As Boolean, ByVal action As Action(Of Integer))
+    End Sub
+
+    <Extension()>
+    Sub MyMethod(ByVal i As Integer, ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+End Module
+
+Class C
+    Public Sub M(ByVal ct As CancellationToken)
+        Dim b As Boolean = False
+        b.Extension(Sub(j)
+                        j.MyMethod()
+                    End Sub)
+    End Sub
+End Class
+            ";
+            return VerifyVB.VerifyAnalyzerAsync(originalCode);
         }
 
         #endregion
@@ -3844,61 +3905,6 @@ End Structure
         }
 
         [Fact]
-        public Task VB_Diagnostic_LambdaAndExtensionMethod()
-        {
-            // The ct parameter is not in the closest ancestor method (anonymous)
-            string originalCode = @"
-Imports System
-Imports System.Threading
-Imports System.Runtime.CompilerServices
-
-Module Extensions
-    <Extension()>
-    Sub Extension(ByVal b As Boolean, ByVal action As Action(Of Integer))
-    End Sub
-
-    <Extension()>
-    Sub MyMethod(ByVal i As Integer, ByVal Optional c As CancellationToken = Nothing)
-    End Sub
-End Module
-
-Class C
-    Public Sub M(ByVal ct As CancellationToken)
-        Dim b As Boolean = False
-        b.Extension(Sub(j)
-                        j.[|MyMethod|]()
-                    End Sub)
-    End Sub
-End Class
-            ";
-            string fixedCode = @"
-Imports System
-Imports System.Threading
-Imports System.Runtime.CompilerServices
-
-Module Extensions
-    <Extension()>
-    Sub Extension(ByVal b As Boolean, ByVal action As Action(Of Integer))
-    End Sub
-
-    <Extension()>
-    Sub MyMethod(ByVal i As Integer, ByVal Optional c As CancellationToken = Nothing)
-    End Sub
-End Module
-
-Class C
-    Public Sub M(ByVal ct As CancellationToken)
-        Dim b As Boolean = False
-        b.Extension(Sub(j)
-                        j.MyMethod(ct)
-                    End Sub)
-    End Sub
-End Class
-            ";
-            return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
-        }
-
-        [Fact]
         public Task VB_Diagnostic_WithTrivia()
         {
             string originalCode = @"
@@ -3988,10 +3994,8 @@ End Class
             return VerifyVB.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
-        [Theory]
-        [InlineData("c As CancellationToken", "", "")]
-        [InlineData("", "(Of CancellationToken)", "c")]
-        public Task VB_Diagnostic_MultiNesting(string topMethodParam, string extensionTypeParam, string extensionArg)
+        [Fact]
+        public Task VB_Diagnostic_MultiNesting_TopMethod()
         {
             // Local methods do not exist in VB, it's the only difference with the CS mirror test
             string originalCode = $@"
@@ -3999,20 +4003,13 @@ Imports System
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Runtime.CompilerServices
-Module Extensions
-    <Extension()>
-    Sub Extension(ByVal b As Boolean, ByVal action As Action{extensionTypeParam})
-    End Sub
-End Module
 Class C
     Private ReadOnly lockingObject As Object = New Object()
-    Public Sub TopMethod({topMethodParam})
+    Public Sub TopMethod(c As CancellationToken)
         Dim b As Boolean = False
-        b.Extension(Sub({extensionArg})
-                        SyncLock lockingObject
-                            TokenMethod(c)
-                        End SyncLock
-                    End Sub)
+        SyncLock lockingObject
+            [|TokenMethod|]()
+        End SyncLock
     End Sub
     Private Sub TokenMethod(ByVal Optional ct As CancellationToken = Nothing)
     End Sub
@@ -4023,20 +4020,13 @@ Imports System
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Runtime.CompilerServices
-Module Extensions
-    <Extension()>
-    Sub Extension(ByVal b As Boolean, ByVal action As Action{extensionTypeParam})
-    End Sub
-End Module
 Class C
     Private ReadOnly lockingObject As Object = New Object()
-    Public Sub TopMethod({topMethodParam})
+    Public Sub TopMethod(c As CancellationToken)
         Dim b As Boolean = False
-        b.Extension(Sub({extensionArg})
-                        SyncLock lockingObject
-                            TokenMethod(c)
-                        End SyncLock
-                    End Sub)
+        SyncLock lockingObject
+            TokenMethod(c)
+        End SyncLock
     End Sub
     Private Sub TokenMethod(ByVal Optional ct As CancellationToken = Nothing)
     End Sub

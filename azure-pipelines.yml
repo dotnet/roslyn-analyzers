@@ -20,7 +20,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: buildpool.windows.10.amd64.vs2017.open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self
@@ -49,7 +49,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self

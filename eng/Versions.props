@@ -13,14 +13,19 @@
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
 
     <!-- Toolset -->
-    <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
-    <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta1-62624-01</MicrosoftDiaSymReaderPdb2PdbVersion>
+    <MicrosoftVSSDKBuildToolsVersion>16.5.2044</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
+    <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19521-03</MicrosoftDiaSymReaderPdb2PdbVersion>
     <OpenCoverVersion>4.6.519</OpenCoverVersion>
     <CodecovVersion>1.0.3</CodecovVersion>
 
+    <!-- Use the correct compiler version -->
+    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
+    <!-- Dependencies from https://github.com/dotnet/roslyn -->
+    <MicrosoftNETCoreCompilersPackageVersion>3.3.1-beta3-final</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>3.3.1-beta3-final</MicrosoftNetCompilersVersion>
     <DogfoodAnalyzersVersion>3.0.0</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
@@ -39,14 +44,5 @@
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <RestoreSources>
-      $(RestoreSources);
-      https://dotnet.myget.org/F/roslyn/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-analyzers/api/v3/index.json
-    </RestoreSources>
   </PropertyGroup>
 </Project>

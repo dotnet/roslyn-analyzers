@@ -13,4 +13,9 @@
        <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Clear out 'RootNamespace' for VB projects. Otherwise, it prepends the RootNamespace to declared namespace for the types in the project. -->
+    <RootNamespace Condition="'$(Language)' == 'VB'"></RootNamespace>
+  </PropertyGroup>
 </Project>

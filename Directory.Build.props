@@ -35,6 +35,12 @@
     <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- The version of XliffTasks pulled in by Arcade is fairly old, so here we specify a newer version. -->
+    <!-- This should be removed when the version in Arcade catches up. -->
+    <XliffTasksVersion>1.0.0-beta.19253.2</XliffTasksVersion>
+  </PropertyGroup>
+
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->
   <PropertyGroup>
     <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>

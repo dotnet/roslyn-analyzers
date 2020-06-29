@@ -199,9 +199,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         return true;
                     }
-                    // If no token param was found and the ancestor happens to be an anonymous function, we don't want
-                    // to try to get the ct from the superior ancestor, only with local functions
-                    if (currentOperation.Kind == OperationKind.AnonymousFunction)
+                    // If no token param was found in the previous check, return false if:
+                    // - the current operation is an anonymous function, we don't want to keep checking the superior ancestors because the ct may be unrelated
+                    // - the current operation is a local static function, the ct cannot be passed if its static
+                    if (currentOperation.Kind == OperationKind.AnonymousFunction ||
+                        (currentOperation.Kind == OperationKind.LocalFunction && ancestor.IsStatic))
                     {
                         return false;
                     }

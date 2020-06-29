@@ -3,7 +3,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpForwardCancellationTokenToInvocationsAnalyzer,
@@ -358,42 +360,39 @@ public static class Extensions
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task CS_NoDiagnostic_ParametersDifferMoreThanOne()
         {
-            string originalCode = @"
+            return CS8VerifyAnalyzerAsync(@"
 using System;
 using System.Threading;
 class C
 {
-    void MyMethod(int i){}
-    void MyMethod(int i, bool b){}
-    void MyMethod(int i, bool b, CancellationToken c){}
+    void MyMethod(int i) {}
+    void MyMethod(int i, bool b) {}
+    void MyMethod(int i, bool b, CancellationToken c) {}
 
     public void M(CancellationToken ct)
     {
         MyMethod(1);
     }
 }
-            ";
-            return CS8VerifyAnalyzerAsync(originalCode);
+            ");
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task CS_NoDiagnostic_LambdaAndExtensionMethod_NoTokenInLambda()
         {
             // Only for local methods will we look for the ct in the top-most ancestor
             // For anonymous methods we will only look in the immediate ancestor
-            string originalCode = @"
+            return VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading;
 public static class Extensions
 {
-    public static void Extension(this bool b, Action<int> action)
-    {
-    }
-    public static void MyMethod(this int i, CancellationToken c = default)
-    {
-    }
+    public static void Extension(this bool b, Action<int> action) {}
+    public static void MyMethod(this int i, CancellationToken c = default) {}
 }
 class C
 {
@@ -406,8 +405,59 @@ class C
         });
     }
 }
-            ";
-            return VerifyCS.VerifyAnalyzerAsync(originalCode);
+            ");
+        }
+
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task CS_NoDiagnostic_AnonymousDelegateAndExtensionMethod_NoTokenInAnonymousDelegate()
+        {
+            // Only for local methods will we look for the ct in the top-most ancestor
+            // For anonymous methods we will only look in the immediate ancestor
+            return VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Threading;
+public static class Extensions
+{
+    public delegate void MyDelegate(int i);
+    public static void Extension(this bool b, MyDelegate d) {}
+    public static void MyMethod(this int i, CancellationToken c = default) {}
+}
+class C
+{
+    public void M(CancellationToken ct)
+    {
+        bool b = false;
+        b.Extension((int j) =>
+        {
+            j.MyMethod();
+        });
+    }
+}
+            ");
+        }
+
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task CS_NoDiagnostic_StaticLocalMethod()
+        {
+            // Local static functions are available in C# >= 8.0
+            return CS8VerifyAnalyzerAsync(@"
+using System;
+using System.Threading;
+class C
+{
+    public static void MyMethod(int i, CancellationToken c = default) {}
+    public void M(CancellationToken ct)
+    {
+        LocalStaticMethod();
+        static void LocalStaticMethod()
+        {
+            MyMethod(5);
+        }
+    }
+}
+            ");
         }
 
         #endregion
@@ -2001,97 +2051,99 @@ class C
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task CS_Diagnostic_MultiNesting_TopMethod()
         {
-            string originalCode = $@"
+            string originalCode = @"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 class C
-{{
+{
     private readonly object lockingObject = new object();
     public void TopMethod(CancellationToken c)
-    {{
+    {
         void LocalMethod()
-        {{
+        {
             bool b = false;
             lock (lockingObject)
-            {{
+            {
                 [|TokenMethod|]();
-            }}
-        }}
-    }}
-    void TokenMethod(CancellationToken ct = default) {{}}
-}}
+            }
+        }
+    }
+    void TokenMethod(CancellationToken ct = default) {}
+}
             ";
-            string fixedCode = $@"
+            string fixedCode = @"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 class C
-{{
+{
     private readonly object lockingObject = new object();
     public void TopMethod(CancellationToken c)
-    {{
+    {
         void LocalMethod()
-        {{
+        {
             bool b = false;
             lock (lockingObject)
-            {{
+            {
                 TokenMethod(c);
-            }}
-        }}
-    }}
-    void TokenMethod(CancellationToken ct = default) {{}}
-}}
+            }
+        }
+    }
+    void TokenMethod(CancellationToken ct = default) {}
+}
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task CS_Diagnostic_MultiNesting_LocalMethod()
         {
-            string originalCode = $@"
+            string originalCode = @"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 class C
-{{
+{
     private readonly object lockingObject = new object();
     public void TopMethod()
-    {{
+    {
         void LocalMethod(CancellationToken c)
-        {{
+        {
             bool b = false;
             lock (lockingObject)
-            {{
+            {
                 [|TokenMethod|]();
-            }}
-        }}
-    }}
-    void TokenMethod(CancellationToken ct = default) {{}}
-}}
+            }
+        }
+    }
+    void TokenMethod(CancellationToken ct = default) {}
+}
             ";
-            string fixedCode = $@"
+            string fixedCode = @"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 class C
-{{
+{
     private readonly object lockingObject = new object();
     public void TopMethod()
-    {{
+    {
         void LocalMethod(CancellationToken c)
-        {{
+        {
             bool b = false;
             lock (lockingObject)
-            {{
+            {
                 TokenMethod(c);
-            }}
-        }}
-    }}
-    void TokenMethod(CancellationToken ct = default) {{}}
-}}
+            }
+        }
+    }
+    void TokenMethod(CancellationToken ct = default) {}
+}
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
         }
@@ -2435,6 +2487,7 @@ End Module
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task VB_NoDiagnostic_LambdaAndExtensionMethod_NoTokenInLambda()
         {
             // Only for local methods will we look for the ct in the top-most ancestor
@@ -2464,6 +2517,36 @@ Class C
 End Class
             ";
             return VerifyVB.VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task VB_NoDiagnostic_AnonymousDelegateAndExtensionMethod_NoTokenInAnonymousDelegate()
+        {
+            // Only for local methods will we look for the ct in the top-most ancestor
+            // For anonymous methods we will only look in the immediate ancestor
+            return VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Threading
+Imports System.Runtime.CompilerServices
+Module Extensions
+    Public Delegate Sub MyDelegate(ByVal i As Integer)
+    <Extension()>
+    Sub Extension(ByVal b As Boolean, ByVal d As MyDelegate)
+    End Sub
+    <Extension()>
+    Sub MyMethod(ByVal i As Integer, ByVal Optional c As CancellationToken = Nothing)
+    End Sub
+End Module
+Class C
+    Public Sub M(ByVal ct As CancellationToken)
+        Dim b As Boolean = False
+        b.Extension(Sub(ByVal j As Integer)
+                        j.MyMethod()
+                    End Sub)
+    End Sub
+End Class
+            ");
         }
 
         #endregion
@@ -3995,6 +4078,7 @@ End Class
         }
 
         [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
         public Task VB_Diagnostic_MultiNesting_TopMethod()
         {
             // Local methods do not exist in VB, it's the only difference with the CS mirror test

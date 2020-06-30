@@ -22,15 +22,15 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNETCoreCompilersPackageVersion>3.3.1-beta3-final</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNETCoreCompilersPackageVersion>3.7.0-3.20269.11</MicrosoftNETCoreCompilersPackageVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
-    <DogfoodAnalyzersVersion>3.0.0</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>3.3.0-beta1.20330.1</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
-    <CodeStyleAnalyersVersion>3.7.0-1.20210.7</CodeStyleAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.8.0-1.20330.5</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->

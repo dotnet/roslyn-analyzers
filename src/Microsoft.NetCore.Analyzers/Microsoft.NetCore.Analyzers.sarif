@@ -130,6 +130,26 @@
             ]
           }
         },
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "InitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1813": {
           "id": "CA1813",
           "shortDescription": "Avoid unsealed attributes",
@@ -217,7 +237,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "typeName": "UseCountProperlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -236,7 +256,26 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "typeName": "UseCountProperlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseCountProperlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -332,6 +371,44 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "PreferConstCharOverConstUnitStringAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1835": {
+          "id": "CA1835",
+          "shortDescription": "Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'.",
+          "fullDescription": "'Stream' has a 'ReadAsync' overload that takes a 'Memory<Byte>' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory<Byte>' as the first argument. Prefer calling the memory based overloads, which are more efficient.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1835",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferStreamAsyncMemoryOverloads",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1836": {
+          "id": "CA1836",
+          "shortDescription": "Prefer IsEmpty over Count",
+          "fullDescription": "For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1836",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseCountProperlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -556,6 +633,26 @@
             ]
           }
         },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "InitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2208": {
           "id": "CA2208",
           "shortDescription": "Instantiate argument exceptions correctly",
@@ -767,6 +864,44 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "DoNotCreateTaskCompletionSourceWithWrongArguments",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2248": {
+          "id": "CA2248",
+          "shortDescription": "Provide correct 'enum' argument to 'Enum.HasFlag'",
+          "fullDescription": "'Enum.HasFlag' method expects the 'enum' argument to be of the same 'enum' type as the instance on which the method is invoked and that this 'enum' is marked with 'System.FlagsAttribute'. If these are different 'enum' types, an unhandled exception will be thrown at runtime. If the 'enum' type is not marked with 'System.FlagsAttribute' the call will always return 'false' at runtime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2248",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "ProvideCorrectArgumentToEnumHasFlag",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2249": {
+          "id": "CA2249",
+          "shortDescription": "Consider using 'string.Contains' instead of 'string.IndexOf'",
+          "fullDescription": "Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2249",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "PreferStringContainsOverIndexOfAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1447,14 +1582,14 @@
         },
         "CA5362": {
           "id": "CA5362",
-          "shortDescription": "Do Not Refer Self In Serializable Class",
-          "fullDescription": "This can allow an attacker to DOS or exhaust the memory of the process.",
+          "shortDescription": "Potential reference cycle in deserialized object graph",
+          "fullDescription": "Review code that processes untrusted deserialized data for handling of unexpected reference cycles. An unexpected reference cycle should not cause the code to enter an infinite loop. Otherwise, an unexpected reference cycle can allow an attacker to DOS or exhaust the memory of the process when deserializing untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5362",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotReferSelfInSerializableClass",
+            "typeName": "PotentialReferenceCycleInDeserializedObjectGraph",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2288,25 +2423,6 @@
             ]
           }
         },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
         "CA1824": {
           "id": "CA1824",
           "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
@@ -2343,43 +2459,6 @@
               "Telemetry"
             ]
           }
-        },
-        "CA1829": {
-          "id": "CA1829",
-          "shortDescription": "Use Length/Count property instead of Count() when available",
-          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
         }
       }
     },
@@ -2400,25 +2479,6 @@
             "category": "Globalization",
             "isEnabledByDefault": false,
             "typeName": "BasicUseOrdinalStringComparisonAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
             "languages": [
               "Visual Basic"
             ],
@@ -2461,43 +2521,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1829": {
-          "id": "CA1829",
-          "shortDescription": "Use Length/Count property instead of Count() when available",
-          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }

@@ -339,7 +339,7 @@ namespace Analyzer.Utilities
                 // Check if the given suffix is the special suffix symbol "{[ ]*?}" (opening curly brace '{', 0..N spaces and a closing curly brace '}')
                 if (trimmedSuffix.Length >= 2 &&
                     trimmedSuffix[0] == '{' &&
-                    trimmedSuffix[trimmedSuffix.Length - 1] == '}')
+                    trimmedSuffix[^1] == '}')
                 {
                     for (int i = 1; i < trimmedSuffix.Length - 2; i++)
                     {
@@ -443,8 +443,8 @@ namespace Analyzer.Utilities
             {
                 var optionValue = s;
 
-                if (!string.IsNullOrEmpty(optionForcedValue) &&
-                    (optionValue == null || !optionValue.Contains(optionForcedValue)))
+                if (!RoslynString.IsNullOrEmpty(optionForcedValue) &&
+                    (optionValue == null || !optionValue.Contains(optionForcedValue, StringComparison.Ordinal)))
                 {
                     optionValue = $"{optionForcedValue}|{optionValue}";
                 }
@@ -470,8 +470,8 @@ namespace Analyzer.Utilities
                     optionValue = optionDefaultValue;
                 }
 
-                if (!string.IsNullOrEmpty(optionForcedValue) &&
-                    (optionValue == null || !optionValue.Contains(optionForcedValue)))
+                if (!RoslynString.IsNullOrEmpty(optionForcedValue) &&
+                    (optionValue == null || !optionValue.Contains(optionForcedValue, StringComparison.Ordinal)))
                 {
                     optionValue = $"{optionForcedValue}|{optionValue}";
                 }
@@ -482,6 +482,31 @@ namespace Analyzer.Utilities
                     ? option
                     : SymbolNamesWithValueOption<TValue>.Empty;
             }
+        }
+
+        public static string? GetMSBuildPropertyValue(
+            this AnalyzerOptions options,
+            string optionName,
+            DiagnosticDescriptor rule,
+            ISymbol symbol,
+            Compilation compilation,
+            CancellationToken cancellationToken)
+        => TryGetSyntaxTreeForOption(symbol, out var tree)
+            ? options.GetMSBuildPropertyValue(optionName, rule, tree, compilation, cancellationToken)
+            : null;
+
+        public static string? GetMSBuildPropertyValue(
+            this AnalyzerOptions options,
+            string optionName,
+            DiagnosticDescriptor rule,
+            SyntaxTree tree,
+            Compilation compilation,
+            CancellationToken cancellationToken)
+        {
+            var analyzerConfigOptions = options.GetOrComputeCategorizedAnalyzerConfigOptions(compilation, cancellationToken);
+            return analyzerConfigOptions.GetOptionValue(optionName, tree, rule,
+                tryParseValue: (string value, out string? result) => { result = value; return true; },
+                defaultValue: null, OptionKind.BuildProperty);
         }
 
 #pragma warning disable CA1801 // Review unused parameters - 'compilation' is used conditionally.

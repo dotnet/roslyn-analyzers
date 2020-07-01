@@ -261,7 +261,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 argumentOperation.Parent is IInvocationOperation argumentParentInvocationOperation)
             {
                 parentOperation = argumentParentInvocationOperation;
-                shouldReplaceParent = AnalyzeParentInvocationOperation(argumentParentInvocationOperation, isInstance: false);
+                shouldReplace = AnalyzeParentInvocationOperation(argumentParentInvocationOperation, isInstance: false);
                 operationKey = OperationEqualsArgument;
             }
 
@@ -380,7 +380,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     properties: propertiesBuilder.ToImmutable()));
         }
 
-        private static void DetermineReportForInvocationAnalysis(OperationAnalysisContext context, IInvocationOperation invocationOperation, IOperation parent, bool shouldReplaceParent, bool isAsync, bool useRightSide, bool shouldNegateIsEmpty, bool hasPredicate, string methodName, string? operationKey)
+        private static void DetermineReportForInvocationAnalysis(OperationAnalysisContext context, IInvocationOperation invocationOperation, IOperation parent, bool shouldReplaceParent, bool isAsync, bool shouldNegateIsEmpty, bool hasPredicate, string methodName, string? operationKey)
         {
             if (!shouldReplaceParent)
             {
@@ -410,7 +410,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     else
                     {
                         if (TypeContainsVisibleProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol!))
+                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, invocationOperation, isEmptyPropertySymbol!))
                         {
                             ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                         }

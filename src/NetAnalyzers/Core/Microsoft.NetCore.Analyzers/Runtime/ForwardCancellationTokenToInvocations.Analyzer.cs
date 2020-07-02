@@ -55,6 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isDataflowRule: false
         );
 
+        internal const string ShouldFix = "ShouldFix";
         internal const string ArgumentName = "ArgumentName";
         internal const string ParameterName = "ParameterName";
 
@@ -88,6 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     invocation,
                     containingMethod,
                     cancellationTokenType,
+                    out int shouldFix,
                     out string? cancellationTokenArgumentName,
                     out string? invocationTokenParameterName))
                 {
@@ -98,6 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 SyntaxNode? nodeToDiagnose = GetInvocationMethodNameNode(context.Operation.Syntax) ?? context.Operation.Syntax;
 
                 ImmutableDictionary<string, string?>.Builder properties = ImmutableDictionary.CreateBuilder<string, string?>(StringComparer.Ordinal);
+                properties.Add(ShouldFix, $"{shouldFix}");
                 properties.Add(ArgumentName, cancellationTokenArgumentName); // The new argument to pass to the invocation
                 properties.Add(ParameterName, invocationTokenParameterName); // If the passed argument should be named, then this will be non-null
 
@@ -115,9 +118,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
+            out int shouldFix,
             [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName,
             out string? invocationTokenParameterName)
         {
+            shouldFix = 1;
             ancestorTokenParameterName = null;
             invocationTokenParameterName = null;
 
@@ -153,7 +158,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Check if there is an ancestor method that has a ct that we can pass to the invocation
-            if (!TryGetClosestAncestorThatTakesAToken(invocation, containingSymbol, cancellationTokenType, out IMethodSymbol? ancestor, out ancestorTokenParameterName))
+            if (!TryGetClosestAncestorThatTakesAToken(
+                invocation, containingSymbol, cancellationTokenType,
+                out shouldFix, out IMethodSymbol? ancestor, out ancestorTokenParameterName))
             {
                 return false;
             }
@@ -175,9 +182,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
+            out int shouldFix,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? ancestor,
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
+            shouldFix = 1;
             IOperation currentOperation = invocation.Parent;
             while (currentOperation != null)
             {
@@ -199,13 +208,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         return true;
                     }
-                    // If no token param was found in the previous check, return false if:
-                    // - the current operation is an anonymous function, we don't want to keep checking the superior ancestors because the ct may be unrelated
-                    // - the current operation is a local static function, the ct cannot be passed if its static
-                    if (currentOperation.Kind == OperationKind.AnonymousFunction ||
-                        (currentOperation.Kind == OperationKind.LocalFunction && ancestor.IsStatic))
+                    // If no token param was found in the previous check, return false if the current operation is an anonymous function,
+                    // we don't want to keep checking the superior ancestors because the ct may be unrelated
+                    if (currentOperation.Kind == OperationKind.AnonymousFunction)
                     {
                         return false;
+                    }
+
+                    // If the current operation is a local static function, the ct cannot be passed if its static, but we want to find the ancestor method to trigger a diagnostic,
+                    // we just won't offer a fix
+                    if (currentOperation.Kind == OperationKind.LocalFunction && ancestor.IsStatic)
+                    {
+                        shouldFix = 0;
                     }
                 }
 

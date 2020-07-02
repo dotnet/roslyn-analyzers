@@ -437,29 +437,6 @@ class C
             ");
         }
 
-        [Fact]
-        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
-        public Task CS_NoDiagnostic_StaticLocalMethod()
-        {
-            // Local static functions are available in C# >= 8.0
-            return CS8VerifyAnalyzerAsync(@"
-using System;
-using System.Threading;
-class C
-{
-    public static void MyMethod(int i, CancellationToken c = default) {}
-    public void M(CancellationToken ct)
-    {
-        LocalStaticMethod();
-        static void LocalStaticMethod()
-        {
-            MyMethod(5);
-        }
-    }
-}
-            ");
-        }
-
         #endregion
 
         #region Diagnostics with no fix = C#
@@ -510,6 +487,32 @@ class C
     void M(CancellationToken ct)
     {
         CancellationTokenSource cts = [|CancellationTokenSource.CreateLinkedTokenSource|]();
+    }
+}
+            ";
+            return CS8VerifyAnalyzerAsync(originalCode);
+        }
+
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task CS_AnalyzerOnlyDiagnostic_StaticLocalMethod()
+        {
+            // Local static functions are available in C# >= 8.0
+            // The user should fix convert the static local method into a non-static local method,
+            // or pass `default` or `CancellationToken.None` manually
+            string originalCode = @"
+using System;
+using System.Threading;
+class C
+{
+    public static void MyMethod(int i, CancellationToken c = default) {}
+    public void M(CancellationToken ct)
+    {
+        LocalStaticMethod();
+        static void LocalStaticMethod()
+        {
+            [|MyMethod|](5);
+        }
     }
 }
             ";

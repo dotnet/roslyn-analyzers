@@ -519,6 +519,36 @@ class C
             return CS8VerifyAnalyzerAsync(originalCode);
         }
 
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task CS_AnalyzerOnlyDiagnostic_LocalMethod_InsideOf_StaticLocalMethod_TokenInTopParent()
+        {
+            // Local static functions are available in C# >= 8.0
+            // The user should fix convert the static local method into a non-static local method,
+            // or pass `default` or `CancellationToken.None` manually
+            string originalCode = @"
+using System;
+using System.Threading;
+class C
+{
+    public static void MyMethod(int i, CancellationToken c = default) {}
+    public void M(CancellationToken ct)
+    {
+        LocalStaticMethod();
+        static void LocalStaticMethod()
+        {
+            LocalMethod();
+            void LocalMethod()
+            {
+                [|MyMethod|](5);
+            }
+        }
+    }
+}
+            ";
+            return CS8VerifyAnalyzerAsync(originalCode);
+        }
+
         #endregion
 
         #region Diagnostics with fix = C#
@@ -2149,6 +2179,54 @@ class C
 }
             ";
             return VerifyCS.VerifyCodeFixAsync(originalCode, fixedCode);
+        }
+
+        [Fact]
+        [WorkItem(3786, "https://github.com/dotnet/roslyn-analyzers/issues/3786")]
+        public Task CS_Diagnostic_LocalMethod_InsideOf_StaticLocalMethodPassingToken()
+        {
+            // Local static functions are available in C# >= 8.0
+            string originalCode = @"
+using System;
+using System.Threading;
+class C
+{
+    public static void MyMethod(int i, CancellationToken c = default) {}
+    public void M(CancellationToken c)
+    {
+        LocalStaticMethod(c);
+        static void LocalStaticMethod(CancellationToken ct)
+        {
+            LocalMethod();
+            void LocalMethod()
+            {
+                [|MyMethod|](5);
+            }
+        }
+    }
+}
+            ";
+            string fixedCode = @"
+using System;
+using System.Threading;
+class C
+{
+    public static void MyMethod(int i, CancellationToken c = default) {}
+    public void M(CancellationToken c)
+    {
+        LocalStaticMethod(c);
+        static void LocalStaticMethod(CancellationToken ct)
+        {
+            LocalMethod();
+            void LocalMethod()
+            {
+                MyMethod(5, ct);
+            }
+        }
+    }
+}
+            ";
+            return CS8VerifyCodeFixAsync(originalCode, fixedCode);
         }
 
         #endregion

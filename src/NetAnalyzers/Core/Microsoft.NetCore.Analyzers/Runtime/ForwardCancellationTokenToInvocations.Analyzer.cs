@@ -215,8 +215,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return false;
                     }
 
-                    // If the current operation is a local static function, the ct cannot be passed if its static, but we want to find the ancestor method to trigger a diagnostic,
-                    // we just won't offer a fix
+                    // If the current operation is a local static function, and is not passing a ct, but the parent is, then the
+                    // ct cannot be passed to the inner invocations of the static local method, but we want to continue trying
+                    // to find the ancestor method passing a ct so that we still trigger a diagnostic, we just won't offer a fix
                     if (currentOperation.Kind == OperationKind.LocalFunction && ancestor.IsStatic)
                     {
                         shouldFix = 0;

@@ -1,17 +1,17 @@
 ---
 name: Bug report
 about: Report a bug, false-positive or false-negative
-title: '[BUG] '
+title: ''
 labels: ''
 assignees: ''
 
 ---
 
-## Describe the bug
+### Describe the bug
 
 <!-- A clear and concise description of what the bug is. -->
 
-## Steps To Reproduce
+### Steps To Reproduce
 
 <!--
 Provide the steps to reproduce the behavior:
@@ -21,7 +21,11 @@ Provide the steps to reproduce the behavior:
 4. See error
 -->
 
-## Analyzer
+### Expected behavior
+
+### Actual behavior
+
+### Analyzer
 
 **Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 

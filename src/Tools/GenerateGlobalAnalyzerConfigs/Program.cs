@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Analyzer.Utilities;
 using Analyzer.Utilities.PooledObjects;
 using Analyzer.Utilities.PooledObjects.Extensions;
 using Microsoft.CodeAnalysis;
@@ -89,6 +90,10 @@ namespace GenerateGlobalAnalyzerConfigs
                 }
 
                 var assemblyDir = Path.GetDirectoryName(assemblyPath);
+                if (assemblyDir is null)
+                {
+                    continue;
+                }
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
                 var shippedFile = Path.Combine(assemblyDir, "AnalyzerReleases", assemblyName, ReleaseTrackingHelper.ShippedFileName);
                 if (File.Exists(shippedFile))
@@ -154,7 +159,7 @@ namespace GenerateGlobalAnalyzerConfigs
             return 0;
 
             // Local functions.
-            static void AnalyzerFileReference_AnalyzerLoadFailed(object sender, AnalyzerLoadFailureEventArgs e)
+            static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
                 => throw e.Exception;
 
             string GetAssemblyPath(string assembly)
@@ -319,6 +324,9 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             File.WriteAllText(fileWithPath, fileContents);
 
             static string GetCommonContents(string packageName)
+                => GetGlobalAnalyzerConfigTargetContents(packageName) + GetMSBuildPropertyOptionItemGroup();
+
+            static string GetGlobalAnalyzerConfigTargetContents(string packageName)
             {
                 string packageVersionPropName = packageName.Replace(".", string.Empty, StringComparison.Ordinal) + "RulesVersion";
                 return $@"
@@ -335,7 +343,26 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
     <ItemGroup Condition=""Exists('$(_GlobalAnalyzerConfigFile)')"">
       <EditorConfigFiles Include=""$(_GlobalAnalyzerConfigFile)"" />
     </ItemGroup>
-  </Target>";
+  </Target>
+";
+            }
+
+            static string GetMSBuildPropertyOptionItemGroup()
+            {
+                var builder = new StringBuilder();
+
+                builder.Append($@"
+  <!-- MSBuild properties to thread to the analyzers as options --> 
+  <ItemGroup>
+");
+                foreach (var field in typeof(MSBuildPropertyOptionNames).GetFields())
+                {
+                    builder.AppendLine($@"    <CompilerVisibleProperty Include=""{field.Name}"" />");
+                }
+
+                builder.AppendLine($@"  </ItemGroup>");
+
+                return builder.ToString();
             }
 
             static string GetPackageSpecificContents(string packageName)

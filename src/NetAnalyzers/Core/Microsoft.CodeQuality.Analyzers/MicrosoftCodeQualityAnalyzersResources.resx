@@ -217,13 +217,13 @@
     <value>Add a member to {0} that has a value of zero with a suggested name of 'None'.</value>
   </data>
   <data name="AbstractTypesShouldNotHaveConstructorsTitle" xml:space="preserve">
-    <value>Abstract types should not have constructors</value>
+    <value>Abstract types should not have public constructors</value>
   </data>
   <data name="AbstractTypesShouldNotHaveConstructorsDescription" xml:space="preserve">
     <value>Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.</value>
   </data>
   <data name="AbstractTypesShouldNotHaveConstructorsMessage" xml:space="preserve">
-    <value>Abstract type {0} should not have constructors</value>
+    <value>Abstract type '{0}' should not have public constructors</value>
   </data>
   <data name="MarkAssembliesWithClsCompliantTitle" xml:space="preserve">
     <value>Mark assemblies with CLSCompliant</value>
@@ -1215,10 +1215,13 @@
     <value>Do not initialize unnecessarily</value>
   </data>
   <data name="DoNotInitializeUnnecessarilyDescription" xml:space="preserve">
-    <value>The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which degrades performance and adds to maintenance costs. One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.</value>
+    <value>The .NET runtime initializes all fields of reference types to their default values before running the constructor. In most cases, explicitly initializing a field to its default value in a constructor is redundant, adding maintenance costs and potentially degrading performance (such as with increased assembly size), and the explicit initialization can be removed.  In some cases, such as with static readonly fields that permanently retain their default value, consider instead changing them to be constants or properties.</value>
   </data>
   <data name="DoNotInitializeUnnecessarilyMessage" xml:space="preserve">
-    <value>Do not initialize unnecessarily</value>
+    <value>Member '{0}' is explicitly initialized to its default value.</value>
+  </data>
+  <data name="DoNotInitializeUnnecessarilyFix" xml:space="preserve">
+    <value>Remove the unnecessary assignment.</value>
   </data>
   <data name="PreferJaggedArraysOverMultidimensionalTitle" xml:space="preserve">
     <value>Prefer jagged arrays over multidimensional</value>
@@ -1250,11 +1253,8 @@
   <data name="ReviewVisibleEventHandlersDescription" xml:space="preserve">
     <value>A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.</value>
   </data>
-  <data name="ReviewVisibleEventHandlersMessageSecurity" xml:space="preserve">
-    <value>Consider making {0} not externally visible or ensure that it is benign code.</value>
-  </data>
   <data name="ReviewVisibleEventHandlersMessageDefault" xml:space="preserve">
-    <value>Consider making {0} not externally visible.</value>
+    <value>Consider making '{0}' not externally visible</value>
   </data>
   <data name="SealMethodsThatSatisfyPrivateInterfacesTitle" xml:space="preserve">
     <value>Seal methods that satisfy private interfaces</value>
@@ -1308,10 +1308,13 @@
     <value>Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.</value>
   </data>
   <data name="AvoidDuplicateElementInitializationMessage" xml:space="preserve">
-    <value>The element at index [{0}] has already been initialized. Previous initializations of this element may be overwritten.</value>
+    <value>Redundant element initialization at index '{0}'. Object initializer has another element initializer with the same index that overwrites this value.</value>
   </data>
   <data name="AvoidDuplicateElementInitializationTitle" xml:space="preserve">
     <value>Do not duplicate indexed element initializations</value>
+  </data>
+  <data name="RemoveRedundantElementInitializationCodeFixTitle" xml:space="preserve">
+    <value>Remove redundant element initializer</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsDescription" xml:space="preserve">
     <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
@@ -1410,13 +1413,22 @@
     <value>Do not expose generic lists</value>
   </data>
   <data name="DoNotDeclareEventFieldsAsVirtualDescription" xml:space="preserve">
-    <value>Do not declare virtual events in a base class and override them in a derived class. The C# compiler does not handle these correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.</value>
+    <value>Do not declare virtual events in a base class. Overridden events in a derived class have undefined behavior. The C# compiler does not handle this correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.</value>
   </data>
   <data name="DoNotDeclareEventFieldsAsVirtualMessage" xml:space="preserve">
-    <value>Event '{0}' should not be declared virtual.</value>
+    <value>Event '{0}' should not be declared virtual</value>
   </data>
   <data name="DoNotDeclareEventFieldsAsVirtualTitle" xml:space="preserve">
     <value>Do not declare event fields as virtual</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesDescription" xml:space="preserve">
+    <value>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesMessage" xml:space="preserve">
+    <value>'{0}' should not overload the equality operator.</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesTitle" xml:space="preserve">
+    <value>Do not overload equality operator on reference types</value>
   </data>
   <data name="DoNotPassTypesByReferenceMessage" xml:space="preserve">
     <value>Consider a design that does not require that '{0}' be a reference parameter.</value>

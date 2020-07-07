@@ -233,6 +233,10 @@ dotnet_diagnostic.IDE0065.severity = silent
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
 
+# IDE0078: Use pattern matching
+# Below entry can be removed and IDE0078 turned into a warning once https://github.com/dotnet/roslyn/issues/45569 is addressed
+dotnet_diagnostic.IDE0078.severity = suggestion
+
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]
 

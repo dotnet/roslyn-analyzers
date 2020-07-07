@@ -56,16 +56,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roslyn.Diagnostics.Analyzer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Text.Analyzers.Package", "nuget\Text.Analyzers\Text.Analyzers.Package.csproj", "{0A7C9A18-888A-4028-B88F-989DA6A0140B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MetaCompilation.Analyzers", "MetaCompilation.Analyzers", "{7FEEECAE-4EC2-469C-868A-0B38435C756C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers", "src\MetaCompilation.Analyzers\Core\MetaCompilation.Analyzers.csproj", "{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Setup", "src\MetaCompilation.Analyzers\Setup\MetaCompilation.Analyzers.Setup.csproj", "{D70D8CBB-1AD0-49DE-83A8-07990915A843}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.UnitTests", "src\MetaCompilation.Analyzers\UnitTests\MetaCompilation.Analyzers.UnitTests.csproj", "{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Package", "nuget\MetaCompilation.Analyzers\MetaCompilation.Analyzers.Package.csproj", "{722141A2-91FE-411A-A64F-A2A2A7150122}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Compiler\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{C0B86774-8307-444F-9EE4-98D62C3424F9}"
@@ -166,6 +156,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenerateDocumentationAndCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateDocumentationAndConfigFiles", "src\Tools\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj", "{563654BA-4C05-4EA2-91D3-28A14723B7D5}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Refactoring.Utilities", "src\Utilities\Refactoring\Refactoring.Utilities.shproj", "{68528C1C-B163-49A6-A19D-24E10F500F90}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Refactoring.CSharp.Utilities", "src\Utilities\Refactoring.CSharp\Refactoring.CSharp.Utilities.shproj", "{3055F932-0D1E-4823-A03A-7B62C7639BDA}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Refactoring.VisualBasic.Utilities", "src\Utilities\Refactoring.VisualBasic\Refactoring.VisualBasic.Utilities.shproj", "{4C362C30-C4B1-4C4B-A545-DBF67C7E9153}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
@@ -176,15 +172,18 @@ Global
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{1c62a2f6-7a44-4030-9d1a-7e7a966736e5}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{2a4af3a4-307b-4252-888e-e6546244585a}*SharedItemsImports = 5
-		src\Utilities\Compiler\Analyzer.Utilities.projitems*{2a520f3e-8c5d-43fe-aa03-fe5e3c5f23d1}*SharedItemsImports = 5
-		src\Utilities\Compiler\Analyzer.Utilities.projitems*{3dd9d249-13d4-4dd2-b043-1f025f550013}*SharedItemsImports = 5
-		src\Utilities\Compiler\Analyzer.Utilities.projitems*{563654ba-4c05-4ea2-91d3-28a14723b7d5}*SharedItemsImports = 5
+		src\Utilities\Refactoring.CSharp\Refactoring.CSharp.Utilities.projitems*{3055f932-0d1e-4823-a03a-7b62c7639bda}*SharedItemsImports = 13
+		src\Utilities\Refactoring.VisualBasic\Refactoring.VisualBasic.Utilities.projitems*{4c362c30-c4b1-4c4b-a545-dbf67c7e9153}*SharedItemsImports = 13
+		src\Utilities\Refactoring\Refactoring.Utilities.projitems*{68528c1c-b163-49a6-a19d-24e10f500f90}*SharedItemsImports = 13
+		src\Utilities\Refactoring.CSharp\Refactoring.CSharp.Utilities.projitems*{697e2991-39a8-46c2-aa9c-fe576fbbcd90}*SharedItemsImports = 5
+		src\Utilities\Refactoring.VisualBasic\Refactoring.VisualBasic.Utilities.projitems*{70bba457-2cc1-4929-8fee-359ebb7c398a}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{730c2d1c-0276-4132-85ea-675ce60068bb}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{9a3072a5-fc2d-4183-9420-de5de323441e}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{a94f29cc-56bf-4cf6-93b1-3bb13725b776}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{b475c173-a39d-4a75-93ff-69c3d2742cad}*SharedItemsImports = 5
+		src\Utilities\Refactoring\Refactoring.Utilities.projitems*{b475c173-a39d-4a75-93ff-69c3d2742cad}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{b475c173-a39d-4a75-93ff-69c3d2742cad}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
 		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{b969f316-815c-47b9-82b3-67fdd9ed694f}*SharedItemsImports = 5
@@ -277,22 +276,6 @@ Global
 		{0A7C9A18-888A-4028-B88F-989DA6A0140B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A7C9A18-888A-4028-B88F-989DA6A0140B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A7C9A18-888A-4028-B88F-989DA6A0140B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D70D8CBB-1AD0-49DE-83A8-07990915A843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D70D8CBB-1AD0-49DE-83A8-07990915A843}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D70D8CBB-1AD0-49DE-83A8-07990915A843}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D70D8CBB-1AD0-49DE-83A8-07990915A843}.Release|Any CPU.Build.0 = Release|Any CPU
-		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{722141A2-91FE-411A-A64F-A2A2A7150122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{722141A2-91FE-411A-A64F-A2A2A7150122}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{722141A2-91FE-411A-A64F-A2A2A7150122}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{722141A2-91FE-411A-A64F-A2A2A7150122}.Release|Any CPU.Build.0 = Release|Any CPU
 		{774B5DF6-D14F-4839-95F3-D3632B754765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{774B5DF6-D14F-4839-95F3-D3632B754765}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{774B5DF6-D14F-4839-95F3-D3632B754765}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -457,10 +440,6 @@ Global
 		{9E184844-18B8-446E-8EFB-25FFF76EE347} = {041E93F2-E703-4AB1-B6DF-13EC899D1C6E}
 		{2569B087-6465-425E-986D-BD0D32FC8AA5} = {72AAA528-FD70-45DA-82F8-1D29FC27F81F}
 		{0A7C9A18-888A-4028-B88F-989DA6A0140B} = {446787CE-66C8-43F0-9D51-585BB41FC770}
-		{2A520F3E-8C5D-43FE-AA03-FE5E3C5F23D1} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
-		{D70D8CBB-1AD0-49DE-83A8-07990915A843} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
-		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
-		{722141A2-91FE-411A-A64F-A2A2A7150122} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
 		{EC946164-1E17-410B-B7D9-7DE7E6268D63} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{774B5DF6-D14F-4839-95F3-D3632B754765} = {4F3DD6F3-121C-4D38-9B8E-5065783EA832}
 		{AFCB0C5B-E3C6-45AF-940B-AA38C7EC94EA} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
@@ -504,6 +483,9 @@ Global
 		{3DD9D249-13D4-4DD2-B043-1F025F550013} = {0194F644-14D0-4AF4-8FA1-5CEA07DC7F5F}
 		{DB2DD702-8301-4FC6-B8C0-029C7DCC2931} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{563654BA-4C05-4EA2-91D3-28A14723B7D5} = {DB2DD702-8301-4FC6-B8C0-029C7DCC2931}
+		{68528C1C-B163-49A6-A19D-24E10F500F90} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{3055F932-0D1E-4823-A03A-7B62C7639BDA} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{4C362C30-C4B1-4C4B-A545-DBF67C7E9153} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

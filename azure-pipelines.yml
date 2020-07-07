@@ -22,7 +22,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.10.Amd64.VS2019.Open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self
@@ -37,7 +37,7 @@ jobs:
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
-    - script: $(Build.SourcesDirectory)/.dotnet/dotnet msbuild -restore eng/CodeCoverage.proj
+    - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
       displayName: Upload coverage to codecov.io
       condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
@@ -54,7 +54,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self

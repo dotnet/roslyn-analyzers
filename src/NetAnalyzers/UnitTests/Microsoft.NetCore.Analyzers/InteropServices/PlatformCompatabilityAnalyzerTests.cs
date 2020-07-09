@@ -11,18 +11,6 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
-    public class Test
-    {
-        public void M1()
-        {
-            if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 1, 1))
-                M2();
-        }
-        [MinimumOSPlatform("Windows10.1.1.1")]
-        public void M2()
-        {
-        }
-    }
     public class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
@@ -475,7 +463,11 @@ class Test
         }
         else if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
         {
-            // M2(); TODO: this is bug, fix it
+            [|M2()|];
+        }
+        else if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12))
+        {
+            M2();
         }
         else
         {
@@ -545,6 +537,539 @@ public class Test
     }
 }
 " + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfTestWithNegationAndReturn()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+        if(!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+            return;
+        M2();
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfTestWithLogicalAnd()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) &&
+           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        {
+            M2();
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
+           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12))
+        {
+            M2();
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
+           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12))
+        {
+            [|M2()|];
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) && 1 == 1)
+        {
+            M2();
+        }
+
+        [|M2()|];
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalAnd()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) &&
+           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        {
+            M2();
+        }
+        else
+        {
+            [|M2()|];
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
+           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12))
+        {
+            [|M2()|];
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfTestWithLogicalOr()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
+           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        {
+            [|M2()|];
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            [|M2()|];
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12) || 
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            [|M2()|];
+        }
+
+        [|M2()|];
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfElseTestWithLogicalOr()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
+           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        {
+            [|M2()|];
+        }
+        else
+        {
+            [|M2()|];
+        }
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            [|M2()|];
+        }
+        else
+        {
+            [|M2()|];
+        }
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
+           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            [|M2()|]; // Even it is not meaningful check i think it is a bug, it shouldn't warn
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfElseIfElseTestWithLogicalOr()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        [|M2()|];
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
+           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 5, 1))
+        {
+            [|M2()|];
+        }
+        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 9))
+        {
+            [|M2()|];
+        }
+        else
+            [|M2()|];
+
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            [|M2()|];
+        }
+        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            M2();
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedCall_SimpleIfElseIfTestWithLogicalOrAnd()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        if((RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 1) ||
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1)) &&
+            (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12) ||
+            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 2)))
+        {
+            [|M2()|]; 
+        }
+        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 13) ||
+                 RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 3) ||
+                 RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 4))
+        {
+            [|M2()|];        
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}"
++ MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_ControlFlowAndMultipleChecks()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 8))
+        {
+            [|M2()|];
+
+            if (RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 2, 0))
+            {
+                [|M2()|];
+            }
+            else if (!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            {
+                [|M2()|];
+            } 
+            else
+            {
+                M2();
+            }
+
+            [|M2()|];
+        }
+        else
+        {
+            [|M2()|];
+        }
+
+        if (IsWindows11OrLater())
+        {
+            [|M2()|]; // TODO: support this
+        }
+
+        [|M2()|];
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+
+    bool IsWindows11OrLater()
+    {
+        return RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11, 0, 0, 0);
+    }
+}" + MockPlatformApiSource;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_DebugAssertAnalysisTest()
+        {
+            var source = @"
+using System.Diagnostics;
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        Debug.Assert(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2));
+
+        M2();
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}" + MockPlatformApiSource;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_ResultSavedInLocal()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        var x1 = RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11);
+        var x2 = RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1);
+
+        if (x1)
+        {
+            M2();
+        }
+
+        if (x1 || x2)
+        {
+            [|M2()|];
+        }
+
+        if (x2)
+            [|M2()|];
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}" + MockPlatformApiSource;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_VersionSavedInLocal()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        var v11 = 11;
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, v11))
+        {
+            [|M2()|]; // TODO: fix this scenario
+        }
+
+        [|M2()|];
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}" + MockPlatformApiSource;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task PlatformSavedInLocal_NotYetSupported() // TODO do we want to support it?
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        var platform = OSPlatform.Windows;
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(platform, 11))
+        {
+            [|M2()|];
+        }
+
+        [|M2()|];
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}" + MockPlatformApiSource;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task UnrelatedConditionCheckDoesNotInvalidateState()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1(bool flag1, bool flag2)
+    {
+        [|M2()|];
+
+        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            M2();
+
+            if (flag1 || flag2)
+            {
+                M2();
+            }
+            else
+            {
+                M2();
+            }
+            
+            M2();
+        }
+
+        if (flag1 || flag2)
+        {
+            [|M2()|];
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+}" + MockPlatformApiSource;
+
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 

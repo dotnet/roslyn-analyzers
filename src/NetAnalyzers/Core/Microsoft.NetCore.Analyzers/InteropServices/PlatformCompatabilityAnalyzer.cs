@@ -139,25 +139,40 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                         else
                         {
-                            if (value.AnalysisValues.FirstOrDefault() is RuntimeMethodInfo info)
+                            bool guarded = false;
+                            foreach (var analysisValue in value.AnalysisValues)
                             {
-                                if (!info.Negated)
+                                if (analysisValue is RuntimeMethodInfo info)
                                 {
-                                    OsAttributeInfo attribute = platformSpecificOperation.Value.First();
-                                    if (attribute.OsPlatform!.Equals(info.PlatformPropertyName, StringComparison.InvariantCultureIgnoreCase))
+                                    if (!info.Negated)
                                     {
-                                        if (info.InvokedPlatformCheckMethodName.Equals(s_platformCheckMethods[0], StringComparison.InvariantCulture))
+                                        OsAttributeInfo attribute = platformSpecificOperation.Value.First();
+                                        if (attribute.OsPlatform!.Equals(info.PlatformPropertyName, StringComparison.InvariantCultureIgnoreCase))
                                         {
-                                            if (AttributeVersionsMatch(attribute.AttributeType, attribute.Version, info.Version))
+                                            if (info.InvokedPlatformCheckMethodName.Equals(s_platformCheckMethods[0], StringComparison.InvariantCulture))
                                             {
-                                                continue;
+                                                if (attribute.AttributeType == OsAttrbiteType.MinimumOSPlatformAttribute && AttributeVersionsMatch(attribute.AttributeType, attribute.Version, info.Version))
+                                                {
+                                                    guarded = true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if ((attribute.AttributeType == OsAttrbiteType.ObsoletedInOSPlatformAttribute || attribute.AttributeType == OsAttrbiteType.RemovedInOSPlatformAttribute)
+                                                        && AttributeVersionsMatch(attribute.AttributeType, attribute.Version, info.Version))
+                                                {
+                                                    guarded = true;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                            context.ReportDiagnostic(platformSpecificOperation.Key.CreateDiagnostic(SwitchRule(parsedAttribute.AttributeType), platformSpecificOperation.Key.TargetMethod.Name,
-                                       parsedAttribute.OsPlatform!, $"{parsedAttribute.Version[0]}.{parsedAttribute.Version[1]}.{parsedAttribute.Version[2]}.{parsedAttribute.Version[3]}"));
+                            if (!guarded)
+                            {
+                                context.ReportDiagnostic(platformSpecificOperation.Key.CreateDiagnostic(SwitchRule(parsedAttribute.AttributeType), platformSpecificOperation.Key.TargetMethod.Name,
+                                           parsedAttribute.OsPlatform!, $"{parsedAttribute.Version[0]}.{parsedAttribute.Version[1]}.{parsedAttribute.Version[2]}.{parsedAttribute.Version[3]}"));
+                            }
                         }
                     }
                 }
@@ -212,7 +227,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                suppressed = suppressed || Suppress(parsedAttribute, context.ContainingSymbol);
+                suppressed = suppressed || IsSuppressedByAttribute(parsedAttribute, context.ContainingSymbol);
 
                 if (!suppressed)
                 {
@@ -313,7 +328,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return attributes;
         }
 
-        private static bool Suppress(OsAttributeInfo diagnosingAttribute, ISymbol containingSymbol)
+        private static bool IsSuppressedByAttribute(OsAttributeInfo diagnosingAttribute, ISymbol containingSymbol)
         {
             while (containingSymbol != null)
             {
@@ -390,6 +405,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
+                Debug.Assert(attributeType == OsAttrbiteType.ObsoletedInOSPlatformAttribute || attributeType == OsAttrbiteType.RemovedInOSPlatformAttribute);
+
                 for (int i = 0; i < 4; i++)
                 {
                     if (diagnosingVersion[i] > suppressingVersion[i])

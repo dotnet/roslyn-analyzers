@@ -92,7 +92,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var parsedTfms = ParseTfm(context.Options, context.OwningSymbol, context.Compilation, context.CancellationToken);
 #pragma warning restore CA2000 
             var platformSpecificOperations = PooledDictionary<IInvocationOperation, ImmutableArray<OsAttributeInfo>>.GetInstance();
-            var needsValueContentAnalysis = false;
 
             context.RegisterOperationAction(context =>
             {
@@ -112,16 +111,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor,
-                        wellKnownTypeProvider, context.Options, AddedRule, performPointsToAnalysis: needsValueContentAnalysis,
-                        performValueContentAnalysis: needsValueContentAnalysis, context.CancellationToken,
+                        wellKnownTypeProvider, context.Options, AddedRule, performPointsToAnalysis: true,
+                        performValueContentAnalysis: true, context.CancellationToken,
                         out var pointsToAnalysisResult, out var valueContentAnalysisResult);
                     if (analysisResult == null)
                     {
                         return;
                     }
-
-                    Debug.Assert(valueContentAnalysisResult == null || needsValueContentAnalysis);
-                    Debug.Assert(pointsToAnalysisResult == null || needsValueContentAnalysis);
 
                     foreach (var platformSpecificOperation in platformSpecificOperations)
                     {

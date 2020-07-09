@@ -874,22 +874,12 @@ class Test
             [|M2()|];
         }
 
-        if (IsWindows11OrLater())
-        {
-            [|M2()|]; // TODO: support this
-        }
-
         [|M2()|];
     }
 
     [MinimumOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
-    }
-
-    bool IsWindows11OrLater()
-    {
-        return RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11, 0, 0, 0);
     }
 }" + MockPlatformApiSource;
 
@@ -979,7 +969,7 @@ class Test
         var v11 = 11;
         if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, v11))
         {
-            [|M2()|]; // TODO: fix this scenario
+            M2();
         }
 
         [|M2()|];
@@ -1071,6 +1061,57 @@ class Test
 }" + MockPlatformApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive")]
+        public async Task InterproceduralAnalysisTest(string editorconfig)
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        {|#0:M2()|};
+
+        if (IsWindows11OrLater())
+        {
+            M2();    
+        }
+
+        {|#1:M2()|}; 
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+
+    bool IsWindows11OrLater()
+    {
+        return RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11);
+    }
+}" + MockPlatformApiSource;
+
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source },
+                    AdditionalFiles = { (".editorconfig", editorconfig) }
+                }
+            };
+
+            test.ExpectedDiagnostics.AddRange(new[]
+            {
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.AddedRule).WithLocation(0).WithArguments("M2", "Windows", "10.1.2.3"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.AddedRule).WithLocation(1).WithArguments("M2", "Windows", "10.1.2.3")
+            });
+
+            await test.RunAsync();
         }
 
         private readonly string MockPlatformApiSource = @"

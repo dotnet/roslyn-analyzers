@@ -20,9 +20,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         internal const string RuleId = "CA1416";
         private static readonly ImmutableArray<string> s_platformCheckMethods = ImmutableArray.Create("IsOSPlatformOrLater", "IsOSPlatformEarlierThan");
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        // TODO: Define resource strings for title, message and description.
+        private static readonly LocalizableString s_localizableTitle = "RuntimePlatformCheckTitle"; //new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = "Platform checks:'{0}'"; //new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = "RuntimePlatformCheckDescription"; //new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.RuntimePlatformCheckMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -66,7 +67,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     foreach (var method in methods)
                     {
                         if (s_platformCheckMethods.Contains(method.Name) &&
-                            method.Parameters.Length >= 1 &&
+                            !method.Parameters.IsEmpty &&
                             method.Parameters[0].Type.Equals(osPlatformType) &&
                             method.Parameters.Skip(1).All(p => p.Type.SpecialType == SpecialType.System_Int32))
                         {
@@ -116,16 +117,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor,
-                        wellKnownTypeProvider, context.Options, Rule, performPointsToAnalysis: needsValueContentAnalysis,
+                        wellKnownTypeProvider, context.Options, Rule,
                         performValueContentAnalysis: needsValueContentAnalysis, context.CancellationToken,
-                        out var pointsToAnalysisResult, out var valueContentAnalysisResult);
+                        out var valueContentAnalysisResult);
                     if (analysisResult == null)
                     {
                         return;
                     }
 
                     Debug.Assert(valueContentAnalysisResult == null || needsValueContentAnalysis);
-                    Debug.Assert(pointsToAnalysisResult == null || needsValueContentAnalysis);
 
                     foreach (var platformSpecificOperation in platformSpecificOperations)
                     {
@@ -155,7 +155,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool ComputeNeedsValueContentAnalysis(IInvocationOperation invocation)
         {
-            Debug.Assert(invocation.Arguments.Length > 0);
+            Debug.Assert(!invocation.Arguments.IsEmpty);
             foreach (var argument in invocation.Arguments.Skip(1))
             {
                 if (!argument.Value.ConstantValue.HasValue)

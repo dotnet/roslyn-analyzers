@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(method, visitedInstance, visitedArguments, invokedAsDelegate, originalOperation, defaultValue);
 
-                if (_platformCheckMethods.Contains(method.OriginalDefinition) && visitedArguments.Length > 0)
+                if (_platformCheckMethods.Contains(method.OriginalDefinition) && visitedArguments.IsEmpty)
                 {
                     return RuntimeMethodInfo.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResultOpt, _osPlatformType, out var platformInfo) ?
                         new GlobalFlowStateAnalysisValueSet(platformInfo) :

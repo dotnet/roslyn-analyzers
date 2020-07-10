@@ -190,7 +190,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 foreach (var method in methods)
                 {
                     if (s_platformCheckMethods.Contains(method.Name) &&
-                        method.Parameters.IsEmpty &&
+                        !method.Parameters.IsEmpty &&
                         method.Parameters[0].Type.Equals(osPlatformType) &&
                         method.Parameters.Skip(1).All(p => p.Type.SpecialType == SpecialType.System_Int32))
                     {

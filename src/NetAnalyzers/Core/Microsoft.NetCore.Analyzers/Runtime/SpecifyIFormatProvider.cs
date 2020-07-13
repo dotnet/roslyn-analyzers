@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -200,6 +201,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                                     oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                                     correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                        }
+
+                        if (targetMethod.Parameters.Length == 2 && targetMethod.Parameters[1].RefKind == RefKind.Out)
+                        {
+                            correctOverload = methodsWithSameNameAsTargetMethod.FirstOrDefault(m =>
+                                m.Parameters.Length == 4 &&
+                                m.Parameters[0].Type.Equals(targetMethod.Parameters[0].Type) &&
+                                string.Equals(m.Parameters[1].Type.Name, "NumberStyles", StringComparison.InvariantCulture) &&
+                                m.Parameters[2].Type.Equals(iformatProviderType) &&
+                                m.Parameters[3].Type.Equals(targetMethod.Parameters[1].Type) &&
+                                m.Parameters[3].RefKind == RefKind.Out);
+
+                            if (correctOverload != null)
+                            {
+                                oaContext.ReportDiagnostic(
+                                    invocationExpression.Syntax.CreateDiagnostic(IFormatProviderAlternateRule,
+                                    targetMethod.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    oaContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    correctOverload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
+                            }
                         }
                     }
                     #endregion

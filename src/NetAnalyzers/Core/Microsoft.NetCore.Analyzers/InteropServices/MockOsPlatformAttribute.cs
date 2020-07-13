@@ -27,7 +27,8 @@ namespace System.Runtime.Versioning
                     AttributeTargets.Method |
                     AttributeTargets.Module |
                     AttributeTargets.Property |
-                    AttributeTargets.Struct,
+                    AttributeTargets.Struct |
+                    AttributeTargets.Field,
                     AllowMultiple = true, Inherited = false)]
     public sealed class MinimumOSPlatformAttribute : OSPlatformAttribute
     {
@@ -42,7 +43,8 @@ namespace System.Runtime.Versioning
                     AttributeTargets.Method |
                     AttributeTargets.Module |
                     AttributeTargets.Property |
-                    AttributeTargets.Struct,
+                    AttributeTargets.Struct |
+                    AttributeTargets.Field,
                     AllowMultiple = true, Inherited = false)]
     public sealed class RemovedInOSPlatformAttribute : OSPlatformAttribute
     {
@@ -57,7 +59,8 @@ namespace System.Runtime.Versioning
                     AttributeTargets.Method |
                     AttributeTargets.Module |
                     AttributeTargets.Property |
-                    AttributeTargets.Struct,
+                    AttributeTargets.Struct |
+                    AttributeTargets.Field,
                     AllowMultiple = true, Inherited = false)]
     public sealed class ObsoletedInOSPlatformAttribute : OSPlatformAttribute
     {

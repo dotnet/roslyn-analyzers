@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Analyzer.Utilities;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
@@ -20,9 +19,103 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
     public partial class PlatformCompatabilityAnalyzer
     {
+        private enum PlatformAttrbiteType
+        {
+            None, MinimumOSPlatformAttribute, ObsoletedInOSPlatformAttribute, RemovedInOSPlatformAttribute, TargetPlatformAttribute
+        }
+
+        private struct PlatformAttrbiuteInfo : IEquatable<PlatformAttrbiuteInfo>
+        {
+            public PlatformAttrbiteType AttributeType { get; set; }
+            public string OsPlatformName { get; set; }
+            public Version Version { get; set; }
+
+            public static bool TryParseAttributeData(AttributeData osAttibute, out PlatformAttrbiuteInfo parsedAttribute)
+            {
+                parsedAttribute = new PlatformAttrbiuteInfo();
+                switch (osAttibute.AttributeClass.Name)
+                {
+                    case MinimumOsAttributeName:
+                        parsedAttribute.AttributeType = PlatformAttrbiteType.MinimumOSPlatformAttribute; break;
+                    case ObsoleteAttributeName:
+                        parsedAttribute.AttributeType = PlatformAttrbiteType.ObsoletedInOSPlatformAttribute; break;
+                    case RemovedAttributeName:
+                        parsedAttribute.AttributeType = PlatformAttrbiteType.RemovedInOSPlatformAttribute; break;
+                    case TargetPlatformAttributeName:
+                        parsedAttribute.AttributeType = PlatformAttrbiteType.TargetPlatformAttribute; break;
+                    default:
+                        parsedAttribute.AttributeType = PlatformAttrbiteType.None; break;
+                }
+
+                if (TryParsePlatformString(osAttibute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
+                {
+                    parsedAttribute.OsPlatformName = platformName;
+                    parsedAttribute.Version = version;
+                    return true;
+                }
+
+                return false;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is PlatformAttrbiuteInfo info)
+                {
+                    return Equals(info);
+                }
+                return false;
+            }
+
+            public override int GetHashCode() => HashUtilities.Combine(AttributeType.GetHashCode(), OsPlatformName.GetHashCode(), Version.GetHashCode());
+
+            public static bool operator ==(PlatformAttrbiuteInfo left, PlatformAttrbiuteInfo right) => left.Equals(right);
+
+            public static bool operator !=(PlatformAttrbiuteInfo left, PlatformAttrbiuteInfo right) => !(left == right);
+
+            public bool Equals(PlatformAttrbiuteInfo other) =>
+                AttributeType == other.AttributeType && OsPlatformName == other.OsPlatformName && Version.Equals(other.Version);
+
+            internal static bool TryParseTfmString(string osString, out PlatformAttrbiuteInfo parsedTfm)
+            {
+                parsedTfm = new PlatformAttrbiuteInfo();
+                parsedTfm.AttributeType = PlatformAttrbiteType.None;
+
+                if (TryParsePlatformString(osString, out string platformName, out Version? version))
+                {
+                    parsedTfm.OsPlatformName = platformName;
+                    parsedTfm.Version = version;
+                }
+                return parsedTfm.Version != null;
+            }
+        }
+
+        private static bool TryParsePlatformString(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)
+        {
+            version = null;
+            osPlatformName = string.Empty;
+            for (int i = 0; i < osString.Length; i++)
+            {
+                if (char.IsDigit(osString[i]))
+                {
+                    if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
+                    {
+                        osPlatformName = osString.Substring(0, i);
+                        version = parsedVersion;
+                        return true;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private struct RuntimeMethodInfo : IAbstractAnalysisValue, IEquatable<RuntimeMethodInfo>
         {
-            private RuntimeMethodInfo(string invokedPlatformCheckMethodName, string platformPropertyName, int[] version, bool negated)
+            private RuntimeMethodInfo(string invokedPlatformCheckMethodName, string platformPropertyName, Version version, bool negated)
             {
                 InvokedPlatformCheckMethodName = invokedPlatformCheckMethodName ?? throw new ArgumentNullException(nameof(invokedPlatformCheckMethodName));
                 PlatformPropertyName = platformPropertyName ?? throw new ArgumentNullException(nameof(platformPropertyName));
@@ -32,9 +125,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public string InvokedPlatformCheckMethodName { get; }
             public string PlatformPropertyName { get; }
-#pragma warning disable CA1819 // Properties should not return arrays
-            public int[] Version { get; }
-#pragma warning restore CA1819 // Properties should not return arrays
+            public Version Version { get; }
             public bool Negated { get; }
 
             public IAbstractAnalysisValue GetNegatedValue()
@@ -47,7 +138,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 INamedTypeSymbol osPlatformType,
                 [NotNullWhen(returnValue: true)] out RuntimeMethodInfo? info)
             {
-                if (!TryDecodeOSPlatform(arguments, osPlatformType, out var osPlatformProperty) ||
+                Debug.Assert(!arguments.IsEmpty);
+                if (arguments[0].Value is ILiteralOperation literal && literal.Type.SpecialType == SpecialType.System_String)
+                {
+                    if (literal.ConstantValue.HasValue && TryParsePlatformString(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                    {
+                        info = new RuntimeMethodInfo(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                        return true;
+                    }
+                }
+
+                if (!TryDecodeOSPlatform(arguments, osPlatformType, out var osPlatformName) ||
                     !TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var osVersion))
                 {
                     // Bail out
@@ -55,39 +156,38 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return false;
                 }
 
-                info = new RuntimeMethodInfo(invokedPlatformCheckMethod.Name, osPlatformProperty.Name, osVersion, negated: false);
+                info = new RuntimeMethodInfo(invokedPlatformCheckMethod.Name, osPlatformName, osVersion, negated: false);
                 return true;
             }
 
             private static bool TryDecodeOSPlatform(
                 ImmutableArray<IArgumentOperation> arguments,
                 INamedTypeSymbol osPlatformType,
-                [NotNullWhen(returnValue: true)] out IPropertySymbol? osPlatformProperty)
+                [NotNullWhen(returnValue: true)] out string? osPlatformName)
             {
-                Debug.Assert(!arguments.IsEmpty);
-                return TryDecodeOSPlatform(arguments[0].Value, osPlatformType, out osPlatformProperty);
+                return TryDecodeOSPlatform(arguments[0].Value, osPlatformType, out osPlatformName);
             }
 
             private static bool TryDecodeOSPlatform(
                 IOperation argumentValue,
                 INamedTypeSymbol osPlatformType,
-                [NotNullWhen(returnValue: true)] out IPropertySymbol? osPlatformProperty)
+                [NotNullWhen(returnValue: true)] out string? osPlatformName)
             {
                 if ((argumentValue is IPropertyReferenceOperation propertyReference) &&
                     propertyReference.Property.ContainingType.Equals(osPlatformType))
                 {
-                    osPlatformProperty = propertyReference.Property;
+                    osPlatformName = propertyReference.Property.Name;
                     return true;
                 }
 
-                osPlatformProperty = null;
+                osPlatformName = null;
                 return false;
             }
 
             private static bool TryDecodeOSVersion(
                 ImmutableArray<IArgumentOperation> arguments,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
-                [NotNullWhen(returnValue: true)] out int[]? osVersion)
+                [NotNullWhen(returnValue: true)] out Version? osVersion)
             {
                 using var versionBuilder = ArrayBuilder<int>.GetInstance(4, fillWithValue: 0);
                 var index = 0;
@@ -102,7 +202,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     versionBuilder[index++] = osVersionPart;
                 }
 
-                osVersion = versionBuilder.ToArray();
+                osVersion = new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
                 return true;
 
                 static bool TryDecodeOSVersionPart(IArgumentOperation argument, ValueContentAnalysisResult? valueContentAnalysisResult, out int osVersionPart)
@@ -133,7 +233,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override string ToString()
             {
-                var versionStr = GetVersionString(Version, GetVersionFieldCount(Version));
+                var versionStr = Version.ToString();
                 var result = $"{InvokedPlatformCheckMethodName};{PlatformPropertyName};{versionStr}";
                 if (Negated)
                 {
@@ -141,36 +241,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 return result;
-
-                static int GetVersionFieldCount(int[] version)
-                {
-                    if (version[3] != 0)
-                    {
-                        return 4;
-                    }
-
-                    if (version[2] != 0)
-                    {
-                        return 3;
-                    }
-
-                    if (version[1] != 0)
-                    {
-                        return 2;
-                    }
-
-                    return 1;
-                }
-            }
-
-            private static string GetVersionString(int[] version, int count)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < count; i++)
-                {
-                    builder.Append(version[i]);
-                }
-                return builder.ToString();
             }
 
             public bool Equals(RuntimeMethodInfo other)

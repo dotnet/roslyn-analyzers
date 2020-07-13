@@ -1445,6 +1445,31 @@ public static class C<T>
         }
 
         [Fact, WorkItem(3672, "https://github.com/dotnet/roslyn-analyzers/issues/3672")]
+        public async Task TypeArgumentRefersToTypeParameter_OnType_SecondTypeArgument()
+        {
+            var source = @"
+#nullable enable
+public static class C<T1, T2>
+    where T1 : class
+    where T2 : System.IComparable<
+#nullable disable
+        T2
+#nullable enable
+        >
+{
+}
+";
+            var shippedText = "#nullable enable";
+            var unshippedText = @"";
+            await VerifyCSharpAsync(source, shippedText, unshippedText,
+                // /0/Test0.cs(3,21): warning RS0016: Symbol 'C<T1, T2>' is not part of the declared API.
+                GetCSharpResultAt(3, 21, DeclarePublicApiAnalyzer.DeclareNewApiRule, "C<T1, T2>"),
+                // /0/Test0.cs(3,21): warning RS0041: Symbol 'C<T1, T2>' uses some oblivious reference types.
+                GetCSharpResultAt(3, 21, DeclarePublicApiAnalyzer.ObliviousApiRule, "C<T1, T2>")
+                );
+        }
+
+        [Fact, WorkItem(3672, "https://github.com/dotnet/roslyn-analyzers/issues/3672")]
         public async Task TypeArgumentRefersToTypeParameter_OnType_ObliviousReference()
         {
             var source = @"

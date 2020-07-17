@@ -35,13 +35,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 parsedAttribute = new PlatformAttrbiuteInfo();
                 switch (osAttibute.AttributeClass.Name)
                 {
-                    case MinimumOsAttributeName:
+                    case MinimumOSPlatformAttribute:
                         parsedAttribute.AttributeType = PlatformAttrbiteType.MinimumOSPlatformAttribute; break;
-                    case ObsoleteAttributeName:
+                    case ObsoletedInOSPlatformAttribute:
                         parsedAttribute.AttributeType = PlatformAttrbiteType.ObsoletedInOSPlatformAttribute; break;
-                    case RemovedAttributeName:
+                    case RemovedInOSPlatformAttribute:
                         parsedAttribute.AttributeType = PlatformAttrbiteType.RemovedInOSPlatformAttribute; break;
-                    case TargetPlatformAttributeName:
+                    case TargetPlatformAttribute:
                         parsedAttribute.AttributeType = PlatformAttrbiteType.TargetPlatformAttribute; break;
                     default:
                         parsedAttribute.AttributeType = PlatformAttrbiteType.None; break;
@@ -139,6 +139,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 [NotNullWhen(returnValue: true)] out RuntimeMethodInfo? info)
             {
                 Debug.Assert(!arguments.IsEmpty);
+
                 if (arguments[0].Value is ILiteralOperation literal && literal.Type.SpecialType == SpecialType.System_String)
                 {
                     if (literal.ConstantValue.HasValue && TryParsePlatformString(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
@@ -233,8 +234,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override string ToString()
             {
-                var versionStr = Version.ToString();
-                var result = $"{InvokedPlatformCheckMethodName};{PlatformPropertyName};{versionStr}";
+                var result = $"{InvokedPlatformCheckMethodName};{PlatformPropertyName};{Version}";
                 if (Negated)
                 {
                     result = $"!{result}";

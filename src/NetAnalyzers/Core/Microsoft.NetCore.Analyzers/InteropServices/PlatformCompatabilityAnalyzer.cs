@@ -236,12 +236,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else if (operation is IPropertyReferenceOperation pOperation)
             {
-                if (!(pOperation.Parent is IBinaryOperation bo && (bo.OperatorKind == BinaryOperatorKind.Equals || bo.OperatorKind == BinaryOperatorKind.NotEquals)))
+                if (!IsWithinConditionalOperation(operation))
                     attributes = FindAllPlatformAttributesApplied(pOperation.Property.GetAttributes(), pOperation.Property.ContainingType);
             }
             else if (operation is IFieldReferenceOperation fOperation)
             {
-                if (!(fOperation.Parent is IBinaryOperation bo && (bo.OperatorKind == BinaryOperatorKind.Equals || bo.OperatorKind == BinaryOperatorKind.NotEquals)))
+                if (!IsWithinConditionalOperation(operation))
                     attributes = FindAllPlatformAttributesApplied(fOperation.Field.GetAttributes(), fOperation.Field.ContainingType);
             }
 
@@ -264,6 +264,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 platformSpecificOperations.Add(operation, builder.ToImmutable());
             }
         }
+
+        private static bool IsWithinConditionalOperation(IOperation pOperation) =>
+         pOperation.Parent is IBinaryOperation bo &&
+            (bo.OperatorKind == BinaryOperatorKind.Equals ||
+            bo.OperatorKind == BinaryOperatorKind.NotEquals ||
+            bo.OperatorKind == BinaryOperatorKind.GreaterThan ||
+            bo.OperatorKind == BinaryOperatorKind.LessThan ||
+            bo.OperatorKind == BinaryOperatorKind.GreaterThanOrEqual ||
+            bo.OperatorKind == BinaryOperatorKind.LessThanOrEqual);
 
         private static bool IsSuppressedByTfm(List<PlatformAttrbiuteInfo>? parsedTfms, PlatformAttrbiuteInfo parsedAttribute)
         {

@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
-        public async Task OsDependentMethodCalledWarns()
+        public async Task OsDependentMethodsCalledWarns()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -21,10 +21,20 @@ public class Test
 {
     public void M1()
     {
-        [|M2()|];
+        [|WindowsOnly()|];
+        [|Obsoleted()|];
+        [|Removed()|];
     }
     [MinimumOSPlatform(""Windows10.1.1.1"")]
-    public void M2()
+    public void WindowsOnly()
+    {
+    }
+    [ObsoletedInOSPlatform(""Linux4.1"")]
+    public void Obsoleted()
+    {
+    }
+    [RemovedInOSPlatform(""Linux4.1"")]
+    public void Removed()
     {
     }
 }
@@ -42,14 +52,18 @@ public class Test
 {
     [MinimumOSPlatform(""Windows10.1.1"")]
     public string WindowsStringProperty { get; set; }
-    [MinimumOSPlatform(""Windows10.1"")]
-    public int WindowsIntProperty { get; set; }
+    [ObsoletedInOSPlatform(""ios4.1"")]
+    public int ObsoleteIntProperty { get; set; }
+    [RemovedInOSPlatform(""Linux4.1"")]
+    public byte RemovedProperty { get; }
     public void M1()
     {
         [|WindowsStringProperty|] = ""Hello"";
         string s = [|WindowsStringProperty|];
         M2([|WindowsStringProperty|]);
-        M3([|WindowsIntProperty|]);
+        [|ObsoleteIntProperty|] = 5;
+        M3([|ObsoleteIntProperty|]);
+        M3([|RemovedProperty|]);
     }
     public string M2(string option)
     {
@@ -64,31 +78,28 @@ public class Test
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
-        [Fact]
-        public async Task OsDependentPropertyConditionalCheckNotWarns()
+        [Theory]
+        [InlineData("MinimumOSPlatform", "string StringProperty", " == StringProperty", @"StringProperty|] = ""Hello""", "StringProperty")]
+        [InlineData("ObsoletedInOSPlatform", "int IntProperty", " > IntProperty", "IntProperty|] = 5", "IntProperty")]
+        [InlineData("RemovedInOSPlatform", "int RemovedProperty", " <= RemovedProperty", "RemovedProperty|] = 3", "RemovedProperty")]
+        public async Task OsDependentPropertyConditionalCheckNotWarns(string attribute, string property, string condition, string setter, string getter)
         {
             var source = @"
 using System.Runtime.Versioning;
 
 public class Test
 {
-    [MinimumOSPlatform(""Windows10.1.1"")]
-    public string WindowsStringProperty { get; set; }
-    [MinimumOSPlatform(""Windows10.1"")]
-    public int WindowsIntProperty { get; set; }
+    [" + attribute + @"(""Windows10.1.1"")]
+    public " + property + @" { get; set; }
+
     public void M1()
     {
-        [|WindowsStringProperty|] = ""Hello"";
-        string s = [|WindowsStringProperty|];
-        bool check = s == WindowsStringProperty;
-        M2([|WindowsStringProperty|]);
-        M3([|WindowsIntProperty|]);
+        [|" + setter + @";
+        var s = [|" + getter + @"|];
+        bool check = s " + condition + @";
+        M2([|" + getter + @"|]);
     }
-    public string M2(string option)
-    {
-        return option;
-    }
-    public int M3(int option)
+    public object M2(object option)
     {
         return option;
     }
@@ -221,7 +232,7 @@ public class Test
         }*/
 
         [Fact]
-        public async Task OsDependentMethodCalledFromIntanceWarns()
+        public async Task OsDependentMethodCalledFromInstanceWarns()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -246,7 +257,7 @@ public class B
         }
 
         [Fact]
-        public async Task OsDependentMethodCalledFromOtherNsIntanceWarns()
+        public async Task OsDependentMethodCalledFromOtherNsInstanceWarns()
         {
             var source = @"
 using System.Runtime.Versioning;

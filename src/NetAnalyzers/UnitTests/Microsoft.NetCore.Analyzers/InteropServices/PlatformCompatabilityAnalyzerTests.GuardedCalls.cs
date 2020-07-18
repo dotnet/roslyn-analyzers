@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.InteropServices
+using System.Threading.Tasks;
+using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.InteropServices.PlatformCompatabilityAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+
+namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
-    public partial class PlatformCompatabilityAnalyserTests
+    public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
         public async Task GuardedCalled_SimpleIf_NotWarns()

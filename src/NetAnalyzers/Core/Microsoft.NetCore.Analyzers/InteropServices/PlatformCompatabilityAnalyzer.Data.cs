@@ -47,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         parsedAttribute.AttributeType = PlatformAttrbiteType.None; break;
                 }
 
-                if (TryParsePlatformString(osAttibute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
+                if (!osAttibute.ConstructorArguments[0].IsNull && TryParsePlatformString(osAttibute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
                 {
                     parsedAttribute.OsPlatformName = platformName;
                     parsedAttribute.Version = version;

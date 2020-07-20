@@ -43,6 +43,57 @@ public class Test
         }
 
         [Fact]
+        public async Task WrongPlatformStringsShouldHandledGracefully()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+public class Test
+{
+    public void M1()
+    {
+        Windows10();
+        Windows1_2_3_4_5();
+        [|ObsoletedLinuxDash4_1()|];
+        [|ObsoletedLinuxStar4_1()|];
+        [|RemovedLinu4_1()|];
+        ObsoletedWithNullString();
+        RemovedWithEmptyString();
+    }
+    [MinimumOSPlatform(""Windows10"")]
+    public void Windows10()
+    {
+    }
+    [MinimumOSPlatform(""Windows1.2.3.4.5"")]
+    public void Windows1_2_3_4_5()
+    {
+    }
+    [ObsoletedInOSPlatform(""Linux-4.1"")]
+    public void ObsoletedLinuxDash4_1()
+    {
+    }
+    [ObsoletedInOSPlatform(""Linux*4.1"")]
+    public void ObsoletedLinuxStar4_1()
+    {
+    }
+    [ObsoletedInOSPlatform(null)]
+    public void ObsoletedWithNullString()
+    {
+    }
+    [RemovedInOSPlatform(""Linu4.1"")]
+    public void RemovedLinu4_1()
+    {
+    }
+    [RemovedInOSPlatform("""")]
+    public void RemovedWithEmptyString()
+    {
+    }
+}
+" + MockPlatformApiSource;
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
         public async Task OsDependentPropertyCalledWarns()
         {
             var source = @"
@@ -131,9 +182,9 @@ public class Test2
 
 public enum PlatformEnum
 {
-    [MinimumOSPlatform(""Windows10.0"")]
+    [MinimumOSPlatform(""windows10.0"")]
     Windows10,
-    [MinimumOSPlatform(""Linux4.8"")]
+    [MinimumOSPlatform(""linux4.8"")]
     Linux48,
     NoPlatform
 }

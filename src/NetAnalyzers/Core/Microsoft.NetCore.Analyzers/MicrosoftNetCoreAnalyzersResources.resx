@@ -1362,9 +1362,6 @@
   <data name="PlatformCompatabilityCheckTitle" xml:space="preserve">
     <value>Call of platform dependent API</value>
   </data>
-  <data name="RuntimePlatformCheckMessage" xml:space="preserve">
-    <value>TODO Platform checks:'{0}'</value>
-  </data>
   <data name="PlatformCompatabilityCheckDescription" xml:space="preserve">
     <value>Using platform dependendent API on a component makes the code no longer work across all platforms.</value>
   </data>

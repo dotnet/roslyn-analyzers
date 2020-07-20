@@ -127,46 +127,46 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             INamedTypeSymbol? namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
             IEnumerable<IMethodSymbol>? methods = namedType?.GetMembers(Count).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(syncMethods, methods);
+            AddIfNotNull(syncMethods, methods);
 
             methods = namedType?.GetMembers(LongCount).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(syncMethods, methods);
+            AddIfNotNull(syncMethods, methods);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqQueryable);
             methods = namedType?.GetMembers(Count).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(syncMethods, methods);
+            AddIfNotNull(syncMethods, methods);
 
             methods = namedType?.GetMembers(LongCount).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(syncMethods, methods);
+            AddIfNotNull(syncMethods, methods);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions);
             methods = namedType?.GetMembers(CountAsync).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(asyncMethods, methods);
+            AddIfNotNull(asyncMethods, methods);
 
             methods = namedType?.GetMembers(LongCountAsync).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(asyncMethods, methods);
+            AddIfNotNull(asyncMethods, methods);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataEntityQueryableExtensions);
             methods = namedType?.GetMembers(CountAsync).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(asyncMethods, methods);
+            AddIfNotNull(asyncMethods, methods);
 
             methods = namedType?.GetMembers(LongCountAsync).OfType<IMethodSymbol>().Where(m => m.Parameters.Length <= 2);
-            AddIfNotNullMethodSymbols(asyncMethods, methods);
+            AddIfNotNull(asyncMethods, methods);
 
             // Disallowed types that shouldn't report a diagnosis given that there is no proven benefit on doing so.
             ImmutableHashSet<ITypeSymbol>.Builder disallowedTypesBuilder = ImmutableHashSet.CreateBuilder<ITypeSymbol>();
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMemory1);
-            AddIfNotNullTypeSymbol(disallowedTypesBuilder, namedType);
+            disallowedTypesBuilder.AddIfNotNull(namedType);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1);
-            AddIfNotNullTypeSymbol(disallowedTypesBuilder, namedType);
+            disallowedTypesBuilder.AddIfNotNull(namedType);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlyMemory1);
-            AddIfNotNullTypeSymbol(disallowedTypesBuilder, namedType);
+            disallowedTypesBuilder.AddIfNotNull(namedType);
 
             namedType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1);
-            AddIfNotNullTypeSymbol(disallowedTypesBuilder, namedType);
+            disallowedTypesBuilder.AddIfNotNull(namedType);
 
             ImmutableHashSet<ITypeSymbol> disallowedTypesForCA1836 = disallowedTypesBuilder.ToImmutable();
 
@@ -181,19 +181,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 operationContext, disallowedTypesForCA1836),
                 OperationKind.PropertyReference);
 
-            static void AddIfNotNullMethodSymbols(ImmutableHashSet<IMethodSymbol>.Builder set, IEnumerable<IMethodSymbol>? others)
+            static void AddIfNotNull(ImmutableHashSet<IMethodSymbol>.Builder set, IEnumerable<IMethodSymbol>? others)
             {
                 if (others != null)
                 {
                     set.UnionWith(others);
-                }
-            }
-
-            static void AddIfNotNullTypeSymbol(ImmutableHashSet<ITypeSymbol>.Builder set, ITypeSymbol? symbol)
-            {
-                if (symbol != null)
-                {
-                    set.Add(symbol);
                 }
             }
         }

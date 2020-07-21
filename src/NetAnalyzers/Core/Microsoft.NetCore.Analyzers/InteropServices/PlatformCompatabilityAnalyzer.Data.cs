@@ -73,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public static bool operator !=(PlatformAttrbiuteInfo left, PlatformAttrbiuteInfo right) => !(left == right);
 
             public bool Equals(PlatformAttrbiuteInfo other) =>
-                AttributeType == other.AttributeType && OsPlatformName == other.OsPlatformName && Version.Equals(other.Version);
+                AttributeType == other.AttributeType && IsOSPlatformsEqual(OsPlatformName, other.OsPlatformName) && Version.Equals(other.Version);
 
             internal static bool TryParseTfmString(string osString, out PlatformAttrbiuteInfo parsedTfm)
             {

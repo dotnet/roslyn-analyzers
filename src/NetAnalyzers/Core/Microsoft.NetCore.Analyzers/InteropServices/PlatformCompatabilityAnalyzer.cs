@@ -71,15 +71,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             context.RegisterCompilationStartAction(context =>
             {
-                var typeName = WellKnownTypeNames.SystemRuntimeInteropServicesRuntimeInformation + "Helper";
+                var typeName = WellKnownTypeNames.SystemRuntimeInteropServicesRuntimeInformation;
 
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName, out var runtimeInformationType) ||
-                    !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOSPlatform, out var osPlatformType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName + "Helper", out var runtimeInformationType))
+                {
+                    runtimeInformationType = context.Compilation.GetOrCreateTypeByMetadataName(typeName);
+                }
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOSPlatform, out var osPlatformType))
                 {
                     return;
                 }
 
-                var guardMethods = GetRuntimePlatformGuardMethods(runtimeInformationType);
+                var guardMethods = GetRuntimePlatformGuardMethods(runtimeInformationType!);
 
                 context.RegisterOperationBlockStartAction(context => AnalyzerOperationBlock(context, guardMethods, osPlatformType));
             });
@@ -168,7 +171,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         if (!info.Negated)
                         {
-                            if (attribute.OsPlatformName.Equals(info.PlatformPropertyName, StringComparison.InvariantCultureIgnoreCase))
+                            if (IsOSPlatformsEqual(attribute.OsPlatformName, info.PlatformPropertyName))
                             {
                                 if (info.InvokedPlatformCheckMethodName.Equals(s_platformCheckMethods[0], StringComparison.InvariantCulture))
                                 {
@@ -280,7 +283,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (PlatformAttrbiuteInfo tfm in parsedTfms)
                 {
-                    if (tfm.OsPlatformName.Equals(parsedAttribute.OsPlatformName, StringComparison.InvariantCultureIgnoreCase))
+                    if (IsOSPlatformsEqual(parsedAttribute.OsPlatformName, tfm.OsPlatformName))
                     {
                         return AttributeVersionsMatch(parsedAttribute, tfm);
                     }
@@ -288,6 +291,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             return false;
+        }
+
+        private static bool IsOSPlatformsEqual(string firstOs, string secondOs)
+        {
+            return firstOs.Equals(secondOs, StringComparison.OrdinalIgnoreCase)
+                || (firstOs.Equals("OSX", StringComparison.OrdinalIgnoreCase) && secondOs.Equals("MACOS", StringComparison.OrdinalIgnoreCase))
+                || (secondOs.Equals("OSX", StringComparison.OrdinalIgnoreCase) && firstOs.Equals("MACOS", StringComparison.OrdinalIgnoreCase));
         }
 
         private static DiagnosticDescriptor SwitchRule(PlatformAttrbiteType attributeType)
@@ -384,11 +394,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     foreach (AttributeData attribute in attributes)
                     {
-                        if (diagnosingAttribute.AttributeType.ToString().Equals(attribute.AttributeClass.Name, StringComparison.InvariantCulture))
+                        if (diagnosingAttribute.AttributeType.ToString() == attribute.AttributeClass.Name)
                         {
                             if (PlatformAttrbiuteInfo.TryParseAttributeData(attribute, out PlatformAttrbiuteInfo parsedAttribute))
                             {
-                                if (diagnosingAttribute.OsPlatformName == parsedAttribute.OsPlatformName && AttributeVersionsMatch(diagnosingAttribute, parsedAttribute))
+                                if (IsOSPlatformsEqual(diagnosingAttribute.OsPlatformName, parsedAttribute.OsPlatformName) && AttributeVersionsMatch(diagnosingAttribute, parsedAttribute))
                                 {
                                     return true;
                                 }

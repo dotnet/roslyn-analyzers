@@ -30,7 +30,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -60,7 +60,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -89,7 +89,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -126,7 +126,7 @@ class Test
     void M3 ()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -174,7 +174,7 @@ class Test
     void M3 ()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -216,7 +216,7 @@ public enum PlatformEnum
     Linux48,
     NoPlatform
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -259,7 +259,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -286,7 +286,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -314,7 +314,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -339,7 +339,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -384,7 +384,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -426,7 +426,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -466,7 +466,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -518,7 +518,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -566,7 +566,7 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -607,7 +607,7 @@ class Test
     {
     }
 }"
-+ MockPlatformApiSource;
++ MockAttributesSource + MockRuntimeApiSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
@@ -653,7 +653,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -681,7 +681,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -718,7 +718,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -745,7 +745,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -772,7 +772,7 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -820,12 +820,12 @@ class Test
     void M2()
     {
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
-        /* [Fact] TODO: Not working anymore, fix this
+        /*[Fact] //TODO: Not working anymore, fix this
         public async Task InterproceduralAnalysisTest()
         {
             var source = @"
@@ -855,7 +855,7 @@ class Test
     {
         return RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows,10,2,3,4);
     }
-}" + MockPlatformApiSource;
+}" + MockAttributesSource + MockRuntimeApiSource;
 
             var test = new VerifyCS.Test
             {
@@ -874,5 +874,49 @@ class Test
 
             await test.RunAsync();
         }*/
+
+        private readonly string MockRuntimeApiSource = @"
+namespace System.Runtime.InteropServices
+{
+    public static class RuntimeInformationHelper
+    {
+#pragma warning disable CA1801, IDE0060 // Review unused parameters
+        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major)
+        {
+            return true;
+        }
+        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor)
+        {
+            return true;
+        }
+        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor, int build)
+        {
+            return true;
+        }
+        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor, int build, int revision)
+        {
+            return true;
+        }
+        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major)
+        {
+            return false;
+        }
+        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor)
+        {
+            return false;
+        }
+        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor, int build)
+        {
+            return false;
+        }
+        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor, int build, int revision)
+        {
+            return false;
+        }
+        public static bool IsOSPlatformOrLater(string platformName) => true;
+        public static bool IsOSPlatformEarlierThan(string platformName) => true;
+#pragma warning restore CA1801, IDE0060 // Review unused parameters
+    }
+}";
     }
 }

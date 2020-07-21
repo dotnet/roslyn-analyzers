@@ -9,7 +9,7 @@ assignees: ''
 
 ### Analyzer
 
-**Diagnostic ID**: [CA1716](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1716)
+**Diagnostic ID**: [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716)
 
 ### Describe the improvement
 

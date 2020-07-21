@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
-    public partial class PlatformCompatabilityAnalyzer
+    public sealed partial class PlatformCompatabilityAnalyzer
     {
         private sealed class OperationVisitor : GlobalFlowStateDataFlowOperationVisitor
         {
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (_platformCheckMethods.Contains(method.OriginalDefinition) && !visitedArguments.IsEmpty)
                 {
-                    return RuntimeMethodInfo.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResultOpt, _osPlatformType, out var platformInfo) ?
+                    return RuntimeMethodValue.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResultOpt, _osPlatformType, out var platformInfo) ?
                         new GlobalFlowStateAnalysisValueSet(platformInfo) :
                         GlobalFlowStateAnalysisValueSet.Unknown;
                 }
@@ -53,6 +53,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public override GlobalFlowStateAnalysisValueSet VisitFieldReference(IFieldReferenceOperation operation, object? argument)
             {
                 var value = base.VisitFieldReference(operation, argument);
+                return GetValueOrDefault(value);
+            }
+
+            public override GlobalFlowStateAnalysisValueSet VisitObjectCreation(IObjectCreationOperation operation, object? argument)
+            {
+                var value = base.VisitObjectCreation(operation, argument);
+                return GetValueOrDefault(value);
+            }
+
+            public override GlobalFlowStateAnalysisValueSet VisitEventReference(IEventReferenceOperation operation, object? argument)
+            {
+                var value = base.VisitEventReference(operation, argument);
                 return GetValueOrDefault(value);
             }
         }

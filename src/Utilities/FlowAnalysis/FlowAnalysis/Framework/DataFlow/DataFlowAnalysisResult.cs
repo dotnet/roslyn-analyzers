@@ -135,6 +135,19 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return null;
         }
 
+        internal DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>? TryGetInterproceduralResultByDefinition(IMethodSymbol symbol)
+        {
+            foreach (var kvp in _interproceduralResultsMap)
+            {
+                if (kvp.Key is IInvocationOperation iOperation && iOperation.TargetMethod.OriginalDefinition.Equals(symbol))
+                {
+                    return (DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>)kvp.Value;
+                }
+            }
+
+            return null;
+        }
+
         public ControlFlowGraph ControlFlowGraph { get; }
         public (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }
         public TBlockAnalysisResult EntryBlockOutput { get; }

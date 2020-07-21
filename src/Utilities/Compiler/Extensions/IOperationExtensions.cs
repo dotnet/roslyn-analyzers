@@ -508,6 +508,27 @@ namespace Analyzer.Utilities.Extensions
             => operation.GetAncestor<IAnonymousFunctionOperation>(OperationKind.AnonymousFunction) != null ||
                operation.GetAncestor<ILocalFunctionOperation>(OperationKind.LocalFunction) != null;
 
+        public static bool TryGetContainingLocalOrLambdaFunctionSymbol(this IOperation operation, [NotNullWhen(true)] out IMethodSymbol? containingSymbol)
+        {
+            var localOperation = operation.GetAncestor<ILocalFunctionOperation>(OperationKind.LocalFunction);
+            if (localOperation != null)
+            {
+                containingSymbol = localOperation.Symbol;
+                return true;
+            }
+            else
+            {
+                var anonymousOperation = operation.GetAncestor<IAnonymousFunctionOperation>(OperationKind.AnonymousFunction);
+                if (anonymousOperation != null)
+                {
+                    containingSymbol = anonymousOperation.Symbol;
+                    return true;
+                }
+            }
+            containingSymbol = null;
+            return false;
+        }
+
         public static ITypeSymbol? GetPatternType(this IPatternOperation pattern)
         {
             return pattern switch

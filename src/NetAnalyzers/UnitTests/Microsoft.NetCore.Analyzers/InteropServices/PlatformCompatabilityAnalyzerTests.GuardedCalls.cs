@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,8 +29,25 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Public Class Test
+    Public Sub M1()
+        [|M2()|]
+        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3) Then M2()
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Public Sub M2()
+    End Sub
+End Class
+" + MockAttributesVbSource + MockRuntimeApiSourceVb;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Fact]
@@ -57,12 +76,12 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
-        public async Task GuardedWith_IsOSPlatformOrLater_SimpleIfElseTest()
+        public async Task GuardedWith_IsOSPlatformOrLater_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -86,13 +105,13 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockRuntimeApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
-        public async Task GuardedWith_IsOSPlatformEarlierThan_SimpleIfElseTest()
+        public async Task GuardedWith_IsOSPlatformEarlierThan_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -123,13 +142,12 @@ class Test
     void M3 ()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
-        public async Task GuardedWith_StringOverload_SimpleIfElseTest()
+        public async Task GuardedWith_StringOverload_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -171,13 +189,46 @@ class Test
     void M3 ()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Class Test
+    Private Sub M1()
+        If RuntimeInformationHelper.IsOSPlatformEarlierThan(""Windows10.1"") Then
+            [|M2()|]
+            M3()
+        Else
+            [|M2()|]
+            [|M3()|]
+        End If
+
+        If RuntimeInformationHelper.IsOSPlatformOrLater(""Windows10.1.3"") Then
+            [|M3()|]
+            M2()
+        Else
+            [|M2()|]
+            [|M3()|]
+        End If
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Private Sub M2()
+    End Sub
+
+    <ObsoletedInOSPlatform(""Windows10.1.2.3"")>
+    Private Sub M3()
+    End Sub
+End Class
+" + MockAttributesVbSource + MockRuntimeApiSourceVb;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Fact]
-        public async Task OsDependentEnumValue_GuardedWith_SimpleIfElseTest()
+        public async Task OsDependentEnumValue_GuardedCall_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -213,9 +264,304 @@ public enum PlatformEnum
     Linux48,
     NoPlatform
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
+
+        [Fact]
+        public async Task OsDependentProperty_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    [RemovedInOSPlatform(""Linux4.1"")]
+    public string RemovedProperty { get; set;}
+    
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 4))
+        {
+            RemovedProperty = ""Hello"";
+            string s = RemovedProperty;
+            M2(RemovedProperty);
+        }
+        else
+        {
+            [|RemovedProperty|] = ""Hello"";
+            string s = [|RemovedProperty|];
+            M2([|RemovedProperty|]);
+        }
+    }
+
+    public string M2(string option)
+    {
+        return option;
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task OsDependentConstructorOfClass_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            C instance = new C();
+            instance.M2();
+        }
+        else
+        {   
+            C instance2 = [|new C()|];
+            instance2.M2();
+        }
+    }
+}
+
+public class C
+{
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public C()
+    {
+    }
+    public void M2()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task ConstructorAndMethodOfOsDependentClass_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        {
+            OsDependentClass odc = new OsDependentClass();
+            odc.M2();
+        }
+        else
+        {
+            OsDependentClass odc = [|new OsDependentClass()|];
+            [|odc.M2()|];
+        }
+    }
+}
+[MinimumOSPlatform(""Windows10.1.2.3"")]
+public class OsDependentClass
+{
+    public void M2()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Public Class Test
+    Public Sub M1()
+        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) Then
+            Dim odc As OsDependentClass = New OsDependentClass()
+            odc.M2()
+        Else
+            Dim odc As OsDependentClass = [|New OsDependentClass()|]
+            [|odc.M2()|]
+        End If
+    End Sub
+End Class
+
+<MinimumOSPlatform(""Windows10.1.2.3"")>
+Public Class OsDependentClass
+    Public Sub M2()
+    End Sub
+End Class
+" + MockRuntimeApiSourceVb + MockAttributesVbSource;
+            await VerifyAnalyzerAsyncVb(vbSource);
+        }
+
+        [Fact]
+        public async Task LocalFunctionCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public void M1()
+    {
+        void Test()
+        {
+            if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            {
+                M2();
+            }
+            else
+            {
+                [|M2()|];
+            }
+        }
+        Test();
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        /*[Fact] // TODO: Need to be fixed
+        public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+using System;
+
+public class Test
+{
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+        {
+            void Test() => M2();
+            Test();
+        }
+        else
+        {
+            void Test() => [|M2()|];
+            Test();
+        }
+
+        Action action = () =>
+        {
+            if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            {
+                M2();
+            }
+            else
+            {
+                [|M2()|];
+            }
+        };
+        action.Invoke();
+    }
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void M2()
+    {
+    }
+}
+" + MockAttributesSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
+
+        [Fact]
+        public async Task OsDependentEventAccessed_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public delegate void Del();
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public event Del SampleEvent;
+
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            SampleEvent += M3;
+        }
+        else
+        {
+            [|SampleEvent|] += M4;
+        }
+    }
+
+    public void M2()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            SampleEvent?.Invoke();
+        }
+        else
+        {
+            [|SampleEvent|]?.Invoke();
+        }
+    }
+
+    public void M3()
+    {
+    }
+    public void M4()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        /*[Fact] // TODO: need to be fixed
+        public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    public delegate void Del();
+
+    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    public void DelegateMethod()
+    {
+    }
+    public void M1()
+    {
+        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        {
+            Del handler = DelegateMethod;
+            handler();
+        }
+        else
+        {
+            Del handler = [|DelegateMethod|];
+            handler();
+        }
+    }
+}
+" + MockAttributesSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
 
         [Fact]
         public async Task GuardedCall_SimpleIfElseIfElseTest()
@@ -256,8 +602,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -283,7 +628,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -311,7 +656,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -336,8 +681,26 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Public Class Test
+    Public Sub M1()
+        [|M2()|]
+        If Not RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3) Then Return
+        M2()
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Public Sub M2()
+    End Sub
+End Class
+" + MockAttributesVbSource + MockRuntimeApiSourceVb;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Fact]
@@ -381,7 +744,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -423,7 +786,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -463,7 +826,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -515,7 +878,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -563,7 +926,7 @@ public class Test
     {
     }
 }
-" + MockAttributesSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -604,8 +967,30 @@ class Test
     {
     }
 }"
-+ MockAttributesSource + MockRuntimeApiSource;
++ MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Class Test
+    Private Sub M1()
+        If (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 1) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1)) AndAlso (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 2)) Then
+            [|M2()|]
+        ElseIf RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 13) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 3) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 4) Then
+            [|M2()|]
+        Else
+            [|M2()|]
+        End If
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Private Sub M2()
+    End Sub
+End Class
+" + MockRuntimeApiSourceVb + MockAttributesVbSource;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Fact]
@@ -650,7 +1035,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockRuntimeApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -678,9 +1063,27 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Diagnostics
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Class Test
+    Private Sub M1()
+        [|M2()|]
+        Debug.Assert(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        M2()
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Private Sub M2()
+    End Sub
+End Class
+" + MockAttributesVbSource + MockRuntimeApiSourceVb;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Fact]
@@ -715,8 +1118,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -742,8 +1144,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -769,8 +1170,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -817,9 +1217,42 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
-
+}" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+Imports System.Runtime.InteropServices
+
+Class Test
+    Private Sub M1(ByVal flag1 As Boolean, ByVal flag2 As Boolean)
+        [|M2()|]
+
+        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11) Then
+            M2()
+
+            If flag1 OrElse flag2 Then
+                M2()
+            Else
+                M2()
+            End If
+
+            M2()
+        End If
+
+        If flag1 OrElse flag2 Then
+            [|M2()|]
+        Else
+            [|M2()|]
+        End If
+    End Sub
+
+    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    Private Sub M2()
+    End Sub
+End Class
+" + MockRuntimeApiSourceVb + MockAttributesVbSource;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         /*[Fact] //TODO: Not working anymore, fix this
@@ -833,14 +1266,14 @@ class Test
 {
     void M1()
     {
-        {|#0:M2()|};
+        [|M2()|];
 
         if (IsWindows11OrLater())
         {
             M2();    
         }
 
-        {|#1:M2()|}; 
+        [|M2()|]; 
     }
 
     [MinimumOSPlatform(""Windows10.1.2.3"")]
@@ -854,22 +1287,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            var test = new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources = { source },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive") }
-                }
-            };
-
-            test.ExpectedDiagnostics.AddRange(new[]
-            {
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithLocation(0).WithArguments("M2", "Windows", "10.1.2.3"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithLocation(1).WithArguments("M2", "Windows", "10.1.2.3"),
-            });
-
-            await test.RunAsync();
+            await VerifyAnalyzerAsyncCs(source, @"{ ("".editorconfig"", ""dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive"") }");
         }*/
 
         private readonly string MockRuntimeApiSource = @"
@@ -915,5 +1333,51 @@ namespace System.Runtime.InteropServices
 #pragma warning restore CA1801, IDE0060 // Review unused parameters
     }
 }";
+
+        private readonly string MockRuntimeApiSourceVb = @"
+Namespace System.Runtime.InteropServices
+    Module RuntimeInformationHelper
+        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer) As Boolean
+            Return True
+        End Function
+
+        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer) As Boolean
+            Return True
+        End Function
+
+        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer) As Boolean
+            Return True
+        End Function
+
+        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer, ByVal revision As Integer) As Boolean
+            Return True
+        End Function
+
+        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer) As Boolean
+            Return False
+        End Function
+
+        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer) As Boolean
+            Return False
+        End Function
+
+        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer) As Boolean
+            Return False
+        End Function
+
+        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer, ByVal revision As Integer) As Boolean
+            Return False
+        End Function
+
+        Function IsOSPlatformOrLater(ByVal platformName As String) As Boolean
+            Return True
+        End Function
+
+        Function IsOSPlatformEarlierThan(ByVal platformName As String) As Boolean
+            Return True
+        End Function
+    End Module
+End Namespace
+";
     }
 }

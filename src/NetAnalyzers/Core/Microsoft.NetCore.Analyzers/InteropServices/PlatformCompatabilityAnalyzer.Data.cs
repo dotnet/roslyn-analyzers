@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
 
-    public partial class PlatformCompatabilityAnalyzer
+    public sealed partial class PlatformCompatabilityAnalyzer
     {
         private enum PlatformAttributeType
         {
@@ -27,29 +27,35 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private struct PlatformAttributeInfo : IEquatable<PlatformAttributeInfo>
         {
             public PlatformAttributeType AttributeType { get; set; }
-            public string OsPlatformName { get; set; }
+            public string PlatformName { get; set; }
             public Version Version { get; set; }
 
-            public static bool TryParseAttributeData(AttributeData osAttribute, out PlatformAttributeInfo parsedAttribute)
+            public static bool TryParsePlatformAttributeInfo(AttributeData osAttribute, out PlatformAttributeInfo parsedAttribute)
             {
                 parsedAttribute = new PlatformAttributeInfo();
                 switch (osAttribute.AttributeClass.Name)
                 {
                     case MinimumOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttributeType.MinimumOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.MinimumOSPlatformAttribute;
+                        break;
                     case ObsoletedInOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttributeType.ObsoletedInOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.ObsoletedInOSPlatformAttribute;
+                        break;
                     case RemovedInOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttributeType.RemovedInOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.RemovedInOSPlatformAttribute;
+                        break;
                     case TargetPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttributeType.TargetPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.TargetPlatformAttribute;
+                        break;
                     default:
-                        parsedAttribute.AttributeType = PlatformAttributeType.None; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.None;
+                        break;
                 }
 
-                if (!osAttribute.ConstructorArguments[0].IsNull && TryParsePlatformString(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
+                if (osAttribute.ConstructorArguments.Length == 1 && osAttribute.ConstructorArguments[0].Type.SpecialType == SpecialType.System_String &&
+                    !osAttribute.ConstructorArguments[0].IsNull && TryParsePlatformNameAndVersion(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
                 {
-                    parsedAttribute.OsPlatformName = platformName;
+                    parsedAttribute.PlatformName = platformName;
                     parsedAttribute.Version = version;
                     return true;
                 }
@@ -66,30 +72,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return false;
             }
 
-            public override int GetHashCode() => HashUtilities.Combine(AttributeType.GetHashCode(), OsPlatformName.GetHashCode(), Version.GetHashCode());
+            public override int GetHashCode() => HashUtilities.Combine(AttributeType.GetHashCode(), PlatformName.GetHashCode(), Version.GetHashCode());
 
             public static bool operator ==(PlatformAttributeInfo left, PlatformAttributeInfo right) => left.Equals(right);
 
             public static bool operator !=(PlatformAttributeInfo left, PlatformAttributeInfo right) => !(left == right);
 
             public bool Equals(PlatformAttributeInfo other) =>
-                AttributeType == other.AttributeType && IsOSPlatformsEqual(OsPlatformName, other.OsPlatformName) && Version.Equals(other.Version);
-
-            internal static bool TryParseTfmString(string osString, out PlatformAttributeInfo parsedTfm)
-            {
-                parsedTfm = new PlatformAttributeInfo();
-                parsedTfm.AttributeType = PlatformAttributeType.None;
-
-                if (TryParsePlatformString(osString, out string platformName, out Version? version))
-                {
-                    parsedTfm.OsPlatformName = platformName;
-                    parsedTfm.Version = version;
-                }
-                return parsedTfm.Version != null;
-            }
+                AttributeType == other.AttributeType && IsOSPlatformsEqual(PlatformName, other.PlatformName) && Version.Equals(other.Version);
         }
 
-        private static bool TryParsePlatformString(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)
+        private static bool TryParsePlatformNameAndVersion(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)
         {
             version = null;
             osPlatformName = string.Empty;
@@ -113,9 +106,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return false;
         }
 
-        private struct RuntimeMethodInfo : IAbstractAnalysisValue, IEquatable<RuntimeMethodInfo>
+        private struct RuntimeMethodValue : IAbstractAnalysisValue, IEquatable<RuntimeMethodValue>
         {
-            private RuntimeMethodInfo(string invokedPlatformCheckMethodName, string platformPropertyName, Version version, bool negated)
+            private RuntimeMethodValue(string invokedPlatformCheckMethodName, string platformPropertyName, Version version, bool negated)
             {
                 InvokedPlatformCheckMethodName = invokedPlatformCheckMethodName ?? throw new ArgumentNullException(nameof(invokedPlatformCheckMethodName));
                 PlatformPropertyName = platformPropertyName ?? throw new ArgumentNullException(nameof(platformPropertyName));
@@ -129,22 +122,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public bool Negated { get; }
 
             public IAbstractAnalysisValue GetNegatedValue()
-                => new RuntimeMethodInfo(InvokedPlatformCheckMethodName, PlatformPropertyName, Version, !Negated);
+                => new RuntimeMethodValue(InvokedPlatformCheckMethodName, PlatformPropertyName, Version, !Negated);
 
             public static bool TryDecode(
                 IMethodSymbol invokedPlatformCheckMethod,
                 ImmutableArray<IArgumentOperation> arguments,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
                 INamedTypeSymbol osPlatformType,
-                [NotNullWhen(returnValue: true)] out RuntimeMethodInfo? info)
+                [NotNullWhen(returnValue: true)] out RuntimeMethodValue? info)
             {
                 Debug.Assert(!arguments.IsEmpty);
 
                 if (arguments[0].Value is ILiteralOperation literal && literal.Type.SpecialType == SpecialType.System_String)
                 {
-                    if (literal.ConstantValue.HasValue && TryParsePlatformString(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                    if (literal.ConstantValue.HasValue && TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
                     {
-                        info = new RuntimeMethodInfo(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                        info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
                         return true;
                     }
                 }
@@ -157,7 +150,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return false;
                 }
 
-                info = new RuntimeMethodInfo(invokedPlatformCheckMethod.Name, osPlatformName, osVersion, negated: false);
+                info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, osPlatformName, osVersion, negated: false);
                 return true;
             }
 
@@ -243,27 +236,27 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return result;
             }
 
-            public bool Equals(RuntimeMethodInfo other)
+            public bool Equals(RuntimeMethodValue other)
                 => InvokedPlatformCheckMethodName.Equals(other.InvokedPlatformCheckMethodName, StringComparison.OrdinalIgnoreCase) &&
                     PlatformPropertyName.Equals(other.PlatformPropertyName, StringComparison.OrdinalIgnoreCase) &&
                     Version.Equals(other.Version) &&
                     Negated == other.Negated;
 
             public override bool Equals(object obj)
-                => obj is RuntimeMethodInfo otherInfo && Equals(otherInfo);
+                => obj is RuntimeMethodValue otherInfo && Equals(otherInfo);
 
             public override int GetHashCode()
                 => HashUtilities.Combine(InvokedPlatformCheckMethodName.GetHashCode(), PlatformPropertyName.GetHashCode(), Version.GetHashCode(), Negated.GetHashCode());
 
             bool IEquatable<IAbstractAnalysisValue>.Equals(IAbstractAnalysisValue other)
-                => other is RuntimeMethodInfo otherInfo && Equals(otherInfo);
+                => other is RuntimeMethodValue otherInfo && Equals(otherInfo);
 
-            public static bool operator ==(RuntimeMethodInfo left, RuntimeMethodInfo right)
+            public static bool operator ==(RuntimeMethodValue left, RuntimeMethodValue right)
             {
                 return left.Equals(right);
             }
 
-            public static bool operator !=(RuntimeMethodInfo left, RuntimeMethodInfo right)
+            public static bool operator !=(RuntimeMethodValue left, RuntimeMethodValue right)
             {
                 return !(left == right);
             }

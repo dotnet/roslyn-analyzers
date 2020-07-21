@@ -10,7 +10,8 @@ CA1047 | Design | Info | DoNotDeclareProtectedMembersInSealedTypes, [Documentati
 CA1069 | Design | Info | EnumShouldNotHaveDuplicatedValues, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1069)
 CA1070 | Design | Info | DoNotDeclareEventFieldsAsVirtual, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1070)
 CA1416 | Interoperability | Info | RuntimePlatformCheckAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1416)
-CA1417 | Interoperability | Warning | PlatformCompatabilityAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1417)
+CA1417 | Interoperability | Warning | DoNotUseOutAttributeStringPinvokeParametersAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1417)
+CA1418 | Interoperability | Warning | PlatformCompatabilityAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1418)
 CA1700 | Naming | Disabled | DoNotNameEnumValuesReserved, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1700)
 CA1713 | Naming | Disabled | EventsShouldNotHaveBeforeOrAfterPrefix, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1713)
 CA1805 | Performance | Info | DoNotInitializeUnnecessarilyAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1805)
@@ -30,6 +31,13 @@ CA2016 | Reliability | Info | ForwardCancellationTokenToInvocationsAnalyzer, [Do
 CA2247 | Usage | Warning | DoNotCreateTaskCompletionSourceWithWrongArguments, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2247)
 CA2248 | Usage | Info | DoNotCheckFlagFromDifferentEnum, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2248)
 CA2249 | Usage | Info | PreferStringContainsOverIndexOfAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2249)
+CA2350 | Security | Disabled | DoNotUseDataTableReadXml, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2350)
+CA2351 | Security | Disabled | DoNotUseDataSetReadXml, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2351)
+CA2352 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2352)
+CA2353 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2353)
+CA2354 | Security | Disabled | DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2354)
+CA2355 | Security | Disabled | DataSetDataTableInSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2355)
+CA2356 | Security | Disabled | DataSetDataTableInWebSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2356)
 
 ### Changed Rules
 Rule ID | New Category | New Severity | Old Category | Old Severity | Notes

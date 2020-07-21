@@ -142,6 +142,76 @@
         <target state="translated">可靠性</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="new">When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable type found in deserializable object graph</source>
+        <target state="new">Unsafe DataSet or DataTable type found in deserializable object graph</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="new">When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks</source>
+        <target state="new">Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceSerializableTypeMessage">
+        <source>When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="new">When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInRceSerializableTypeTitle">
+        <source>Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks</source>
+        <target state="new">Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInSerializableTypeMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="new">When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInSerializableTypeTitle">
+        <source>Unsafe DataSet or DataTable in serializable type</source>
+        <target state="new">Unsafe DataSet or DataTable in serializable type</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInWebDeserializableObjectGraphMessage">
+        <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</source>
+        <target state="new">When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetDataTableInWebDeserializableObjectGraphTitle">
+        <source>Unsafe DataSet or DataTable type in web deserializable object graph</source>
+        <target state="new">Unsafe DataSet or DataTable type in web deserializable object graph</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.</source>
+        <target state="new">The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataSetReadXmlTitle">
+        <source>Do not use insecure deserialization with DataSet.ReadXml()</source>
+        <target state="new">Do not use insecure deserialization with DataSet.ReadXml()</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataTableReadXmlMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.</source>
+        <target state="new">The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataTableReadXmlTitle">
+        <source>Do not use insecure deserialization with DataTable.ReadXml()</source>
+        <target state="new">Do not use insecure deserialization with DataTable.ReadXml()</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
         <source>HttpClients should enable certificate revocation list checks</source>
         <target state="translated">HttpClients 應啟用憑證撤銷清單檢查</target>
@@ -740,6 +810,21 @@
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
         <source>Call to obsolete key derivation function {0}.{1}</source>
         <target state="translated">呼叫已淘汰的金鑰衍生函數 {0}.{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersDescription">
+        <source>String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.</source>
+        <target state="new">String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersMessage">
+        <source>Do not use the 'OutAttribute' for string parameter '{0}' which is passed by value. If marshalling of modified data back to the caller is required, use the 'out' keyword to pass the string by reference instead</source>
+        <target state="new">Do not use the 'OutAttribute' for string parameter '{0}' which is passed by value. If marshalling of modified data back to the caller is required, use the 'out' keyword to pass the string by reference instead</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseOutAttributeStringPInvokeParametersTitle">
+        <source>Do not use 'OutAttribute' on string parameters for P/Invokes</source>
+        <target state="new">Do not use 'OutAttribute' on string parameters for P/Invokes</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseReferenceEqualsWithValueTypesComparerMessage">

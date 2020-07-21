@@ -28,7 +28,6 @@ namespace Test.Utilities
             var test = new Test
             {
                 TestCode = source,
-                MarkupOptions = MarkupOptions.UseFirstDescriptor
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

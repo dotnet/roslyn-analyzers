@@ -2,9 +2,6 @@
 
 using System.Threading.Tasks;
 using Xunit;
-using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.InteropServices.PlatformCompatabilityAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
@@ -31,7 +28,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -61,7 +58,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -91,7 +88,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -128,7 +125,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -176,7 +173,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -217,7 +214,7 @@ public enum PlatformEnum
     NoPlatform
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -261,7 +258,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -287,7 +284,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -315,7 +312,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -340,7 +337,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -385,7 +382,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -427,7 +424,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -467,7 +464,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -519,7 +516,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -567,7 +564,7 @@ public class Test
     }
 }
 " + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -608,7 +605,7 @@ class Test
     }
 }"
 + MockAttributesSource + MockRuntimeApiSource;
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -655,7 +652,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -683,7 +680,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -720,7 +717,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -747,7 +744,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -774,7 +771,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -822,7 +819,7 @@ class Test
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
-            await VerifyCS.VerifyAnalyzerAsync(source);
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         /*[Fact] //TODO: Not working anymore, fix this

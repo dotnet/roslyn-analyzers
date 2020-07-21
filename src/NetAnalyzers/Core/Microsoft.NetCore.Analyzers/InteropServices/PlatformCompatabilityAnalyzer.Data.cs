@@ -19,35 +19,35 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
     public partial class PlatformCompatabilityAnalyzer
     {
-        private enum PlatformAttrbiteType
+        private enum PlatformAttributeType
         {
             None, MinimumOSPlatformAttribute, ObsoletedInOSPlatformAttribute, RemovedInOSPlatformAttribute, TargetPlatformAttribute
         }
 
-        private struct PlatformAttrbiuteInfo : IEquatable<PlatformAttrbiuteInfo>
+        private struct PlatformAttributeInfo : IEquatable<PlatformAttributeInfo>
         {
-            public PlatformAttrbiteType AttributeType { get; set; }
+            public PlatformAttributeType AttributeType { get; set; }
             public string OsPlatformName { get; set; }
             public Version Version { get; set; }
 
-            public static bool TryParseAttributeData(AttributeData osAttibute, out PlatformAttrbiuteInfo parsedAttribute)
+            public static bool TryParseAttributeData(AttributeData osAttribute, out PlatformAttributeInfo parsedAttribute)
             {
-                parsedAttribute = new PlatformAttrbiuteInfo();
-                switch (osAttibute.AttributeClass.Name)
+                parsedAttribute = new PlatformAttributeInfo();
+                switch (osAttribute.AttributeClass.Name)
                 {
                     case MinimumOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttrbiteType.MinimumOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.MinimumOSPlatformAttribute; break;
                     case ObsoletedInOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttrbiteType.ObsoletedInOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.ObsoletedInOSPlatformAttribute; break;
                     case RemovedInOSPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttrbiteType.RemovedInOSPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.RemovedInOSPlatformAttribute; break;
                     case TargetPlatformAttribute:
-                        parsedAttribute.AttributeType = PlatformAttrbiteType.TargetPlatformAttribute; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.TargetPlatformAttribute; break;
                     default:
-                        parsedAttribute.AttributeType = PlatformAttrbiteType.None; break;
+                        parsedAttribute.AttributeType = PlatformAttributeType.None; break;
                 }
 
-                if (!osAttibute.ConstructorArguments[0].IsNull && TryParsePlatformString(osAttibute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
+                if (!osAttribute.ConstructorArguments[0].IsNull && TryParsePlatformString(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
                 {
                     parsedAttribute.OsPlatformName = platformName;
                     parsedAttribute.Version = version;
@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override bool Equals(object obj)
             {
-                if (obj is PlatformAttrbiuteInfo info)
+                if (obj is PlatformAttributeInfo info)
                 {
                     return Equals(info);
                 }
@@ -68,17 +68,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override int GetHashCode() => HashUtilities.Combine(AttributeType.GetHashCode(), OsPlatformName.GetHashCode(), Version.GetHashCode());
 
-            public static bool operator ==(PlatformAttrbiuteInfo left, PlatformAttrbiuteInfo right) => left.Equals(right);
+            public static bool operator ==(PlatformAttributeInfo left, PlatformAttributeInfo right) => left.Equals(right);
 
-            public static bool operator !=(PlatformAttrbiuteInfo left, PlatformAttrbiuteInfo right) => !(left == right);
+            public static bool operator !=(PlatformAttributeInfo left, PlatformAttributeInfo right) => !(left == right);
 
-            public bool Equals(PlatformAttrbiuteInfo other) =>
+            public bool Equals(PlatformAttributeInfo other) =>
                 AttributeType == other.AttributeType && IsOSPlatformsEqual(OsPlatformName, other.OsPlatformName) && Version.Equals(other.Version);
 
-            internal static bool TryParseTfmString(string osString, out PlatformAttrbiuteInfo parsedTfm)
+            internal static bool TryParseTfmString(string osString, out PlatformAttributeInfo parsedTfm)
             {
-                parsedTfm = new PlatformAttrbiuteInfo();
-                parsedTfm.AttributeType = PlatformAttrbiteType.None;
+                parsedTfm = new PlatformAttributeInfo();
+                parsedTfm.AttributeType = PlatformAttributeType.None;
 
                 if (TryParsePlatformString(osString, out string platformName, out Version? version))
                 {

@@ -12,8 +12,8 @@
 
   <!-- Test runner configuration -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFXCopAnalyersVersion)" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyersVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFXCopAnalyzersVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
     <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" />
     <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>

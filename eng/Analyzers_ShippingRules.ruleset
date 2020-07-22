@@ -14,11 +14,11 @@
   </Rules>
 
   <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
-    <!-- Do not use generic 'CodeAction.Create' to create 'CodeAction' -->
+    <!-- Do not use generic 'CodeAction.Create' to create 'CodeAction', there is no agreement on what to do for roslyn-analyzer repo -->
     <Rule Id="RS0005" Action="None" />
-    <!-- Parts exported with MEFv2 must be marked with 'SharedAttribute' -->
+    <!-- Parts exported with MEFv2 must be marked with 'SharedAttribute', un-needed here -->
     <Rule Id="RS0023" Action="None" />
-    <!-- Exported parts should be marked with 'ImportingConstructorAttribute' -->
+    <!-- Exported parts should be marked with 'ImportingConstructorAttribute', un-needed here -->
     <Rule Id="RS0034" Action="None" />
     <!-- Use 'null' instead of 'default' for nullable types -->
     <Rule Id="RS0038" Action="None" />
@@ -28,4 +28,17 @@
     <Rule Id="RS0100" Action="None" />
   </Rules>
 
+  <!-- Disable all rules from public API analyzer as we do not expose public API -->
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+    <Rule Id="RS0016" Action="None" />
+    <Rule Id="RS0017" Action="None" />
+    <Rule Id="RS0022" Action="None" />
+    <Rule Id="RS0024" Action="None" />
+    <Rule Id="RS0025" Action="None" />
+    <Rule Id="RS0026" Action="None" />
+    <Rule Id="RS0027" Action="None" />
+    <Rule Id="RS0036" Action="None" />
+    <Rule Id="RS0037" Action="None" />
+    <Rule Id="RS0041" Action="None" />
+  </Rules>
 </RuleSet>

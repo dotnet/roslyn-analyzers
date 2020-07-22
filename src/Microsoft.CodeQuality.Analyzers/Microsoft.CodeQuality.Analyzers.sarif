@@ -141,7 +141,7 @@
         },
         "CA1012": {
           "id": "CA1012",
-          "shortDescription": "Abstract types should not have constructors",
+          "shortDescription": "Abstract types should not have public constructors",
           "fullDescription": "Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1012",
@@ -956,7 +956,7 @@
         "CA1508": {
           "id": "CA1508",
           "shortDescription": "Avoid dead conditional code",
-          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
+          "fullDescription": "'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1508",
           "properties": {
@@ -1335,7 +1335,7 @@
         "CA1805": {
           "id": "CA1805",
           "shortDescription": "Do not initialize unnecessarily",
-          "fullDescription": "The common language runtime initializes all fields to their default values before running the constructor. In most cases, initializing a field to its default value in a constructor is redundant, which adds to maintenance costs and may degrade performance (such as with increased assembly size). One case where it is not redundant occurs when the constructor calls another constructor of the same class or a base class constructor and that constructor initializes the field to a non-default value. In this case, changing the value of the field back to its default value can be appropriate.",
+          "fullDescription": "The .NET runtime initializes all fields of reference types to their default values before running the constructor. In most cases, explicitly initializing a field to its default value in a constructor is redundant, adding maintenance costs and potentially degrading performance (such as with increased assembly size), and the explicit initialization can be removed.  In some cases, such as with static readonly fields that permanently retain their default value, consider instead changing them to be constants or properties.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1805",
           "properties": {

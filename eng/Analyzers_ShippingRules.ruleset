@@ -22,8 +22,6 @@
     <Rule Id="RS0034" Action="None" />
     <!-- Use 'null' instead of 'default' for nullable types -->
     <Rule Id="RS0038" Action="None" />
-    <!-- Avoid the 'Opt' suffix in a nullable-enabled code -->
-    <Rule Id="RS0046" Action="None" />
     <!-- Statements must be placed on their own line -->
     <Rule Id="RS0100" Action="None" />
   </Rules>

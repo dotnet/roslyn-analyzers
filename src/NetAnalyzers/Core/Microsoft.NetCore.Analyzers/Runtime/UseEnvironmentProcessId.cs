@@ -60,7 +60,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         operationContext.ReportDiagnostic(processIdPropertyReference.CreateDiagnostic(Rule));
                     }
-
                 }, OperationKind.PropertyReference);
             });
         }

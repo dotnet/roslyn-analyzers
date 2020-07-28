@@ -379,6 +379,18 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 	<AdditionalFiles Include=""AnalyzerReleases.Unshipped.md"" />
   </ItemGroup>";
                 }
+                else if (packageName == "Microsoft.CodeAnalysis.PublicApiAnalyzers")
+                {
+                    return @"
+
+  <!-- Workaround for https://github.com/dotnet/roslyn/issues/4655 -->
+  <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt')"" >
+	<AdditionalFiles Include=""PublicAPI.Shipped.txt"" />
+  </ItemGroup>
+  <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt')"" >
+	<AdditionalFiles Include=""PublicAPI.Unshipped.txt"" />
+  </ItemGroup>";
+                }
 
                 return string.Empty;
             }

@@ -25,8 +25,10 @@
     <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0-2.final</MicrosoftCodeAnalysisForShippedApisVersion>
     <DogfoodAnalyzersVersion>3.3.0-beta1.20351.1</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyersVersion>
-    <MicrosoftCodeAnalysisAnalyersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>
+    <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
+    <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
+    <RoslynDiagnosticsAnalyzersVersion>$(DogfoodAnalyzersVersion)</RoslynDiagnosticsAnalyzersVersion>
     <CodeStyleAnalyersVersion>3.8.0-1.20330.5</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <!-- Roslyn Testing -->

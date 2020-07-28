@@ -288,20 +288,20 @@ namespace GenerateGlobalAnalyzerConfigs
                             return GetSeverityString(null);
                         }
 
-                        static string GetSeverityString(DiagnosticSeverity? severityOpt)
+                        static string GetSeverityString(DiagnosticSeverity? severity)
                         {
-                            if (!severityOpt.HasValue)
+                            if (!severity.HasValue)
                             {
                                 return "none";
                             }
 
-                            return severityOpt.Value switch
+                            return severity.Value switch
                             {
                                 DiagnosticSeverity.Error => "error",
                                 DiagnosticSeverity.Warning => "warning",
                                 DiagnosticSeverity.Info => "suggestion",
                                 DiagnosticSeverity.Hidden => "silent",
-                                _ => throw new NotImplementedException(severityOpt.Value.ToString()),
+                                _ => throw new NotImplementedException(severity.Value.ToString()),
                             };
                         }
                     }

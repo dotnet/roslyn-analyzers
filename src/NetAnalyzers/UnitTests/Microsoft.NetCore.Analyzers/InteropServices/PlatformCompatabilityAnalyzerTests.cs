@@ -89,8 +89,13 @@ public class Test
         [|RemovedLinu4_1()|];
         ObsoletedWithNullString();
         RemovedWithEmptyString();
+        [|WindowsOnly()|];
     }
 
+    [MinimumOSPlatform(""Windows"")]
+    public void WindowsOnly()
+    {
+    }
     [MinimumOSPlatform(""Windows10"")]
     public void Windows10()
     {

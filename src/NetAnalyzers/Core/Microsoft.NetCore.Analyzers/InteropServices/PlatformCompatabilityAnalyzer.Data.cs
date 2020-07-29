@@ -52,8 +52,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         break;
                 }
 
-                if (osAttribute.ConstructorArguments.Length == 1 && osAttribute.ConstructorArguments[0].Type.SpecialType == SpecialType.System_String &&
-                    !osAttribute.ConstructorArguments[0].IsNull && TryParsePlatformNameAndVersion(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
+                if (!osAttribute.ConstructorArguments.IsEmpty && osAttribute.ConstructorArguments[0].Type.SpecialType == SpecialType.System_String &&
+                    !osAttribute.ConstructorArguments[0].IsNull && !osAttribute.ConstructorArguments[0].Value.Equals(string.Empty) &&
+                    TryParsePlatformNameAndVersion(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
                 {
                     parsedAttribute.PlatformName = platformName;
                     parsedAttribute.Version = version;
@@ -90,20 +91,29 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (char.IsDigit(osString[i]))
                 {
-                    if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
+                    try
                     {
-                        osPlatformName = osString.Substring(0, i);
-                        version = parsedVersion;
-                        return true;
+                        if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
+                        {
+                            osPlatformName = osString.Substring(0, i);
+                            version = parsedVersion;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
-                    else
+                    catch (ArgumentException)
                     {
-                        break;
+                        // When version string was not valid we don't want to do furter diagnostics
+                        return false;
                     }
                 }
             }
-
-            return false;
+            osPlatformName = osString;
+            version = new Version(0, 0);
+            return true;
         }
 
         private struct RuntimeMethodValue : IAbstractAnalysisValue, IEquatable<RuntimeMethodValue>

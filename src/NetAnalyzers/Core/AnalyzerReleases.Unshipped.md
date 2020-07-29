@@ -38,6 +38,7 @@ CA2353 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Docu
 CA2354 | Security | Disabled | DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2354)
 CA2355 | Security | Disabled | DataSetDataTableInSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2355)
 CA2356 | Security | Disabled | DataSetDataTableInWebSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2356)
+CA3000 | Publish  | Warning  | DoNotUseAssemblyLocationInSingleFile, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca3000)
 
 ### Changed Rules
 Rule ID | New Category | New Severity | Old Category | Old Severity | Notes

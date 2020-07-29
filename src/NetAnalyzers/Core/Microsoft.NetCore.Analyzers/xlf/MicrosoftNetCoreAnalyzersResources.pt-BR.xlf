@@ -47,6 +47,21 @@
         <target state="translated">Literais de cadeias de caracteres de atributos devem ser analisados corretamente</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidAssemblyLocationInSingleFileDescription">
+        <source>Accessing Assembly location or file path is not valid when publishing as a single-file.</source>
+        <target state="new">Accessing Assembly location or file path is not valid when publishing as a single-file.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidAssemblyLocationInSingleFileMessage">
+        <source>Avoid `{0}` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.</source>
+        <target state="new">Avoid `{0}` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidAssemblyLocationInSingleFileTitle">
+        <source>Avoid `{0}` when publishing as a single-file.</source>
+        <target state="new">Avoid `{0}` when publishing as a single-file.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidUnsealedAttributesDescription">
         <source>The .NET Framework class library provides methods for retrieving custom attributes. By default, these methods search the attribute inheritance hierarchy. Sealing the attribute eliminates the search through the inheritance hierarchy and can improve performance.</source>
         <target state="translated">A biblioteca de classes .NET Framework oferece métodos para recuperar atributos personalizados. Por padrão, esses métodos pesquisam a hierarquia de herança de atributos. Selar o atributo elimina a pesquisa por meio da hierarquia de herança e pode melhorar o desempenho.</target>

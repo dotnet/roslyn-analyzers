@@ -9,6 +9,9 @@
   -->
   <ItemGroup>
     <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
+
+    <!-- Also pass the resx files as additional files to enable entry validation -->
+    <AdditionalFiles Include="**\*.resx" />
   </ItemGroup>
 
   <ItemGroup>

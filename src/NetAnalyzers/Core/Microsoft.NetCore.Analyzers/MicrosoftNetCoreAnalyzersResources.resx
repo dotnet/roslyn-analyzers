@@ -1429,6 +1429,6 @@
     <value>Avoid '{0}'`' when publishing as a single-file</value>
   </data>
   <data name="AvoidAssemblyLocationInSingleFileMessage" xml:space="preserve">
-    <value>Avoid `{0}` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.</value>
+    <value>Avoid '{0}' when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.</value>
   </data>
 </root>

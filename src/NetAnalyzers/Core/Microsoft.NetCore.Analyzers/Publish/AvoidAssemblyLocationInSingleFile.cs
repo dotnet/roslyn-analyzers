@@ -17,25 +17,34 @@ namespace Microsoft.NetCore.Analyzers.Publish
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidAssemblyLocationInSingleFile : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA3000";
+        public const string IL3000 = nameof(IL3000);
+        public const string IL3001 = nameof(IL3001);
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        internal static DiagnosticDescriptor LocationRule = DiagnosticDescriptorHelper.Create(
+            IL3000,
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileTitle),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileMessage),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            DiagnosticCategory.Publish,
+            RuleLevel.BuildWarning,
+            description: null,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Publish,
-                                                                             RuleLevel.BuildWarning,
-                                                                             s_localizableDescription,
-                                                                             isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
+        internal static DiagnosticDescriptor GetFilesRule = DiagnosticDescriptorHelper.Create(
+            IL3001,
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyGetFilesInSingleFile),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyGetFilesInSingleFile),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
+            DiagnosticCategory.Publish,
+            RuleLevel.BuildWarning,
+            description: null,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LocationRule, GetFilesRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -58,24 +67,20 @@ namespace Microsoft.NetCore.Analyzers.Publish
                     return;
                 }
 
-                HashSet<IPropertySymbol> properties = new HashSet<IPropertySymbol>(SymbolEqualityComparer.Default);
-                HashSet<IMethodSymbol> methods = new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+                var properties = new List<IPropertySymbol>();
+                var methods = new List<IMethodSymbol>();
 
-                var assemblyType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssembly);
-                if (assemblyType is not null)
+                if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssembly, out var assemblyType))
                 {
                     // properties
                     addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyType.GetMembers("Location")));
-                    addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyType.GetMembers("CodeBase")));
-                    addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyType.GetMembers("EscapedCodeBase")));
 
                     // methods
-                    methods.UnionWith(assemblyType.GetMembers("GetFile").OfType<IMethodSymbol>());
-                    methods.UnionWith(assemblyType.GetMembers("GetFiles").OfType<IMethodSymbol>());
+                    methods.AddRange(assemblyType.GetMembers("GetFile").OfType<IMethodSymbol>());
+                    methods.AddRange(assemblyType.GetMembers("GetFiles").OfType<IMethodSymbol>());
                 }
 
-                var assemblyNameType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssemblyName);
-                if (assemblyNameType is not null)
+                if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssemblyName, out var assemblyNameType))
                 {
                     addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("CodeBase")));
                     addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("EscapedCodeBase")));
@@ -85,33 +90,40 @@ namespace Microsoft.NetCore.Analyzers.Publish
                 {
                     var access = (IPropertyReferenceOperation)operationContext.Operation;
                     var property = access.Property;
-                    if (!properties.Contains(property))
+                    if (!contains(properties, property, SymbolEqualityComparer.Default))
                     {
                         return;
                     }
 
-                    operationContext.ReportDiagnostic(Diagnostic.Create(
-                        Rule,
-                        access.Syntax.GetLocation(),
-                        property));
+                    operationContext.ReportDiagnostic(access.CreateDiagnostic(LocationRule, property));
                 }, OperationKind.PropertyReference);
 
                 context.RegisterOperationAction(operationContext =>
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
                     var targetMethod = invocation.TargetMethod;
-                    if (!methods.Contains(targetMethod))
+                    if (!contains(methods, targetMethod, SymbolEqualityComparer.Default))
                     {
                         return;
                     }
 
-                    operationContext.ReportDiagnostic(Diagnostic.Create(
-                        Rule,
-                        invocation.Syntax.GetLocation(),
-                        targetMethod));
+                    operationContext.ReportDiagnostic(invocation.CreateDiagnostic(GetFilesRule, targetMethod));
                 }, OperationKind.Invocation);
 
                 return;
+
+                static bool contains<T, TComp>(List<T> list, T elem, TComp comparer)
+                    where TComp : IEqualityComparer<T>
+                {
+                    foreach (var e in list)
+                    {
+                        if (comparer.Equals(e, elem))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
 
                 static TSymbol? tryGetSingleSymbol<TSymbol>(ImmutableArray<ISymbol> members) where TSymbol : class, ISymbol
                 {
@@ -133,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
                     return candidate;
                 }
 
-                static void addIfNotNull<TSymbol>(HashSet<TSymbol> properties, TSymbol? p) where TSymbol : class, ISymbol
+                static void addIfNotNull<TSymbol>(List<TSymbol> properties, TSymbol? p) where TSymbol : class, ISymbol
                 {
                     if (p is not null)
                     {

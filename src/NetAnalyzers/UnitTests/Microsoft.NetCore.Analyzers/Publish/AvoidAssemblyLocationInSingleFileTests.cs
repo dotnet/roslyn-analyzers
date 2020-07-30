@@ -8,7 +8,7 @@ using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Publish.AvoidAssemblyLocationInSingleFile,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using static Analyzer.Utilities.MSBuildPropertyOptionNames;
-using System.Collections.Generic;
+using static Microsoft.NetCore.Analyzers.Publish.AvoidAssemblyLocationInSingleFile;
 
 namespace Microsoft.NetCore.Analyzers.Publish.UnitTests
 {
@@ -45,9 +45,9 @@ class C
             DiagnosticResult[] diagnostics;
             if (publish is true && includeContent is not true)
             {
-                diagnostics = new[] {
-// /0/Test0.cs(5,26): warning CA3000: Avoid `System.Reflection.Assembly.Location` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-VerifyCS.Diagnostic().WithSpan(5, 26, 5, 66).WithArguments("System.Reflection.Assembly.Location")
+                diagnostics = new DiagnosticResult[] {
+                    // /0/Test0.cs(5,26): warning IL3000: 'System.Reflection.Assembly.Location' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
+                    VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3000).WithSpan(5, 26, 5, 66).WithArguments("System.Reflection.Assembly.Location"),
                 };
             }
             else
@@ -70,17 +70,14 @@ class C
     {
         var a = Assembly.GetExecutingAssembly();
         _ = a.Location;
+        // below will be obsolete in 5.0
         _ = a.CodeBase;
         _ = a.EscapedCodeBase;
     }
 }";
             return VerifyDiagnosticsAsync(src,
-                // /0/Test0.cs(8,13): warning CA3000: Avoid `System.Reflection.Assembly.Location` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.Assembly.Location"),
-                // /0/Test0.cs(9,13): warning CA3000: Avoid `System.Reflection.Assembly.CodeBase` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(9, 13, 9, 23).WithArguments("System.Reflection.Assembly.CodeBase"),
-                // /0/Test0.cs(10,13): warning CA3000: Avoid `System.Reflection.Assembly.EscapedCodeBase` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(10, 13, 10, 30).WithArguments("System.Reflection.Assembly.EscapedCodeBase")
+                // /0/Test0.cs(8,13): warning IL3000: 'System.Reflection.Assembly.Location' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3000).WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.Assembly.Location")
             );
         }
 
@@ -99,10 +96,10 @@ class C
     }
 }";
             return VerifyDiagnosticsAsync(src,
-                // /0/Test0.cs(8,13): warning CA3000: Avoid `System.Reflection.Assembly.GetFile(string)` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(8, 13, 8, 41).WithArguments("System.Reflection.Assembly.GetFile(string)"),
-                // /0/Test0.cs(9,13): warning CA3000: Avoid `System.Reflection.Assembly.GetFiles()` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(9, 13, 9, 25).WithArguments("System.Reflection.Assembly.GetFiles()")
+                // /0/Test0.cs(8,13): warning IL3001: Assemblies embedded in a single-file app cannot have additional files in the manifest.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3001).WithSpan(8, 13, 8, 41).WithArguments("System.Reflection.Assembly.GetFile(string)"),
+                // /0/Test0.cs(9,13): warning IL3001: Assemblies embedded in a single-file app cannot have additional files in the manifest.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3001).WithSpan(9, 13, 9, 25).WithArguments("System.Reflection.Assembly.GetFiles()")
                 );
         }
 
@@ -121,10 +118,10 @@ class C
     }
 }";
             return VerifyDiagnosticsAsync(src,
-                // /0/Test0.cs(8,13): warning CA3000: Avoid `System.Reflection.AssemblyName.CodeBase` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.AssemblyName.CodeBase"),
-                // /0/Test0.cs(9,13): warning CA3000: Avoid `System.Reflection.AssemblyName.EscapedCodeBase` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(9, 13, 9, 30).WithArguments("System.Reflection.AssemblyName.EscapedCodeBase")
+                // /0/Test0.cs(8,13): warning IL3000: 'System.Reflection.AssemblyName.CodeBase' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3000).WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.AssemblyName.CodeBase"),
+                // /0/Test0.cs(9,13): warning IL3000: 'System.Reflection.AssemblyName.EscapedCodeBase' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3000).WithSpan(9, 13, 9, 30).WithArguments("System.Reflection.AssemblyName.EscapedCodeBase")
                 );
         }
 
@@ -145,10 +142,11 @@ class C
     }
 }";
             return VerifyDiagnosticsAsync(src,
-                // /0/Test0.cs(8,13): warning CA3000: Avoid `System.Reflection.Assembly.Location` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.Assembly.Location"),
-                // /0/Test0.cs(9,13): warning CA3000: Avoid `System.Reflection.Assembly.GetFiles()` when publishing as a single-file. Assemblies inside a single-file bundle do not have a file or file path. If the path to the app directory is needed, consider calling System.AppContext.BaseDirectory.
-                VerifyCS.Diagnostic().WithSpan(9, 13, 9, 25).WithArguments("System.Reflection.Assembly.GetFiles()"));
+                // /0/Test0.cs(8,13): warning IL3000: 'System.Reflection.Assembly.Location' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3000).WithSpan(8, 13, 8, 23).WithArguments("System.Reflection.Assembly.Location"),
+                // /0/Test0.cs(9,13): warning IL3001: Assemblies embedded in a single-file app cannot have additional files in the manifest.
+                VerifyCS.Diagnostic(AvoidAssemblyLocationInSingleFile.IL3001).WithSpan(9, 13, 9, 25).WithArguments("System.Reflection.Assembly.GetFiles()")
+                );
         }
 
         private Task VerifyDiagnosticsAsync(string source, params DiagnosticResult[] expected)

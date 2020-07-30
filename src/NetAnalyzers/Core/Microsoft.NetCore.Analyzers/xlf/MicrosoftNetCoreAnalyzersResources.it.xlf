@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidAssemblyGetFilesInSingleFile">
-        <source>Assemblies embedded in a single-file app cannot have additional files in the manifest.</source>
-        <target state="new">Assemblies embedded in a single-file app cannot have additional files in the manifest.</target>
+        <source>'{0}' will throw for assemblies embedded in a single-file app.</source>
+        <target state="new">'{0}' will throw for assemblies embedded in a single-file app.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAssemblyLocationInSingleFileMessage">

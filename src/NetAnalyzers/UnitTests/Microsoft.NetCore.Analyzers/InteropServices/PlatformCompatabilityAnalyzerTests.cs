@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -14,6 +15,80 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
+    namespace System.Runtime.Versioning
+    {
+        public abstract class OSPlatformAttribute : Attribute
+        {
+            private protected OSPlatformAttribute(string platformName)
+            {
+                PlatformName = platformName;
+            }
+
+            public string PlatformName { get; }
+        }
+
+        [AttributeUsage(AttributeTargets.Assembly,
+                        AllowMultiple = false, Inherited = false)]
+        public sealed class TargetPlatformAttribute : OSPlatformAttribute
+        {
+            public TargetPlatformAttribute(string platformName) : base(platformName)
+            { }
+        }
+
+        [AttributeUsage(AttributeTargets.Assembly |
+                        AttributeTargets.Class |
+                        AttributeTargets.Constructor |
+                        AttributeTargets.Event |
+                        AttributeTargets.Method |
+                        AttributeTargets.Module |
+                        AttributeTargets.Property |
+                        AttributeTargets.Field |
+                        AttributeTargets.Struct,
+                        AllowMultiple = true, Inherited = false)]
+        public sealed class MinimumOSPlatformAttribute : OSPlatformAttribute
+        {
+            public MinimumOSPlatformAttribute(string platformName) : base(platformName)
+            { }
+        }
+
+        [AttributeUsage(AttributeTargets.Assembly |
+                        AttributeTargets.Class |
+                        AttributeTargets.Constructor |
+                        AttributeTargets.Event |
+                        AttributeTargets.Method |
+                        AttributeTargets.Module |
+                        AttributeTargets.Property |
+                        AttributeTargets.Field |
+                        AttributeTargets.Struct,
+                        AllowMultiple = true, Inherited = false)]
+        public sealed class RemovedInOSPlatformAttribute : OSPlatformAttribute
+        {
+            public RemovedInOSPlatformAttribute(string platformName) : base(platformName)
+            { }
+        }
+
+        [AttributeUsage(AttributeTargets.Assembly |
+                        AttributeTargets.Class |
+                        AttributeTargets.Constructor |
+                        AttributeTargets.Event |
+                        AttributeTargets.Method |
+                        AttributeTargets.Module |
+                        AttributeTargets.Property |
+                        AttributeTargets.Field |
+                        AttributeTargets.Struct,
+                        AllowMultiple = true, Inherited = false)]
+        public sealed class ObsoletedInOSPlatformAttribute : OSPlatformAttribute
+        {
+            public ObsoletedInOSPlatformAttribute(string platformName) : base(platformName)
+            { }
+            public ObsoletedInOSPlatformAttribute(string platformName, string message) : base(platformName)
+            {
+                Message = message;
+            }
+            public string Message { get; }
+            public string Url { get; set; }
+        }
+    }
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]

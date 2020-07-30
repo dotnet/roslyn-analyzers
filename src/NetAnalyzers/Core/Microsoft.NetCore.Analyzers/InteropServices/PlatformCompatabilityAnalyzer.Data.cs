@@ -11,11 +11,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     {
         private enum PlatformAttributeType
         {
-            None,
+            TargetPlatformAttribute,
             MinimumOSPlatformAttribute,
             ObsoletedInOSPlatformAttribute,
             RemovedInOSPlatformAttribute,
-            TargetPlatformAttribute
         }
 
         private readonly struct PlatformAttributeInfo : IEquatable<PlatformAttributeInfo>
@@ -34,9 +33,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public static bool TryParsePlatformAttributeInfo(AttributeData osAttribute, out PlatformAttributeInfo parsedAttribute)
             {
                 if (!osAttribute.ConstructorArguments.IsEmpty &&
-                    osAttribute.ConstructorArguments[0].Type.SpecialType == SpecialType.System_String &&
-                    !osAttribute.ConstructorArguments[0].IsNull &&
-                    !osAttribute.ConstructorArguments[0].Value.Equals(string.Empty) &&
+                    osAttribute.ConstructorArguments[0] is { } argument &&
+                    argument.Kind == TypedConstantKind.Primitive &&
+                    argument.Type.SpecialType == SpecialType.System_String &&
+                    !argument.IsNull &&
+                    !argument.Value.Equals(string.Empty) &&
                     TryParsePlatformNameAndVersion(osAttribute.ConstructorArguments[0].Value.ToString(), out string platformName, out Version? version))
                 {
                     parsedAttribute = new PlatformAttributeInfo(SwitchAttrributeType(osAttribute.AttributeClass.Name), platformName, version);
@@ -53,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     ObsoletedInOSPlatformAttribute => PlatformAttributeType.ObsoletedInOSPlatformAttribute,
                     RemovedInOSPlatformAttribute => PlatformAttributeType.RemovedInOSPlatformAttribute,
                     TargetPlatformAttribute => PlatformAttributeType.TargetPlatformAttribute,
-                    _ => PlatformAttributeType.None,
+                    _ => throw new NotImplementedException(),
                 };
 
             public override bool Equals(object obj)
@@ -83,22 +84,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (char.IsDigit(osString[i]))
                 {
-                    try
+                    if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
                     {
-                        if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
-                        {
-                            osPlatformName = osString.Substring(0, i);
-                            version = parsedVersion;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        osPlatformName = osString.Substring(0, i);
+                        version = parsedVersion;
+                        return true;
                     }
-                    catch (ArgumentException)
+                    else
                     {
-                        // When version string was not valid we don't want to do furter diagnostics
                         return false;
                     }
                 }

@@ -1468,13 +1468,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckObsoleteMessage">
-        <source>'{0}' has been deprecated since {1} {2} version.</source>
-        <target state="new">'{0}' has been deprecated since {1} {2} version.</target>
+        <source>'{0}' has been deprecated since {1} {2} version</source>
+        <target state="new">'{0}' has been deprecated since {1} {2} version</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckRemovedMessage">
-        <source>'{0}' has been removed since {1} {2} version.</source>
-        <target state="new">'{0}' has been removed since {1} {2} version.</target>
+        <source>'{0}' has been removed since {1} {2} version</source>
+        <target state="new">'{0}' has been removed since {1} {2} version</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckTitle">
@@ -1483,8 +1483,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityCheckAddedMessage">
-        <source>'{0}' requires {1} {2} version or later.</source>
-        <target state="new">'{0}' requires {1} {2} version or later.</target>
+        <source>'{0}' requires {1} {2} version or later</source>
+        <target state="new">'{0}' requires {1} {2} version or later</target>
         <note />
       </trans-unit>
       <trans-unit id="PotentialReferenceCycleInDeserializedObjectGraphDescription">

@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     public sealed partial class PlatformCompatabilityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1416";
-        private static readonly ImmutableArray<string> s_platformCheckMethodNames = ImmutableArray.Create("IsOSPlatformOrLater", "IsOSPlatformEarlierThan");
+        private static readonly ImmutableArray<string> s_platformCheckMethodNames = ImmutableArray.Create(IsOSPlatformOrLater, IsOSPlatformEarlierThan);
         private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(MinimumOSPlatformAttribute, ObsoletedInOSPlatformAttribute, RemovedInOSPlatformAttribute);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -28,12 +28,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static readonly LocalizableString s_localizableRemovedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckRemovedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
+        // We are adding the new attributes into older versions of .Net 5.0, so there could be multiple referenced assemblies each with their own 
+        // version of internal attribute type which will cause ambiguity, to avoid that we are comparing the attributes by their name
         private const string MinimumOSPlatformAttribute = nameof(MinimumOSPlatformAttribute);
         private const string ObsoletedInOSPlatformAttribute = nameof(ObsoletedInOSPlatformAttribute);
         private const string RemovedInOSPlatformAttribute = nameof(RemovedInOSPlatformAttribute);
         private const string TargetPlatformAttribute = nameof(TargetPlatformAttribute);
+
+        // Platform guard method names
+        private const string IsOSPlatformOrLater = nameof(IsOSPlatformOrLater);
+        private const string IsOSPlatformEarlierThan = nameof(IsOSPlatformEarlierThan);
+
+        // Equivalent OS names
         private const string OSX = nameof(OSPlatform.OSX);
-        private const string macOS = nameof(macOS);
+        private const string macOS = nameof(macOS); // TODO use 'OSPlatform.macOS' when new OS is available
 
         internal static DiagnosticDescriptor MinimumOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -73,6 +81,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName + "Helper", out var runtimeInformationType))
                 {
+                    // TODO: remove 'typeName + "Helper"' load after tests able to use
                     runtimeInformationType = context.Compilation.GetOrCreateTypeByMetadataName(typeName);
                 }
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOSPlatform, out var osPlatformType))
@@ -184,7 +193,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         if (IsOSPlatformsEqual(attribute.PlatformName, info.PlatformPropertyName))
                         {
-                            if (info.InvokedPlatformCheckMethodName == s_platformCheckMethodNames[0])
+                            if (info.InvokedPlatformCheckMethodName == IsOSPlatformOrLater)
                             {
                                 if (attribute.AttributeType == PlatformAttributeType.MinimumOSPlatformAttribute &&
                                     AttributeVersionsMatch(attribute.AttributeType, attribute.Version, info.Version))
@@ -229,7 +238,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 IInvocationOperation iOperation => iOperation.TargetMethod,
                 IObjectCreationOperation cOperation => cOperation.Constructor,
-                IFieldReferenceOperation fOperation => IsWithinConditionalOperation(operation) ? null : fOperation.Field,
+                IFieldReferenceOperation fOperation => IsWithinConditionalOperation(fOperation) ? null : fOperation.Field,
                 IMemberReferenceOperation mOperation => mOperation.Member,
                 _ => null,
             };
@@ -240,18 +249,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             using var builder = ArrayBuilder<PlatformAttributeInfo>.GetInstance();
             var symbol = GetOperationSymbol(operation);
 
-            if (symbol != null)
+            if (symbol == null)
             {
-                var attributes = FindAllPlatformAttributesApplied(symbol.GetAttributes(), symbol.ContainingType);
+                return;
+            }
 
-                foreach (AttributeData attribute in attributes)
+            var attributes = FindAllPlatformAttributesApplied(symbol.GetAttributes(), symbol.ContainingSymbol);
+
+            foreach (AttributeData attribute in attributes)
+            {
+                if (PlatformAttributeInfo.TryParsePlatformAttributeInfo(attribute, out PlatformAttributeInfo parsedAttribute))
                 {
-                    if (PlatformAttributeInfo.TryParsePlatformAttributeInfo(attribute, out PlatformAttributeInfo parsedAttribute))
+                    if (!IsSuppressedByAttribute(parsedAttribute, context.ContainingSymbol))
                     {
-                        if (!IsSuppressedByAttribute(parsedAttribute, context.ContainingSymbol))
-                        {
-                            builder.Add(parsedAttribute);
-                        }
+                        builder.Add(parsedAttribute);
                     }
                 }
             }
@@ -262,7 +273,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private static bool IsWithinConditionalOperation(IOperation pOperation) =>
+        // Do not warn for conditional checks of platfomr specific enum value; 'if (value != FooEnum.WindowsOnlyValue)'
+        private static bool IsWithinConditionalOperation(IFieldReferenceOperation pOperation) =>
             pOperation.ConstantValue.HasValue &&
             pOperation.Parent is IBinaryOperation bo &&
             (bo.OperatorKind == BinaryOperatorKind.Equals ||
@@ -298,7 +310,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 _ => RemovedRule,
             };
 
-        private static ImmutableArray<AttributeData> FindAllPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes, INamedTypeSymbol parent)
+        private static ImmutableArray<AttributeData> FindAllPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes, ISymbol parent)
         {
             using var builder = ArrayBuilder<AttributeData>.GetInstance();
             foreach (AttributeData attribute in immediateAttributes)
@@ -314,13 +326,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var current = parent.GetAttributes();
                 foreach (var attribute in current)
                 {
-                    if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name) &&
-                        TargetPlatformAttribute != attribute.AttributeClass.Name)
+                    if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
                     {
                         builder.Add(attribute);
                     }
                 }
-                parent = parent.BaseType;
+                parent = parent.ContainingSymbol;
             }
 
             return builder.ToImmutableArray();
@@ -331,32 +342,28 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             while (containingSymbol != null)
             {
                 var attributes = containingSymbol.GetAttributes();
-                if (!attributes.IsEmpty)
+                containingSymbol = containingSymbol.ContainingSymbol;
+
+                if (attributes.IsEmpty)
                 {
-                    foreach (AttributeData attribute in attributes)
+                    continue;
+                }
+                foreach (AttributeData attribute in attributes)
+                {
+                    if (diagnosingAttribute.AttributeType.ToString() == attribute.AttributeClass.Name &&
+                        PlatformAttributeInfo.TryParsePlatformAttributeInfo(attribute, out PlatformAttributeInfo parsedAttribute) &&
+                        IsOSPlatformsEqual(diagnosingAttribute.PlatformName, parsedAttribute.PlatformName) &&
+                        AttributeVersionsMatch(diagnosingAttribute, parsedAttribute))
                     {
-                        if (diagnosingAttribute.AttributeType.ToString() == attribute.AttributeClass.Name)
-                        {
-                            if (PlatformAttributeInfo.TryParsePlatformAttributeInfo(attribute, out PlatformAttributeInfo parsedAttribute))
-                            {
-                                if (IsOSPlatformsEqual(diagnosingAttribute.PlatformName, parsedAttribute.PlatformName) &&
-                                    AttributeVersionsMatch(diagnosingAttribute, parsedAttribute))
-                                {
-                                    return true;
-                                }
-                            }
-                        }
+                        return true;
                     }
                 }
-                containingSymbol = containingSymbol.ContainingSymbol;
             }
             return false;
         }
 
         private static bool AttributeVersionsMatch(PlatformAttributeInfo diagnosingAttribute, PlatformAttributeInfo osAttribute)
-        {
-            return AttributeVersionsMatch(diagnosingAttribute.AttributeType, diagnosingAttribute.Version, osAttribute.Version);
-        }
+            => AttributeVersionsMatch(diagnosingAttribute.AttributeType, diagnosingAttribute.Version, osAttribute.Version);
 
         private static bool AttributeVersionsMatch(PlatformAttributeType attributeType, Version diagnosingVersion, Version suppressingVersion)
         {

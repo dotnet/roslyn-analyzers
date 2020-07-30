@@ -1423,7 +1423,7 @@
     <value>'{0}' requires {1} {2} version or later.</value>
   </data>
   <data name="PlatformCompatabilityCheckObsoleteMessage" xml:space="preserve">
-    <value>'{0}' has been deprecated  since {1} {2} version.</value>
+    <value>'{0}' has been deprecated since {1} {2} version.</value>
   </data>
   <data name="PlatformCompatabilityCheckRemovedMessage" xml:space="preserve">
     <value>'{0}' has been removed since {1} {2} version.</value>

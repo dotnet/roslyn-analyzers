@@ -868,28 +868,23 @@ public class OsDependentClass
             }
         }
 
-        private static VerifyCS.Test PopulateTestCs(string sourceCode)
+        private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {
-            return new VerifyCS.Test
+            var test = new VerifyCS.Test
             {
                 TestCode = sourceCode,
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 TestState = { }
             };
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test;
         }
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode) => await PopulateTestCs(sourceCode).RunAsync();
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
-        {
-            var test = PopulateTestCs(sourceCode);
-            foreach (DiagnosticResult expectedDiagnostic in expectedDiagnostics)
-            {
-                test.ExpectedDiagnostics.Add(expectedDiagnostic);
-            }
-            await test.RunAsync();
-        }
+            => await PopulateTestCs(sourceCode, expectedDiagnostics).RunAsync();
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, string additionalFiles)
         {
@@ -900,14 +895,16 @@ public class OsDependentClass
 
         private static async Task VerifyAnalyzerAsyncVb(string sourceCode) => await PopulateTestVb(sourceCode).RunAsync();
 
-        private static VerifyVB.Test PopulateTestVb(string sourceCode)
+        private static VerifyVB.Test PopulateTestVb(string sourceCode, params DiagnosticResult[] expected)
         {
-            return new VerifyVB.Test
+            var test = new VerifyVB.Test
             {
                 TestCode = sourceCode,
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
             };
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test;
         }
 
         private readonly string MockAttributesCsSource = @"

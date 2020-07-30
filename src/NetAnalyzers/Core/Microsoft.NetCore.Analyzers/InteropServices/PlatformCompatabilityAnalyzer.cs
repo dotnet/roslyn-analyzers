@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -31,8 +32,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string ObsoletedInOSPlatformAttribute = nameof(ObsoletedInOSPlatformAttribute);
         private const string RemovedInOSPlatformAttribute = nameof(RemovedInOSPlatformAttribute);
         private const string TargetPlatformAttribute = nameof(TargetPlatformAttribute);
-        private const string Windows = nameof(Windows);
-        private const string OSX = nameof(OSX);
+        private const string OSX = nameof(OSPlatform.OSX);
         private const string macOS = nameof(macOS);
 
         internal static DiagnosticDescriptor MinimumOsRule = DiagnosticDescriptorHelper.Create(RuleId,
@@ -98,9 +98,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             context.RegisterOperationAction(context =>
             {
-                AnalyzeInvocationOperation(context.Operation, context, ref platformSpecificOperations);
+                AnalyzeOperation(context.Operation, context, platformSpecificOperations);
             }
-            , OperationKind.DelegateCreation, OperationKind.EventReference, OperationKind.FieldReference,
+            , OperationKind.MethodReference, OperationKind.EventReference, OperationKind.FieldReference,
             OperationKind.Invocation, OperationKind.ObjectCreation, OperationKind.PropertyReference);
 
             context.RegisterOperationBlockEndAction(context =>
@@ -126,7 +126,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                     if (analysisResult == null)
                     {
-                        ReportDiagnosticsForAll(platformSpecificOperations, context);
                         return;
                     }
 
@@ -219,73 +218,32 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void ReportDiagnostics(IOperation operation, PlatformAttributeInfo attribute, OperationBlockAnalysisContext context)
         {
-            string operationName = string.Empty;
-
-            if (operation is IInvocationOperation iOperation)
-            {
-                operationName = iOperation.TargetMethod.Name;
-            }
-            else if (operation is IObjectCreationOperation cOperation)
-            {
-                operationName = cOperation.Constructor.Name;
-            }
-            else if (operation is IPropertyReferenceOperation pOperation)
-            {
-                operationName = pOperation.Property.Name;
-            }
-            else if (operation is IFieldReferenceOperation fOperation)
-            {
-                operationName = fOperation.Field.Name;
-            }
-            if (operation is IDelegateCreationOperation dOperation)
-            {
-                if (dOperation.Target is IMethodReferenceOperation mrOperation)
-                    operationName = mrOperation.Method.Name;
-            }
-            else if (operation is IEventReferenceOperation eOperation)
-            {
-                operationName = eOperation.Event.Name;
-            }
+            var operationName = GetOperationSymbol(operation)?.Name;
 
             context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(attribute.AttributeType),
-                operationName, attribute.PlatformName, attribute.Version.ToString()));
+                operationName ?? string.Empty, attribute.PlatformName, attribute.Version.ToString()));
         }
 
-        private static void AnalyzeInvocationOperation(IOperation operation, OperationAnalysisContext context,
-            ref PooledDictionary<IOperation, ImmutableArray<PlatformAttributeInfo>> platformSpecificOperations)
+        private static ISymbol? GetOperationSymbol(IOperation operation)
+            => operation switch
+            {
+                IInvocationOperation iOperation => iOperation.TargetMethod,
+                IObjectCreationOperation cOperation => cOperation.Constructor,
+                IFieldReferenceOperation fOperation => IsWithinConditionalOperation(operation) ? null : fOperation.Field,
+                IMemberReferenceOperation mOperation => mOperation.Member,
+                _ => null,
+            };
+
+        private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
+            PooledDictionary<IOperation, ImmutableArray<PlatformAttributeInfo>> platformSpecificOperations)
         {
             using var builder = ArrayBuilder<PlatformAttributeInfo>.GetInstance();
-            AttributeData[]? attributes = null;
+            var symbol = GetOperationSymbol(operation);
 
-            if (operation is IInvocationOperation iOperation)
+            if (symbol != null)
             {
-                attributes = FindAllPlatformAttributesApplied(iOperation.TargetMethod.GetAttributes(), iOperation.TargetMethod.ContainingType);
-            }
-            else if (operation is IObjectCreationOperation cOperation)
-            {
-                attributes = FindAllPlatformAttributesApplied(cOperation.Constructor.GetAttributes(), cOperation.Constructor.ContainingType);
-            }
-            else if (operation is IPropertyReferenceOperation pOperation)
-            {
-                attributes = FindAllPlatformAttributesApplied(pOperation.Property.GetAttributes(), pOperation.Property.ContainingType);
-            }
-            else if (operation is IFieldReferenceOperation fOperation)
-            {
-                if (!IsWithinConditionalOperation(operation))
-                    attributes = FindAllPlatformAttributesApplied(fOperation.Field.GetAttributes(), fOperation.Field.ContainingType);
-            }
-            else if (operation is IDelegateCreationOperation dOperation)
-            {
-                if (dOperation.Target is IMethodReferenceOperation mrOperation)
-                    attributes = FindAllPlatformAttributesApplied(mrOperation.Method.GetAttributes(), mrOperation.Method.ContainingType);
-            }
-            else if (operation is IEventReferenceOperation eOperation)
-            {
-                attributes = FindAllPlatformAttributesApplied(eOperation.Event.GetAttributes(), eOperation.Event.ContainingType);
-            }
+                var attributes = FindAllPlatformAttributesApplied(symbol.GetAttributes(), symbol.ContainingType);
 
-            if (attributes != null)
-            {
                 foreach (AttributeData attribute in attributes)
                 {
                     if (PlatformAttributeInfo.TryParsePlatformAttributeInfo(attribute, out PlatformAttributeInfo parsedAttribute))
@@ -328,23 +286,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private static string NormalizeOSName(string name)
-        {
-            if (name.Equals(OSX, StringComparison.OrdinalIgnoreCase))
-                return macOS;
-            return name;
-        }
+        private static string NormalizeOSName(string name) => name.Equals(OSX, StringComparison.OrdinalIgnoreCase)
+            ? macOS
+            : name;
 
         private static DiagnosticDescriptor SelectRule(PlatformAttributeType attributeType)
-        {
-            if (attributeType == PlatformAttributeType.MinimumOSPlatformAttribute)
-                return MinimumOsRule;
-            if (attributeType == PlatformAttributeType.ObsoletedInOSPlatformAttribute)
-                return ObsoleteRule;
-            return RemovedRule;
-        }
+            => attributeType switch
+            {
+                PlatformAttributeType.MinimumOSPlatformAttribute => MinimumOsRule,
+                PlatformAttributeType.ObsoletedInOSPlatformAttribute => ObsoleteRule,
+                _ => RemovedRule,
+            };
 
-        private static AttributeData[] FindAllPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes, INamedTypeSymbol parent)
+        private static ImmutableArray<AttributeData> FindAllPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes, INamedTypeSymbol parent)
         {
             using var builder = ArrayBuilder<AttributeData>.GetInstance();
             foreach (AttributeData attribute in immediateAttributes)
@@ -368,7 +322,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 parent = parent.BaseType;
             }
-            return builder.ToArray();
+
+            return builder.ToImmutableArray();
         }
 
         private static bool IsSuppressedByAttribute(PlatformAttributeInfo diagnosingAttribute, ISymbol containingSymbol)
@@ -376,7 +331,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             while (containingSymbol != null)
             {
                 var attributes = containingSymbol.GetAttributes();
-                if (attributes != null)
+                if (!attributes.IsEmpty)
                 {
                     foreach (AttributeData attribute in attributes)
                     {

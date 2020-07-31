@@ -112,7 +112,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
 
                 return;
 
-                static bool contains<T, TComp>(List<T> list, T elem, TComp comparer)
+                static bool Contains<T, TComp>(List<T> list, T elem, TComp comparer)
                     where TComp : IEqualityComparer<T>
                 {
                     foreach (var e in list)

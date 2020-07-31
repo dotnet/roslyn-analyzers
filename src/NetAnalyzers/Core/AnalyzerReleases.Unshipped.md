@@ -22,6 +22,7 @@ CA1834 | Performance | Info | PreferConstCharOverConstUnitStringAnalyzer, [Docum
 CA1835 | Performance | Info | PreferStreamAsyncMemoryOverloads, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1835)
 CA1836 | Performance | Info | PreferIsEmptyOverCountAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1836)
 CA1837 | Performance | Info | UseEnvironmentProcessId, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1837)
+CA1838 | Performance | Hidden | AvoidStringBuilderPInvokeParametersAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1838)
 CA2011 | Reliability | Info | AvoidInfiniteRecursion, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2011)
 CA2012 | Reliability | Hidden | UseValueTasksCorrectlyAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2012)
 CA2013 | Reliability | Warning | DoNotUseReferenceEqualsWithValueTypesAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2013)
@@ -38,6 +39,9 @@ CA2353 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Docu
 CA2354 | Security | Disabled | DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2354)
 CA2355 | Security | Disabled | DataSetDataTableInSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2355)
 CA2356 | Security | Disabled | DataSetDataTableInWebSerializableObjectGraphAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2356)
+CA2361 | Security | Disabled | DoNotUseDataSetReadXml, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2361)
+CA2362 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2362)
+CA2363 | Security | Disabled | DataSetDataTableInSerializableTypeAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2363)
 
 IL3000 | Publish  | Warning  | DoNotUseAssemblyLocationInSingleFile, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/il3000)
 IL3001 | Publish  | Warning  | DoNotUseAssemblyGetFilesInSingleFile, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/il3001)

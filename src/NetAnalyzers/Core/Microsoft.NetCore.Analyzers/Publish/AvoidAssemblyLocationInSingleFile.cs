@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Publish
 {
     /// <summary>
-    /// CA3000: Do not use Assembly.Location in single-file publish
+    /// IL3000, IL3001: Do not use Assembly file path in single-file publish
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidAssemblyLocationInSingleFile : DiagnosticAnalyzer
@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
 
         internal static DiagnosticDescriptor GetFilesRule = DiagnosticDescriptorHelper.Create(
             IL3001,
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyGetFilesInSingleFile),
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyLocationInSingleFileTitle),
                 MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidAssemblyGetFilesInSingleFile),
                 MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
@@ -67,30 +67,33 @@ namespace Microsoft.NetCore.Analyzers.Publish
                     return;
                 }
 
-                var properties = new List<IPropertySymbol>();
-                var methods = new List<IMethodSymbol>();
+                var propertiesBuilder = ImmutableArray.CreateBuilder<IPropertySymbol>();
+                var methodsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
 
                 if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssembly, out var assemblyType))
                 {
                     // properties
-                    addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyType.GetMembers("Location")));
+                    AddIfNotNull(propertiesBuilder, TryGetSingleSymbol<IPropertySymbol>(assemblyType.GetMembers("Location")));
 
                     // methods
-                    methods.AddRange(assemblyType.GetMembers("GetFile").OfType<IMethodSymbol>());
-                    methods.AddRange(assemblyType.GetMembers("GetFiles").OfType<IMethodSymbol>());
+                    methodsBuilder.AddRange(assemblyType.GetMembers("GetFile").OfType<IMethodSymbol>());
+                    methodsBuilder.AddRange(assemblyType.GetMembers("GetFiles").OfType<IMethodSymbol>());
                 }
 
                 if (compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssemblyName, out var assemblyNameType))
                 {
-                    addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("CodeBase")));
-                    addIfNotNull(properties, tryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("EscapedCodeBase")));
+                    AddIfNotNull(propertiesBuilder, TryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("CodeBase")));
+                    AddIfNotNull(propertiesBuilder, TryGetSingleSymbol<IPropertySymbol>(assemblyNameType.GetMembers("EscapedCodeBase")));
                 }
+
+                var properties = propertiesBuilder.ToImmutable();
+                var methods = methodsBuilder.ToImmutable();
 
                 context.RegisterOperationAction(operationContext =>
                 {
                     var access = (IPropertyReferenceOperation)operationContext.Operation;
                     var property = access.Property;
-                    if (!contains(properties, property, SymbolEqualityComparer.Default))
+                    if (!Contains(properties, property, SymbolEqualityComparer.Default))
                     {
                         return;
                     }
@@ -102,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
                     var targetMethod = invocation.TargetMethod;
-                    if (!contains(methods, targetMethod, SymbolEqualityComparer.Default))
+                    if (!Contains(methods, targetMethod, SymbolEqualityComparer.Default))
                     {
                         return;
                     }
@@ -112,7 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
 
                 return;
 
-                static bool Contains<T, TComp>(List<T> list, T elem, TComp comparer)
+                static bool Contains<T, TComp>(ImmutableArray<T> list, T elem, TComp comparer)
                     where TComp : IEqualityComparer<T>
                 {
                     foreach (var e in list)
@@ -125,7 +128,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
                     return false;
                 }
 
-                static TSymbol? tryGetSingleSymbol<TSymbol>(ImmutableArray<ISymbol> members) where TSymbol : class, ISymbol
+                static TSymbol? TryGetSingleSymbol<TSymbol>(ImmutableArray<ISymbol> members) where TSymbol : class, ISymbol
                 {
                     TSymbol? candidate = null;
                     foreach (var m in members)
@@ -145,7 +148,7 @@ namespace Microsoft.NetCore.Analyzers.Publish
                     return candidate;
                 }
 
-                static void addIfNotNull<TSymbol>(List<TSymbol> properties, TSymbol? p) where TSymbol : class, ISymbol
+                static void AddIfNotNull<TSymbol>(ImmutableArray<TSymbol>.Builder properties, TSymbol? p) where TSymbol : class, ISymbol
                 {
                     if (p is not null)
                     {

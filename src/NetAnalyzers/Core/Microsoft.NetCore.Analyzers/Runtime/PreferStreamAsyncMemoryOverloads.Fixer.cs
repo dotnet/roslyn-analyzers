@@ -34,8 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Checks if the argument in the specified index has a name. If it doesn't, returns that arguments. If it does, then looks for the argument using the specified name, and returns it, or null if not found.
         protected abstract IArgumentOperation? GetArgumentByPositionOrName(ImmutableArray<IArgumentOperation> args, int index, string name, out bool isNamed);
 
-        // 
-        protected abstract bool IsSystemNamespaceImported(IReadOnlyList<SyntaxNode> imports);
+        // Verifies if a namespace has already been added to the usings/imports list.
+        protected abstract bool IsSystemNamespaceImported(IReadOnlyList<SyntaxNode> importList);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);

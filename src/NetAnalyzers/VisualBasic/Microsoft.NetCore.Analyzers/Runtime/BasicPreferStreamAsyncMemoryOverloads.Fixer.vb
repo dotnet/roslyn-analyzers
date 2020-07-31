@@ -33,9 +33,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             End If
         End Function
 
-        Protected Overrides Function IsSystemNamespaceImported([imports] As IReadOnlyList(Of SyntaxNode)) As Boolean
+        Protected Overrides Function IsSystemNamespaceImported(importList As IReadOnlyList(Of SyntaxNode)) As Boolean
 
-            For Each import As SyntaxNode In [imports]
+            For Each import As SyntaxNode In importList
 
                 Dim importsStatement As ImportsStatementSyntax = TryCast(import, ImportsStatementSyntax)
                 If importsStatement IsNot Nothing Then
@@ -51,11 +51,8 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                             End If
 
                         End If
-
                     Next
-
                 End If
-
             Next
 
             Return False

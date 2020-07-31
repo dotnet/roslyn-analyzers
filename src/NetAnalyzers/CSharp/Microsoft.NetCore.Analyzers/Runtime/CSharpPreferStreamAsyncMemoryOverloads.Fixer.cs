@@ -40,9 +40,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
         }
 
-        protected override bool IsSystemNamespaceImported(IReadOnlyList<SyntaxNode> imports)
+        protected override bool IsSystemNamespaceImported(IReadOnlyList<SyntaxNode> importList)
         {
-            foreach (SyntaxNode import in imports)
+            foreach (SyntaxNode import in importList)
             {
                 if (import is UsingDirectiveSyntax usingDirective &&
                     usingDirective.Name is IdentifierNameSyntax identifierName &&

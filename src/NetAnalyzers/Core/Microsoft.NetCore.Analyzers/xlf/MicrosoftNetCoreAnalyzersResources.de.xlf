@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Prozessbefehlseinschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Es wurde ein potenzielles Sicherheitsrisiko durch Prozessbefehlseinschleusung gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko durch Einschleusung von SQL-Befehlen gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Es wurde ein potenzielles Sicherheitsrisiko durch Einschleusung von SQL-Befehlen gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch benutzergesteuerte Daten aus "{2}" in Methode "{3}" verändert.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

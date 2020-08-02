@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">找到了潜在进程命令注入漏洞，其中方法“{1}”中的“{0}”可能会受到方法“{3}”中“{2}”的用户控制数据的污染。</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">找到了潜在进程命令注入漏洞，其中方法“{1}”中的“{0}”可能会受到方法“{3}”中“{2}”的用户控制数据的污染。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">找到了潜在 SQL 注入漏洞，其中方法“{1}”中的“{0}”可能会受到方法“{3}”中“{2}”的用户控制数据的污染。</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">找到了潜在 SQL 注入漏洞，其中方法“{1}”中的“{0}”可能会受到方法“{3}”中“{2}”的用户控制数据的污染。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

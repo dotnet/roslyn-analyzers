@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">潜在的なプロセス コマンド インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">潜在的なプロセス コマンド インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">潜在的な SQL インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">潜在的な SQL インジェクションの脆弱性が見つかりました。メソッド '{1}' の '{0}' は、メソッド '{3}' の '{2}' からのユーザーが制御するデータによって悪用される可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

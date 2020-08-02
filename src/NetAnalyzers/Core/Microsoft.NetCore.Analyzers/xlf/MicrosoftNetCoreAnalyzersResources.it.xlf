@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">È stata trovata una potenziale vulnerabilità di tipo process command injection in cui '{0}' nel metodo '{1}' può essere contaminato da dati controllati dall'utente di '{2}' nel metodo '{3}'.</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">È stata trovata una potenziale vulnerabilità di tipo process command injection in cui '{0}' nel metodo '{1}' può essere contaminato da dati controllati dall'utente di '{2}' nel metodo '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">È stata trovata una potenziale vulnerabilità di tipo SQL injection in cui '{0}' nel metodo '{1}' può essere contaminato da dati controllati dall'utente di '{2}' nel metodo '{3}'.</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">È stata trovata una potenziale vulnerabilità di tipo SQL injection in cui '{0}' nel metodo '{1}' può essere contaminato da dati controllati dall'utente di '{2}' nel metodo '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

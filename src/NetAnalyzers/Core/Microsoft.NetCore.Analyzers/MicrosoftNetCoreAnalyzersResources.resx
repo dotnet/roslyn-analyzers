@@ -601,7 +601,7 @@
     <value>Provide deserialization methods for optional fields</value>
   </data>
   <data name="ReviewCodeForSqlInjectionVulnerabilitiesMessage" xml:space="preserve">
-    <value>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+    <value>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
   </data>
   <data name="ReviewCodeForSqlInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for SQL injection vulnerabilities</value>
@@ -652,7 +652,7 @@
     <value>Review code for file path injection vulnerabilities</value>
   </data>
   <data name="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage" xml:space="preserve">
-    <value>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+    <value>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
   </data>
   <data name="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for process command injection vulnerabilities</value>

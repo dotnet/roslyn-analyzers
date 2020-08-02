@@ -1739,8 +1739,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Znaleziono potencjalną lukę umożliwiającą wstrzyknięcie polecenia procesu, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony danymi kontrolowanymi przez użytkownika z elementu „{2}” w metodzie „{3}”.</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Znaleziono potencjalną lukę umożliwiającą wstrzyknięcie polecenia procesu, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony danymi kontrolowanymi przez użytkownika z elementu „{2}” w metodzie „{3}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1759,8 +1759,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Znaleziono potencjalną lukę umożliwiającą wstrzyknięcie kodu SQL, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony danymi kontrolowanymi przez użytkownika z elementu „{2}” w metodzie „{3}”.</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Znaleziono potencjalną lukę umożliwiającą wstrzyknięcie kodu SQL, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony danymi kontrolowanymi przez użytkownika z elementu „{2}” w metodzie „{3}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

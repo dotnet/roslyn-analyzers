@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Обнаружена потенциальная уязвимость к внедрению команд процесса, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Обнаружена потенциальная уязвимость к внедрению команд процесса, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Обнаружена потенциальная уязвимость к внедрению кода SQL, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Обнаружена потенциальная уязвимость к внедрению кода SQL, где "{0}" в методе "{1}" может быть испорчен пользовательскими данными из "{2}" в методе "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

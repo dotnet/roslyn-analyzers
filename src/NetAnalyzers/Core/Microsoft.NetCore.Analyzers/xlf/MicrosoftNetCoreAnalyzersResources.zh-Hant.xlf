@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">發現潛在的插入處理序命令弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">發現潛在的插入處理序命令弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">發現潛在的插入 SQL 弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">發現潛在的插入 SQL 弱點，方法 '{1}' 中的 '{0}' 可能被來自方法 '{3}' 中 '{2}' 由使用者控制的資料所感染。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

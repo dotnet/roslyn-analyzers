@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 프로세스 명령 삽입 취약성이 발견되었습니다.</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 프로세스 명령 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 SQL 삽입 취약성이 발견되었습니다.</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 SQL 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

@@ -1738,8 +1738,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
-        <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de commande de processus a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <source>Potential process command injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Une vulnérabilité potentielle liée à une injection de commande de processus a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
@@ -1758,8 +1758,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="translated">Une vulnérabilité potentielle liée à une injection de code SQL a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
+        <source>Potential SQL injection vulnerability was found where '{0}' in '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="needs-review-translation">Une vulnérabilité potentielle liée à une injection de code SQL a été détectée. '{0}' dans la méthode '{1}' peut être altéré par des données contrôlées par l'utilisateur en provenance de '{2}' dans la méthode '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

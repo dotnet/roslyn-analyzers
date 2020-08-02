@@ -54,6 +54,29 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             builder.Add(sinkInfo);
         }
 
+        public static void AddSourceInfo(
+            this PooledHashSet<SourceInfo> builder,
+            string fullTypeName,
+            IEnumerable<ParameterMatcher> taintedArguments)
+        {
+            SourceInfo metadata = new SourceInfo(
+                fullTypeName,
+                isInterface: false,
+                taintedProperties: ImmutableHashSet<string>.Empty,
+                taintedArguments:
+                    taintedArguments.ToImmutableHashSet(),
+                taintedMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
+                taintedMethodsNeedsPointsToAnalysis:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)>.Empty,
+                taintedMethodsNeedsValueContentAnalysis:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)>.Empty,
+                transferMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)>.Empty,
+                taintConstantArray: false);
+            builder.Add(metadata);
+        }
+
         // Just to make hardcoding SourceInfos more convenient.
         public static void AddSourceInfo(
             this PooledHashSet<SourceInfo> builder,
@@ -67,6 +90,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
+                taintedArguments:
+                    ImmutableHashSet<ParameterMatcher>.Empty,
                 taintedMethods:
                     taintedMethods
                         ?.Select<string, (MethodMatcher, ImmutableHashSet<string>)>(o =>
@@ -111,6 +136,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
+                taintedArguments:
+                    ImmutableHashSet<ParameterMatcher>.Empty,
                 taintedMethods:
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
                 taintedMethodsNeedsPointsToAnalysis:
@@ -162,6 +189,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 isInterface: isInterface,
                 taintedProperties: taintedProperties?.ToImmutableHashSet(StringComparer.Ordinal)
                     ?? ImmutableHashSet<string>.Empty,
+                taintedArguments:
+                    ImmutableHashSet<ParameterMatcher>.Empty,
                 taintedMethods:
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
                 taintedMethodsNeedsPointsToAnalysis:

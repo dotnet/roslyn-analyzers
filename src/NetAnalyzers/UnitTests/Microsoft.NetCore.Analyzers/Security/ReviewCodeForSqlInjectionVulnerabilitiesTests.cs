@@ -3253,5 +3253,23 @@ namespace TestNamespace
     }
 }");
         }
+
+        [Fact]
+        public async Task TaintFunctionArguments()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+public class MyController : Controller
+{
+    public string DoSomething(string input)
+    {
+        new SqlCommand(input);
+        return null;
+    }
+}",
+                GetCSharpResultAt(9, 9, 9, 24, "SqlCommand.SqlCommand(string cmdText)", "string MyController.DoSomething(string input)", "string input", "string MyController.DoSomething(string input)"));
+        }
     }
 }

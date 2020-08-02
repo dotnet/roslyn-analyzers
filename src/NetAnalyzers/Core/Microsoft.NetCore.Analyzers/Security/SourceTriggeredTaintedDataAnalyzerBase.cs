@@ -143,6 +143,20 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
+                                    IParameterReferenceOperation parameterReferenceOperation = (IParameterReferenceOperation)operationAnalysisContext.Operation;
+                                    if (sourceInfoSymbolMap.IsSourceParameter(parameterReferenceOperation.Parameter))
+                                    {
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(parameterReferenceOperation.GetRoot());
+                                        }
+                                    }
+                                },
+                                OperationKind.ParameterReference);
+
+                            operationBlockStartContext.RegisterOperationAction(
+                                operationAnalysisContext =>
+                                {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                                     if (sourceInfoSymbolMap.IsSourceMethod(
                                             invocationOperation.TargetMethod,

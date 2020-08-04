@@ -232,13 +232,23 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     ProcessTaintedDataEnteringInvocationOrCreation(method, taintedArguments, originalOperation);
                 }
 
+                bool isSanitizingMethod = false;
                 PooledHashSet<string>? taintedTargets = null;
                 PooledHashSet<(string, string)>? taintedParameterPairs = null;
+                PooledHashSet<(string, string)>? sanitizedParameterPairs = null;
                 try
                 {
-                    if (this.IsSanitizingMethod(method))
+                    var taintedParameterNames = visitedArguments
+                            .Where(s => this.GetCachedAbstractValue(s).Kind == TaintedDataAbstractValueKind.Tainted)
+                            .Select(s => s.Parameter.Name); // keep enumerable, don't cache it here
+
+                    if (this.IsSanitizingMethod(
+                        method,
+                        visitedArguments,
+                        taintedParameterNames.ToImmutableArray(),
+                        out sanitizedParameterPairs))
                     {
-                        result = TaintedDataAbstractValue.NotTainted;
+                        isSanitizingMethod = true;
                     }
                     else if (visitedInstance != null && this.IsSanitizingInstanceMethod(method))
                     {
@@ -276,10 +286,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     if (this.DataFlowAnalysisContext.SourceInfos.IsSourceTransferMethod(
                         method,
                         visitedArguments,
-                        visitedArguments
-                            .Where(s => this.GetCachedAbstractValue(s).Kind == TaintedDataAbstractValueKind.Tainted)
-                            .Select(s => s.Parameter.Name)
-                            .ToImmutableArray(),
+                        taintedParameterNames.ToImmutableArray(),
                         out taintedParameterPairs))
                     {
                         foreach ((string ifTaintedParameter, string thenTaintedTarget) in taintedParameterPairs)
@@ -295,6 +302,37 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                             else
                             {
                                 Debug.Fail("Are the tainted data sources misconfigured?");
+                            }
+                        }
+                    }
+
+                    if (isSanitizingMethod)
+                    {
+                        if (!sanitizedParameterPairs.Any())
+                        {
+                            // it was either sanitizing constructor or
+                            // the short form or registering sanitizer method by just the name
+                            result = TaintedDataAbstractValue.NotTainted;
+                        }
+                        else
+                        {
+                            foreach ((string ifTaintedParameter, string thenSanitizedTarget) in sanitizedParameterPairs)
+                            {
+                                if (thenSanitizedTarget == TaintedTargetValue.Return)
+                                {
+                                    result = TaintedDataAbstractValue.NotTainted;
+                                    continue;
+                                }
+
+                                IArgumentOperation thenSanitizedTargetOperation = visitedArguments.FirstOrDefault(o => o.Parameter.Name == thenSanitizedTarget);
+                                if (thenSanitizedTargetOperation != null)
+                                {
+                                    SetTaintedForEntity(thenSanitizedTargetOperation, TaintedDataAbstractValue.NotTainted);
+                                }
+                                else
+                                {
+                                    Debug.Fail("Are the tainted data sources misconfigured?");
+                                }
                             }
                         }
                     }
@@ -490,23 +528,37 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// </summary>
             /// <param name="method">Instance method being called.</param>
             /// <returns>True if the method returns tainted data, false otherwise.</returns>
-            private bool IsSanitizingMethod(IMethodSymbol method)
+            private bool IsSanitizingMethod(
+                IMethodSymbol method,
+                ImmutableArray<IArgumentOperation> arguments,
+                ImmutableArray<string> taintedParameterNames,
+                [NotNullWhen(returnValue: true)] out PooledHashSet<(string, string)>? taintedParameterPairs)
             {
+                taintedParameterPairs = null;
                 foreach (SanitizerInfo sanitizerInfo in this.DataFlowAnalysisContext.SanitizerInfos.GetInfosForType(method.ContainingType))
                 {
                     if (method.MethodKind == MethodKind.Constructor
                         && sanitizerInfo.IsConstructorSanitizing)
                     {
+                        taintedParameterPairs = PooledHashSet<(string, string)>.GetInstance();
                         return true;
                     }
 
-                    if (sanitizerInfo.SanitizingMethods.Contains(method.MetadataName))
+                    foreach ((MethodMatcher methodMatcher, ImmutableHashSet<(string source, string end)> sourceToEnds) in sanitizerInfo.SanitizingMethods)
                     {
-                        return true;
+                        if (methodMatcher(method.Name, arguments))
+                        {
+                            if (taintedParameterPairs == null)
+                            {
+                                taintedParameterPairs = PooledHashSet<(string, string)>.GetInstance();
+                            }
+
+                            taintedParameterPairs.UnionWith(sourceToEnds.Where(s => taintedParameterNames.Contains(s.source)));
+                        }
                     }
                 }
 
-                return false;
+                return taintedParameterPairs != null;
             }
 
             /// <summary>

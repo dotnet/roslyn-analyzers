@@ -21,9 +21,9 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 
         protected virtual IEnumerable<string> AdditionalVisualBasicSources { get; }
 
-        protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
+        protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod, DiagnosticDescriptor rule = null)
         {
-            return new DiagnosticResult(Rule).WithArguments(sink, sinkContainingMethod, source, sourceContainingMethod)
+            return new DiagnosticResult(rule ?? Rule).WithArguments(sink, sinkContainingMethod, source, sourceContainingMethod)
                 .WithLocation(sinkLine, sinkColumn)
                 .WithLocation(sourceLine, sourceColumn);
         }
@@ -72,9 +72,9 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             await test.RunAsync();
         }
 
-        protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
+        protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod, DiagnosticDescriptor rule = null)
         {
-            return new DiagnosticResult(Rule).WithArguments(sink, sinkContainingMethod, source, sourceContainingMethod)
+            return new DiagnosticResult(rule ?? Rule).WithArguments(sink, sinkContainingMethod, source, sourceContainingMethod)
                 .WithLocation(sinkLine, sinkColumn)
                 .WithLocation(sourceLine, sourceColumn);
         }

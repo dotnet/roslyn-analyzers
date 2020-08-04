@@ -324,13 +324,14 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             File.WriteAllText(fileWithPath, fileContents);
 
             static string GetCommonContents(string packageName)
-                => GetGlobalAnalyzerConfigTargetContents(packageName) + GetMSBuildPropertyOptionItemGroup();
+                => GetGlobalAnalyzerConfigTargetContents(packageName) + GetMSBuildContentForPropertyAndItemOptions();
 
             static string GetGlobalAnalyzerConfigTargetContents(string packageName)
             {
-                string packageVersionPropName = packageName.Replace(".", string.Empty, StringComparison.Ordinal) + "RulesVersion";
+                var trimmedPackageName = packageName.Replace(".", string.Empty, StringComparison.Ordinal);
+                string packageVersionPropName = trimmedPackageName + "RulesVersion";
                 return $@"
-  <Target Name=""AddGlobalAnalyzerConfigForPackage"" BeforeTargets=""CoreCompile"" Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
+  <Target Name=""AddGlobalAnalyzerConfigForPackage_{trimmedPackageName}"" BeforeTargets=""CoreCompile"" Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
     <!-- PropertyGroup to compute global analyzer config file to be used -->
     <PropertyGroup>
       <!-- GlobalAnalyzerConfig folder name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
@@ -347,22 +348,67 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 ";
             }
 
-            static string GetMSBuildPropertyOptionItemGroup()
+            static string GetMSBuildContentForPropertyAndItemOptions()
             {
                 var builder = new StringBuilder();
 
-                builder.Append($@"
-  <!-- MSBuild properties to thread to the analyzers as options --> 
-  <ItemGroup>
-");
-                foreach (var field in typeof(MSBuildPropertyOptionNames).GetFields())
-                {
-                    builder.AppendLine($@"    <CompilerVisibleProperty Include=""{field.Name}"" />");
-                }
-
-                builder.AppendLine($@"  </ItemGroup>");
+                AddMSBuildContentForPropertyOptions(builder);
+                AddMSBuildContentForItemOptions(builder);
 
                 return builder.ToString();
+
+                static void AddMSBuildContentForPropertyOptions(StringBuilder builder)
+                {
+                    var compilerVisibleProperties = new List<string>();
+                    foreach (var field in typeof(MSBuildPropertyOptionNames).GetFields())
+                    {
+                        compilerVisibleProperties.Add(field.Name);
+                    }
+
+                    // Add ItemGroup for MSBuild property names that are required to be threaded as analyzer config options.
+                    AddItemGroupForCompilerVisibleProperties(compilerVisibleProperties, builder);
+                }
+
+                static void AddItemGroupForCompilerVisibleProperties(List<string> compilerVisibleProperties, StringBuilder builder)
+                {
+                    builder.AppendLine($@"
+  <!-- MSBuild properties to thread to the analyzers as options --> 
+  <ItemGroup>");
+                    foreach (var compilerVisibleProperty in compilerVisibleProperties)
+                    {
+                        builder.AppendLine($@"    <CompilerVisibleProperty Include=""{compilerVisibleProperty}"" />");
+                    }
+
+                    builder.AppendLine($@"  </ItemGroup>");
+                }
+
+                static void AddMSBuildContentForItemOptions(StringBuilder builder)
+                {
+                    // Add ItemGroup and PropertyGroup for MSBuild item names that are required to be treated as analyzer config options.
+                    // The analyzer config option will have the following key/value:
+                    // - Key: Item name prefixed with an '_' and suffixed with a 'List' to reduce chances of conflicts with any existing project property.
+                    // - Value: Concatenated item metadata values, separated by a ',' character. See https://github.com/dotnet/sdk/issues/12706#issuecomment-668219422 for details.
+
+                    builder.Append($@"
+  <!-- MSBuild item metadata to thread to the analyzers as options -->
+  <PropertyGroup>
+");
+                    var compilerVisibleProperties = new List<string>();
+                    foreach (var field in typeof(MSBuildItemOptionNames).GetFields())
+                    {
+                        // Item option name: "SupportedPlatform"
+                        // Generated MSBuild property: "<_SupportedPlatformList>@(SupportedPlatform, '<separator>')</_SupportedPlatformList>"
+
+                        var itemOptionName = field.Name;
+                        var propertyName = MSBuildItemOptionNamesHelpers.GetPropertyNameForItemOptionName(itemOptionName);
+                        compilerVisibleProperties.Add(propertyName);
+                        builder.AppendLine($@"    <{propertyName}>@({itemOptionName}, '{MSBuildItemOptionNamesHelpers.ValuesSeparator}')</{propertyName}>");
+                    }
+
+                    builder.AppendLine($@"  </PropertyGroup>");
+
+                    AddItemGroupForCompilerVisibleProperties(compilerVisibleProperties, builder);
+                }
             }
 
             static string GetPackageSpecificContents(string packageName)

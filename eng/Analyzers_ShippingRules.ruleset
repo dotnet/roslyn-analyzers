@@ -13,4 +13,21 @@
     <Rule Id="CA1303" Action="None" />
   </Rules>
 
+  <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
+    <!-- Do not use generic 'CodeAction.Create' to create 'CodeAction', there is no agreement on what to do for roslyn-analyzer repo -->
+    <Rule Id="RS0005" Action="None" />
+    <!-- Parts exported with MEFv2 must be marked with 'SharedAttribute', un-needed here -->
+    <Rule Id="RS0023" Action="None" />
+    <!-- Exported parts should be marked with 'ImportingConstructorAttribute', un-needed here -->
+    <Rule Id="RS0034" Action="None" />
+    <!-- Use 'null' instead of 'default' for nullable types -->
+    <Rule Id="RS0038" Action="None" />
+    <!-- Statements must be placed on their own line -->
+    <Rule Id="RS0100" Action="None" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+    <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
+    <Rule Id="RS0041" Action="None" />
+  </Rules>
 </RuleSet>

@@ -13,7 +13,7 @@ pr:
     exclude:
       - docs/*
       - .github/*
-      - **/*.md
+      - '**/*.md'
 
 jobs:
 - job: Windows

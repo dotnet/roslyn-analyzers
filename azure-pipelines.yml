@@ -5,8 +5,15 @@ trigger:
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
-- master
-- 2.9.x
+  branches:
+    include:
+    - master
+    - 2.9.x
+  paths:
+    exclude:
+      - docs/*
+      - .github/*
+      
 
 jobs:
 - job: Windows

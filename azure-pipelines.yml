@@ -14,7 +14,6 @@ pr:
       - docs/*
       - .github/*
       - *.md
-      
 
 jobs:
 - job: Windows

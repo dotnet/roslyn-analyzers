@@ -17,7 +17,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <summary>
         /// Qualified name of the optional dependency type.
         /// </summary>
-        string? FullDependencyTypeName { get; }
+        string? DependencyFullTypeName { get; }
 
         /// <summary>
         /// Indicates that the type is an interface, rather than a concrete type.

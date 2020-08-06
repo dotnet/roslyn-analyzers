@@ -33,8 +33,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
             foreach (TInfo info in taintedDataInfos)
             {
-                if (info.FullDependencyTypeName != null
-                    && !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(info.FullDependencyTypeName, out INamedTypeSymbol? _))
+                if (info.DependencyFullTypeName != null
+                    && !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(info.DependencyFullTypeName, out INamedTypeSymbol? _))
                 {
                     continue;
                 }

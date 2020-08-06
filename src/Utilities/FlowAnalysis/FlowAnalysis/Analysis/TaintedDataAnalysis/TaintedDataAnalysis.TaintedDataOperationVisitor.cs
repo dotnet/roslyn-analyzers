@@ -188,7 +188,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     return TaintedDataAbstractValue.CreateTainted(propertyReferenceOperation.Member, propertyReferenceOperation.Syntax, this.OwningSymbol);
                 }
                 else if (operation is IParameterReferenceOperation parameterReferenceOperation
-                    && this.DataFlowAnalysisContext.SourceInfos.IsSourceParameter(parameterReferenceOperation.Parameter))
+                    && this.DataFlowAnalysisContext.SourceInfos.IsSourceParameter(parameterReferenceOperation.Parameter, WellKnownTypeProvider))
                 {
                     return TaintedDataAbstractValue.CreateTainted(parameterReferenceOperation.Parameter, parameterReferenceOperation.Syntax, this.OwningSymbol);
                 }

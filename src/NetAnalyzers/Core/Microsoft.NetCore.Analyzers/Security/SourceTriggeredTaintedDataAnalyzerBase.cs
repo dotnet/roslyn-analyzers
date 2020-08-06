@@ -144,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IParameterReferenceOperation parameterReferenceOperation = (IParameterReferenceOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceParameter(parameterReferenceOperation.Parameter))
+                                    if (sourceInfoSymbolMap.IsSourceParameter(parameterReferenceOperation.Parameter, wellKnownTypeProvider))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {

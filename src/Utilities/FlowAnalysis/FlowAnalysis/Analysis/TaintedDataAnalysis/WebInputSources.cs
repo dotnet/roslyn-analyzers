@@ -24,14 +24,23 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             sourceInfosBuilder.AddSourceInfo(
                 WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase,
                  new ParameterMatcher[]{
-                    (parameter) => {
-                        ISymbol containingSymbol = parameter.ContainingSymbol;
-
-                        if (containingSymbol.DeclaredAccessibility != Accessibility.Public)
+                    (parameter, wellKnownTypeProvider) => {
+                        if (!(parameter.ContainingSymbol is IMethodSymbol containingSymbol)
+                            || !(containingSymbol.ContainingSymbol is ITypeSymbol typeSymbol))
+                        {
                             return false;
+                        }
 
-                        if (containingSymbol.IsConstructor())
+                        if (containingSymbol.DeclaredAccessibility != Accessibility.Public
+                            || containingSymbol.IsConstructor()
+                            || containingSymbol.IsStatic
+                            || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonActionAttribute, out var nonActionAttributeTypeSymbol)
+                            || containingSymbol.HasDerivedMethodAttribute(nonActionAttributeTypeSymbol)
+                            || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonControllerAttribute, out var nonControllerAttributeTypeSymbol)
+                            || typeSymbol.HasDerivedTypeAttribute(nonControllerAttributeTypeSymbol))
+                        {
                             return false;
+                        }
 
                         return true;
                     }

@@ -3255,6 +3255,52 @@ namespace TestNamespace
         }
 
         [Fact]
+        public async Task TaintFunctionArguments_InheritedNonController_NoDiagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+[NonController]
+public class TotallyNonController : Controller
+{
+}
+
+public class MyController : TotallyNonController
+{
+    public void DoSomethingNonAction(string input)
+    {
+        new SqlCommand(input);
+    }
+}");
+        }
+
+        [Fact]
+        public async Task TaintFunctionArguments_InheritedNonAction_NoDiagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+public class MyControllerBase : Controller
+{
+    [NonAction]
+    public virtual void DoSomethingNonAction(string input)
+    {
+        new SqlCommand(input);
+    }
+}
+
+public class MyController : MyControllerBase
+{
+    public override void DoSomethingNonAction(string input)
+    {
+        new SqlCommand(input);
+    }
+}");
+        }
+
+        [Fact]
         public async Task TaintFunctionArguments()
         {
             await VerifyCSharpWithDependenciesAsync(@"
@@ -3263,13 +3309,38 @@ using Microsoft.AspNetCore.Mvc;
 
 public class MyController : Controller
 {
-    public string DoSomething(string input)
+    public void DoSomething(string input)
     {
         new SqlCommand(input);
-        return null;
+    }
+
+    [NonAction]
+    public void DoSomethingNonAction(string input)
+    {
+        new SqlCommand(input);
+    }
+
+    public static void DoSomethingStatic(string input)
+    {
+        new SqlCommand(input);
+    }
+
+    private void DoSomethingPrivate(string input)
+    {
+        new SqlCommand(input);
+    }
+
+    protected void DoSomethingProtected(string input)
+    {
+        new SqlCommand(input);
+    }
+
+    public MyController(string x)
+    {
+        new SqlCommand(x);
     }
 }",
-                GetCSharpResultAt(9, 9, 9, 24, "SqlCommand.SqlCommand(string cmdText)", "string MyController.DoSomething(string input)", "string input", "string MyController.DoSomething(string input)"));
+                GetCSharpResultAt(9, 9, 9, 24, "SqlCommand.SqlCommand(string cmdText)", "void MyController.DoSomething(string input)", "string input", "void MyController.DoSomething(string input)"));
         }
     }
 }

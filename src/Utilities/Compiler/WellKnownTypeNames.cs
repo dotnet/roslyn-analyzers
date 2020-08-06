@@ -24,6 +24,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftAspNetCoreMvcHttpPostAttribute = "Microsoft.AspNetCore.Mvc.HttpPostAttribute";
         public const string MicrosoftAspNetCoreMvcHttpPutAttribute = "Microsoft.AspNetCore.Mvc.HttpPutAttribute";
         public const string MicrosoftAspNetCoreMvcNonActionAttribute = "Microsoft.AspNetCore.Mvc.NonActionAttribute";
+        public const string MicrosoftAspNetCoreMvcNonControllerAttribute = "Microsoft.AspNetCore.Mvc.NonControllerAttribute";
         public const string MicrosoftAspNetCoreMvcRouteAttribute = "Microsoft.AspNetCore.Mvc.RouteAttribute";
         public const string MicrosoftAspNetCoreMvcRoutingHttpMethodAttribute = "Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute";
         public const string MicrosoftAspNetCoreRazorHostingRazorCompiledItemAttribute = "Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute";

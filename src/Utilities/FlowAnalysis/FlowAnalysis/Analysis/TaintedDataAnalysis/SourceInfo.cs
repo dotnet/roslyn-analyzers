@@ -13,7 +13,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
     internal delegate bool PointsToCheck(ImmutableArray<PointsToAbstractValue> pointsTos);
     internal delegate bool ValueContentCheck(ImmutableArray<PointsToAbstractValue> pointsTos, ImmutableArray<ValueContentAbstractValue> valueContents);
     internal delegate bool MethodMatcher(string methodName, ImmutableArray<IArgumentOperation> arguments);
-    internal delegate bool ParameterMatcher(IParameterSymbol parameter);
+    internal delegate bool ParameterMatcher(IParameterSymbol parameter, WellKnownTypeProvider wellKnownTypeProvider);
 
     /// <summary>
     /// Info for tainted data sources, which generate tainted data.

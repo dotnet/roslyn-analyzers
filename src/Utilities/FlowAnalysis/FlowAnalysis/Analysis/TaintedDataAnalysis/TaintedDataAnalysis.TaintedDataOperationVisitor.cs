@@ -240,12 +240,14 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 {
                     var taintedParameterNames = visitedArguments
                             .Where(s => this.GetCachedAbstractValue(s).Kind == TaintedDataAbstractValueKind.Tainted)
-                            .Select(s => s.Parameter.Name); // keep enumerable, don't cache it here
+                            .Select(s => s.Parameter.Name);
+
+                    var taintedParameterNamesCached = taintedParameterNames.ToImmutableArray();
 
                     if (this.IsSanitizingMethod(
                         method,
                         visitedArguments,
-                        taintedParameterNames.ToImmutableArray(),
+                        taintedParameterNamesCached,
                         out sanitizedParameterPairs))
                     {
                         isSanitizingMethod = true;
@@ -262,6 +264,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(() => (DataFlowAnalysisContext.PointsToAnalysisResultOpt, DataFlowAnalysisContext.ValueContentAnalysisResultOpt)),
                         out taintedTargets))
                     {
+                        bool rebuildTaintedParameterNames = false;
+
                         foreach (string taintedTarget in taintedTargets)
                         {
                             if (taintedTarget != TaintedTargetValue.Return)
@@ -269,6 +273,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                 IArgumentOperation argumentOperation = visitedArguments.FirstOrDefault(o => o.Parameter.Name == taintedTarget);
                                 if (argumentOperation != null)
                                 {
+                                    rebuildTaintedParameterNames = true;
                                     this.CacheAbstractValue(argumentOperation, TaintedDataAbstractValue.CreateTainted(argumentOperation.Parameter, argumentOperation.Syntax, method));
                                 }
                                 else
@@ -281,12 +286,15 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                 result = TaintedDataAbstractValue.CreateTainted(method, originalOperation.Syntax, this.OwningSymbol);
                             }
                         }
+
+                        if (rebuildTaintedParameterNames)
+                            taintedParameterNamesCached = taintedParameterNames.ToImmutableArray();
                     }
 
                     if (this.DataFlowAnalysisContext.SourceInfos.IsSourceTransferMethod(
                         method,
                         visitedArguments,
-                        taintedParameterNames.ToImmutableArray(),
+                        taintedParameterNamesCached,
                         out taintedParameterPairs))
                     {
                         foreach ((string ifTaintedParameter, string thenTaintedTarget) in taintedParameterPairs)

@@ -236,13 +236,14 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 PooledHashSet<string>? taintedTargets = null;
                 PooledHashSet<(string, string)>? taintedParameterPairs = null;
                 PooledHashSet<(string, string)>? sanitizedParameterPairs = null;
+                PooledHashSet<string>? taintedParameterNamesCached = null;
                 try
                 {
                     var taintedParameterNames = visitedArguments
                             .Where(s => this.GetCachedAbstractValue(s).Kind == TaintedDataAbstractValueKind.Tainted)
                             .Select(s => s.Parameter.Name);
 
-                    PooledHashSet<string> taintedParameterNamesCached = PooledHashSet<string>.GetInstance();
+                    taintedParameterNamesCached = PooledHashSet<string>.GetInstance();
                     if (taintedParameterNames != null)
                         taintedParameterNamesCached.UnionWith(taintedParameterNames);
 
@@ -357,6 +358,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 {
                     taintedTargets?.Free();
                     taintedParameterPairs?.Free();
+                    sanitizedParameterPairs?.Free();
+                    taintedParameterNamesCached?.Free();
                 }
 
                 return result;

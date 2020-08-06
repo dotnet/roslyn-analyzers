@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-<!-- Please refer to https://github.com/dotnet/roslyn-analyzers/blob/master/GuidelinesForNewRules.md -->
+<!-- Please refer to [GuidelinesForNewRules.md](.//..//..//GuidelinesForNewRules.md) -->
 
 ### Describe the problem you are trying to solve
 

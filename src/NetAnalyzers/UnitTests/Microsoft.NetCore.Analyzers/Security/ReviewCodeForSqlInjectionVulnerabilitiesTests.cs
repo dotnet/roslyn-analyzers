@@ -3301,6 +3301,62 @@ public class MyController : MyControllerBase
         }
 
         [Fact]
+        public async Task TaintFunctionArguments_ControllerAttribute()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+[Controller]
+public class My
+{
+    public void DoSomething(string input)
+    {
+        new SqlCommand(input);
+    }
+}",
+                GetCSharpResultAt(10, 9, 10, 24, "SqlCommand.SqlCommand(string cmdText)", "void My.DoSomething(string input)", "string input", "void My.DoSomething(string input)"));
+        }
+
+        [Fact]
+        public async Task TaintFunctionArguments_ControllerSuffix_Inherited()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+public class Controller
+{
+}
+
+public class My : Controller
+{
+    public void DoSomething(string input)
+    {
+        new SqlCommand(input);
+    }
+}",
+                GetCSharpResultAt(13, 9, 13, 24, "SqlCommand.SqlCommand(string cmdText)", "void My.DoSomething(string input)", "string input", "void My.DoSomething(string input)"));
+        }
+
+        [Fact]
+        public async Task TaintFunctionArguments_ControllerSuffix()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+public class MyController
+{
+    public void DoSomething(string input)
+    {
+        new SqlCommand(input);
+    }
+}",
+                GetCSharpResultAt(9, 9, 9, 24, "SqlCommand.SqlCommand(string cmdText)", "void MyController.DoSomething(string input)", "string input", "void MyController.DoSomething(string input)"));
+        }
+
+        [Fact]
         public async Task TaintFunctionArguments()
         {
             await VerifyCSharpWithDependenciesAsync(@"

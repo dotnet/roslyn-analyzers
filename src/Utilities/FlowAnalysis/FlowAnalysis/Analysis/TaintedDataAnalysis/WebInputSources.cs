@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
@@ -22,11 +23,18 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             var sourceInfosBuilder = PooledHashSet<SourceInfo>.GetInstance();
 
             sourceInfosBuilder.AddSourceInfo(
-                WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase,
+                WellKnownTypeNames.SystemObject,
                  new ParameterMatcher[]{
                     (parameter, wellKnownTypeProvider) => {
                         if (!(parameter.ContainingSymbol is IMethodSymbol containingSymbol)
-                            || !(containingSymbol.ContainingSymbol is ITypeSymbol typeSymbol))
+                            || !(containingSymbol.ContainingSymbol is INamedTypeSymbol typeSymbol))
+                        {
+                            return false;
+                        }
+
+                        if (!typeSymbol.GetBaseTypesAndThis().Any(x => x.Name.EndsWith("Controller", System.StringComparison.Ordinal))
+                            && (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerAttribute, out var controllerAttributeTypeSymbol)
+                                || !typeSymbol.HasDerivedTypeAttribute(controllerAttributeTypeSymbol)))
                         {
                             return false;
                         }

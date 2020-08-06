@@ -10,6 +10,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftAspNetCoreHttpInternalResponseCookies = "Microsoft.AspNetCore.Http.Internal.ResponseCookies";
         public const string MicrosoftAspNetCoreHttpIResponseCookies = "Microsoft.AspNetCore.Http.IResponseCookies";
         public const string MicrosoftAspNetCoreMvcController = "Microsoft.AspNetCore.Mvc.Controller";
+        public const string MicrosoftAspNetCoreMvcControllerAttribute = "Microsoft.AspNetCore.Mvc.ControllerAttribute";
         public const string MicrosoftAspNetCoreMvcControllerBase = "Microsoft.AspNetCore.Mvc.ControllerBase";
         public const string MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext = "Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext";
         public const string MicrosoftAspNetCoreMvcFiltersFilterCollection = "Microsoft.AspNetCore.Mvc.Filters.FilterCollection";
@@ -212,6 +213,7 @@ namespace Analyzer.Utilities
         public const string SystemNotSupportedException = "System.NotSupportedException";
         public const string SystemNullable1 = "System.Nullable`1";
         public const string SystemNumber = "System.Number";
+        public const string SystemObject = "System.Object";
         public const string SystemObsoleteAttribute = "System.ObsoleteAttribute";
         public const string SystemOutOfMemoryException = "System.OutOfMemoryException";
         public const string SystemRandom = "System.Random";

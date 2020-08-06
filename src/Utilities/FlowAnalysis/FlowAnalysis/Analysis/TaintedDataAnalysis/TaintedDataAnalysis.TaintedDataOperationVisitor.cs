@@ -543,7 +543,10 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             /// Determines if the instance method call returns tainted data.
             /// </summary>
             /// <param name="method">Instance method being called.</param>
-            /// <returns>True if the method returns tainted data, false otherwise.</returns>
+            /// <param name="arguments">Arguments passed to the method.</param>
+            /// <param name="taintedParameterNames">Names of the tainted input parameters.</param>
+            /// <param name="taintedParameterPairs">Matched pairs of "tainted parameter name" to "sanitized parameter name".</param>
+            /// <returns>True if the method sanitizes data (returned or as an output parameter), false otherwise.</returns>
             private bool IsSanitizingMethod(
                 IMethodSymbol method,
                 ImmutableArray<IArgumentOperation> arguments,

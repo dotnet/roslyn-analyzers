@@ -77,6 +77,31 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             builder.Add(metadata);
         }
 
+        public static void AddSourceInfo(
+            this PooledHashSet<SourceInfo> builder,
+            string fullDependencyTypeName,
+            string fullTypeName,
+            IEnumerable<ParameterMatcher> taintedArguments)
+        {
+            SourceInfo metadata = new SourceInfo(
+                fullTypeName,
+                fullDependencyTypeName: fullDependencyTypeName,
+                isInterface: false,
+                taintedProperties: ImmutableHashSet<string>.Empty,
+                taintedArguments:
+                    taintedArguments.ToImmutableHashSet(),
+                taintedMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<string>)>.Empty,
+                taintedMethodsNeedsPointsToAnalysis:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)>.Empty,
+                taintedMethodsNeedsValueContentAnalysis:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)>.Empty,
+                transferMethods:
+                    ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)>.Empty,
+                taintConstantArray: false);
+            builder.Add(metadata);
+        }
+
         // Just to make hardcoding SourceInfos more convenient.
         public static void AddSourceInfo(
             this PooledHashSet<SourceInfo> builder,

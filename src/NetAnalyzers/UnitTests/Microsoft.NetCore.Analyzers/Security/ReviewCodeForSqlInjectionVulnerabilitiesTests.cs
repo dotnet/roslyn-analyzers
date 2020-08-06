@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.ReviewCodeForSqlInjectionVulnerabilities, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
@@ -3354,6 +3355,31 @@ public class MyController
     }
 }",
                 GetCSharpResultAt(9, 9, 9, 24, "SqlCommand.SqlCommand(string cmdText)", "void MyController.DoSomething(string input)", "string input", "void MyController.DoSomething(string input)"));
+        }
+
+        [Fact]
+        public async Task TaintFunctionArguments_NoMvcReferenced_NoDiagnostic()
+        {
+            var csharpTest = new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestState =
+                {
+                    Sources = { @"
+using System.Data.SqlClient;
+
+public class MyController
+{
+    public void DoSomething(string input)
+    {
+        new SqlCommand(input);
+    }
+}"
+                    }
+                },
+            };
+
+            await csharpTest.RunAsync();
         }
 
         [Fact]

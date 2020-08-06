@@ -242,7 +242,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                             .Where(s => this.GetCachedAbstractValue(s).Kind == TaintedDataAbstractValueKind.Tainted)
                             .Select(s => s.Parameter.Name);
 
-                    var taintedParameterNamesCached = taintedParameterNames.ToImmutableArray();
+                    PooledHashSet<string> taintedParameterNamesCached = PooledHashSet<string>.GetInstance();
+                    if (taintedParameterNames != null)
+                        taintedParameterNamesCached.UnionWith(taintedParameterNames);
 
                     if (this.IsSanitizingMethod(
                         method,
@@ -288,7 +290,10 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         }
 
                         if (rebuildTaintedParameterNames)
-                            taintedParameterNamesCached = taintedParameterNames.ToImmutableArray();
+                        {
+                            taintedParameterNamesCached.Clear();
+                            taintedParameterNamesCached.UnionWith(taintedParameterNames);
+                        }
                     }
 
                     if (this.DataFlowAnalysisContext.SourceInfos.IsSourceTransferMethod(
@@ -542,7 +547,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             private bool IsSanitizingMethod(
                 IMethodSymbol method,
                 ImmutableArray<IArgumentOperation> arguments,
-                ImmutableArray<string> taintedParameterNames,
+                ISet<string> taintedParameterNames,
                 [NotNullWhen(returnValue: true)] out PooledHashSet<(string, string)>? taintedParameterPairs)
             {
                 taintedParameterPairs = null;

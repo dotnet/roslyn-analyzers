@@ -217,24 +217,6 @@ public partial class WebForm : System.Web.UI.Page
         [Fact]
         public async Task HttpServerUtility_HtmlEncode_StringWriterOverload_NoDiagnostic()
         {
-            const string code = @"
-using System;
-using System.Data.SqlClient;
-using System.IO;
-using System.Web;
-
-public partial class WebForm : System.Web.UI.Page
-{
-    protected void Page_Load(object sender, EventArgs e)
-    {
-        string input = Request.Form[""in""];
-        StringWriter w = new StringWriter();
-        Server.HtmlEncode(input, w);
-        Response.Write(""<HTML>"" + w.ToString() + ""</HTML>"");
-        // make sure it is not like any unknown method breaks the taint path, it should warn about sql injection
-        SqlCommand sqlCommand = new SqlCommand(w.ToString());
-    }
-}";
             await new VerifyCS.Test
             {
                 ReferenceAssemblies = AdditionalMetadataReferences.DefaultForTaintedDataAnalysis,
@@ -242,24 +224,8 @@ public partial class WebForm : System.Web.UI.Page
                 {
                     Sources =
                     {
-                        code,
+                        SharedCode.WrongSanitizer,
                     }
-                },
-            }.RunAsync();
-
-            await new CSharpSecurityCodeFixVerifier<Microsoft.NetCore.Analyzers.Security.ReviewCodeForSqlInjectionVulnerabilities, Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>.Test
-            {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultForTaintedDataAnalysis,
-                TestState =
-                {
-                    Sources =
-                    {
-                        code,
-                    },
-                    ExpectedDiagnostics =
-                    {
-                        GetCSharpResultAt(16, 33, 11, 24, "SqlCommand.SqlCommand(string cmdText)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)", ReviewCodeForSqlInjectionVulnerabilities.Rule)
-                    },
                 },
             }.RunAsync();
         }

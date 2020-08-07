@@ -19,50 +19,50 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     {
         internal const string RuleId = "CA1416";
         private static readonly ImmutableArray<string> s_platformCheckMethodNames = ImmutableArray.Create(IsOSPlatformOrLater, IsOSPlatformEarlierThan);
-        private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(MinimumOSPlatformAttribute, ObsoletedInOSPlatformAttribute, RemovedInOSPlatformAttribute);
+        private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(SupportedOSPlatformAttribute, ObsoletedInOSPlatformAttribute, UnsupportedOSPlatformAttribute);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableAddedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckAddedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableSupportedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckSupportedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableObsoleteMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckObsoleteMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableRemovedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckRemovedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableUnsupportedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckUnsupportedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         // We are adding the new attributes into older versions of .Net 5.0, so there could be multiple referenced assemblies each with their own 
         // version of internal attribute type which will cause ambiguity, to avoid that we are comparing the attributes by their name
-        private const string MinimumOSPlatformAttribute = nameof(MinimumOSPlatformAttribute);
+        private const string SupportedOSPlatformAttribute = nameof(SupportedOSPlatformAttribute);
         private const string ObsoletedInOSPlatformAttribute = nameof(ObsoletedInOSPlatformAttribute);
-        private const string RemovedInOSPlatformAttribute = nameof(RemovedInOSPlatformAttribute);
+        private const string UnsupportedOSPlatformAttribute = nameof(UnsupportedOSPlatformAttribute);
 
         // Platform guard method names
         private const string IsOSPlatformOrLater = nameof(IsOSPlatformOrLater);
         private const string IsOSPlatformEarlierThan = nameof(IsOSPlatformEarlierThan);
 
-        internal static DiagnosticDescriptor MinimumOsRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor SupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableAddedMessage,
+                                                                                      s_localizableSupportedMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
 
-        internal static DiagnosticDescriptor ObsoleteRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor ObsoleteOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableAddedMessage,
+                                                                                      s_localizableSupportedMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
                                                                                       description: s_localizableObsoleteMessage,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
-        internal static DiagnosticDescriptor RemovedRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor UnsupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableAddedMessage,
+                                                                                      s_localizableSupportedMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
-                                                                                      description: s_localizableRemovedMessage,
+                                                                                      description: s_localizableUnsupportedMessage,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MinimumOsRule, ObsoleteRule, RemovedRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SupportedOsRule, ObsoleteOsRule, UnsupportedOsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -95,11 +95,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return runtimeInformationType.GetMembers().OfType<IMethodSymbol>().Where(m =>
                     s_platformCheckMethodNames.Contains(m.Name) && !m.Parameters.IsEmpty).ToImmutableArray();
             }
-        }
-
-        private void AnalyzeSymbolAction(SymbolAnalysisContext obj)
-        {
-            throw new NotImplementedException();
         }
 
         private void AnalyzeOperationBlock(OperationBlockStartAnalysisContext context, ImmutableArray<IMethodSymbol> guardMethods, INamedTypeSymbol osPlatformType)
@@ -136,7 +131,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor, wellKnownTypeProvider,
-                        context.Options, MinimumOsRule, performValueContentAnalysis: true,
+                        context.Options, SupportedOsRule, performValueContentAnalysis: true,
                         context.CancellationToken, out var valueContentAnalysisResult);
 
                     if (analysisResult == null)
@@ -197,35 +192,35 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (!info.Negated)
                     {
-                        if (attribute.SupportedPlatforms.TryGetValue(info.PlatformPropertyName, out var versions))
+                        if (attribute.SupportedPlatforms.TryGetValue(info.PlatformName, out var versions))
                         {
-                            if (info.InvokedPlatformCheckMethodName == IsOSPlatformOrLater)
+                            if (info.InvokedMethodName == IsOSPlatformOrLater)
                             {
                                 foreach (var version in versions)
                                 {
-                                    if (AttributeVersionsMatch(PlatformAttributeType.MinimumOSPlatformAttribute, version, info.Version))
+                                    if (AttributeVersionsMatch(PlatformAttributeType.SupportedOSPlatformAttribute, version, info.Version))
                                     {
                                         return true;
                                     }
                                 }
                             }
                         }
-                        if (attribute.UnsupportedPlatforms.TryGetValue(info.PlatformPropertyName, out versions))
+                        if (attribute.UnsupportedPlatforms.TryGetValue(info.PlatformName, out versions))
                         {
-                            if (info.InvokedPlatformCheckMethodName == IsOSPlatformEarlierThan)
+                            if (info.InvokedMethodName == IsOSPlatformEarlierThan)
                             {
                                 foreach (var version in versions)
                                 {
-                                    if (AttributeVersionsMatch(PlatformAttributeType.RemovedInOSPlatformAttribute, version, info.Version))
+                                    if (AttributeVersionsMatch(PlatformAttributeType.UnsupportedOSPlatformAttribute, version, info.Version))
                                     {
                                         return true;
                                     }
                                 }
                             }
                         }
-                        if (attribute.ObsoletedPlatforms.TryGetValue(info.PlatformPropertyName, out var obsoletedVersion))
+                        if (attribute.ObsoletedPlatforms.TryGetValue(info.PlatformName, out var obsoletedVersion))
                         {
-                            if (info.InvokedPlatformCheckMethodName == IsOSPlatformEarlierThan)
+                            if (info.InvokedMethodName == IsOSPlatformEarlierThan)
                             {
                                 if (AttributeVersionsMatch(PlatformAttributeType.ObsoletedInOSPlatformAttribute, obsoletedVersion, info.Version))
                                 {
@@ -257,7 +252,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     foreach (var version in attr.Value)
                     {
-                        context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.MinimumOSPlatformAttribute),
+                        context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.SupportedOSPlatformAttribute),
                         operationName ?? string.Empty, attr.Key, version.ToString()));
                     }
                 }
@@ -268,7 +263,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     foreach (var version in attr.Value)
                     {
-                        context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.RemovedInOSPlatformAttribute),
+                        context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.UnsupportedOSPlatformAttribute),
                         operationName ?? string.Empty, attr.Key, version.ToString()));
                     }
                 }
@@ -277,7 +272,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var attr in attributes.ObsoletedPlatforms)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.MinimumOSPlatformAttribute),
+                    context.ReportDiagnostic(operation.CreateDiagnostic(SelectRule(PlatformAttributeType.SupportedOSPlatformAttribute),
                     operationName ?? string.Empty, attr.Key, attr.Value.ToString()));
                 }
             }
@@ -312,7 +307,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            if (operationAttributes.Initialized && operationAttributes.HasAttribute)
+            if (operationAttributes.HasAttribute)
             {
                 if (!platformSpecificMembers.TryGetValue(context.ContainingSymbol, out var callSiteAttribute))
                 {
@@ -322,7 +317,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                if (callSiteAttribute.Initialized && callSiteAttribute.HasAttribute)
+                if (callSiteAttribute.HasAttribute)
                 {
                     if (!IsSuppressedByCallSite(operationAttributes, callSiteAttribute, out PlatformAttributes notSuppressedAttributes))
                     {
@@ -505,7 +500,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var calledVersion in callSiteSupportedVersions)
                 {
-                    if (supportedVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.MinimumOSPlatformAttribute, calledVersion, v))) //v <= calledVersion))
+                    if (supportedVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.SupportedOSPlatformAttribute, calledVersion, v))) //v <= calledVersion))
                     {
                         return true;
                     }
@@ -522,7 +517,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var supportedVersion in supportedVersions)
                 {
-                    if (!suppressingVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.MinimumOSPlatformAttribute, supportedVersion, v)))//supportedVersion <= v))
+                    if (!suppressingVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.SupportedOSPlatformAttribute, supportedVersion, v)))//supportedVersion <= v))
                     {
                         AddToDiagnostics(key, notSuppressedVersions, supportedVersion);
 
@@ -554,7 +549,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var checkingVersion in checkingVersions)
                 {
-                    if (!suppressingVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.MinimumOSPlatformAttribute, checkingVersion, v))) //checkingVersion <= v))
+                    if (!suppressingVersions.Any(v => AttributeVersionsMatch(PlatformAttributeType.SupportedOSPlatformAttribute, checkingVersion, v))) //checkingVersion <= v))
                     {
                         AddToDiagnostics(key, notSuppressedVersions, checkingVersion);
 
@@ -593,9 +588,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static DiagnosticDescriptor SelectRule(PlatformAttributeType attributeType)
             => attributeType switch
             {
-                PlatformAttributeType.MinimumOSPlatformAttribute => MinimumOsRule,
-                PlatformAttributeType.ObsoletedInOSPlatformAttribute => ObsoleteRule,
-                _ => RemovedRule,
+                PlatformAttributeType.SupportedOSPlatformAttribute => SupportedOsRule,
+                PlatformAttributeType.ObsoletedInOSPlatformAttribute => ObsoleteOsRule,
+                _ => UnsupportedOsRule,
             };
 
         private static bool FindPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes, ISymbol containingSymbol, out PlatformAttributes attributes)
@@ -662,7 +657,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
-                //diagnostic = Diagnostic.Create(InvalidPlatformVersionRule, osAttribute.ApplicationSyntaxReference.GetSyntax().GetLocation());
+                // report Diagnostic.Create(InvalidPlatformVersionRule, osAttribute.ApplicationSyntaxReference.GetSyntax().GetLocation());
             }
 
             return attributes;
@@ -671,8 +666,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static SmallDictionary<string, PooledSortedSet<Version>> SwitchAttrributes(string osAttributeName, PlatformAttributes attributes)
                 => osAttributeName switch
                 {
-                    MinimumOSPlatformAttribute => attributes.SupportedPlatforms,
-                    RemovedInOSPlatformAttribute => attributes.UnsupportedPlatforms,
+                    SupportedOSPlatformAttribute => attributes.SupportedPlatforms,
+                    UnsupportedOSPlatformAttribute => attributes.UnsupportedPlatforms,
                     _ => throw new NotImplementedException(),
                 };
 
@@ -691,7 +686,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool AttributeVersionsMatch(PlatformAttributeType attributeType, Version diagnosingVersion, Version suppressingVersion)
         {
-            if (attributeType == PlatformAttributeType.MinimumOSPlatformAttribute)
+            if (attributeType == PlatformAttributeType.SupportedOSPlatformAttribute)
             {
                 if (diagnosingVersion.Major != suppressingVersion.Major)
                 {
@@ -710,7 +705,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
-                Debug.Assert(attributeType == PlatformAttributeType.ObsoletedInOSPlatformAttribute || attributeType == PlatformAttributeType.RemovedInOSPlatformAttribute);
+                Debug.Assert(attributeType == PlatformAttributeType.ObsoletedInOSPlatformAttribute || attributeType == PlatformAttributeType.UnsupportedOSPlatformAttribute);
 
                 if (diagnosingVersion.Major != suppressingVersion.Major)
                 {

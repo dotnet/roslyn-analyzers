@@ -23,19 +23,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             private RuntimeMethodValue(string invokedPlatformCheckMethodName, string platformPropertyName, Version version, bool negated)
             {
-                InvokedPlatformCheckMethodName = invokedPlatformCheckMethodName ?? throw new ArgumentNullException(nameof(invokedPlatformCheckMethodName));
-                PlatformPropertyName = platformPropertyName ?? throw new ArgumentNullException(nameof(platformPropertyName));
+                InvokedMethodName = invokedPlatformCheckMethodName ?? throw new ArgumentNullException(nameof(invokedPlatformCheckMethodName));
+                PlatformName = platformPropertyName ?? throw new ArgumentNullException(nameof(platformPropertyName));
                 Version = version ?? throw new ArgumentNullException(nameof(version));
                 Negated = negated;
             }
 
-            public string InvokedPlatformCheckMethodName { get; }
-            public string PlatformPropertyName { get; }
+            public string InvokedMethodName { get; }
+            public string PlatformName { get; }
             public Version Version { get; }
             public bool Negated { get; }
 
             public IAbstractAnalysisValue GetNegatedValue()
-                => new RuntimeMethodValue(InvokedPlatformCheckMethodName, PlatformPropertyName, Version, !Negated);
+                => new RuntimeMethodValue(InvokedMethodName, PlatformName, Version, !Negated);
 
             public static bool TryDecode(
                 IMethodSymbol invokedPlatformCheckMethod,
@@ -141,7 +141,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override string ToString()
             {
-                var result = $"{InvokedPlatformCheckMethodName};{PlatformPropertyName};{Version}";
+                var result = $"{InvokedMethodName};{PlatformName};{Version}";
                 if (Negated)
                 {
                     result = $"!{result}";
@@ -151,8 +151,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             public bool Equals(RuntimeMethodValue other)
-                => InvokedPlatformCheckMethodName.Equals(other.InvokedPlatformCheckMethodName, StringComparison.OrdinalIgnoreCase) &&
-                    PlatformPropertyName.Equals(other.PlatformPropertyName, StringComparison.OrdinalIgnoreCase) &&
+                => InvokedMethodName.Equals(other.InvokedMethodName, StringComparison.OrdinalIgnoreCase) &&
+                    PlatformName.Equals(other.PlatformName, StringComparison.OrdinalIgnoreCase) &&
                     Version.Equals(other.Version) &&
                     Negated == other.Negated;
 
@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 => obj is RuntimeMethodValue otherInfo && Equals(otherInfo);
 
             public override int GetHashCode()
-                => HashUtilities.Combine(InvokedPlatformCheckMethodName.GetHashCode(), PlatformPropertyName.GetHashCode(), Version.GetHashCode(), Negated.GetHashCode());
+                => HashUtilities.Combine(InvokedMethodName.GetHashCode(), PlatformName.GetHashCode(), Version.GetHashCode(), Negated.GetHashCode());
 
             bool IEquatable<IAbstractAnalysisValue>.Equals(IAbstractAnalysisValue other)
                 => other is RuntimeMethodValue otherInfo && Equals(otherInfo);

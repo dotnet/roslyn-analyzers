@@ -22,7 +22,7 @@ public class Test
         if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
             M2();
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -40,7 +40,7 @@ Public Class Test
         If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3) Then M2()
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Public Sub M2()
     End Sub
 End Class
@@ -69,7 +69,7 @@ public class Test
         if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 8, 1, 2, 3))
             [|M2()|];        
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -99,7 +99,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -131,7 +131,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -178,7 +178,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -213,7 +213,7 @@ Class Test
         End If
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
 
@@ -256,9 +256,9 @@ public class Test2
 
 public enum PlatformEnum
 {
-    [MinimumOSPlatform(""Windows10.0"")]
+    [SupportedOSPlatform(""Windows10.0"")]
     Windows10,
-    [MinimumOSPlatform(""Linux4.8"")]
+    [SupportedOSPlatform(""Linux4.8"")]
     Linux48,
     NoPlatform
 }
@@ -275,7 +275,7 @@ using System.Runtime.InteropServices;
 
 public class Test
 {
-    [RemovedInOSPlatform(""Linux4.1"")]
+    [UnsupportedOSPlatform(""Linux4.1"")]
     public string RemovedProperty { get; set;}
     
     public void M1()
@@ -329,7 +329,7 @@ public class Test
 
 public class C
 {
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public C()
     {
     }
@@ -364,7 +364,7 @@ public class Test
         }
     }
 }
-[MinimumOSPlatform(""Windows10.1.2.3"")]
+[SupportedOSPlatform(""Windows10.1.2.3"")]
 public class OsDependentClass
 {
     public void M2()
@@ -390,7 +390,7 @@ Public Class Test
     End Sub
 End Class
 
-<MinimumOSPlatform(""Windows10.1.2.3"")>
+<SupportedOSPlatform(""Windows10.1.2.3"")>
 Public Class OsDependentClass
     Public Sub M2()
     End Sub
@@ -424,7 +424,7 @@ public class Test
         Test();
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -470,7 +470,7 @@ public class Test
         action.Invoke();
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -490,7 +490,7 @@ public class Test
 {
     public delegate void Del();
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public event Del SampleEvent;
 
     public void M1()
@@ -539,7 +539,7 @@ public class Test
 {
     public delegate void Del();
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void DelegateMethod()
     {
     }
@@ -596,7 +596,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -621,7 +621,7 @@ public class Test
         else
             M2();
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -649,7 +649,7 @@ public class Test
         else
             M2();
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -674,7 +674,7 @@ public class Test
             return;
         M2();
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -693,7 +693,7 @@ Public Class Test
         M2()
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Public Sub M2()
     End Sub
 End Class
@@ -737,7 +737,7 @@ public class Test
 
         [|M2()|];
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -779,7 +779,7 @@ public class Test
             [|M2()|];
         }
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -819,7 +819,7 @@ public class Test
 
         [|M2()|];
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -871,7 +871,7 @@ public class Test
             [|M2()|];
         }
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -919,7 +919,7 @@ public class Test
             [|M2()|];
         }
     }
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -960,7 +960,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -983,7 +983,7 @@ Class Test
         End If
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
 End Class
@@ -1029,7 +1029,7 @@ class Test
         [|M2()|];
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1057,7 +1057,7 @@ class Test
         M2();
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1076,7 +1076,7 @@ Class Test
         M2()
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
 End Class
@@ -1112,7 +1112,7 @@ class Test
             [|M2()|];
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1138,7 +1138,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1164,7 +1164,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1211,7 +1211,7 @@ class Test
         }
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -1245,7 +1245,7 @@ Class Test
         End If
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M2()
     End Sub
 End Class
@@ -1274,7 +1274,7 @@ class Test
         [|M2()|]; 
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }

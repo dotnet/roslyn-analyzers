@@ -29,10 +29,10 @@ public class Test
     {
         [|WindowsOnly()|];
         [|Obsoleted()|];
-        [|Removed()|];
+        [|Unsupported()|];
         [|ObsoletedOverload()|];
     }
-    [MinimumOSPlatform(""Windows10.1.1.1"")]
+    [SupportedOSPlatform(""Windows10.1.1.1"")]
     public void WindowsOnly()
     {
     }
@@ -44,8 +44,8 @@ public class Test
     public void ObsoletedOverload()
     {
     }
-    [RemovedInOSPlatform(""Linux4.1"")]
-    public void Removed()
+    [UnsupportedOSPlatform(""Linux4.1"")]
+    public void Unsupported()
     {
     }
 }
@@ -60,10 +60,10 @@ Public Class Test
         [|WindowsOnly()|]
         [|Obsoleted()|]
         [|ObsoletedOverload()|]
-        [|Removed()|]
+        [|Unsupported()|]
     End Sub
 
-    <MinimumOSPlatform(""Windows10.1.1.1"")>
+    <SupportedOSPlatform(""Windows10.1.1.1"")>
     Public Sub WindowsOnly()
     End Sub
 
@@ -75,8 +75,8 @@ Public Class Test
     Public Sub ObsoletedOverload()
     End Sub
 
-    <RemovedInOSPlatform(""Linux4.1"")>
-    Public Sub Removed()
+    <UnsupportedOSPlatform(""Linux4.1"")>
+    Public Sub Unsupported()
     End Sub
 End Class
 " + MockAttributesVbSource;
@@ -97,21 +97,21 @@ public class Test
         Windows1_2_3_4_5();
         [|ObsoletedLinuxDash4_1()|];
         [|ObsoletedLinuxStar4_1()|];
-        [|RemovedLinu4_1()|];
+        [|UnsupportedLinu4_1()|];
         ObsoletedWithNullString();
-        RemovedWithEmptyString();
+        UnsupportedWithEmptyString();
         [|WindowsOnly()|];
     }
 
-    [MinimumOSPlatform(""Windows"")]
+    [SupportedOSPlatform(""Windows"")]
     public void WindowsOnly()
     {
     }
-    [MinimumOSPlatform(""Windows10"")]
+    [SupportedOSPlatform(""Windows10"")]
     public void Windows10()
     {
     }
-    [MinimumOSPlatform(""Windows1.2.3.4.5"")]
+    [SupportedOSPlatform(""Windows1.2.3.4.5"")]
     public void Windows1_2_3_4_5()
     {
     }
@@ -127,12 +127,12 @@ public class Test
     public void ObsoletedWithNullString()
     {
     }
-    [RemovedInOSPlatform(""Linu4.1"")]
-    public void RemovedLinu4_1()
+    [UnsupportedOSPlatform(""Linu4.1"")]
+    public void UnsupportedLinu4_1()
     {
     }
-    [RemovedInOSPlatform("""")]
-    public void RemovedWithEmptyString()
+    [UnsupportedOSPlatform("""")]
+    public void UnsupportedWithEmptyString()
     {
     }
 }
@@ -148,12 +148,12 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    [MinimumOSPlatform(""Windows10.1.1"")]
+    [SupportedOSPlatform(""Windows10.1.1"")]
     public string WindowsStringProperty { get; set; }
     [ObsoletedInOSPlatform(""ios4.1"")]
     public int ObsoleteIntProperty { get; set; }
-    [RemovedInOSPlatform(""Linux4.1"")]
-    public byte RemovedProperty { get; }
+    [UnsupportedOSPlatform(""Linux4.1"")]
+    public byte UnsupportedProperty { get; }
     public void M1()
     {
         [|WindowsStringProperty|] = ""Hello"";
@@ -161,7 +161,7 @@ public class Test
         M2([|WindowsStringProperty|]);
         [|ObsoleteIntProperty|] = 5;
         M3([|ObsoleteIntProperty|]);
-        M3([|RemovedProperty|]);
+        M3([|UnsupportedProperty|]);
     }
     public string M2(string option)
     {
@@ -206,9 +206,9 @@ public class Test
 
         public static IEnumerable<object[]> Create_AtrrbiuteProperty_WithCondtions()
         {
-            yield return new object[] { "MinimumOSPlatform", "string StringProperty", " == [|StringProperty|]", @"StringProperty|] = ""Hello""", "StringProperty" };
+            yield return new object[] { "SupportedOSPlatform", "string StringProperty", " == [|StringProperty|]", @"StringProperty|] = ""Hello""", "StringProperty" };
             yield return new object[] { "ObsoletedInOSPlatform", "int IntProperty", " > [|IntProperty|]", "IntProperty|] = 5", "IntProperty" };
-            yield return new object[] { "RemovedInOSPlatform", "int RemovedProperty", " <= [|RemovedProperty|]", "RemovedProperty|] = 3", "RemovedProperty" };
+            yield return new object[] { "UnsupportedOSPlatform", "int UnsupportedProperty", " <= [|UnsupportedProperty|]", "UnsupportedProperty|] = 3", "UnsupportedProperty" };
         }
 
         [Fact]
@@ -234,9 +234,9 @@ public class Test2
 
 public enum PlatformEnum
 {
-    [MinimumOSPlatform(""windows10.0"")]
+    [SupportedOSPlatform(""windows10.0"")]
     Windows10,
-    [MinimumOSPlatform(""linux4.8"")]
+    [SupportedOSPlatform(""linux4.8"")]
     Linux48,
     NoPlatform
 }
@@ -269,9 +269,9 @@ public class Test2
 
 public enum PlatformEnum
 {
-    [MinimumOSPlatform(""Windows10.0"")]
+    [SupportedOSPlatform(""Windows10.0"")]
     Windows10,
-    [MinimumOSPlatform(""Linux4.8"")]
+    [SupportedOSPlatform(""Linux4.8"")]
     Linux48,
     NoPlatform
 }
@@ -295,9 +295,9 @@ Public Class Test2
 End Class
 
 Public Enum PlatformEnum
-    <MinimumOSPlatform(""Windows10.0"")>
+    <SupportedOSPlatform(""Windows10.0"")>
     Windows10
-    < MinimumOSPlatform(""Linux4.8"") >
+    < SupportedOSPlatform(""Linux4.8"") >
     Linux48
     NoPlatform
 End Enum
@@ -313,9 +313,9 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    [MinimumOSPlatform(""Windows10.1.1.1"")]
+    [SupportedOSPlatform(""Windows10.1.1.1"")]
     string WindowsStringField;
-    [MinimumOSPlatform(""Windows10.1.1.1"")]
+    [SupportedOSPlatform(""Windows10.1.1.1"")]
     public int WindowsIntField { get; set; }
     public void M1()
     {
@@ -376,7 +376,7 @@ public class Test
 }
 public class B
 {
-    [MinimumOSPlatform(""Windows10.1.1.1"")]
+    [SupportedOSPlatform(""Windows10.1.1.1"")]
     public void M2()
     {
     }
@@ -405,7 +405,7 @@ namespace Ns
 {
     public class B
     {
-        [MinimumOSPlatform(""Windows10.1.1.1"")]
+        [SupportedOSPlatform(""Windows10.1.1.1"")]
         public void M2()
         {
         }
@@ -428,7 +428,7 @@ End Class
 
 Namespace Ns
     Public Class B
-        <MinimumOSPlatform(""Windows10.1.1.1"")>
+        <SupportedOSPlatform(""Windows10.1.1.1"")>
         Public Sub M2()
         End Sub
     End Class
@@ -454,7 +454,7 @@ public class Test
 
 public class C
 {
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public C()
     {
     }
@@ -480,7 +480,7 @@ public class Test
         [|odc.M2()|];
     }
 }
-[MinimumOSPlatform(""Windows10.1.2.3"")]
+[SupportedOSPlatform(""Windows10.1.2.3"")]
 public class OsDependentClass
 {
     public void M2()
@@ -500,7 +500,7 @@ Public Class Test
     End Sub
 End Class
 
-<MinimumOSPlatform(""Windows10.1.2.3"")>
+<SupportedOSPlatform(""Windows10.1.2.3"")>
 Public Class OsDependentClass
     Public Sub M2()
     End Sub
@@ -526,7 +526,7 @@ public class Test
         Test();
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -543,7 +543,7 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    [MinimumOSPlatform(""Windows10.2"")]
+    [SupportedOSPlatform(""Windows10.2"")]
     public void M1()
     {
         void Test()
@@ -553,7 +553,7 @@ public class Test
         Test();
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -582,7 +582,7 @@ public class Test
         };
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -600,7 +600,7 @@ using System;
 
 public class C
 {
-    [MinimumOSPlatform(""Windows10.13"")]
+    [SupportedOSPlatform(""Windows10.13"")]
     public void M1()
     {
         void Test() => M2();
@@ -612,7 +612,7 @@ public class C
         };
     }
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void M2()
     {
     }
@@ -631,7 +631,7 @@ public class Test
 {
     public delegate void Del();
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public event Del SampleEvent;
 
     public void M1()
@@ -657,7 +657,7 @@ Imports System.Runtime.Versioning
 
 Public Class Test
     Public Delegate Sub Del()
-    <MinimumOSPlatform(""Windows10.1.2.3"")>
+    <SupportedOSPlatform(""Windows10.1.2.3"")>
     Public Event SampleEvent As Del
 
     Public Sub M1()
@@ -686,7 +686,7 @@ public class Test
 {
     public delegate void Del(); // The attribute not supported on delegates, so no tets for that
 
-    [MinimumOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void DelegateMethod()
     {
     }
@@ -714,7 +714,7 @@ public class Test
                     odc.M2();
                 }
             }
-            [assembly:MinimumOSPlatform(""Windows10.1.2.3"")]
+            [assembly:SupportedOSPlatform(""Windows10.1.2.3"")]
             namespace ns
             {
                 public class OsDependentClass
@@ -729,7 +729,7 @@ public class Test
                 VerifyCS.Diagnostic(RuntimePlatformCheckAnalyzer2.Rule).WithSpan(10, 21, 10, 29).WithArguments("M2", "Windows", "10.1.2.3"));
         }*/
 
-        public static IEnumerable<object[]> MinimumOsAttributeTestData()
+        public static IEnumerable<object[]> SupportedOsAttributeTestData()
         {
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", false };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.3.3", false };
@@ -749,15 +749,15 @@ public class Test
         }
 
         [Theory]
-        [MemberData(nameof(MinimumOsAttributeTestData))]
-        public async Task MethodOfOsDependentClassSuppressedWithMinimumOsAttribute(string dependentVersion, string suppressingVersion, bool warn)
+        [MemberData(nameof(SupportedOsAttributeTestData))]
+        public async Task MethodOfOsDependentClassSuppressedWithSupportedOsAttribute(string dependentVersion, string suppressingVersion, bool warn)
         {
             var source = @"
 using System.Runtime.Versioning;
 
 public class Test
 {
-    [MinimumOSPlatform(""" + suppressingVersion + @""")]
+    [SupportedOSPlatform(""" + suppressingVersion + @""")]
     public void M1()
     {
         OsDependentClass odc = new OsDependentClass();
@@ -765,7 +765,7 @@ public class Test
     }
 }
 
-[MinimumOSPlatform(""" + dependentVersion + @""")]
+[SupportedOSPlatform(""" + dependentVersion + @""")]
 public class OsDependentClass
 {
     public void M2()
@@ -777,8 +777,8 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
             {
@@ -787,13 +787,13 @@ public class OsDependentClass
         }
 
         [Theory]
-        [MemberData(nameof(ObsoletedRemovedAttributeTestData))]
+        [MemberData(nameof(ObsoletedUnsupportedAttributeTestData))]
         public async Task MethodOfOsDependentClassSuppressedWithObsoleteAttribute(string dependentVersion, string suppressingVersion, bool warn)
         {
             var source = @"
 using System.Runtime.Versioning;
 
-[MinimumOSPlatform(""Windows"")]
+[SupportedOSPlatform(""Windows"")]
 public class Test
 {
     [ObsoletedInOSPlatform(""" + suppressingVersion + @""")]
@@ -804,7 +804,7 @@ public class Test
     }
  }
  
-[MinimumOSPlatform(""Windows"")]
+[SupportedOSPlatform(""Windows"")]
 [ObsoletedInOSPlatform(""" + dependentVersion + @""")]
 public class OsDependentClass
 {
@@ -817,8 +817,8 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteRule).WithLocation(10, 32).WithArguments(".ctor", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(10, 32).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
             {
@@ -826,7 +826,7 @@ public class OsDependentClass
             }
         }
 
-        public static IEnumerable<object[]> ObsoletedRemovedAttributeTestData()
+        public static IEnumerable<object[]> ObsoletedUnsupportedAttributeTestData()
         {
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", false };
             yield return new object[] { "Windows10.1.2.3", "MacOs10.1.3.3", true };
@@ -842,15 +842,15 @@ public class OsDependentClass
         }
 
         [Theory]
-        [MemberData(nameof(ObsoletedRemovedAttributeTestData))]
-        public async Task MethodOfOsDependentClassSuppressedWithRemovedAttribute(string dependentVersion, string suppressingVersion, bool warn)
+        [MemberData(nameof(ObsoletedUnsupportedAttributeTestData))]
+        public async Task MethodOfOsDependentClassSuppressedWithUnsupportedAttribute(string dependentVersion, string suppressingVersion, bool warn)
         {
             var source = @"
  using System.Runtime.Versioning;
  
 public class Test
 {
-    [RemovedInOSPlatform(""" + suppressingVersion + @""")]
+    [UnsupportedOSPlatform(""" + suppressingVersion + @""")]
     public void M1()
     {
         OsDependentClass odc = new OsDependentClass();
@@ -858,7 +858,7 @@ public class Test
     }
 }
 
-[RemovedInOSPlatform(""" + dependentVersion + @""")]
+[UnsupportedOSPlatform(""" + dependentVersion + @""")]
 public class OsDependentClass
 {
     public void M2()
@@ -870,8 +870,8 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RemovedRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
             {
@@ -949,9 +949,9 @@ namespace System.Runtime.Versioning
                     AttributeTargets.Field |
                     AttributeTargets.Struct,
                     AllowMultiple = true, Inherited = false)]
-    public sealed class MinimumOSPlatformAttribute : OSPlatformAttribute
+    public sealed class SupportedOSPlatformAttribute : OSPlatformAttribute
     {
-        public MinimumOSPlatformAttribute(string platformName) : base(platformName)
+        public SupportedOSPlatformAttribute(string platformName) : base(platformName)
         { }
     }
 
@@ -965,9 +965,9 @@ namespace System.Runtime.Versioning
                     AttributeTargets.Field |
                     AttributeTargets.Struct,
                     AllowMultiple = true, Inherited = false)]
-    public sealed class RemovedInOSPlatformAttribute : OSPlatformAttribute
+    public sealed class UnsupportedOSPlatformAttribute : OSPlatformAttribute
     {
-        public RemovedInOSPlatformAttribute(string platformName) : base(platformName)
+        public UnsupportedOSPlatformAttribute(string platformName) : base(platformName)
         { }
     }
 
@@ -1017,7 +1017,7 @@ Namespace System.Runtime.Versioning
     End Class
 
     <AttributeUsage(AttributeTargets.Assembly Or AttributeTargets.[Class] Or AttributeTargets.Constructor Or AttributeTargets.[Event] Or AttributeTargets.Method Or AttributeTargets.[Module] Or AttributeTargets.[Property] Or AttributeTargets.Field Or AttributeTargets.Struct, AllowMultiple:=True, Inherited:=False)>
-    Public NotInheritable Class MinimumOSPlatformAttribute
+    Public NotInheritable Class SupportedOSPlatformAttribute
         Inherits OSPlatformAttribute
 
         Public Sub New(ByVal platformName As String)
@@ -1026,7 +1026,7 @@ Namespace System.Runtime.Versioning
     End Class
 
     <AttributeUsage(AttributeTargets.Assembly Or AttributeTargets.[Class] Or AttributeTargets.Constructor Or AttributeTargets.[Event] Or AttributeTargets.Method Or AttributeTargets.[Module] Or AttributeTargets.[Property] Or AttributeTargets.Field Or AttributeTargets.Struct, AllowMultiple:=True, Inherited:=False)>
-    Public NotInheritable Class RemovedInOSPlatformAttribute
+    Public NotInheritable Class UnsupportedOSPlatformAttribute
         Inherits OSPlatformAttribute
 
         Public Sub New(ByVal platformName As String)

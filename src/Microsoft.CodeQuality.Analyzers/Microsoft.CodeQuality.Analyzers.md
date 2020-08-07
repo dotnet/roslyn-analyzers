@@ -154,7 +154,7 @@ ComVisibleAttribute determines how COM clients access managed code. Good design 
 
 ### Rule description
 
-Specify AttributeUsage on {0}.
+Specify AttributeUsage on {0}
 
 ## [CA1019](https://docs.microsoft.com/visualstudio/code-quality/ca1019): Define accessors for attribute arguments
 
@@ -167,7 +167,7 @@ Specify AttributeUsage on {0}.
 
 ### Rule description
 
-Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.
+Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}
 
 ## [CA1021](https://docs.microsoft.com/visualstudio/code-quality/ca1021): Avoid out parameters
 
@@ -596,7 +596,7 @@ Method '{0}' should take CancellationToken as the last parameter
 
 ### Rule description
 
-The field reference '{0}' is duplicated in this bitwise initialization.
+The field reference '{0}' is duplicated in this bitwise initialization
 
 ## [CA1070](https://docs.microsoft.com/visualstudio/code-quality/ca1070): Do not declare event fields as virtual
 
@@ -713,7 +713,7 @@ Using nameof helps keep your code valid when refactoring.
 
 ### Rule description
 
-Invalid entry in code metrics rule specification file
+Invalid entry in code metrics rule specification file.
 
 ## [CA1700](https://docs.microsoft.com/visualstudio/code-quality/ca1700): Do not name enum values 'Reserved'
 
@@ -830,7 +830,7 @@ A public enumeration has the System.FlagsAttribute attribute, and its name does 
 
 ### Rule description
 
-Identifiers should have correct prefix
+The name of an externally visible interface does not start with an uppercase ""I"". The name of a generic type parameter on an externally visible type or method does not start with an uppercase ""T"".
 
 ## [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716): Identifiers should not match keywords
 
@@ -1105,7 +1105,7 @@ A public or protected event-handling method was detected. Event-handling methods
 
 An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.
 
-## [CA2200](https://docs.microsoft.com/visualstudio/code-quality/ca2200): Rethrow to preserve stack details.
+## [CA2200](https://docs.microsoft.com/visualstudio/code-quality/ca2200): Rethrow to preserve stack details
 
 |Item|Value|
 |-|-|
@@ -1116,7 +1116,7 @@ An inheritable public type provides an overridable method implementation of an i
 
 ### Rule description
 
-Re-throwing caught exception changes stack information.
+Re-throwing caught exception changes stack information
 
 ## [CA2211](https://docs.microsoft.com/visualstudio/code-quality/ca2211): Non-constant fields should not be visible
 
@@ -1246,7 +1246,7 @@ A writable collection property allows a user to replace the collection with a di
 
 ### Rule description
 
-In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals
+In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.
 
 ## [CA2234](https://docs.microsoft.com/visualstudio/code-quality/ca2234): Pass system uri objects instead of strings
 
@@ -1274,7 +1274,7 @@ A call is made to a method that has a string parameter whose name contains "uri"
 
 Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.
 
-## [CA2245](https://docs.microsoft.com/visualstudio/code-quality/ca2245): Do not assign a property to itself.
+## [CA2245](https://docs.microsoft.com/visualstudio/code-quality/ca2245): Do not assign a property to itself
 
 |Item|Value|
 |-|-|
@@ -1285,9 +1285,9 @@ Indexed elements in objects initializers must initialize unique elements. A dupl
 
 ### Rule description
 
-The property {0} should not be assigned to itself.
+The property {0} should not be assigned to itself
 
-## [CA2246](https://docs.microsoft.com/visualstudio/code-quality/ca2246): Assigning symbol and its member in the same statement.
+## [CA2246](https://docs.microsoft.com/visualstudio/code-quality/ca2246): Assigning symbol and its member in the same statement
 
 |Item|Value|
 |-|-|

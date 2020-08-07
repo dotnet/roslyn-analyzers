@@ -620,8 +620,8 @@
         },
         "CA1054": {
           "id": "CA1054",
-          "shortDescription": "Uri parameters should not be strings",
-          "fullDescription": "If a method takes a string representation of a URI, a corresponding overload should be provided that takes an instance of the URI class, which provides these services in a safe and secure manner.",
+          "shortDescription": "URI-like parameters should not be strings",
+          "fullDescription": "This rule assumes that the parameter represents a Uniform Resource Identifier (URI). A string representation or a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. 'System.Uri' class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1054",
           "properties": {
@@ -640,7 +640,7 @@
         },
         "CA1055": {
           "id": "CA1055",
-          "shortDescription": "Uri return values should not be strings",
+          "shortDescription": "URI-like return values should not be strings",
           "fullDescription": "This rule assumes that the method returns a URI. A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1055",
@@ -660,7 +660,7 @@
         },
         "CA1056": {
           "id": "CA1056",
-          "shortDescription": "Uri properties should not be strings",
+          "shortDescription": "URI-like properties should not be strings",
           "fullDescription": "This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1056",
@@ -1372,26 +1372,6 @@
             ]
           }
         },
-        "CA1812": {
-          "id": "CA1812",
-          "shortDescription": "Avoid uninstantiated internal classes",
-          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "AvoidUninstantiatedInternalClassesAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
         "CA1814": {
           "id": "CA1814",
           "shortDescription": "Prefer jagged arrays over multidimensional",
@@ -1558,7 +1538,7 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2109",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "ReviewVisibleEventHandlersAnalyzer",
             "languages": [
               "C#",
@@ -1926,6 +1906,25 @@
             ]
           }
         },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2200": {
           "id": "CA2200",
           "shortDescription": "Rethrow to preserve stack details.",
@@ -2081,6 +2080,25 @@
               "Visual Basic"
             ],
             "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }

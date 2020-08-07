@@ -26,6 +26,12 @@
     <Rule Id="RS0100" Action="None" />
   </Rules>
 
+  <Rules AnalyzerId="Roslyn.Diagnostics.CSharp.Analyzers" RuleNamespace="Roslyn.Diagnostics.CSharp.Analyzers">
+    <!-- TODO: Remove this suppression and fix issues -->
+    <!-- Avoid Opt suffix -->
+    <Rule Id="RS0046" Action="None" />
+  </Rules>
+
   <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
     <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
     <Rule Id="RS0041" Action="None" />

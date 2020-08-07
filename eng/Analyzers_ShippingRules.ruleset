@@ -26,22 +26,8 @@
     <Rule Id="RS0100" Action="None" />
   </Rules>
 
-  <!-- 
-    This package is a transitive dependency of Roslyn.Diagnostics.Analyzers and so is available for all projects
-    while we only want it for Microsoft.CodeAnalysis.AnalyzerUtilities so let's disable the rules everywhere but
-    on the required project. 
-   -->
-  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">    
-    <Rule Id="RS0016" Action="None" />
-    <Rule Id="RS0017" Action="None" />
-    <Rule Id="RS0022" Action="None" />
-    <Rule Id="RS0024" Action="None" />
-    <Rule Id="RS0025" Action="None" />
-    <Rule Id="RS0026" Action="None" />
-    <Rule Id="RS0027" Action="None" />
-    <Rule Id="RS0036" Action="None" />
-    <Rule Id="RS0037" Action="None" />
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+    <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
     <Rule Id="RS0041" Action="None" />
-    <Rule Id="RS0048" Action="None" />
   </Rules>
 </RuleSet>

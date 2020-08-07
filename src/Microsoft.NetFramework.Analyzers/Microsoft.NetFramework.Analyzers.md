@@ -24,7 +24,7 @@ An externally visible type extends certain base types. Use one of the alternativ
 
 ### Rule description
 
-Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception
+Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception.
 
 ## [CA3075](https://docs.microsoft.com/visualstudio/code-quality/ca3075): Insecure DTD processing in XML
 
@@ -76,5 +76,5 @@ Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocu
 
 ### Rule description
 
-Missing ValidateAntiForgeryTokenAttribute on controller action {0}.
+Missing ValidateAntiForgeryTokenAttribute on controller action {0}
 

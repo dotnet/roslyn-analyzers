@@ -222,7 +222,7 @@
         "CA1018": {
           "id": "CA1018",
           "shortDescription": "Mark attributes with AttributeUsageAttribute",
-          "fullDescription": "Specify AttributeUsage on {0}.",
+          "fullDescription": "Specify AttributeUsage on {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1018",
           "properties": {
@@ -839,7 +839,7 @@
         "CA1069": {
           "id": "CA1069",
           "shortDescription": "Enums values should not be duplicated",
-          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization.",
+          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1069",
           "properties": {
@@ -976,7 +976,7 @@
         "CA1509": {
           "id": "CA1509",
           "shortDescription": "Invalid entry in code metrics rule specification file",
-          "fullDescription": "Invalid entry in code metrics rule specification file",
+          "fullDescription": "Invalid entry in code metrics rule specification file.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1509",
           "properties": {
@@ -1155,7 +1155,7 @@
         "CA1715": {
           "id": "CA1715",
           "shortDescription": "Identifiers should have correct prefix",
-          "fullDescription": "Identifiers should have correct prefix",
+          "fullDescription": "The name of an externally visible interface does not start with an uppercase \"\"I\"\". The name of a generic type parameter on an externally visible type or method does not start with an uppercase \"\"T\"\".",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1715",
           "properties": {
@@ -1713,7 +1713,7 @@
         "CA2231": {
           "id": "CA2231",
           "shortDescription": "Overload operator equals on overriding value type Equals",
-          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals",
+          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2231",
           "properties": {
@@ -1750,8 +1750,8 @@
         },
         "CA2245": {
           "id": "CA2245",
-          "shortDescription": "Do not assign a property to itself.",
-          "fullDescription": "The property {0} should not be assigned to itself.",
+          "shortDescription": "Do not assign a property to itself",
+          "fullDescription": "The property {0} should not be assigned to itself",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2245",
           "properties": {
@@ -1769,7 +1769,7 @@
         },
         "CA2246": {
           "id": "CA2246",
-          "shortDescription": "Assigning symbol and its member in the same statement.",
+          "shortDescription": "Assigning symbol and its member in the same statement",
           "fullDescription": "Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2246",
@@ -1816,7 +1816,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -1927,8 +1927,8 @@
         },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {
@@ -1994,7 +1994,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -2105,8 +2105,8 @@
         },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {

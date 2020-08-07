@@ -2,7 +2,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
@@ -11,12 +13,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     {
         private enum PlatformAttributeType
         {
-            TargetPlatformAttribute,
             MinimumOSPlatformAttribute,
             ObsoletedInOSPlatformAttribute,
             RemovedInOSPlatformAttribute,
         }
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+        private readonly struct PlatformAttributes
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+        {
+            public PlatformAttributes(SmallDictionary<string, PooledSortedSet<Version>> supportedPlatforms,
+                SmallDictionary<string, PooledSortedSet<Version>> unsupportedPlatforms,
+                SmallDictionary<string, Version> obsoletedPlatforms)
+            {
+                SupportedPlatforms = supportedPlatforms;
+                UnsupportedPlatforms = unsupportedPlatforms;
+                ObsoletedPlatforms = obsoletedPlatforms;
+            }
+            public bool HasAttribute => SupportedPlatforms.Any() || UnsupportedPlatforms.Any() || ObsoletedPlatforms.Any();
+            public bool Initialized => SupportedPlatforms != null;
+            public SmallDictionary<string, PooledSortedSet<Version>> SupportedPlatforms { get; }
+            public SmallDictionary<string, PooledSortedSet<Version>> UnsupportedPlatforms { get; }
+            public SmallDictionary<string, Version> ObsoletedPlatforms { get; }
+        }
+
+        /* TODO : Might remove later
         private readonly struct PlatformAttributeInfo : IEquatable<PlatformAttributeInfo>
         {
             public PlatformAttributeType AttributeType { get; }
@@ -53,7 +74,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     MinimumOSPlatformAttribute => PlatformAttributeType.MinimumOSPlatformAttribute,
                     ObsoletedInOSPlatformAttribute => PlatformAttributeType.ObsoletedInOSPlatformAttribute,
                     RemovedInOSPlatformAttribute => PlatformAttributeType.RemovedInOSPlatformAttribute,
-                    TargetPlatformAttribute => PlatformAttributeType.TargetPlatformAttribute,
                     _ => throw new NotImplementedException(),
                 };
 
@@ -73,8 +93,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public static bool operator !=(PlatformAttributeInfo left, PlatformAttributeInfo right) => !(left == right);
 
             public bool Equals(PlatformAttributeInfo other) =>
-                AttributeType == other.AttributeType && IsOSPlatformsEqual(PlatformName, other.PlatformName) && Version.Equals(other.Version);
-        }
+                AttributeType == other.AttributeType && PlatformName.Equals(other.PlatformName, StringComparison.InvariantCultureIgnoreCase) && Version.Equals(other.Version);
+        }*/
 
         private static bool TryParsePlatformNameAndVersion(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)
         {

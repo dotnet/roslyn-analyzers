@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -15,80 +14,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
-    namespace System.Runtime.Versioning
-    {
-        public abstract class OSPlatformAttribute : Attribute
-        {
-            private protected OSPlatformAttribute(string platformName)
-            {
-                PlatformName = platformName;
-            }
 
-            public string PlatformName { get; }
-        }
-
-        [AttributeUsage(AttributeTargets.Assembly,
-                        AllowMultiple = false, Inherited = false)]
-        public sealed class TargetPlatformAttribute : OSPlatformAttribute
-        {
-            public TargetPlatformAttribute(string platformName) : base(platformName)
-            { }
-        }
-
-        [AttributeUsage(AttributeTargets.Assembly |
-                        AttributeTargets.Class |
-                        AttributeTargets.Constructor |
-                        AttributeTargets.Event |
-                        AttributeTargets.Method |
-                        AttributeTargets.Module |
-                        AttributeTargets.Property |
-                        AttributeTargets.Field |
-                        AttributeTargets.Struct,
-                        AllowMultiple = true, Inherited = false)]
-        public sealed class MinimumOSPlatformAttribute : OSPlatformAttribute
-        {
-            public MinimumOSPlatformAttribute(string platformName) : base(platformName)
-            { }
-        }
-
-        [AttributeUsage(AttributeTargets.Assembly |
-                        AttributeTargets.Class |
-                        AttributeTargets.Constructor |
-                        AttributeTargets.Event |
-                        AttributeTargets.Method |
-                        AttributeTargets.Module |
-                        AttributeTargets.Property |
-                        AttributeTargets.Field |
-                        AttributeTargets.Struct,
-                        AllowMultiple = true, Inherited = false)]
-        public sealed class RemovedInOSPlatformAttribute : OSPlatformAttribute
-        {
-            public RemovedInOSPlatformAttribute(string platformName) : base(platformName)
-            { }
-        }
-
-        [AttributeUsage(AttributeTargets.Assembly |
-                        AttributeTargets.Class |
-                        AttributeTargets.Constructor |
-                        AttributeTargets.Event |
-                        AttributeTargets.Method |
-                        AttributeTargets.Module |
-                        AttributeTargets.Property |
-                        AttributeTargets.Field |
-                        AttributeTargets.Struct,
-                        AllowMultiple = true, Inherited = false)]
-        public sealed class ObsoletedInOSPlatformAttribute : OSPlatformAttribute
-        {
-            public ObsoletedInOSPlatformAttribute(string platformName) : base(platformName)
-            { }
-            public ObsoletedInOSPlatformAttribute(string platformName, string message) : base(platformName)
-            {
-                Message = message;
-            }
-            public string Message { get; }
-            public string Url { get; set; }
-        }
-    }
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
@@ -104,6 +30,7 @@ public class Test
         [|WindowsOnly()|];
         [|Obsoleted()|];
         [|Removed()|];
+        [|ObsoletedOverload()|];
     }
     [MinimumOSPlatform(""Windows10.1.1.1"")]
     public void WindowsOnly()
@@ -111,6 +38,10 @@ public class Test
     }
     [ObsoletedInOSPlatform(""Linux4.1"")]
     public void Obsoleted()
+    {
+    }
+    [ObsoletedInOSPlatform(""Linux4.1"", ""Obsolete message"")]
+    public void ObsoletedOverload()
     {
     }
     [RemovedInOSPlatform(""Linux4.1"")]
@@ -128,6 +59,7 @@ Public Class Test
     Public Sub M1()
         [|WindowsOnly()|]
         [|Obsoleted()|]
+        [|ObsoletedOverload()|]
         [|Removed()|]
     End Sub
 
@@ -137,6 +69,10 @@ Public Class Test
 
     <ObsoletedInOSPlatform(""Linux4.1"")>
     Public Sub Obsoleted()
+    End Sub
+
+    <ObsoletedInOSPlatform(""Linux4.1"", ""Obsoleted message"")>
+    Public Sub ObsoletedOverload()
     End Sub
 
     <RemovedInOSPlatform(""Linux4.1"")>
@@ -662,7 +598,7 @@ public class Test
 using System.Runtime.Versioning;
 using System;
 
-public class Test
+public class C
 {
     [MinimumOSPlatform(""Windows10.13"")]
     public void M1()
@@ -797,15 +733,15 @@ public class Test
         {
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", false };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.3.3", false };
-            yield return new object[] { "WINDOWS10.1.2.3", "Windows10.1.3.1", false };
-            yield return new object[] { "Windows10.1.2.3", "Windows11.1.2.3", false };
+            yield return new object[] { "WINDOWS10.1.2.3", "Windows10.1.3", false };
+            yield return new object[] { "Windows10.1.2.3", "Windows11.0", false };
             yield return new object[] { "Windows10.1.2.3", "windows10.2.2.0", false };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.1.3", true };
             yield return new object[] { "Windows10.1.2.3", "WINDOWS11.1.1.3", false };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.1.4", true };
-            yield return new object[] { "osx10.1.2.3", "macos10.2.2.0", false };
-            yield return new object[] { "macOs10.1.2.3", "Osx11.1.1.0", false };
-            yield return new object[] { "MACOS10.1.2.3", "osx10.2.2.0", false };
+            yield return new object[] { "MACOS10.1.2.3", "macos10.2.2.0", false };
+            yield return new object[] { "OSX10.1.2.3", "Osx11.1.1.0", false };
+            yield return new object[] { "Osx10.1.2.3", "osx10.2", false };
             yield return new object[] { "Windows10.1.2.3", "Osx11.1.1.4", true };
             yield return new object[] { "Windows10.1.2.3", "Windows10.0.1.9", true };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.1.4", true };
@@ -857,6 +793,7 @@ public class OsDependentClass
             var source = @"
 using System.Runtime.Versioning;
 
+[MinimumOSPlatform(""Windows"")]
 public class Test
 {
     [ObsoletedInOSPlatform(""" + suppressingVersion + @""")]
@@ -867,6 +804,7 @@ public class Test
     }
  }
  
+[MinimumOSPlatform(""Windows"")]
 [ObsoletedInOSPlatform(""" + dependentVersion + @""")]
 public class OsDependentClass
 {
@@ -879,8 +817,8 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.MinimumOsRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteRule).WithLocation(10, 32).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
             {
@@ -890,16 +828,14 @@ public class OsDependentClass
 
         public static IEnumerable<object[]> ObsoletedRemovedAttributeTestData()
         {
-            yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", true };
-            yield return new object[] { "Windows10.1.2.3", "Windows10.1.3.3", true };
+            yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", false };
+            yield return new object[] { "Windows10.1.2.3", "MacOs10.1.3.3", true };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.3.1", true };
-            yield return new object[] { "Windows10.1.2.3", "Windows11.1.2.3", true };
+            yield return new object[] { "Windows10.1.2.3", "Windows11.1", true };
             yield return new object[] { "Windows10.1.2.3", "Windows10.2.2.0", true };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.1.3", false };
             yield return new object[] { "Windows10.1.2.3", "WINDOWS10.1.1.3", false };
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.1.4", false };
-            yield return new object[] { "osx10.1.2.3", "MacOs10.1.1.4", false };
-            yield return new object[] { "macOs10.1.2.3", "Osx10.1.1.4", false };
             yield return new object[] { "Windows10.1.2.3", "Osx10.1.1.4", true };
             yield return new object[] { "windows10.1.2.3", "Windows10.1.0.1", false };
             yield return new object[] { "Windows10.1.2.3", "Windows8.2.3.4", false };

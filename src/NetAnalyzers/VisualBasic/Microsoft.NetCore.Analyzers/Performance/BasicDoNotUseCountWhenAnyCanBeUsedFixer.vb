@@ -104,7 +104,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
         End Function
 
-        Private Shared Sub TryGetExpressionAndInvocationArguments(sourceExpression As ExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
+        Private Shared Function TryGetExpressionAndInvocationArguments(sourceExpression As ExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode)) As Boolean
 
             Dim parenthesizedExpression = TryCast(sourceExpression, ParenthesizedExpressionSyntax)
 

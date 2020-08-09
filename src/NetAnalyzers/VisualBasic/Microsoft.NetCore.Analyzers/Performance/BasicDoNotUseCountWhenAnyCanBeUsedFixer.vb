@@ -38,13 +38,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                         If Not member Is Nothing Then
 
-                            GetExpressionAndInvocationArguments(
+                            If TryGetExpressionAndInvocationArguments(
                                 sourceExpression:=member.Expression,
                                 isAsync:=isAsync,
                                 expression:=expression,
-                                arguments:=arguments)
-
-                            Return True
+                                arguments:=arguments) Then
+                                Return True
+                            End If
 
                         End If
 
@@ -56,13 +56,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not invocation Is Nothing AndAlso invocation.ArgumentList.Arguments.Count = 1 Then
 
-                        GetExpressionAndInvocationArguments(
+                        If TryGetExpressionAndInvocationArguments(
                             sourceExpression:=invocation.ArgumentList.Arguments(0).GetExpression(),
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments)
-
-                        Return True
+                            arguments:=arguments) Then
+                            Return True
+                        End If
 
                     End If
 
@@ -72,13 +72,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not binary Is Nothing Then
 
-                        GetExpressionAndInvocationArguments(
+                        If TryGetExpressionAndInvocationArguments(
                             sourceExpression:=binary.Left,
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments)
-
-                        Return True
+                            arguments:=arguments) Then
+                            Return True
+                        End If
 
                     End If
 
@@ -88,13 +88,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not binary Is Nothing Then
 
-                        GetExpressionAndInvocationArguments(
+                        If TryGetExpressionAndInvocationArguments(
                             sourceExpression:=binary.Right,
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments)
-
-                        Return True
+                            arguments:=arguments) Then
+                            Return True
+                        End If
 
                     End If
 
@@ -104,7 +104,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
         End Function
 
-        Private Shared Sub GetExpressionAndInvocationArguments(sourceExpression As ExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
+        Private Shared Sub TryGetExpressionAndInvocationArguments(sourceExpression As ExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
 
             Dim parenthesizedExpression = TryCast(sourceExpression, ParenthesizedExpressionSyntax)
 
@@ -137,13 +137,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                 expression = Nothing
                 arguments = Nothing
-                Return
+                Return False
 
             End If
 
             expression = DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
             arguments = invocationExpression.ArgumentList.ChildNodes()
-
+            Return True
         End Sub
 
     End Class

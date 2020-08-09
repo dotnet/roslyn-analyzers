@@ -144,7 +144,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             expression = DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
             arguments = invocationExpression.ArgumentList.ChildNodes()
             Return True
-        End Sub
+        End Function
 
     End Class
 

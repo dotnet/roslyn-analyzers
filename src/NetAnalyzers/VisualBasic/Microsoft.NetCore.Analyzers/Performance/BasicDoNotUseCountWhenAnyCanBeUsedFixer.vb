@@ -133,17 +133,24 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             End If
 
-            If invocationExpression Is Nothing Then
+            If invocationExpression IsNot Nothing Then
 
-                expression = Nothing
-                arguments = Nothing
-                Return False
+                expression = DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
+                arguments = invocationExpression.ArgumentList.ChildNodes()
+                Return True
 
             End If
 
-            expression = DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
-            arguments = invocationExpression.ArgumentList.ChildNodes()
-            Return True
+            Dim memberAccessExpression = TryCast(sourceExpression, MemberAccessExpressionSyntax)
+            If memberAccessExpression IsNot Nothing Then ' This case happens for something like: x = GetData().Count where Count method is called without parentheses.
+                expression = memberAccessExpression.Expression
+                arguments = Enumerable.Empty(Of SyntaxNode)()
+                Return True
+            End If
+
+            expression = Nothing
+            arguments = Nothing
+            Return False
         End Function
 
     End Class

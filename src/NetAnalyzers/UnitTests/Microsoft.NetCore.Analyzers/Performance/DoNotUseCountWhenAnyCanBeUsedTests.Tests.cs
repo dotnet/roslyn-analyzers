@@ -457,6 +457,7 @@ Module C
     End Function
     Sub M()
         Dim b As Boolean
+
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count.Equals(IntegerZero)|}}
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(IntegerZero)|}}
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(UIntegerZero)|}}

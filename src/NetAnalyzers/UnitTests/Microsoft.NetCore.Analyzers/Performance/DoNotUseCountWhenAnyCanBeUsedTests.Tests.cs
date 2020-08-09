@@ -992,6 +992,7 @@ Namespace System.Data.Entity
         Async Sub M()
             Dim b As Boolean
 
+            b = {{|{this.Verifier.DiagnosticId}:(Await GetData().CountAsync).Equals(IntegerZero)|}}
             b = {{|{this.Verifier.DiagnosticId}:(Await GetData().CountAsync()).Equals(IntegerZero)|}}
             b = {{|{this.Verifier.DiagnosticId}:(Await GetData().CountAsync()).Equals(UIntegerZero)|}}
             b = {{|{this.Verifier.DiagnosticId}:(Await GetData().CountAsync()).Equals(LongZero)|}}
@@ -1049,6 +1050,7 @@ Namespace System.Data.Entity
         Async Sub M()
             Dim b As Boolean
 
+            b = Not Await GetData().AnyAsync()
             b = Not Await GetData().AnyAsync()
             b = Not Await GetData().AnyAsync()
             b = Not Await GetData().AnyAsync()

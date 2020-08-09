@@ -457,7 +457,7 @@ Module C
     End Function
     Sub M()
         Dim b As Boolean
-
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count.Equals(IntegerZero)|}}
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(IntegerZero)|}}
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(UIntegerZero)|}}
         b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(LongZero)|}}
@@ -502,6 +502,7 @@ Module C
     Sub M()
         Dim b As Boolean
 
+        b = Not GetData().Any()
         b = Not GetData().Any()
         b = Not GetData().Any()
         b = Not GetData().Any()

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -23,6 +24,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
             var csSource = @"
 using System.Runtime.Versioning;
 
+[SupportedOSPlatform(""Linux"")]
 public class Test
 {
     public void M1()
@@ -31,6 +33,10 @@ public class Test
         [|Obsoleted()|];
         [|Unsupported()|];
         [|ObsoletedOverload()|];
+    }
+    [UnsupportedOSPlatform(""Linux4.1"")]
+    public void Unsupported()
+    {
     }
     [SupportedOSPlatform(""Windows10.1.1.1"")]
     public void WindowsOnly()
@@ -42,10 +48,6 @@ public class Test
     }
     [ObsoletedInOSPlatform(""Linux4.1"", ""Obsolete message"")]
     public void ObsoletedOverload()
-    {
-    }
-    [UnsupportedOSPlatform(""Linux4.1"")]
-    public void Unsupported()
     {
     }
 }

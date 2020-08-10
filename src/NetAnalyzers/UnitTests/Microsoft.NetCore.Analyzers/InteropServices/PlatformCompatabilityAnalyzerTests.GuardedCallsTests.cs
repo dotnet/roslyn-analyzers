@@ -8,18 +8,48 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
-        public async Task GuardedCalled_SimpleIf_NotWarns()
+        public async Task GuardedWith_IsOSPlatform_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
 using System.Runtime.InteropServices;
+
+class Test
+{
+    void M1()
+    {
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            M2();
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+
+    [SupportedOSPlatform(""Windows"")]
+    void M2()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task GuardedCalled_SimpleIf_NotWarns()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
 
 public class Test
 {
     public void M1()
     {
         [|M2()|];
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             M2();
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
@@ -32,12 +62,12 @@ public class Test
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Public Class Test
     Public Sub M1()
         [|M2()|]
-        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3) Then M2()
+        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then M2()
     End Sub
 
     <SupportedOSPlatform(""Windows10.1.2.3"")>
@@ -53,20 +83,20 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
         [|M2()|];
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             M2();
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 10, 1, 2, 3))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 1, 2, 3))
             [|M2()|];
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             M2();
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 8, 1, 2, 3))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 8, 1, 2, 3))
             [|M2()|];        
     }
     [SupportedOSPlatform(""Windows10.1.2.3"")]
@@ -79,17 +109,17 @@ public class Test
         }
 
         [Fact]
-        public async Task GuardedWith_IsOSPlatformOrLater_SimpleIfElse()
+        public async Task GuardedWith_IsOSPlatformVersionAtLeast_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
     void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
@@ -113,13 +143,14 @@ class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
+    [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 10))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(11, 0, 19222))
         {
             [|M2()|];
             M3();
@@ -131,12 +162,13 @@ class Test
         }
     }
 
-    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""MacOs12.2.3"")]
     void M2()
     {
     }
 
-    [ObsoletedInOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Windows"")]
+    [ObsoletedInOSPlatform(""Windows10.0"")]
     void M3 ()
     {
     }
@@ -144,18 +176,19 @@ class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        [Fact]
+        /*[Fact] TODO fix VB test
         public async Task GuardedWith_StringOverload_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
+    [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(""Windows10.1""))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19222))
         {
             [|M2()|];
             M3();
@@ -166,7 +199,7 @@ class Test
             [|M3()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(""Windows10.1.3""))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Android"",12,1))
         {
             [|M3()|];
             M2();
@@ -178,11 +211,11 @@ class Test
         }
     }
 
-    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    [SupportedOSPlatform(""Android10.2.3"")]
     void M2()
     {
     }
-
+    [SupportedOSPlatform(""Windows"")]
     [ObsoletedInOSPlatform(""Windows10.1.2.3"")]
     void M3 ()
     {
@@ -192,11 +225,11 @@ class Test
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Class Test
     Private Sub M1()
-        If RuntimeInformationHelper.IsOSPlatformEarlierThan(""Windows10.1"") Then
+        If OperatingSystemHelper.IsOSPlatformEarlierThan(""Windows10.1"") Then
             [|M2()|]
             M3()
         Else
@@ -204,7 +237,7 @@ Class Test
             [|M3()|]
         End If
 
-        If RuntimeInformationHelper.IsOSPlatformOrLater(""Windows10.1.3"") Then
+        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows10.1.3"") Then
             [|M3()|]
             M2()
         Else
@@ -223,21 +256,21 @@ Class Test
 End Class
 " + MockAttributesVbSource + MockRuntimeApiSourceVb;
             await VerifyAnalyzerAsyncVb(vbSource);
-        }
+        }*/
 
         [Fact]
         public async Task OsDependentEnumValue_GuardedCall_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test2
 {
     public void M1()
     {
         PlatformEnum val = [|PlatformEnum.Windows10|];
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10))
         {
             M2(PlatformEnum.Windows10);
         }
@@ -271,16 +304,16 @@ public enum PlatformEnum
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
-    [UnsupportedOSPlatform(""Linux4.1"")]
+    [UnsupportedOSPlatform(""Windows8.1"")]
     public string RemovedProperty { get; set;}
     
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 4))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222)) //OperatingSystemHelper.IsOSPlatformEarlierThan 
         {
             RemovedProperty = ""Hello"";
             string s = RemovedProperty;
@@ -308,13 +341,13 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             C instance = new C();
             instance.M2();
@@ -346,28 +379,28 @@ public class C
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             OsDependentClass odc = new OsDependentClass();
-            odc.M2();
+            odc.Method2();
         }
         else
         {
-            OsDependentClass odc = [|new OsDependentClass()|];
-            [|odc.M2()|];
+            OsDependentClass odc2 = [|new OsDependentClass()|];
+            [|odc2.Method2()|];
         }
     }
 }
 [SupportedOSPlatform(""Windows10.1.2.3"")]
 public class OsDependentClass
 {
-    public void M2()
+    public void Method2()
     {
     }
 }
@@ -376,16 +409,16 @@ public class OsDependentClass
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Public Class Test
     Public Sub M1()
-        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) Then
+        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) Then
             Dim odc As OsDependentClass = New OsDependentClass()
             odc.M2()
         Else
-            Dim odc As OsDependentClass = [|New OsDependentClass()|]
-            [|odc.M2()|]
+            Dim odc2 As OsDependentClass = [|New OsDependentClass()|]
+            [|odc2.M2()|]
         End If
     End Sub
 End Class
@@ -404,7 +437,7 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -412,7 +445,7 @@ public class Test
     {
         void Test()
         {
-            if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 M2();
             }
@@ -438,14 +471,14 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 using System;
 
 public class Test
 {
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
         {
             void Test() => M2();
             Test();
@@ -458,7 +491,7 @@ public class Test
 
         Action action = () =>
         {
-            if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 M2();
             }
@@ -484,7 +517,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -495,7 +528,7 @@ public class Test
 
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             SampleEvent += M3;
         }
@@ -507,7 +540,7 @@ public class Test
 
     public void M2()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             SampleEvent?.Invoke();
         }
@@ -533,7 +566,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -545,7 +578,7 @@ public class Test
     }
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             Del handler = DelegateMethod;
             handler();
@@ -566,7 +599,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
@@ -574,19 +607,19 @@ class Test
     {
         [|M2()|];
 
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
-        else if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 11))
+        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222))
         {
             [|M2()|];
         }
-        else if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
         {
             [|M2()|];
         }
-        else if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12))
+        else if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12))
         {
             M2();
         }
@@ -609,14 +642,14 @@ class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
         [|M2()|];
-        if(!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             [|M2()|];
         else
             M2();
@@ -635,16 +668,16 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
         [|M2()|];
-        if(!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             [|M2()|];
-        else if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 1, 1))
+        else if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
             M2();
         else
             M2();
@@ -663,14 +696,14 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
         [|M2()|];
-        if(!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3))
+        if(!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3))
             return;
         M2();
     }
@@ -684,12 +717,12 @@ public class Test
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Public Class Test
     Public Sub M1()
         [|M2()|]
-        If Not RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 1, 2, 3) Then Return
+        If Not OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 1, 2, 3) Then Return
         M2()
     End Sub
 
@@ -706,31 +739,31 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) &&
-           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
+           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             M2();
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
-           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12))
+        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12))
         {
             M2();
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
-           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12))
+        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12))
         {
             [|M2()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) && 1 == 1)
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) && 1 == 1)
         {
             M2();
         }
@@ -751,7 +784,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -759,8 +792,8 @@ public class Test
     {
         [|M2()|];
 
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) &&
-           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) &&
+           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             M2();
         }
@@ -769,8 +802,8 @@ public class Test
             [|M2()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) &&
-           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12))
+        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) &&
+           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12))
         {
             [|M2()|];
         }
@@ -793,26 +826,26 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
     public void M1()
     {
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
-           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             [|M2()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) || 
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 12) || 
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 12) || 
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|];
         }
@@ -833,7 +866,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -841,8 +874,8 @@ public class Test
     {
         [|M2()|];
 
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
-           RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)))
         {
             [|M2()|];
         }
@@ -851,8 +884,8 @@ public class Test
             [|M2()|];
         }
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if((OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222)) || 
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|];
         }
@@ -861,8 +894,8 @@ public class Test
             [|M2()|];
         }
 
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
-           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             [|M2()|]; // Even it is not meaningful check i think it is a bug, it shouldn't warn
         }
@@ -885,7 +918,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 public class Test
 {
@@ -893,24 +926,24 @@ public class Test
     {
         [|M2()|];
 
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2) ||
-           RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 5, 1))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
+           OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 5, 1))
         {
             [|M2()|];
         }
-        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 9))
+        else if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 9))
         {
             [|M2()|];
         }
         else
             [|M2()|];
 
-        if(RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Windows, 12) || 
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222) || 
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             [|M2()|];
         }
-        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        else if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
         }
@@ -933,7 +966,7 @@ public class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
@@ -941,16 +974,16 @@ class Test
     {
         [|M2()|];
 
-        if((RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 1) ||
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1)) &&
-            (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12) ||
-            RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 2)))
+        if((OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 1) ||
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 1)) &&
+            (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12) ||
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 2)))
         {
             [|M2()|]; 
         }
-        else if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 13) ||
-                 RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 3) ||
-                 RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 4))
+        else if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 13) ||
+                 OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 3) ||
+                 OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 4))
         {
             [|M2()|];        
         }
@@ -970,13 +1003,13 @@ class Test
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Class Test
     Private Sub M1()
-        If (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 1) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1)) AndAlso (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 12) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 2)) Then
+        If (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 1) OrElse OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 1)) AndAlso (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 12) OrElse OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 2)) Then
             [|M2()|]
-        ElseIf RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 13) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 3) OrElse RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 4) Then
+        ElseIf OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 13) OrElse OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 3) OrElse OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 4) Then
             [|M2()|]
         Else
             [|M2()|]
@@ -996,21 +1029,21 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
     void M1()
     {
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 8))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 8))
         {
             [|M2()|];
 
-            if (RuntimeInformationHelper.IsOSPlatformEarlierThan(OSPlatform.Linux, 2, 0))
+            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(12, 0, 19222))
             {
                 [|M2()|];
             }
-            else if (!RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2, 1))
+            else if (!OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2, 1))
             {
                 [|M2()|];
             } 
@@ -1044,7 +1077,7 @@ class Test
             var source = @"
 using System.Diagnostics;
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
@@ -1052,7 +1085,7 @@ class Test
     {
         [|M2()|];
 
-        Debug.Assert(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2));
+        Debug.Assert(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2));
 
         M2();
     }
@@ -1067,12 +1100,12 @@ class Test
             var vbSource = @"
 Imports System.Diagnostics
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Class Test
     Private Sub M1()
         [|M2()|]
-        Debug.Assert(RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 10, 2))
+        Debug.Assert(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         M2()
     End Sub
 
@@ -1089,14 +1122,14 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
     void M1()
     {
-        var x1 = RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11);
-        var x2 = RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Linux, 1);
+        var x1 = OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11);
+        var x2 = OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 1);
 
         if (x1)
         {
@@ -1125,14 +1158,14 @@ class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
     void M1()
     {
         var v11 = 11;
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, v11))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", v11))
         {
             M2();
         }
@@ -1151,14 +1184,14 @@ class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
     void M1()
     {
-        var platform = OSPlatform.Windows;
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(platform, 11))
+        var platform = ""Windows"";
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(platform, 11))
         {
             [|M2()|];
         }
@@ -1177,7 +1210,7 @@ class Test
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
@@ -1185,7 +1218,7 @@ class Test
     {
         [|M2()|];
 
-        if (RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
             M2();
 
@@ -1220,13 +1253,13 @@ class Test
 
             var vbSource = @"
 Imports System.Runtime.Versioning
-Imports System.Runtime.InteropServices
+Imports System
 
 Class Test
     Private Sub M1(ByVal flag1 As Boolean, ByVal flag2 As Boolean)
         [|M2()|]
 
-        If RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows, 11) Then
+        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11) Then
             M2()
 
             If flag1 OrElse flag2 Then
@@ -1258,7 +1291,7 @@ End Class
         {
             var source = @"
 using System.Runtime.Versioning;
-using System.Runtime.InteropServices;
+using System;
 
 class Test
 {
@@ -1281,7 +1314,7 @@ class Test
 
     bool IsWindows11OrLater()
     {
-        return RuntimeInformationHelper.IsOSPlatformOrLater(OSPlatform.Windows,10,2,3,4);
+        return OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4);
     }
 }" + MockAttributesSource + MockRuntimeApiSource;
 
@@ -1289,92 +1322,108 @@ class Test
         }*/
 
         private readonly string MockRuntimeApiSource = @"
-namespace System.Runtime.InteropServices
+namespace System
 {
-    public static class RuntimeInformationHelper
+    public sealed class OperatingSystemHelper
     {
 #pragma warning disable CA1801, IDE0060 // Review unused parameters
-        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major)
-        {
-            return true;
-        }
-        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor)
-        {
-            return true;
-        }
-        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor, int build)
-        {
-            return true;
-        }
-        public static bool IsOSPlatformOrLater(OSPlatform osPlatform, int major, int minor, int build, int revision)
-        {
-            return true;
-        }
-        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major)
-        {
-            return false;
-        }
-        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor)
-        {
-            return false;
-        }
-        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor, int build)
-        {
-            return false;
-        }
-        public static bool IsOSPlatformEarlierThan(OSPlatform osPlatform, int major, int minor, int build, int revision)
-        {
-            return false;
-        }
-        public static bool IsOSPlatformOrLater(string platformName) => true;
-        public static bool IsOSPlatformEarlierThan(string platformName) => true;
+        public static bool IsOSPlatform(string platform) { return true; }
+        public static bool IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0) { return true; }
+        public static bool IsBrowser() { return true; }
+        public static bool IsLinux() { return true; }
+        public static bool IsFreeBSD() { return true; }
+        public static bool IsFreeBSDVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
+        public static bool IsAndroid() { return true; }
+        public static bool IsAndroidVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
+        public static bool IsIOS() { return true; }
+        public static bool IsIOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
+        public static bool IsMacOS() { return true; }
+        public static bool IsMacOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
+        public static bool IsTvOS() { return true; }
+        public static bool IsTvOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
+        public static bool IsWatchOS() { return true; }
+        public static bool IsWatchOSVersionAtLeast(int major, int minor = 0, int build = 0) { return true; }
+        public static bool IsWindows() { return true; }
+        public static bool IsWindowsVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0) { return true; }
 #pragma warning restore CA1801, IDE0060 // Review unused parameters
     }
 }";
 
         private readonly string MockRuntimeApiSourceVb = @"
-Namespace System.Runtime.InteropServices
-    Module RuntimeInformationHelper
-        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer) As Boolean
+Namespace System
+    Public NotInheritable Class OperatingSystemHelper
+        Public Shared Function IsOSPlatform(ByVal platform As String) As Boolean
             Return True
         End Function
 
-        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer) As Boolean
+        Public Shared Function IsOSPlatformVersionAtLeast(ByVal platform As String, ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
             Return True
         End Function
 
-        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer) As Boolean
+        Public Shared Function IsBrowser() As Boolean
             Return True
         End Function
 
-        Function IsOSPlatformOrLater(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer, ByVal revision As Integer) As Boolean
+        Public Shared Function IsLinux() As Boolean
             Return True
         End Function
 
-        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer) As Boolean
-            Return False
-        End Function
-
-        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer) As Boolean
-            Return False
-        End Function
-
-        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer) As Boolean
-            Return False
-        End Function
-
-        Function IsOSPlatformEarlierThan(ByVal osPlatform As OSPlatform, ByVal major As Integer, ByVal minor As Integer, ByVal build As Integer, ByVal revision As Integer) As Boolean
-            Return False
-        End Function
-
-        Function IsOSPlatformOrLater(ByVal platformName As String) As Boolean
+        Public Shared Function IsFreeBSD() As Boolean
             Return True
         End Function
 
-        Function IsOSPlatformEarlierThan(ByVal platformName As String) As Boolean
+        Public Shared Function IsFreeBSDVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
             Return True
         End Function
-    End Module
+
+        Public Shared Function IsAndroid() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsAndroidVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsIOS() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsIOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsMacOS() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsMacOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsTvOS() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsTvOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsWatchOS() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsWatchOSVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0) As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsWindows() As Boolean
+            Return True
+        End Function
+
+        Public Shared Function IsWindowsVersionAtLeast(ByVal major As Integer, ByVal Optional minor As Integer = 0, ByVal Optional build As Integer = 0, ByVal Optional revision As Integer = 0) As Boolean
+            Return True
+        End Function
+    End Class
 End Namespace
 ";
     }

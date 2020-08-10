@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using Analyzer.Utilities.PooledObjects;
 using System.Linq;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -19,6 +18,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
     public sealed partial class PlatformCompatabilityAnalyzer
     {
+        private const string Browser = nameof(Browser);
+        private const string Linux = nameof(Linux);
+        private const string FreeBSD = nameof(FreeBSD);
+        private const string Android = nameof(Android);
+        private const string IOS = nameof(IOS);
+        private const string MacOS = nameof(MacOS);
+        private const string TvOS = nameof(TvOS);
+        private const string WatchOS = nameof(WatchOS);
+        private const string Windows = nameof(Windows);
+
         private readonly struct RuntimeMethodValue : IAbstractAnalysisValue, IEquatable<RuntimeMethodValue>
         {
             private RuntimeMethodValue(string invokedPlatformCheckMethodName, string platformPropertyName, Version version, bool negated)
@@ -44,39 +53,86 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 INamedTypeSymbol osPlatformType,
                 [NotNullWhen(returnValue: true)] out RuntimeMethodValue? info)
             {
-                Debug.Assert(!arguments.IsEmpty);
-
-                if (arguments[0].Value is ILiteralOperation literal && literal.Type?.SpecialType == SpecialType.System_String)
+                if (arguments.IsEmpty)
                 {
-                    if (literal.ConstantValue.HasValue &&
-                        TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                    var platformName = SwitchPlatformName(invokedPlatformCheckMethod.Name);
+                    if (platformName != null)
                     {
-                        info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                        info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, new Version(0, 0), negated: false);
                         return true;
                     }
                 }
-
-                if (!TryDecodeOSPlatform(arguments, osPlatformType, out var osPlatformName) ||
-                    !TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var osVersion))
+                else
                 {
-                    // Bail out
-                    info = default;
-                    return false;
+                    // RuntimeInformation.IsOSPlatform(OSPlatform)
+                    if (TryDecodeRuntimeInformationIsOSPlatform(arguments[0].Value, osPlatformType, out string? osPlatformName))
+                    {
+                        info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, osPlatformName, new Version(0, 0), negated: false);
+                        return true;
+                    }
+
+                    if (arguments[0].Value is ILiteralOperation literal &&
+                        literal.Type?.SpecialType == SpecialType.System_String &&
+                        literal.ConstantValue.HasValue)
+                    {
+                        // OperatingSystem.IsOSPlatform(string platform)
+                        if (invokedPlatformCheckMethod.Name == IsOSPlatform && TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                        {
+                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                            return true;
+                        }
+
+                        // OperatingSystem.IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0)
+                        if (TryDecodeOSVersion(arguments, valueContentAnalysisResult, out version, true))
+                        {
+                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, literal.ConstantValue.Value.ToString(), version, negated: false);
+                            return true;
+                        }
+                    }
+                    else if (arguments[0].Value is ILiteralOperation intLiteral &&
+                            intLiteral.Type?.SpecialType == SpecialType.System_Int32)
+                    {
+                        var platformName = SwitchVersionedPlatformName(invokedPlatformCheckMethod.Name);
+                        if (platformName != null && TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var version))
+                        {
+                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                            return true;
+                        }
+                    }
                 }
-
-                info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, osPlatformName, osVersion, negated: false);
-                return true;
+                info = default;
+                return false;
             }
 
-            private static bool TryDecodeOSPlatform(
-                ImmutableArray<IArgumentOperation> arguments,
-                INamedTypeSymbol osPlatformType,
-                [NotNullWhen(returnValue: true)] out string? osPlatformName)
+            private static string? SwitchVersionedPlatformName(string name)
+            => name switch
             {
-                return TryDecodeOSPlatform(arguments[0].Value, osPlatformType, out osPlatformName);
-            }
+                IsWindowsVersionAtLeast => Windows,
+                IsMacOSVersionAtLeast => MacOS,
+                IsIOSVersionAtLeast => IOS,
+                IsAndroidVersionAtLeast => Android,
+                IsFreeBSDVersionAtLeast => FreeBSD,
+                IsTvOSVersionAtLeast => TvOS,
+                IsWatchOSVersionAtLeast => WatchOS,
+                _ => null
+            };
 
-            private static bool TryDecodeOSPlatform(
+            private static string? SwitchPlatformName(string name)
+                 => name switch
+                 {
+                     IsWindows => Windows,
+                     IsLinux => Linux,
+                     IsMacOS => MacOS,
+                     IsIOS => IOS,
+                     IsBrowser => Browser,
+                     IsAndroid => Android,
+                     IsFreeBSD => FreeBSD,
+                     IsTvOS => TvOS,
+                     IsWatchOS => WatchOS,
+                     _ => null
+                 };
+
+            private static bool TryDecodeRuntimeInformationIsOSPlatform(
                 IOperation argumentValue,
                 INamedTypeSymbol osPlatformType,
                 [NotNullWhen(returnValue: true)] out string? osPlatformName)
@@ -95,11 +151,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             private static bool TryDecodeOSVersion(
                 ImmutableArray<IArgumentOperation> arguments,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
-                [NotNullWhen(returnValue: true)] out Version? osVersion)
+                [NotNullWhen(returnValue: true)] out Version? osVersion,
+                bool skipFirst = false)
             {
                 using var versionBuilder = ArrayBuilder<int>.GetInstance(4, fillWithValue: 0);
                 var index = 0;
-                foreach (var argument in arguments.Skip(1))
+
+                foreach (var argument in skipFirst ? arguments.Skip(1) : arguments)
                 {
                     if (!TryDecodeOSVersionPart(argument, valueContentAnalysisResult, out var osVersionPart))
                     {

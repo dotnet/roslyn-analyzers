@@ -21,6 +21,7 @@ var analyzerSarifFileDir = Args[17];
 var analyzerSarifFileName = Args[18];
 var analyzerConfigurationFileDir = Args[19];
 var analyzerConfigurationFileName = Args[20];
+var globalAnalyzerConfigsDir = Args[21];
 
 var result = new StringBuilder();
 
@@ -215,6 +216,18 @@ if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
         foreach (string editorconfig in Directory.EnumerateFiles(directory))
         {
             result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"editorconfig\\{directoryName}"));
+        }
+    }
+}
+
+if (globalAnalyzerConfigsDir.Length > 0 && Directory.Exists(globalAnalyzerConfigsDir))
+{
+    foreach (string directory in Directory.EnumerateDirectories(globalAnalyzerConfigsDir))
+    {
+        var directoryName = new DirectoryInfo(directory).Name;
+        foreach (string editorconfig in Directory.EnumerateFiles(directory))
+        {
+            result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"build\\config\\{directoryName}"));
         }
     }
 }

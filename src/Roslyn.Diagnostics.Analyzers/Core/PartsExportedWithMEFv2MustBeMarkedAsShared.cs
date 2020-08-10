@@ -24,8 +24,8 @@ namespace Roslyn.Diagnostics.Analyzers
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.RoslynDiagnosticsReliability,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             DiagnosticSeverity.Warning,
+                                                                             isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
@@ -62,7 +62,7 @@ namespace Roslyn.Diagnostics.Analyzers
                                                            ad.AttributeClass.ContainingNamespace.Equals(exportAttribute.ContainingNamespace)))
                         {
                             // '{0}' is exported with MEFv2 and hence must be marked as Shared
-                            symbolContext.ReportDiagnostic(Diagnostic.Create(Rule, exportAttributeApplication.ApplicationSyntaxReference.GetSyntax().GetLocation(), namedType.Name));
+                            symbolContext.ReportDiagnostic(Diagnostic.Create(Rule, exportAttributeApplication.ApplicationSyntaxReference.GetSyntax(symbolContext.CancellationToken).GetLocation(), namedType.Name));
                         }
                     }
                 }, SymbolKind.NamedType);

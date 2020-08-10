@@ -16,19 +16,26 @@ namespace Analyzer.Utilities.Extensions
             this SyntaxNode node,
             DiagnosticDescriptor rule,
             params object[] args)
-        {
-            return node.GetLocation().CreateDiagnostic(rule, args);
-        }
+            => node.CreateDiagnostic(rule, properties: null, args);
 
         public static Diagnostic CreateDiagnostic(
             this SyntaxNode node,
             DiagnosticDescriptor rule,
-            ImmutableDictionary<string, string?> properties,
+            ImmutableDictionary<string, string?>? properties,
+            params object[] args)
+            => node.CreateDiagnostic(rule, additionalLocations: ImmutableArray<Location>.Empty, properties, args);
+
+        public static Diagnostic CreateDiagnostic(
+            this SyntaxNode node,
+            DiagnosticDescriptor rule,
+            ImmutableArray<Location> additionalLocations,
+            ImmutableDictionary<string, string?>? properties,
             params object[] args)
             => node
                 .GetLocation()
                 .CreateDiagnostic(
                     rule: rule,
+                    additionalLocations: additionalLocations,
                     properties: properties,
                     args: args);
 
@@ -36,8 +43,25 @@ namespace Analyzer.Utilities.Extensions
             this IOperation operation,
             DiagnosticDescriptor rule,
             params object[] args)
+            => operation.CreateDiagnostic(rule, properties: null, args);
+
+        public static Diagnostic CreateDiagnostic(
+            this IOperation operation,
+            DiagnosticDescriptor rule,
+            ImmutableDictionary<string, string?>? properties,
+            params object[] args)
         {
-            return operation.Syntax.CreateDiagnostic(rule, args);
+            return operation.Syntax.CreateDiagnostic(rule, properties, args);
+        }
+
+        public static Diagnostic CreateDiagnostic(
+            this IOperation operation,
+            DiagnosticDescriptor rule,
+            ImmutableArray<Location> additionalLocations,
+            ImmutableDictionary<string, string?>? properties,
+            params object[] args)
+        {
+            return operation.Syntax.CreateDiagnostic(rule, additionalLocations, properties, args);
         }
 
         public static Diagnostic CreateDiagnostic(
@@ -69,7 +93,15 @@ namespace Analyzer.Utilities.Extensions
         public static Diagnostic CreateDiagnostic(
             this Location location,
             DiagnosticDescriptor rule,
-            ImmutableDictionary<string, string?> properties,
+            ImmutableDictionary<string, string?>? properties,
+            params object[] args)
+            => location.CreateDiagnostic(rule, ImmutableArray<Location>.Empty, properties, args);
+
+        public static Diagnostic CreateDiagnostic(
+            this Location location,
+            DiagnosticDescriptor rule,
+            ImmutableArray<Location> additionalLocations,
+            ImmutableDictionary<string, string?>? properties,
             params object[] args)
         {
             if (!location.IsInSource)
@@ -80,6 +112,7 @@ namespace Analyzer.Utilities.Extensions
             return Diagnostic.Create(
                 descriptor: rule,
                 location: location,
+                additionalLocations: additionalLocations,
                 properties: properties,
                 messageArgs: args);
         }
@@ -114,7 +147,7 @@ namespace Analyzer.Utilities.Extensions
         /// <summary>
         /// TODO: Revert this reflection based workaround once we move to Microsoft.CodeAnalysis version 3.0
         /// </summary>
-        private static readonly PropertyInfo s_syntaxTreeDiagnosticOptionsProperty =
+        private static readonly PropertyInfo? s_syntaxTreeDiagnosticOptionsProperty =
             typeof(SyntaxTree).GetTypeInfo().GetDeclaredProperty("DiagnosticOptions");
 
         public static void ReportNoLocationDiagnostic(
@@ -139,8 +172,10 @@ namespace Analyzer.Utilities.Extensions
 
             if (effectiveSeverity.Value != rule.DefaultSeverity)
             {
+#pragma warning disable RS0030 // The symbol 'DiagnosticDescriptor.DiagnosticDescriptor.#ctor' is banned in this project: Use 'DiagnosticDescriptorHelper.Create' instead
                 rule = new DiagnosticDescriptor(rule.Id, rule.Title, rule.MessageFormat, rule.Category,
                     effectiveSeverity.Value, rule.IsEnabledByDefault, rule.Description, rule.HelpLinkUri, rule.CustomTags.ToArray());
+#pragma warning restore RS0030
             }
 
             var diagnostic = Diagnostic.Create(rule, Location.None, properties, args);
@@ -157,7 +192,7 @@ namespace Analyzer.Utilities.Extensions
                 ReportDiagnostic? overriddenSeverity = null;
                 foreach (var tree in compilation.SyntaxTrees)
                 {
-                    var options = (ImmutableDictionary<string, ReportDiagnostic>)s_syntaxTreeDiagnosticOptionsProperty.GetValue(tree);
+                    var options = (ImmutableDictionary<string, ReportDiagnostic>)s_syntaxTreeDiagnosticOptionsProperty.GetValue(tree)!;
                     if (options.TryGetValue(rule.Id, out var configuredValue))
                     {
                         if (configuredValue == ReportDiagnostic.Suppress)

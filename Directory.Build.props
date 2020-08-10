@@ -4,12 +4,16 @@
     <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
     <AssetsDir>$(MSBuildThisFileDirectory)assets\</AssetsDir>
     <VSSDKTargetPlatformRegRootSuffix>RoslynDev</VSSDKTargetPlatformRegRootSuffix>
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+
+    <!-- Set 'NoDefaultExcludes' to ensure that we can package .editorconfig files into our analyzer NuGet packages -->
+    <NoDefaultExcludes>true</NoDefaultExcludes>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <LangVersion Condition="'$(Language)' == 'C#'">8</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
 
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
@@ -28,20 +32,11 @@
       CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
     -->
     <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),1573,1591,1712</NoWarn>
-
-    <!-- Disable CS8717 until we can move to compiler toolset 3.5.0 or greater which has the fix for https://github.com/dotnet/roslyn/issues/38638 -->
-    <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),CS8717</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
     <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- The version of XliffTasks pulled in by Arcade is fairly old, so here we specify a newer version. -->
-    <!-- This should be removed when the version in Arcade catches up. -->
-    <XliffTasksVersion>1.0.0-beta.19253.2</XliffTasksVersion>
   </PropertyGroup>
 
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->

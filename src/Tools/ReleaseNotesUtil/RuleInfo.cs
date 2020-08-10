@@ -23,21 +23,18 @@ namespace ReleaseNotesUtil
             HelpLink = helpLink;
         }
 
-        // TODO(dotpaul): Remove the below suppression.
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public RuleInfo()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
         }
 
         [DataMember]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [DataMember]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [DataMember]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         [DataMember]
         public bool IsEnabledByDefault { get; set; }
@@ -46,22 +43,22 @@ namespace ReleaseNotesUtil
         public bool HasCodeFix { get; set; }
 
         [DataMember]
-        public string MessageFormat { get; set; }
+        public string? MessageFormat { get; set; }
 
         [DataMember]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [DataMember]
-        public string HelpLink { get; set; }
+        public string? HelpLink { get; set; }
 
         // Computed properties.
         public string IdWithHelpLinkMarkdown
         {
             get
             {
-                return !String.IsNullOrWhiteSpace(this.HelpLink)
+                return !string.IsNullOrWhiteSpace(this.HelpLink)
                     ? $"[{this.Id}]({this.HelpLink})"
-                    : this.Id;
+                    : this.Id ?? string.Empty;
             }
         }
 
@@ -69,9 +66,11 @@ namespace ReleaseNotesUtil
         {
             get
             {
-                return !String.IsNullOrWhiteSpace(this.Description)
-                    ? this.Description
-                    : this.MessageFormat;
+                return
+                    (!string.IsNullOrWhiteSpace(this.Description)
+                        ? this.Description
+                        : this.MessageFormat)
+                    ?? string.Empty;
             }
         }
     }

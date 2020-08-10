@@ -1,8 +1,11 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>3.3.0</VersionPrefix>
-    <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
-    <PreReleaseVersionLabel>beta3</PreReleaseVersionLabel>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+
+    <VersionPrefix>2.9.12</VersionPrefix>
+    <FlowAnalysisUtilitiesVersionPrefix>$(VersionPrefix)</FlowAnalysisUtilitiesVersionPrefix>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>

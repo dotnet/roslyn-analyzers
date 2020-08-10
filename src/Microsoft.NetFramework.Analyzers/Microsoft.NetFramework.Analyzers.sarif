@@ -32,7 +32,7 @@
         "CA2153": {
           "id": "CA2153",
           "shortDescription": "Do Not Catch Corrupted State Exceptions",
-          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception",
+          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2153",
           "properties": {
@@ -70,7 +70,7 @@
         "CA3147": {
           "id": "CA3147",
           "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
-          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
+          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147",
           "properties": {

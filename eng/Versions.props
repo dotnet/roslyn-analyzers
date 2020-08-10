@@ -1,11 +1,8 @@
 <Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
-    <VersionPrefix>2.9.12</VersionPrefix>
-    <FlowAnalysisUtilitiesVersionPrefix>$(VersionPrefix)</FlowAnalysisUtilitiesVersionPrefix>
+    <VersionPrefix>3.3.1</VersionPrefix>
+    <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
@@ -26,7 +23,7 @@
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0-2.final</MicrosoftCodeAnalysisForShippedApisVersion>
-    <DogfoodAnalyzersVersion>3.3.0-beta3.20406.3</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>3.3.0</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>

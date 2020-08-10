@@ -29,7 +29,7 @@ Provide the steps to reproduce the behavior:
 
 **Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-**Version**: v3.0.0 (Latest)
+**Version**: v3.3.0 (Latest)
 
 **Diagnostic ID**: [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716)
 

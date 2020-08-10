@@ -2,7 +2,7 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     
-    <VersionPrefix>2.9.11</VersionPrefix>
+    <VersionPrefix>2.9.12</VersionPrefix>
     <FlowAnalysisUtilitiesVersionPrefix>$(VersionPrefix)</FlowAnalysisUtilitiesVersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 

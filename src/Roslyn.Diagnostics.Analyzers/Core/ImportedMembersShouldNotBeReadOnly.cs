@@ -20,8 +20,8 @@ namespace Roslyn.Diagnostics.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.RoslynDiagnosticsReliability,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             helpLinkUri: null,
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -50,7 +50,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 {
                     var isReadOnly = context.Symbol switch
                     {
-                    IFieldSymbol fieldSymbol => fieldSymbol.IsReadOnly,
+                        IFieldSymbol fieldSymbol => fieldSymbol.IsReadOnly,
                         IPropertySymbol propertySymbol => propertySymbol.IsReadOnly,
                         _ => false,
                     };

@@ -188,8 +188,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ImportedMembersShouldNotBeReadOnlyDescription">
-        <source>Imported members should not be read-only</source>
-        <target state="new">Imported members should not be read-only</target>
+        <source>Imported members should not be read-only.</source>
+        <target state="new">Imported members should not be read-only.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImportedMembersShouldNotBeReadOnlyMessage">

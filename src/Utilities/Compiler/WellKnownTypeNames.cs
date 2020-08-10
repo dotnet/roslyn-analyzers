@@ -128,13 +128,17 @@ namespace Analyzer.Utilities
         public const string SystemCollectionsObjectModelReadOnlyObservableCollection1 = "System.Collections.ObjectModel.ReadOnlyObservableCollection`1";
         public const string SystemComponentModelComponent = "System.ComponentModel.Component";
         public const string SystemComponentModelCompositionExportAttribute = "System.ComponentModel.Composition.ExportAttribute";
+        public const string SystemComponentModelCompositionImportAttribute = "System.ComponentModel.Composition.ImportAttribute";
         public const string SystemComponentModelCompositionImportingConstructorAttribute = "System.ComponentModel.Composition.ImportingConstructorAttribute";
+        public const string SystemComponentModelCompositionImportManyAttribute = "System.ComponentModel.Composition.ImportManyAttribute";
         public const string SystemComponentModelCompositionInheritedExportAttribute = "System.ComponentModel.Composition.InheritedExportAttribute";
         public const string SystemComponentModelDesignerAttribute = "System.ComponentModel.DesignerAttribute";
         public const string SystemComponentModelDesignerCategoryAttribute = "System.ComponentModel.DesignerCategoryAttribute";
         public const string SystemComponentModelLocalizableAttribute = "System.ComponentModel.LocalizableAttribute";
         public const string SystemCompositionExportAttribute = "System.Composition.ExportAttribute";
+        public const string SystemCompositionImportAttribute = "System.Composition.ImportAttribute";
         public const string SystemCompositionImportingConstructorAttribute = "System.Composition.ImportingConstructorAttribute";
+        public const string SystemCompositionImportManyAttribute = "System.Composition.ImportManyAttribute";
         public const string SystemConfigurationConfigurationSection = "System.Configuration.ConfigurationSection";
         public const string SystemConfigurationIConfigurationSectionHandler = "System.Configuration.IConfigurationSectionHandler";
         public const string SystemConsole = "System.Console";

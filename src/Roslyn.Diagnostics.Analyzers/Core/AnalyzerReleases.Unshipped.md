@@ -6,6 +6,7 @@ Rule ID | Category | Severity | Notes
 RS0040 | RoslynDiagnosticsReliability | Warning | DefaultableTypeShouldHaveDefaultableFieldsAnalyzer
 RS0042 | RoslynDiagnosticsReliability | Warning | DoNotCopyValue
 RS0043 | RoslynDiagnosticsMaintainability | Warning | DoNotCallGetTestAccessor
+RS0049 | RoslynDiagnosticsReliability | Warning | ImportedMembersShouldNotBeReadOnly
 RS0101 | RoslynDiagnosticsMaintainability | Warning | AbstractBlankLinesDiagnosticAnalyzer
 
 ### Changed Rules

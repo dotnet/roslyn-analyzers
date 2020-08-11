@@ -11,9 +11,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Performance;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
+    /// <summary>
+    /// CA1416: Analyzer that informs developers when they use platform-specific APIs from call sites where the API might not be available
+    /// 
+    /// It finds usage of platform-specific or obsoleted or unsupported or removed APIs and diagnoses if the 
+    /// API is guarded by platform check or if it is annotated with corresponding platform specific attribute.
+    /// If using the platform-specific API is not safe it reports diagnostics.
+    ///
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class PlatformCompatabilityAnalyzer : DiagnosticAnalyzer
     {
@@ -84,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             context.RegisterCompilationStartAction(context =>
             {
@@ -198,6 +207,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             if (value.AnalysisValues.Count == 1)
             {
+                // No && or || operators used, result can be consumed directly
                 var analysisValue = value.AnalysisValues.First();
 
                 if (analysisValue is RuntimeMethodValue info &&
@@ -207,6 +217,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         if (attribute.UnsupportedFirst != null && IsEmptyVersion(attribute.UnsupportedFirst) && IsEmptyVersion(info.Version))
                         {
+                            // the unsupported attribute suppressed setting null to not warn for it, same logic for all 
                             attribute.UnsupportedFirst = null;
                         }
 
@@ -231,8 +242,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
+                // Analysis values conjuncted with &&, temporary containers keep track of previous values
                 var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
                 var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
+
                 foreach (var analysisValue in value.AnalysisValues)
                 {
                     if (analysisValue is RuntimeMethodValue info && attributes.TryGetValue(info.PlatformName, out var attribute))
@@ -253,6 +266,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 attribute.UnsupportedSecond = null;
                             }
+
                             if (!IsEmptyVersion(info.Version))
                             {
                                 capturedVersions[info.PlatformName] = info.Version;
@@ -295,6 +309,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             foreach (var attribute in attributes)
             {
+                // if any of the attributes is not suppressed
                 if (attribute.Value.HasAttribute())
                 {
                     return false;
@@ -325,19 +340,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (attribute.SupportedFirst != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, attribute.SupportedFirst));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.SupportedFirst)));
                 }
                 if (attribute.SupportedSecond != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, attribute.SupportedSecond));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.SupportedSecond)));
                 }
                 if (attribute.UnsupportedFirst != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, attribute.UnsupportedFirst));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.UnsupportedFirst)));
                 }
                 if (attribute.UnsupportedSecond != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, attribute.UnsupportedSecond));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.UnsupportedSecond)));
                 }
                 if (attribute.Obsoleted != null)
                 {
@@ -345,6 +360,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
         }
+
+        private static string NormalizeVersionString(Version version) => IsEmptyVersion(version) ? string.Empty : version.ToString();
 
         private static ISymbol? GetOperationSymbol(IOperation operation)
             => operation switch
@@ -406,7 +423,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         }
 
         /// <summary>
-        /// Summury coming 
+        /// The semantics of the platform specific attributes are :
+        ///    - An API that doesn't have any of these attributes is considered supported by all platforms.
+        ///    - If either [SupportedOSPlatform] or [UnsupportedOSPlatform] attributes are present, we group all attributes by OS platform identifier:
+        ///        - Allow list.If the lowest version for each OS platform is a [SupportedOSPlatform] attribute, the API is considered to only be supported by the listed platforms and unsupported by all other platforms.
+        ///        - Deny list. If the lowest version for each OS platform is a [UnsupportedOSPlatform] attribute, then the API is considered to only be unsupported by the listed platforms and supported by all other platforms.
+        ///        - Inconsistent list. If for some platforms the lowest version attribute is [SupportedOSPlatform] while for others it is [UnsupportedOSPlatform], the analyzer will produce a warning on the API definition because the API is attributed inconsistently.
+        ///    - Both attributes can be instantiated without version numbers. This means the version number is assumed to be 0.0. This simplifies guard clauses, see examples below for more details.
+        ///    - [ObsoletedInOSPlatform] continuous to require a version number.
+        ///    - [ObsoletedInOSPlatform] by itself doesn't imply support. However, it doesn't make sense to apply [ObsoletedInOSPlatform] unless that platform is supported.
         /// </summary>
         /// <param name="operationAttributes">Platform specific attributes applied to the invoked member</param>
         /// <param name="callSiteAttributes">Platform specific attributes applied to the call site where the member invoked</param>

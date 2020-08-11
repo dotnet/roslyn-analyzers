@@ -107,6 +107,7 @@ namespace Analyzer.Utilities
             return TryGetValue(key, out V _);
         }
 
+#pragma warning disable CA1822
         [Conditional("DEBUG")]
         internal void AssertBalanced()
         {
@@ -114,7 +115,7 @@ namespace Analyzer.Utilities
             AvlNode.AssertBalanced(_root);
 #endif
         }
-
+#pragma warning restore CA1822
         private abstract class Node
         {
             public readonly K Key;

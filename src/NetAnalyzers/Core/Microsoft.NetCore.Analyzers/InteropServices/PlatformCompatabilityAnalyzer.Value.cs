@@ -53,6 +53,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 INamedTypeSymbol osPlatformType,
                 [NotNullWhen(returnValue: true)] out RuntimeMethodValue? info)
             {
+                // Accelerators like OperatingSystem.IsPlatformName()
                 if (arguments.IsEmpty)
                 {
                     var platformName = SwitchPlatformName(invokedPlatformCheckMethod.Name);
@@ -64,7 +65,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 else
                 {
-                    // RuntimeInformation.IsOSPlatform(OSPlatform)
                     if (TryDecodeRuntimeInformationIsOSPlatform(arguments[0].Value, osPlatformType, out string? osPlatformName))
                     {
                         info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, osPlatformName, new Version(0, 0), negated: false);
@@ -92,7 +92,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                     else if (arguments[0].Value is ILiteralOperation intLiteral && intLiteral.Type?.SpecialType == SpecialType.System_Int32)
                     {
+                        // Accelerators like OperatingSystem.IsPlatformNameVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0)
                         var platformName = SwitchVersionedPlatformName(invokedPlatformCheckMethod.Name);
+
                         if (platformName != null && TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var version))
                         {
                             info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
@@ -100,12 +102,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
                 }
+
                 info = default;
                 return false;
             }
 
-            private static string? SwitchVersionedPlatformName(string name)
-            => name switch
+            private static string? SwitchVersionedPlatformName(string methodName)
+            => methodName switch
             {
                 IsWindowsVersionAtLeast => Windows,
                 IsMacOSVersionAtLeast => MacOS,
@@ -117,8 +120,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 _ => null
             };
 
-            private static string? SwitchPlatformName(string name)
-                 => name switch
+            private static string? SwitchPlatformName(string methodName)
+                 => methodName switch
                  {
                      IsWindows => Windows,
                      IsLinux => Linux,

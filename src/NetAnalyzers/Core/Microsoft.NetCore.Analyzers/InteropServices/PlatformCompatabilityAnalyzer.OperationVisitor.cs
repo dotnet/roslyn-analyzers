@@ -46,26 +46,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public override GlobalFlowStateAnalysisValueSet VisitPropertyReference(IPropertyReferenceOperation operation, object? argument)
             {
-                var value = base.VisitPropertyReference(operation, argument);
-                return GetValueOrDefault(value);
+                return GetValueOrDefault(base.VisitPropertyReference(operation, argument));
             }
 
             public override GlobalFlowStateAnalysisValueSet VisitFieldReference(IFieldReferenceOperation operation, object? argument)
             {
-                var value = base.VisitFieldReference(operation, argument);
-                return GetValueOrDefault(value);
+                return GetValueOrDefault(base.VisitFieldReference(operation, argument));
             }
 
             public override GlobalFlowStateAnalysisValueSet VisitObjectCreation(IObjectCreationOperation operation, object? argument)
             {
-                var value = base.VisitObjectCreation(operation, argument);
-                return GetValueOrDefault(value);
+                return GetValueOrDefault(base.VisitObjectCreation(operation, argument));
             }
 
             public override GlobalFlowStateAnalysisValueSet VisitEventReference(IEventReferenceOperation operation, object? argument)
             {
-                var value = base.VisitEventReference(operation, argument);
-                return GetValueOrDefault(value);
+                return GetValueOrDefault(base.VisitEventReference(operation, argument));
             }
         }
     }

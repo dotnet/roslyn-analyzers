@@ -93,10 +93,21 @@ namespace Analyzer.Utilities.Extensions
                    symbol.ImplementsOperator(WellKnownMemberNames.InequalityOperatorName);
         }
 
+        public static bool OverridesBaseClassEquals(this INamedTypeSymbol symbol, INamedTypeSymbol baseType)
+        {
+            // Does the symbol override baseType.Equals(baseType)?
+            return symbol.OverridesEquals(m => m.IsBaseClassEqualsOverride(baseType));
+        }
+
         public static bool OverridesEquals(this INamedTypeSymbol symbol)
         {
             // Does the symbol override Object.Equals?
-            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Any(m => m.IsObjectEqualsOverride());
+            return symbol.OverridesEquals(m => m.IsObjectEqualsOverride());
+        }
+
+        public static bool OverridesEquals(this INamedTypeSymbol symbol, Func<IMethodSymbol, bool> predicate)
+        {
+            return symbol.GetMembers(WellKnownMemberNames.ObjectEquals).OfType<IMethodSymbol>().Any(m => predicate(m));
         }
 
         public static bool OverridesGetHashCode(this INamedTypeSymbol symbol)

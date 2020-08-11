@@ -22,7 +22,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class EquatableFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds =>
-            ImmutableArray.Create(EquatableAnalyzer.ImplementIEquatableRuleId, EquatableAnalyzer.OverrideObjectEqualsRuleId);
+            ImmutableArray.Create(EquatableAnalyzer.ImplementIEquatableRuleId,
+                EquatableAnalyzer.OverrideObjectEqualsRuleId, EquatableAnalyzer.OverrideBaseClassEqualsRuleId);
 
         public override FixAllProvider GetFixAllProvider()
         {
@@ -55,7 +56,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
+            var implementsEquatable = TypeImplementsEquatable(type, equatableType);
+
+            if (type.TypeKind == TypeKind.Struct && !implementsEquatable)
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.ImplementEquatable;
                 context.RegisterCodeFix(new MyCodeAction(
@@ -66,15 +69,31 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     equivalenceKey: title), context.Diagnostics);
             }
 
-            if (!type.OverridesEquals())
+            if (implementsEquatable)
             {
-                string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
-                context.RegisterCodeFix(new MyCodeAction(
-                    title,
-                    async ct =>
-                        await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
-                            ct).ConfigureAwait(false),
-                    equivalenceKey: title), context.Diagnostics);
+                if (TypeImplementsEquatable(type.BaseType, equatableType))
+                {
+                    if (!type.OverridesBaseClassEquals(type.BaseType))
+                    {
+                        string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
+                        context.RegisterCodeFix(new MyCodeAction(
+                            title,
+                            async ct =>
+                                await OverrideBaseClassEqualsAsync(context.Document, declaration, type, equatableType, ct)
+                                    .ConfigureAwait(false),
+                            equivalenceKey: title), context.Diagnostics);
+                    }
+                }
+                else if (!type.OverridesEquals())
+                {
+                    string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
+                    context.RegisterCodeFix(new MyCodeAction(
+                        title,
+                        async ct =>
+                            await OverrideEqualsAsync(context.Document, declaration, type, equatableType, null, "obj",
+                                ct).ConfigureAwait(false),
+                        equivalenceKey: title), context.Diagnostics);
+                }
             }
         }
 
@@ -112,13 +131,53 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return editor.GetChangedDocument();
         }
 
-        private static async Task<Document> OverrideObjectEqualsAsync(Document document, SyntaxNode declaration,
+        private static async Task<Document> OverrideEqualsAsync(Document document, SyntaxNode declaration,
+            INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType, INamedTypeSymbol? baseType, string parameterName, CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
+
+            var argumentType = baseType != null ? generator.TypeExpression(baseType) : generator.TypeExpression(SpecialType.System_Object);
+            var argumentName = generator.IdentifierName(parameterName);
+
+            SyntaxNode returnStatement;
+
+            if (HasExplicitEqualsImplementation(typeSymbol, equatableType))
+            {
+                returnStatement = typeSymbol.TypeKind == TypeKind.Class
+                    ? GetReturnStatementForExplicitClass(generator, typeSymbol, argumentName, equatableType)
+                    : GetReturnStatementForExplicitStruct(generator, typeSymbol, argumentName, equatableType);
+            }
+            else
+            {
+                returnStatement = typeSymbol.TypeKind == TypeKind.Class
+                    ? GetReturnStatementForImplicitClass(generator, typeSymbol, argumentName)
+                    : GetReturnStatementForImplicitStruct(generator, typeSymbol, argumentName);
+            }
+
+            var equalsMethod = generator.MethodDeclaration(
+                WellKnownMemberNames.ObjectEquals,
+                new[]
+                {
+                    generator.ParameterDeclaration(argumentName.ToString(), argumentType)
+                },
+                returnType: generator.TypeExpression(SpecialType.System_Boolean),
+                accessibility: Accessibility.Public,
+                modifiers: DeclarationModifiers.Override,
+                statements: new[] { returnStatement });
+
+            editor.AddMember(declaration, equalsMethod);
+
+            return editor.GetChangedDocument();
+        }
+
+        private static async Task<Document> OverrideBaseClassEqualsAsync(Document document, SyntaxNode declaration,
             INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var argumentName = generator.IdentifierName("obj");
+            var argumentName = generator.IdentifierName("other");
 
             SyntaxNode returnStatement;
 
@@ -140,7 +199,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 new[]
                 {
                     generator.ParameterDeclaration(argumentName.ToString(),
-                        generator.TypeExpression(SpecialType.System_Object))
+                        generator.TypeExpression(typeSymbol.BaseType))
                 },
                 returnType: generator.TypeExpression(SpecialType.System_Boolean),
                 accessibility: Accessibility.Public,

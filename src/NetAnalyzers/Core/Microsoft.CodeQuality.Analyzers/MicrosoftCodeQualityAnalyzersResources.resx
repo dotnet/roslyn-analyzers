@@ -1436,4 +1436,13 @@
   <data name="MarkAttributesWithAttributeUsageCodeFix" xml:space="preserve">
     <value>Apply 'AttributeUsageAttribute'</value>
   </data>
+  <data name="OverrideBaseClassEqualsDescription" xml:space="preserve">
+    <value>When a base class type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of a derived type can be equated using the base type.</value>
+  </data>
+  <data name="OverrideBaseClassEqualsMessage" xml:space="preserve">
+    <value>Type {0} should override Equals&amp;lt;{1}&amp;gt; because it implements IEquatable&amp;lt;T&amp;gt;</value>
+  </data>
+  <data name="OverrideBaseClassEqualsTitle" xml:space="preserve">
+    <value>Override base.Equals(base) when implementing IEquatable&amp;lt;T&amp;gt;</value>
+  </data>
 </root>

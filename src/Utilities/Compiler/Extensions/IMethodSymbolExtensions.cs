@@ -35,6 +35,20 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Checks if the given method is an override for <see cref="IEquatable{T}.Equals(T)"/> for the given base type.
+        /// </summary>
+        public static bool IsBaseClassEqualsOverride(this IMethodSymbol method, INamedTypeSymbol baseType)
+        {
+            return method != null &&
+                   method.IsOverride &&
+                   method.Name == WellKnownMemberNames.ObjectEquals &&
+                   method.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                   method.Parameters.Length == 1 &&
+                   method.Parameters[0].Type == baseType &&
+                   method.OverriddenMethod.ContainingType == baseType;
+        }
+
+        /// <summary>
         /// Checks if the given method is <see cref="object.Equals(object)"/>.
         /// </summary>
         public static bool IsObjectEquals(this IMethodSymbol method)

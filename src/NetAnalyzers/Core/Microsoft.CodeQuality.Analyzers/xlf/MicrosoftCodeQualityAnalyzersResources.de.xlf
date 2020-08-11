@@ -302,6 +302,21 @@
         <target state="translated">"AttributeUsageAttribute" anwenden</target>
         <note />
       </trans-unit>
+      <trans-unit id="OverrideBaseClassEqualsDescription">
+        <source>When a base class type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of a derived type can be equated using the base type.</source>
+        <target state="new">When a base class type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of a derived type can be equated using the base type.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverrideBaseClassEqualsMessage">
+        <source>Type {0} should override Equals&amp;lt;{1}&amp;gt; because it implements IEquatable&amp;lt;T&amp;gt;</source>
+        <target state="new">Type {0} should override Equals&amp;lt;{1}&amp;gt; because it implements IEquatable&amp;lt;T&amp;gt;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverrideBaseClassEqualsTitle">
+        <source>Override base.Equals(base) when implementing IEquatable&amp;lt;T&amp;gt;</source>
+        <target state="new">Override base.Equals(base) when implementing IEquatable&amp;lt;T&amp;gt;</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">Nach Möglichkeit CancellationTokens verteilen</target>

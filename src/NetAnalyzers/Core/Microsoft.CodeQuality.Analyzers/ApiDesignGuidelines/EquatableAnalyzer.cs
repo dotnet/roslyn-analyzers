@@ -14,6 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string ImplementIEquatableRuleId = "CA1066";
         internal const string OverrideObjectEqualsRuleId = "CA1067";
+        internal const string OverrideBaseClassEqualsRuleId = "CA1071";
 
         private static readonly LocalizableString s_localizableTitleImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageImplementIEquatable = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
@@ -43,7 +44,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ImplementIEquatableDescriptor, OverridesObjectEqualsDescriptor);
+        private static readonly LocalizableString s_localizableTitleOverridesBaseClassEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideBaseClassEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOverridesBaseClassEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideBaseClassEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionOverridesBaseClassEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideBaseClassEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+
+        internal static readonly DiagnosticDescriptor OverridesBaseClassEqualsDescriptor = DiagnosticDescriptorHelper.Create(
+            OverrideBaseClassEqualsRuleId,
+            s_localizableTitleOverridesBaseClassEquals,
+            s_localizableMessageOverridesBaseClassEquals,
+            DiagnosticCategory.Design,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescriptionOverridesBaseClassEquals,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+            ImmutableArray.Create(ImplementIEquatableDescriptor, OverridesObjectEqualsDescriptor, OverridesBaseClassEqualsDescriptor);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -55,9 +71,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            INamedTypeSymbol? objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
             INamedTypeSymbol? equatableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
-            if (objectType != null && equatableType != null)
+            if (equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);
             }
@@ -72,7 +87,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            bool overridesObjectEquals = namedType.OverridesEquals();
+            // Check if base class implements IEquatable<baseclass>
+            INamedTypeSymbol baseType = namedType.BaseType;
+
+            INamedTypeSymbol baseEquatable = equatableType.Construct(baseType);
+            bool baseClassImplementsEquatable = baseType
+                .AllInterfaces
+                .Any(x => x.Equals(baseEquatable));
+            bool overridesBaseEquatable;
+
+            if (baseClassImplementsEquatable)
+            {
+                // This class must override the base class IEquatable method.
+                overridesBaseEquatable = namedType.OverridesBaseClassEquals(baseType);
+            }
+            else
+            {
+                // This class must override object.Equals
+                overridesBaseEquatable = namedType.OverridesEquals();
+            }
 
             INamedTypeSymbol constructedEquatable = equatableType.Construct(namedType);
             INamedTypeSymbol implementation = namedType
@@ -90,21 +123,28 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 //       class A<T> : IEquatable<T>
                 //          where T: A<T>
                 //       { ... }
-                if (constructedEquatable.GetMembers("Equals").FirstOrDefault() is not IMethodSymbol equatableEqualsMethod ||
+                if (constructedEquatable.GetMembers(WellKnownMemberNames.ObjectEquals).FirstOrDefault() is not IMethodSymbol equatableEqualsMethod ||
                     !Equals(namedType, namedType.FindImplementationForInterfaceMember(equatableEqualsMethod)?.ContainingType))
                 {
                     return;
                 }
             }
 
-            if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
+            if (overridesBaseEquatable && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
             {
                 context.ReportDiagnostic(namedType.CreateDiagnostic(ImplementIEquatableDescriptor, namedType));
             }
 
-            if (!overridesObjectEquals && implementsEquatable)
+            if (!overridesBaseEquatable && implementsEquatable)
             {
-                context.ReportDiagnostic(namedType.CreateDiagnostic(OverridesObjectEqualsDescriptor, namedType));
+                if (baseClassImplementsEquatable)
+                {
+                    context.ReportDiagnostic(namedType.CreateDiagnostic(OverridesBaseClassEqualsDescriptor, namedType, baseType));
+                }
+                else
+                {
+                    context.ReportDiagnostic(namedType.CreateDiagnostic(OverridesObjectEqualsDescriptor, namedType));
+                }
             }
         }
     }

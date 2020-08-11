@@ -168,5 +168,62 @@ struct S : IEquatable<S>
 }
 ");
         }
+
+        [Fact]
+        public async Task CodeFixForDerivedClassWithIEquatableImplementationButNoBaseClassEqualsOverride()
+        {
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+class B : IEquatable<B>
+{
+    public virtual bool Equals(B other)
+    {
+        return true;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as B);
+    }
+}
+
+class {|CA1071:C|} : B, IEquatable<C>
+{
+    public bool Equals(C other)
+    {
+        return true;
+    }
+}
+", @"
+using System;
+
+class B : IEquatable<B>
+{
+    public virtual bool Equals(B other)
+    {
+        return true;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as B);
+    }
+}
+
+class C : B, IEquatable<C>
+{
+    public bool Equals(C other)
+    {
+        return true;
+    }
+
+    public override bool Equals(B other)
+    {
+        return Equals(other as C);
+    }
+}
+");
+        }
     }
 }

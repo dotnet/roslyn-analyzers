@@ -388,6 +388,90 @@ public ref struct S
             }.RunAsync();
         }
 
+        [Fact, WorkItem(3983, "https://github.com/dotnet/roslyn-analyzers/issues/3983")]
+        public async Task NoDiagnosticForClassWithEqualsOverride()
+        {
+            var code = @"
+using System;
+
+public class BaseClass : IEquatable<BaseClass>
+{
+    public virtual bool Equals(BaseClass other)
+    {
+        return true;
+    }
+
+    public sealed override bool Equals(object obj)
+    {
+        return Equals(obj as BaseClass);
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Fact, WorkItem(3983, "https://github.com/dotnet/roslyn-analyzers/issues/3983")]
+        public async Task NoDiagnosticForClassWithEqualsOverrideInBaseClass()
+        {
+            var code = @"
+using System;
+
+public abstract class BaseClass : IEquatable<BaseClass>
+{
+    public abstract bool Equals(BaseClass other);
+
+    public sealed override bool Equals(object obj)
+    {
+        return Equals(obj as BaseClass);
+    }
+}
+
+public class DerivedClass : BaseClass, IEquatable<DerivedClass>
+{
+    public override bool Equals(BaseClass other)
+    {
+        return Equals(other as DerivedClass);
+    }
+
+    public bool Equals(DerivedClass other)
+    {
+        return true;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Fact, WorkItem(3983, "https://github.com/dotnet/roslyn-analyzers/issues/3983")]
+        public async Task DiagnosticForClassNotOverridingBaseClassEquals()
+        {
+            var code = @"
+using System;
+
+public abstract class BaseClass : IEquatable<BaseClass>
+{
+    public virtual bool Equals(BaseClass other)
+    {
+        return true;
+    }
+
+    public sealed override bool Equals(object obj)
+    {
+        return Equals(obj as BaseClass);
+    }
+}
+
+public class DerivedClass : BaseClass, IEquatable<DerivedClass>
+{
+    public bool Equals(DerivedClass other)
+    {
+        return true;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(code,
+                VerifyCS.Diagnostic(EquatableAnalyzer.OverridesBaseClassEqualsDescriptor)
+                .WithArguments("DerivedClass", "BaseClass")
+                .WithLocation(17, 14));
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, string typeName)
             => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)

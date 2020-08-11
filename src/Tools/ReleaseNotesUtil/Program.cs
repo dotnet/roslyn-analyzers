@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -69,31 +68,33 @@ namespace ReleaseNotesUtil
             RuleFileContent newContent = ReadRuleFileContent(newRulesJsonPath);
 
             // If we have the latest rules, we can backfill missing help link URLs.
-            if (!RoslynString.IsNullOrWhiteSpace(latestRulesJsonPath))
+            if (!string.IsNullOrWhiteSpace(latestRulesJsonPath))
             {
                 RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
-                Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
+                Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.Where(r => r.Id != null).ToDictionary(r => r.Id!);
                 foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
                 {
-                    if (RoslynString.IsNullOrWhiteSpace(rule.HelpLink)
-                        && latestRulesById.TryGetValue(rule.Id, out RuleInfo latestRule))
+                    if (string.IsNullOrWhiteSpace(rule.HelpLink)
+                        && rule.Id != null
+                        && latestRulesById.TryGetValue(rule.Id, out RuleInfo? latestRule))
                     {
                         rule.HelpLink = latestRule.HelpLink;
                     }
                 }
             }
 
-            Dictionary<string, RuleInfo> oldRulesById = oldContent.Rules.ToDictionary(r => r.Id);
-            Dictionary<string, RuleInfo> newRulesById = newContent.Rules.ToDictionary(r => r.Id);
+            Dictionary<string, RuleInfo> oldRulesById = oldContent.Rules.Where(r => r.Id != null).ToDictionary(r => r.Id!);
+            Dictionary<string, RuleInfo> newRulesById = newContent.Rules.Where(r => r.Id != null).ToDictionary(r => r.Id!);
             IEnumerable<RuleInfo> addedRules =
                 newContent.Rules
-                    .Where(r => !oldRulesById.ContainsKey(r.Id));
+                    .Where(r => r.Id != null && !oldRulesById.ContainsKey(r.Id));
             IEnumerable<RuleInfo> removedRules =
                 oldContent.Rules
-                    .Where(r => !newRulesById.ContainsKey(r.Id));
+                    .Where(r => r.Id != null && !newRulesById.ContainsKey(r.Id));
             IEnumerable<RuleInfo> changedRules =
                 newContent.Rules
-                    .Where(r => oldRulesById.TryGetValue(r.Id, out RuleInfo oldRule)
+                    .Where(r => r.Id != null &&
+                                oldRulesById.TryGetValue(r.Id, out RuleInfo? oldRule)
                                 && r.IsEnabledByDefault != oldRule.IsEnabledByDefault);
             StringBuilder sb = new StringBuilder();
             GenerateAddRemovedRulesDiffMarkdown(sb, "### Added", addedRules);

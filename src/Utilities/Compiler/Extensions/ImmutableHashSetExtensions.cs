@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license 
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Linq;
 using Analyzer.Utilities.PooledObjects;
@@ -90,6 +90,15 @@ namespace System.Collections.Immutable
             }
 
             return true;
+        }
+
+        public static void AddIfNotNull<T>(this ImmutableHashSet<T>.Builder builder, T? item)
+            where T : class
+        {
+            if (item != null)
+            {
+                builder.Add(item);
+            }
         }
     }
 }

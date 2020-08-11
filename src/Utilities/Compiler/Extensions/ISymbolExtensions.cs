@@ -66,7 +66,7 @@ namespace Analyzer.Utilities.Extensions
 
         public static bool IsDefaultConstructor([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
-            return symbol.IsConstructor() && symbol.GetParameters().Length == 0;
+            return symbol.IsConstructor() && symbol.GetParameters().IsEmpty;
         }
 
         public static bool IsPublic(this ISymbol symbol)
@@ -112,6 +112,30 @@ namespace Analyzer.Utilities.Extensions
                 propertySymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Any(f => f.IsImplicitlyDeclared && Equals(f.AssociatedSymbol, symbol));
         }
 
+        /// <summary>
+        /// Determines if the given symbol is a backing field for a property.
+        /// </summary>
+        /// <param name="symbol">This symbol to check.</param>
+        /// <param name="propertySymbol">The property that this field symbol is backing.</param>
+        /// <returns>True if the given symbol is a backing field for a property, false otherwise.</returns>
+        public static bool IsBackingFieldForProperty(
+            [NotNullWhen(returnValue: true)] this ISymbol? symbol,
+            [NotNullWhen(returnValue: true)] out IPropertySymbol? propertySymbol)
+        {
+            if (symbol is IFieldSymbol fieldSymbol
+                && fieldSymbol.IsImplicitlyDeclared
+                && fieldSymbol.AssociatedSymbol is IPropertySymbol p)
+            {
+                propertySymbol = p;
+                return true;
+            }
+            else
+            {
+                propertySymbol = null;
+                return false;
+            }
+        }
+
         public static bool IsUserDefinedOperator([NotNullWhen(returnValue: true)] this ISymbol? symbol)
         {
             return (symbol as IMethodSymbol)?.MethodKind == MethodKind.UserDefinedOperator;
@@ -133,7 +157,7 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
-        /// Returns true if the given symbol has required visibility based on options:
+        /// Returns true if the given source symbol has required visibility based on options:
         ///   1. If user has explicitly configured candidate <see cref="SymbolVisibilityGroup"/> in editor config options and
         ///      given symbol's visibility is one of the candidate visibilites.
         ///   2. Otherwise, if user has not configured visibility, and given symbol's visibility
@@ -143,16 +167,34 @@ namespace Analyzer.Utilities.Extensions
             this ISymbol symbol,
             AnalyzerOptions options,
             DiagnosticDescriptor rule,
+            Compilation compilation,
+            CancellationToken cancellationToken,
+            SymbolVisibilityGroup defaultRequiredVisibility = SymbolVisibilityGroup.Public)
+        => symbol.MatchesConfiguredVisibility(symbol, options, rule, compilation, cancellationToken, defaultRequiredVisibility);
+
+        /// <summary>
+        /// Returns true if the given symbol has required visibility based on options in context of the given containing symbol:
+        ///   1. If user has explicitly configured candidate <see cref="SymbolVisibilityGroup"/> in editor config options and
+        ///      given symbol's visibility is one of the candidate visibilites.
+        ///   2. Otherwise, if user has not configured visibility, and given symbol's visibility
+        ///      matches the given default symbol visibility.
+        /// </summary>
+        public static bool MatchesConfiguredVisibility(
+            this ISymbol symbol,
+            ISymbol containingContextSymbol,
+            AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            Compilation compilation,
             CancellationToken cancellationToken,
             SymbolVisibilityGroup defaultRequiredVisibility = SymbolVisibilityGroup.Public)
         {
-            var allowedVisibilities = options.GetSymbolVisibilityGroupOption(rule, defaultRequiredVisibility, cancellationToken);
+            var allowedVisibilities = options.GetSymbolVisibilityGroupOption(rule, containingContextSymbol, compilation, defaultRequiredVisibility, cancellationToken);
             return allowedVisibilities == SymbolVisibilityGroup.All ||
                 allowedVisibilities.Contains(symbol.GetResultantVisibility());
         }
 
         /// <summary>
-        /// Returns true if the given symbol has been configured to be excluded from analysis by options.
+        /// Returns true if the given source symbol has been configured to be excluded from analysis by options.
         /// </summary>
         public static bool IsConfiguredToSkipAnalysis(
             this ISymbol symbol,
@@ -160,9 +202,21 @@ namespace Analyzer.Utilities.Extensions
             DiagnosticDescriptor rule,
             Compilation compilation,
             CancellationToken cancellationToken)
+        => symbol.IsConfiguredToSkipAnalysis(symbol, options, rule, compilation, cancellationToken);
+
+        /// <summary>
+        /// Returns true if the given symbol has been configured to be excluded from analysis by options in context of the given containing symbol.
+        /// </summary>
+        public static bool IsConfiguredToSkipAnalysis(
+            this ISymbol symbol,
+            ISymbol containingContextSymbol,
+            AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            Compilation compilation,
+            CancellationToken cancellationToken)
         {
-            var excludedSymbols = options.GetExcludedSymbolNamesOption(rule, compilation, cancellationToken);
-            var excludedTypeNamesWithDerivedTypes = options.GetExcludedTypeNamesWithDerivedTypesOption(rule, compilation, cancellationToken);
+            var excludedSymbols = options.GetExcludedSymbolNamesWithValueOption(rule, containingContextSymbol, compilation, cancellationToken);
+            var excludedTypeNamesWithDerivedTypes = options.GetExcludedTypeNamesWithDerivedTypesOption(rule, containingContextSymbol, compilation, cancellationToken);
             if (excludedSymbols.IsEmpty && excludedTypeNamesWithDerivedTypes.IsEmpty)
             {
                 return false;
@@ -202,10 +256,11 @@ namespace Analyzer.Utilities.Extensions
             this ISymbol symbol,
             AnalyzerOptions options,
             DiagnosticDescriptor rule,
+            Compilation compilation,
             CancellationToken cancellationToken,
             SymbolModifiers defaultRequiredModifiers = SymbolModifiers.None)
         {
-            var requiredModifiers = options.GetRequiredModifiersOption(rule, defaultRequiredModifiers, cancellationToken);
+            var requiredModifiers = options.GetRequiredModifiersOption(rule, symbol, compilation, defaultRequiredModifiers, cancellationToken);
             return symbol.GetSymbolModifiers().Contains(requiredModifiers);
         }
 
@@ -647,6 +702,47 @@ namespace Analyzer.Utilities.Extensions
         public static bool HasAttribute(this ISymbol symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? attribute)
         {
             return attribute != null && symbol.GetAttributes().Any(attr => attr.AttributeClass.Equals(attribute));
+        }
+
+        /// <summary>
+        /// Determines if the given symbol has the specified attributes.
+        /// </summary>
+        /// <param name="symbol">Symbol to examine.</param>
+        /// <param name="attributes">Type symbols of the attributes to check for.</param>
+        /// <returns>Boolean array, same size and order as <paramref name="attributes"/>, indicating that the corresponding
+        /// attirbute is present.</returns>
+        public static bool[] HasAttributes(this ISymbol symbol, params INamedTypeSymbol?[] attributes)
+        {
+            bool[] isAttributePresent = new bool[attributes.Length];
+            foreach (var attributeData in symbol.GetAttributes())
+            {
+                for (int i = 0; i < attributes.Length; i++)
+                {
+                    if (attributeData.AttributeClass.Equals(attributes[i]))
+                    {
+                        isAttributePresent[i] = true;
+                    }
+                }
+            }
+
+            return isAttributePresent;
+        }
+
+        /// <summary>
+        /// Gets enumeration of attributes that are of the specified type.
+        /// </summary>
+        /// <param name="symbol">This symbol whose attributes to get.</param>
+        /// <param name="attributeType">Type of attribute to look for.</param>
+        /// <returns>Enumeration of attributes.</returns>
+        [SuppressMessage("RoslyDiagnosticsPerformance", "RS0001:Use SpecializedCollections.EmptyEnumerable()", Justification = "Not available in all projects")]
+        public static IEnumerable<AttributeData> GetAttributes(this ISymbol symbol, INamedTypeSymbol? attributeType)
+        {
+            if (attributeType == null)
+            {
+                return Enumerable.Empty<AttributeData>();
+            }
+
+            return symbol.GetAttributes().Where(attr => attr.AttributeClass.Equals(attributeType));
         }
 
         /// <summary>

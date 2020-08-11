@@ -24,8 +24,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -71,13 +71,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Analyzers
             var candidateInvocation = (InvocationExpressionSyntax)context.Node;
 
             //We're looking for invocations that are direct children of expression statements
-            if (!(candidateInvocation.Parent.IsKind(SyntaxKind.ExpressionStatement)))
+            if (!candidateInvocation.Parent.IsKind(SyntaxKind.ExpressionStatement))
             {
                 return;
             }
 
             //If we can't find the method symbol, quit
-            if (!(model.GetSymbolInfo(candidateInvocation).Symbol is IMethodSymbol methodSymbol))
+            if (!(model.GetSymbolInfo(candidateInvocation, context.CancellationToken).Symbol is IMethodSymbol methodSymbol))
             {
                 return;
             }

@@ -4,31 +4,8 @@ using Microsoft.CodeAnalysis;
 
 namespace Analyzer.Utilities
 {
-    internal static class DiagnosticHelpers
+    internal static partial class DiagnosticHelpers
     {
-        public const DiagnosticSeverity DefaultDiagnosticSeverity =
-#if BUILDING_VSIX
-            DiagnosticSeverity.Info;
-#else
-            DiagnosticSeverity.Warning;
-#endif
-
-        public const bool EnabledByDefaultIfNotBuildingVSIX =
-#if BUILDING_VSIX
-            false;
-#else
-            true;
-#endif
-
-        public const bool EnabledByDefaultOnlyIfBuildingVSIX =
-#if BUILDING_VSIX
-            true;
-#else
-            false;
-#endif
-
-        public const bool EnabledByDefaultForVsixAndNuget = true;
-
         public static bool TryConvertToUInt64(object value, SpecialType specialType, out ulong convertedValue)
         {
             bool success = false;
@@ -38,15 +15,15 @@ namespace Analyzer.Utilities
                 switch (specialType)
                 {
                     case SpecialType.System_Int16:
-                        convertedValue = unchecked((ulong)((short)value));
+                        convertedValue = unchecked((ulong)(short)value);
                         success = true;
                         break;
                     case SpecialType.System_Int32:
-                        convertedValue = unchecked((ulong)((int)value));
+                        convertedValue = unchecked((ulong)(int)value);
                         success = true;
                         break;
                     case SpecialType.System_Int64:
-                        convertedValue = unchecked((ulong)((long)value));
+                        convertedValue = unchecked((ulong)(long)value);
                         success = true;
                         break;
                     case SpecialType.System_UInt16:
@@ -66,7 +43,7 @@ namespace Analyzer.Utilities
                         success = true;
                         break;
                     case SpecialType.System_SByte:
-                        convertedValue = unchecked((ulong)((sbyte)value));
+                        convertedValue = unchecked((ulong)(sbyte)value);
                         success = true;
                         break;
                     case SpecialType.System_Char:

@@ -24,8 +24,8 @@ namespace Microsoft.CodeAnalysis.Analyzers
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Library,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             description: s_localizableDescription,
             helpLinkUri: "https://go.microsoft.com/fwlink/?linkid=874285",
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -39,11 +39,10 @@ namespace Microsoft.CodeAnalysis.Analyzers
             _performAssemblyChecks = performAssemblyChecks;
         }
 
-#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext context)
-#pragma warning restore RS1025 // Configure generated code analysis
         {
             context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             if (_performAssemblyChecks)
             {

@@ -15,16 +15,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     {
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.EnableConcurrentExecutionTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.EnableConcurrentExecutionMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.EnableConcurrentExecutionDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
 
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             DiagnosticIds.EnableConcurrentExecutionRuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: s_localizableDescription,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -43,7 +41,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         {
             var compilation = compilationContext.Compilation;
 
-            var analysisContext = compilation.GetOrCreateTypeByMetadataName(AnalysisContextFullName);
+            var analysisContext = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisDiagnosticsAnalysisContext);
             if (analysisContext is null)
             {
                 return null;

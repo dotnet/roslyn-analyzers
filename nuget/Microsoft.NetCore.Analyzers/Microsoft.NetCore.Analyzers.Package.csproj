@@ -11,6 +11,7 @@
     <ReleaseNotes>Microsoft .NetCore API Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
     <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
+    <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +21,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.NetCore.Analyzers\Core\Microsoft.NetCore.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.NetCore.Analyzers\CSharp\Microsoft.NetCore.CSharp.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.NetCore.Analyzers\VisualBasic\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\Core\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\CSharp\Microsoft.NetCore.Analyzers\Microsoft.NetCore.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\NetAnalyzers\VisualBasic\Microsoft.NetCore.Analyzers\Microsoft.NetCore.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
 </Project>

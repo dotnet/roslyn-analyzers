@@ -2118,25 +2118,6 @@
             ]
           }
         },
-        "CA1812": {
-          "id": "CA1812",
-          "shortDescription": "Avoid uninstantiated internal classes",
-          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicAvoidUninstantiatedInternalClasses",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
         "CA2200": {
           "id": "CA2200",
           "shortDescription": "Rethrow to preserve stack details",

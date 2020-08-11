@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (_platformCheckMethods.Contains(method.OriginalDefinition))
                 {
-                    return RuntimeMethodValue.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResultOpt, _osPlatformType, out var platformInfo) ?
+                    return RuntimeMethodValue.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResult, _osPlatformType, out var platformInfo) ?
                         new GlobalFlowStateAnalysisValueSet(platformInfo) :
                         GlobalFlowStateAnalysisValueSet.Unknown;
                 }

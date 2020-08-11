@@ -94,6 +94,10 @@ namespace Analyzer.Utilities
         public const string SystemChar = "System.Char";
         public const string SystemCLSCompliantAttribute = "System.CLSCompliantAttribute";
         public const string SystemCodeDomCompilerGeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
+        public const string SystemCollectionsConcurrentConcurrentBag1 = "System.Collections.Concurrent.ConcurrentBag`1";
+        public const string SystemCollectionsConcurrentConcurrentDictionary2 = "System.Collections.Concurrent.ConcurrentDictionary`2";
+        public const string SystemCollectionsConcurrentConcurrentQueue1 = "System.Collections.Concurrent.ConcurrentQueue`1";
+        public const string SystemCollectionsConcurrentConcurrentStack1 = "System.Collections.Concurrent.ConcurrentStack`1";
         public const string SystemCollectionsGenericICollection1 = "System.Collections.Generic.ICollection`1";
         public const string SystemCollectionsGenericIEnumerable1 = "System.Collections.Generic.IEnumerable`1";
         public const string SystemCollectionsGenericIEnumerator1 = "System.Collections.Generic.IEnumerator`1";
@@ -127,6 +131,7 @@ namespace Analyzer.Utilities
         public const string SystemComponentModelCompositionImportingConstructorAttribute = "System.ComponentModel.Composition.ImportingConstructorAttribute";
         public const string SystemComponentModelCompositionInheritedExportAttribute = "System.ComponentModel.Composition.InheritedExportAttribute";
         public const string SystemComponentModelDesignerAttribute = "System.ComponentModel.DesignerAttribute";
+        public const string SystemComponentModelDesignerCategoryAttribute = "System.ComponentModel.DesignerCategoryAttribute";
         public const string SystemComponentModelLocalizableAttribute = "System.ComponentModel.LocalizableAttribute";
         public const string SystemCompositionExportAttribute = "System.Composition.ExportAttribute";
         public const string SystemCompositionImportingConstructorAttribute = "System.Composition.ImportingConstructorAttribute";
@@ -141,6 +146,10 @@ namespace Analyzer.Utilities
         public const string SystemDataEntityQueryableExtensions = "System.Data.Entity.QueryableExtensions";
         public const string SystemDataIDataAdapter = "System.Data.IDataAdapter";
         public const string SystemDataIDbCommand = "System.Data.IDbCommand";
+        public const string SystemDataOdbcOdbcParameter = "System.Data.Odbc.OdbcParameter";
+        public const string SystemDataOleDbOleDbParameter = "System.Data.OleDb.OleDbParameter";
+        public const string SystemDataSqlClientSqlParameter = "System.Data.SqlClient.SqlParameter";
+        public const string SystemDataTypedTableBase1 = "System.Data.TypedTableBase`1";
         public const string SystemDateTime = "System.DateTime";
         public const string SystemDateTimeOffset = "System.DateTimeOffset";
         public const string SystemDecimal = "System.Decimal";
@@ -148,6 +157,7 @@ namespace Analyzer.Utilities
         public const string SystemDiagnosticsConditionalAttribute = "System.Diagnostics.ConditionalAttribute";
         public const string SystemDiagnosticsContractsPureAttribute = "System.Diagnostics.Contracts.PureAttribute";
         public const string SystemDiagnosticsDebug = "System.Diagnostics.Debug";
+        public const string SystemDiagnosticsDebuggerNonUserCode = "System.Diagnostics.DebuggerNonUserCodeAttribute";
         public const string SystemDiagnosticsProcess = "System.Diagnostics.Process";
         public const string SystemDiagnosticsProcessStartInfo = "System.Diagnostics.ProcessStartInfo";
         public const string SystemDiagnosticsTraceListener = "System.Diagnostics.TraceListener";
@@ -212,7 +222,8 @@ namespace Analyzer.Utilities
         public const string SystemRange = "System.Range";
         public const string SystemReadOnlyMemory1 = "System.ReadOnlyMemory`1";
         public const string SystemReadOnlySpan1 = "System.ReadOnlySpan`1";
-        public const string SystemReflectionAssemblyFullName = "System.Reflection.Assembly";
+        public const string SystemReflectionAssembly = "System.Reflection.Assembly";
+        public const string SystemReflectionAssemblyName = "System.Reflection.AssemblyName";
         public const string SystemReflectionAssemblyVersionAttribute = "System.Reflection.AssemblyVersionAttribute";
         public const string SystemReflectionMemberInfo = "System.Reflection.MemberInfo";
         public const string SystemReflectionParameterInfo = "System.Reflection.ParameterInfo";
@@ -285,6 +296,7 @@ namespace Analyzer.Utilities
         public const string SystemSecurityCryptographyX509CertificatesX509Chain = "System.Security.Cryptography.X509Certificates.X509Chain";
         public const string SystemSecurityCryptographyX509CertificatesX509Store = "System.Security.Cryptography.X509Certificates.X509Store";
         public const string SystemSerializableAttribute = "System.SerializableAttribute";
+        public const string SystemServiceModelMessageContractAttribute = "System.ServiceModel.MessageContractAttribute";
         public const string SystemServiceModelOperationContractAttribute = "System.ServiceModel.OperationContractAttribute";
         public const string SystemSingle = "System.Single";
         public const string SystemSpan1 = "System.Span`1";

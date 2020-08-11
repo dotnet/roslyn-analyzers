@@ -65,18 +65,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         internal static DiagnosticDescriptor ObsoleteOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableSupportedMessage,
+                                                                                      s_localizableObsoleteMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
-                                                                                      description: s_localizableObsoleteMessage,
+                                                                                      description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
         internal static DiagnosticDescriptor UnsupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableSupportedMessage,
+                                                                                      s_localizableUnsupportedMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
-                                                                                      description: s_localizableUnsupportedMessage,
+                                                                                      description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SupportedOsRule, ObsoleteOsRule, UnsupportedOsRule);

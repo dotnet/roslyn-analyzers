@@ -38,10 +38,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         version = parsedVersion;
                         return true;
                     }
-                    else
-                    {
-                        return false;
-                    }
+
+                    return false;
                 }
             }
             osPlatformName = osString;

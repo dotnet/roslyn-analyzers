@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -8,7 +9,233 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     public partial class PlatformCompatabilityAnalyzerTests
     {
         [Fact]
-        public async Task GuardedWith_IsOSPlatform_SimpleIfElse()
+        public async Task Unsupported_GuardedWith_IsOsNameMethods()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    void M1()
+    {
+        if(!OperatingSystemHelper.IsBrowser())
+        {
+            NotForBrowser();
+            [|NotForIos12OrLater()|];
+        }
+        else
+        {
+            [|NotForIos12OrLater()|];
+            [|NotForBrowser()|];
+        }
+
+        if(OperatingSystemHelper.IsOSPlatform(""Browser""))
+        {
+            [|NotForBrowser()|];
+        }
+        else
+        {
+            NotForBrowser();
+        }
+        
+        if(OperatingSystemHelper.IsIOS())
+        {
+            [|NotForIos12OrLater()|];
+        }
+        else
+        {
+            [|NotForIos12OrLater()|];
+        }
+
+        if(OperatingSystemHelper.IsIOSVersionAtLeast(12,1))
+        {
+            [|NotForIos12OrLater()|];
+        }
+        else
+        {
+            [|NotForIos12OrLater()|];
+        }
+
+        if(OperatingSystemHelper.IsIOS() && !OperatingSystemHelper.IsIOSVersionAtLeast(12,0))
+        {
+            NotForIos12OrLater();
+        }
+        else
+        {
+            [|NotForIos12OrLater()|];
+        }
+    }
+
+    [UnsupportedOSPlatform(""browser"")]
+    void NotForBrowser()
+    {
+    }
+
+    [UnsupportedOSPlatform(""ios12.1"")]
+    void NotForIos12OrLater()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        public static IEnumerable<object[]> OperatingSystem_IsOsNameVersionAtLeast_MethodsTestData()
+        {
+            yield return new object[] { "Windows", "IsWindows", "10,1", true };
+            yield return new object[] { "windows11.0", "IsWindows", "10,1,2,3", false };
+            yield return new object[] { "WINDOWS10.1.2", "IsWindows", "10,1,2", true };
+            yield return new object[] { "FreeBSD", "IsFreeBSD", "10", true };
+            yield return new object[] { "FreeBSD12.0", "IsFreeBSD", "10,1,2", false };
+            yield return new object[] { "freebsd10.1.2", "IsFreeBSD", "10,1,2", true };
+            yield return new object[] { "Android", "IsAndroid", "10,1,2", true };
+            yield return new object[] { "android11.0", "IsAndroid", "10,1,2", false };
+            yield return new object[] { "Android10.1.2", "IsAndroid", "10,1,2", true };
+            yield return new object[] { "IOS", "IsIOS", "10,1,2", true };
+            yield return new object[] { "ios12.0", "IsIOS", "10,1,2", false };
+            yield return new object[] { "iOS10.1.2", "IsIOS", "10,1,2", true };
+            yield return new object[] { "MacOS", "IsMacOS", "10,1,2", true };
+            yield return new object[] { "macOS14.0", "IsMacOS", "10,1,2", false };
+            yield return new object[] { "macos10.1.2", "IsMacOS", "10,1,2", true };
+            yield return new object[] { "TvOS", "IsTvOS", "10,1,2", true };
+            yield return new object[] { "tvOS13.0", "IsTvOS", "10,1,2", false };
+            yield return new object[] { "Tvos10.1", "IsTvOS", "10,1,2", true };
+            yield return new object[] { "watchOS", "IsWatchOS", "10,1,2", true };
+            yield return new object[] { "WatchOS14.0", "IsWatchOS", "10,1,2", false };
+            yield return new object[] { "watchos10.0", "IsWatchOS", "10,1,2", true };
+        }
+
+        [Theory]
+        [MemberData(nameof(OperatingSystem_IsOsNameVersionAtLeast_MethodsTestData))]
+        public async Task GuardedWith_IsOsNameVersionAtLeast_impleIfElse(string osName, string isOsMethod, string version, bool versionMatch)
+        {
+            var match = versionMatch ? "OsSpecificMethod()" : "[|OsSpecificMethod()|]";
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    void M1()
+    {
+        if(OperatingSystemHelper." + isOsMethod + @"VersionAtLeast(" + version + @"))
+        {
+            " + match + @";
+        }
+        else
+        {
+            [|OsSpecificMethod()|];
+        }
+    }
+
+    [SupportedOSPlatform(""" + osName + @""")]
+    void OsSpecificMethod()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        public static IEnumerable<object[]> OperatingSystem_IsOsName_MethodsTestData()
+        {
+            yield return new object[] { "Windows", "IsWindows" };
+            yield return new object[] { "WINDOWS", "IsWindows" };
+            yield return new object[] { "windows", "IsWindows" };
+            yield return new object[] { "LinuX", "IsLinux" };
+            yield return new object[] { "linux", "IsLinux" };
+            yield return new object[] { "Browser", "IsBrowser" };
+            yield return new object[] { "browser", "IsBrowser" };
+            yield return new object[] { "FreeBSD", "IsFreeBSD" };
+            yield return new object[] { "freebsd", "IsFreeBSD" };
+            yield return new object[] { "Android", "IsAndroid" };
+            yield return new object[] { "android", "IsAndroid" };
+            yield return new object[] { "IOS", "IsIOS" };
+            yield return new object[] { "Ios", "IsIOS" };
+            yield return new object[] { "ios", "IsIOS" };
+            yield return new object[] { "MacOS", "IsMacOS" };
+            yield return new object[] { "macOS", "IsMacOS" };
+            yield return new object[] { "macos", "IsMacOS" };
+            yield return new object[] { "TvOS", "IsTvOS" };
+            yield return new object[] { "tvOS", "IsTvOS" };
+            yield return new object[] { "watchOS", "IsWatchOS" };
+            yield return new object[] { "WatchOS", "IsWatchOS" };
+            yield return new object[] { "watchos", "IsWatchOS" };
+        }
+
+        [Theory]
+        [MemberData(nameof(OperatingSystem_IsOsName_MethodsTestData))]
+        public async Task GuardedWith_IsOsNameMethods_SimpleIfElse(string osName, string isOsMethod)
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    void M1()
+    {
+        if(OperatingSystemHelper." + isOsMethod + @"())
+        {
+            OsSpecificMethod();
+        }
+        else
+        {
+            [|OsSpecificMethod()|];
+        }
+    }
+
+    [SupportedOSPlatform(""" + osName + @""")]
+    void OsSpecificMethod()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_OperatingSystem_IsOSPlatform_SimpleIfElse()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    void M1()
+    {
+        if(OperatingSystemHelper.IsOSPlatform(""Windows""))
+        {
+            M2();
+        }
+        else
+        {
+            [|M2()|];
+        }
+
+        if(OperatingSystemHelper.IsOSPlatform(""Windows8.0""))
+        {
+            M2();
+        }
+        else
+        {
+            [|M2()|];
+        }
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    void M2()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task GuardedWith_RuntimeInformation_IsOSPlatform_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -139,7 +366,7 @@ class Test
         }
 
         [Fact]
-        public async Task GuardedWith_IsOSPlatformEarlierThan_SimpleIfElse()
+        public async Task GuardedWith_AlternativeOf_IsOSPlatformEarlierThan()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -150,7 +377,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(11, 0, 19222))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0))
         {
             [|M2()|];
             M3();
@@ -176,8 +403,8 @@ class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact] TODO fix VB test
-        public async Task GuardedWith_StringOverload_SimpleIfElse()
+        [Fact]
+        public async Task GuardedWith_Obsoleted_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -188,7 +415,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19222))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 2, 19222))
         {
             [|M2()|];
             M3();
@@ -199,7 +426,7 @@ class Test
             [|M3()|];
         }
 
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Android"",12,1))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,1,3))
         {
             [|M3()|];
             M2();
@@ -211,7 +438,7 @@ class Test
         }
     }
 
-    [SupportedOSPlatform(""Android10.2.3"")]
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
     void M2()
     {
     }
@@ -228,8 +455,9 @@ Imports System.Runtime.Versioning
 Imports System
 
 Class Test
+    <SupportedOSPlatform(""Windows"")>
     Private Sub M1()
-        If OperatingSystemHelper.IsOSPlatformEarlierThan(""Windows10.1"") Then
+        If OperatingSystemHelper.IsWindows() AndAlso Not OperatingSystemHelper.IsWindowsVersionAtLeast(10, 2, 19222) Then
             [|M2()|]
             M3()
         Else
@@ -237,7 +465,7 @@ Class Test
             [|M3()|]
         End If
 
-        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows10.1.3"") Then
+        If OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,1,3) Then
             [|M3()|]
             M2()
         Else
@@ -250,13 +478,14 @@ Class Test
     Private Sub M2()
     End Sub
 
+    <SupportedOSPlatform(""Windows"")>
     <ObsoletedInOSPlatform(""Windows10.1.2.3"")>
     Private Sub M3()
     End Sub
 End Class
 " + MockAttributesVbSource + MockRuntimeApiSourceVb;
             await VerifyAnalyzerAsyncVb(vbSource);
-        }*/
+        }
 
         [Fact]
         public async Task OsDependentEnumValue_GuardedCall_SimpleIfElse()
@@ -313,7 +542,7 @@ public class Test
     
     public void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222)) //OperatingSystemHelper.IsOSPlatformEarlierThan 
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(8, 0, 19222)) 
         {
             RemovedProperty = ""Hello"";
             string s = RemovedProperty;

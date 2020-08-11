@@ -76,21 +76,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         literal.ConstantValue.HasValue)
                     {
                         // OperatingSystem.IsOSPlatform(string platform)
-                        if (invokedPlatformCheckMethod.Name == IsOSPlatform && TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                        if (invokedPlatformCheckMethod.Name == IsOSPlatform &&
+                            TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
                         {
                             info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
                             return true;
                         }
 
                         // OperatingSystem.IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0)
-                        if (TryDecodeOSVersion(arguments, valueContentAnalysisResult, out version, true))
+                        if (TryDecodeOSVersion(arguments, valueContentAnalysisResult, out version, 1))
                         {
                             info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, literal.ConstantValue.Value.ToString(), version, negated: false);
                             return true;
                         }
                     }
-                    else if (arguments[0].Value is ILiteralOperation intLiteral &&
-                            intLiteral.Type?.SpecialType == SpecialType.System_Int32)
+                    else if (arguments[0].Value is ILiteralOperation intLiteral && intLiteral.Type?.SpecialType == SpecialType.System_Int32)
                     {
                         var platformName = SwitchVersionedPlatformName(invokedPlatformCheckMethod.Name);
                         if (platformName != null && TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var version))
@@ -152,12 +152,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 ImmutableArray<IArgumentOperation> arguments,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
                 [NotNullWhen(returnValue: true)] out Version? osVersion,
-                bool skipFirst = false)
+                int skip = 0)
             {
+
                 using var versionBuilder = ArrayBuilder<int>.GetInstance(4, fillWithValue: 0);
                 var index = 0;
 
-                foreach (var argument in skipFirst ? arguments.Skip(1) : arguments)
+                foreach (var argument in arguments.Skip(skip))
                 {
                     if (!TryDecodeOSVersionPart(argument, valueContentAnalysisResult, out var osVersionPart))
                     {
@@ -168,7 +169,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     versionBuilder[index++] = osVersionPart;
                 }
 
-                osVersion = new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
+                osVersion = arguments.Length - skip == 2 ? new Version(versionBuilder[0], versionBuilder[1]) :
+                    arguments.Length - skip == 3 ? new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]) :
+                    new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
+
                 return true;
 
                 static bool TryDecodeOSVersionPart(IArgumentOperation argument, ValueContentAnalysisResult? valueContentAnalysisResult, out int osVersionPart)

@@ -445,9 +445,10 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
             static string GetPackageSpecificContents(string packageName)
             {
-                if (packageName == "Microsoft.CodeAnalysis.Analyzers")
+                switch (packageName)
                 {
-                    return @"
+                    case "Microsoft.CodeAnalysis.Analyzers":
+                        return @"
   <!-- Target to add all 'EmbeddedResource' files with '.resx' extension as analyzer additional files -->
   <Target Name=""AddAllResxFilesAsAdditionalFiles"" BeforeTargets=""CoreCompile"" Condition=""'@(EmbeddedResource)' != '' AND '$(SkipAddAllResxFilesAsAdditionalFiles)' != 'true'"">
     <ItemGroup>
@@ -463,10 +464,9 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')"" >
 	<AdditionalFiles Include=""AnalyzerReleases.Unshipped.md"" />
   </ItemGroup>";
-                }
-                else if (packageName == "Microsoft.CodeAnalysis.PublicApiAnalyzers")
-                {
-                    return @"
+
+                    case "Microsoft.CodeAnalysis.PublicApiAnalyzers":
+                        return @"
 
   <!-- Workaround for https://github.com/dotnet/roslyn/issues/4655 -->
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt')"" >
@@ -475,9 +475,24 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt')"" >
 	<AdditionalFiles Include=""PublicAPI.Unshipped.txt"" />
   </ItemGroup>";
-                }
 
-                return string.Empty;
+                    case "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers":
+                        return @"
+  <PropertyGroup>
+    <GeneratePerformanceSensitiveAttribute Condition=""'$(GeneratePerformanceSensitiveAttribute)' == ''"">true</GeneratePerformanceSensitiveAttribute>
+    <PerformanceSensitiveAttributePath Condition=""'$(PerformanceSensitiveAttributePath)' == ''"">$(MSBuildThisFileDirectory)PerformanceSensitiveAttribute$(DefaultLanguageSourceExtension)</PerformanceSensitiveAttributePath>
+  </PropertyGroup>
+
+  <ItemGroup Condition=""'$(GeneratePerformanceSensitiveAttribute)' == 'true' and Exists($(PerformanceSensitiveAttributePath))"">
+    <Compile Include=""$(PerformanceSensitiveAttributePath)"" Visible=""false"" />
+    
+    <!-- Make sure the source file is embedded in PDB to support Source Link -->
+    <EmbeddedFiles Condition=""'$(DebugType)' != 'none'"" Include=""$(PerformanceSensitiveAttributePath)"" />
+  </ItemGroup>";
+
+                    default:
+                        return string.Empty;
+                }
             }
         }
 

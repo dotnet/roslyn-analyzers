@@ -1431,13 +1431,13 @@
   <data name="PlatformCompatabilityCheckDescription" xml:space="preserve">
     <value>Using platform dependendent API on a component makes the code no longer work across all platforms.</value>
   </data>
-  <data name="PlatformCompatibilityCheckSupportedMessage" xml:space="preserve">
+  <data name="PlatformCompatibilityCheckRequiredOsVersionMessage" xml:space="preserve">
     <value>'{0}' requires {1} {2} version or later</value>
   </data>
   <data name="PlatformCompatabilityCheckObsoleteMessage" xml:space="preserve">
     <value>'{0}' has been deprecated since {1} {2} version</value>
   </data>
-  <data name="PlatformCompatabilityCheckUnsupportedMessage" xml:space="preserve">
+  <data name="PlatformCompatabilityCheckUnsupportedOsVersionMessage" xml:space="preserve">
     <value>'{0}' is not supported or has been removed since {1} {2} version</value>
   </data>
   <data name="DoNotUseOutAttributeStringPInvokeParametersDescription" xml:space="preserve">
@@ -1466,5 +1466,11 @@
   </data>
   <data name="AvoidAssemblyGetFilesInSingleFileMessage" xml:space="preserve">
     <value>'{0}' will throw for assemblies embedded in a single-file app</value>
+  </data>
+  <data name="PlatformCompatabilityCheckUnsupportedOsMessage" xml:space="preserve">
+    <value>'{0}' is not supported or has been removed from {1}</value>
+  </data>
+  <data name="PlatformCompatibilityCheckRequiredOsMessage" xml:space="preserve">
+    <value>'{0}' requires {1}</value>
   </data>
 </root>

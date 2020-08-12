@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.NetCore.Analyzers.Performance;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
@@ -32,9 +31,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(SupportedOSPlatformAttribute, ObsoletedInOSPlatformAttribute, UnsupportedOSPlatformAttribute);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableSupportedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckSupportedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableRequiredOsMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckRequiredOsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableRequiredOsVersionMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckRequiredOsVersionMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableObsoleteMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckObsoleteMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableUnsupportedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckUnsupportedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableUnsupportedOsMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckUnsupportedOsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableUnsupportedOsVersionMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckUnsupportedOsVersionMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         // We are adding the new attributes into older versions of .Net 5.0, so there could be multiple referenced assemblies each with their own 
@@ -63,9 +64,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string IsWindows = nameof(IsWindows);
         private const string IsWindowsVersionAtLeast = nameof(IsWindowsVersionAtLeast);
 
-        internal static DiagnosticDescriptor SupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor RequiredOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableSupportedMessage,
+                                                                                      s_localizableRequiredOsVersionMessage,
+                                                                                      DiagnosticCategory.Interoperability,
+                                                                                      RuleLevel.BuildWarning,
+                                                                                      description: s_localizableDescription,
+                                                                                      isPortedFxCopRule: false,
+                                                                                      isDataflowRule: false);
+
+        internal static DiagnosticDescriptor RequiredOsRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                                      s_localizableTitle,
+                                                                                      s_localizableRequiredOsMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
                                                                                       description: s_localizableDescription,
@@ -80,15 +90,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
+
         internal static DiagnosticDescriptor UnsupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
-                                                                                      s_localizableUnsupportedMessage,
+                                                                                      s_localizableUnsupportedOsMessage,
                                                                                       DiagnosticCategory.Interoperability,
                                                                                       RuleLevel.BuildWarning,
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SupportedOsRule, ObsoleteOsRule, UnsupportedOsRule);
+
+        internal static DiagnosticDescriptor UnsupportedOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                                      s_localizableTitle,
+                                                                                      s_localizableUnsupportedOsVersionMessage,
+                                                                                      DiagnosticCategory.Interoperability,
+                                                                                      RuleLevel.BuildWarning,
+                                                                                      description: s_localizableDescription,
+                                                                                      isPortedFxCopRule: false,
+                                                                                      isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RequiredOsRule, RequiredOsVersionRule, ObsoleteOsRule, UnsupportedOsRule, UnsupportedOsVersionRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -156,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor, wellKnownTypeProvider,
-                        context.Options, SupportedOsRule, performValueContentAnalysis: true,
+                        context.Options, RequiredOsRule, performValueContentAnalysis: true,
                         context.CancellationToken, out var valueContentAnalysisResult);
 
                     if (analysisResult == null)
@@ -338,30 +358,40 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var attribute = attributes[platformName];
 
-                if (attribute.SupportedFirst != null)
-                {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.SupportedFirst)));
-                }
                 if (attribute.SupportedSecond != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(SupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.SupportedSecond)));
+                    ReportSupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.SupportedSecond));
                 }
+                else if (attribute.SupportedFirst != null)
+                {
+                    ReportSupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.SupportedFirst));
+                }
+
                 if (attribute.UnsupportedFirst != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.UnsupportedFirst)));
+                    ReportUnsupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.UnsupportedFirst));
                 }
-                if (attribute.UnsupportedSecond != null)
+                else if (attribute.UnsupportedSecond != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(UnsupportedOsRule, operationName, platformName, NormalizeVersionString(attribute.UnsupportedSecond)));
+                    ReportUnsupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.UnsupportedSecond));
                 }
+
                 if (attribute.Obsoleted != null)
                 {
-                    context.ReportDiagnostic(operation.CreateDiagnostic(ObsoleteOsRule, operationName, platformName, attribute.Obsoleted));
+                    context.ReportDiagnostic(operation.CreateDiagnostic(ObsoleteOsRule, operationName, platformName, attribute.Obsoleted)); ;
                 }
             }
         }
 
-        private static string NormalizeVersionString(Version version) => IsEmptyVersion(version) ? string.Empty : version.ToString();
+        private static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
+            context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(RequiredOsRule, name, platformName) :
+                operation.CreateDiagnostic(RequiredOsVersionRule, name, platformName, version));
+
+        private static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
+            context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(UnsupportedOsRule, name, platformName) :
+                operation.CreateDiagnostic(UnsupportedOsVersionRule, name, platformName, version));
+
+        private static string? VersionToString(Version version) => IsEmptyVersion(version) ? null : version.ToString();
 
         private static ISymbol? GetOperationSymbol(IOperation operation)
             => operation switch
@@ -448,7 +478,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (attribute.SupportedFirst != null)
                 {
-                    if (attribute.UnsupportedFirst == null || attribute.UnsupportedFirst > attribute.SupportedFirst) // only for current platform
+                    // If only supported for current platform
+                    if (attribute.UnsupportedFirst == null || attribute.UnsupportedFirst > attribute.SupportedFirst)
                     {
                         if (supportedOnlyList.HasValue && !supportedOnlyList.Value)
                         {
@@ -479,7 +510,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 {
                                     // Can supported version be greater than obsoleted? Do we want to report diagnostic here for wrong version?
                                 }
-                                else if (!ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
+                                else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
                                 {
                                     diagnositcAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                                 }
@@ -512,18 +543,26 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             if (!UnsupportedFirstSuppressed(attribute, callSiteAttribute))
                             {
                                 diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
-                                continue;
                             }
 
                             if (attribute.UnsupportedSecond != null && !UnsupportedSecondSuppressed(attribute, callSiteAttribute))
                             {
                                 diagnositcAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                             }
+
+                            if (attribute.Obsoleted != null)
+                            {
+                                if (attribute.SupportedSecond != null && attribute.SupportedSecond > attribute.Obsoleted || attribute.SupportedFirst > attribute.Obsoleted)
+                                {
+                                    // Can supported version be greater than obsoleted? Do we want to report diagnostic here for wrong version?
+                                }
+                                else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
+                                {
+                                    diagnositcAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
+                                }
+                            }
                         }
-                        else
-                        {
-                            CopyAllAttributes(diagnositcAttribute, attribute);
-                        }
+                        // else call site is not supporting this platform, and it is deny list, so no need to warn
                     }
                 }
                 else
@@ -551,11 +590,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 diagnositcAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                             }
                         }
-                        else
-                        {
-                            diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
-                            diagnositcAttribute.UnsupportedSecond = (Version?)attribute.UnsupportedSecond?.Clone();
-                        }
+                        // else call site is not supporting this platform, and it is deny list, so no need to warn
                     }
 
                     if (attribute.Obsoleted != null)
@@ -573,6 +608,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return notSuppressedAttributes.Any();
         }
 
+        private static bool SuppresedByUnsupported(PlatformAttributes callSiteAttribute, Version obsoleted) =>
+             callSiteAttribute.UnsupportedFirst != null && callSiteAttribute.UnsupportedFirst <= obsoleted ||
+             callSiteAttribute.UnsupportedSecond != null && callSiteAttribute.UnsupportedSecond <= obsoleted;
+
         private static PlatformAttributes CopyAllAttributes(PlatformAttributes copyTo, PlatformAttributes copyFrom)
         {
             copyTo.SupportedFirst = (Version?)copyFrom.SupportedFirst?.Clone();
@@ -583,65 +622,33 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return copyTo;
         }
 
-        private static bool SuppressedByCallSiteUnsupported(PlatformAttributes callSiteAttribute, Version unsupporteAttribute)
-        {
-            if (callSiteAttribute.UnsupportedFirst != null && unsupporteAttribute >= callSiteAttribute.UnsupportedFirst ||
-                callSiteAttribute.UnsupportedSecond != null && unsupporteAttribute >= callSiteAttribute.UnsupportedSecond)
-            {
-                return true;
-            }
-            return false;
-        }
+        private static bool SuppressedByCallSiteUnsupported(PlatformAttributes callSiteAttribute, Version unsupporteAttribute) =>
+            callSiteAttribute.UnsupportedFirst != null && unsupporteAttribute >= callSiteAttribute.UnsupportedFirst ||
+            callSiteAttribute.UnsupportedSecond != null && unsupporteAttribute >= callSiteAttribute.UnsupportedSecond;
 
         private static bool ObsoletedSuppressed(Version? callSiteObsoleted, Version checkingObsoleted) =>
             callSiteObsoleted != null && checkingObsoleted >= callSiteObsoleted;
 
-        private static bool UnsupportedSecondSuppressed(PlatformAttributes attribute, PlatformAttributes callSiteAttribute)
-        {
-            if (callSiteAttribute.SupportedFirst != null && callSiteAttribute.SupportedFirst <= attribute.SupportedFirst! ||
-                attribute.SupportedSecond != null && callSiteAttribute.SupportedFirst! <= attribute.SupportedSecond)
-            {
-                return true;
-            }
+        private static bool UnsupportedSecondSuppressed(PlatformAttributes attribute, PlatformAttributes callSiteAttribute) =>
+            SuppressedByCallSiteSupported(attribute, callSiteAttribute.SupportedFirst) ||
+            SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedSecond!);
 
-            return SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedSecond!);
-        }
+        private static bool SuppressedByCallSiteSupported(PlatformAttributes attribute, Version? callSiteSupportedFirst) =>
+            callSiteSupportedFirst != null && callSiteSupportedFirst >= attribute.SupportedFirst! &&
+            attribute.SupportedSecond != null && callSiteSupportedFirst >= attribute.SupportedSecond;
 
-        private static bool UnsupportedFirstSuppressed(PlatformAttributes attribute, PlatformAttributes callSiteAttribute)
-        {
-            if (callSiteAttribute.SupportedFirst != null && callSiteAttribute.SupportedFirst <= attribute.SupportedFirst! ||
-                attribute.SupportedSecond != null && callSiteAttribute.SupportedFirst! <= attribute.SupportedSecond)
-            {
-                return true;
-            }
+        private static bool UnsupportedFirstSuppressed(PlatformAttributes attribute, PlatformAttributes callSiteAttribute) =>
+            callSiteAttribute.SupportedFirst != null && callSiteAttribute.SupportedFirst >= attribute.SupportedFirst ||
+            SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst!);
 
-            return SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst!);
-        }
+        // As optianal if call site supports that platform, their versions should match
+        private static bool OptionalOsVersionsSuppressed(PlatformAttributes callSiteAttribute, PlatformAttributes attribute) =>
+            (callSiteAttribute.SupportedFirst == null || attribute.SupportedFirst <= callSiteAttribute.SupportedFirst) &&
+            (callSiteAttribute.SupportedSecond == null || attribute.SupportedFirst <= callSiteAttribute.SupportedSecond);
 
-        private static bool OptionalOsVersionsSuppressed(PlatformAttributes callSiteAttribute, PlatformAttributes attribute)
-        {
-            // Optianal supported attribute, if call site supports it, its versions should match
-            if (callSiteAttribute.SupportedFirst != null &&
-                !(attribute.SupportedFirst <= callSiteAttribute.SupportedFirst ||
-                 (callSiteAttribute.SupportedSecond != null && attribute.SupportedFirst <= callSiteAttribute.SupportedSecond)))
-            {
-
-                return false;
-            }
-
-            // if call site not suppors it, no problem
-            return true;
-        }
-
-        private static bool MandatoryOsVersionsSuppressed(PlatformAttributes callSitePlatforms, Version checkingVersion)
-        {
-            if ((callSitePlatforms.SupportedFirst != null && checkingVersion <= callSitePlatforms.SupportedFirst) ||
-               (callSitePlatforms.SupportedSecond != null && checkingVersion <= callSitePlatforms.SupportedSecond))
-            {
-                return true;
-            }
-            return false;
-        }
+        private static bool MandatoryOsVersionsSuppressed(PlatformAttributes callSitePlatforms, Version checkingVersion) =>
+            callSitePlatforms.SupportedFirst != null && checkingVersion <= callSitePlatforms.SupportedFirst ||
+            callSitePlatforms.SupportedSecond != null && checkingVersion <= callSitePlatforms.SupportedSecond;
 
         // Do not warn for conditional checks of platfomr specific enum value; 'if (value != FooEnum.WindowsOnlyValue)'
         private static bool IsWithinConditionalOperation(IFieldReferenceOperation pOperation) =>

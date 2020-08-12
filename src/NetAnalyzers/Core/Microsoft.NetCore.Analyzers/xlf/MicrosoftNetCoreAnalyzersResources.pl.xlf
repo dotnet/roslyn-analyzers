@@ -1528,12 +1528,22 @@
         <target state="new">Call of platform dependent API</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatabilityCheckUnsupportedMessage">
+      <trans-unit id="PlatformCompatabilityCheckUnsupportedOsMessage">
+        <source>'{0}' is not supported or has been removed from {1}</source>
+        <target state="new">'{0}' is not supported or has been removed from {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatabilityCheckUnsupportedOsVersionMessage">
         <source>'{0}' is not supported or has been removed since {1} {2} version</source>
         <target state="new">'{0}' is not supported or has been removed since {1} {2} version</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckSupportedMessage">
+      <trans-unit id="PlatformCompatibilityCheckRequiredOsMessage">
+        <source>'{0}' requires {1}</source>
+        <target state="new">'{0}' requires {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityCheckRequiredOsVersionMessage">
         <source>'{0}' requires {1} {2} version or later</source>
         <target state="new">'{0}' requires {1} {2} version or later</target>
         <note />

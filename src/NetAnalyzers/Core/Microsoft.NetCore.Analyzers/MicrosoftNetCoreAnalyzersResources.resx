@@ -1429,7 +1429,7 @@
     <value>Call of platform dependent API</value>
   </data>
   <data name="PlatformCompatabilityCheckDescription" xml:space="preserve">
-    <value>Using platform dependendent API on a component makes the code no longer work across all platforms.</value>
+    <value>Using platform dependent API on a component makes the code no longer work across all platforms.</value>
   </data>
   <data name="PlatformCompatibilityCheckRequiredOsVersionMessage" xml:space="preserve">
     <value>'{0}' requires {1} {2} version or later</value>
@@ -1471,6 +1471,6 @@
     <value>'{0}' is not supported or has been removed from {1}</value>
   </data>
   <data name="PlatformCompatibilityCheckRequiredOsMessage" xml:space="preserve">
-    <value>'{0}' requires {1}</value>
+    <value>'{0}' requires {1} platform</value>
   </data>
 </root>

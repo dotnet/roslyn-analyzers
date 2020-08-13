@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -19,6 +17,37 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
     public partial class PlatformCompatabilityAnalyzerTests
     {
+        /*[Fact] TODO: Compiler error test, not sure how to report the diagnostic
+        public async Task TestOsPlatformAttributesWithNonStringArgument()
+        {
+            var csSource = @"
+using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+    [[|SupportedOSPlatform(""Linux"", ""Windows"")|]]
+    public void MethodWithTwoArguments()
+    {
+    }
+    [SupportedOSPlatform([|new string[]{""Linux"", ""Windows""}|])]
+    public void MethodWithArrayArgument()
+    {
+    }
+    [ObsoletedInOSPlatform([|10|])]
+    public void MethodWithIntArgument()
+    {
+    }
+    [ObsoletedInOSPlatform([|OSPlatform.Windows|])]
+    public void MethodWithPropertyAccess()
+    {
+    }
+}
+" + MockAttributesCsSource;
+
+            await VerifyAnalyzerAsyncCs(csSource);
+        }*/
+
         [Fact]
         public async Task OsDependentMethodsCalledWarns()
         {
@@ -1069,11 +1098,11 @@ public class C
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' requires windows"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' requires windows platform"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since windows 10.0.1909 version"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since windows 10.0.2004 version"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since windows 10.0.1909 version"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' requires windows"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' requires windows platform"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since windows 10.0.1909 version"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since windows 10.0.2004 version"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since windows 10.0.1909 version"),

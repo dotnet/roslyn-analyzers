@@ -4,10 +4,75 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.InteropServices.PlatformCompatabilityAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
+        /*[Fact] TODO: Missing scenario
+        public async Task SupportedUnsupportedRange_GuardedWithOr()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystemHelper.IsWindows() ||
+           !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19041))
+        {
+            Api();
+        }
+
+        [|Api()|];
+    }
+
+    [UnsupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""windows10.0.19041"")]
+    void Api()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
+
+        [Fact]
+        public async Task SupportedUnsupportedRange_GuardedWithAnd()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystemHelper.IsIOSVersionAtLeast(12,0) &&
+           !OperatingSystemHelper.IsIOSVersionAtLeast(14,0))
+        {
+            Api();
+        }
+        [|Api()|];
+    }
+
+    [SupportedOSPlatform(""ios12.0"")]
+    [UnsupportedOSPlatform(""ios14.0"")]
+    void Api()
+    {
+    }
+}" + MockAttributesCsSource + MockRuntimeApiSource;
+
+            await VerifyAnalyzerAsyncCs(source,
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
+                .WithMessage("'Api' is not supported or has been removed since ios 14.0 version"));
+        }
+
         [Fact]
         public async Task Unsupported_GuardedWith_IsOsNameMethods()
         {
@@ -695,7 +760,61 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact] // TODO: Need to be fixed
+        [Fact]
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+public class Test
+{
+    void M()
+    {
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        {
+            LocalM(); // We don't need to account this platform check
+        }
+
+        LocalM();
+        return;
+
+        void LocalM()
+        {
+            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            {
+                WindowsOnlyMethod();
+            }
+            else
+            {
+                [|WindowsOnlyMethod()|];
+            }
+            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            {
+                UnsupportedWindows10();
+            }
+            else
+            {
+                [|UnsupportedWindows10()|];
+            }
+        }
+    }
+
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    public void WindowsOnlyMethod()
+    {
+    }
+
+    [UnsupportedOSPlatform(""Windows10.0"")]
+    public void UnsupportedWindows10()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        /*[Fact]
         public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
         {
             var source = @"
@@ -790,7 +909,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact] // TODO: need to be fixed
+        /*[Fact]
         public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElse()
         {
             var source = @"
@@ -807,7 +926,7 @@ public class Test
     }
     public void M1()
     {
-        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
+        if(OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11, 0))
         {
             Del handler = DelegateMethod;
             handler();

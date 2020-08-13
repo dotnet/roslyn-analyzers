@@ -172,9 +172,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     versionBuilder[index++] = osVersionPart;
                 }
 
-                osVersion = arguments.Length - skip == 2 ? new Version(versionBuilder[0], versionBuilder[1]) :
-                    arguments.Length - skip == 3 ? new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]) :
-                    new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
+                osVersion = versionBuilder[3] == 0 ? versionBuilder[2] == 0 ? new Version(versionBuilder[0], versionBuilder[1]) :
+                     new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]) :
+                     new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
 
                 return true;
 

@@ -294,9 +294,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                         else
                         {
+                            capturedPlatforms.Add(info.PlatformName);
                             if (IsEmptyVersion(info.Version))
                             {
-                                capturedPlatforms.Add(info.PlatformName);
                                 if (attribute.UnsupportedFirst != null && capturedVersions.TryGetValue(info.PlatformName, out var version) && attribute.UnsupportedFirst >= version)
                                 {
                                     attribute.UnsupportedFirst = null;
@@ -650,7 +650,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             callSitePlatforms.SupportedFirst != null && checkingVersion <= callSitePlatforms.SupportedFirst ||
             callSitePlatforms.SupportedSecond != null && checkingVersion <= callSitePlatforms.SupportedSecond;
 
-        // Do not warn for conditional checks of platfomr specific enum value; 'if (value != FooEnum.WindowsOnlyValue)'
+        // Do not warn if platform specific enum/field value is used in conditional check, like: 'if (value == FooEnum.WindowsOnlyValue)'
         private static bool IsWithinConditionalOperation(IFieldReferenceOperation pOperation) =>
             pOperation.ConstantValue.HasValue &&
             pOperation.Parent is IBinaryOperation bo &&

@@ -1514,8 +1514,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckDescription">
-        <source>Using platform dependendent API on a component makes the code no longer work across all platforms.</source>
-        <target state="new">Using platform dependendent API on a component makes the code no longer work across all platforms.</target>
+        <source>Using platform dependent API on a component makes the code no longer work across all platforms.</source>
+        <target state="new">Using platform dependent API on a component makes the code no longer work across all platforms.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckObsoleteMessage">
@@ -1539,8 +1539,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityCheckRequiredOsMessage">
-        <source>'{0}' requires {1}</source>
-        <target state="new">'{0}' requires {1}</target>
+        <source>'{0}' requires {1} platform</source>
+        <target state="new">'{0}' requires {1} platform</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityCheckRequiredOsVersionMessage">

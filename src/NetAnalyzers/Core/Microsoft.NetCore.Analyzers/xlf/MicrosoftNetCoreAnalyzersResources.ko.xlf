@@ -727,6 +727,21 @@
         <target state="translated">대칭형 암호화는 항상 반복할 수 없는 초기화 벡터를 사용하여 사전 공격을 방지해야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsDescription">
+        <source>description</source>
+        <target state="new">description</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsMessage">
+        <source>message</source>
+        <target state="new">message</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsTitle">
+        <source>title</source>
+        <target state="new">title</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
         <target state="translated">사용되지 않는 보안 프로토콜을 사용하지 마세요.</target>

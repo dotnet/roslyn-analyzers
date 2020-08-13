@@ -728,6 +728,21 @@
         <target state="translated">Szyfrowanie symetryczne powinno zawsze używać wektora inicjowania, który nie jest powtarzalny, aby zapobiec atakom słownikowym.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsDescription">
+        <source>description</source>
+        <target state="new">description</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsMessage">
+        <source>message</source>
+        <target state="new">message</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsTitle">
+        <source>title</source>
+        <target state="new">title</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
         <target state="translated">Nie używaj przestarzałych protokołów zabezpieczeń</target>

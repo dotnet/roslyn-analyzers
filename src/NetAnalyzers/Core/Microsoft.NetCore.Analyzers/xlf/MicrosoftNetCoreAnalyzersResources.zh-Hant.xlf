@@ -727,6 +727,21 @@
         <target state="translated">對稱式加密應永遠使用不可重複的初始化向量以防止字典攻擊。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsDescription">
+        <source>description</source>
+        <target state="new">description</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsMessage">
+        <source>message</source>
+        <target state="new">message</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsTitle">
+        <source>title</source>
+        <target state="new">title</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
         <target state="translated">請勿使用已淘汰的安全性通訊協定</target>

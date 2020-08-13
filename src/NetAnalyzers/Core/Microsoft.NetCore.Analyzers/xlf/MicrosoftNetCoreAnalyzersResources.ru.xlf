@@ -727,6 +727,21 @@
         <target state="translated">Для предотвращения атак перебором по словарю в симметричном шифровании всегда нужно использовать невоспроизводимый вектор инициализации.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsDescription">
+        <source>description</source>
+        <target state="new">description</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsMessage">
+        <source>message</source>
+        <target state="new">message</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsTitle">
+        <source>title</source>
+        <target state="new">title</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
         <target state="translated">Не используйте нерекомендуемые протоколы безопасности</target>

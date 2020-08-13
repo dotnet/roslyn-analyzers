@@ -727,6 +727,21 @@
         <target state="translated">対称暗号化では、辞書攻撃を防ぐために、反復不能な初期化ベクトルを常に使用する必要があります。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsDescription">
+        <source>description</source>
+        <target state="new">description</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsMessage">
+        <source>message</source>
+        <target state="new">message</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCryptographicHardwareIntrinsicsTitle">
+        <source>title</source>
+        <target state="new">title</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
         <target state="translated">非推奨のセキュリティ プロトコルを使用しない</target>

@@ -610,7 +610,19 @@ class C
         }
     }
 }";
-            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(12, 19, 12, 68));
+            var test = new Test.Utilities.CSharpCodeFixVerifier<
+    PreferStreamAsyncMemoryOverloads,
+    CSharp.Analyzers.Runtime.CSharpPreferStreamAsyncMemoryOverloadsFixer>.Test
+            {
+                TestCode = originalCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne
+            };
+            test.ExpectedDiagnostics.Add(GetCSharpResult(12, 19, 12, 68));
+            return test.RunAsync();
+
+            // return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(12, 19, 12, 68));
         }
 
         [Theory]

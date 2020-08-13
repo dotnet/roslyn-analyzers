@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 
 string nuspecFile = Args[0];
@@ -222,12 +223,15 @@ if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
 
 if (globalAnalyzerConfigsDir.Length > 0 && Directory.Exists(globalAnalyzerConfigsDir))
 {
-    foreach (string directory in Directory.EnumerateDirectories(globalAnalyzerConfigsDir))
+    foreach (string editorconfig in Directory.EnumerateFiles(globalAnalyzerConfigsDir))
     {
-        var directoryName = new DirectoryInfo(directory).Name;
-        foreach (string editorconfig in Directory.EnumerateFiles(directory))
+        if (Path.GetExtension(editorconfig) == ".editorconfig")
         {
-            result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"build\\config\\{directoryName}"));
+            result.AppendLine(FileElement(Path.Combine(globalAnalyzerConfigsDir, editorconfig), $"build\\config"));
+        }
+        else
+        {
+            throw new InvalidDataException($"Encountered a file with unexpected extension: {editorconfig}");
         }
     }
 }

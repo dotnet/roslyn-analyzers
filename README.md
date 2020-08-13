@@ -14,13 +14,39 @@ Roslyn analyzers analyze your code for style, quality and maintainability, desig
 
 Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) that contains the most important "FxCop" rules from static code analysis, converted to Roslyn analyzers. These analyzers check your code for security, performance, and design issues, among others. The documentation for FxCop analyzers in Visual Studio can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
 
+# Microsoft.CodeAnalysis.NetAnalyzers
+
+*Latest stable version:* _Not yet released_
+
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.NetAnalyzers&protocolType=NuGet)
+
+This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
+
+You do not need to manually install this NuGet package to your project if you are using .NET5 SDK or later. These analyzers are enabled by default for projects targeting .NET5 or later. For projects targeting earlier .NET frameworks, you can enable them in your MSBuild project file by setting one of the following properties:
+
+1. _EnableNETAnalyzers_
+
+```xml
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  </PropertyGroup>
+```
+
+2. _AnalysisLevel_
+
+```xml
+  <PropertyGroup>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+```
+
 # Microsoft.CodeAnalysis.FxCopAnalyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.FxCopAnalyzers&protocolType=NuGet)
 
-This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. The documentation for FxCop Analyzers and FAQs about migrating from legacy post-build static analysis also known as "FxCop" to FxCop Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
+This is a migration analyzer package for existing binary FxCop users. It contains all **the ported FxCop code analysis rules (CAxxxx)**. The documentation for FxCop Analyzers and FAQs about migrating from legacy post-build static analysis also known as "FxCop" to FxCop Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
 
 The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
@@ -107,8 +133,8 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
    2. .NET Core cross-platform development
    3. Visual Studio extension development
 2. Clone this repository
-3. Open the VS developer command prompt or PowerShell
-4. Go to the directory of the Roslyn Analyzer Repo
+3. Install .NET Core SDK version specified in `.\global.json` with `"dotnet":` from [here](https://dotnet.microsoft.com/download/dotnet-core).
+4. Open a command prompt and go to the directory of the Roslyn Analyzer Repo
 5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
 6. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
 

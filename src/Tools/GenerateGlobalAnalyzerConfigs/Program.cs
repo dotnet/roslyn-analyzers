@@ -133,25 +133,21 @@ namespace GenerateGlobalAnalyzerConfigs
                 return 6;
             }
 
-            // Bail out if there are no shipped releases: User cannot choose a version specific global analyzer config.
-            if (versionsBuilder.Count == 0)
+            if (versionsBuilder.Count > 0)
             {
-                return 0;
-            }
+                var shippedFilesData = shippedFilesDataBuilder.ToImmutable();
 
-            var shippedFilesData = shippedFilesDataBuilder.ToImmutable();
-
-            // Generate global analyzer config files for each shipped version, if required.
-            foreach (var version in versionsBuilder)
-            {
-                var versionString = version.ToString().Replace(".", "_", StringComparison.Ordinal);
-                CreateEditorconfigIfRequired(
-                    outputDir,
-                    $"RulesVersion{versionString}",
-                    $"Rules from '{version}' release",
-                    $"Rules with default severity and enabled state from '{version}' release. Rules that are first released in a version later then '{version}' are disabled.",
-                    allRulesById,
-                    (shippedFilesData, version));
+                // Generate global analyzer config files for each shipped version, if required.
+                foreach (var version in versionsBuilder)
+                {
+                    CreateEditorconfig(
+                        outputDir,
+                        $"AnalysisLevel_{GetNormalizedVersionStringForEditorconfigFileNameSuffix(version)}.editorconfig",
+                        $"Rules from '{version}' release",
+                        $"Rules with default severity and enabled state from '{version}' release. Rules that are first released in a version later then '{version}' are disabled.",
+                        allRulesById,
+                        (shippedFilesData, version));
+                }
             }
 
             CreateTargetsFile(targetsFileDir, targetsFileName, packageName);
@@ -159,6 +155,32 @@ namespace GenerateGlobalAnalyzerConfigs
             return 0;
 
             // Local functions.
+            static string GetNormalizedVersionStringForEditorconfigFileNameSuffix(Version version)
+            {
+                var fieldCount = GetVersionFieldCount(version);
+                return version.ToString(fieldCount).Replace(".", "_", StringComparison.Ordinal);
+
+                static int GetVersionFieldCount(Version version)
+                {
+                    if (version.Revision > 0)
+                    {
+                        return 4;
+                    }
+
+                    if (version.Build > 0)
+                    {
+                        return 3;
+                    }
+
+                    if (version.Minor > 0)
+                    {
+                        return 2;
+                    }
+
+                    return 1;
+                }
+            }
+
             static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
                 => throw e.Exception;
 
@@ -170,33 +192,28 @@ namespace GenerateGlobalAnalyzerConfigs
             }
         }
 
-        private static void CreateEditorconfigIfRequired(
+        private static void CreateEditorconfig(
             string folder,
-            string subFolder,
+            string editorconfigFileName,
             string editorconfigTitle,
             string editorconfigDescription,
             SortedList<string, DiagnosticDescriptor> sortedRulesById,
             (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version) shippedReleaseData)
         {
+            Debug.Assert(editorconfigFileName.EndsWith(".editorconfig", StringComparison.Ordinal));
+
             var text = GetEditorconfigText(
                 editorconfigTitle,
                 editorconfigDescription,
                 sortedRulesById,
                 shippedReleaseData);
-            if (text == null)
-            {
-                // Identical set of rules + default severity and enabled state for rules between this release and latest.
-                // We don't need to generate a global editor config.
-                return;
-            }
-
-            var directory = Directory.CreateDirectory(Path.Combine(folder, subFolder));
-            var editorconfigFilePath = Path.Combine(directory.FullName, ".editorconfig");
+            var directory = Directory.CreateDirectory(folder);
+            var editorconfigFilePath = Path.Combine(directory.FullName, editorconfigFileName);
             File.WriteAllText(editorconfigFilePath, text);
             return;
 
             // Local functions
-            static string? GetEditorconfigText(
+            static string GetEditorconfigText(
                 string editorconfigTitle,
                 string editorconfigDescription,
                 SortedList<string, DiagnosticDescriptor> sortedRulesById,
@@ -204,8 +221,8 @@ namespace GenerateGlobalAnalyzerConfigs
             {
                 var result = new StringBuilder();
                 StartEditorconfig();
-                var added = AddRules();
-                return added ? result.ToString() : null;
+                AddRules();
+                return result.ToString();
 
                 void StartEditorconfig()
                 {
@@ -329,16 +346,18 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             static string GetGlobalAnalyzerConfigTargetContents(string packageName)
             {
                 var trimmedPackageName = packageName.Replace(".", string.Empty, StringComparison.Ordinal);
-                string packageVersionPropName = trimmedPackageName + "RulesVersion";
+                var packageVersionPropName = trimmedPackageName + "RulesVersion";
+                var propertyStringForSettingDefaultPropertyValue = GetPropertyStringForSettingDefaultPropertyValue(packageName, packageVersionPropName);
+
                 return $@"
   <Target Name=""AddGlobalAnalyzerConfigForPackage_{trimmedPackageName}"" BeforeTargets=""CoreCompile"" Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
     <!-- PropertyGroup to compute global analyzer config file to be used -->
-    <PropertyGroup>
-      <!-- GlobalAnalyzerConfig folder name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
-      <_GlobalAnalyzerConfigFolderName Condition=""'$({packageVersionPropName})' != ''"">RulesVersion$({packageVersionPropName}.Replace(""."",""_""))</_GlobalAnalyzerConfigFolderName>
+    <PropertyGroup>{propertyStringForSettingDefaultPropertyValue}
+      <!-- GlobalAnalyzerConfig file name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
+      <_GlobalAnalyzerConfigFileName Condition=""'$({packageVersionPropName})' != ''"">AnalysisLevel_$({packageVersionPropName}.Replace(""."",""_"")).editorconfig</_GlobalAnalyzerConfigFileName>
       
-      <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config\$(_GlobalAnalyzerConfigFolderName)</_GlobalAnalyzerConfigDir>
-      <_GlobalAnalyzerConfigFile>$(_GlobalAnalyzerConfigDir)\.editorconfig</_GlobalAnalyzerConfigFile>
+      <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir>
+      <_GlobalAnalyzerConfigFile Condition=""'$(_GlobalAnalyzerConfigFileName)' != ''"">$(_GlobalAnalyzerConfigDir)\$(_GlobalAnalyzerConfigFileName)</_GlobalAnalyzerConfigFile>
     </PropertyGroup>
 
     <ItemGroup Condition=""Exists('$(_GlobalAnalyzerConfigFile)')"">
@@ -346,6 +365,19 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
     </ItemGroup>
   </Target>
 ";
+
+                static string GetPropertyStringForSettingDefaultPropertyValue(string packageName, string packageVersionPropName)
+                {
+                    if (packageName == "Microsoft.CodeAnalysis.NetAnalyzers")
+                    {
+                        return $@"
+      <!-- Default '{packageVersionPropName}' to 'EffectiveAnalysisLevel' with trimmed trailing '.0' -->
+      <{packageVersionPropName} Condition=""'$({packageVersionPropName})' == '' and $(EffectiveAnalysisLevel) != ''"">$([System.Text.RegularExpressions.Regex]::Replace($(EffectiveAnalysisLevel), '(.0)*$', ''))</{packageVersionPropName}>
+";
+                    }
+
+                    return string.Empty;
+                }
             }
 
             static string GetMSBuildContentForPropertyAndItemOptions()
@@ -413,9 +445,10 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
             static string GetPackageSpecificContents(string packageName)
             {
-                if (packageName == "Microsoft.CodeAnalysis.Analyzers")
+                switch (packageName)
                 {
-                    return @"
+                    case "Microsoft.CodeAnalysis.Analyzers":
+                        return @"
   <!-- Target to add all 'EmbeddedResource' files with '.resx' extension as analyzer additional files -->
   <Target Name=""AddAllResxFilesAsAdditionalFiles"" BeforeTargets=""CoreCompile"" Condition=""'@(EmbeddedResource)' != '' AND '$(SkipAddAllResxFilesAsAdditionalFiles)' != 'true'"">
     <ItemGroup>
@@ -431,10 +464,9 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')"" >
 	<AdditionalFiles Include=""AnalyzerReleases.Unshipped.md"" />
   </ItemGroup>";
-                }
-                else if (packageName == "Microsoft.CodeAnalysis.PublicApiAnalyzers")
-                {
-                    return @"
+
+                    case "Microsoft.CodeAnalysis.PublicApiAnalyzers":
+                        return @"
 
   <!-- Workaround for https://github.com/dotnet/roslyn/issues/4655 -->
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Shipped.txt')"" >
@@ -443,9 +475,24 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
   <ItemGroup Condition=""Exists('$(MSBuildProjectDirectory)\PublicAPI.Unshipped.txt')"" >
 	<AdditionalFiles Include=""PublicAPI.Unshipped.txt"" />
   </ItemGroup>";
-                }
 
-                return string.Empty;
+                    case "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers":
+                        return @"
+  <PropertyGroup>
+    <GeneratePerformanceSensitiveAttribute Condition=""'$(GeneratePerformanceSensitiveAttribute)' == ''"">true</GeneratePerformanceSensitiveAttribute>
+    <PerformanceSensitiveAttributePath Condition=""'$(PerformanceSensitiveAttributePath)' == ''"">$(MSBuildThisFileDirectory)PerformanceSensitiveAttribute$(DefaultLanguageSourceExtension)</PerformanceSensitiveAttributePath>
+  </PropertyGroup>
+
+  <ItemGroup Condition=""'$(GeneratePerformanceSensitiveAttribute)' == 'true' and Exists($(PerformanceSensitiveAttributePath))"">
+    <Compile Include=""$(PerformanceSensitiveAttributePath)"" Visible=""false"" />
+    
+    <!-- Make sure the source file is embedded in PDB to support Source Link -->
+    <EmbeddedFiles Condition=""'$(DebugType)' != 'none'"" Include=""$(PerformanceSensitiveAttributePath)"" />
+  </ItemGroup>";
+
+                    default:
+                        return string.Empty;
+                }
             }
         }
 

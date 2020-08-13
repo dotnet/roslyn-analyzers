@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Security.CryptographicHardwareIntrinsicsAnalyzer,
@@ -23,7 +25,15 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         [Fact]
         public async Task InvokingDecryptLast_CS_Diagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var test = new VerifyCS.Test
+            {
+                ReferenceAssemblies = new ReferenceAssemblies(
+                    "netcoreapp3.1",
+                    new PackageIdentity(
+                        "Microsoft.NETCore.App.Ref",
+                        "3.1.0"),
+                    Path.Combine("ref", "netcoreapp3.1")),
+                TestCode = @"
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
@@ -34,7 +44,11 @@ public class C
         return Aes.Decrypt(default, default);
     }
 }
-", GetCSharpResultAt(9, 20));
+"
+            };
+            test.ExpectedDiagnostics.Add(GetCSharpResultAt(9, 16));
+            await test.RunAsync();
+
         }
     }
 }

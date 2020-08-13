@@ -194,6 +194,9 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeInteropServicesSafeHandle = "System.Runtime.InteropServices.SafeHandle";
         public const string SystemRuntimeInteropServicesStructLayoutAttribute = "System.Runtime.InteropServices.StructLayoutAttribute";
         public const string SystemRuntimeInteropServicesUnmanagedType = "System.Runtime.InteropServices.UnmanagedType";
+        public const string SystemRuntimeIntrinsicsX86Aes = "System.Runtime.Intrinsics.X86.Aes";
+        public const string SystemRuntimeSerializationDataContractAttribute = "System.Runtime.Serialization.DataContractAttribute";
+        public const string SystemRuntimeSerializationDataContractSerializer = "System.Runtime.Serialization.DataContractSerializer";
         public const string SystemRuntimeSerializationDataMemberAttribute = "System.Runtime.Serialization.DataMemberAttribute";
         public const string SystemRuntimeSerializationFormattersBinaryBinaryFormatter = "System.Runtime.Serialization.Formatters.Binary.BinaryFormatter";
         public const string SystemRuntimeSerializationIDeserializationCallback = "System.Runtime.Serialization.IDeserializationCallback";

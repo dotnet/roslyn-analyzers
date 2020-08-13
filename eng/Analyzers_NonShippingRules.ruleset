@@ -30,6 +30,6 @@
   </Rules>
 
   <Rules AnalyzerId="xunit.analyzers" RuleNamespace="Xunit.Analyzers">
-    <Rule Id="xUnit1004" Action="None" /> <!-- allow skipped tests -->
+    <Rule Id="xUnit1004" Action="Hidden" /> <!-- allow skipped tests, but also enable the refactoring to enable them -->
   </Rules>
 </RuleSet>

@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             context.RegisterCompilationStartAction(
                 compilationStartContext =>
@@ -40,19 +40,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     if (symbol is object)
                     {
                         compilationStartContext.RegisterOperationAction(
-                            context => AnalyzeObjectCreation(context, symbol),
-                            OperationKind.ObjectCreation);
+                            context => AnalyzeInvocation(context, symbol),
+                            OperationKind.Invocation);
+
+                        compilationStartContext.RegisterOperationAction(
+                            context => AnalyzeMethodReference(context, symbol),
+                            OperationKind.MethodReference);
                     }
 
                 });
         }
 
-        private static void AnalyzeObjectCreation(OperationAnalysisContext context, INamedTypeSymbol symbol)
+        private static void AnalyzeInvocation(OperationAnalysisContext context, INamedTypeSymbol symbol)
         {
-            var objectCreation = (IObjectCreationOperation)context.Operation;
-            if (objectCreation.Constructor.ContainingType.DerivesFrom(symbol))
+            var operation = (IInvocationOperation)context.Operation;
+            var operationTargetSymbol = operation.TargetMethod.ContainingType;
+
+            if (Equals(symbol, operationTargetSymbol))
             {
-                context.ReportDiagnostic(objectCreation.CreateDiagnostic(s_rule));
+                context.ReportDiagnostic(operation.CreateDiagnostic(s_rule));
+            }
+        }
+
+        private static void AnalyzeMethodReference(OperationAnalysisContext context, INamedTypeSymbol symbol)
+        {
+            var operation = (IMethodReferenceOperation)context.Operation;
+            var operationTargetSymbol = operation.Method.ContainingType;
+
+            if (Equals(symbol, operationTargetSymbol))
+            {
+                context.ReportDiagnostic(operation.CreateDiagnostic(s_rule));
             }
         }
     }

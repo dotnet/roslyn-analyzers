@@ -54,4 +54,5 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var typeSymbol = objectCreation.Constructor.ContainingType;
             // TODO: context.ReportDiagnostic if the object creation is a type derived from "symbol".
         }
+    }
 }

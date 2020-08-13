@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -21,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCryptographicHardwareIntrinsicsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor s_rule = DiagnosticDescriptorHelper.Create(
-            "",
+            "CA5404",
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Security,
@@ -40,19 +36,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
             context.RegisterCompilationStartAction(
                 compilationStartContext =>
                 {
-                    INamedTypeSymbol symbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsX86Aes);
+                    INamedTypeSymbol? symbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeIntrinsicsX86Aes);
+                    if (symbol is object)
+                    {
+                        compilationStartContext.RegisterOperationAction(
+                            context => AnalyzeObjectCreation(context, symbol),
+                            OperationKind.ObjectCreation);
+                    }
 
-                    compilationStartContext.RegisterOperationAction(
-                        context => AnalyzeObjectCreation(context, tooGenericExceptionSymbols, reservedExceptionSymbols),
-                        OperationKind.ObjectCreation);
                 });
         }
 
         private static void AnalyzeObjectCreation(OperationAnalysisContext context, INamedTypeSymbol symbol)
         {
             var objectCreation = (IObjectCreationOperation)context.Operation;
-            var typeSymbol = objectCreation.Constructor.ContainingType;
-            // TODO: context.ReportDiagnostic if the object creation is a type derived from "symbol".
+            if (objectCreation.Constructor.ContainingType.DerivesFrom(symbol))
+            {
+                context.ReportDiagnostic(objectCreation.CreateDiagnostic(s_rule));
+            }
         }
     }
 }

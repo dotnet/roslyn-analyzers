@@ -133,10 +133,11 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
    2. .NET Core cross-platform development
    3. Visual Studio extension development
 2. Clone this repository
-3. Open the VS developer command prompt or PowerShell
-4. Go to the directory of the Roslyn Analyzer Repo
-5. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
-6. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
+3. Install .NET Core SDK version specified in `.\global.json` with `"dotnet":` from [here](https://dotnet.microsoft.com/download/dotnet-core).
+4. Open the VS developer command prompt or PowerShell
+5. Go to the directory of the Roslyn Analyzer Repo
+6. Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell).
+7. Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
 
 # Submitting Pull Requests
 

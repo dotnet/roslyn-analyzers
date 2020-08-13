@@ -371,8 +371,8 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
                     if (packageName == "Microsoft.CodeAnalysis.NetAnalyzers")
                     {
                         return $@"
-      <!-- Default '{packageVersionPropName}' to 'AnalysisLevel' -->
-      <{packageVersionPropName} Condition=""'$({packageVersionPropName})' == '' and $(AnalysisLevel) != ''"">$(AnalysisLevel)</{packageVersionPropName}>
+      <!-- Default '{packageVersionPropName}' to 'EffectiveAnalysisLevel' with trimmed trailing '.0' -->
+      <{packageVersionPropName} Condition=""'$({packageVersionPropName})' == '' and $(EffectiveAnalysisLevel) != ''"">$([System.Text.RegularExpressions.Regex]::Replace($(EffectiveAnalysisLevel), '(.0)*$', ''))</{packageVersionPropName}>
 ";
                     }
 

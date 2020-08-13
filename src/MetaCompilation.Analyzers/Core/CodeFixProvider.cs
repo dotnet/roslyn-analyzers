@@ -652,7 +652,7 @@ namespace MetaCompilation.Analyzers
 
             string analysisMethodName = CodeFixHelper.AnalysisMethodName(declaration);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var newAnalysisMethod = CodeFixHelper.CreateAnalysisMethod(generator, analysisMethodName, semanticModel) as MethodDeclarationSyntax;
 
             ClassDeclarationSyntax classDeclaration = declaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
@@ -1185,7 +1185,7 @@ namespace MetaCompilation.Analyzers
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
@@ -1202,7 +1202,7 @@ namespace MetaCompilation.Analyzers
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
-            SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             bool newAnalysisRequired = false;
 
             string methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
@@ -1555,7 +1555,7 @@ namespace MetaCompilation.Analyzers
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             SyntaxNode[] throwStatement = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };

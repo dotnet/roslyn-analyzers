@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
+                ConcurrentDictionary<INamedTypeSymbol, object?> instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
                 var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
 
                 var compilation = startContext.Compilation;
@@ -307,7 +307,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var taskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
-            var genericTaskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
+            var genericTaskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1);
 
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.

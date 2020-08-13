@@ -1281,9 +1281,36 @@ End Namespace",
         }
 
         [Fact]
-        public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx46ShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx451ShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Reflection;               
+using System.Xml;   
+
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute("".NETFramework,Version=v4.5.1"", FrameworkDisplayName = "".NET Framework 4.5.1"")]
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(string path)
+        {
+            XmlTextReader reader = new XmlTextReader(path);
+            reader.DtdProcessing = DtdProcessing.Prohibit;
+        }
+    }
+}
+"
+            );
+        }
+
+        [Fact]
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx46ShouldNotGenerateDiagnostic()
+        {
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net46.Default,
+                @"
 using System;
 using System.Reflection;               
 using System.Xml;   
@@ -1304,7 +1331,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net46.Default,
+                @"
 Imports System.Reflection
 Imports System.Xml
 
@@ -1323,7 +1352,9 @@ End Namespace");
         [Fact]
         public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx452ShouldNotGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net452.Default,
+                @"
 using System;
 using System.Reflection;               
 using System.Xml;   
@@ -1344,7 +1375,9 @@ namespace TestNamespace
 "
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net452.Default,
+                @"
 Imports System.Reflection
 Imports System.Xml
 

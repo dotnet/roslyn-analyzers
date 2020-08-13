@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Humanizer",
-        "version": "2.9.9",
+        "version": "2.9.10",
         "language": "en-US"
       },
       "rules": {
@@ -14,7 +14,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "2.9.9",
+        "version": "2.9.10",
         "language": "en-US"
       },
       "rules": {
@@ -61,8 +61,8 @@
         },
         "CA1010": {
           "id": "CA1010",
-          "shortDescription": "Collections should implement generic interface",
-          "fullDescription": "To broaden the usability of a collection, implement one of the generic collection interfaces. Then the collection can be used to populate generic collection types.",
+          "shortDescription": "Generic interface should also be implemented",
+          "fullDescription": "To broaden the usability of a type, implement one of the generic interfaces. This is especially true for collections as they can then be used to populate generic collection types.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1010",
           "properties": {
@@ -1219,7 +1219,7 @@
         "CA1822": {
           "id": "CA1822",
           "shortDescription": "Mark members as static",
-          "fullDescription": "Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.",
+          "fullDescription": "Members that do not access instance data or call instance methods can be marked as static. After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1822",
           "properties": {
@@ -1515,7 +1515,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "2.9.9",
+        "version": "2.9.10",
         "language": "en-US"
       },
       "rules": {
@@ -1712,7 +1712,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "2.9.9",
+        "version": "2.9.10",
         "language": "en-US"
       },
       "rules": {

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.NetCore.Analyzers.Performance
+namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class CryptographicHardwareIntrinsicsAnalyzer : DiagnosticAnalyzer

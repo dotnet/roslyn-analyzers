@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             "",
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.Performance,
+            DiagnosticCategory.Security,
             RuleLevel.IdeSuggestion,
             description: s_localizableDescription,
             isPortedFxCopRule: false,

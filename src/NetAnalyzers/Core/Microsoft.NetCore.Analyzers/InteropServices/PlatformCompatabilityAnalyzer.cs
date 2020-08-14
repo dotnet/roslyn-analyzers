@@ -768,6 +768,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attributes.UnsupportedFirst > version)
                 {
+                    if (attributes.UnsupportedSecond != null)
+                    {
+                        if (attributes.UnsupportedSecond > attributes.UnsupportedFirst)
+                        {
+                            attributes.UnsupportedSecond = attributes.UnsupportedFirst;
+                        }
+                    }
+                    else
+                    {
+                        attributes.UnsupportedSecond = attributes.UnsupportedFirst;
+                    }
+
                     attributes.UnsupportedFirst = version;
                 }
                 else
@@ -797,6 +809,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (attributes.SupportedFirst > version)
                 {
+                    if (attributes.SupportedSecond != null)
+                    {
+                        if (attributes.SupportedSecond < attributes.SupportedFirst)
+                        {
+                            attributes.SupportedSecond = attributes.SupportedFirst;
+                        }
+                    }
+                    else
+                    {
+                        attributes.SupportedSecond = attributes.SupportedFirst;
+                    }
+
                     attributes.SupportedFirst = version;
                 }
                 else

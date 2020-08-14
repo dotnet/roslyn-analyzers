@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis;
 using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
+using System.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
@@ -71,34 +72,36 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return true;
                     }
 
-                    if (arguments[0].Value is ILiteralOperation literal &&
-                        literal.Type?.SpecialType == SpecialType.System_String &&
-                        literal.ConstantValue.HasValue)
+                    if (arguments[0].Value is ILiteralOperation literal)
                     {
-                        // OperatingSystem.IsOSPlatform(string platform)
-                        if (invokedPlatformCheckMethod.Name == IsOSPlatform &&
-                            TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                        if (literal.Type?.SpecialType == SpecialType.System_String &&
+                            literal.ConstantValue.HasValue)
                         {
-                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
-                            return true;
+                            // OperatingSystem.IsOSPlatform(string platform)
+                            if (invokedPlatformCheckMethod.Name == IsOSPlatform &&
+                                TryParsePlatformNameAndVersion(literal.ConstantValue.Value.ToString(), out string platformName, out Version? version))
+                            {
+                                info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                                return true;
+                            }
+                            else if (TryDecodeOSVersion(arguments, valueContentAnalysisResult, out version, 1))
+                            {
+                                // OperatingSystem.IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0)
+                                Debug.Assert(invokedPlatformCheckMethod.Name == IsOSPlatformVersionAtLeast);
+                                info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, literal.ConstantValue.Value.ToString(), version, negated: false);
+                                return true;
+                            }
                         }
-
-                        // OperatingSystem.IsOSPlatformVersionAtLeast(string platform, int major, int minor = 0, int build = 0, int revision = 0)
-                        if (TryDecodeOSVersion(arguments, valueContentAnalysisResult, out version, 1))
+                        else if (literal.Type?.SpecialType == SpecialType.System_Int32)
                         {
-                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, literal.ConstantValue.Value.ToString(), version, negated: false);
-                            return true;
-                        }
-                    }
-                    else if (arguments[0].Value is ILiteralOperation intLiteral && intLiteral.Type?.SpecialType == SpecialType.System_Int32)
-                    {
-                        // Accelerators like OperatingSystem.IsPlatformNameVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0)
-                        var platformName = SwitchVersionedPlatformName(invokedPlatformCheckMethod.Name);
+                            // Accelerators like OperatingSystem.IsPlatformNameVersionAtLeast(int major, int minor = 0, int build = 0, int revision = 0)
+                            var platformName = SwitchVersionedPlatformName(invokedPlatformCheckMethod.Name);
 
-                        if (platformName != null && TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var version))
-                        {
-                            info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
-                            return true;
+                            if (platformName != null && TryDecodeOSVersion(arguments, valueContentAnalysisResult, out var version))
+                            {
+                                info = new RuntimeMethodValue(invokedPlatformCheckMethod.Name, platformName, version, negated: false);
+                                return true;
+                            }
                         }
                     }
                 }
@@ -172,9 +175,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     versionBuilder[index++] = osVersionPart;
                 }
 
-                osVersion = versionBuilder[3] == 0 ? versionBuilder[2] == 0 ? new Version(versionBuilder[0], versionBuilder[1]) :
-                     new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]) :
-                     new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
+                osVersion = CreateVersion(versionBuilder);
 
                 return true;
 
@@ -201,6 +202,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                     osVersionPart = default;
                     return false;
+                }
+
+                static Version CreateVersion(ArrayBuilder<int> versionBuilder)
+                {
+                    if (versionBuilder[3] == 0)
+                    {
+                        if (versionBuilder[2] == 0)
+                        {
+                            return new Version(versionBuilder[0], versionBuilder[1]);
+                        }
+                        else
+                        {
+                            return new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2]);
+                        }
+                    }
+                    else
+                    {
+                        return new Version(versionBuilder[0], versionBuilder[1], versionBuilder[2], versionBuilder[3]);
+                    }
                 }
             }
 

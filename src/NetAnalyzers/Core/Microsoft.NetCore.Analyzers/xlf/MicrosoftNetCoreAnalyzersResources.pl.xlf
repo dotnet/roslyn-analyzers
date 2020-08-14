@@ -1519,8 +1519,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckObsoleteMessage">
-        <source>'{0}' has been deprecated since {1} {2} version</source>
-        <target state="new">'{0}' has been deprecated since {1} {2} version</target>
+        <source>'{0}' has been deprecated since '{1}' {2}</source>
+        <target state="new">'{0}' has been deprecated since '{1}' {2}</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckTitle">
@@ -1529,23 +1529,23 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckUnsupportedOsMessage">
-        <source>'{0}' is not supported or has been removed from {1}</source>
-        <target state="new">'{0}' is not supported or has been removed from {1}</target>
+        <source>'{0}' is not supported or has been removed from '{1}'</source>
+        <target state="new">'{0}' is not supported or has been removed from '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckUnsupportedOsVersionMessage">
-        <source>'{0}' is not supported or has been removed since {1} {2} version</source>
-        <target state="new">'{0}' is not supported or has been removed since {1} {2} version</target>
+        <source>'{0}' is not supported or has been removed since '{1}' {2}</source>
+        <target state="new">'{0}' is not supported or has been removed since '{1}' {2}</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityCheckRequiredOsMessage">
-        <source>'{0}' requires {1} platform</source>
-        <target state="new">'{0}' requires {1} platform</target>
+        <source>'{0}' requires '{1}'</source>
+        <target state="new">'{0}' requires '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityCheckRequiredOsVersionMessage">
-        <source>'{0}' requires {1} {2} version or later</source>
-        <target state="new">'{0}' requires {1} {2} version or later</target>
+        <source>'{0}' requires '{1}' {2} or later</source>
+        <target state="new">'{0}' requires '{1}' {2} or later</target>
         <note />
       </trans-unit>
       <trans-unit id="PotentialReferenceCycleInDeserializedObjectGraphDescription">

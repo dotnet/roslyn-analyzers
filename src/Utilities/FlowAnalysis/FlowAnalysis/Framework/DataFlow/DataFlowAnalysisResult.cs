@@ -139,7 +139,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         {
             foreach (var kvp in _interproceduralResultsMap)
             {
-                if (kvp.Key is IInvocationOperation iOperation && iOperation.TargetMethod.OriginalDefinition.Equals(symbol))
+                if (kvp.Key is IInvocationOperation iOperation && iOperation.TargetMethod.Equals(symbol))
                 {
                     return (DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>)kvp.Value;
                 }

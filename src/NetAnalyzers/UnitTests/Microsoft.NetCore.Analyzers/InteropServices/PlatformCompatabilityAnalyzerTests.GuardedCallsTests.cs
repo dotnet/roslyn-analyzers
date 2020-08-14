@@ -70,7 +70,7 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
-                .WithMessage("'Api' is not supported or has been removed since ios 14.0 version"));
+                .WithMessage("'Api' is not supported or has been removed since 'ios' 14.0"));
         }
 
         [Fact]
@@ -326,6 +326,42 @@ class Test
     }
 }" + MockAttributesCsSource + MockRuntimeApiSource;
 
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task GuardedCalled_SimpleIfElse_VersionNotMatch_Warns()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+[assembly:SupportedOSPlatform(""windows7.0"")]
+
+static class Program
+{
+    public static void Main()
+    {
+        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        {
+            [|WindowsSpecificApis.WindowsOnlyMethod()|];
+        }
+        else
+        {
+            [|WindowsSpecificApis.WindowsOnlyMethod()|];
+        }
+    }
+}
+
+public class WindowsSpecificApis
+{
+    [SupportedOSPlatform(""windows10.1.2.3"")]
+    public static void WindowsOnlyMethod() { }
+
+    [UnsupportedOSPlatform(""windows10.1.2.3"")]
+    public static void UnsupportedWindows10() { }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -761,7 +797,66 @@ public class Test
         }
 
         [Fact]
-        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromNotGuardedDifferentContext()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+public class Test
+{
+    void M()
+    {
+        LocalM();
+
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 2))
+        {
+            LocalM();
+        }
+
+        LocalM();
+        return;
+
+        void LocalM()
+        {
+            [|WindowsOnlyMethod()|];
+
+            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            {
+                WindowsOnlyMethod();
+            }
+            else
+            {
+                [|WindowsOnlyMethod()|];
+            }
+
+            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            {
+                UnsupportedWindows10();
+            }
+            else
+            {
+                [|UnsupportedWindows10()|];
+            }
+        }
+    }
+
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    public void WindowsOnlyMethod()
+    {
+    }
+
+    [UnsupportedOSPlatform(""Windows10.0"")]
+    public void UnsupportedWindows10()
+    {
+    }
+}
+" + MockAttributesCsSource + MockRuntimeApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromGuardedDifferentContext()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -773,22 +868,29 @@ public class Test
     {
         if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
-            LocalM(); // We don't need to account this platform check
+            LocalM();
         }
 
-        LocalM();
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+        {
+            LocalM();
+        }
+
         return;
 
         void LocalM()
         {
+            WindowsOnlyMethod();
+
             if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             {
                 WindowsOnlyMethod();
             }
             else
             {
-                [|WindowsOnlyMethod()|];
+                WindowsOnlyMethod();
             }
+
             if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
             {
                 UnsupportedWindows10();

@@ -572,15 +572,14 @@ class C
             string originalCode = @"
 using System.IO;
 using System.Threading;
-
 class C
 {
     public async void M()
     {
-        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
         {
             byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
-            await s.WriteAsync(buffer, 0, 8);
+            await s.WriteAsync(buffer, 0, buffer.Length);
         }
     }
 }";
@@ -593,14 +592,14 @@ class C
 {
     public async void M()
     {
-        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
         {
             byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
-            await s.WriteAsync(buffer.AsMemory(0, 8));
+            await s.WriteAsync(buffer.AsMemory(0, buffer.Length));
         }
     }
 }";
-            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(12, 19, 12, 68));
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(11, 19, 11, 57));
         }
 
         [Theory]
@@ -761,12 +760,11 @@ End Module
             string originalCode = @"
 Imports System.IO
 Imports System.Threading
-
 Class C
     Public Async Sub M()
-        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
             Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
-            Await s.WriteAsync(buffer, 0, 8)
+            Await s.WriteAsync(buffer, 0, buffer.Length)
         End Using
     End Sub
 End Class
@@ -778,14 +776,14 @@ Imports System
 
 Class C
     Public Async Sub M()
-        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
             Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
-            Await s.WriteAsync(buffer.AsMemory(0, 8))
+            Await s.WriteAsync(buffer.AsMemory(0, buffer.Length))
         End Using
     End Sub
 End Class
 ";
-            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetVisualBasicResult(9, 19, 9, 70));
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetVisualBasicResult(8, 19, 8, 57));
         }
 
         [Theory]

@@ -123,7 +123,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Generate an invocation of the AsMemory() method from the byte array object, using the correct named arguments
             SyntaxNode asMemoryExpressionNode = generator.MemberAccessExpression(bufferValueNode.WithoutTrivia(), memberName: "AsMemory");
-
             SyntaxNode asMemoryInvocationNode = generator.InvocationExpression(
                 asMemoryExpressionNode,
                 namedStartNode.WithTriviaFrom(offsetValueNode),
@@ -152,10 +151,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             bool containsSystemImport = IsSystemNamespaceImported(generator.GetNamespaceImports(root));
 
-            SyntaxNode rootWithImports = containsSystemImport ? root : generator.AddNamespaceImports(root, generator.NamespaceImportDeclaration("System").WithAddImportsAnnotation());
-            SyntaxNode newRoot = generator.ReplaceNode(rootWithImports, invocation.Syntax, newInvocationExpression.WithTriviaFrom(invocation.Syntax));
+            // The invocation needs to be replaced before adding the import/using, it won't work the other way around
+            SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression.WithTriviaFrom(invocation.Syntax));
+            SyntaxNode newRootWithImports = containsSystemImport ? newRoot : generator.AddNamespaceImports(newRoot, generator.NamespaceImportDeclaration("System"));
 
-            return Task.FromResult(doc.WithSyntaxRoot(newRoot));
+            return Task.FromResult(doc.WithSyntaxRoot(newRootWithImports));
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 

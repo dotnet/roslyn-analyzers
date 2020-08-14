@@ -582,12 +582,11 @@ class C
             string originalCode = @"
 using System.IO;
 using System.Threading;
-
 class C
 {
     public async void M()
     {
-        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
             await s.ReadAsync(new byte[s.Length], 0, (int)s.Length);
@@ -603,26 +602,14 @@ class C
 {
     public async void M()
     {
-        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
             await s.ReadAsync((new byte[s.Length]).AsMemory(0, (int)s.Length));
         }
     }
 }";
-            var test = new Test.Utilities.CSharpCodeFixVerifier<
-    PreferStreamAsyncMemoryOverloads,
-    CSharp.Analyzers.Runtime.CSharpPreferStreamAsyncMemoryOverloadsFixer>.Test
-            {
-                TestCode = originalCode,
-                FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
-                CodeFixTestBehaviors = CodeFixTestBehaviors.FixOne
-            };
-            test.ExpectedDiagnostics.Add(GetCSharpResult(12, 19, 12, 68));
-            return test.RunAsync();
-
-            // return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(12, 19, 12, 68));
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(11, 19, 11, 68));
         }
 
         [Theory]
@@ -813,10 +800,9 @@ End Module
             string originalCode = @"
 Imports System.IO
 Imports System.Threading
-
 Class C
     Public Async Sub M()
-        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
             Dim buffer As Byte() = New Byte(s.Length - 1) {}
             Await s.ReadAsync(New Byte(s.Length - 1) {}, 0, s.Length)
         End Using
@@ -830,14 +816,14 @@ Imports System
 
 Class C
     Public Async Sub M()
-        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
             Dim buffer As Byte() = New Byte(s.Length - 1) {}
             Await s.ReadAsync((New Byte(s.Length - 1) {}).AsMemory(0, s.Length))
         End Using
     End Sub
 End Class
 ";
-            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetVisualBasicResult(9, 19, 9, 70));
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetVisualBasicResult(8, 19, 8, 70));
         }
 
         [Theory]

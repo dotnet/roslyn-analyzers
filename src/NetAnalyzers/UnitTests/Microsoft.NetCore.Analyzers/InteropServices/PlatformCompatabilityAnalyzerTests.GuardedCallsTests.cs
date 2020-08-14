@@ -23,8 +23,8 @@ class Test
 {
     public void Api_Usage()
     {
-        if (OperatingSystemHelper.IsWindows() ||
-           !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19041))
+        if (!OperatingSystemHelper.IsWindows() ||
+            OperatingSystemHelper.IsWindowsVersionAtLeast(10, 0, 19041))
         {
             Api();
         }
@@ -42,7 +42,7 @@ class Test
             await VerifyAnalyzerAsyncCs(source);
         }*/
 
-        [Fact]
+        [Fact] // TODO check again
         public async Task SupportedUnsupportedRange_GuardedWithAnd()
         {
             var source = @"
@@ -66,7 +66,7 @@ class Test
     void Api()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
@@ -141,7 +141,7 @@ class Test
     void NotForIos12OrLater()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -198,7 +198,7 @@ class Test
     void OsSpecificMethod()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -255,7 +255,7 @@ class Test
     void OsSpecificMethod()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -294,7 +294,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -324,7 +324,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -361,7 +361,38 @@ public class WindowsSpecificApis
     [UnsupportedOSPlatform(""windows10.1.2.3"")]
     public static void UnsupportedWindows10() { }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task ReintroducingApiSupport_Guraded_NotWarn()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+[assembly:SupportedOSPlatform(""windows"")]
+static class Program
+{
+    public static void Main()
+    {
+        if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        {
+            Some.WindowsSpecificApi();
+        }
+    }
+}
+
+static class Some
+{
+    [UnsupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""windows10.0"")]
+    public static void WindowsSpecificApi()
+    {
+    }
+}
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -385,7 +416,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -432,7 +463,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -461,7 +492,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -500,7 +531,7 @@ class Test
     void M3 ()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -548,7 +579,7 @@ class Test
     void M3 ()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -625,7 +656,7 @@ public enum PlatformEnum
     Linux48,
     NoPlatform
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -662,7 +693,7 @@ public class Test
         return option;
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -700,7 +731,7 @@ public class C
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -734,7 +765,7 @@ public class OsDependentClass
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -792,9 +823,65 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
+
+        /* [Fact] Failing because we cannot detect the correct local invocation being called
+        public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+public class Test
+{
+    void M()
+    {
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 2))
+        {
+            LocalM(true);
+        }
+        LocalM(false);
+        return;
+
+        void LocalM(bool suppressed)
+        {
+            if (suppressed)
+            {
+                WindowsOnlyMethod();
+            }
+            else
+            {
+                [|WindowsOnlyMethod()|];
+            }
+            
+            if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
+            {
+                WindowsOnlyMethod();
+            }
+
+            if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10,0))
+            {
+                UnsupportedWindows10();
+            }
+            else
+            {
+                [|UnsupportedWindows10()|];
+            }
+        }
+    }
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    public void WindowsOnlyMethod()
+    {
+    }
+    [UnsupportedOSPlatform(""Windows10.0"")]
+    public void UnsupportedWindows10()
+    {
+    }
+}
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
 
         [Fact]
         public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromNotGuardedDifferentContext()
@@ -851,7 +938,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -912,7 +999,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -958,7 +1045,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }*/
 
@@ -1007,7 +1094,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1083,7 +1170,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1109,7 +1196,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1137,7 +1224,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1162,7 +1249,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -1225,7 +1312,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1267,7 +1354,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1307,7 +1394,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1359,7 +1446,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1407,7 +1494,7 @@ public class Test
     {
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1448,7 +1535,7 @@ class Test
     {
     }
 }"
-+ MockAttributesCsSource + MockRuntimeApiSource;
++ MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -1516,7 +1603,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
         }
@@ -1544,7 +1631,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -1599,7 +1686,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1625,7 +1712,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1651,7 +1738,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
         }
 
@@ -1698,7 +1785,7 @@ class Test
     void M2()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
 
             var vbSource = @"
@@ -1771,7 +1858,7 @@ class Test
             await VerifyAnalyzerAsyncCs(source, @"{ ("".editorconfig"", ""dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive"") }");
         }*/
 
-        private readonly string MockRuntimeApiSource = @"
+        private readonly string MockOperatingSystemApiSource = @"
 namespace System
 {
     public sealed class OperatingSystemHelper

@@ -130,15 +130,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return;
                 }
 
-                var guardMethods = GetRuntimePlatformGuardMethods(runtimeInformationType, operatingSystemType!);
+                var runtimeIsOSPlatformMethod = runtimeInformationType.GetMembers().OfType<IMethodSymbol>().Where(m =>
+                    IsOSPlatform == m.Name &&
+                    m.IsStatic &&
+                    m.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                    m.Parameters.Length == 1 &&
+                    m.Parameters[0].Type.Equals(osPlatformType)).FirstOrDefault();
+
+                var guardMethods = GetRuntimePlatformGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
 
                 context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType));
             });
 
-            static ImmutableArray<IMethodSymbol> GetRuntimePlatformGuardMethods(INamedTypeSymbol runtimeInformationType, INamedTypeSymbol operatingSystemType)
+            static ImmutableArray<IMethodSymbol> GetRuntimePlatformGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
             {
-                return operatingSystemType.GetMembers().OfType<IMethodSymbol>().Where(m => s_platformCheckMethodNames.Contains(m.Name)).ToImmutableArray().
-                    Add(runtimeInformationType.GetMembers().OfType<IMethodSymbol>().Where(m => IsOSPlatform == m.Name).FirstOrDefault());
+                return operatingSystemType.GetMembers().OfType<IMethodSymbol>().Where(m =>
+                    s_platformCheckMethodNames.Contains(m.Name) &&
+                    m.IsStatic &&
+                    m.ReturnType.SpecialType == SpecialType.System_Boolean).ToImmutableArray().
+                    Add(runtimeIsOSPlatformMethod);
             }
         }
 
@@ -184,32 +194,41 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return;
                     }
 
-                    foreach (var platformSpecificOperation in platformSpecificOperations)
+                    foreach (var (platformSpecificOperation, attributes) in platformSpecificOperations)
                     {
-                        var value = analysisResult[platformSpecificOperation.Key.Kind, platformSpecificOperation.Key.Syntax];
-                        var attribute = platformSpecificOperation.Value;
+                        var value = analysisResult[platformSpecificOperation.Kind, platformSpecificOperation.Syntax];
 
                         if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Unknown)
                         {
-                            if (platformSpecificOperation.Key.TryGetContainingLocalOrLambdaFunctionSymbol(out var containingSymbol))
+                            if (platformSpecificOperation.TryGetContainingLocalOrLambdaFunctionSymbol(out var containingSymbol))
                             {
-                                var localResult = analysisResult.TryGetInterproceduralResultByDefinition(containingSymbol);
-                                if (localResult != null)
+                                var localResults = analysisResult.TryGetInterproceduralResultByDefinition(containingSymbol);
+                                if (localResults != null)
                                 {
-                                    var localValue = localResult[platformSpecificOperation.Key.Kind, platformSpecificOperation.Key.Syntax];
-                                    if (localValue.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attribute, localValue))
+                                    var hasKnownUnguardedValue = false;
+                                    foreach (var localResult in localResults)
+                                    {
+                                        var localValue = localResult[platformSpecificOperation.Kind, platformSpecificOperation.Syntax];
+                                        if (localValue.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, localValue))
+                                        {
+                                            hasKnownUnguardedValue = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (hasKnownUnguardedValue)
                                     {
                                         continue;
                                     }
                                 }
                             }
                         }
-                        else if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attribute, value))
+                        else if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, value))
                         {
                             continue;
                         }
 
-                        ReportDiagnostics(platformSpecificOperation.Key, attribute, context);
+                        ReportDiagnostics(platformSpecificOperation, attributes, context);
                     }
                 }
                 finally
@@ -227,7 +246,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             if (value.AnalysisValues.Count == 1)
             {
-                // No && or || operators used, result can be consumed directly
+                // Singel valued result, no '&&' nor '||' operators are used, result can be consumed directly
                 var analysisValue = value.AnalysisValues.First();
 
                 if (analysisValue is RuntimeMethodValue info &&
@@ -237,7 +256,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         if (attribute.UnsupportedFirst != null && IsEmptyVersion(attribute.UnsupportedFirst) && IsEmptyVersion(info.Version))
                         {
-                            // the unsupported attribute suppressed setting null to not warn for it, same logic for all 
+                            // the unsupported attribute is suppressed, setting it to null to not warn further, same logic for all checks below
                             attribute.UnsupportedFirst = null;
                         }
 
@@ -263,8 +282,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             else
             {
                 // Analysis values conjuncted with &&, temporary containers keep track of previous values
-                var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
-                var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
+                using var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
+                using var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
 
                 foreach (var analysisValue in value.AnalysisValues)
                 {
@@ -295,7 +314,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         else
                         {
                             capturedPlatforms.Add(info.PlatformName);
-                            if (IsEmptyVersion(info.Version))
+
+                            if (capturedVersions.Any())
                             {
                                 if (attribute.UnsupportedFirst != null && capturedVersions.TryGetValue(info.PlatformName, out var version) && attribute.UnsupportedFirst >= version)
                                 {
@@ -352,7 +372,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void ReportDiagnostics(IOperation operation, SmallDictionary<string, PlatformAttributes> attributes, OperationBlockAnalysisContext context)
         {
-            var operationName = GetOperationSymbol(operation)?.Name ?? string.Empty;
+            var symbol = operation is IObjectCreationOperation creation ? creation.Constructor.ContainingType : GetOperationSymbol(operation);
+
+            if (symbol == null)
+            {
+                return;
+            }
+
+            var operationName = symbol.Name;
 
             foreach (var platformName in attributes.Keys)
             {
@@ -499,7 +526,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 diagnositcAttribute.SupportedSecond = (Version)attributeToCheck.Clone();
                             }
 
-                            if (attribute.UnsupportedFirst != null && !SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst))
+                            if (attribute.UnsupportedFirst != null &&
+                                !(SuppressedByCallSiteSupported(attribute, callSiteAttribute.SupportedFirst) ||
+                                  SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst)))
                             {
                                 diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
                             }

@@ -758,6 +758,34 @@ static class Some
             await VerifyAnalyzerAsyncCs(source);
         }
 
+        [Fact]
+        public async Task ReintroducingApiSupport_NotWarn()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+[assembly: SupportedOSPlatform(""windows10.0"")]
+
+static class Program
+{
+    public static void Main()
+    {
+        Some.WindowsSpecificApi();
+    }
+}
+
+static class Some
+{
+    [SupportedOSPlatform(""windows"")]
+    [UnsupportedOSPlatform(""windows8.1"")]
+    [SupportedOSPlatform(""windows10.0"")]
+    public static void WindowsSpecificApi()
+    {
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
         /*[Fact] TODO wait until assembly level APIs merged
         public async Task MethodOfOsDependentAssemblyCalledWithoutSuppressionWarns()
         {
@@ -835,7 +863,7 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(9, 32, 9, 54).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(9, 32, 9, 54).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
                     VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(10, 9, 10, 17).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
@@ -875,7 +903,7 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(10, 32).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(10, 32).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
                     VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else
@@ -929,7 +957,7 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(10, 32).WithArguments(".ctor", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(10, 32).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
                     VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
             }
             else

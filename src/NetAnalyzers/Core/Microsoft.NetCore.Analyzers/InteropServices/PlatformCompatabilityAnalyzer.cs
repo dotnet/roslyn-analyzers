@@ -249,56 +249,36 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool IsKnownValueGuarded(SmallDictionary<string, PlatformAttributes> attributes, GlobalFlowStateAnalysisValueSet value)
         {
-            if (value.AnalysisValues.Count == 1)
+            using var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            using var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            return IsKnownValueGuarded(attributes, value, capturedPlatforms, capturedVersions);
+
+            static bool IsKnownValueGuarded(
+                SmallDictionary<string, PlatformAttributes> attributes,
+                GlobalFlowStateAnalysisValueSet value,
+                PooledSortedSet<string> capturedPlatforms,
+                PooledDictionary<string, Version> capturedVersions)
             {
-                // Singel valued result, no '&&' nor '||' operators are used, result can be consumed directly
-                var analysisValue = value.AnalysisValues.First();
-
-                if (analysisValue is RuntimeMethodValue info &&
-                    attributes.TryGetValue(info.PlatformName, out var attribute))
-                {
-                    if (info.Negated)
-                    {
-                        if (attribute.UnsupportedFirst != null && IsEmptyVersion(attribute.UnsupportedFirst) && IsEmptyVersion(info.Version))
-                        {
-                            // the unsupported attribute is suppressed, setting it to null to not warn further, same logic for all checks below
-                            attribute.UnsupportedFirst = null;
-                        }
-
-                        if (attribute.UnsupportedSecond != null && IsEmptyVersion(attribute.UnsupportedSecond) && IsEmptyVersion(info.Version))
-                        {
-                            attribute.UnsupportedSecond = null;
-                        }
-                    }
-                    else
-                    {
-                        if (attribute.SupportedFirst != null && attribute.SupportedFirst <= info.Version)
-                        {
-                            attribute.SupportedFirst = null;
-                        }
-
-                        if (attribute.SupportedSecond != null && attribute.SupportedSecond <= info.Version)
-                        {
-                            attribute.SupportedSecond = null;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // Analysis values conjuncted with &&, temporary containers keep track of previous values
-                using var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
-                using var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
-
+                // 'GlobalFlowStateAnalysisValueSet.AnalysisValues' represent the && of values.
                 foreach (var analysisValue in value.AnalysisValues)
                 {
                     if (analysisValue is RuntimeMethodValue info && attributes.TryGetValue(info.PlatformName, out var attribute))
                     {
                         if (info.Negated)
                         {
-                            if (attribute.UnsupportedFirst != null && capturedPlatforms.Contains(info.PlatformName) && attribute.UnsupportedFirst >= info.Version)
+                            if (attribute.UnsupportedFirst != null)
                             {
-                                attribute.UnsupportedFirst = null;
+                                if (capturedPlatforms.Contains(info.PlatformName))
+                                {
+                                    if (attribute.UnsupportedFirst >= info.Version)
+                                    {
+                                        attribute.UnsupportedFirst = null;
+                                    }
+                                }
+                                else if (IsEmptyVersion(attribute.UnsupportedFirst) && IsEmptyVersion(info.Version))
+                                {
+                                    attribute.UnsupportedFirst = null;
+                                }
                             }
 
                             if (attribute.Obsoleted != null && capturedPlatforms.Contains(info.PlatformName) && attribute.Obsoleted <= info.Version)
@@ -306,9 +286,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 attribute.Obsoleted = null;
                             }
 
-                            if (attribute.UnsupportedSecond != null && capturedPlatforms.Contains(info.PlatformName) && attribute.UnsupportedSecond <= info.Version)
+                            if (attribute.UnsupportedSecond != null)
                             {
-                                attribute.UnsupportedSecond = null;
+                                if (capturedPlatforms.Contains(info.PlatformName))
+                                {
+                                    if (attribute.UnsupportedSecond <= info.Version)
+                                    {
+                                        attribute.UnsupportedSecond = null;
+                                    }
+                                }
+                                else if (IsEmptyVersion(attribute.UnsupportedSecond) && IsEmptyVersion(info.Version))
+                                {
+                                    attribute.UnsupportedSecond = null;
+                                }
                             }
 
                             if (!IsEmptyVersion(info.Version))
@@ -350,18 +340,39 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
                 }
-            }
 
-            foreach (var attribute in attributes)
-            {
-                // if any of the attributes is not suppressed
-                if (attribute.Value.HasAttribute())
+                if (value.Parents.IsEmpty)
                 {
-                    return false;
+                    foreach (var attribute in attributes)
+                    {
+                        // if any of the attributes is not suppressed
+                        if (attribute.Value.HasAttribute())
+                        {
+                            return false;
+                        }
+                    }
                 }
-            }
+                else
+                {
+                    // 'GlobalFlowStateAnalysisValueSet.Parents' represent || of values on different flow paths.
+                    // We are guarded only if values are guarded on *all flow paths**.
+                    foreach (var parent in value.Parents)
+                    {
+                        // NOTE: IsKnownValueGuarded mutates the input values, so we pass in cloned values
+                        // to ensure that evaluation of each part of || is independent of evaluation of other parts.
+                        var parentAttributes = CopyOperationAttributes(attributes);
+                        using var parentCapturedPlatforms = PooledSortedSet<string>.GetInstance(capturedPlatforms);
+                        using var parentCapturedVersions = PooledDictionary<string, Version>.GetInstance(capturedVersions);
 
-            return true;
+                        if (!IsKnownValueGuarded(parentAttributes, parent, parentCapturedPlatforms, parentCapturedVersions))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
         }
 
         private static bool IsEmptyVersion(Version version) => version.Major == 0 && version.Minor == 0;

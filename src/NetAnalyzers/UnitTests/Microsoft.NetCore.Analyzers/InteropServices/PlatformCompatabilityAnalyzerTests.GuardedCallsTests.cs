@@ -1434,7 +1434,7 @@ public class Test
         if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2) ||
            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 11))
         {
-            [|M2()|]; // Even it is not meaningful check i think it is a bug, it shouldn't warn
+            M2(); // Even it is not meaningful check, it shouldn't warn
         }
         else
         {

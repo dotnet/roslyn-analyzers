@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -138,8 +139,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     m.Parameters[0].Type.Equals(osPlatformType)).FirstOrDefault();
 
                 var guardMethods = GetRuntimePlatformGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
+                var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
 
-                context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType));
+                context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers));
             });
 
             static ImmutableArray<IMethodSymbol> GetRuntimePlatformGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
@@ -152,10 +154,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private void AnalyzeOperationBlock(OperationBlockStartAnalysisContext context, ImmutableArray<IMethodSymbol> guardMethods, INamedTypeSymbol osPlatformType)
+        private void AnalyzeOperationBlock(
+            OperationBlockStartAnalysisContext context,
+            ImmutableArray<IMethodSymbol> guardMethods,
+            INamedTypeSymbol osPlatformType,
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             var platformSpecificOperations = PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>>.GetInstance();
-            var platformSpecificMembers = PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>.GetInstance();
 
             context.RegisterOperationAction(context =>
             {
@@ -432,7 +437,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-            PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             var symbol = GetOperationSymbol(operation);
 
@@ -680,7 +685,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool TryGetOrCreatePlatformAttributes(
             ISymbol symbol,
-            PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
             [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
         {
             if (!platformSpecificMembers.TryGetValue(symbol, out attributes))

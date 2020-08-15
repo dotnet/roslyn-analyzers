@@ -1823,7 +1823,7 @@ End Class
             await VerifyAnalyzerAsyncVb(vbSource);
         }
 
-        /*[Fact] //TODO: Not working anymore, fix this
+        [Fact]
         public async Task InterproceduralAnalysisTest()
         {
             var source = @"
@@ -1853,10 +1853,46 @@ class Test
     {
         return OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4);
     }
-}" + MockAttributesSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source, @"{ ("".editorconfig"", ""dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive"") }");
-        }*/
+            await VerifyAnalyzerAsyncCs(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
+        }
+
+        [Fact(Skip = "TODO: Needs to be fixed")]
+        public async Task InterproceduralAnalysisTest_LogicalOr()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    void M1()
+    {
+        [|M2()|];
+
+        if (IsWindows11OrLater())
+        {
+            M2();    
+        }
+
+        [|M2()|]; 
+    }
+
+    [SupportedOSPlatform(""Windows10.1.2.3"")]
+    void M2()
+    {
+    }
+
+    bool IsWindows11OrLater()
+    {
+        return OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",10,2,3,4) ||
+            OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"",11);
+    }
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+
+            await VerifyAnalyzerAsyncCs(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
+        }
 
         private readonly string MockOperatingSystemApiSource = @"
 namespace System

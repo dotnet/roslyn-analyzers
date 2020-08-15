@@ -161,10 +161,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             var platformSpecificOperations = PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>>.GetInstance();
+            bool needsValueContentAnalysis = false;
 
             context.RegisterOperationAction(context =>
             {
-                AnalyzeOperation(context.Operation, context, platformSpecificOperations, platformSpecificMembers);
+                AnalyzeOperation(context.Operation, context, platformSpecificOperations, platformSpecificMembers, guardMethods, ref needsValueContentAnalysis);
             },
             OperationKind.MethodReference,
             OperationKind.EventReference,
@@ -191,7 +192,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor, wellKnownTypeProvider,
-                        context.Options, RequiredOsRule, performValueContentAnalysis: true,
+                        context.Options, RequiredOsRule, performValueContentAnalysis: needsValueContentAnalysis,
                         context.CancellationToken, out var valueContentAnalysisResult);
 
                     if (analysisResult == null)
@@ -448,7 +449,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+            ImmutableArray<IMethodSymbol> guardMethods,
+            ref bool needsValueContentAnalysis)
         {
             var symbol = GetOperationSymbol(operation);
 
@@ -470,6 +473,29 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     platformSpecificOperations.TryAdd(operation, CopyOperationAttributes(operationAttributes));
                 }
+            }
+
+            if (guardMethods.Contains(symbol) &&
+                operation is IInvocationOperation invocation)
+            {
+                needsValueContentAnalysis = needsValueContentAnalysis || ComputeNeedsValueContentAnalysis(invocation);
+            }
+
+            return;
+
+            static bool ComputeNeedsValueContentAnalysis(IInvocationOperation invocation)
+            {
+                // Check if any integral parameter to guard method invocation has non-constant value.
+                foreach (var argument in invocation.Arguments)
+                {
+                    if (argument.Parameter.Type.SpecialType == SpecialType.System_Int32 &&
+                        !argument.Value.ConstantValue.HasValue)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
 

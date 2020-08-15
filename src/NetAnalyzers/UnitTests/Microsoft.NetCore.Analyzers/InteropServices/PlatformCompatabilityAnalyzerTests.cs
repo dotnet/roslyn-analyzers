@@ -1181,10 +1181,10 @@ public class C
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
             => await PopulateTestCs(sourceCode, expectedDiagnostics).RunAsync();
 
-        private static async Task VerifyAnalyzerAsyncCs(string sourceCode, string additionalFiles)
+        private static async Task VerifyAnalyzerAsyncCs(string sourceCode, string editorconfigText)
         {
             var test = PopulateTestCs(sourceCode);
-            test.TestState.AdditionalFiles.Add((".editorconfig", additionalFiles));
+            test.TestState.AdditionalFiles.Add((".editorconfig", editorconfigText));
             await test.RunAsync();
         }
 

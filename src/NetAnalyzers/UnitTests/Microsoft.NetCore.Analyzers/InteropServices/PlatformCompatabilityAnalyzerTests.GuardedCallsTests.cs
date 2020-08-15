@@ -827,7 +827,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /* [Fact] Failing because we cannot detect the correct local invocation being called
+        /* [Fact] //Failing because we cannot detect the correct local invocation being called
         public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
         {
             var source = @"
@@ -837,7 +837,7 @@ public class Test
 {
     void M()
     {
-        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Linux"", 10, 2))
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
             LocalM(true);
         }

@@ -240,7 +240,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 finally
                 {
                     platformSpecificOperations.Free();
-                    platformSpecificMembers.Free();
                 }
 
                 return;

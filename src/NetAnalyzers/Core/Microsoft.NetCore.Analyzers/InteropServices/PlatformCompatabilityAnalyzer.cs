@@ -155,7 +155,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private void AnalyzeOperationBlock(OperationBlockStartAnalysisContext context, ImmutableArray<IMethodSymbol> guardMethods, INamedTypeSymbol osPlatformType)
         {
             var platformSpecificOperations = PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>>.GetInstance();
-            var platformSpecificMembers = PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>>.GetInstance();
+            var platformSpecificMembers = PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>.GetInstance();
 
             context.RegisterOperationAction(context =>
             {
@@ -432,7 +432,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-            PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>> platformSpecificMembers)
+            PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             var symbol = GetOperationSymbol(operation);
 
@@ -441,23 +441,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (!platformSpecificMembers.TryGetValue(symbol.OriginalDefinition, out var operationAttributes) &&
-                TryFindPlatformAttributesApplied(symbol.GetAttributes(), symbol.OriginalDefinition.ContainingSymbol, out operationAttributes))
+            if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
             {
-                platformSpecificMembers.TryAdd(symbol.OriginalDefinition, operationAttributes);
-            }
-
-            if (operationAttributes != null && operationAttributes.Any())
-            {
-                if (!platformSpecificMembers.TryGetValue(context.ContainingSymbol.OriginalDefinition, out var callSiteAttribute) &&
-                    TryFindContainingSymbolPlatformAttributes(context.ContainingSymbol, out callSiteAttribute))
+                if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
                 {
-                    platformSpecificMembers.TryAdd(context.ContainingSymbol.OriginalDefinition, callSiteAttribute);
-                }
-
-                if (callSiteAttribute != null && callSiteAttribute.Any())
-                {
-                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttribute, out var notSuppressedAttributes))
+                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, out var notSuppressedAttributes))
                     {
                         platformSpecificOperations.TryAdd(operation, notSuppressedAttributes);
                     }
@@ -690,42 +678,45 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             bo.OperatorKind == BinaryOperatorKind.GreaterThanOrEqual ||
             bo.OperatorKind == BinaryOperatorKind.LessThanOrEqual);
 
-        private static bool TryFindPlatformAttributesApplied(ImmutableArray<AttributeData> immediateAttributes,
-            ISymbol containingSymbol, [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
+        private static bool TryGetOrCreatePlatformAttributes(
+            ISymbol symbol,
+            PooledConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+            [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
         {
-            attributes = null;
-            AddPlatformAttributes(immediateAttributes, ref attributes);
-
-            while (containingSymbol != null)
+            if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
             {
-                AddPlatformAttributes(containingSymbol.GetAttributes(), ref attributes);
-                containingSymbol = containingSymbol.ContainingSymbol;
-            }
-            return attributes != null;
-        }
+                var container = symbol.ContainingSymbol;
 
-        private static bool AddPlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, [NotNullWhen(true)] ref SmallDictionary<string, PlatformAttributes>? attributes)
-        {
-            foreach (AttributeData attribute in immediateAttributes)
-            {
-                if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
+                // Namespaces do not have attributes
+                while (container is INamespaceSymbol)
                 {
-                    TryAddValidAttribute(ref attributes, attribute);
+                    container = container.ContainingSymbol;
                 }
-            }
-            return attributes != null;
-        }
 
-        private static bool TryFindContainingSymbolPlatformAttributes(ISymbol containingSymbol, [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
-        {
-            attributes = null;
-            while (containingSymbol != null)
+                if (container != null &&
+                    TryGetOrCreatePlatformAttributes(container, platformSpecificMembers, out var containerAttributes))
+                {
+                    attributes = CopyOperationAttributes(containerAttributes);
+                }
+
+                AddPlatformAttributes(symbol.GetAttributes(), ref attributes);
+
+                attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
+            }
+
+            return attributes != null;
+
+            static bool AddPlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, [NotNullWhen(true)] ref SmallDictionary<string, PlatformAttributes>? attributes)
             {
-                AddPlatformAttributes(containingSymbol.GetAttributes(), ref attributes);
-                containingSymbol = containingSymbol.ContainingSymbol;
+                foreach (AttributeData attribute in immediateAttributes)
+                {
+                    if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
+                    {
+                        TryAddValidAttribute(ref attributes, attribute);
+                    }
+                }
+                return attributes != null;
             }
-
-            return attributes != null;
         }
 
         private static bool TryAddValidAttribute([NotNullWhen(true)] ref SmallDictionary<string, PlatformAttributes>? attributes, AttributeData attribute)

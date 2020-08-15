@@ -234,6 +234,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 finally
                 {
                     platformSpecificOperations.Free();
+                    platformSpecificMembers.Free();
                 }
 
                 return;
@@ -735,26 +736,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 argument.Kind == TypedConstantKind.Primitive &&
                                 argument.Type.SpecialType == SpecialType.System_String &&
                                 !argument.IsNull &&
-                                !argument.Value.Equals(string.Empty))
+                                !argument.Value.Equals(string.Empty) &&
+                                TryParsePlatformNameAndVersion(argument.Value.ToString(), out string platformName, out Version? version))
             {
-                if (TryParsePlatformNameAndVersion(argument.Value.ToString(), out string platformName, out Version? version))
+                attributes ??= new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
+
+                if (!attributes.TryGetValue(platformName, out var existingAttributes))
                 {
-                    attributes ??= new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
-
-                    if (!attributes.TryGetValue(platformName, out var existingAttributes))
-                    {
-                        existingAttributes = new PlatformAttributes();
-                        attributes[platformName] = existingAttributes;
-                    }
-
-                    AddAttribute(attribute.AttributeClass.Name, version, existingAttributes);
-                    return true;
+                    existingAttributes = new PlatformAttributes();
+                    attributes[platformName] = existingAttributes;
                 }
-                // else report diagnostic = Diagnostic.Create(PlatformNameNullOrEmptyRule, osAttribute.ApplicationSyntaxReference.GetSyntax().GetLocation());
-            }
-            else
-            {
-                // report Diagnostic.Create(InvalidPlatformVersionRule, osAttribute.ApplicationSyntaxReference.GetSyntax().GetLocation());
+
+                AddAttribute(attribute.AttributeClass.Name, version, existingAttributes);
+                return true;
             }
 
             return false;

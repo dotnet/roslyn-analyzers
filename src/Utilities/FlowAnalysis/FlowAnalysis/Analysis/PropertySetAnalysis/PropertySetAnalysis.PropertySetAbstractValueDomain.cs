@@ -57,20 +57,13 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 // The PropertySetAbstractValue indexer allows accessing beyond KnownValuesCount (returns Unknown),
                 // so looping through the max of the two KnownValuesCount.
                 int maxKnownCount = Math.Max(value1.KnownValuesCount, value2.KnownValuesCount);
-                ArrayBuilder<PropertySetAbstractValueKind> builder = ArrayBuilder<PropertySetAbstractValueKind>.GetInstance(maxKnownCount);
-                try
+                using ArrayBuilder<PropertySetAbstractValueKind> builder = ArrayBuilder<PropertySetAbstractValueKind>.GetInstance(maxKnownCount);
+                for (int i = 0; i < maxKnownCount; i++)
                 {
-                    for (int i = 0; i < maxKnownCount; i++)
-                    {
-                        builder.Add(MergeKind(value1[i], value2[i]));
-                    }
+                    builder.Add(MergeKind(value1[i], value2[i]));
+                }
 
-                    return PropertySetAbstractValue.GetInstance(builder);
-                }
-                finally
-                {
-                    builder.Free();
-                }
+                return PropertySetAbstractValue.GetInstance(builder);
             }
 
             private static PropertySetAbstractValueKind MergeKind(PropertySetAbstractValueKind kind1, PropertySetAbstractValueKind kind2)

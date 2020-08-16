@@ -270,7 +270,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
-                    var symbolNamesToRemove = symbolNamesToRemoveBuilder.ToImmutableAndFree();
+                    var symbolNamesToRemove = symbolNamesToRemoveBuilder.ToImmutableAndFree(cancellationToken);
 
                     // We shouldn't be attempting to remove any symbol name, while also adding it.
                     Debug.Assert(newSymbolNames.All(newSymbolName => !symbolNamesToRemove.Contains(newSymbolName)));

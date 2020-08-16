@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 
     public partial class PlatformCompatabilityAnalyzerTests
     {
-        /*[Fact] TODO: Test for Compiler error for wrong arguments, not sure how to report the diagnostic
+        [Fact(Skip = "TODO need to be fixed: Test for for wrong arguments, not sure how to report the Compiler error diagnostic")]
         public async Task TestOsPlatformAttributesWithNonStringArgument()
         {
             var csSource = @"
@@ -46,7 +46,7 @@ public class Test
 " + MockAttributesCsSource;
 
             await VerifyAnalyzerAsyncCs(csSource);
-        }*/
+        }
 
         [Fact]
         public async Task OsDependentMethodsCalledWarns()
@@ -371,7 +371,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact] TODO: enable the test when preview 8 consumed
+        [Fact(Skip = "TODO: enable when tests could consume new TargetPlatform attribute, (preview 8)")]
         public async Task MethodWithTargetPlatrofrmAttributeDoesNotWarn()
         {
             var source = @"
@@ -388,9 +388,9 @@ public class Test
     {
     }
 }
-" + MockPlatformApiSource;
+" + MockAttributesCsSource;
             await VerifyCS.VerifyAnalyzerAsync(source);
-        }*/
+        }
 
         [Fact]
         public async Task OsDependentMethodCalledFromInstanceWarns()
@@ -725,12 +725,193 @@ public class Test
     public void M1()
     {
         Del handler = [|DelegateMethod|];
-        handler(); // assume it shouldn't warn here
+        handler();
     }
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source);
         }
+
+        /*[Fact]
+        public async Task CallerSupportsSubsetOfTarget()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerSupportsSubsetOfTarget
+{
+    class Caller
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void Test()
+        {
+            Target.SupportedOnWindows();
+            [|Target.SupportedOnBrowser()|];
+            Target.SupportedOnWindowsAndBrowser(); //Reported correct diagnostic: 'SupportedOnWindowsAndBrowser' requires 'browser'
+        }
+    }
+
+    class Target
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void SupportedOnWindows() { }
+
+        [SupportedOSPlatform(""browser"")]
+        public static void SupportedOnBrowser() { }
+        [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
+        public static void SupportedOnWindowsAndBrowser() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
+
+        [Fact]
+        public async Task CallerSupportsSupersetOfTarget()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerSupportsSubsetOfTarget
+{
+    class Caller
+    {
+        [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
+        public static void TestWithWindowsAndBrowserSupported()
+        {
+            [|Target.SupportedOnWindows()|]; // FAIL: no diagnostic; should have a diagnostic for browser
+            [|Target.SupportedOnBrowser()|]; // FAIL: no diagnostic; should have a diagnostic for browser
+            Target.SupportedOnWindowsAndBrowser(); // PASS: no diagnostic
+
+            [|Target.UnsupportedOnWindows()|]; // PASS: windows unsupported
+            [|Target.UnsupportedOnBrowser()|]; // PASS: browser unsupported
+            [|Target.UnsupportedOnWindowsAndBrowser()|]; // PASS: windows unsupported, browser unsupported
+        }
+        [UnsupportedOSPlatform(""browser"")]
+        public static void TestWithBrowserUnsupported()
+        {
+            [|Target.SupportedOnWindows()|]; // PASS: windows supported
+            [|Target.SupportedOnBrowser()|]; // PASS: browser supported
+            [|Target.SupportedOnWindowsAndBrowser()|]; // PASS: windows supported, browser supported
+
+            [|Target.UnsupportedOnWindows()|]; // FAIL: no diagnostic; should have a diagnostic for windows - Fixed
+            Target.UnsupportedOnBrowser(); // PASS: no diagnostic 
+            [|Target.UnsupportedOnWindowsAndBrowser()|]; // FAIL: no diagnostic; should have a diagnostic for windows - Fixed
+        }
+    }
+
+    class Target
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void SupportedOnWindows() { }
+
+        [SupportedOSPlatform(""browser"")]
+        public static void SupportedOnBrowser() { }
+
+        [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
+        public static void SupportedOnWindowsAndBrowser() { }
+
+        [UnsupportedOSPlatform(""windows"")]
+        public static void UnsupportedOnWindows() { }
+
+        [UnsupportedOSPlatform(""browser"")]
+        public static void UnsupportedOnBrowser() { }
+
+        [UnsupportedOSPlatform(""windows""), UnsupportedOSPlatform(""browser"")]
+        public static void UnsupportedOnWindowsAndBrowser() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(17, 13)
+                    .WithMessage("'UnsupportedOnWindowsAndBrowser' is not supported or has been removed from 'windows'").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(24, 13).
+                    WithMessage("'SupportedOnWindowsAndBrowser' requires 'windows'").WithArguments("SupportedOnWindowsAndBrowser", "windows"));
+        }
+
+        /*[Fact] //TODO fix it now
+        public async Task UnsupportedMustSuppressSupported()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+static class Program
+{
+    public static void Main()
+    {
+        [|Some.Api1()|];
+        Some.Api2();
+    }
+}
+
+[SupportedOSPlatform(""ios10.0"")]
+[SupportedOSPlatform(""tvos4.0"")]
+class Some
+{
+    public static void Api1() {}
+
+    [UnsupportedOSPlatform(""tvos"")]
+    public static void Api2() {}
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task UnsupportedMustSuppressSupportedAssemblyAttribute()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+[assembly:SupportedOSPlatform(""browser"")]
+
+namespace PlatformCompatDemo
+{
+    static class Program
+    {
+        public static void Main()
+        {
+            [|CrossPlatformApis.DoesNotWorkOnBrowser()|];
+            var nonBrowser = new [|NonBrowserApis()|];
+        }
+    }
+
+    public class CrossPlatformApis
+    {
+        [UnsupportedOSPlatform(""browser"")]
+        public static void DoesNotWorkOnBrowser() { }
+    }
+
+    [UnsupportedOSPlatform(""browser"")]
+    public class NonBrowserApis
+    {
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task UsingUnsupportedApiShouldWarn()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+[assembly: SupportedOSPlatform(""windows"")]
+
+static class Program
+{
+    public static void Main()
+    {
+        [|SomeWindowsSpecific.Api()|];
+    }
+}
+
+class SomeWindowsSpecific
+{
+    [UnsupportedOSPlatform(""windows"")]
+    public static void Api() { }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
 
         [Fact]
         public async Task UsingVersionedApiFromUnversionedAssembly()
@@ -786,7 +967,7 @@ static class Some
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact] TODO wait until assembly level APIs merged
+        [Fact(Skip = "TODO: enable when tests could consume new attribute applied to runtime assemblies")]
         public async Task MethodOfOsDependentAssemblyCalledWithoutSuppressionWarns()
         {
             var source = @"
@@ -810,10 +991,10 @@ static class Some
                     }
                 }
             }
-" + MockPlatformApiSource;
+" + MockAttributesCsSource;
             await VerifyCS.VerifyAnalyzerAsync(source,
-                VerifyCS.Diagnostic(RuntimePlatformCheckAnalyzer2.Rule).WithSpan(10, 21, 10, 29).WithArguments("M2", "Windows", "10.1.2.3"));
-        }*/
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(10, 21, 10, 29).WithArguments("M2", "Windows", "10.1.2.3"));
+        }
 
         public static IEnumerable<object[]> SupportedOsAttributeTestData()
         {

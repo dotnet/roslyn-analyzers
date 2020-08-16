@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
-        /*[Fact] TODO: Missing scenario
+        [Fact(Skip = "TODO: Needs to be fixed")]
         public async Task SupportedUnsupportedRange_GuardedWithOr()
         {
             var source = @"
@@ -37,12 +37,12 @@ class Test
     void Api()
     {
     }
-}" + MockAttributesCsSource + MockRuntimeApiSource;
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
-        [Fact] // TODO check again
+        [Fact]
         public async Task SupportedUnsupportedRange_GuardedWithAnd()
         {
             var source = @"
@@ -827,7 +827,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /* [Fact] //Failing because we cannot detect the correct local invocation being called
+        [Fact(Skip = "TODO: Failing because we cannot detect the correct local invocation being called")]
         public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
         {
             var source = @"
@@ -881,7 +881,7 @@ public class Test
 }
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
         [Fact]
         public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromNotGuardedDifferentContext()
@@ -1003,7 +1003,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact]
+        [Fact(Skip = "TODO: Needs to be fixed")]
         public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
         {
             var source = @"
@@ -1047,7 +1047,7 @@ public class Test
 }
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
         [Fact]
         public async Task OsDependentEventAccessed_GuardedCall_SimpleIfElse()
@@ -1098,7 +1098,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact]
+        [Fact(Skip = "TODO: Needs to be fixed")]
         public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElse()
         {
             var source = @"
@@ -1127,9 +1127,9 @@ public class Test
         }
     }
 }
-" + MockAttributesCsSource + MockRuntimeApiSource;
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
         [Fact]
         public async Task GuardedCall_SimpleIfElseIfElseTest()

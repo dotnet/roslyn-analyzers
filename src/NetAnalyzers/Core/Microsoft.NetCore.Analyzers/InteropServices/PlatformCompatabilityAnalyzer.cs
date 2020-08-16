@@ -525,23 +525,26 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             notSuppressedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             bool? supportedOnlyList = null;
+#pragma warning disable CA2000
+            var supportedOnlyPlatforms = PooledConcurrentSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
+#pragma warning restore CA2000
             foreach (string key in operationAttributes.Keys)
             {
                 var attribute = operationAttributes[key];
-                var diagnositcAttribute = new PlatformAttributes();
+                var diagnosticAttribute = new PlatformAttributes();
 
                 if (attribute.SupportedFirst != null)
                 {
-                    // If only supported for current platform
                     if (attribute.UnsupportedFirst == null || attribute.UnsupportedFirst > attribute.SupportedFirst)
                     {
+                        // If only supported for current platform
                         if (supportedOnlyList.HasValue && !supportedOnlyList.Value)
                         {
-                            // report inconsistent list diagnostic
                             return true; // do not need to add this API to the list
                         }
                         else
                         {
+                            supportedOnlyPlatforms.Add(key);
                             supportedOnlyList = true;
                         }
 
@@ -550,14 +553,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             var attributeToCheck = attribute.SupportedSecond ?? attribute.SupportedFirst;
                             if (!MandatoryOsVersionsSuppressed(callSiteAttribute, attributeToCheck))
                             {
-                                diagnositcAttribute.SupportedSecond = (Version)attributeToCheck.Clone();
+                                diagnosticAttribute.SupportedSecond = (Version)attributeToCheck.Clone();
                             }
 
                             if (attribute.UnsupportedFirst != null &&
                                 !(SuppressedByCallSiteSupported(attribute, callSiteAttribute.SupportedFirst) ||
                                   SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst)))
                             {
-                                diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                                diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
                             }
 
                             if (attribute.Obsoleted != null)
@@ -568,13 +571,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                                 else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
                                 {
-                                    diagnositcAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
+                                    diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                                 }
                             }
                         }
                         else
                         {
-                            CopyAllAttributes(diagnositcAttribute, attribute);
+                            CopyAllAttributes(diagnosticAttribute, attribute);
                         }
                     }
                     else if (attribute.UnsupportedFirst != null) // also means Unsupported < Supported, optional list
@@ -593,17 +596,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             if (!OptionalOsVersionsSuppressed(callSiteAttribute, attribute))
                             {
-                                diagnositcAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
+                                diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
                             }
 
                             if (!UnsupportedFirstSuppressed(attribute, callSiteAttribute))
                             {
-                                diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                                diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
                             }
 
                             if (attribute.UnsupportedSecond != null && !UnsupportedSecondSuppressed(attribute, callSiteAttribute))
                             {
-                                diagnositcAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
+                                diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                             }
 
                             if (attribute.Obsoleted != null)
@@ -614,7 +617,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                                 else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
                                 {
-                                    diagnositcAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
+                                    diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                                 }
                             }
                         }
@@ -638,15 +641,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             if (!SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst))
                             {
-                                diagnositcAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                                diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
                             }
 
                             if (attribute.UnsupportedSecond != null && !SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedSecond))
                             {
-                                diagnositcAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
+                                diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                             }
                         }
-                        // else call site is not supporting this platform, and it is deny list, so no need to warn
+                        else if (!callSiteAttributes.Values.Any(v => v.SupportedFirst != null))
+                        {
+                            // if call site has no any other supported attribute it means global, so need to warn
+                            diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                        }
                     }
 
                     if (attribute.Obsoleted != null)
@@ -655,12 +662,32 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                if (diagnositcAttribute.HasAttribute())
+                if (diagnosticAttribute.HasAttribute())
                 {
-                    notSuppressedAttributes[key] = diagnositcAttribute;
+                    notSuppressedAttributes[key] = diagnosticAttribute;
                 }
             }
 
+            if (supportedOnlyList.HasValue && supportedOnlyList.Value)
+            {
+                // if supportedOnlyList then call site should not have any platform not listed in the support list
+                foreach (var (platform, csAttributes) in callSiteAttributes)
+                {
+                    if (csAttributes.SupportedFirst != null && !supportedOnlyPlatforms.Contains(platform))
+                    {
+                        foreach (var (name, version) in operationAttributes)
+                        {
+                            if (!notSuppressedAttributes.TryGetValue(name, out var diagnosticAttribute))
+                            {
+                                diagnosticAttribute = new PlatformAttributes();
+                            }
+                            diagnosticAttribute.SupportedFirst = operationAttributes[name].SupportedFirst;
+                            notSuppressedAttributes[name] = diagnosticAttribute;
+                        }
+                    }
+                }
+            }
+            supportedOnlyPlatforms.Free();
             return notSuppressedAttributes.Any();
         }
 

@@ -239,7 +239,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 finally
                 {
-                    platformSpecificOperations.Free();
+                    // Workaround for https://github.com/dotnet/roslyn/issues/46859
+                    // Do not free in presence of cancellation.
+                    if (!context.CancellationToken.IsCancellationRequested)
+                    {
+                        platformSpecificOperations.Free();
+                    }
                 }
 
                 return;

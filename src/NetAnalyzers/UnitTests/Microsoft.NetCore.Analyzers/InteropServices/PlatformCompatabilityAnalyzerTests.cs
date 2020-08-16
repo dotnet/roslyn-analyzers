@@ -54,9 +54,9 @@ public class Test
             var csSource = @"
 using System.Runtime.Versioning;
 
-[SupportedOSPlatform(""Linux"")]
 public class Test
 {
+    [SupportedOSPlatform(""Linux"")]
     public void M1()
     {
         [|WindowsOnly()|];
@@ -64,6 +64,7 @@ public class Test
         [|Unsupported()|];
         [|ObsoletedOverload()|];
     }
+    [SupportedOSPlatform(""Linux"")]
     [UnsupportedOSPlatform(""Linux4.1"")]
     public void Unsupported()
     {
@@ -72,10 +73,12 @@ public class Test
     public void WindowsOnly()
     {
     }
+    [SupportedOSPlatform(""Linux"")]
     [ObsoletedInOSPlatform(""Linux4.1"")]
     public void Obsoleted()
     {
     }
+    [SupportedOSPlatform(""Linux"")]
     [ObsoletedInOSPlatform(""Linux4.1"", ""Obsolete message"")]
     public void ObsoletedOverload()
     {
@@ -732,7 +735,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        /*[Fact]
+        [Fact]
         public async Task CallerSupportsSubsetOfTarget()
         {
             var source = @"
@@ -747,7 +750,7 @@ namespace CallerSupportsSubsetOfTarget
         {
             Target.SupportedOnWindows();
             [|Target.SupportedOnBrowser()|];
-            Target.SupportedOnWindowsAndBrowser(); //Reported correct diagnostic: 'SupportedOnWindowsAndBrowser' requires 'browser'
+            Target.SupportedOnWindowsAndBrowser();
         }
     }
 
@@ -758,13 +761,13 @@ namespace CallerSupportsSubsetOfTarget
 
         [SupportedOSPlatform(""browser"")]
         public static void SupportedOnBrowser() { }
-        [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
+        [SupportedOSPlatform(""browser""), SupportedOSPlatform(""windows"")]
         public static void SupportedOnWindowsAndBrowser() { }
     }
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
         [Fact]
         public async Task CallerSupportsSupersetOfTarget()

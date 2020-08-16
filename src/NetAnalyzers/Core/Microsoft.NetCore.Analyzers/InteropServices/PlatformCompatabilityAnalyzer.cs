@@ -525,6 +525,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             notSuppressedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             bool? supportedOnlyList = null;
+            bool mandatoryMatchFound = false;
 #pragma warning disable CA2000
             var supportedOnlyPlatforms = PooledConcurrentSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
 #pragma warning restore CA2000
@@ -551,7 +552,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (callSiteAttributes.TryGetValue(key, out var callSiteAttribute))
                         {
                             var attributeToCheck = attribute.SupportedSecond ?? attribute.SupportedFirst;
-                            if (!MandatoryOsVersionsSuppressed(callSiteAttribute, attributeToCheck))
+                            if (MandatoryOsVersionsSuppressed(callSiteAttribute, attributeToCheck))
+                            {
+                                mandatoryMatchFound = true;
+                            }
+                            else
                             {
                                 diagnosticAttribute.SupportedSecond = (Version)attributeToCheck.Clone();
                             }
@@ -574,10 +579,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                                 }
                             }
-                        }
-                        else
-                        {
-                            CopyAllAttributes(diagnosticAttribute, attribute);
                         }
                     }
                     else if (attribute.UnsupportedFirst != null) // also means Unsupported < Supported, optional list
@@ -670,6 +671,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (supportedOnlyList.HasValue && supportedOnlyList.Value)
             {
+                if (!mandatoryMatchFound)
+                {
+                    foreach (var (name, attributes) in operationAttributes)
+                    {
+                        if (attributes.SupportedFirst != null)
+                        {
+                            if (!notSuppressedAttributes.TryGetValue(name, out var diagnosticAttribute))
+                            {
+                                diagnosticAttribute = new PlatformAttributes();
+                            }
+                            CopyAllAttributes(diagnosticAttribute, attributes);
+                            notSuppressedAttributes[name] = diagnosticAttribute;
+                        }
+                    }
+                }
+
                 // if supportedOnlyList then call site should not have any platform not listed in the support list
                 foreach (var (platform, csAttributes) in callSiteAttributes)
                 {
@@ -677,18 +694,26 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         foreach (var (name, version) in operationAttributes)
                         {
-                            if (!notSuppressedAttributes.TryGetValue(name, out var diagnosticAttribute))
-                            {
-                                diagnosticAttribute = new PlatformAttributes();
-                            }
-                            diagnosticAttribute.SupportedFirst = operationAttributes[name].SupportedFirst;
-                            notSuppressedAttributes[name] = diagnosticAttribute;
+                            AddOrUpdatedDiagnostic(operationAttributes[name], notSuppressedAttributes, name);
                         }
                     }
                 }
             }
             supportedOnlyPlatforms.Free();
             return notSuppressedAttributes.Any();
+        }
+
+        private static void AddOrUpdatedDiagnostic(PlatformAttributes operationAttributes, SmallDictionary<string, PlatformAttributes> notSuppressedAttributes, string name)
+        {
+            if (operationAttributes.SupportedFirst != null)
+            {
+                if (!notSuppressedAttributes.TryGetValue(name, out var diagnosticAttribute))
+                {
+                    diagnosticAttribute = new PlatformAttributes();
+                }
+                diagnosticAttribute.SupportedFirst = (Version)operationAttributes.SupportedFirst.Clone();
+                notSuppressedAttributes[name] = diagnosticAttribute;
+            }
         }
 
         private static bool SuppresedByUnsupported(PlatformAttributes callSiteAttribute, Version obsoleted) =>

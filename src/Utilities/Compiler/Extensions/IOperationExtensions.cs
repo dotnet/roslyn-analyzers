@@ -803,6 +803,19 @@ namespace Analyzer.Utilities.Extensions
 
             throw new InvalidOperationException();
         }
+
+        public static ImmutableArray<IArgumentOperation> GetArgumentsInNaturalOrder(
+            this ImmutableArray<IArgumentOperation> arguments)
+        {
+            using var naturalOderedArray = ArrayBuilder<IArgumentOperation>.GetInstance(arguments.Length, null!);
+
+            foreach (var argument in arguments)
+            {
+                naturalOderedArray[argument.Parameter.Ordinal] = argument;
+            }
+
+            return naturalOderedArray.ToImmutableArray();
+        }
     }
 }
 

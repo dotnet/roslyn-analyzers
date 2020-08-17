@@ -631,7 +631,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                             }
                         }
-                        // else call site is not supporting this platform, and it is deny list, so no need to warn
+                        else
+                        {
+                            // call site is not supporting this platform, check if the call site also has deny list, then it should support
+                            if (callSiteAttributes.Any(ca => ca.Value.UnsupportedFirst != null &&
+                               (ca.Value.SupportedFirst == null || ca.Value.UnsupportedFirst <= ca.Value.SupportedFirst)))
+                            {
+                                diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
+                            }
+                        }
                     }
                 }
                 else

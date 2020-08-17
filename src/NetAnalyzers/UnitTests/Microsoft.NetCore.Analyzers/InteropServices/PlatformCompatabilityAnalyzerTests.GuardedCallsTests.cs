@@ -14,11 +14,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     {
         public static IEnumerable<object[]> NamedArgumentsData()
         {
-            yield return new object[] { "minor : 2, major : 12" };
+            //yield return new object[] { "minor : 2, major : 12" };
             yield return new object[] { "build : 2, major : 12, revision : 556" };
-            yield return new object[] { "build : 1, minor : 1, major : 12" };
+            /*yield return new object[] { "build : 1, minor : 1, major : 12" };
             yield return new object[] { "revision : 555, major : 12, build : 2" };
-            yield return new object[] { "major : 13, build : 3" };
+            yield return new object[] { "major : 13, build : 3" };*/
         }
 
         [Theory]
@@ -159,9 +159,6 @@ class Target
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source);
-            /*await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
-                .WithMessage("'Api' is not supported or has been removed since 'ios' 14.0"));*/
         }
 
         [Fact]

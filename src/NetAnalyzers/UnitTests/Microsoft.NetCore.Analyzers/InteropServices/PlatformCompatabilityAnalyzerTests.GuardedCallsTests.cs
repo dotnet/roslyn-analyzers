@@ -74,6 +74,51 @@ class Test
         }
 
         [Fact]
+        public async Task GuardsAroundUnsupported()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Caller
+{
+    public static void TestWithGuardMethods()
+    {
+        if (!OperatingSystemHelper.IsWindows())
+        {
+            Target.UnsupportedInWindows();
+            [|Target.UnsupportedInWindows10()|]; // not windows doesn't mean it is windows 10 or before
+        }
+        if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10))
+        {
+            [|Target.UnsupportedInWindows()|];
+            Target.UnsupportedInWindows10();
+        }
+        if (OperatingSystemHelper.IsBrowser())
+        {
+            [|Target.UnsupportedInWindows()|];   // It is browser doesn't mean it is not windows
+            [|Target.UnsupportedInWindows10()|]; // The same
+         }
+    }
+}
+
+class Target
+{
+    [UnsupportedOSPlatform(""windows"")]
+    public static void UnsupportedInWindows() { }
+
+    [UnsupportedOSPlatform(""windows10.0"")]
+    public static void UnsupportedInWindows10() { }
+}
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+            /*await VerifyAnalyzerAsyncCs(source,
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
+                .WithMessage("'Api' is not supported or has been removed since 'ios' 14.0"));*/
+        }
+
+        [Fact]
         public async Task Unsupported_GuardedWith_IsOsNameMethods()
         {
             var source = @"
@@ -366,7 +411,7 @@ public class WindowsSpecificApis
         }
 
         [Fact]
-        public async Task ReintroducingApiSupport_Guraded_NotWarn()
+        public async Task ReintroducingApiSupport_Guarded_NotWarn()
         {
             var source = @"
 using System;
@@ -381,6 +426,10 @@ static class Program
         {
             Some.WindowsSpecificApi();
         }
+        else
+        {
+            [|Some.WindowsSpecificApi()|]; // should show 2 diagnostic
+        }
     }
 }
 
@@ -393,7 +442,10 @@ static class Some
     }
 }
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source);
+
+            await VerifyAnalyzerAsyncCs(source,
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(16, 13)
+                .WithMessage("'WindowsSpecificApi' requires 'windows' 10.0 or later"));
         }
 
         [Fact]

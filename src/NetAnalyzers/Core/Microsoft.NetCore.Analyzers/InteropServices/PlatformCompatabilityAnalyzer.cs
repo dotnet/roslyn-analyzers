@@ -354,11 +354,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             if (attribute.SupportedFirst != null && attribute.SupportedFirst <= info.Version)
                             {
                                 attribute.SupportedFirst = null;
+                                RemoveUnsupportedWithLessVersion(info.Version, attribute);
                             }
 
                             if (attribute.SupportedSecond != null && attribute.SupportedSecond <= info.Version)
                             {
                                 attribute.SupportedSecond = null;
+                                RemoveUnsupportedWithLessVersion(info.Version, attribute);
                             }
                         }
                     }
@@ -395,6 +397,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 return true;
+            }
+
+            static void RemoveUnsupportedWithLessVersion(Version supportedVersion, PlatformAttributes attribute)
+            {
+                if (attribute.UnsupportedFirst != null && attribute.UnsupportedFirst <= supportedVersion)
+                {
+                    attribute.UnsupportedFirst = null;
+                }
             }
         }
 
@@ -526,9 +536,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             notSuppressedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             bool? supportedOnlyList = null;
             bool mandatoryMatchFound = false;
-#pragma warning disable CA2000
-            var supportedOnlyPlatforms = PooledConcurrentSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
-#pragma warning restore CA2000
+            using var supportedOnlyPlatforms = PooledHashSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
             foreach (string key in operationAttributes.Keys)
             {
                 var attribute = operationAttributes[key];
@@ -699,7 +707,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
             }
-            supportedOnlyPlatforms.Free();
             return notSuppressedAttributes.Any();
         }
 
@@ -822,31 +829,30 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 attributes ??= new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
 
-                if (!attributes.TryGetValue(platformName, out var existingAttributes))
+                if (!attributes.TryGetValue(platformName, out var _))
                 {
-                    existingAttributes = new PlatformAttributes();
-                    attributes[platformName] = existingAttributes;
+                    attributes[platformName] = new PlatformAttributes();
                 }
 
-                AddAttribute(attribute.AttributeClass.Name, version, existingAttributes);
+                AddAttribute(attribute.AttributeClass.Name, version, attributes, platformName);
                 return true;
             }
 
             return false;
         }
 
-        private static void AddAttribute(string name, Version version, PlatformAttributes existingAttributes)
+        private static void AddAttribute(string name, Version version, SmallDictionary<string, PlatformAttributes> existingAttributes, string platformName)
         {
             switch (name)
             {
                 case ObsoletedInOSPlatformAttribute:
-                    AddOrUpdateObsoletedAttribute(existingAttributes, version);
+                    AddOrUpdateObsoletedAttribute(existingAttributes[platformName], version);
                     break;
                 case SupportedOSPlatformAttribute:
-                    AddOrUpdateSupportedAttribute(existingAttributes, version);
+                    AddOrUpdateSupportedAttribute(existingAttributes[platformName], version);
                     break;
                 case UnsupportedOSPlatformAttribute:
-                    AddOrUpdateUnsupportedAttribute(existingAttributes, version);
+                    AddOrUpdateUnsupportedAttribute(platformName, existingAttributes[platformName], version, existingAttributes);
                     break;
             }
         }
@@ -866,7 +872,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private static void AddOrUpdateUnsupportedAttribute(PlatformAttributes attributes, Version version)
+        private static void AddOrUpdateUnsupportedAttribute(string name, PlatformAttributes attributes, Version version, SmallDictionary<string, PlatformAttributes> existingAttributes)
         {
             if (attributes.UnsupportedFirst != null)
             {
@@ -903,9 +909,33 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
-                attributes.UnsupportedFirst = version;
+                if (attributes.SupportedFirst != null && attributes.SupportedFirst >= version)
+                {
+                    // Override needed
+                    if (attributes.SupportedSecond != null)
+                    {
+                        attributes.SupportedFirst = attributes.SupportedSecond;
+                        attributes.SupportedSecond = null;
+                    }
+                    else
+                    {
+                        attributes.SupportedFirst = null;
+                    }
+                    if (!HasAnySuppoertedOnlyAttribute(name, existingAttributes))
+                    {
+                        attributes.UnsupportedFirst = version;
+                    }
+                }
+                else
+                {
+                    attributes.UnsupportedFirst = version;
+                }
             }
         }
+
+        private static bool HasAnySuppoertedOnlyAttribute(string name, SmallDictionary<string, PlatformAttributes> existingAttributes) =>
+            existingAttributes.Any(a => a.Key != name && a.Value.SupportedFirst != null &&
+            (a.Value.UnsupportedFirst == null || a.Value.SupportedFirst < a.Value.UnsupportedFirst));
 
         private static void AddOrUpdateSupportedAttribute(PlatformAttributes attributes, Version version)
         {

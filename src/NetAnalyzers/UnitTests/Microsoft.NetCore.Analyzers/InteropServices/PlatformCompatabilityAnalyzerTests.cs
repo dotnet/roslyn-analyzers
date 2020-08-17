@@ -719,7 +719,7 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    public delegate void Del(); // The attribute not supported on delegates, so no tets for that
+    public delegate void Del(); // The attribute not supported on delegates, so no tests for that
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void DelegateMethod()
@@ -782,24 +782,24 @@ namespace CallerSupportsSubsetOfTarget
         [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
         public static void TestWithWindowsAndBrowserSupported()
         {
-            [|Target.SupportedOnWindows()|]; // FAIL: no diagnostic; should have a diagnostic for browser
-            [|Target.SupportedOnBrowser()|]; // FAIL: no diagnostic; should have a diagnostic for browser
-            Target.SupportedOnWindowsAndBrowser(); // PASS: no diagnostic
+            [|Target.SupportedOnWindows()|];
+            [|Target.SupportedOnBrowser()|];
+            Target.SupportedOnWindowsAndBrowser();
 
-            [|Target.UnsupportedOnWindows()|]; // PASS: windows unsupported
-            [|Target.UnsupportedOnBrowser()|]; // PASS: browser unsupported
-            [|Target.UnsupportedOnWindowsAndBrowser()|]; // PASS: windows unsupported, browser unsupported
+            [|Target.UnsupportedOnWindows()|];
+            [|Target.UnsupportedOnBrowser()|];
+            [|Target.UnsupportedOnWindowsAndBrowser()|];
         }
         [UnsupportedOSPlatform(""browser"")]
         public static void TestWithBrowserUnsupported()
         {
-            [|Target.SupportedOnWindows()|]; // PASS: windows supported
-            [|Target.SupportedOnBrowser()|]; // PASS: browser supported
-            [|Target.SupportedOnWindowsAndBrowser()|]; // PASS: windows supported, browser supported
+            [|Target.SupportedOnWindows()|];
+            [|Target.SupportedOnBrowser()|];
+            [|Target.SupportedOnWindowsAndBrowser()|];
 
-            [|Target.UnsupportedOnWindows()|]; // FAIL: no diagnostic; should have a diagnostic for windows - Fixed
-            Target.UnsupportedOnBrowser(); // PASS: no diagnostic 
-            [|Target.UnsupportedOnWindowsAndBrowser()|]; // FAIL: no diagnostic; should have a diagnostic for windows - Fixed
+            [|Target.UnsupportedOnWindows()|];
+            Target.UnsupportedOnBrowser();
+            [|Target.UnsupportedOnWindowsAndBrowser()|];
         }
     }
 
@@ -831,7 +831,7 @@ namespace CallerSupportsSubsetOfTarget
                     WithMessage("'SupportedOnWindowsAndBrowser' requires 'windows'").WithArguments("SupportedOnWindowsAndBrowser", "windows"));
         }
 
-        /*[Fact] //TODO fix it now
+        [Fact]
         public async Task UnsupportedMustSuppressSupported()
         {
             var source = @"
@@ -842,7 +842,7 @@ static class Program
     public static void Main()
     {
         [|Some.Api1()|];
-        Some.Api2();
+        [|Some.Api2()|]; // TvOs is suppressed
     }
 }
 
@@ -856,8 +856,66 @@ class Some
     public static void Api2() {}
 }
 " + MockAttributesCsSource;
-            await VerifyAnalyzerAsyncCs(source);
+            await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(8, 9)
+                    .WithMessage("'Api1' requires 'tvos' 4.0 or later").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"));
         }
+
+        /*[Fact]
+        public async Task OverridesPlatform()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace PlatformCompatDemo.Bugs
+{
+    class Caller
+    {
+        [SupportedOSPlatform(""windows"")]
+        public void TestSupportedOnWindows()
+        {
+            [|TargetSupportedOnWindows.FunctionUnsupportedOnWindows()|]; // 11 FAIL: should be unsupported on windows
+            TargetSupportedOnWindows.FunctionUnsupportedOnBrowser();
+
+            TargetUnsupportedOnWindows.FunctionSupportedOnWindows();
+            [|TargetUnsupportedOnWindows.FunctionSupportedOnBrowser()|]; // 15 FAIL: should only be supported on browser                                                         
+        }                                                            // - Still should warn unsupported windows
+
+        [UnsupportedOSPlatform(""windows"")]
+        public void TestUnsupportedOnWindows()
+        {
+            TargetSupportedOnWindows.FunctionUnsupportedOnWindows();
+            [|TargetSupportedOnWindows.FunctionUnsupportedOnBrowser()|]; // 22 FAIL: being unsupported on browser doesn't matter
+                                                                     // because it should only be supported on windows
+                                                                     // (since an allow-list was found) - No this doesn't have any supported info means for all means browser should warn
+
+            [|TargetUnsupportedOnWindows.FunctionSupportedOnWindows()|]; // 26 FAIL: should only be supported on windows
+            [|TargetUnsupportedOnWindows.FunctionSupportedOnBrowser()|]; // FAIL: should only be supported on browser
+        }
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    class TargetSupportedOnWindows
+    {
+        [UnsupportedOSPlatform(""windows"")]
+        public static void FunctionUnsupportedOnWindows() { }
+
+        [UnsupportedOSPlatform(""browser"")]
+        public static void FunctionUnsupportedOnBrowser() { }
+    }
+
+    [UnsupportedOSPlatform(""windows"")]
+    class TargetUnsupportedOnWindows
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void FunctionSupportedOnWindows() { }
+
+        [SupportedOSPlatform(""browser"")]
+        public static void FunctionSupportedOnBrowser() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }*/
 
         [Fact]
         public async Task UnsupportedMustSuppressSupportedAssemblyAttribute()
@@ -873,7 +931,7 @@ namespace PlatformCompatDemo
         public static void Main()
         {
             [|CrossPlatformApis.DoesNotWorkOnBrowser()|];
-            var nonBrowser = new [|NonBrowserApis()|];
+            var nonBrowser = [|new NonBrowserApis()|];
         }
     }
 
@@ -914,7 +972,7 @@ class SomeWindowsSpecific
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source);
-        }*/
+        }
 
         [Fact]
         public async Task UsingVersionedApiFromUnversionedAssembly()

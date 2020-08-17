@@ -581,16 +581,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
                             }
 
-                            if (attribute.Obsoleted != null)
+                            if (attribute.Obsoleted != null &&
+                                SupportedVersionLessThanObsoleted(attribute) &&
+                                !SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) &&
+                                !ObsoletedSuppressedByCallSite(callSiteAttribute.Obsoleted, attribute.Obsoleted))
                             {
-                                if (attribute.SupportedSecond != null && attribute.SupportedSecond > attribute.Obsoleted || attribute.SupportedFirst > attribute.Obsoleted)
-                                {
-                                    // Can supported version be greater than obsoleted? Do we want to report diagnostic here for wrong version?
-                                }
-                                else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
-                                {
-                                    diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
-                                }
+                                diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                             }
                         }
                     }
@@ -629,7 +625,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 {
                                     // Can supported version be greater than obsoleted? Do we want to report diagnostic here for wrong version?
                                 }
-                                else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressed(callSiteAttribute.Obsoleted, attribute.Obsoleted))
+                                else if (!SuppresedByUnsupported(callSiteAttribute, attribute.Obsoleted) && !ObsoletedSuppressedByCallSite(callSiteAttribute.Obsoleted, attribute.Obsoleted))
                                 {
                                     diagnosticAttribute.Obsoleted = (Version)attribute.Obsoleted.Clone();
                                 }
@@ -672,7 +668,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                     if (attribute.Obsoleted != null)
                     {
-                        // When no supported attribute exist, obsoleted not expected, reoport diagnostic
+                        // When no supported attribute exist, obsoleted not expected, reoport diagnostic (Would handled with other analyzer)
                     }
                 }
 
@@ -715,6 +711,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return notSuppressedAttributes.Any();
         }
 
+        private static bool SupportedVersionLessThanObsoleted(PlatformAttributes attribute) =>
+            attribute.SupportedSecond != null && attribute.SupportedSecond < attribute.Obsoleted || attribute.SupportedFirst < attribute.Obsoleted;
+
         private static void AddOrUpdatedDiagnostic(PlatformAttributes operationAttributes, SmallDictionary<string, PlatformAttributes> notSuppressedAttributes, string name)
         {
             if (operationAttributes.SupportedFirst != null)
@@ -746,7 +745,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             callSiteAttribute.UnsupportedFirst != null && unsupporteAttribute >= callSiteAttribute.UnsupportedFirst ||
             callSiteAttribute.UnsupportedSecond != null && unsupporteAttribute >= callSiteAttribute.UnsupportedSecond;
 
-        private static bool ObsoletedSuppressed(Version? callSiteObsoleted, Version checkingObsoleted) =>
+        private static bool ObsoletedSuppressedByCallSite(Version? callSiteObsoleted, Version checkingObsoleted) =>
             callSiteObsoleted != null && checkingObsoleted >= callSiteObsoleted;
 
         private static bool UnsupportedSecondSuppressed(PlatformAttributes attribute, PlatformAttributes callSiteAttribute) =>

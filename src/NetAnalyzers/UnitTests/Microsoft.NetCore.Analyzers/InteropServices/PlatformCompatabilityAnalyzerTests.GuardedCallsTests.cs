@@ -12,6 +12,52 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
+        public static IEnumerable<object[]> NamedArgumentsData()
+        {
+            yield return new object[] { "minor : 2, major : 12" };
+            yield return new object[] { "build : 2, major : 12, revision : 556" };
+            yield return new object[] { "build : 1, minor : 1, major : 12" };
+            yield return new object[] { "revision : 555, major : 12, build : 2" };
+            yield return new object[] { "major : 13, build : 3" };
+        }
+
+        [Theory]
+        [MemberData(nameof(NamedArgumentsData))]
+        public async Task GuardMethodWithNamedArgumentsTest(string arguments)
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystemHelper.IsAndroidVersionAtLeast(" + arguments + @"))
+        {
+            Api();
+        }
+        [|Api()|];
+
+        if (OperatingSystemHelper.IsOSPlatformVersionAtLeast(" + arguments + @", platform : ""Android""))
+        {
+            Api();
+        }
+        else
+        {
+            [|Api()|];
+        }
+    }
+
+    [SupportedOSPlatform(""Android12.0.2.521"")]
+    void Api()
+    {
+    }
+}" + MockAttributesCsSource + MockOperatingSystemApiSource;
+
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
         [Fact(Skip = "TODO: Needs to be fixed")]
         public async Task SupportedUnsupportedRange_GuardedWithOr()
         {
@@ -70,7 +116,7 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
-                .WithMessage("'Api' is not supported or has been removed since 'ios' 14.0"));
+                .WithMessage("'Api' is unsupported on 'ios' 14.0 and later"));
         }
 
         [Fact]
@@ -445,7 +491,7 @@ static class Some
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(16, 13)
-                .WithMessage("'WindowsSpecificApi' requires 'windows' 10.0 or later"));
+                .WithMessage("'WindowsSpecificApi' is supported on 'windows' 10.0 and later"));
         }
 
         [Fact]

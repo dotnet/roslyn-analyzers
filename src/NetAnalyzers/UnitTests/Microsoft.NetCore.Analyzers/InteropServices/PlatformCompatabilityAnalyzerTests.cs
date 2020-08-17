@@ -826,9 +826,9 @@ namespace CallerSupportsSubsetOfTarget
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(17, 13)
-                    .WithMessage("'UnsupportedOnWindowsAndBrowser' is not supported or has been removed from 'windows'").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"),
+                    .WithMessage("'UnsupportedOnWindowsAndBrowser' is unsupported on 'windows'").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(24, 13).
-                    WithMessage("'SupportedOnWindowsAndBrowser' requires 'windows'").WithArguments("SupportedOnWindowsAndBrowser", "windows"));
+                    WithMessage("'SupportedOnWindowsAndBrowser' is supported on 'windows'").WithArguments("SupportedOnWindowsAndBrowser", "windows"));
         }
 
         [Fact]
@@ -857,7 +857,7 @@ class Some
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(8, 9)
-                    .WithMessage("'Api1' requires 'tvos' 4.0 or later").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"));
+                    .WithMessage("'Api1' is supported on 'tvos' 4.0 and later").WithArguments("UnsupportedOnWindowsAndBrowser", "windows"));
         }
 
         /*[Fact]
@@ -1247,9 +1247,9 @@ public class C
 " + MockAttributesCsSource;
 
             await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(11, 9)
-                .WithMessage("'LinuxMethod' is not supported or has been removed from 'linux'").WithArguments("LinuxMethod", "linux"),
+                .WithMessage("'LinuxMethod' is unsupported on 'linux'").WithArguments("LinuxMethod", "linux"),
                  VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(12, 9)
-                .WithMessage("'LinuxVersionedMethod' is not supported or has been removed since 'linux' 4.8").WithArguments("LinuxMethod", "linux"));
+                .WithMessage("'LinuxVersionedMethod' is unsupported on 'linux' 4.8 and later").WithArguments("LinuxMethod", "linux"));
 
         }
 
@@ -1319,14 +1319,14 @@ public class C
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed from 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' requires 'windows' 10.0.1903 or later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed from 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' requires 'windows' 10.0.1903 or later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since 'windows' 10.0.2004"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows' 10.0.1903 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows' 10.0.1903 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"));
         }
 
         [Fact]
@@ -1394,15 +1394,15 @@ public class C
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' requires 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since 'windows' 10.0.2004"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' requires 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since 'windows' 10.0.2004"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' has been deprecated since 'windows' 10.0.1909"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is not supported or has been removed since 'windows' 10.0.2004"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"));
         }
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)

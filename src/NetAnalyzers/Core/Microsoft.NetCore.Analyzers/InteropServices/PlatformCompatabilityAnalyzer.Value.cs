@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
@@ -72,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return true;
                     }
 
-                    if (arguments[0].Value is ILiteralOperation literal)
+                    if (arguments.GetArgumentForParameterAtIndex(0).Value is ILiteralOperation literal)
                     {
                         if (literal.Type?.SpecialType == SpecialType.System_String &&
                             literal.ConstantValue.HasValue)
@@ -164,9 +165,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 using var versionBuilder = ArrayBuilder<int>.GetInstance(4, fillWithValue: 0);
                 var index = 0;
 
-                foreach (var argument in arguments.Skip(skip))
+                while (index < arguments.Length - skip)
                 {
-                    if (!TryDecodeOSVersionPart(argument, valueContentAnalysisResult, out var osVersionPart))
+                    if (!TryDecodeOSVersionPart(arguments.GetArgumentForParameterAtIndex(index + skip), valueContentAnalysisResult, out var osVersionPart))
                     {
                         osVersion = null;
                         return false;

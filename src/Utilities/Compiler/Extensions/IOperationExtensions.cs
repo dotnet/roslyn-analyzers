@@ -804,17 +804,23 @@ namespace Analyzer.Utilities.Extensions
             throw new InvalidOperationException();
         }
 
-        public static ImmutableArray<IArgumentOperation> GetArgumentsInNaturalOrder(
+        /// <summary>
+        /// Useful when named arguments used for a method call and you need them in the original parameter order.
+        /// </summary>
+        /// <param name="arguments">Arguments of the method</param>
+        /// <returns>Returns the arguments in parameter order</returns>
+        public static ImmutableArray<IArgumentOperation> GetArgumentsInParameterOrder(
             this ImmutableArray<IArgumentOperation> arguments)
         {
-            using var naturalOderedArray = ArrayBuilder<IArgumentOperation>.GetInstance(arguments.Length, null!);
+            using var parameterOrderedArguments = ArrayBuilder<IArgumentOperation>.GetInstance(arguments.Length, null!);
 
             foreach (var argument in arguments)
             {
-                naturalOderedArray[argument.Parameter.Ordinal] = argument;
+                Debug.Assert(parameterOrderedArguments[argument.Parameter.Ordinal] == null);
+                parameterOrderedArguments[argument.Parameter.Ordinal] = argument;
             }
 
-            return naturalOderedArray.ToImmutableArray();
+            return parameterOrderedArguments.ToImmutableArray();
         }
     }
 }

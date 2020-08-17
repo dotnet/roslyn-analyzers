@@ -165,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 using var versionBuilder = ArrayBuilder<int>.GetInstance(4, fillWithValue: 0);
                 var index = 0;
 
-                foreach (var argument in arguments.GetArgumentsInNaturalOrder().Skip(skip))
+                foreach (var argument in arguments.GetArgumentsInParameterOrder().Skip(skip))
                 {
                     if (!TryDecodeOSVersionPart(argument, valueContentAnalysisResult, out var osVersionPart))
                     {

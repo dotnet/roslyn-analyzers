@@ -412,7 +412,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            var operationName = symbol.Name;
+            var operationName = symbol.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
 
             foreach (var platformName in attributes.Keys)
             {

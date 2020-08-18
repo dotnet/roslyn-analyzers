@@ -116,7 +116,7 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(14, 9)
-                .WithMessage("'Api' is unsupported on 'ios' 14.0 and later"));
+                .WithMessage("'Test.Api()' is unsupported on 'ios' 14.0 and later"));
         }
 
         [Fact]
@@ -488,7 +488,7 @@ static class Some
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(16, 13)
-                .WithMessage("'WindowsSpecificApi' is supported on 'windows' 10.0 and later"));
+                .WithMessage("'Some.WindowsSpecificApi()' is supported on 'windows' 10.0 and later"));
         }
 
         [Fact]

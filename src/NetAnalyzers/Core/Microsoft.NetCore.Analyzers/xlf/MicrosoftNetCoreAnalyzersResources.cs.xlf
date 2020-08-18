@@ -1517,11 +1517,6 @@
         <target state="new">Using platform dependent API on a component makes the code no longer work across all platforms.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatabilityCheckObsoleteMessage">
-        <source>'{0}' is deprecated on '{1}' {2} and later</source>
-        <target state="new">'{0}' is deprecated on '{1}' {2} and later</target>
-        <note />
-      </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckTitle">
         <source>Call of platform dependent API</source>
         <target state="new">Call of platform dependent API</target>
@@ -1537,12 +1532,12 @@
         <target state="new">'{0}' is unsupported on '{1}' {2} and later</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckRequiredOsMessage">
+      <trans-unit id="PlatformCompatibilityCheckSupportedOsMessage">
         <source>'{0}' is supported on '{1}'</source>
         <target state="new">'{0}' is supported on '{1}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckRequiredOsVersionMessage">
+      <trans-unit id="PlatformCompatibilityCheckSupportedOsVersionMessage">
         <source>'{0}' is supported on '{1}' {2} and later</source>
         <target state="new">'{0}' is supported on '{1}' {2} and later</target>
         <note />

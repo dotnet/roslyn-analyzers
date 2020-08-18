@@ -621,8 +621,7 @@ class Test
     {
     }
 
-    [SupportedOSPlatform(""Windows"")]
-    [ObsoletedInOSPlatform(""Windows10.0"")]
+    [UnsupportedOSPlatform(""Windows10.0"")]
     void M3 ()
     {
     }
@@ -631,7 +630,7 @@ class Test
         }
 
         [Fact]
-        public async Task GuardedWith_Obsoleted_SimpleIfElse()
+        public async Task GuardedWith_Unsupported_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -642,7 +641,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     void M1()
     {
-        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 2, 19222))
+        if(OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1, 2, 3))
         {
             [|M2()|];
             M3();
@@ -669,8 +668,7 @@ class Test
     void M2()
     {
     }
-    [SupportedOSPlatform(""Windows"")]
-    [ObsoletedInOSPlatform(""Windows10.1.2.3"")]
+    [UnsupportedOSPlatform(""Windows10.1.2.3"")]
     void M3 ()
     {
     }
@@ -684,7 +682,7 @@ Imports System
 Class Test
     <SupportedOSPlatform(""Windows"")>
     Private Sub M1()
-        If OperatingSystemHelper.IsWindows() AndAlso Not OperatingSystemHelper.IsWindowsVersionAtLeast(10, 2, 19222) Then
+        If OperatingSystemHelper.IsWindows() AndAlso Not OperatingSystemHelper.IsWindowsVersionAtLeast(10, 1, 2, 3) Then
             [|M2()|]
             M3()
         Else
@@ -705,8 +703,7 @@ Class Test
     Private Sub M2()
     End Sub
 
-    <SupportedOSPlatform(""Windows"")>
-    <ObsoletedInOSPlatform(""Windows10.1.2.3"")>
+    <UnsupportedOSPlatform(""Windows10.1.2.3"")>
     Private Sub M3()
     End Sub
 End Class

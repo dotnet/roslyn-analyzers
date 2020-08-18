@@ -30,16 +30,8 @@ public class Test
     public void MethodWithTwoArguments()
     {
     }
-    [SupportedOSPlatform([|new string[]{""Linux"", ""Windows""}|])]
+    [UnsupportedOSPlatform([|new string[]{""Linux"", ""Windows""}|])]
     public void MethodWithArrayArgument()
-    {
-    }
-    [ObsoletedInOSPlatform([|10|])]
-    public void MethodWithIntArgument()
-    {
-    }
-    [ObsoletedInOSPlatform([|OSPlatform.Windows|])]
-    public void MethodWithPropertyAccess()
     {
     }
 }
@@ -60,9 +52,7 @@ public class Test
     public void M1()
     {
         [|WindowsOnly()|];
-        [|Obsoleted()|];
         [|Unsupported()|];
-        [|ObsoletedOverload()|];
     }
     [SupportedOSPlatform(""Linux"")]
     [UnsupportedOSPlatform(""Linux4.1"")]
@@ -71,16 +61,6 @@ public class Test
     }
     [SupportedOSPlatform(""Windows10.1.1.1"")]
     public void WindowsOnly()
-    {
-    }
-    [SupportedOSPlatform(""Linux"")]
-    [ObsoletedInOSPlatform(""Linux4.1"")]
-    public void Obsoleted()
-    {
-    }
-    [SupportedOSPlatform(""Linux"")]
-    [ObsoletedInOSPlatform(""Linux4.1"", ""Obsolete message"")]
-    public void ObsoletedOverload()
     {
     }
 }
@@ -93,21 +73,11 @@ Imports System.Runtime.Versioning
 Public Class Test
     Public Sub M1()
         [|WindowsOnly()|]
-        [|Obsoleted()|]
-        [|ObsoletedOverload()|]
         [|Unsupported()|]
     End Sub
 
     <SupportedOSPlatform(""Windows10.1.1.1"")>
     Public Sub WindowsOnly()
-    End Sub
-
-    <ObsoletedInOSPlatform(""Linux4.1"")>
-    Public Sub Obsoleted()
-    End Sub
-
-    <ObsoletedInOSPlatform(""Linux4.1"", ""Obsoleted message"")>
-    Public Sub ObsoletedOverload()
     End Sub
 
     <UnsupportedOSPlatform(""Linux4.1"")>
@@ -130,10 +100,10 @@ public class Test
     {
         Windows10();
         Windows1_2_3_4_5();
-        [|ObsoletedLinuxDash4_1()|];
-        [|ObsoletedLinuxStar4_1()|];
+        [|UnsupportedOSPlatformLinuxDash4_1()|];
+        [|UnsupportedOSPlatformLinuxStar4_1()|];
         [|UnsupportedLinu4_1()|];
-        ObsoletedWithNullString();
+        UnsupportedOSPlatformWithNullString();
         UnsupportedWithEmptyString();
         [|WindowsOnly()|];
     }
@@ -150,16 +120,16 @@ public class Test
     public void Windows1_2_3_4_5()
     {
     }
-    [ObsoletedInOSPlatform(""Linux-4.1"")]
-    public void ObsoletedLinuxDash4_1()
+    [UnsupportedOSPlatform(""Linux-4.1"")]
+    public void UnsupportedOSPlatformLinuxDash4_1()
     {
     }
-    [ObsoletedInOSPlatform(""Linux*4.1"")]
-    public void ObsoletedLinuxStar4_1()
+    [UnsupportedOSPlatform(""Linux*4.1"")]
+    public void UnsupportedOSPlatformLinuxStar4_1()
     {
     }
-    [ObsoletedInOSPlatform(null)]
-    public void ObsoletedWithNullString()
+    [UnsupportedOSPlatform(null)]
+    public void UnsupportedOSPlatformWithNullString()
     {
     }
     [UnsupportedOSPlatform(""Linu4.1"")]
@@ -185,8 +155,6 @@ public class Test
 {
     [SupportedOSPlatform(""Windows10.1.1"")]
     public string WindowsStringProperty { get; set; }
-    [ObsoletedInOSPlatform(""ios4.1"")]
-    public int ObsoleteIntProperty { get; set; }
     [UnsupportedOSPlatform(""Linux4.1"")]
     public byte UnsupportedProperty { get; }
     public void M1()
@@ -194,8 +162,6 @@ public class Test
         [|WindowsStringProperty|] = ""Hello"";
         string s = [|WindowsStringProperty|];
         M2([|WindowsStringProperty|]);
-        [|ObsoleteIntProperty|] = 5;
-        M3([|ObsoleteIntProperty|]);
         M3([|UnsupportedProperty|]);
     }
     public string M2(string option)
@@ -242,7 +208,6 @@ public class Test
         public static IEnumerable<object[]> Create_AtrrbiuteProperty_WithCondtions()
         {
             yield return new object[] { "SupportedOSPlatform", "string StringProperty", " == [|StringProperty|]", @"StringProperty|] = ""Hello""", "StringProperty" };
-            yield return new object[] { "ObsoletedInOSPlatform", "int IntProperty", " > [|IntProperty|]", "IntProperty|] = 5", "IntProperty" };
             yield return new object[] { "UnsupportedOSPlatform", "int UnsupportedProperty", " <= [|UnsupportedProperty|]", "UnsupportedProperty|] = 3", "UnsupportedProperty" };
         }
 
@@ -795,8 +760,43 @@ namespace CallerUnsupportsNonSubsetOfTarget
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        [Fact(Skip = "Is this valid scenario? Check again")]
-        public async Task CallerUnsupportsSubsetOfTargetSupport()
+        [Fact]
+        public async Task CallerUnsupportsSubsetOfTargetUsupportedFirstThenSupportsNotWarn()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerUnsupportsSubsetOfTarget
+{
+    class Caller
+    {
+        [UnsupportedOSPlatform(""windows"")]
+        public void TestUnsupportedOnWindows()
+        {
+            // Call site unsupporting Windows, means the call site supports all other platforms 
+            // It is calling into code that was NOT supported only on Windows, but eventually added support,
+            // as it was only not supported window supporting it later doesn' matter for call site that is 
+            // not supporting windows at all, so it shouldn't raise diagnostic
+            TargetUnsupportedOnWindows.FunctionSupportedOnWindows1(); // should not warn
+            TargetUnsupportedOnWindows.FunctionSupportedOnWindowsSameVersion();
+        }
+    }
+    [UnsupportedOSPlatform(""windows"")]
+    class TargetUnsupportedOnWindows
+    {
+        [SupportedOSPlatform(""windows1.0"")]
+        public static void FunctionSupportedOnWindows1() { }
+        
+        [SupportedOSPlatform(""windows"")]
+        public static void FunctionSupportedOnWindowsSameVersion() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task CallerUnsupportsNonSubsetOfTargetUnsupportedFirstSupportsWarns()
         {
             var source = @"
 using System.Runtime.Versioning;
@@ -805,10 +805,10 @@ namespace CallerUnsupportsNonSubsetOfTarget
 {
     class Caller
     {
-        [UnsupportedOSPlatform(""windows"")]
+        [UnsupportedOSPlatform(""browser"")]
         public void TestUnsupportedOnWindows()
         {
-            [|TargetUnsupportedOnWindows.FunctionSupportedOnWindows1()|]; // should warn supported on windows 1.0
+            [|TargetUnsupportedOnWindows.FunctionSupportedOnWindows1()|];
             [|TargetUnsupportedOnWindows.FunctionSupportedOnWindowsSameVersion()|];
         }
     }
@@ -818,7 +818,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
         [SupportedOSPlatform(""windows1.0"")]
         public static void FunctionSupportedOnWindows1() { }
         
-        [SupportedOSPlatform(""windows"")] // this would cause conflict, need to have less version than unsupported
+        [SupportedOSPlatform(""windows"")]
         public static void FunctionSupportedOnWindowsSameVersion() { }
     }
 }
@@ -1226,47 +1226,7 @@ public class OsDependentClass
             }
         }
 
-        [Theory]
-        [MemberData(nameof(ObsoletedUnsupportedAttributeTestData))]
-        public async Task MethodOfOsDependentClassSuppressedWithObsoleteAttribute(string dependentVersion, string suppressingVersion, bool warn)
-        {
-            var source = @"
-using System.Runtime.Versioning;
-
-[SupportedOSPlatform(""Windows"")]
-public class Test
-{
-    [ObsoletedInOSPlatform(""" + suppressingVersion + @""")]
-    public void M1()
-    {
-        OsDependentClass odc = new OsDependentClass();
-        odc.M2();
-    }
- }
- 
-[SupportedOSPlatform(""Windows"")]
-[ObsoletedInOSPlatform(""" + dependentVersion + @""")]
-public class OsDependentClass
-{
-     public void M2()
-    {
-    }
-}
-" + MockAttributesCsSource;
-
-            if (warn)
-            {
-                await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(10, 32).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(11, 9).WithArguments("M2", "Windows", "10.1.2.3"));
-            }
-            else
-            {
-                await VerifyAnalyzerAsyncCs(source);
-            }
-        }
-
-        public static IEnumerable<object[]> ObsoletedUnsupportedAttributeTestData()
+        public static IEnumerable<object[]> UnsupportedAttributeTestData()
         {
             yield return new object[] { "Windows10.1.2.3", "Windows10.1.2.3", false };
             yield return new object[] { "Windows10.1.2.3", "MacOs10.1.3.3", true };
@@ -1282,7 +1242,7 @@ public class OsDependentClass
         }
 
         [Theory]
-        [MemberData(nameof(ObsoletedUnsupportedAttributeTestData))]
+        [MemberData(nameof(UnsupportedAttributeTestData))]
         public async Task MethodOfOsDependentClassSuppressedWithUnsupportedAttribute(string dependentVersion, string suppressingVersion, bool warn)
         {
             var source = @"
@@ -1385,13 +1345,12 @@ public class Test
     [UnsupportedOSPlatform(""windows10.0.2000"")]
     public void SupporteWindows()
     {
-        // Warns for UnsupportedFirst, Supported and Obsoleted
+        // Warns for UnsupportedFirst, Supported
         obj.DoesNotWorkOnWindows(); 
     }
 
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.1"")]
-    [ObsoletedInOSPlatform(""windows10.0.1909"")]
     [UnsupportedOSPlatform(""windows10.0.2003"")]
     public void SameSupportForWindowsNotWarn()
     {
@@ -1406,7 +1365,7 @@ public class Test
     [SupportedOSPlatform(""windows10.0.2000"")]
     public void SupportedFromWindows10_0_2000()
     {
-        // Should warn for [ObsoletedInOSPlatform] and [UnsupportedOSPlatform]
+        // Should warn for [UnsupportedOSPlatform]
         obj.DoesNotWorkOnWindows();
     }
 
@@ -1423,7 +1382,6 @@ public class C
 {
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.0.1903"")]
-    [ObsoletedInOSPlatform(""windows10.0.1909"")]
     [UnsupportedOSPlatform(""windows10.0.2004"")]
     public void DoesNotWorkOnWindows()
     {
@@ -1433,12 +1391,9 @@ public class C
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows'"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows' 10.0.1903 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows' 10.0.1903 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(32, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(39, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(31, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(31, 9).WithMessage("'DoesNotWorkOnWindows' is supported on 'windows' 10.0.1903 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(38, 9).WithMessage("'DoesNotWorkOnWindows' is unsupported on 'windows' 10.0.2004 and later"));
         }
 
         [Fact]
@@ -1458,15 +1413,6 @@ public class Test
     }
 
     [SupportedOSPlatform(""windows"")]
-    [UnsupportedOSPlatform(""windows10.0.2000"")]
-    public void SupporteWindows()
-    {
-        // Warns for Obsoleted version
-        obj.WindowsOnlyMethod(); 
-    }
-
-    [SupportedOSPlatform(""windows"")]
-    [ObsoletedInOSPlatform(""windows10.0.1909"")]
     [UnsupportedOSPlatform(""windows10.0.2003"")]
     public void SameSupportForWindowsNotWarn()
     {
@@ -1481,7 +1427,7 @@ public class Test
     [SupportedOSPlatform(""windows10.0.2000"")]
     public void SupportedFromWindows10_0_2000()
     {
-        // Warns for [ObsoletedInOSPlatform] and [UnsupportedOSPlatform]
+        // Warns for [UnsupportedOSPlatform]
         obj.WindowsOnlyMethod();
     }
     
@@ -1497,7 +1443,6 @@ public class Test
 public class C
 {
     [SupportedOSPlatform(""windows"")]
-    [ObsoletedInOSPlatform(""windows10.0.1909"")]
     [UnsupportedOSPlatform(""windows10.0.2004"")]
     public void WindowsOnlyMethod()
     {
@@ -1506,14 +1451,10 @@ public class C
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'WindowsOnlyMethod' is supported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'WindowsOnlyMethod' is deprecated on 'windows' 10.0.1909 and later"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'WindowsOnlyMethod' is unsupported on 'windows' 10.0.2004 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(18, 9).WithMessage("'WindowsOnlyMethod' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(31, 9).WithMessage("'WindowsOnlyMethod' is supported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.ObsoleteOsRule).WithLocation(31, 9).WithMessage("'WindowsOnlyMethod' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(31, 9).WithMessage("'WindowsOnlyMethod' is unsupported on 'windows' 10.0.2004 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(38, 9).WithMessage("'WindowsOnlyMethod' is deprecated on 'windows' 10.0.1909 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(38, 9).WithMessage("'WindowsOnlyMethod' is unsupported on 'windows' 10.0.2004 and later"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(22, 9).WithMessage("'WindowsOnlyMethod' is supported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(22, 9).WithMessage("'WindowsOnlyMethod' is unsupported on 'windows' 10.0.2004 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(29, 9).WithMessage("'WindowsOnlyMethod' is unsupported on 'windows' 10.0.2004 and later"));
         }
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
@@ -1607,28 +1548,6 @@ namespace System.Runtime.Versioning
         public UnsupportedOSPlatformAttribute(string platformName) : base(platformName)
         { }
     }
-
-    [AttributeUsage(AttributeTargets.Assembly |
-                    AttributeTargets.Class |
-                    AttributeTargets.Constructor |
-                    AttributeTargets.Event |
-                    AttributeTargets.Method |
-                    AttributeTargets.Module |
-                    AttributeTargets.Property |
-                    AttributeTargets.Field |
-                    AttributeTargets.Struct,
-                    AllowMultiple = true, Inherited = false)]
-    public sealed class ObsoletedInOSPlatformAttribute: OSPlatformAttribute
-    {
-        public ObsoletedInOSPlatformAttribute(string platformName) : base(platformName)
-        { }
-        public ObsoletedInOSPlatformAttribute(string platformName, string message) : base(platformName)
-        {
-            Message = message;
-        }
-        public string Message { get; }
-        public string Url { get; set; }
-    }
 }
 ";
 
@@ -1669,23 +1588,6 @@ Namespace System.Runtime.Versioning
         Public Sub New(ByVal platformName As String)
             MyBase.New(platformName)
         End Sub
-    End Class
-
-    <AttributeUsage(AttributeTargets.Assembly Or AttributeTargets.[Class] Or AttributeTargets.Constructor Or AttributeTargets.[Event] Or AttributeTargets.Method Or AttributeTargets.[Module] Or AttributeTargets.[Property] Or AttributeTargets.Field Or AttributeTargets.Struct, AllowMultiple:=True, Inherited:=False)>
-    Public NotInheritable Class ObsoletedInOSPlatformAttribute
-        Inherits OSPlatformAttribute
-
-        Public Sub New(ByVal platformName As String)
-            MyBase.New(platformName)
-        End Sub
-
-        Public Sub New(ByVal platformName As String, ByVal message As String)
-            MyBase.New(platformName)
-            Message = message
-        End Sub
-
-        Public ReadOnly Property Message As String
-        Public Property Url As String
     End Class
 End Namespace
 ";

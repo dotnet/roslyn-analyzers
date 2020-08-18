@@ -28,13 +28,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         /// </summary>
         private class PlatformAttributes
         {
-            public Version? Obsoleted { get; set; }
             public Version? SupportedFirst { get; set; }
             public Version? SupportedSecond { get; set; }
             public Version? UnsupportedFirst { get; set; }
             public Version? UnsupportedSecond { get; set; }
             public bool HasAttribute() => SupportedFirst != null || UnsupportedFirst != null ||
-                        SupportedSecond != null || UnsupportedSecond != null || Obsoleted != null;
+                        SupportedSecond != null || UnsupportedSecond != null;
         }
 
         private static bool TryParsePlatformNameAndVersion(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)

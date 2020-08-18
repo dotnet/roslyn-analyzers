@@ -1431,11 +1431,8 @@
   <data name="PlatformCompatabilityCheckDescription" xml:space="preserve">
     <value>Using platform dependent API on a component makes the code no longer work across all platforms.</value>
   </data>
-  <data name="PlatformCompatibilityCheckRequiredOsVersionMessage" xml:space="preserve">
+  <data name="PlatformCompatibilityCheckSupportedOsVersionMessage" xml:space="preserve">
     <value>'{0}' is supported on '{1}' {2} and later</value>
-  </data>
-  <data name="PlatformCompatabilityCheckObsoleteMessage" xml:space="preserve">
-    <value>'{0}' is deprecated on '{1}' {2} and later</value>
   </data>
   <data name="PlatformCompatabilityCheckUnsupportedOsVersionMessage" xml:space="preserve">
     <value>'{0}' is unsupported on '{1}' {2} and later</value>
@@ -1470,7 +1467,7 @@
   <data name="PlatformCompatabilityCheckUnsupportedOsMessage" xml:space="preserve">
     <value>'{0}' is unsupported on '{1}'</value>
   </data>
-  <data name="PlatformCompatibilityCheckRequiredOsMessage" xml:space="preserve">
+  <data name="PlatformCompatibilityCheckSupportedOsMessage" xml:space="preserve">
     <value>'{0}' is supported on '{1}'</value>
   </data>
 </root>

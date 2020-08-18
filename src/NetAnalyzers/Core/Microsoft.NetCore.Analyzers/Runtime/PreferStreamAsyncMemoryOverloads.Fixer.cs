@@ -153,12 +153,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // The invocation needs to be replaced before adding the import/using, it won't work the other way around
             SyntaxNode newRoot = generator.ReplaceNode(root, invocation.Syntax, newInvocationExpression.WithTriviaFrom(invocation.Syntax));
-            SyntaxNode newRootWithImports = containsSystemImport ? newRoot : generator.AddNamespaceImports(newRoot, generator.NamespaceImportDeclaration("System"));
+            SyntaxNode newRootWithImports = containsSystemImport ? newRoot : generator.AddNamespaceImports(newRoot, generator.NamespaceImportDeclaration(nameof(System)));
 
             return Task.FromResult(doc.WithSyntaxRoot(newRootWithImports));
         }
 
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)

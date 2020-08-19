@@ -63,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string IsWindows = nameof(IsWindows);
         private const string IsWindowsVersionAtLeast = nameof(IsWindowsVersionAtLeast);
 
-        internal static DiagnosticDescriptor RequiredOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor SupportedOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
                                                                                       s_localizableSupportedOsVersionMessage,
                                                                                       DiagnosticCategory.Interoperability,
@@ -72,7 +72,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
 
-        internal static DiagnosticDescriptor RequiredOsRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor SupportedOsRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
                                                                                       s_localizableSupportedOsMessage,
                                                                                       DiagnosticCategory.Interoperability,
@@ -98,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RequiredOsRule, RequiredOsVersionRule, UnsupportedOsRule, UnsupportedOsVersionRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SupportedOsRule, SupportedOsVersionRule, UnsupportedOsRule, UnsupportedOsVersionRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
                     var analysisResult = GlobalFlowStateAnalysis.TryGetOrComputeResult(
                         cfg, context.OwningSymbol, CreateOperationVisitor, wellKnownTypeProvider,
-                        context.Options, RequiredOsRule, performValueContentAnalysis,
+                        context.Options, SupportedOsRule, performValueContentAnalysis,
                         context.CancellationToken, out var valueContentAnalysisResult);
 
                     if (analysisResult == null)
@@ -266,85 +266,85 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool IsKnownValueGuarded(SmallDictionary<string, PlatformAttributes> attributes, GlobalFlowStateAnalysisValueSet value)
         {
-            using var capturedPlatforms = PooledSortedSet<string>.GetInstance(StringComparer.OrdinalIgnoreCase);
             using var capturedVersions = PooledDictionary<string, Version>.GetInstance(StringComparer.OrdinalIgnoreCase);
-            return IsKnownValueGuarded(attributes, value, capturedPlatforms, capturedVersions);
+            return IsKnownValueGuarded(attributes, value, capturedVersions);
 
             static bool IsKnownValueGuarded(
                 SmallDictionary<string, PlatformAttributes> attributes,
                 GlobalFlowStateAnalysisValueSet value,
-                PooledSortedSet<string> capturedPlatforms,
                 PooledDictionary<string, Version> capturedVersions)
             {
                 // 'GlobalFlowStateAnalysisValueSet.AnalysisValues' represent the && of values.
                 foreach (var analysisValue in value.AnalysisValues)
                 {
-                    if (analysisValue is RuntimeMethodValue info && attributes.TryGetValue(info.PlatformName, out var attribute))
+                    if (analysisValue is RuntimeMethodValue info)
                     {
-                        if (info.Negated)
+                        if (attributes.TryGetValue(info.PlatformName, out var attribute))
                         {
-                            if (attribute.UnsupportedFirst != null)
+                            if (info.Negated)
                             {
-                                if (capturedPlatforms.Contains(info.PlatformName))
+                                if (attribute.UnsupportedFirst != null)
                                 {
                                     if (attribute.UnsupportedFirst >= info.Version)
                                     {
+                                        if (attribute.SupportedFirst != null && attribute.SupportedFirst >= attribute.UnsupportedFirst)
+                                        {  // deny list
+                                            attribute.SupportedFirst = null;
+                                        }
                                         attribute.UnsupportedFirst = null;
                                     }
                                 }
-                                else if (IsEmptyVersion(attribute.UnsupportedFirst) && IsEmptyVersion(info.Version))
-                                {
-                                    attribute.UnsupportedFirst = null;
-                                }
-                            }
 
-                            if (attribute.UnsupportedSecond != null)
-                            {
-                                if (capturedPlatforms.Contains(info.PlatformName))
+                                if (attribute.UnsupportedSecond != null)
                                 {
                                     if (attribute.UnsupportedSecond <= info.Version)
                                     {
                                         attribute.UnsupportedSecond = null;
                                     }
                                 }
-                                else if (IsEmptyVersion(attribute.UnsupportedSecond) && IsEmptyVersion(info.Version))
+
+                                if (!IsEmptyVersion(info.Version))
                                 {
-                                    attribute.UnsupportedSecond = null;
+                                    capturedVersions[info.PlatformName] = info.Version;
                                 }
                             }
-
-                            if (!IsEmptyVersion(info.Version))
+                            else
                             {
-                                capturedVersions[info.PlatformName] = info.Version;
+                                if (capturedVersions.Any())
+                                {
+                                    if (attribute.UnsupportedFirst != null && capturedVersions.TryGetValue(info.PlatformName, out var version) && attribute.UnsupportedFirst >= version)
+                                    {
+                                        attribute.UnsupportedFirst = null;
+                                    }
+
+                                    if (attribute.UnsupportedSecond != null && capturedVersions.TryGetValue(info.PlatformName, out version) && attribute.UnsupportedSecond <= version)
+                                    {
+                                        attribute.UnsupportedSecond = null;
+                                    }
+                                }
+
+                                if (attribute.SupportedFirst != null && attribute.SupportedFirst <= info.Version)
+                                {
+                                    attribute.SupportedFirst = null;
+                                    RemoveUnsupportedWithLessVersion(info.Version, attribute);
+                                    RemoveOtherSupportsOnDifferentPlatforms(attributes, info.PlatformName);
+                                }
+
+                                if (attribute.SupportedSecond != null && attribute.SupportedSecond <= info.Version)
+                                {
+                                    attribute.SupportedSecond = null;
+                                    RemoveUnsupportedWithLessVersion(info.Version, attribute);
+                                    RemoveOtherSupportsOnDifferentPlatforms(attributes, info.PlatformName);
+                                }
+                                RemoveUnsupportsOnDifferentPlatforms(attributes, info.PlatformName);
                             }
                         }
                         else
                         {
-                            capturedPlatforms.Add(info.PlatformName);
-
-                            if (capturedVersions.Any())
+                            if (!info.Negated)
                             {
-                                if (attribute.UnsupportedFirst != null && capturedVersions.TryGetValue(info.PlatformName, out var version) && attribute.UnsupportedFirst >= version)
-                                {
-                                    attribute.UnsupportedFirst = null;
-                                }
-
-                                if (attribute.UnsupportedSecond != null && capturedVersions.TryGetValue(info.PlatformName, out version) && attribute.UnsupportedSecond <= version)
-                                {
-                                    attribute.UnsupportedSecond = null;
-                                }
-                            }
-
-                            if (attribute.SupportedFirst != null && attribute.SupportedFirst <= info.Version)
-                            {
-                                attribute.SupportedFirst = null;
-                                RemoveUnsupportedWithLessVersion(info.Version, attribute);
-                            }
-
-                            if (attribute.SupportedSecond != null && attribute.SupportedSecond <= info.Version)
-                            {
-                                attribute.SupportedSecond = null;
-                                RemoveUnsupportedWithLessVersion(info.Version, attribute);
+                                // it is checking one exact platform, other unsupported should be suppressed
+                                RemoveUnsupportsOnDifferentPlatforms(attributes, info.PlatformName);
                             }
                         }
                     }
@@ -370,10 +370,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         // NOTE: IsKnownValueGuarded mutates the input values, so we pass in cloned values
                         // to ensure that evaluation of each part of || is independent of evaluation of other parts.
                         var parentAttributes = CopyOperationAttributes(attributes);
-                        using var parentCapturedPlatforms = PooledSortedSet<string>.GetInstance(capturedPlatforms);
                         using var parentCapturedVersions = PooledDictionary<string, Version>.GetInstance(capturedVersions);
 
-                        if (!IsKnownValueGuarded(parentAttributes, parent, parentCapturedPlatforms, parentCapturedVersions))
+                        if (!IsKnownValueGuarded(parentAttributes, parent, parentCapturedVersions))
                         {
                             return false;
                         }
@@ -383,11 +382,35 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return true;
             }
 
+            static void RemoveUnsupportsOnDifferentPlatforms(SmallDictionary<string, PlatformAttributes> attributes, string platformName)
+            {
+                foreach (var (name, attribute) in attributes)
+                {
+                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        attribute.UnsupportedFirst = null;
+                        attribute.UnsupportedSecond = null;
+                    }
+                }
+            }
+
             static void RemoveUnsupportedWithLessVersion(Version supportedVersion, PlatformAttributes attribute)
             {
                 if (attribute.UnsupportedFirst != null && attribute.UnsupportedFirst <= supportedVersion)
                 {
                     attribute.UnsupportedFirst = null;
+                }
+            }
+
+            static void RemoveOtherSupportsOnDifferentPlatforms(SmallDictionary<string, PlatformAttributes> attributes, string platformName)
+            {
+                foreach (var (name, attribute) in attributes)
+                {
+                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        attribute.SupportedFirst = null;
+                        attribute.SupportedSecond = null;
+                    }
                 }
             }
         }
@@ -439,8 +462,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         }
 
         private static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
-            context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(RequiredOsRule, name, platformName) :
-                operation.CreateDiagnostic(RequiredOsVersionRule, name, platformName, version));
+            context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(SupportedOsRule, name, platformName) :
+                operation.CreateDiagnostic(SupportedOsVersionRule, name, platformName, version));
 
         private static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
             context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(UnsupportedOsRule, name, platformName) :

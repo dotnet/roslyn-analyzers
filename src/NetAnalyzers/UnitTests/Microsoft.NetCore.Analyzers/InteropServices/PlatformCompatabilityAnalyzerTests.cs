@@ -1001,6 +1001,8 @@ namespace PlatformCompatDemo.Bugs
             [|TargetSupportedOnWindows.FunctionUnsupportedOnBrowser()|]; // should warn supported on windows and unsupported on browser as this is deny list
 
             [|TargetUnsupportedOnWindows.FunctionSupportedOnBrowser();|] // Fail: should warn supported on browser, but is this valid scenario?
+            TargetUnsupportedOnWindows.FunctionSupportedOnWindows();     // It's unsupporting Windows at the call site, which means the call site supports all other platforms.
+                                                                         // It's calling into code that was NOT supported only on Windows but eventually added support, so it shouldn't raise diagnostic
         }
     }
 
@@ -1166,7 +1168,7 @@ static class Some
             }
 " + MockAttributesCsSource;
             await VerifyCS.VerifyAnalyzerAsync(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(10, 21, 10, 29).WithArguments("M2", "Windows", "10.1.2.3"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithSpan(10, 21, 10, 29).WithArguments("M2", "Windows", "10.1.2.3"));
         }
 
         public static IEnumerable<object[]> SupportedOsAttributeTestData()
@@ -1217,8 +1219,8 @@ public class OsDependentClass
             if (warn)
             {
                 await VerifyAnalyzerAsyncCs(source,
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(9, 32, 9, 54).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
-                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithSpan(10, 9, 10, 17).WithArguments("OsDependentClass.M2()", "Windows", "10.1.2.3"));
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithSpan(9, 32, 9, 54).WithArguments("OsDependentClass", "Windows", "10.1.2.3"),
+                    VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithSpan(10, 9, 10, 17).WithArguments("OsDependentClass.M2()", "Windows", "10.1.2.3"));
             }
             else
             {
@@ -1390,9 +1392,9 @@ public class C
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(18, 9).WithMessage("'C.DoesNotWorkOnWindows()' is unsupported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(18, 9).WithMessage("'C.DoesNotWorkOnWindows()' is supported on 'windows' 10.0.1903 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithLocation(18, 9).WithMessage("'C.DoesNotWorkOnWindows()' is supported on 'windows' 10.0.1903 and later"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsRule).WithLocation(31, 9).WithMessage("'C.DoesNotWorkOnWindows()' is unsupported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(31, 9).WithMessage("'C.DoesNotWorkOnWindows()' is supported on 'windows' 10.0.1903 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithLocation(31, 9).WithMessage("'C.DoesNotWorkOnWindows()' is supported on 'windows' 10.0.1903 and later"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(38, 9).WithMessage("'C.DoesNotWorkOnWindows()' is unsupported on 'windows' 10.0.2004 and later"));
         }
 
@@ -1450,9 +1452,9 @@ public class C
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(10, 9).WithMessage("'C.WindowsOnlyMethod()' is supported on 'windows'"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsVersionRule).WithLocation(10, 9).WithMessage("'C.WindowsOnlyMethod()' is unsupported on 'windows' 10.0.2004 and later"),
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.RequiredOsRule).WithLocation(22, 9).WithMessage("'C.WindowsOnlyMethod()' is supported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithLocation(10, 9).WithMessage("'C.WindowsOnlyMethod()' is supported on 'windows'"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsVersionRule).WithLocation(10, 9).WithMessage("'C.WindowsOnlyMethod()' is unsupported on 'windows' 10.0.2004 and later"),
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithLocation(22, 9).WithMessage("'C.WindowsOnlyMethod()' is supported on 'windows'"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(22, 9).WithMessage("'C.WindowsOnlyMethod()' is unsupported on 'windows' 10.0.2004 and later"),
                 VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.UnsupportedOsVersionRule).WithLocation(29, 9).WithMessage("'C.WindowsOnlyMethod()' is unsupported on 'windows' 10.0.2004 and later"));
         }
@@ -1470,8 +1472,6 @@ public class C
             return test;
         }
 
-        private static async Task VerifyAnalyzerAsyncCs(string sourceCode) => await PopulateTestCs(sourceCode).RunAsync();
-
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
             => await PopulateTestCs(sourceCode, expectedDiagnostics).RunAsync();
 
@@ -1482,7 +1482,8 @@ public class C
             await test.RunAsync();
         }
 
-        private static async Task VerifyAnalyzerAsyncVb(string sourceCode) => await PopulateTestVb(sourceCode).RunAsync();
+        private static async Task VerifyAnalyzerAsyncVb(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
+            => await PopulateTestVb(sourceCode, expectedDiagnostics).RunAsync();
 
         private static VerifyVB.Test PopulateTestVb(string sourceCode, params DiagnosticResult[] expected)
         {

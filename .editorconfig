@@ -8,6 +8,10 @@ root = true
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
+# RS1024: Compare symbols correctly
+# https://github.com/dotnet/roslyn-analyzers/issues/3389
+dotnet_diagnostic.RS1024.severity = none
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
@@ -229,6 +233,10 @@ dotnet_diagnostic.IDE0065.severity = silent
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
 
+# IDE0078: Use pattern matching
+# Below entry can be removed and IDE0078 turned into a warning once https://github.com/dotnet/roslyn/issues/45569 is addressed
+dotnet_diagnostic.IDE0078.severity = suggestion
+
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]
 
@@ -246,3 +254,9 @@ dotnet_code_quality.CA1720.api_surface = public
 # Exclude single letter type parameter names
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+
+### Configuration for PublicAPI analyzers executed on this repo ###
+[*.{cs,vb}]
+
+# Analyzers bail-out if the PublicAPI.*.txt file is not found
+dotnet_public_api_analyzer.require_api_files = true

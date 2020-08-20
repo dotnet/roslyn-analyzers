@@ -41,16 +41,16 @@ public class StringComparisonTests
         return 0;
     }
 }",
-GetCA1310CSharpResultsAt(11, 18, $"string.Compare({StringArgType}, {StringArgType})",
+GetCA1307CSharpResultsAt(11, 18, $"string.Compare({StringArgType}, {StringArgType})",
                                  "StringComparisonTests.StringCompare()",
                                  $"string.Compare({StringArgType}, {StringArgType}, System.StringComparison)"),
-GetCA1310CSharpResultsAt(12, 18, $"string.Compare({StringArgType}, {StringArgType}, bool)",
+GetCA1307CSharpResultsAt(12, 18, $"string.Compare({StringArgType}, {StringArgType}, bool)",
                                  "StringComparisonTests.StringCompare()",
                                  $"string.Compare({StringArgType}, {StringArgType}, System.StringComparison)"),
-GetCA1310CSharpResultsAt(13, 18, $"string.Compare({StringArgType}, int, {StringArgType}, int, int)",
+GetCA1307CSharpResultsAt(13, 18, $"string.Compare({StringArgType}, int, {StringArgType}, int, int)",
                                  "StringComparisonTests.StringCompare()",
                                  $"string.Compare({StringArgType}, int, {StringArgType}, int, int, System.StringComparison)"),
-GetCA1310CSharpResultsAt(14, 18, $"string.Compare({StringArgType}, int, {StringArgType}, int, int, bool)",
+GetCA1307CSharpResultsAt(14, 18, $"string.Compare({StringArgType}, int, {StringArgType}, int, int, bool)",
                                  "StringComparisonTests.StringCompare()",
                                  $"string.Compare({StringArgType}, int, {StringArgType}, int, int, System.StringComparison)"));
         }
@@ -72,10 +72,10 @@ public class StringComparisonTests
         return strA.StartsWith(strB);
     }
 }",
-GetCA1310CSharpResultsAt(11, 18, "string.EndsWith(string)",
+GetCA1307CSharpResultsAt(11, 18, "string.EndsWith(string)",
                                  "StringComparisonTests.StringWith()",
                                  "string.EndsWith(string, System.StringComparison)"),
-GetCA1310CSharpResultsAt(12, 16, "string.StartsWith(string)",
+GetCA1307CSharpResultsAt(12, 16, "string.StartsWith(string)",
                                  "StringComparisonTests.StringWith()",
                                  "string.StartsWith(string, System.StringComparison)"));
         }
@@ -118,13 +118,13 @@ public class StringComparisonTests
         return strA.{method}("""", 0, 1);
     }}
 }}",
-GetCA1310CSharpResultsAt(10, 18, $"string.{method}(string)",
+GetCA1307CSharpResultsAt(10, 18, $"string.{method}(string)",
                                 "StringComparisonTests.StringIndexOf()",
                                 $"string.{method}(string, System.StringComparison)"),
-GetCA1310CSharpResultsAt(11, 18, $"string.{method}(string, int)",
+GetCA1307CSharpResultsAt(11, 18, $"string.{method}(string, int)",
                                  "StringComparisonTests.StringIndexOf()",
                                  $"string.{method}(string, int, System.StringComparison)"),
-GetCA1310CSharpResultsAt(12, 16, $"string.{method}(string, int, int)",
+GetCA1307CSharpResultsAt(12, 16, $"string.{method}(string, int, int)",
                                  "StringComparisonTests.StringIndexOf()",
                                  $"string.{method}(string, int, int, System.StringComparison)"));
         }
@@ -146,7 +146,7 @@ public class StringComparisonTests
     }
 }"
 #if NETCOREAPP  // 'string.IndexOf(char, System.StringComparison)' overload does not exist in .NET Framework
-, GetCA1307CSharpResultsAt(9, 18, "string.IndexOf(char)",
+, GetCA1310CSharpResultsAt(9, 18, "string.IndexOf(char)",
                                 "StringComparisonTests.StringIndexOf(string, char)",
                                 "string.IndexOf(char, System.StringComparison)")
 #endif
@@ -188,7 +188,7 @@ public class StringContainsTests
         return strA.Contains(p);
     }}
 }}",
-GetCA1307CSharpResultsAt(9, 16, $"string.Contains({firstParamType})",
+GetCA1310CSharpResultsAt(9, 16, $"string.Contains({firstParamType})",
                                  $"StringContainsTests.StringContains(string, {firstParamType})",
                                  $"string.Contains({firstParamType}, System.StringComparison)"));
         }
@@ -209,7 +209,7 @@ public class StringGetHashCodeTests
     }
 }"
 #if NETCOREAPP  // 'string.GetHashCode(System.StringComparison)' overload does not exist in .NET Framework
-, GetCA1307CSharpResultsAt(9, 16, "string.GetHashCode()",
+, GetCA1310CSharpResultsAt(9, 16, "string.GetHashCode()",
                                  "StringGetHashCodeTests.StringGetHashCode(string)",
                                  "string.GetHashCode(System.StringComparison)")
 #endif
@@ -241,10 +241,10 @@ public class StringComparisonTests
             return """".CompareTo(new object());
     }
 }",
-GetCA1310CSharpResultsAt(11, 22, $"string.CompareTo({StringArgType})",
+GetCA1307CSharpResultsAt(11, 22, $"string.CompareTo({StringArgType})",
                                  "StringComparisonTests.StringCompareTo()",
                                  $"string.Compare({StringArgType}, {StringArgType}, System.StringComparison)"),
-GetCA1310CSharpResultsAt(12, 20, $"string.CompareTo({ObjectArgType})",
+GetCA1307CSharpResultsAt(12, 20, $"string.CompareTo({ObjectArgType})",
                                  "StringComparisonTests.StringCompareTo()",
                                  $"string.Compare({StringArgType}, {StringArgType}, System.StringComparison)"));
         }
@@ -276,7 +276,7 @@ public class StringComparisonTests
     {
     }
 }",
-GetCA1307CSharpResultsAt(9, 9, "StringComparisonTests.DoNothing(string)",
+GetCA1310CSharpResultsAt(9, 9, "StringComparisonTests.DoNothing(string)",
                                "StringComparisonTests.NonString()",
                                "StringComparisonTests.DoNothing<T>(string, System.StringComparison)"));
         }
@@ -307,7 +307,7 @@ public class StringComparisonTests
     {{
     }}
 }}",
-GetCA1307CSharpResultsAt(9, 9, $"StringComparisonTests.DoNothing({firstParamType})",
+GetCA1310CSharpResultsAt(9, 9, $"StringComparisonTests.DoNothing({firstParamType})",
                                  $"StringComparisonTests.NonString({firstParamType})",
                                  $"StringComparisonTests.DoNothing({firstParamType}, System.StringComparison)"));
         }
@@ -364,16 +364,16 @@ Public Class StringComparisonTests
         Return 0
     End Function
 End Class",
-GetCA1310BasicResultsAt(9, 18, "String.Compare(String, String)",
+GetCA1307BasicResultsAt(9, 18, "String.Compare(String, String)",
                                "StringComparisonTests.StringCompare()",
                                "String.Compare(String, String, System.StringComparison)"),
-GetCA1310BasicResultsAt(10, 18, "String.Compare(String, String, Boolean)",
+GetCA1307BasicResultsAt(10, 18, "String.Compare(String, String, Boolean)",
                                 "StringComparisonTests.StringCompare()",
                                 "String.Compare(String, String, System.StringComparison)"),
-GetCA1310BasicResultsAt(11, 18, "String.Compare(String, Integer, String, Integer, Integer)",
+GetCA1307BasicResultsAt(11, 18, "String.Compare(String, Integer, String, Integer, Integer)",
                                 "StringComparisonTests.StringCompare()",
                                 "String.Compare(String, Integer, String, Integer, Integer, System.StringComparison)"),
-GetCA1310BasicResultsAt(12, 18, "String.Compare(String, Integer, String, Integer, Integer, Boolean)",
+GetCA1307BasicResultsAt(12, 18, "String.Compare(String, Integer, String, Integer, Integer, Boolean)",
                                 "StringComparisonTests.StringCompare()",
                                 "String.Compare(String, Integer, String, Integer, Integer, System.StringComparison)"));
         }
@@ -393,10 +393,10 @@ Public Class StringComparisonTests
         Return strA.StartsWith(strB)
     End Function
 End Class",
-GetCA1310BasicResultsAt(9, 17, "String.EndsWith(String)",
+GetCA1307BasicResultsAt(9, 17, "String.EndsWith(String)",
                                "StringComparisonTests.StringWith()",
                                "String.EndsWith(String, System.StringComparison)"),
-GetCA1310BasicResultsAt(10, 16, "String.StartsWith(String)",
+GetCA1307BasicResultsAt(10, 16, "String.StartsWith(String)",
                                 "StringComparisonTests.StringWith()",
                                 "String.StartsWith(String, System.StringComparison)"));
         }
@@ -416,13 +416,13 @@ Public Class StringComparisonTests
         Return strA.IndexOf("""", 0, 1)
     End Function
 End Class",
-GetCA1310BasicResultsAt(8, 18, "String.IndexOf(String)",
+GetCA1307BasicResultsAt(8, 18, "String.IndexOf(String)",
                                "StringComparisonTests.StringIndexOf()",
                                "String.IndexOf(String, System.StringComparison)"),
-GetCA1310BasicResultsAt(9, 18, "String.IndexOf(String, Integer)",
+GetCA1307BasicResultsAt(9, 18, "String.IndexOf(String, Integer)",
                                 "StringComparisonTests.StringIndexOf()",
                                 "String.IndexOf(String, Integer, System.StringComparison)"),
-GetCA1310BasicResultsAt(10, 16, "String.IndexOf(String, Integer, Integer)",
+GetCA1307BasicResultsAt(10, 16, "String.IndexOf(String, Integer, Integer)",
                                 "StringComparisonTests.StringIndexOf()",
                                 "String.IndexOf(String, Integer, Integer, System.StringComparison)"));
         }
@@ -442,10 +442,10 @@ Public Class StringComparisonTests
         Return """".CompareTo(New Object())
     End Function
 End Class",
-GetCA1310BasicResultsAt(9, 18, "String.CompareTo(String)",
+GetCA1307BasicResultsAt(9, 18, "String.CompareTo(String)",
                                "StringComparisonTests.StringCompareTo()",
                                "String.Compare(String, String, System.StringComparison)"),
-GetCA1310BasicResultsAt(10, 16, "String.CompareTo(Object)",
+GetCA1307BasicResultsAt(10, 16, "String.CompareTo(Object)",
                                 "StringComparisonTests.StringCompareTo()",
                                 "String.Compare(String, String, System.StringComparison)"));
         }
@@ -473,7 +473,7 @@ Public Class StringComparisonTests
     Public Sub DoNothing(Of T)(str As String, strCompare As StringComparison)
     End Sub
 End Class",
-GetCA1307BasicResultsAt(7, 9, "StringComparisonTests.DoNothing(String)",
+GetCA1310BasicResultsAt(7, 9, "StringComparisonTests.DoNothing(String)",
                               "StringComparisonTests.NonString()",
                               "StringComparisonTests.DoNothing(Of T)(String, System.StringComparison)"));
         }

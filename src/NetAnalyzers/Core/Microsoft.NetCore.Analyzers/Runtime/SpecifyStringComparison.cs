@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private const string RuleId_CA1307 = "CA1307";
         private const string RuleId_CA1310 = "CA1310";
 
-        private static readonly ImmutableArray<string> s_CA1310MethodNamesWithFirstStringParameter =
+        private static readonly ImmutableArray<string> s_CA1307MethodNamesWithFirstStringParameter =
             ImmutableArray.Create("Compare", "StartsWith", "EndsWith", "IndexOf", "LastIndexOf");
 
         private static readonly LocalizableString s_localizableCA1307Title = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyStringComparisonCA1307Title), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -44,10 +44,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableCA1310Title,
                                                                              s_localizableCA1310Message,
                                                                              DiagnosticCategory.Globalization,
-                                                                             RuleLevel.IdeHidden_BulkConfigurable,
+                                                                             RuleLevel.Disabled,
                                                                              description: s_localizableCA1310Description,
                                                                              isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule_CA1307, Rule_CA1310);
 
@@ -81,14 +82,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // Report correctness issue CA1310 for known string comparison methods that default to culture specific string comparison:
+                    // Report correctness issue CA1307 for known string comparison methods that default to culture specific string comparison:
                     // https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings#string-comparisons-that-use-the-current-culture
                     if (targetMethod.ContainingType.SpecialType == SpecialType.System_String &&
                         !overloadMap.IsEmpty &&
                         overloadMap.ContainsKey(targetMethod))
                     {
                         ReportDiagnostic(
-                            Rule_CA1310,
+                            Rule_CA1307,
                             oaContext,
                             invocationExpression,
                             targetMethod,
@@ -97,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // Report maintainability issue CA1307 for any method that has an additional overload with the exact same parameter list,
+                    // Report maintainability issue CA1310 for any method that has an additional overload with the exact same parameter list,
                     // plus as additional StringComparison parameter. Default StringComparison may or may not match user's intent,
                     // but it is recommended to explicitly specify it for clarity and readability:
                     // https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings#recommendations-for-string-usage
@@ -111,7 +112,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (correctOverload != null)
                         {
                             ReportDiagnostic(
-                                Rule_CA1307,
+                                Rule_CA1310,
                                 oaContext,
                                 invocationExpression,
                                 targetMethod,
@@ -165,7 +166,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringStringBool, stringCompareParameterStringStringStringComparison);
                 overloadMapBuilder.AddKeyValueIfNotNull(stringCompareParameterStringIntStringIntIntBool, stringCompareParameterStringIntStringIntIntComparison);
 
-                foreach (var methodName in s_CA1310MethodNamesWithFirstStringParameter)
+                foreach (var methodName in s_CA1307MethodNamesWithFirstStringParameter)
                 {
                     var methodsWithMethodName = stringType.GetMembers(methodName).OfType<IMethodSymbol>();
                     foreach (var method in methodsWithMethodName)

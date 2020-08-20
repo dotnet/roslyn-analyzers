@@ -288,8 +288,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     if (attribute.UnsupportedFirst >= info.Version)
                                     {
                                         if (attribute.SupportedFirst != null && attribute.SupportedFirst >= attribute.UnsupportedFirst)
-                                        {  // deny list
+                                        {
+                                            // deny list, no need further check
                                             attribute.SupportedFirst = null;
+                                            attribute.SupportedSecond = null;
+                                            attribute.UnsupportedSecond = null;
                                         }
                                         attribute.UnsupportedFirst = null;
                                     }
@@ -312,30 +315,37 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 if (capturedVersions.Any())
                                 {
-                                    if (attribute.UnsupportedFirst != null && capturedVersions.TryGetValue(info.PlatformName, out var version) && attribute.UnsupportedFirst >= version)
+                                    if (attribute.UnsupportedFirst != null &&
+                                        capturedVersions.TryGetValue(info.PlatformName, out var version) &&
+                                        attribute.UnsupportedFirst >= version)
                                     {
                                         attribute.UnsupportedFirst = null;
                                     }
 
-                                    if (attribute.UnsupportedSecond != null && capturedVersions.TryGetValue(info.PlatformName, out version) && attribute.UnsupportedSecond <= version)
+                                    if (attribute.UnsupportedSecond != null &&
+                                        capturedVersions.TryGetValue(info.PlatformName, out version) &&
+                                        attribute.UnsupportedSecond <= version)
                                     {
                                         attribute.UnsupportedSecond = null;
                                     }
                                 }
 
-                                if (attribute.SupportedFirst != null && attribute.SupportedFirst <= info.Version)
+                                if (attribute.SupportedFirst != null &&
+                                    attribute.SupportedFirst <= info.Version)
                                 {
                                     attribute.SupportedFirst = null;
                                     RemoveUnsupportedWithLessVersion(info.Version, attribute);
                                     RemoveOtherSupportsOnDifferentPlatforms(attributes, info.PlatformName);
                                 }
 
-                                if (attribute.SupportedSecond != null && attribute.SupportedSecond <= info.Version)
+                                if (attribute.SupportedSecond != null &&
+                                    attribute.SupportedSecond <= info.Version)
                                 {
                                     attribute.SupportedSecond = null;
                                     RemoveUnsupportedWithLessVersion(info.Version, attribute);
                                     RemoveOtherSupportsOnDifferentPlatforms(attributes, info.PlatformName);
                                 }
+
                                 RemoveUnsupportsOnDifferentPlatforms(attributes, info.PlatformName);
                             }
                         }
@@ -386,10 +396,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var (name, attribute) in attributes)
                 {
-                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase))
+                    if (!name.Equals(platformName, StringComparison.OrdinalIgnoreCase) &&
+                        attribute.UnsupportedFirst != null &&
+                        (attribute.SupportedFirst == null || attribute.UnsupportedFirst <= attribute.SupportedFirst))
                     {
                         attribute.UnsupportedFirst = null;
                         attribute.UnsupportedSecond = null;
+                        attribute.SupportedFirst = null;
+                        attribute.SupportedSecond = null;
                     }
                 }
             }
@@ -856,7 +870,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                     else
                     {
-                        attributes.UnsupportedSecond = version;
+                        if (attributes.SupportedFirst != null && attributes.SupportedFirst < version)
+                        {
+                            // We should ignore second attribute in case like [UnsupportedOSPlatform(""windows""), 
+                            // [UnsupportedOSPlatform(""windows11.0"")] which doesn't have supported in between
+                            attributes.UnsupportedSecond = version;
+                        }
                     }
                 }
             }

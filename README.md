@@ -26,19 +26,19 @@ You do not need to manually install this NuGet package to your project if you ar
 
 1. _EnableNETAnalyzers_
 
-```xml
-  <PropertyGroup>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-  </PropertyGroup>
-```
+   ```xml
+     <PropertyGroup>
+       <EnableNETAnalyzers>true</EnableNETAnalyzers>
+     </PropertyGroup>
+   ```
 
 2. _AnalysisLevel_
 
-```xml
-  <PropertyGroup>
-    <AnalysisLevel>latest</AnalysisLevel>
-  </PropertyGroup>
-```
+   ```xml
+     <PropertyGroup>
+       <AnalysisLevel>latest</AnalysisLevel>
+     </PropertyGroup>
+   ```
 
 # Microsoft.CodeAnalysis.FxCopAnalyzers
 

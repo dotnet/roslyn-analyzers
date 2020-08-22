@@ -6386,12 +6386,10 @@ End Module"
             await vbTest.RunAsync();
         }
 
-        [Theory]
+        [Fact]
         [WorkItem(4046, "https://github.com/dotnet/roslyn-analyzers/issues/4046")]
         public async Task EditorConfigConfiguration_ExcludeExtensionMethodThisParameterOption2()
         {
-            var expected = Array.Empty<DiagnosticResult>();
-
             var csTest = new VerifyCS.Test
             {
                 TestState =

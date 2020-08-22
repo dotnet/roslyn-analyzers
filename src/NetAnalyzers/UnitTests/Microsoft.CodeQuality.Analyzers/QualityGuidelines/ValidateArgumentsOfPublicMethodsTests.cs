@@ -6386,6 +6386,41 @@ End Module"
             await vbTest.RunAsync();
         }
 
+        [Theory]
+        [WorkItem(4046, "https://github.com/dotnet/roslyn-analyzers/issues/4046")]
+        public async Task EditorConfigConfiguration_ExcludeExtensionMethodThisParameterOption2()
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Collections.Generic;
+
+namespace Tools
+{
+    public static class DictionaryExtensions
+    {
+        public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        {
+            dictionary.TryGetValue(key, out TValue value);
+            return value;
+        }
+    }
+}
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1062.exclude_extension_method_this_parameter = true") }
+                },
+            };
+
+            await csTest.RunAsync();
+        }
+
         [Fact, WorkItem(2919, "https://github.com/dotnet/roslyn-analyzers/issues/2919")]
         public async Task Interprocedural_DelegateInvocation_NoDiagnostic()
         {

@@ -127,7 +127,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             var identifier = symbol.Name;
-            if (s_typeNames.Contains(identifier))
+            if (s_typeNames.Contains(identifier) && symbol.Locations.Length > 0)
             {
                 Diagnostic diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier);
                 context.ReportDiagnostic(diagnostic);

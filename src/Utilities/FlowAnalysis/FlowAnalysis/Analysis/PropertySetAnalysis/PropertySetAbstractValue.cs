@@ -15,13 +15,16 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
     /// cref="PropertySetAbstractValueKind"/>.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Note that <see cref="KnownPropertyAbstractValues"/> may be
     /// "incomplete", i.e. it doesn't cover all properties.  In such cases,
     /// missing elements are implicitly <see 
     /// cref="PropertySetAbstractValueKind.Unknown"/>.
-    /// 
+    /// </para>
+    /// <para>
     /// The reason for the "sparse" array is so that the Unknown value doesn't
     /// have to be aware of how many properties are being tracked.
+    /// </para>
     /// </remarks>
     internal partial class PropertySetAbstractValue
     {

@@ -14,19 +14,19 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1835: Prefer Memory/ReadOnlyMemory overloads for Stream ReadAsync/WriteAsync methods.
-    ///
-    /// Undesired methods (available since .NET Framework 4.5):
-    ///
+    /// <para>CA1835: Prefer Memory/ReadOnlyMemory overloads for Stream ReadAsync/WriteAsync methods.</para>
+    /// <para>Undesired methods (available since .NET Framework 4.5):</para>
+    /// <para>
     /// - Stream.WriteAsync(Byte[], Int32, Int32)
     /// - Stream.WriteAsync(Byte[], Int32, Int32, CancellationToken)
     /// - Stream.ReadAsync(Byte[], Int32, Int32)
     /// - Stream.ReadAsync(Byte[], Int32, Int32, CancellationToken)
-    ///
-    /// Preferred methods (available since .NET Standard 2.1 and .NET Core 2.1):
-    ///
+    /// </para>
+    /// <para>Preferred methods (available since .NET Standard 2.1 and .NET Core 2.1):</para>
+    /// <para>
     /// - Stream.WriteAsync(ReadOnlyMemory{Byte}, CancellationToken)
     /// - Stream.ReadAsync(Memory{Byte}, CancellationToken)
+    /// </para>
     ///
     /// </summary>
     public abstract class PreferStreamAsyncMemoryOverloadsFixer : CodeFixProvider

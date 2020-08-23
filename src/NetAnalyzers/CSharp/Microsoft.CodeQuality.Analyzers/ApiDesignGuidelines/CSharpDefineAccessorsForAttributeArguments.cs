@@ -9,10 +9,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1019: Define accessors for attribute arguments
-    /// 
+    /// <para>CA1019: Define accessors for attribute arguments</para>
+    /// <para>
     /// Cause:
     /// In its constructor, an attribute defines arguments that do not have corresponding properties.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDefineAccessorsForAttributeArgumentsAnalyzer : DefineAccessorsForAttributeArgumentsAnalyzer

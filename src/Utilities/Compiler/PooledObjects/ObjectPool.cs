@@ -21,21 +21,26 @@ using System.Runtime.CompilerServices;
 namespace Analyzer.Utilities.PooledObjects
 {
     /// <summary>
+    /// <para>
     /// Generic implementation of object pooling pattern with predefined pool size limit. The main
     /// purpose is that limited number of frequently used objects can be kept in the pool for
     /// further recycling.
-    /// 
+    /// </para>
+    /// <para>
     /// Notes: 
     /// 1) it is not the goal to keep all returned objects. Pool is not meant for storage. If there
     ///    is no space in the pool, extra returned objects will be dropped.
-    /// 
+    /// </para>
+    /// <para>
     /// 2) it is implied that if object was obtained from a pool, the caller will return it back in
     ///    a relatively short time. Keeping checked out objects for long durations is ok, but 
     ///    reduces usefulness of pooling. Just new up your own.
-    /// 
+    /// </para>
+    /// <para>
     /// Not returning objects to the pool in not detrimental to the pool's work, but is a bad practice. 
     /// Rationale: 
     ///    If there is no intent for reusing the object, do not use pool - just use "new". 
+    /// </para>
     /// </summary>
     internal class ObjectPool<T> where T : class
     {
@@ -227,12 +232,13 @@ namespace Analyzer.Utilities.PooledObjects
         }
 
         /// <summary>
-        /// Removes an object from leak tracking.  
-        /// 
+        /// <para>Removes an object from leak tracking.  </para>
+        /// <para>
         /// This is called when an object is returned to the pool.  It may also be explicitly 
         /// called if an object allocated from the pool is intentionally not being returned
         /// to the pool.  This can be of use with pooled arrays if the consumer wants to 
         /// return a larger array to the pool than was originally allocated.
+        /// </para>
         /// </summary>
         [Conditional("DEBUG")]
         internal static void ForgetTrackedObject(T old, T? replacement = null)

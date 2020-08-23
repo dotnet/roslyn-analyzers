@@ -14,20 +14,20 @@ using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// Implements CA1027 and CA2217
-    ///
-    /// 1) CA1027: Mark enums with FlagsAttribute
-    ///
+    /// <para>Implements CA1027 and CA2217</para>
+    /// <para>1) CA1027: Mark enums with FlagsAttribute</para>
+    /// <para>
     /// Cause:
     /// The values of a public enumeration are powers of two or are combinations of other values that are defined in the enumeration,
     /// and the System.FlagsAttribute attribute is not present.
     /// To reduce false positives, this rule does not report a violation for enumerations that have contiguous values.
-    ///
-    /// 2) CA2217: Do not mark enums with FlagsAttribute
-    ///
+    /// </para>
+    /// <para>2) CA2217: Do not mark enums with FlagsAttribute</para>
+    /// <para>
     /// Cause:
     /// An externally visible enumeration is marked with FlagsAttribute and it has one or more values that are not powers of two or
     /// a combination of the other defined values on the enumeration.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EnumWithFlagsAttributeAnalyzer : DiagnosticAnalyzer

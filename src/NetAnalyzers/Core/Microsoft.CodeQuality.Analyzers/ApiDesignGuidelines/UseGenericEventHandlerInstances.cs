@@ -10,10 +10,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
+    /// <para>
     /// CA1003: Use generic event handler instances
     /// CA1009: A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.
-    ///
-    /// Recommends that event handlers use <see cref="System.EventHandler{TEventArgs}"/>
+    /// </para>
+    /// <para>Recommends that event handlers use <see cref="System.EventHandler{TEventArgs}"/></para>
     /// </summary>
     /// <remarks>
     /// NOTE: Legacy FxCop reports CA1009 for delegate type that handles a public or protected event and does not have the correct signature, return type, or parameter names.

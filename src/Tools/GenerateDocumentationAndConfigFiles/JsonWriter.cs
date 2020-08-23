@@ -11,14 +11,16 @@ using System.Text;
 namespace Roslyn.Utilities
 {
     /// <summary>
+    /// <para>
     /// A simple, forward-only JSON writer to avoid adding dependencies to the compiler.
     /// Used to generate /errorlogger output.
-    /// 
+    /// </para>
+    /// <para>
     /// Does not guarantee well-formed JSON if misused. It is the caller's responsibility 
     /// to balance array/object start/end, to only write key-value pairs to objects and
     /// elements to arrays, etc.
-    /// 
-    /// Takes ownership of the given <see cref="TextWriter" /> at construction and handles its disposal.
+    /// </para>
+    /// <para>Takes ownership of the given <see cref="TextWriter" /> at construction and handles its disposal.</para>
     /// </summary>
     internal sealed class JsonWriter : IDisposable
     {

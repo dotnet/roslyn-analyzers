@@ -91,12 +91,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         /// <summary>
+        /// <para>
         /// The Enumerable.Last method will only special case indexable types that implement <see cref="IList{T}" />.  Types 
         /// which implement only <see cref="IReadOnlyList{T}"/> will be treated the same as IEnumerable{T} and go through a 
         /// full enumeration.  This method identifies such types.
-        /// 
+        /// </para>
+        /// <para>
         /// At this point it only identifies <see cref="IReadOnlyList{T}"/> directly but could easily be extended to support
         /// any type which has an index and count property.  
+        /// </para>
         /// </summary>
         private static bool IsTypeWithInefficientLinqMethods(ITypeSymbol targetType, ITypeSymbol readonlyListType, ITypeSymbol listType)
         {

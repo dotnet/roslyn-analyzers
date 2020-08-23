@@ -10,10 +10,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1024: Use properties where appropriate
-    ///
+    /// <para>CA1024: Use properties where appropriate</para>
+    /// <para>
     /// Cause:
     /// A public or protected method has a name that starts with Get, takes no parameters, and returns a value that is not an array.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UsePropertiesWhereAppropriateAnalyzer : DiagnosticAnalyzer

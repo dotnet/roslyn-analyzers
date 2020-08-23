@@ -15,14 +15,14 @@ namespace Analyzer.Utilities
     using static CategorizedAnalyzerConfigOptionsExtensions;
 
     /// <summary>
-    /// Aggregate analyzer configuration options:
-    ///
+    /// <para>Aggregate analyzer configuration options:</para>
+    /// <para>
     /// <list type="number">
     /// <item><description>Per syntax tree options from <see cref="AnalyzerConfigOptionsProvider"/>.</description></item>
     /// <item><description>Options from an <strong>.editorconfig</strong> file passed in as an additional file (back compat).</description></item>
     /// </list>
-    ///
-    /// <inheritdoc cref="ICategorizedAnalyzerConfigOptions"/>
+    /// </para>
+    /// <para><inheritdoc cref="ICategorizedAnalyzerConfigOptions"/></para>
     /// </summary>
     internal sealed class AggregateCategorizedAnalyzerConfigOptions : ICategorizedAnalyzerConfigOptions
     {

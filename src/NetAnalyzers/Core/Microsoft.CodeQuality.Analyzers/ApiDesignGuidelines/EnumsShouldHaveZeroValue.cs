@@ -13,12 +13,13 @@ using System.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1008: Enums should have zero value
-    ///
+    /// <para>CA1008: Enums should have zero value</para>
+    /// <para>
     /// Cause:
     /// An enumeration without an applied System.FlagsAttribute does not define a member that has a value of zero;
     /// or an enumeration that has an applied FlagsAttribute defines a member that has a value of zero but its name is not 'None',
     /// or the enumeration defines multiple zero-valued members.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class EnumsShouldHaveZeroValueAnalyzer : DiagnosticAnalyzer

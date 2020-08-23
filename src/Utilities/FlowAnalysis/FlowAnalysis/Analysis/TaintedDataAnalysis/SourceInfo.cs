@@ -98,10 +98,12 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// Methods that generate tainted data and whose arguments don't need extra value content analysis.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// MethodMatcher determines if the outermost tuple applies, based on the method names and arguments.
         /// PointsToCheck determines if the inner tuple applies, based on the method invocation's arguments PointsToAbstractValues.
         /// TaintedTarget is the tainted target (arguments / return value).
-        ///
+        /// </para>
+        /// <para>
         /// Example:
         /// (
         ///   (methodName, argumentOperations) => methodName == "Bar",  // MethodMatcher
@@ -112,8 +114,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         ///      )
         ///   }
         /// )
-        ///
-        /// will treat any invocation of the "Bar" method's return value as tainted.
+        /// </para>
+        /// <para>will treat any invocation of the "Bar" method's return value as tainted.</para>
         /// </remarks>
         public ImmutableHashSet<(MethodMatcher MethodMatcher, ImmutableHashSet<(PointsToCheck PointsToCheck, string TaintedTarget)>)> TaintedMethodsNeedsPointsToAnalysis { get; }
 
@@ -121,10 +123,12 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// Methods that generate tainted data and whose arguments need extra value content analysis and points to analysis.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// MethodMatcher determines if the outermost tuple applies, based on the method names and arguments.
         /// ValueContentCheck determines if the inner tuple applies, based on the method invocation's arguments PointsToAbstractValues and ValueContentAbstractValues.
         /// TaintedTarget is the tainted target (arguments / return value).
-        ///
+        /// </para>
+        /// <para>
         /// Example:
         /// (
         ///   (methodName, argumentOperations) => methodName == "Bar",  // MethodMatcher
@@ -135,8 +139,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         ///      )
         ///   }
         /// )
-        ///
-        /// will treat any invocation of the "Bar" method's return value as tainted.
+        /// </para>
+        /// <para>will treat any invocation of the "Bar" method's return value as tainted.</para>
         /// </remarks>
         public ImmutableHashSet<(MethodMatcher MethodMatcher, ImmutableHashSet<(ValueContentCheck ValueContentCheck, string TaintedTarget)>)> TaintedMethodsNeedsValueContentAnalysis { get; }
 
@@ -144,9 +148,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// Methods that could taint another argument when one of its argument is tainted.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// MethodMatcher determines if the outermost tuple applies, based on the method names and arguments.
         /// (IfTaintedParameter, ThenTaintedTarget) determines if the ThenTaintedTarget is tainted, based on if the IfTaintedParameter is tainted.
-        ///
+        /// </para>
+        /// <para>
         /// Example:
         /// (
         ///   (methodName, argumentOperations) => methodName == "Bar",  // MethodMatcher
@@ -154,8 +160,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         ///      ("a", "b")
         ///   }
         /// )
-        ///
-        /// will treat the parameter "b" as tainted when parameter "a" is tainted of the "Bar" method.
+        /// </para>
+        /// <para>will treat the parameter "b" as tainted when parameter "a" is tainted of the "Bar" method.</para>
         /// </remarks>
         public ImmutableHashSet<(MethodMatcher MethodMatcher, ImmutableHashSet<(string IfTaintedParameter, string ThenTaintedTarget)>)> TransferMethods { get; }
 

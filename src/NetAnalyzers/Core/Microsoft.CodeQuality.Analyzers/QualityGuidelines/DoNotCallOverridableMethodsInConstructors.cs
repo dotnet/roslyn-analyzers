@@ -10,13 +10,13 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
-    /// CA2214: Do not call overridable methods in constructors
-    ///
-    /// Cause: The constructor of an unsealed type calls a virtual method defined in its class.
-    ///
+    /// <para>CA2214: Do not call overridable methods in constructors</para>
+    /// <para>Cause: The constructor of an unsealed type calls a virtual method defined in its class.</para>
+    /// <para>
     /// Description: When a virtual method is called, the actual type that executes the method is not selected
     /// until run time. When a constructor calls a virtual method, it is possible that the constructor for the
     /// instance that invokes the method has not executed.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallOverridableMethodsInConstructorsAnalyzer : DiagnosticAnalyzer

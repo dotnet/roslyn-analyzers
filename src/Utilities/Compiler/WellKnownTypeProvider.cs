@@ -69,11 +69,12 @@ namespace Analyzer.Utilities
         /// so we can query <see cref="IAssemblySymbol.NamespaceNames"/>.
         /// </summary>
         /// <remarks>
-        /// Example: "System.Collections.Generic.List`1" => [ "System", "Collections", "Generic" ]
-        /// 
+        /// <para>Example: "System.Collections.Generic.List`1" => [ "System", "Collections", "Generic" ]</para>
+        /// <para>
         /// https://github.com/dotnet/roslyn/blob/9e786147b8cb884af454db081bb747a5bd36a086/src/Compilers/CSharp/Portable/Symbols/AssemblySymbol.cs#L455
         /// suggests the TypeNames collection can be checked to avoid expensive operations. But realizing TypeNames seems to be
         /// as memory intensive as unnecessary calls GetTypeByMetadataName() in some cases. So we'll go with namespace names.
+        /// </para>
         /// </remarks>
         private static readonly ConcurrentDictionary<string, ImmutableArray<string>> _fullTypeNameToNamespaceNames =
             new ConcurrentDictionary<string, ImmutableArray<string>>(StringComparer.Ordinal);

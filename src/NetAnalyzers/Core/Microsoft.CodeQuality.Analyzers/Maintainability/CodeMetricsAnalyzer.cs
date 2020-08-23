@@ -32,14 +32,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         internal const string CA1506RuleId = "CA1506";
 
         /// <summary>
+        /// <para>
         /// Configuration file to configure custom threshold values for supported code metrics.
         /// For example, the below entry changes the maximum allowed inheritance depth from the default value of 5 to 10:
-        ///
+        /// </para>
+        /// <para>
         ///     # FORMAT:
         ///     # 'RuleId'(Optional 'SymbolKind'): 'Threshold'
-        ///
+        /// </para>
+        /// <para>
         ///     CA1501: 10
         /// See CA1509 unit tests for more examples.
+        /// </para>
         /// </summary>
         private const string CodeMetricsConfigurationFile = "CodeMetricsConfig.txt";
 

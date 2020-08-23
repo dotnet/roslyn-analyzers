@@ -13,20 +13,22 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2016: Forward CancellationToken to invocations.
-    /// 
+    /// <para>CA2016: Forward CancellationToken to invocations.</para>
+    /// <para>
     /// Conditions for positive cases:
     ///     - The containing method signature receives a ct parameter. It can be a method, a nested method, an action or a func.
     ///     - The invocation method is not receiving a ct argument, and...
     ///     - The invocation method either:
     ///         - Has no overloads but its current signature receives an optional ct=default, currently implicit, or...
     ///         - Has a method overload with the exact same arguments in the same order, plus one ct parameter at the end.
-    ///         
+    /// </para>
+    /// <para>
     /// Conditions for negative cases:
     ///     - The containing method signature does not receive a ct parameter.
     ///     - The invocation method signature receives a ct and one is already being explicitly passed, or...
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
     ///     - The invocation method only has overloads that receive more than one ct.
+    /// </para>
     /// </summary>
     public abstract class ForwardCancellationTokenToInvocationsAnalyzer : DiagnosticAnalyzer
     {

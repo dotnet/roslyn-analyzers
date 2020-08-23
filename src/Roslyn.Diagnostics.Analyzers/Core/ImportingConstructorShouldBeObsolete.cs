@@ -11,11 +11,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
-    /// The importing constructor for a MEF-exported type should be marked obsolete.
-    ///
+    /// <para>The importing constructor for a MEF-exported type should be marked obsolete.</para>
+    /// <para>
     /// <code>
     /// [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
     /// </code>
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class ImportingConstructorShouldBeObsolete : DiagnosticAnalyzer

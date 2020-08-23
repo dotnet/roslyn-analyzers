@@ -11,22 +11,25 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA2227: Collection properties should be read only
-    ///
+    /// <para>CA2227: Collection properties should be read only</para>
+    /// <para>
     /// Cause:
     /// An externally visible writable property is a type that implements System.Collections.ICollection.
     /// Arrays, indexers(properties with the name 'Item'), and permission sets are ignored by the rule.
-    ///
+    /// </para>
+    /// <para>
     /// Description:
     /// A writable collection property allows a user to replace the collection with a completely different collection.
     /// A read-only property stops the collection from being replaced but still allows the individual members to be set.
     /// If replacing the collection is a goal, the preferred design pattern is to include a method to remove all the elements
     /// from the collection and a method to re-populate the collection.See the Clear and AddRange methods of the System.Collections.ArrayList class
     /// for an example of this pattern.
-    ///
+    /// </para>
+    /// <para>
     /// Both binary and XML serialization support read-only properties that are collections.
     /// The System.Xml.Serialization.XmlSerializer class has specific requirements for types that implement ICollection and
     /// System.Collections.IEnumerable in order to be serializable.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CollectionPropertiesShouldBeReadOnlyAnalyzer : DiagnosticAnalyzer

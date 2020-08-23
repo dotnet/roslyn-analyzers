@@ -11,13 +11,14 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2201: Do not raise reserved exception types
-    ///
+    /// <para>CA2201: Do not raise reserved exception types</para>
+    /// <para>
     /// Too generic:
     ///     System.Exception
     ///     System.ApplicationException
     ///     System.SystemException
-    ///
+    /// </para>
+    /// <para>
     /// Reserved:
     ///     System.OutOfMemoryException
     ///     System.IndexOutOfRangeException
@@ -28,6 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     System.Runtime.InteropServices.COMException
     ///     System.Runtime.InteropServices.SEHException
     ///     System.AccessViolationException
+    /// </para>
     ///
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]

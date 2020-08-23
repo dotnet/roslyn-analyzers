@@ -60,11 +60,12 @@ namespace Analyzer.Utilities.Lightup
         /// the project default.
         /// </summary>
         /// <remarks>
-        /// This flag is set by default at the start of all files.
-        ///
+        /// <para>This flag is set by default at the start of all files.</para>
+        /// <para>
         /// The project default can change depending on the file type. Generated
         /// files have nullable off by default, regardless of of the project-level
         /// default setting.
+        /// </para>
         /// </remarks>
         ContextInherited = WarningsContextInherited | AnnotationsContextInherited
     }

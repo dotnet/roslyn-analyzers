@@ -20,11 +20,14 @@ using Microsoft.CodeAnalysis.Editing;
 namespace Roslyn.Diagnostics.Analyzers
 {
     /// <summary>
+    /// <para>
     /// This refactoring looks for numbered comments `// N` or `// N, N+1, ...` on non-empty lines within string literals
     /// and checks that the numbers are sequential. If they are not, the refactoring is offered.
-    ///
+    /// </para>
+    /// <para>
     /// This pattern is commonly used by compiler tests.
     /// Comments that don't look like numbered comments are left alone. For instance, any comment that contains alpha characters.
+    /// </para>
     /// </summary>
     [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(NumberCommentslRefactoring)), Shared]
     internal sealed class NumberCommentslRefactoring : CodeRefactoringProvider

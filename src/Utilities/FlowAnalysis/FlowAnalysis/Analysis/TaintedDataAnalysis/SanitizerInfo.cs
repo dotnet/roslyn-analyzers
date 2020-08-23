@@ -45,9 +45,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// Methods that untaint tainted data.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// MethodMatcher determines if the outermost tuple applies, based on the method names and arguments.
         /// (IfTaintedParameter, ThenUnTaintedTarget) determines if the ThenUnTaintedTarget is untainted, based on if the IfTaintedParameter is tainted.
-        ///
+        /// </para>
+        /// <para>
         /// Example:
         /// (
         ///   (methodName, argumentOperations) => methodName == "Bar",  // MethodMatcher
@@ -55,8 +57,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         ///      ("a", "b")
         ///   }
         /// )
-        ///
-        /// will treat the parameter "b" as untainted when parameter "a" is tainted of the "Bar" method.
+        /// </para>
+        /// <para>will treat the parameter "b" as untainted when parameter "a" is tainted of the "Bar" method.</para>
         /// </remarks>
         public ImmutableHashSet<(MethodMatcher MethodMatcher, ImmutableHashSet<(string IfTaintedParameter, string ThenUnTaintedTarget)>)> SanitizingMethods { get; }
 

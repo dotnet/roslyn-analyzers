@@ -11,11 +11,12 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2215: Dispose methods should call base class dispose
-    ///
+    /// <para>CA2215: Dispose methods should call base class dispose</para>
+    /// <para>
     /// A type that implements System.IDisposable inherits from a type that also implements IDisposable.
     /// The Dispose method of the inheriting type does not call the Dispose method of the parent type.
     /// To fix a violation of this rule, call base.Dispose in your Dispose method.
+    /// </para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DisposeMethodsShouldCallBaseClassDispose : DiagnosticAnalyzer

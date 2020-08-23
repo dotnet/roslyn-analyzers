@@ -28,7 +28,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="pointsToFactory">If the method needs to do PointsToAnalysis, the PointsToAnalysis result will be produced by the passed value factory.</param>
         /// <param name="valueContentFactory">If the method needs to do ValueContentAnalysis, the ValueContentAnalysis result will be produced by the passed value factory.</param>
         /// <param name="allTaintedTargets"></param>
-        /// <returns></returns>
         public static bool IsSourceMethod(
             this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap,
             IMethodSymbol method,
@@ -117,7 +116,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// </summary>
         /// <param name="sourceSymbolMap"></param>
         /// <param name="propertySymbol"></param>
-        /// <returns></returns>
         public static bool IsSourceProperty(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IPropertySymbol propertySymbol)
         {
             foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(propertySymbol.ContainingType))
@@ -136,7 +134,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// </summary>
         /// <param name="sourceSymbolMap"></param>
         /// <param name="parameterSymbol"></param>
-        /// <returns></returns>
         public static bool IsSourceParameter(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IParameterSymbol parameterSymbol, WellKnownTypeProvider wellKnownTypeProvider)
         {
             ISymbol containingSymbol = parameterSymbol.ContainingSymbol;
@@ -156,7 +153,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// </summary>
         /// <param name="sourceSymbolMap"></param>
         /// <param name="arrayTypeSymbol"></param>
-        /// <returns></returns>
         public static bool IsSourceConstantArrayOfType(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IArrayTypeSymbol arrayTypeSymbol)
         {
             if (arrayTypeSymbol.ElementType is INamedTypeSymbol elementType)
@@ -180,7 +176,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="method"></param>
         /// <param name="taintedParameterNames"></param>
         /// <param name="taintedParameterPairs">The set of parameter pairs (tainted source parameter name, tainted end parameter name).</param>
-        /// <returns></returns>
         public static bool IsSourceTransferMethod(
             this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap,
             IMethodSymbol method,

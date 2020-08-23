@@ -694,7 +694,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <summary>
             /// Calculated the set of APIs which have been deleted but not yet documented.
             /// </summary>
-            /// <returns></returns>
             internal List<ApiLine> GetDeletedApiList()
             {
                 var list = new List<ApiLine>();

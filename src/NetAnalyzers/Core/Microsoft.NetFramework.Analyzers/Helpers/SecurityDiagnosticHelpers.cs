@@ -241,7 +241,6 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         /// <param name="current">Current syntax not to examine</param>
         /// <param name="model">The semantic model</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns></returns>
         public static string GetNonEmptyParentName(SyntaxNode current, SemanticModel model, CancellationToken cancellationToken)
         {
             while (current.Parent != null)

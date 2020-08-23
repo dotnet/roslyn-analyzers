@@ -273,7 +273,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         /// <param name="method"></param>
         /// <param name="compilation"></param>
-        /// <returns></returns>
         private static bool IsGetHashCodeInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
             if (method.Name != WellKnownMemberNames.ObjectGetHashCode)

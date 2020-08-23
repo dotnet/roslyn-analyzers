@@ -13,13 +13,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
         /// Return negated value if the analysis value is a predicated value.
         /// Otherwise, return the current instance itself.
         /// </summary>
-        /// <returns></returns>
         IAbstractAnalysisValue GetNegatedValue();
 
         /// <summary>
         /// String representation of the abstract value.
         /// </summary>
-        /// <returns></returns>
         string ToString();
     }
 }

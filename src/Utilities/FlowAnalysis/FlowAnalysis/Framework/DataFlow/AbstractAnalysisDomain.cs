@@ -11,7 +11,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// Creates a clone of the analysis data.
         /// </summary>
         /// <param name="value"></param>
-        /// <returns></returns>
         public abstract TAnalysisData Clone(TAnalysisData value);
 
         /// <summary>

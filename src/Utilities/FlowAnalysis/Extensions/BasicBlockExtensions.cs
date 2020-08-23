@@ -161,7 +161,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
         /// for example, if the block only has a structured exception handling branch for throw operation.
         /// </summary>
         /// <param name="basicBlock"></param>
-        /// <returns></returns>
         internal static int GetMaxSuccessorOrdinal(this BasicBlock basicBlock)
             => Math.Max(basicBlock.FallThroughSuccessor?.Destination?.Ordinal ?? -1,
                         basicBlock.ConditionalSuccessor?.Destination?.Ordinal ?? -1);

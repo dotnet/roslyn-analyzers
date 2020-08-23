@@ -357,7 +357,6 @@ namespace Analyzer.Utilities.Extensions
         /// Indicates if the given <paramref name="binaryOperation"/> is a predicate operation used in a condition.
         /// </summary>
         /// <param name="binaryOperation"></param>
-        /// <returns></returns>
         public static bool IsComparisonOperator(this IBinaryOperation binaryOperation)
         {
             switch (binaryOperation.OperatorKind)

@@ -32,7 +32,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static readonly ImmutableArray<string> s_platformCheckMethodNames = ImmutableArray.Create(IsOSPlatformVersionAtLeast, IsOSPlatform, IsBrowser, IsLinux, IsFreeBSD, IsFreeBSDVersionAtLeast,
             IsAndroid, IsAndroidVersionAtLeast, IsIOS, IsIOSVersionAtLeast, IsMacOS, IsMacOSVersionAtLeast, IsTvOS, IsTvOSVersionAtLeast, IsWatchOS, IsWatchOSVersionAtLeast, IsWindows, IsWindowsVersionAtLeast);
         private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(SupportedOSPlatformAttribute, UnsupportedOSPlatformAttribute);
-        private static ImmutableArray<string> s_supportedMsBuildPlatforms;
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableSupportedOsMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityCheckSupportedOsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -123,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return;
                 }
 
-                s_supportedMsBuildPlatforms = GetSupportedPlatforms(context.Options, context.Compilation, context.CancellationToken);
+                var msBuildPlatforms = GetSupportedPlatforms(context.Options, context.Compilation, context.CancellationToken);
                 var runtimeIsOSPlatformMethod = runtimeInformationType.GetMembers().OfType<IMethodSymbol>().Where(m =>
                     IsOSPlatform == m.Name &&
                     m.IsStatic &&
@@ -134,7 +133,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var guardMethods = GetRuntimePlatformGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
 
-                context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers));
+                context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers, msBuildPlatforms));
             });
 
             static ImmutableArray<IMethodSymbol> GetRuntimePlatformGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
@@ -153,13 +152,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             OperationBlockStartAnalysisContext context,
             ImmutableArray<IMethodSymbol> guardMethods,
             INamedTypeSymbol osPlatformType,
-            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+            ImmutableArray<string> msBuildPlatforms)
         {
             var platformSpecificOperations = PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>>.GetInstance();
 
             context.RegisterOperationAction(context =>
             {
-                AnalyzeOperation(context.Operation, context, platformSpecificOperations, platformSpecificMembers);
+                AnalyzeOperation(context.Operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
             },
             OperationKind.MethodReference,
             OperationKind.EventReference,
@@ -504,7 +504,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
         {
             var symbol = GetOperationSymbol(operation);
 
@@ -517,14 +517,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
                 {
-                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, out var notSuppressedAttributes))
+                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
                     {
                         platformSpecificOperations.TryAdd(operation, notSuppressedAttributes);
                     }
                 }
                 else
                 {
-                    if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, out var copiedAttributes))
+                    if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
                     {
                         platformSpecificOperations.TryAdd(operation, copiedAttributes);
                     }
@@ -532,12 +532,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        private static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
+        private static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
+            ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
         {
             copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             foreach (var (platformName, attributes) in operationAttributes)
             {
-                if (AllowList(attributes) || s_supportedMsBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
+                if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
                 {
 
                     copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
@@ -569,7 +570,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         /// <param name="callSiteAttributes">Platform specific attributes applied to the call site where the member invoked</param>
         /// <returns>true if all attributes applied to the operation is suppressed, false otherwise</returns>
 
-        private static bool IsNotSuppressedByCallSite(SmallDictionary<string, PlatformAttributes> operationAttributes, SmallDictionary<string, PlatformAttributes> callSiteAttributes, out SmallDictionary<string, PlatformAttributes> notSuppressedAttributes)
+        private static bool IsNotSuppressedByCallSite(SmallDictionary<string, PlatformAttributes> operationAttributes, SmallDictionary<string, PlatformAttributes> callSiteAttributes,
+            ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> notSuppressedAttributes)
         {
             notSuppressedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             bool? supportedOnlyList = null;
@@ -650,7 +652,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             // Call site has no attributes for this platform, check if MsBuild list has it, 
                             // then if call site has deny list, it should support its later support
-                            if (s_supportedMsBuildPlatforms.Contains(platformName) &&
+                            if (msBuildPlatforms.Contains(platformName) &&
                                 callSiteAttributes.Any(ca => DenyList(ca.Value)))
                             {
                                 diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
@@ -687,7 +689,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                             }
                         }
-                        else if (s_supportedMsBuildPlatforms.Contains(platformName) &&
+                        else if (msBuildPlatforms.Contains(platformName) &&
                             !callSiteAttributes.Values.Any(v => v.SupportedFirst != null))
                         {
                             // if MsBuild list contain the platform and call site has no any other supported attribute it means global, so need to warn

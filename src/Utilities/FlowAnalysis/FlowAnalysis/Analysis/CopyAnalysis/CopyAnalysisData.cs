@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
         }
 
         /// <summary>
-        /// Updates the the copy values for all entities that are part of the given <paramref name="copyValue"/> set,
+        /// Updates the copy values for all entities that are part of the given <paramref name="copyValue"/> set,
         /// i.e. <see cref="CopyAbstractValue.AnalysisEntities"/>.
         /// We do not support the <see cref="SetAbstractValue(AnalysisEntity, CopyAbstractValue)"/> overload
         /// that updates copy value for each individual entity.

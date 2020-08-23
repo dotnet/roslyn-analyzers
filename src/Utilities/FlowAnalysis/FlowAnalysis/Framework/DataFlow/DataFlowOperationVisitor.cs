@@ -3087,7 +3087,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// Visits an invocation, either as a direct method call, or intermediately through a delegate.
         /// </summary>
         /// <param name="method">Method that is invoked.</param>
-        /// <param name="visitedInstance">Instance that that the method is invoked on, if any.</param>
+        /// <param name="visitedInstance">Instance that the method is invoked on, if any.</param>
         /// <param name="visitedArguments">Arguments to the invoked method.</param>
         /// <param name="invokedAsDelegate">Indicates that invocation is a delegate invocation.</param>
         /// <param name="originalOperation">Original invocation operation, which may be a delegate invocation.</param>

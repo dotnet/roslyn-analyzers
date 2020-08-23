@@ -43,8 +43,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <summary>
         /// Creates a TaintedDataAbstractValue that's marked as tainted.
         /// </summary>
-        /// <param name="accessingSyntax">Where the tainted data is originally coming from.</param>
         /// <param name="taintedSymbol">Symbol that's tainted.</param>
+        /// <param name="accessingSyntax">Where the tainted data is originally coming from.</param>
         /// <param name="accessingMethod">Method that's accessing the tainted data.</param>
         /// <returns>New TaintedDataAbstractValue that's marked as tainted.</returns>
         internal static TaintedDataAbstractValue CreateTainted(ISymbol taintedSymbol, SyntaxNode accessingSyntax, ISymbol accessingMethod)

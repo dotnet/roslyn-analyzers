@@ -24,9 +24,9 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's message.</param>
         /// <param name="ruleLevel">Indicates the <see cref="RuleLevel"/> for this rule.</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's descrption.</param>
         /// <param name="isPortedFxCopRule">Flag indicating if this is a rule ported from legacy FxCop.</param>
         /// <param name="isDataflowRule">Flag indicating if this is a dataflow analysis based rule.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's descrption.</param>
         /// <returns>new DiagnosticDescriptor</returns>
         public static DiagnosticDescriptor CreateDiagnosticDescriptor(
             string id,
@@ -56,9 +56,9 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's message.</param>
         /// <param name="ruleLevel">Indicates the <see cref="RuleLevel"/> for this rule.</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's descrption.</param>
         /// <param name="isPortedFxCopRule">Flag indicating if this is a rule ported from legacy FxCop.</param>
         /// <param name="isDataflowRule">Flag indicating if this is a dataflow analysis based rule.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's descrption.</param>
         /// <returns>new DiagnosticDescriptor</returns>
         public static DiagnosticDescriptor CreateDiagnosticDescriptor(
             string id,

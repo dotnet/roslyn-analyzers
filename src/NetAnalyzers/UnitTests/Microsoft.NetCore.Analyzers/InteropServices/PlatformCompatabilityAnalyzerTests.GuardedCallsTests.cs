@@ -794,9 +794,6 @@ public class WindowsSpecificApis
 {
     [SupportedOSPlatform(""windows10.1.2.3"")]
     public static void WindowsOnlyMethod() { }
-
-    [UnsupportedOSPlatform(""windows10.1.2.3"")]
-    public static void UnsupportedWindows10() { }
 }
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
             await VerifyAnalyzerAsyncCs(source);

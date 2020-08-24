@@ -12,6 +12,7 @@ using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -43,8 +44,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string SupportedOSPlatformAttribute = nameof(SupportedOSPlatformAttribute);
         private const string UnsupportedOSPlatformAttribute = nameof(UnsupportedOSPlatformAttribute);
 
-        // Platform guard method names
+        // Platform guard method name, prefix, suffix
         private const string IsOSPlatform = nameof(IsOSPlatform);
+        private const string IsPrefix = "Is";
+        private const string OptionalSuffix = "VersionAtLeast";
 
         internal static DiagnosticDescriptor SupportedOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -81,7 +84,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(SupportedOsRule, SupportedOsVersionRule, UnsupportedOsRule, UnsupportedOsVersionRule);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            SupportedOsRule, SupportedOsVersionRule, UnsupportedOsRule, UnsupportedOsVersionRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -129,12 +134,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static ImmutableArray<string> GetSupportedPlatforms(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
                 options.GetMSBuildItemMetadataValues(MSBuildItemOptionNames.SupportedPlatform, compilation, cancellationToken);
-        }
 
-        private static bool NameAndParametersValid(IMethodSymbol method)
-        {
-            return method.Name.StartsWith(IsPrefix, StringComparison.Ordinal) &&
-                (method.Parameters.Length == 0 || method.Name.EndsWith(OptionalSuffix, StringComparison.Ordinal));
+            static bool NameAndParametersValid(IMethodSymbol method) => method.Name.StartsWith(IsPrefix, StringComparison.Ordinal) &&
+                    (method.Parameters.Length == 0 || method.Name.EndsWith(OptionalSuffix, StringComparison.Ordinal));
         }
 
         private void AnalyzeOperationBlock(
@@ -188,32 +190,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         var value = analysisResult[platformSpecificOperation.Kind, platformSpecificOperation.Syntax];
 
-                        if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Unknown)
-                        {
-                            if (platformSpecificOperation.IsWithinLambdaOrLocalFunction())
-                            {
-                                var localResults = analysisResult.TryGetInterproceduralResultByDefinition();
-                                if (localResults != null)
-                                {
-                                    var hasKnownUnguardedValue = false;
-                                    foreach (var localResult in localResults)
-                                    {
-                                        var localValue = localResult[platformSpecificOperation.Kind, platformSpecificOperation.Syntax];
-                                        if (localValue.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, localValue))
-                                        {
-                                            hasKnownUnguardedValue = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (hasKnownUnguardedValue)
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                        else if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, value))
+                        if ((value.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, value)) ||
+                           (value.Kind == GlobalFlowStateAnalysisValueSetKind.Unknown && HasInterproceduralResult(platformSpecificOperation, attributes, analysisResult)))
                         {
                             continue;
                         }
@@ -235,6 +213,28 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 OperationVisitor CreateOperationVisitor(GlobalFlowStateAnalysisContext context) => new OperationVisitor(guardMethods, osPlatformType, context);
             });
+        }
+
+        private static bool HasInterproceduralResult(IOperation platformSpecificOperation, SmallDictionary<string, PlatformAttributes> attributes,
+            DataFlowAnalysisResult<GlobalFlowStateBlockAnalysisResult, GlobalFlowStateAnalysisValueSet> analysisResult)
+        {
+
+            if (platformSpecificOperation.IsWithinLambdaOrLocalFunction())
+            {
+                var results = analysisResult.TryGetInterproceduralResults();
+                if (results != null)
+                {
+                    foreach (var localResult in results)
+                    {
+                        var localValue = localResult[platformSpecificOperation.Kind, platformSpecificOperation.Syntax];
+                        if (localValue.Kind == GlobalFlowStateAnalysisValueSetKind.Known && IsKnownValueGuarded(attributes, localValue))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private static bool ComputeNeedsValueContentAnalysis(IBlockOperation operationBlock, ImmutableArray<IMethodSymbol> guardMethods)
@@ -272,7 +272,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 // 'GlobalFlowStateAnalysisValueSet.AnalysisValues' represent the && of values.
                 foreach (var analysisValue in value.AnalysisValues)
                 {
-                    if (analysisValue is RuntimeMethodValue info)
+                    if (analysisValue is PlatformMethodValue info)
                     {
                         if (attributes.TryGetValue(info.PlatformName, out var attribute))
                         {
@@ -282,10 +282,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 {
                                     if (attribute.UnsupportedFirst >= info.Version)
                                     {
-                                        if (attribute.SupportedFirst != null &&
-                                            attribute.SupportedFirst >= attribute.UnsupportedFirst)
+                                        if (DenyList(attribute))
                                         {
-                                            // deny list, no need further check
                                             attribute.SupportedFirst = null;
                                             attribute.SupportedSecond = null;
                                             attribute.UnsupportedSecond = null;
@@ -469,15 +467,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     ReportUnsupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.UnsupportedSecond));
                 }
             }
-        }
 
-        private static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
+            static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
             context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(SupportedOsRule, name, platformName) :
                 operation.CreateDiagnostic(SupportedOsVersionRule, name, platformName, version));
 
-        private static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
+            static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
             context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(UnsupportedOsRule, name, platformName) :
                 operation.CreateDiagnostic(UnsupportedOsVersionRule, name, platformName, version));
+        }
 
         private static string? VersionToString(Version version) => IsEmptyVersion(version) ? null : version.ToString();
 
@@ -533,6 +531,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
                 }
             }
+
             return copiedAttributes.Any();
         }
 
@@ -543,6 +542,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 copy.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
             }
+
             return copy;
         }
 
@@ -559,8 +559,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         /// <param name="callSiteAttributes">Platform specific attributes applied to the call site where the member invoked</param>
         /// <returns>true if all attributes applied to the operation is suppressed, false otherwise</returns>
 
-        private static bool IsNotSuppressedByCallSite(SmallDictionary<string, PlatformAttributes> operationAttributes, SmallDictionary<string, PlatformAttributes> callSiteAttributes,
-            ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> notSuppressedAttributes)
+        private static bool IsNotSuppressedByCallSite(SmallDictionary<string, PlatformAttributes> operationAttributes,
+            SmallDictionary<string, PlatformAttributes> callSiteAttributes, ImmutableArray<string> msBuildPlatforms,
+            out SmallDictionary<string, PlatformAttributes> notSuppressedAttributes)
         {
             notSuppressedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             bool? supportedOnlyList = null;
@@ -720,7 +721,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             return notSuppressedAttributes.Any();
 
-            static void AddOrUpdatedDiagnostic(PlatformAttributes operationAttributes, SmallDictionary<string, PlatformAttributes> notSuppressedAttributes, string name)
+            static void AddOrUpdatedDiagnostic(PlatformAttributes operationAttributes,
+                SmallDictionary<string, PlatformAttributes> notSuppressedAttributes, string name)
             {
                 if (operationAttributes.SupportedFirst != null)
                 {
@@ -844,6 +846,30 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return false;
         }
 
+        private static bool TryParsePlatformNameAndVersion(string osString, out string osPlatformName, [NotNullWhen(true)] out Version? version)
+        {
+            version = null;
+            osPlatformName = string.Empty;
+            for (int i = 0; i < osString.Length; i++)
+            {
+                if (char.IsDigit(osString[i]))
+                {
+                    if (i > 0 && Version.TryParse(osString.Substring(i), out Version? parsedVersion))
+                    {
+                        osPlatformName = osString.Substring(0, i);
+                        version = parsedVersion;
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
+            osPlatformName = osString;
+            version = new Version(0, 0);
+            return true;
+        }
+
         private static void AddAttribute(string name, Version version, SmallDictionary<string, PlatformAttributes> existingAttributes, string platformName)
         {
             if (name == SupportedOSPlatformAttribute)
@@ -856,7 +882,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 AddOrUpdateUnsupportedAttribute(platformName, existingAttributes[platformName], version, existingAttributes);
             }
 
-            static void AddOrUpdateUnsupportedAttribute(string name, PlatformAttributes attributes, Version version, SmallDictionary<string, PlatformAttributes> existingAttributes)
+            static void AddOrUpdateUnsupportedAttribute(string name, PlatformAttributes attributes,
+                Version version, SmallDictionary<string, PlatformAttributes> existingAttributes)
             {
                 if (attributes.UnsupportedFirst != null)
                 {
@@ -922,8 +949,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 static bool HasAnySupportedOnlyAttribute(string name, SmallDictionary<string, PlatformAttributes> existingAttributes) =>
-                existingAttributes.Any(a => !a.Key.Equals(name, StringComparison.OrdinalIgnoreCase) &&
-                AllowList(a.Value));
+                    existingAttributes.Any(a => !a.Key.Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                    AllowList(a.Value));
             }
 
             static void AddOrUpdateSupportedAttribute(PlatformAttributes attributes, Version version)

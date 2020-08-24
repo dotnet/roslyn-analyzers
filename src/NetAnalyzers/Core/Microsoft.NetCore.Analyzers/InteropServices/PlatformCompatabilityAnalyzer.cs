@@ -201,9 +201,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                         if (value.Kind == GlobalFlowStateAnalysisValueSetKind.Unknown)
                         {
-                            if (platformSpecificOperation.TryGetContainingLocalOrLambdaFunctionSymbol(out var containingSymbol))
+                            if (platformSpecificOperation.IsWithinLambdaOrLocalFunction())
                             {
-                                var localResults = analysisResult.TryGetInterproceduralResultByDefinition(containingSymbol);
+                                var localResults = analysisResult.TryGetInterproceduralResultByDefinition();
                                 if (localResults != null)
                                 {
                                     var hasKnownUnguardedValue = false;
@@ -588,13 +588,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         // If only supported for current platform
                         if (supportedOnlyList.HasValue && !supportedOnlyList.Value)
                         {
-                            return true; // do not need to add this API to the list
+                            return true; // invalid state, do not need to add this API to the list
                         }
-                        else
-                        {
-                            supportedOnlyPlatforms.Add(platformName);
-                            supportedOnlyList = true;
-                        }
+
+                        supportedOnlyPlatforms.Add(platformName);
+                        supportedOnlyList = true;
 
                         if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))
                         {
@@ -622,10 +620,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             return true; // do not need to add this API to the list
                         }
-                        else
-                        {
-                            supportedOnlyList = false;
-                        }
+ 
+                        supportedOnlyList = false;
 
                         if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))
                         {
@@ -666,10 +662,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     {
                         return true; // do not need to add this API to the list
                     }
-                    else
-                    {
-                        supportedOnlyList = false;
-                    }
+
+                    supportedOnlyList = false;
 
                     if (attribute.UnsupportedFirst != null) // Unsupported for this but supported all other
                     {

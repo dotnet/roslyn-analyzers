@@ -135,11 +135,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return null;
         }
 
-        internal IEnumerable<DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>>? TryGetInterproceduralResultByDefinition(IMethodSymbol symbol)
+        internal IEnumerable<DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>>? TryGetInterproceduralResultByDefinition()
         {
             foreach (var kvp in _interproceduralResultsMap)
             {
-                if (kvp.Key is IInvocationOperation iOperation && iOperation.TargetMethod.Equals(symbol))
+                if (kvp.Key is IInvocationOperation)
                 {
                     yield return (DataFlowAnalysisResult<TBlockAnalysisResult, TAbstractAnalysisValue>)kvp.Value;
                 }

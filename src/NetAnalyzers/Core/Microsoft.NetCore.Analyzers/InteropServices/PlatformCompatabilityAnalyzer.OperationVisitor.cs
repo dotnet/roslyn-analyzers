@@ -63,6 +63,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 return GetValueOrDefault(base.VisitEventReference(operation, argument));
             }
+            public override GlobalFlowStateAnalysisValueSet VisitMethodReference(IMethodReferenceOperation operation, object? argument)
+            {
+                return GetValueOrDefault(base.VisitMethodReference(operation, argument));
+            }
         }
     }
 }

@@ -1444,12 +1444,11 @@ public class Test
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
-        [Fact(Skip = "TODO: Needs to be fixed")]
+        [Fact]
         public async Task LambdaCallsOsDependentMember_GuardedCall_SimpleIfElse()
         {
             var source = @"
 using System.Runtime.Versioning;
-using System;
 using System;
 
 public class Test
@@ -1539,7 +1538,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        [Fact(Skip = "TODO: Needs to be fixed")]
+        [Fact]
         public async Task OsDependentMethodAssignedToDelegate_GuardedCall_SimpleIfElse()
         {
             var source = @"
@@ -2258,8 +2257,10 @@ class Test
         {
             M2();    
         }
-
-        [|M2()|]; 
+        else
+        {
+            [|M2()|]; 
+        }
     }
 
     [SupportedOSPlatform(""Windows10.1.2.3"")]
@@ -2276,7 +2277,7 @@ class Test
             await VerifyAnalyzerAsyncCs(source, "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive");
         }
 
-        [Fact(Skip = "TODO: Needs to be fixed")]
+        [Fact(Skip = "TODO: Analysis value not returned, needs to be fixed")]
         public async Task InterproceduralAnalysisTest_LogicalOr()
         {
             var source = @"

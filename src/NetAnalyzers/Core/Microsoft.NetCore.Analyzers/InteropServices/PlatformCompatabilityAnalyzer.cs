@@ -29,8 +29,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     public sealed partial class PlatformCompatabilityAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1416";
-        private static readonly ImmutableArray<string> s_platformCheckMethodNames = ImmutableArray.Create(IsOSPlatformVersionAtLeast, IsOSPlatform, IsBrowser, IsLinux, IsFreeBSD, IsFreeBSDVersionAtLeast,
-            IsAndroid, IsAndroidVersionAtLeast, IsIOS, IsIOSVersionAtLeast, IsMacOS, IsMacOSVersionAtLeast, IsTvOS, IsTvOSVersionAtLeast, IsWatchOS, IsWatchOSVersionAtLeast, IsWindows, IsWindowsVersionAtLeast);
         private static readonly ImmutableArray<string> s_osPlatformAttributes = ImmutableArray.Create(SupportedOSPlatformAttribute, UnsupportedOSPlatformAttribute);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PlatformCompatabilityCheckTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -46,24 +44,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string UnsupportedOSPlatformAttribute = nameof(UnsupportedOSPlatformAttribute);
 
         // Platform guard method names
-        private const string IsOSPlatformVersionAtLeast = nameof(IsOSPlatformVersionAtLeast);
         private const string IsOSPlatform = nameof(IsOSPlatform);
-        private const string IsBrowser = nameof(IsBrowser);
-        private const string IsLinux = nameof(IsLinux);
-        private const string IsFreeBSD = nameof(IsFreeBSD);
-        private const string IsFreeBSDVersionAtLeast = nameof(IsFreeBSDVersionAtLeast);
-        private const string IsAndroid = nameof(IsAndroid);
-        private const string IsAndroidVersionAtLeast = nameof(IsAndroidVersionAtLeast);
-        private const string IsIOS = nameof(IsIOS);
-        private const string IsIOSVersionAtLeast = nameof(IsIOSVersionAtLeast);
-        private const string IsMacOS = nameof(IsMacOS);
-        private const string IsMacOSVersionAtLeast = nameof(IsMacOSVersionAtLeast);
-        private const string IsTvOS = nameof(IsTvOS);
-        private const string IsTvOSVersionAtLeast = nameof(IsTvOSVersionAtLeast);
-        private const string IsWatchOS = nameof(IsWatchOS);
-        private const string IsWatchOSVersionAtLeast = nameof(IsWatchOSVersionAtLeast);
-        private const string IsWindows = nameof(IsWindows);
-        private const string IsWindowsVersionAtLeast = nameof(IsWindowsVersionAtLeast);
 
         internal static DiagnosticDescriptor SupportedOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -130,24 +111,32 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     m.Parameters.Length == 1 &&
                     m.Parameters[0].Type.Equals(osPlatformType)).FirstOrDefault();
 
-                var guardMethods = GetRuntimePlatformGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
+                var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
 
                 context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers, msBuildPlatforms));
             });
 
-            static ImmutableArray<IMethodSymbol> GetRuntimePlatformGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
+            static ImmutableArray<IMethodSymbol> GetOperatingSystemGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
             {
                 return operatingSystemType.GetMembers().OfType<IMethodSymbol>().Where(m =>
-                    s_platformCheckMethodNames.Contains(m.Name) &&
                     m.IsStatic &&
-                    m.ReturnType.SpecialType == SpecialType.System_Boolean).ToImmutableArray().
+                    m.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                    (IsOSPlatform == m.Name) || NameAndParametersValid(m)).
+                    ToImmutableArray().
                     Add(runtimeIsOSPlatformMethod);
             }
 
             static ImmutableArray<string> GetSupportedPlatforms(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
                 options.GetMSBuildItemMetadataValues(MSBuildItemOptionNames.SupportedPlatform, compilation, cancellationToken);
         }
+
+        private static bool NameAndParametersValid(IMethodSymbol method)
+        {
+            return method.Name.StartsWith(IsPrefix, StringComparison.Ordinal) &&
+                (method.Parameters.Length == 0 || method.Name.EndsWith(OptionalSuffix, StringComparison.Ordinal));
+        }
+
         private void AnalyzeOperationBlock(
             OperationBlockStartAnalysisContext context,
             ImmutableArray<IMethodSymbol> guardMethods,
@@ -620,7 +609,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             return true; // do not need to add this API to the list
                         }
- 
+
                         supportedOnlyList = false;
 
                         if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))

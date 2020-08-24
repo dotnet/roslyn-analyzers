@@ -122,14 +122,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers, msBuildPlatforms));
             });
 
-            static ImmutableArray<IMethodSymbol> GetOperatingSystemGuardMethods(IMethodSymbol runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
+            static ImmutableArray<IMethodSymbol> GetOperatingSystemGuardMethods(IMethodSymbol? runtimeIsOSPlatformMethod, INamedTypeSymbol operatingSystemType)
             {
-                return operatingSystemType.GetMembers().OfType<IMethodSymbol>().Where(m =>
+                var methods = operatingSystemType.GetMembers().OfType<IMethodSymbol>().Where(m =>
                     m.IsStatic &&
                     m.ReturnType.SpecialType == SpecialType.System_Boolean &&
                     (IsOSPlatform == m.Name) || NameAndParametersValid(m)).
-                    ToImmutableArray().
-                    Add(runtimeIsOSPlatformMethod);
+                    ToImmutableArray();
+
+                if (runtimeIsOSPlatformMethod != null)
+                {
+                    return methods.Add(runtimeIsOSPlatformMethod);
+                }
+                return methods;
             }
 
             static ImmutableArray<string> GetSupportedPlatforms(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
@@ -218,7 +223,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static bool HasInterproceduralResult(IOperation platformSpecificOperation, SmallDictionary<string, PlatformAttributes> attributes,
             DataFlowAnalysisResult<GlobalFlowStateBlockAnalysisResult, GlobalFlowStateAnalysisValueSet> analysisResult)
         {
-
             if (platformSpecificOperation.IsWithinLambdaOrLocalFunction())
             {
                 var results = analysisResult.TryGetInterproceduralResults();
@@ -234,6 +238,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
             }
+
             return false;
         }
 
@@ -527,7 +532,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
                 {
-
                     copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
                 }
             }

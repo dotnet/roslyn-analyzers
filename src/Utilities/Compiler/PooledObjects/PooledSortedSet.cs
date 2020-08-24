@@ -59,22 +59,5 @@ namespace Analyzer.Utilities.PooledObjects
             Debug.Assert(instance.Count == 0);
             return instance;
         }
-
-        /// <summary>
-        /// Gets a pooled instance of a <see cref="PooledSortedSet{T}"/> with an initializer and an optional comparer.
-        /// </summary>
-        /// <param name="initializer">Initial values for the set.</param>
-        /// <param name="comparer">Comparer to use, or null for the element type's default comparer.</param>
-        /// <returns>An empty <see cref="PooledSortedSet{T}"/>.</returns>
-        public static PooledSortedSet<T> GetInstance(IEnumerable<T> initializer, IComparer<T>? comparer = null)
-        {
-            var instance = GetInstance(comparer);
-            foreach (var value in initializer)
-            {
-                instance.Add(value);
-            }
-
-            return instance;
-        }
     }
 }

@@ -155,7 +155,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 osVersion = CreateVersion(versionBuilder);
-
                 return true;
 
                 static bool TryDecodeOSVersionPart(IArgumentOperation argument, ValueContentAnalysisResult? valueContentAnalysisResult, out int osVersionPart)

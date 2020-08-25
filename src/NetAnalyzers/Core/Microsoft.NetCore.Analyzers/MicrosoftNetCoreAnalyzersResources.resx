@@ -1426,7 +1426,7 @@
     <value>Use `{0}` instead of Range-based indexers on an array</value>
   </data>
   <data name="PlatformCompatabilityCheckTitle" xml:space="preserve">
-    <value>Validate Platform Compatibility</value>
+    <value>Validate platform compatibility</value>
   </data>
   <data name="PlatformCompatabilityCheckDescription" xml:space="preserve">
     <value>Using platform dependent API on a component makes the code no longer work across all platforms.</value>

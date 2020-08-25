@@ -1518,8 +1518,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckTitle">
-        <source>Validate Platform Compatibility</source>
-        <target state="new">Validate Platform Compatibility</target>
+        <source>Validate platform compatibility</source>
+        <target state="new">Validate platform compatibility</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatabilityCheckUnsupportedOsMessage">

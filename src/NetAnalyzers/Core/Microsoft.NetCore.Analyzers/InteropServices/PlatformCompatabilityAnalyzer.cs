@@ -490,8 +490,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 IInvocationOperation iOperation => iOperation.TargetMethod,
                 IObjectCreationOperation cOperation => cOperation.Constructor,
                 IFieldReferenceOperation fOperation => IsWithinConditionalOperation(fOperation) ? null : fOperation.Field,
+                IPropertyReferenceOperation pOperation => GetPropertyAccessor(pOperation.Property, operation),
                 IMemberReferenceOperation mOperation => mOperation.Member,
                 _ => null,
+            };
+
+        private static ISymbol GetPropertyAccessor(IPropertySymbol property, IOperation operation)
+            => operation.GetValueUsageInfo(property.ContainingSymbol) switch
+            {
+                ValueUsageInfos.Read => property.GetMethod,
+                ValueUsageInfos.Name => property.GetMethod,
+                ValueUsageInfos.Write => property.SetMethod,
+                _ => property
             };
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
@@ -807,6 +817,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 AddPlatformAttributes(symbol.GetAttributes(), ref attributes);
+
+                if (symbol is IMethodSymbol method && (method.MethodKind == MethodKind.PropertyGet || method.MethodKind == MethodKind.PropertySet))
+                {
+                    // Add attributes for the associated Property
+                    AddPlatformAttributes(method.AssociatedSymbol.GetAttributes(), ref attributes);
+                }
 
                 attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
             }

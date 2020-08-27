@@ -180,6 +180,46 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
+        [Fact]
+        public async Task OsDependentPropertyGetterSetterCalledWarns()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+public class Test
+{
+    public static bool WindowsOnlyPropertyGetter
+    {
+        [SupportedOSPlatform(""windows"")]
+        get { return true; }
+        set { }
+    }
+
+    public static bool WindowsOnlyPropertySetter
+    {
+        get { return true; }
+        [SupportedOSPlatform(""windows"")]
+        set { }
+    }
+
+    public void M1()
+    {
+        WindowsOnlyPropertyGetter = true;
+        var s = [|WindowsOnlyPropertyGetter|];
+        [|WindowsOnlyPropertySetter|] = false;
+        s = WindowsOnlyPropertySetter;
+        M2([|WindowsOnlyPropertyGetter|]);
+        var name = nameof([|WindowsOnlyPropertyGetter|]);
+    }
+    public bool M2(bool option)
+    {
+        return option;
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
         [Theory]
         [MemberData(nameof(Create_AttributeProperty_WithCondtions))]
         public async Task OsDependentPropertyConditionalCheckWarns(string attribute, string property, string condition, string setter, string getter)
@@ -319,7 +359,7 @@ public class Test
     [SupportedOSPlatform(""Windows10.1.1.1"")]
     string WindowsStringField;
     [SupportedOSPlatform(""Windows10.1.1.1"")]
-    public int WindowsIntField { get; set; }
+    public int WindowsIntField;
     public void M1()
     {
         Test test = new Test();

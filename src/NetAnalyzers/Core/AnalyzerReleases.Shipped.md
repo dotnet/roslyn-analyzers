@@ -1,6 +1,7 @@
 ## Release 5.0
 
 ### New Rules
+
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1000 | Design | Hidden | DoNotDeclareStaticMembersOnGenericTypesAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1000)
@@ -58,9 +59,10 @@ CA1303 | Globalization | Disabled | DoNotPassLiteralsAsLocalizedParameters, [Doc
 CA1304 | Globalization | Hidden | SpecifyCultureInfoAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1304)
 CA1305 | Globalization | Hidden | SpecifyIFormatProviderAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1305)
 CA1306 | Globalization | Disabled | SetLocaleForDataTypesAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1306)
-CA1307 | Globalization | Hidden | SpecifyStringComparisonAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1307)
+CA1307 | Globalization | Disabled | SpecifyStringComparisonAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1307)
 CA1308 | Globalization | Disabled | NormalizeStringsToUppercaseAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1308)
 CA1309 | Globalization | Hidden | UseOrdinalStringComparisonAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1309)
+CA1310 | Globalization | Hidden | SpecifyStringComparisonAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1310)
 CA1401 | Interoperability | Info | PInvokeDiagnosticAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1401)
 CA1414 | Interoperability | Disabled | MarkBooleanPInvokeArgumentsWithMarshalAsAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1414)
 CA1416 | Interoperability | Warning | PlatformCompatabilityAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1416)
@@ -259,5 +261,5 @@ CA5400 | Security | Disabled | DoNotDisableHttpClientCRLCheck, [Documentation](h
 CA5401 | Security | Disabled | DoNotUseCreateEncryptorWithNonDefaultIV, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5401)
 CA5402 | Security | Disabled | DoNotUseCreateEncryptorWithNonDefaultIV, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5402)
 CA5403 | Security | Disabled | DoNotHardCodeCertificate, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5403)
-IL3000 | Publish | Warning | AvoidAssemblyLocationInSingleFile
-IL3001 | Publish | Warning | AvoidAssemblyLocationInSingleFile
+IL3000 | Publish | Warning | AvoidAssemblyLocationInSingleFile, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/il3000)
+IL3001 | Publish | Warning | AvoidAssemblyLocationInSingleFile, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/il3001)

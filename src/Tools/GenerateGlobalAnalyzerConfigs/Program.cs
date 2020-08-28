@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ReleaseTracking;
 using Microsoft.CodeAnalysis.Text;
+using static GenerateDocumentationAndConfigFiles.CommonPropertyNames;
 
 namespace GenerateGlobalAnalyzerConfigs
 {
@@ -368,7 +369,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
                 static string GetPropertyStringForSettingDefaultPropertyValue(string packageName, string packageVersionPropName)
                 {
-                    if (packageName == "Microsoft.CodeAnalysis.NetAnalyzers")
+                    if (packageName == NetAnalyzersPackageName)
                     {
                         return $@"
       <!-- Default '{packageVersionPropName}' to 'EffectiveAnalysisLevel' with trimmed trailing '.0' -->
@@ -447,7 +448,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             {
                 switch (packageName)
                 {
-                    case "Microsoft.CodeAnalysis.Analyzers":
+                    case CodeAnalysisAnalyzersPackageName:
                         return @"
   <!-- Target to add all 'EmbeddedResource' files with '.resx' extension as analyzer additional files -->
   <Target Name=""AddAllResxFilesAsAdditionalFiles"" BeforeTargets=""CoreCompile"" Condition=""'@(EmbeddedResource)' != '' AND '$(SkipAddAllResxFilesAsAdditionalFiles)' != 'true'"">
@@ -465,7 +466,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 	<AdditionalFiles Include=""AnalyzerReleases.Unshipped.md"" />
   </ItemGroup>";
 
-                    case "Microsoft.CodeAnalysis.PublicApiAnalyzers":
+                    case PublicApiAnalyzersPackageName:
                         return @"
 
   <!-- Workaround for https://github.com/dotnet/roslyn/issues/4655 -->
@@ -476,7 +477,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 	<AdditionalFiles Include=""PublicAPI.Unshipped.txt"" />
   </ItemGroup>";
 
-                    case "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers":
+                    case PerformanceSensitiveAnalyzersPackageName:
                         return @"
   <PropertyGroup>
     <GeneratePerformanceSensitiveAttribute Condition=""'$(GeneratePerformanceSensitiveAttribute)' == ''"">true</GeneratePerformanceSensitiveAttribute>
@@ -489,6 +490,16 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
     <!-- Make sure the source file is embedded in PDB to support Source Link -->
     <EmbeddedFiles Condition=""'$(DebugType)' != 'none'"" Include=""$(PerformanceSensitiveAttributePath)"" />
   </ItemGroup>";
+
+                    case NetAnalyzersPackageName:
+                        return $@"
+  <!-- Target to report a warning when SDK NetAnalyzers version is higher then the referenced NuGet NetAnalyzers version -->
+  <Target Name=""_ReportUpgradeNetAnalyzersNuGetWarning"" BeforeTargets=""CoreCompile"" Condition=""'$(_SkipUpgradeNetAnalyzersNuGetWarning)' != 'true' "">
+    <Warning Text =""The .NET SDK has newer analyzers with version '$({NetAnalyzersSDKAssemblyVersionPropertyName})' then what is provided by version '$({NetAnalyzersNugetAssemblyVersionPropertyName})' of '{NetAnalyzersPackageName}' package. Update or remove this package reference.""
+             Condition=""'$({NetAnalyzersNugetAssemblyVersionPropertyName})' != '' AND
+                         '$({NetAnalyzersSDKAssemblyVersionPropertyName})' != '' AND
+                          $({NetAnalyzersNugetAssemblyVersionPropertyName}) &lt; $({NetAnalyzersSDKAssemblyVersionPropertyName})""/>
+  </Target>";
 
                     default:
                         return string.Empty;

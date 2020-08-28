@@ -806,10 +806,10 @@ namespace Analyzer.Utilities.Extensions
 
 #if CODEANALYSIS_V3_OR_BETTER
         /// <summary>
-        /// Returns the <see cref="ValueUsageInfos"/> for the given operation.
+        /// Returns the <see cref="ValueUsageInfo"/> for the given operation.
         /// This extension can be removed once https://github.com/dotnet/roslyn/issues/25057 is implemented.
         /// </summary>
-        public static ValueUsageInfos GetValueUsageInfo(this IOperation operation, ISymbol containingSymbol)
+        public static ValueUsageInfo GetValueUsageInfo(this IOperation operation, ISymbol containingSymbol)
         {
             /*
             |    code                  | Read | Write | ReadableRef | WritableRef | NonReadWriteRef |
@@ -836,7 +836,7 @@ namespace Analyzer.Utilities.Extensions
                 !localReference.IsImplicit) // Workaround for https://github.com/dotnet/roslyn/issues/30753
             {
                 // Declaration expression is a definition (write) for the declared local.
-                return ValueUsageInfos.Write;
+                return ValueUsageInfo.Write;
             }
             else if (operation is IDeclarationPatternOperation)
             {
@@ -850,7 +850,7 @@ namespace Analyzer.Utilities.Extensions
                         //      {
                         //          case X x:
                         //
-                        return ValueUsageInfos.Write;
+                        return ValueUsageInfo.Write;
 
                     case IRecursivePatternOperation _:
                         // A declaration pattern within a recursive pattern is a
@@ -861,7 +861,7 @@ namespace Analyzer.Utilities.Extensions
                         //          (X x) => ...
                         //      };
                         //
-                        return ValueUsageInfos.Write;
+                        return ValueUsageInfo.Write;
 
                     case ISwitchExpressionArmOperation _:
                         // A declaration pattern within a switch expression arm is a
@@ -871,7 +871,7 @@ namespace Analyzer.Utilities.Extensions
                         //      {
                         //          X x => ...
                         //
-                        return ValueUsageInfos.Write;
+                        return ValueUsageInfo.Write;
 
                     case IIsPatternOperation _:
                         // A declaration pattern within an is pattern is a
@@ -879,7 +879,7 @@ namespace Analyzer.Utilities.Extensions
                         // For example, 'x' is defined and assigned the value from 'obj' below:
                         //      if (obj is X x)
                         //
-                        return ValueUsageInfos.Write;
+                        return ValueUsageInfo.Write;
 
                     case IPropertySubpatternOperation _:
                         // A declaration pattern within a property sub-pattern is a
@@ -887,13 +887,13 @@ namespace Analyzer.Utilities.Extensions
                         // For example, 'x' is defined and assigned the value from 'obj.Property' below:
                         //      if (obj is { Property : int x })
                         //
-                        return ValueUsageInfos.Write;
+                        return ValueUsageInfo.Write;
 
                     default:
                         Debug.Fail("Unhandled declaration pattern context");
 
                         // Conservatively assume read/write.
-                        return ValueUsageInfos.ReadWrite;
+                        return ValueUsageInfo.ReadWrite;
                 }
             }
 
@@ -901,12 +901,12 @@ namespace Analyzer.Utilities.Extensions
                 assignmentOperation.Target == operation)
             {
                 return operation.Parent.IsAnyCompoundAssignment()
-                    ? ValueUsageInfos.ReadWrite
-                    : ValueUsageInfos.Write;
+                    ? ValueUsageInfo.ReadWrite
+                    : ValueUsageInfo.Write;
             }
             else if (operation.Parent is IIncrementOrDecrementOperation)
             {
-                return ValueUsageInfos.ReadWrite;
+                return ValueUsageInfo.ReadWrite;
             }
             else if (operation.Parent is IParenthesizedOperation parenthesizedOperation)
             {
@@ -914,38 +914,38 @@ namespace Analyzer.Utilities.Extensions
                 Debug.Assert(parenthesizedOperation.Language == LanguageNames.VisualBasic);
 
                 return parenthesizedOperation.GetValueUsageInfo(containingSymbol) &
-                    ~(ValueUsageInfos.Write | ValueUsageInfos.Reference);
+                    ~(ValueUsageInfo.Write | ValueUsageInfo.Reference);
             }
             else if (operation.Parent is INameOfOperation ||
                      operation.Parent is ITypeOfOperation ||
                      operation.Parent is ISizeOfOperation)
             {
-                return ValueUsageInfos.Name;
+                return ValueUsageInfo.Name;
             }
             else if (operation.Parent is IArgumentOperation argumentOperation)
             {
                 switch (argumentOperation.Parameter.RefKind)
                 {
                     case RefKind.RefReadOnly:
-                        return ValueUsageInfos.ReadableReference;
+                        return ValueUsageInfo.ReadableReference;
 
                     case RefKind.Out:
-                        return ValueUsageInfos.WritableReference;
+                        return ValueUsageInfo.WritableReference;
 
                     case RefKind.Ref:
-                        return ValueUsageInfos.ReadableWritableReference;
+                        return ValueUsageInfo.ReadableWritableReference;
 
                     default:
-                        return ValueUsageInfos.Read;
+                        return ValueUsageInfo.Read;
                 }
             }
             else if (operation.Parent is IReturnOperation returnOperation)
             {
                 return returnOperation.GetRefKind(containingSymbol) switch
                 {
-                    RefKind.RefReadOnly => ValueUsageInfos.ReadableReference,
-                    RefKind.Ref => ValueUsageInfos.ReadableWritableReference,
-                    _ => ValueUsageInfos.Read,
+                    RefKind.RefReadOnly => ValueUsageInfo.ReadableReference,
+                    RefKind.Ref => ValueUsageInfo.ReadableWritableReference,
+                    _ => ValueUsageInfo.Read,
                 };
             }
             else if (operation.Parent is IConditionalOperation conditionalOperation)
@@ -957,15 +957,15 @@ namespace Analyzer.Utilities.Extensions
                 }
                 else
                 {
-                    return ValueUsageInfos.Read;
+                    return ValueUsageInfo.Read;
                 }
             }
             else if (operation.Parent is IReDimClauseOperation reDimClauseOperation &&
                 reDimClauseOperation.Operand == operation)
             {
                 return (reDimClauseOperation.Parent as IReDimOperation)?.Preserve == true
-                    ? ValueUsageInfos.ReadWrite
-                    : ValueUsageInfos.Write;
+                    ? ValueUsageInfo.ReadWrite
+                    : ValueUsageInfo.Write;
             }
             else if (operation.Parent is IDeclarationExpressionOperation declarationExpression)
             {
@@ -973,7 +973,7 @@ namespace Analyzer.Utilities.Extensions
             }
             else if (operation.IsInLeftOfDeconstructionAssignment(out _))
             {
-                return ValueUsageInfos.Write;
+                return ValueUsageInfo.Write;
             }
             else if (operation.Parent is IVariableInitializerOperation variableInitializerOperation)
             {
@@ -982,15 +982,15 @@ namespace Analyzer.Utilities.Extensions
                     switch (variableDeclaratorOperation.Symbol.RefKind)
                     {
                         case RefKind.Ref:
-                            return ValueUsageInfos.ReadableWritableReference;
+                            return ValueUsageInfo.ReadableWritableReference;
 
                         case RefKind.RefReadOnly:
-                            return ValueUsageInfos.ReadableReference;
+                            return ValueUsageInfo.ReadableReference;
                     }
                 }
             }
 
-            return ValueUsageInfos.Read;
+            return ValueUsageInfo.Read;
         }
 
         public static bool IsInLeftOfDeconstructionAssignment(this IOperation operation, out IDeconstructionAssignmentOperation? deconstructionAssignment)
@@ -1071,7 +1071,9 @@ namespace Analyzer.Utilities.Extensions
     }
 
     [Flags]
-    internal enum ValueUsageInfos
+#pragma warning disable CA1714 // Flags enums should have plural names
+    internal enum ValueUsageInfo
+#pragma warning restore CA1714
     {
         /// <summary>
         /// Represents default value indicating no usage.
@@ -1126,6 +1128,21 @@ namespace Analyzer.Utilities.Extensions
         /// For example, passing an argument to a "ref" parameter.
         /// </summary>
         ReadableWritableReference = Read | Write | Reference
+    }
+
+    internal static class ValueUsageInfoExtensions
+    {
+        public static bool IsReadFrom(this ValueUsageInfo valueUsageInfo)
+            => (valueUsageInfo & ValueUsageInfo.Read) != 0;
+
+        public static bool IsWrittenTo(this ValueUsageInfo valueUsageInfo)
+            => (valueUsageInfo & ValueUsageInfo.Write) != 0;
+
+        public static bool IsNameOnly(this ValueUsageInfo valueUsageInfo)
+            => (valueUsageInfo & ValueUsageInfo.Name) != 0;
+
+        public static bool IsReference(this ValueUsageInfo valueUsageInfo)
+            => (valueUsageInfo & ValueUsageInfo.Reference) != 0;
     }
 }
 

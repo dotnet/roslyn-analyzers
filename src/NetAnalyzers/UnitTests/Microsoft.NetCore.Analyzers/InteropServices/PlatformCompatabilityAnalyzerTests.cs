@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.InteropServices.PlatformCompatabilityAnalyzer,
@@ -180,7 +181,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        [Fact]
+        [Fact, WorkItem(4071, "https://github.com/dotnet/roslyn-analyzers/issues/4071")]
         public async Task OsDependentPropertyGetterSetterCalledWarns()
         {
             var source = @"
@@ -206,6 +207,8 @@ public class Test
     {
         WindowsOnlyPropertyGetter = true;
         var s = [|WindowsOnlyPropertyGetter|];
+        [|WindowsOnlyPropertyGetter|] |= true;
+        [|WindowsOnlyPropertySetter|] &= false;
         [|WindowsOnlyPropertySetter|] = false;
         s = WindowsOnlyPropertySetter;
         M2([|WindowsOnlyPropertyGetter|]);

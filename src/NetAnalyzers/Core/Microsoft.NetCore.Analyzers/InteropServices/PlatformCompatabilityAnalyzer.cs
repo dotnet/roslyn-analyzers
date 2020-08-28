@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -490,19 +491,29 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 IInvocationOperation iOperation => iOperation.TargetMethod,
                 IObjectCreationOperation cOperation => cOperation.Constructor,
                 IFieldReferenceOperation fOperation => IsWithinConditionalOperation(fOperation) ? null : fOperation.Field,
-                IPropertyReferenceOperation pOperation => GetPropertyAccessor(pOperation.Property, operation),
                 IMemberReferenceOperation mOperation => mOperation.Member,
                 _ => null,
             };
 
-        private static ISymbol GetPropertyAccessor(IPropertySymbol property, IOperation operation)
-            => operation.GetValueUsageInfo(property.ContainingSymbol) switch
+        private static IEnumerable<ISymbol> GetPropertyAccessor(IPropertySymbol property, IOperation operation)
+        {
+            var usageInfo = operation.GetValueUsageInfo(property.ContainingSymbol);
+
+            // not checking/using ValueUsageInfo.Reference related values as property cannot be used as ref or out parameter
+            if (usageInfo == ValueUsageInfo.ReadWrite)
             {
-                ValueUsageInfos.Read => property.GetMethod,
-                ValueUsageInfos.Name => property.GetMethod,
-                ValueUsageInfos.Write => property.SetMethod,
-                _ => property
-            };
+                yield return property.GetMethod;
+                yield return property.SetMethod;
+            }
+            else if (usageInfo.IsWrittenTo())
+            {
+                yield return property.SetMethod;
+            }
+            else if (usageInfo.IsReadFrom() || usageInfo.IsNameOnly())
+            {
+                yield return property.GetMethod;
+            }
+        }
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
@@ -515,20 +526,41 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
+            if (symbol is IPropertySymbol property)
             {
-                if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
+                var accessors = GetPropertyAccessor(property, operation);
+                foreach (var accessor in accessors)
                 {
-                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                    if (accessor != null)
                     {
-                        platformSpecificOperations.TryAdd(operation, notSuppressedAttributes);
+                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
                     }
                 }
-                else
+            }
+            else
+            {
+                CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol);
+            }
+
+            static void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<IOperation,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
+                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
+            {
+                if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
                 {
-                    if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
+                    if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
                     {
-                        platformSpecificOperations.TryAdd(operation, copiedAttributes);
+                        if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                        {
+                            platformSpecificOperations.TryAdd(operation, notSuppressedAttributes);
+                        }
+                    }
+                    else
+                    {
+                        if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
+                        {
+                            platformSpecificOperations.TryAdd(operation, copiedAttributes);
+                        }
                     }
                 }
             }
@@ -831,14 +863,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static bool AddPlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, [NotNullWhen(true)] ref SmallDictionary<string, PlatformAttributes>? attributes)
             {
+                bool added = false;
                 foreach (AttributeData attribute in immediateAttributes)
                 {
                     if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
                     {
-                        TryAddValidAttribute(ref attributes, attribute);
+                        added |= TryAddValidAttribute(ref attributes, attribute);
                     }
                 }
-                return attributes != null;
+                return added;
             }
         }
 

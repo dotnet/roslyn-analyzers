@@ -463,7 +463,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
             }
-            var operationName = symbol.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
+            var operationName = symbol.ToDisplayString(GetLanguageSpecificFormat(operation));
 
             foreach (var platformName in attributes.Keys)
             {
@@ -495,6 +495,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
             context.ReportDiagnostic(version == null ? operation.CreateDiagnostic(UnsupportedOsRule, name, platformName) :
                 operation.CreateDiagnostic(UnsupportedOsVersionRule, name, platformName, version));
+
+            static SymbolDisplayFormat GetLanguageSpecificFormat(IOperation operation) =>
+                operation.Language == LanguageNames.CSharp ? SymbolDisplayFormat.CSharpShortErrorMessageFormat : SymbolDisplayFormat.VisualBasicShortErrorMessageFormat;
         }
 
         private static string? VersionToString(Version version) => IsEmptyVersion(version) ? null : version.ToString();

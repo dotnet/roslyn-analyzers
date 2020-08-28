@@ -1983,7 +1983,7 @@ Class Test
 End Class
 " + MockRuntimeApiSourceVb + MockAttributesVbSource;
             await VerifyAnalyzerAsyncVb(vbSource, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithLocation(10, 13).WithMessage("'Test.M2()' is unsupported on 'Windows'"));
+                VerifyCS.Diagnostic(PlatformCompatabilityAnalyzer.SupportedOsRule).WithLocation(10, 13).WithMessage("'Private Sub M2()' is unsupported on 'Windows'"));
         }
 
         [Fact]

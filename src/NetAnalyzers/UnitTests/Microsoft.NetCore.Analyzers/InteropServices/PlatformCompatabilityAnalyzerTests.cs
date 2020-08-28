@@ -189,6 +189,12 @@ using System.Runtime.Versioning;
 
 public class Test
 {
+    [SupportedOSPlatform(""windows"")]
+    public static bool WindowsOnlyProperty
+    {   
+        get { return true; }
+        set { }
+    }
     public static bool WindowsOnlyPropertyGetter
     {
         [SupportedOSPlatform(""windows"")]
@@ -212,7 +218,10 @@ public class Test
         [|WindowsOnlyPropertySetter|] = false;
         s = WindowsOnlyPropertySetter;
         M2([|WindowsOnlyPropertyGetter|]);
-        var name = nameof([|WindowsOnlyPropertyGetter|]);
+        M2(WindowsOnlyPropertySetter);
+        var name = nameof(WindowsOnlyPropertyGetter);
+        name = nameof(WindowsOnlyPropertySetter);
+        name = nameof([|WindowsOnlyProperty|]);
     }
     public bool M2(bool option)
     {
@@ -221,6 +230,55 @@ public class Test
 }
 " + MockAttributesCsSource;
             await VerifyAnalyzerAsyncCs(source);
+
+            var vbSource = @"
+Imports System.Runtime.Versioning
+
+Public Class Test
+    <SupportedOSPlatform(""windows"")>
+    Public Shared Property WindowsOnlyProperty As Boolean
+        Get
+            Return True
+        End Get
+        Set(ByVal value As Boolean)
+        End Set
+    End Property
+
+    Public Shared Property WindowsOnlyPropertyGetter As Boolean
+        <SupportedOSPlatform(""windows"")>
+        Get
+            Return True
+        End Get
+        Set(ByVal value As Boolean)
+        End Set
+    End Property
+
+    Public Shared Property WindowsOnlyPropertySetter As Boolean
+        Get
+            Return True
+        End Get
+        < SupportedOSPlatform(""windows"") >
+        Set(ByVal value As Boolean)
+        End Set
+    End Property
+
+    Public Sub M1()
+        WindowsOnlyPropertyGetter = True
+        Dim s = [|WindowsOnlyPropertyGetter|]
+        WindowsOnlyPropertyGetter = [|WindowsOnlyPropertyGetter|] Or True
+        [|WindowsOnlyPropertySetter|] = WindowsOnlyPropertySetter And False
+        [|WindowsOnlyPropertySetter|] = False
+        s = WindowsOnlyPropertySetter
+        M2([|WindowsOnlyPropertyGetter|])
+        Dim name = NameOf(WindowsOnlyPropertyGetter)
+    End Sub
+
+    Public Function M2(ByVal[option] As Boolean) As Boolean
+        Return[option]
+    End Function
+End Class
+" + MockAttributesVbSource;
+            await VerifyAnalyzerAsyncVb(vbSource);
         }
 
         [Theory]

@@ -176,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                     if (guardMethods.IsEmpty || !(context.OperationBlocks.GetControlFlowGraph(out var topmostBlock) is { } cfg))
                     {
-                        ReportDiagnosticsForAll(platformSpecificOperations, context);
+                        ReportDiagnosticsForAll(platformSpecificOperations, context, platformSpecificMembers);
                         return;
                     }
 
@@ -202,7 +202,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             continue;
                         }
 
-                        ReportDiagnostics(platformSpecificOperation, attributes, context);
+                        ReportDiagnostics(platformSpecificOperation, attributes, context, platformSpecificMembers);
                     }
                 }
                 finally
@@ -432,15 +432,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static bool IsEmptyVersion(Version version) => version.Major == 0 && version.Minor == 0;
 
         private static void ReportDiagnosticsForAll(PooledConcurrentDictionary<IOperation,
-            SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, OperationBlockAnalysisContext context)
+            SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, OperationBlockAnalysisContext context,
+            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             foreach (var platformSpecificOperation in platformSpecificOperations)
             {
-                ReportDiagnostics(platformSpecificOperation.Key, platformSpecificOperation.Value, context);
+                ReportDiagnostics(platformSpecificOperation.Key, platformSpecificOperation.Value, context, platformSpecificMembers);
             }
         }
 
-        private static void ReportDiagnostics(IOperation operation, SmallDictionary<string, PlatformAttributes> attributes, OperationBlockAnalysisContext context)
+        private static void ReportDiagnostics(IOperation operation, SmallDictionary<string, PlatformAttributes> attributes,
+            OperationBlockAnalysisContext context, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
             var symbol = operation is IObjectCreationOperation creation ? creation.Constructor.ContainingType : GetOperationSymbol(operation);
 
@@ -449,6 +451,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
+            if (symbol is IPropertySymbol property)
+            {
+                var accessors = GetPropertyAccessor(property, operation);
+                foreach (var accessor in accessors)
+                {
+                    if (accessor != null && platformSpecificMembers.TryGetValue(accessor, out var attribute) && attribute != null)
+                    {
+                        symbol = accessor;
+                        break;
+                    }
+                }
+            }
             var operationName = symbol.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
 
             foreach (var platformName in attributes.Keys)
@@ -500,6 +514,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var usageInfo = operation.GetValueUsageInfo(property.ContainingSymbol);
 
             // not checking/using ValueUsageInfo.Reference related values as property cannot be used as ref or out parameter
+            // not using ValueUsageInfo.Name too, it only use name of the property
             if (usageInfo == ValueUsageInfo.ReadWrite)
             {
                 yield return property.GetMethod;
@@ -509,9 +524,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 yield return property.SetMethod;
             }
-            else if (usageInfo.IsReadFrom() || usageInfo.IsNameOnly())
+            else if (usageInfo.IsReadFrom())
             {
                 yield return property.GetMethod;
+            }
+            else
+            {
+                yield return property;
             }
         }
 

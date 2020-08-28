@@ -49,20 +49,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CancellationToken ct = context.CancellationToken;
             SyntaxNode root = await doc.GetSyntaxRootAsync(ct).ConfigureAwait(false);
 
-            if (!(root.FindNode(context.Span, getInnermostNodeForTie: true) is SyntaxNode node))
+            if (root.FindNode(context.Span, getInnermostNodeForTie: true) is not SyntaxNode node)
             {
                 return;
             }
 
             SemanticModel model = await doc.GetSemanticModelAsync(ct).ConfigureAwait(false);
 
-            if (!(model.GetOperation(node, ct) is IInvocationOperation invocation))
+            if (model.GetOperation(node, ct) is not IInvocationOperation invocation)
             {
                 return;
             }
 
             // Defensive check to ensure the fix is only attempted on one of the 4 specific undesired overloads
-            if (invocation.Arguments.Length < 3 || invocation.Arguments.Length > 4)
+            if (invocation.Arguments.Length is not (3 or 4))
             {
                 return;
             }

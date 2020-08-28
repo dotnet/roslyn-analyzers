@@ -29,7 +29,7 @@ public class Class1
     const int f6 = 3;
     static readonly int f7 = 8 + f6;
     internal static readonly int f8 = 8 + f6;
-    static readonly string f5 = @""Verbatim\String"";
+    static readonly string f9 = @""Verbatim\String"";
 }",
                 GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
                 GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),

@@ -13,9 +13,9 @@ assignees: ''
 
 ### Analyzer source
 
-**SDK**: [Built-in CA analyzers in .NET5 SDK or later](https://docs.microsoft.com/dotnet/fundamentals/productivity/code-analysis)
+**SDK**: [Built-in CA analyzers in .NET 5 SDK or later](https://docs.microsoft.com/dotnet/fundamentals/productivity/code-analysis)
 
-**Version**: [.NET5 Preview8](https://dotnet.microsoft.com/download/dotnet/5.0)
+**Version**: [SDK 5.0.100-preview.8](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 _OR_
 

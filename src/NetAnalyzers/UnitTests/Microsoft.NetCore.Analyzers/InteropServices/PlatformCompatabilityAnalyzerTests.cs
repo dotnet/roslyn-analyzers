@@ -781,6 +781,53 @@ End Class"
         }
 
         [Fact]
+        public async Task OsDependentEventAddRemoveAccessedWarns()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+public class Test
+{
+    [SupportedOSPlatform(""windows"")]
+    public static event EventHandler WindowsOnlyEvent
+    {
+        add { }
+        remove { }
+    }
+
+    public static event EventHandler WindowsOnlyEventAdd
+    {
+        [SupportedOSPlatform(""windows"")]
+        add { }
+        remove { }
+    }
+
+    public static event EventHandler WindowsOnlyEventRemove
+    {
+        add { }
+        [SupportedOSPlatform(""windows"")]
+        remove { }
+    }
+
+    public static void WindowsEventHandler(object sender, EventArgs e) { }
+
+    public void M1()
+    {
+        [|WindowsOnlyEvent|] += WindowsEventHandler;
+        [|WindowsOnlyEventAdd|] += WindowsEventHandler;
+        WindowsOnlyEventRemove += WindowsEventHandler;
+
+        [|WindowsOnlyEvent|] -= WindowsEventHandler;
+        WindowsOnlyEventAdd -= WindowsEventHandler;
+        [|WindowsOnlyEventRemove|] -= WindowsEventHandler;
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
         public async Task OsDependentMethodAssignedToDelegateWarns()
         {
             var source = @"

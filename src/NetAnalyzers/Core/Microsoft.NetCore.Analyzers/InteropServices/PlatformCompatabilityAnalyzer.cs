@@ -453,14 +453,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (symbol is IPropertySymbol property)
             {
-                var accessors = GetPropertyAccessor(property, operation);
-                foreach (var accessor in accessors)
+                symbol = GetAccessorMethod(platformSpecificMembers, symbol, GetPropertyAccessors(property, operation));
+            }
+
+            if (symbol is IEventSymbol iEvent)
+            {
+                var accessor = GetEventAccessor(iEvent, operation);
+                if (accessor != null)
                 {
-                    if (accessor != null && platformSpecificMembers.TryGetValue(accessor, out var attribute) && attribute != null)
-                    {
-                        symbol = accessor;
-                        break;
-                    }
+                    symbol = accessor;
                 }
             }
             var operationName = symbol.ToDisplayString(GetLanguageSpecificFormat(operation));
@@ -498,6 +499,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static SymbolDisplayFormat GetLanguageSpecificFormat(IOperation operation) =>
                 operation.Language == LanguageNames.CSharp ? SymbolDisplayFormat.CSharpShortErrorMessageFormat : SymbolDisplayFormat.VisualBasicShortErrorMessageFormat;
+
+            static ISymbol GetAccessorMethod(ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ISymbol symbol, IEnumerable<ISymbol> accessors)
+            {
+                foreach (var accessor in accessors)
+                {
+                    if (accessor != null && platformSpecificMembers.TryGetValue(accessor, out var attribute) && attribute != null)
+                    {
+                        return accessor;
+                    }
+                }
+
+                return symbol;
+            }
         }
 
         private static string? VersionToString(Version version) => IsEmptyVersion(version) ? null : version.ToString();
@@ -512,7 +526,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 _ => null,
             };
 
-        private static IEnumerable<ISymbol> GetPropertyAccessor(IPropertySymbol property, IOperation operation)
+        private static IEnumerable<ISymbol> GetPropertyAccessors(IPropertySymbol property, IOperation operation)
         {
             var usageInfo = operation.GetValueUsageInfo(property.ContainingSymbol);
 
@@ -537,6 +551,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
+        private static ISymbol GetEventAccessor(IEventSymbol iEvent, IOperation operation)
+        {
+            if (operation.Parent is IEventAssignmentOperation eventAssignment)
+            {
+                if (eventAssignment.Adds)
+                    return iEvent.AddMethod;
+                else
+                    return iEvent.RemoveMethod;
+            }
+            return iEvent;
+        }
+
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context,
             PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
             ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
@@ -550,13 +576,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (symbol is IPropertySymbol property)
             {
-                var accessors = GetPropertyAccessor(property, operation);
-                foreach (var accessor in accessors)
+                foreach (var accessor in GetPropertyAccessors(property, operation))
                 {
                     if (accessor != null)
                     {
                         CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
                     }
+                }
+            }
+            else if (symbol is IEventSymbol iEvent)
+            {
+                var accessor = GetEventAccessor(iEvent, operation);
+
+                if (accessor != null)
+                {
+                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                }
+                else
+                {
+                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, iEvent);
                 }
             }
             else
@@ -872,7 +910,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 AddPlatformAttributes(symbol.GetAttributes(), ref attributes);
 
-                if (symbol is IMethodSymbol method && (method.MethodKind == MethodKind.PropertyGet || method.MethodKind == MethodKind.PropertySet))
+                if (symbol is IMethodSymbol method && method.IsAccessorMethod())
                 {
                     // Add attributes for the associated Property
                     AddPlatformAttributes(method.AssociatedSymbol.GetAttributes(), ref attributes);

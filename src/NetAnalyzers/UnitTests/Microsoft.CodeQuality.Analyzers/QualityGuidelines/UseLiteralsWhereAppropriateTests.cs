@@ -29,13 +29,15 @@ public class Class1
     const int f6 = 3;
     static readonly int f7 = 8 + f6;
     internal static readonly int f8 = 8 + f6;
+    static readonly string f5 = @""Verbatim\String"";
 }",
                 GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
                 GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),
                 GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4"),
                 GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
                 GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
-                GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"));
+                GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"),
+                GetCSharpDefaultResultAt(line: 11, column: 28, symbolName: "f5");
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Reliability,
-            RuleLevel.Disabled,
+            RuleLevel.IdeHidden_BulkConfigurable,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);

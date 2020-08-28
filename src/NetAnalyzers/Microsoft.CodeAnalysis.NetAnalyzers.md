@@ -96,8 +96,8 @@ To broaden the usability of a type, implement one of the generic interfaces. Thi
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -200,8 +200,8 @@ A public or protected method has a name that starts with ""Get"", takes no param
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -252,8 +252,8 @@ A general exception such as System.Exception or System.SystemException or a disa
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -421,8 +421,8 @@ The primary use of a field should be as an implementation detail. Fields should 
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Hidden|
 |CodeFix|True|
 
 ### Rule description
@@ -538,8 +538,8 @@ All IDisposable types should implement the Dispose pattern correctly.
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -564,8 +564,8 @@ A method that is not expected to throw exceptions throws an exception.
 |Item|Value|
 |-|-|
 |Category|Design|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Hidden|
 |CodeFix|True|
 
 ### Rule description
@@ -676,18 +676,18 @@ A method or constructor calls a member that has an overload that accepts a Syste
 
 A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'.
 
-## [CA1307](https://docs.microsoft.com/visualstudio/code-quality/ca1307): Specify StringComparison
+## [CA1307](https://docs.microsoft.com/visualstudio/code-quality/ca1307): Specify StringComparison for clarity
 
 |Item|Value|
 |-|-|
 |Category|Globalization|
-|Enabled|True|
-|Severity|Hidden|
+|Enabled|False|
+|Severity|Warning|
 |CodeFix|False|
 
 ### Rule description
 
-A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.
+A string comparison operation uses a method overload that does not set a StringComparison parameter. It is recommended to use the overload with StringComparison parameter for clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.
 
 ## [CA1308](https://docs.microsoft.com/visualstudio/code-quality/ca1308): Normalize strings to uppercase
 
@@ -715,6 +715,19 @@ Strings should be normalized to uppercase. A small group of characters cannot ma
 
 A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.
 
+## [CA1310](https://docs.microsoft.com/visualstudio/code-quality/ca1310): Specify StringComparison for correctness
+
+|Item|Value|
+|-|-|
+|Category|Globalization|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+
+### Rule description
+
+A string comparison operation uses a method overload that does not set a StringComparison parameter, hence its behavior could vary based on the current user's locale settings. It is strongly recommended to use the overload with StringComparison parameter for correctness and clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.
+
 ## [CA1401](https://docs.microsoft.com/visualstudio/code-quality/ca1401): P/Invokes should not be visible
 
 |Item|Value|
@@ -727,6 +740,19 @@ A string comparison operation that is nonlinguistic does not set the StringCompa
 ### Rule description
 
 A public or protected method in a public type has the System.Runtime.InteropServices.DllImportAttribute attribute (also implemented by the Declare keyword in Visual Basic). Such methods should not be exposed.
+
+## [CA1416](https://docs.microsoft.com/visualstudio/code-quality/ca1416): Validate platform compatibility
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+
+### Rule description
+
+Using platform dependent API on a component makes the code no longer work across all platforms.
 
 ## [CA1417](https://docs.microsoft.com/visualstudio/code-quality/ca1417): Do not use 'OutAttribute' on string parameters for P/Invokes
 
@@ -1019,8 +1045,8 @@ Avoid unused paramereters in your code. If the parameter cannot be removed, then
 |Item|Value|
 |-|-|
 |Category|Performance|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -1149,8 +1175,8 @@ Arrays that are returned by properties are not write-protected, even when the pr
 |Item|Value|
 |-|-|
 |Category|Performance|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description
@@ -1422,8 +1448,8 @@ An object is said to have a weak identity when it can be directly accessed acros
 |Item|Value|
 |-|-|
 |Category|Reliability|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Hidden|
 |CodeFix|True|
 
 ### Rule description
@@ -1435,8 +1461,8 @@ When an asynchronous method awaits a Task directly, continuation occurs in the s
 |Item|Value|
 |-|-|
 |Category|Reliability|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|False|
 
 ### Rule description
@@ -1721,8 +1747,8 @@ A type that implements System.IDisposable and has fields that suggest the use of
 |Item|Value|
 |-|-|
 |Category|Usage|
-|Enabled|False|
-|Severity|Warning|
+|Enabled|True|
+|Severity|Info|
 |CodeFix|True|
 
 ### Rule description

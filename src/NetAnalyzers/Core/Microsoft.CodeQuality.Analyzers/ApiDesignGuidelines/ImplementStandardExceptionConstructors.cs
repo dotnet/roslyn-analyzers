@@ -34,11 +34,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableMessageMissingConstructor = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
+        // This rule matches the recommended design for Custom Exception types
+        // https://docs.microsoft.com/dotnet/api/system.exception?view=netcore-3.1#Custom
         internal static DiagnosticDescriptor MissingConstructorRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMissingConstructor,
                                                                              DiagnosticCategory.Design,
-                                                                             RuleLevel.Disabled,    // Need to validate with other parameter requirements and consider code coverage scenarios.
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);

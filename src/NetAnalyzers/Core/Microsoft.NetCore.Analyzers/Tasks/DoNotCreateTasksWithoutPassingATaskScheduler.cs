@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.CandidateForRemoval,     // Superseded by VS threading analyzers
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);

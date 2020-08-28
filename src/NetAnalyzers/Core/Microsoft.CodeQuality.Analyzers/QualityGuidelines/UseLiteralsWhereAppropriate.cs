@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEmptyString,
                                                                              DiagnosticCategory.Performance,
-                                                                             RuleLevel.CandidateForRemoval,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);

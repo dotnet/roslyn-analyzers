@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_title,
             s_messageFormat,
             DiagnosticCategory.Design,
-            RuleLevel.Disabled,
+            RuleLevel.IdeHidden_BulkConfigurable,
             description: null,
             isPortedFxCopRule: true,
             isDataflowRule: false);

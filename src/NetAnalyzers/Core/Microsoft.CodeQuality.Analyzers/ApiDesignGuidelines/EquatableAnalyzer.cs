@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_localizableTitleImplementIEquatable,
             s_localizableMessageImplementIEquatable,
             DiagnosticCategory.Design,
-            RuleLevel.Disabled,
+            RuleLevel.IdeHidden_BulkConfigurable,
             description: s_localizableDescriptionImplementIEquatable,
             isPortedFxCopRule: false,
             isDataflowRule: false);

@@ -51,11 +51,11 @@
           "id": "CA1032",
           "shortDescription": "Implement standard exception constructors",
           "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "CSharpImplementStandardExceptionConstructorsAnalyzer",
             "languages": [
               "C#"
@@ -422,11 +422,11 @@
           "id": "CA1012",
           "shortDescription": "Abstract types should not have public constructors",
           "fullDescription": "Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1012",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "AbstractTypesShouldNotHaveConstructorsAnalyzer",
             "languages": [
               "C#",
@@ -562,11 +562,11 @@
           "id": "CA1027",
           "shortDescription": "Mark enums with FlagsAttribute",
           "fullDescription": "An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1027",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "EnumWithFlagsAttributeAnalyzer",
             "languages": [
               "C#",
@@ -881,11 +881,11 @@
           "id": "CA1052",
           "shortDescription": "Static holder types should be Static or NotInheritable",
           "fullDescription": "Type '{0}' is a static holder type but is neither static nor NotInheritable",
-          "defaultLevel": "warning",
+          "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1052",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "StaticHolderTypesAnalyzer",
             "languages": [
               "C#",
@@ -1062,11 +1062,11 @@
           "id": "CA1064",
           "shortDescription": "Exceptions should be public",
           "fullDescription": "An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from T:System.Exception, T:System.SystemException, or T:System.ApplicationException, the external code will not have sufficient information to know what to do with the exception.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1064",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "ExceptionsShouldBePublicAnalyzer",
             "languages": [
               "C#",
@@ -1082,11 +1082,11 @@
           "id": "CA1066",
           "shortDescription": "Implement IEquatable when overriding Object.Equals",
           "fullDescription": "When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable<T>, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable<T>.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.",
-          "defaultLevel": "warning",
+          "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1066",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "EquatableAnalyzer",
             "languages": [
               "C#",
@@ -1235,13 +1235,13 @@
         },
         "CA1307": {
           "id": "CA1307",
-          "shortDescription": "Specify StringComparison",
-          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
-          "defaultLevel": "hidden",
+          "shortDescription": "Specify StringComparison for clarity",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. It is recommended to use the overload with StringComparison parameter for clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1307",
           "properties": {
             "category": "Globalization",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "SpecifyStringComparisonAnalyzer",
             "languages": [
               "C#",
@@ -1273,6 +1273,25 @@
             ]
           }
         },
+        "CA1310": {
+          "id": "CA1310",
+          "shortDescription": "Specify StringComparison for correctness",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter, hence its behavior could vary based on the current user's locale settings. It is strongly recommended to use the overload with StringComparison parameter for correctness and clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "defaultLevel": "hidden",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1310",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": true,
+            "typeName": "SpecifyStringComparisonAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA1401": {
           "id": "CA1401",
           "shortDescription": "P/Invokes should not be visible",
@@ -1289,6 +1308,25 @@
             ],
             "tags": [
               "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1416": {
+          "id": "CA1416",
+          "shortDescription": "Validate platform compatibility",
+          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1416",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "PlatformCompatabilityAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry"
             ]
           }
@@ -1715,11 +1753,11 @@
           "id": "CA1802",
           "shortDescription": "Use literals where appropriate",
           "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1802",
           "properties": {
             "category": "Performance",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "UseLiteralsWhereAppropriateAnalyzer",
             "languages": [
               "C#",
@@ -1895,11 +1933,11 @@
           "id": "CA1820",
           "shortDescription": "Test for empty strings using string length",
           "fullDescription": "Comparing strings by using the String.Length property or the String.IsNullOrEmpty method is significantly faster than using Equals.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1820",
           "properties": {
             "category": "Performance",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "TestForEmptyStringsUsingStringLengthAnalyzer",
             "languages": [
               "C#"
@@ -2262,11 +2300,11 @@
           "id": "CA2007",
           "shortDescription": "Consider calling ConfigureAwait on the awaited task",
           "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
-          "defaultLevel": "warning",
+          "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2007",
           "properties": {
             "category": "Reliability",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "DoNotDirectlyAwaitATaskAnalyzer",
             "languages": [
               "C#",
@@ -2281,11 +2319,11 @@
           "id": "CA2008",
           "shortDescription": "Do not create tasks without passing a TaskScheduler",
           "fullDescription": "Do not create tasks unless you are using one of the overloads that takes a TaskScheduler. The default is to schedule on TaskScheduler.Current, which would lead to deadlocks. Either use TaskScheduler.Default to schedule on the thread pool, or explicitly pass TaskScheduler.Current to make your intentions clear.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2008",
           "properties": {
             "category": "Reliability",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer",
             "languages": [
               "C#",
@@ -2674,11 +2712,11 @@
           "id": "CA2217",
           "shortDescription": "Do not mark enums with FlagsAttribute",
           "fullDescription": "An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2217",
           "properties": {
             "category": "Usage",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "EnumWithFlagsAttributeAnalyzer",
             "languages": [
               "C#",
@@ -4804,11 +4842,11 @@
           "id": "CA1032",
           "shortDescription": "Implement standard exception constructors",
           "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
-          "defaultLevel": "warning",
+          "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": false,
+            "isEnabledByDefault": true,
             "typeName": "BasicImplementStandardExceptionConstructorsAnalyzer",
             "languages": [
               "Visual Basic"

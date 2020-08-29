@@ -37,7 +37,7 @@ public class Class1
                 GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
                 GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
                 GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"),
-                GetCSharpDefaultResultAt(line: 11, column: 28, symbolName: "f5"));
+                GetCSharpDefaultResultAt(line: 11, column: 28, symbolName: "f9"));
         }
 
         [Fact]

@@ -141,13 +141,19 @@ namespace GenerateGlobalAnalyzerConfigs
                 // Generate global analyzer config files for each shipped version, if required.
                 foreach (var version in versionsBuilder)
                 {
-                    CreateEditorconfig(
+                    var analysisLevelVersionString = GetNormalizedVersionStringForEditorconfigFileNameSuffix(version);
+
+                    foreach (var analysisMode in Enum.GetValues(typeof(AnalysisMode)))
+                    {
+                        CreateEditorconfig(
                         outputDir,
-                        $"AnalysisLevel_{GetNormalizedVersionStringForEditorconfigFileNameSuffix(version)}.editorconfig",
-                        $"Rules from '{version}' release",
-                        $"Rules with default severity and enabled state from '{version}' release. Rules that are first released in a version later then '{version}' are disabled.",
+                        $"AnalysisLevel_{analysisLevelVersionString}_{analysisMode}.editorconfig",
+                        $"Rules from '{version}' release with '{analysisMode}' analysis mode",
+                        $"Rules with enabled by default state from '{version}' release with '{analysisMode}' analysis mode. Rules that are first released in a version later then '{version}' are disabled.",
+                        (AnalysisMode)analysisMode!,
                         allRulesById,
                         (shippedFilesData, version));
+                    }
                 }
             }
 
@@ -198,6 +204,7 @@ namespace GenerateGlobalAnalyzerConfigs
             string editorconfigFileName,
             string editorconfigTitle,
             string editorconfigDescription,
+            AnalysisMode analysisMode,
             SortedList<string, DiagnosticDescriptor> sortedRulesById,
             (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version) shippedReleaseData)
         {
@@ -206,6 +213,7 @@ namespace GenerateGlobalAnalyzerConfigs
             var text = GetEditorconfigText(
                 editorconfigTitle,
                 editorconfigDescription,
+                analysisMode,
                 sortedRulesById,
                 shippedReleaseData);
             var directory = Directory.CreateDirectory(folder);
@@ -217,12 +225,13 @@ namespace GenerateGlobalAnalyzerConfigs
             static string GetEditorconfigText(
                 string editorconfigTitle,
                 string editorconfigDescription,
+                AnalysisMode analysisMode,
                 SortedList<string, DiagnosticDescriptor> sortedRulesById,
                 (ImmutableArray<ReleaseTrackingData> shippedFiles, Version version)? shippedReleaseData)
             {
                 var result = new StringBuilder();
                 StartEditorconfig();
-                AddRules();
+                AddRules(analysisMode);
                 return result.ToString();
 
                 void StartEditorconfig()
@@ -236,7 +245,7 @@ namespace GenerateGlobalAnalyzerConfigs
                     result.AppendLine();
                 }
 
-                bool AddRules()
+                bool AddRules(AnalysisMode analysisMode)
                 {
                     Debug.Assert(sortedRulesById.Count > 0);
 
@@ -253,7 +262,7 @@ namespace GenerateGlobalAnalyzerConfigs
 
                     bool AddRule(DiagnosticDescriptor rule)
                     {
-                        var (isEnabledByDefault, severity) = GetEnabledByDefaultAndSeverity(rule);
+                        var (isEnabledByDefault, severity) = GetEnabledByDefaultAndSeverity(rule, analysisMode);
                         if (rule.IsEnabledByDefault == isEnabledByDefault &&
                             severity == rule.DefaultSeverity)
                         {
@@ -270,14 +279,27 @@ namespace GenerateGlobalAnalyzerConfigs
                         return true;
                     }
 
-                    (bool isEnabledByDefault, DiagnosticSeverity effectiveSeverity) GetEnabledByDefaultAndSeverity(DiagnosticDescriptor rule)
+                    (bool isEnabledByDefault, DiagnosticSeverity effectiveSeverity) GetEnabledByDefaultAndSeverity(DiagnosticDescriptor rule, AnalysisMode analysisMode)
                     {
+                        if (analysisMode == AnalysisMode.AllDisabled)
+                        {
+                            return (isEnabledByDefault: false, DiagnosticSeverity.Warning);
+                        }
+
                         var isEnabledByDefault = rule.IsEnabledByDefault;
                         var effectiveSeverity = rule.DefaultSeverity;
 
+                        var isEnabledRuleInAggressiveMode = analysisMode == AnalysisMode.AllEnabled &&
+                            rule.CustomTags.Contains(WellKnownDiagnosticTagsExtensions.EnabledRuleInAggressiveMode);
+                        if (isEnabledRuleInAggressiveMode)
+                        {
+                            isEnabledByDefault = true;
+                            effectiveSeverity = DiagnosticSeverity.Warning;
+                        }
+
                         if (shippedReleaseData != null)
                         {
-                            isEnabledByDefault = false;
+                            isEnabledByDefault = isEnabledRuleInAggressiveMode;
                             var maxVersion = shippedReleaseData.Value.version;
                             foreach (var shippedFile in shippedReleaseData.Value.shippedFiles)
                             {
@@ -287,6 +309,13 @@ namespace GenerateGlobalAnalyzerConfigs
                                 {
                                     isEnabledByDefault = releaseTrackingLine.EnabledByDefault.Value && !releaseTrackingLine.IsRemovedRule;
                                     effectiveSeverity = releaseTrackingLine.DefaultSeverity.Value;
+
+                                    if (isEnabledRuleInAggressiveMode && !releaseTrackingLine.IsRemovedRule)
+                                    {
+                                        isEnabledByDefault = true;
+                                        effectiveSeverity = DiagnosticSeverity.Warning;
+                                    }
+
                                     break;
                                 }
                             }
@@ -354,8 +383,12 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
   <Target Name=""AddGlobalAnalyzerConfigForPackage_{trimmedPackageName}"" BeforeTargets=""CoreCompile"" Condition=""'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'"">
     <!-- PropertyGroup to compute global analyzer config file to be used -->
     <PropertyGroup>{propertyStringForSettingDefaultPropertyValue}
+      <!-- Set the default analysis mode, if not set by the user -->
+      <_GlobalAnalyzerConfigAnalysisMode>$(AnalysisMode)</_GlobalAnalyzerConfigAnalysisMode>
+      <_GlobalAnalyzerConfigAnalysisMode Condition=""'$(_GlobalAnalyzerConfigAnalysisMode)' == ''"">{nameof(AnalysisMode.Default)}</_GlobalAnalyzerConfigAnalysisMode>
+
       <!-- GlobalAnalyzerConfig file name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
-      <_GlobalAnalyzerConfigFileName Condition=""'$({packageVersionPropName})' != ''"">AnalysisLevel_$({packageVersionPropName}.Replace(""."",""_"")).editorconfig</_GlobalAnalyzerConfigFileName>
+      <_GlobalAnalyzerConfigFileName Condition=""'$({packageVersionPropName})' != ''"">AnalysisLevel_$({packageVersionPropName}.Replace(""."",""_""))_$(_GlobalAnalyzerConfigAnalysisMode).editorconfig</_GlobalAnalyzerConfigFileName>
       
       <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir>
       <_GlobalAnalyzerConfigFile Condition=""'$(_GlobalAnalyzerConfigFileName)' != ''"">$(_GlobalAnalyzerConfigDir)\$(_GlobalAnalyzerConfigFileName)</_GlobalAnalyzerConfigFile>
@@ -520,6 +553,13 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             {
                 return Assembly.LoadFrom(fullPath);
             }
+        }
+
+        private enum AnalysisMode
+        {
+            Default,
+            AllDisabled,
+            AllEnabled,
         }
     }
 }

@@ -7,6 +7,22 @@ assignees: ''
 
 ---
 
+### Analyzer
+
+**Diagnostic ID**: [CA2013](https://docs.microsoft.com/visualstudio/code-quality/ca2013): `Do not use ReferenceEquals with value types`
+
+### Analyzer source
+
+**SDK**: [Built-in CA analyzers in .NET 5 SDK or later](https://docs.microsoft.com/dotnet/fundamentals/productivity/code-analysis)
+
+**Version**: [SDK 5.0.100-preview.8](https://dotnet.microsoft.com/download/dotnet/5.0)
+
+_OR_
+
+**NuGet Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+
+**Version**: v3.3.0 (Latest)
+
 ### Describe the bug
 
 <!-- A clear and concise description of what the bug is. -->
@@ -24,14 +40,6 @@ Provide the steps to reproduce the behavior:
 ### Expected behavior
 
 ### Actual behavior
-
-### Analyzer
-
-**Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
-
-**Version**: v3.0.0 (Latest)
-
-**Diagnostic ID**: [CA1716](https://docs.microsoft.com/visualstudio/code-quality/ca1716)
 
 ## Additional context
 

@@ -1,8 +1,10 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>3.3.0</VersionPrefix>
+    <VersionPrefix>3.3.1</VersionPrefix>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+    <NetAnalyzersVersionPrefix>5.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersPreReleaseVersionLabel>rc2</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
-    <PreReleaseVersionLabel>beta3</PreReleaseVersionLabel>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
@@ -17,19 +19,19 @@
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNETCoreCompilersPackageVersion>3.7.0-3.20269.11</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNETCoreCompilersPackageVersion>3.8.0-3.20428.4</MicrosoftNETCoreCompilersPackageVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0-2.final</MicrosoftCodeAnalysisForShippedApisVersion>
-    <DogfoodAnalyzersVersion>3.3.0-beta3.20406.3</DogfoodAnalyzersVersion>
+    <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0</MicrosoftCodeAnalysisForShippedApisVersion>
+    <DogfoodAnalyzersVersion>3.3.0</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(DogfoodAnalyzersVersion)</RoslynDiagnosticsAnalyzersVersion>
-    <CodeStyleAnalyersVersion>3.8.0-1.20330.5</CodeStyleAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.8.0-2.20427.18</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>

@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
 
-    public sealed partial class PlatformCompatabilityAnalyzer
+    public sealed partial class PlatformCompatibilityAnalyzer
     {
         private readonly struct PlatformMethodValue : IAbstractAnalysisValue, IEquatable<PlatformMethodValue>
         {
@@ -126,6 +126,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     propertyReference.Property.ContainingType.Equals(osPlatformType))
                 {
                     osPlatformName = propertyReference.Property.Name;
+                    return true;
+                }
+                else if (argumentValue is IInvocationOperation iOperaion &&
+                    iOperaion.TargetMethod.ReturnType.Equals(osPlatformType) &&
+                    iOperaion.Arguments.Length == 1 &&
+                    iOperaion.Arguments[0] is { } argument &&
+                    argument.Value is ILiteralOperation literal &&
+                    literal.Type.SpecialType == SpecialType.System_String &&
+                    literal.ConstantValue.HasValue &&
+                    !literal.ConstantValue.Value.Equals(string.Empty))
+                {
+                    osPlatformName = literal.ConstantValue.Value.ToString();
                     return true;
                 }
 

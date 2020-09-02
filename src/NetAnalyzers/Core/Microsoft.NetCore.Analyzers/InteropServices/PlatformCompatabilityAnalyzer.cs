@@ -98,10 +98,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var typeName = WellKnownTypeNames.SystemOperatingSystem;
 
                 // TODO: remove 'typeName + "Helper"' after tests able to consume the real new APIs
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName + "Helper", out var operatingSystemType) &&
-                    !context.Compilation.TryGetOrCreateTypeByMetadataName(typeName, out operatingSystemType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName + "Helper", out var operatingSystemType))
                 {
-                    return;
+                    if (!context.Compilation.TryGetOrCreateTypeByMetadataName(typeName, out operatingSystemType))
+                    {
+                        return;
+                    }
                 }
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOSPlatform, out var osPlatformType) ||
                     !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesRuntimeInformation, out var runtimeInformationType))
@@ -117,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     m.Parameters.Length == 1 &&
                     m.Parameters[0].Type.Equals(osPlatformType)).FirstOrDefault();
 
-                var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType);
+                var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType!);
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
 
                 context.RegisterOperationBlockStartAction(context => AnalyzeOperationBlock(context, guardMethods, osPlatformType, platformSpecificMembers, msBuildPlatforms));

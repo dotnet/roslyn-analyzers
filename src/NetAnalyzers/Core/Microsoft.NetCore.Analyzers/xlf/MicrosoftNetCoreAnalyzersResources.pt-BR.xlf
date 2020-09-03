@@ -327,6 +327,21 @@
         <target state="translated">Não usar valores de SslProtocols preteridos</target>
         <note />
       </trans-unit>
+      <trans-unit id="DetectPLINQNopsDescription">
+        <source>AsParallel() does not have an effect if it is the last Expression or the only remaining Expressions are ToList() or ToArray().</source>
+        <target state="new">AsParallel() does not have an effect if it is the last Expression or the only remaining Expressions are ToList() or ToArray().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsMessage">
+        <source>AsParallel() Expression '{0}' has no effect</source>
+        <target state="new">AsParallel() Expression '{0}' has no effect</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsTitle">
+        <source>AsParallel() at the end of a LINQ query does not have an effect</source>
+        <target state="new">AsParallel() at the end of a LINQ query does not have an effect</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
         <target state="translated">Um tipo que implementa System.IDisposable declara campos dos tipos que também implementam IDisposable. O método Dispose do campo não é chamado pelo método Dispose do tipo declarativo. Se você for responsável por alocar e liberar os recursos não gerenciados mantidos pelo campo, chame Dispose nos campos de tipos que implementam IDisposable para corrigir uma violação dessa regra.</target>

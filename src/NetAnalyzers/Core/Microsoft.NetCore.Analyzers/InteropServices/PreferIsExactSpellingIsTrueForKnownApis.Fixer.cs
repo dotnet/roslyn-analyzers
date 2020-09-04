@@ -61,14 +61,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     if (methods.Contains(actualName + "W"))
                     {
                         context.RegisterCodeFix(new MySolutionCodeAction(title,
-                                                         async ct => await AddWSuffix(context.Document, methodDeclaration, methodSymbol, dllImportType, ct).ConfigureAwait(false),
+                                                         async ct => await AddWSuffix(context.Document, methodDeclaration, methodSymbol, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
                     }
                     else
                     {
                         context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await AddExactSpelling(context.Document, methodDeclaration, methodSymbol, dllImportType, ct).ConfigureAwait(false),
+                                                         async ct => await AddExactSpelling(context.Document, methodDeclaration, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                         context.Diagnostics);
                     }
@@ -76,7 +76,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        public static async Task<Document> AddExactSpelling(Document document, MethodDeclarationSyntax methodDeclaration, IMethodSymbol methodSymbol, INamedTypeSymbol dllImport, CancellationToken cancellationToken)
+        public static async Task<Document> AddExactSpelling(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
@@ -101,9 +101,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             return editor.GetChangedDocument();
         }
 
-        public static async Task<Solution> AddWSuffix(Document document, MethodDeclarationSyntax methodDeclaration, IMethodSymbol methodSymbol, INamedTypeSymbol dllImport, CancellationToken cancellationToken)
+        public static async Task<Solution> AddWSuffix(Document document, MethodDeclarationSyntax methodDeclaration, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
         {
-            document = await AddExactSpelling(document, methodDeclaration, methodSymbol, dllImport, cancellationToken).ConfigureAwait(false);
+            document = await AddExactSpelling(document, methodDeclaration, cancellationToken).ConfigureAwait(false);
 
             var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, methodSymbol, methodSymbol.Name + "W", document.Project.Solution.Workspace.Options, cancellationToken).ConfigureAwait(false);
             return newSolution;

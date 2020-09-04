@@ -86,16 +86,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             // [DllImport] attribute -> add or replace ExactSpelling parameter
             SyntaxNode argumentValue = generator.TrueLiteralExpression();
-            SyntaxNode newCharSetArgument = generator.AttributeArgument(ExactSpellingText, argumentValue);
+            SyntaxNode newExactSpellingArgument = generator.AttributeArgument(ExactSpellingText, argumentValue);
 
             SyntaxNode exactSpellingArgument = FindNamedArgument(arguments, ExactSpellingText);
             if (exactSpellingArgument == null)
             {
-                editor.AddAttributeArgument(dllImportSyntax, newCharSetArgument);
+                editor.AddAttributeArgument(dllImportSyntax, newExactSpellingArgument);
             }
             else
             {
-                editor.ReplaceNode(exactSpellingArgument, newCharSetArgument);
+                editor.ReplaceNode(exactSpellingArgument, newExactSpellingArgument);
             }
 
             return editor.GetChangedDocument();

@@ -81,8 +81,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            if (!methodSymbol.GetAttributes().Any(x => x.AttributeClass.Equals(dllImport)))
-                return document;
             var dllImportSyntax = methodDeclaration.AttributeLists.First(x => x.Attributes.Any(y => y.Name.ToString().Equals("DllImport", StringComparison.Ordinal)));
             IReadOnlyList<SyntaxNode> arguments = generator.GetAttributeArguments(dllImportSyntax);
 

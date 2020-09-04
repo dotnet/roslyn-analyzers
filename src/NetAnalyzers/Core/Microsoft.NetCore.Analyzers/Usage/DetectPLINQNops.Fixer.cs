@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -17,7 +16,6 @@ namespace Microsoft.NetCore.Analyzers.Usage
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNops.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider
     {
-        private const string title = "Remove AsParallel";
         private static readonly string[] removableEnds = new string[] { "ToList", "ToArray", "AsParallel" };
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
@@ -39,10 +37,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InvocationExpressionSyntax>().Last();
 
                 context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title: title,
+                    new AsPArallelCodeAction(
+                        title: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall,
                         createChangedSolution: c => RemoveAsParallelCall(context.Document, declaration, c),
-                        equivalenceKey: title),
+                        equivalenceKey: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall),
                     diagnostic);
             }
         }
@@ -58,6 +56,13 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 possibleInvocation = newExpression;
             } while (possibleInvocation is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax member && removableEnds.Contains(member.Name.Identifier.ValueText));
             return originalSolution.WithDocumentSyntaxRoot(document.Id, root.ReplaceNode(invocationExpression, possibleInvocation));
+        }
+        private class AsPArallelCodeAction : SolutionChangeAction
+        {
+            public AsPArallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
+                : base(title, createChangedSolution, equivalenceKey)
+            {
+            }
         }
     }
 }

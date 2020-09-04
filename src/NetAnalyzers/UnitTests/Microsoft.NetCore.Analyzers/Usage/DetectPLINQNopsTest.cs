@@ -3,7 +3,10 @@
 using System.Threading.Tasks;
 using Microsoft.NetCore.Analyzers.Usage;
 using Test.Utilities;
+using Microsoft.CodeAnalysis.Generators.Generated;
 using Xunit;
+using System.Collections.Generic;
+
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNops,
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsFixer>;
@@ -18,6 +21,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         [Fact]
         public async Task AsParallelToListInForeach_SingleDiagnostic()
         {
+            Assert.True(KnowApiDictionaryGenerated.KnownApis["user32.dll"].Count > 0);
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
     using System.Collections.Generic;
@@ -131,7 +135,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         {   
                 public void Test() {foreach(var s in {|#0:Enumerable.Range(0,1).Select(x => x*2).AsParallel()|});}
         }
-    }", VerifyCS.Diagnostic(DetectPLINQNops.DefaultRule).WithLocation(0).WithArguments("Enumerable.Range(0, 1).Select(x => x * 2).AsParallel()"));
+    }", VerifyCS.Diagnostic(DetectPLINQNops.DefaultRule).WithLocation(0).WithArguments("Enumerable.Range(0,1).Select(x => x*2).AsParallel()"));
         }
     }
 }

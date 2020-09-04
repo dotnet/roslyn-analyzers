@@ -1557,6 +1557,26 @@
         <target state="translated">역직렬화된 개체 그래프의 잠재적 참조 주기</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisDescription">
+        <source>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</source>
+        <target state="new">|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisMessage">
+        <source>This method is part of the known API. Use ExactSpelling to avoid name lookups on first invocation.</source>
+        <target state="new">This method is part of the known API. Use ExactSpelling to avoid name lookups on first invocation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisTitle">
+        <source>Add ExactSpelling=true to DllImport declaration</source>
+        <target state="new">Add ExactSpelling=true to DllImport declaration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisWithSuffixDescription">
+        <source>|{0}| is a known invocation on Windows withan equivalent -W suffix. Use ExactSpelling=true and use the method without string encoding differences.</source>
+        <target state="new">|{0}| is a known invocation on Windows withan equivalent -W suffix. Use ExactSpelling=true and use the method without string encoding differences.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">'Stream'에 첫 번째 인수로 'Memory&lt;Byte&gt;'를 사용하는 'ReadAsync' 오버로드와 첫 번째 인수로 'ReadOnlyMemory&lt;Byte&gt;'를 사용하는 'WriteAsync' 오버로드가 있습니다. 더 효율적인 메모리 기반 오버로드를 호출하는 것이 좋습니다.</target>

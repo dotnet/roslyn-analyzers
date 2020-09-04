@@ -1557,6 +1557,26 @@
         <target state="translated">Ciclo de referência potencial em grafo de objeto desserializado</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisDescription">
+        <source>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</source>
+        <target state="new">|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisMessage">
+        <source>This method is part of the known API. Use ExactSpelling to avoid name lookups on first invocation.</source>
+        <target state="new">This method is part of the known API. Use ExactSpelling to avoid name lookups on first invocation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisTitle">
+        <source>Add ExactSpelling=true to DllImport declaration</source>
+        <target state="new">Add ExactSpelling=true to DllImport declaration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisWithSuffixDescription">
+        <source>|{0}| is a known invocation on Windows withan equivalent -W suffix. Use ExactSpelling=true and use the method without string encoding differences.</source>
+        <target state="new">|{0}| is a known invocation on Windows withan equivalent -W suffix. Use ExactSpelling=true and use the method without string encoding differences.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">
         <source>'Stream' has a 'ReadAsync' overload that takes a 'Memory&lt;Byte&gt;' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory&lt;Byte&gt;' as the first argument. Prefer calling the memory based overloads, which are more efficient.</source>
         <target state="translated">'Stream' tem uma sobrecarga 'ReadAsync' que recebe um 'Memory&lt;Byte&gt;' como o primeiro argumento e uma sobrecarga 'WriteAsync' que recebe um 'ReadOnlyMemory&lt;Byte&gt;' como o primeiro argumento. Prefira chamar as sobrecargas com base na memória, que são mais eficientes.</target>

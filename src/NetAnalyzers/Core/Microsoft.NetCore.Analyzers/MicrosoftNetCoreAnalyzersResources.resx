@@ -1479,4 +1479,20 @@
   <data name="PlatformCompatibilityCheckSupportedOsMessage" xml:space="preserve">
     <value>'{0}' is supported on '{1}'</value>
   </data>
+  <data name="PreferIsExactSpellingIsTrueForKnownApisDescription" xml:space="preserve">
+    <value>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</value>
+  </data>
+  <data name="PreferIsExactSpellingIsTrueForKnownApisMessage" xml:space="preserve">
+    <value>This method is part of the known API. Use ExactSpelling to avoid name lookups on first invocation.</value>
+  </data>
+  <data name="PreferIsExactSpellingIsTrueForKnownApisTitle" xml:space="preserve">
+    <value>Add ExactSpelling=true to DllImport declaration</value>
+  </data>
+  <data name="PreferIsExactSpellingIsTrueForKnownApisWithSuffixDescription" xml:space="preserve">
+    <value>|{0}| is a known invocation on Windows withan equivalent -W suffix. Use ExactSpelling=true and use the method without string encoding differences.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="KnownApiList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>interopservices\knownapilist.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

@@ -38,12 +38,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             var serializer = new XmlSerializer(typeof(KnownApi[]));
             var str = MicrosoftNetCoreAnalyzersResources.ResourceManager.GetObject("KnownApiList", CultureInfo.InvariantCulture);
-            using (var stringReader = new StringReader(str.ToString()))
-            using (var reader = XmlReader.Create(stringReader))
-            {
-                var knownApis = (serializer.Deserialize(reader) as KnownApi[])!;
-                return knownApis.ToDictionary(x => x.Dll!, x => new HashSet<string>(x.Methods!));
-            }
+            using var stringReader = new StringReader(str.ToString());
+            using var reader = XmlReader.Create(stringReader);
+            var knownApis = (serializer.Deserialize(reader) as KnownApi[])!;
+            return knownApis.ToDictionary(x => x.Dll!, x => new HashSet<string>(x.Methods!));
         }
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));

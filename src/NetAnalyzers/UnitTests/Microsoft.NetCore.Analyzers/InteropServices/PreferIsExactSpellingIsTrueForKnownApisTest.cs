@@ -57,17 +57,22 @@ public class C
     static extern void CallMsgFilterW(); // should have exactSpelling
     [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"")]
     static extern void CallMyMessageFilter(); // should have exactSpelling
+    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = false)]
+    static extern void CallMyMessageFilterCuston(); // should have exactSpelling true
     [DllImport(""user32.dll"", ExactSpelling = true)]
     static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
     [DllImport(""user32.dll"")]
     static extern void abcdefg(); // should have nothing, method unknown
     [DllImport(""testunknown.dll"")]
     static extern void abcdefg12(); // should have nothing, dll unknown
+    static void nonExtern() {} // should have nothing, not extern
+    static extern void onlyExtern(); // should have nothing, attribute missing
 }
 ",
                 new[]{CA1839_WideRule(7, 24, "ProcessIdleTasks"),
                 CA1839_DefaultRule(9, 24, "CallMsgFilterW"),
-                CA1839_DefaultRule(11, 24, "CallMsgFilterW") }, @"
+                CA1839_DefaultRule(11, 24, "CallMsgFilterW"),
+                CA1839_DefaultRule(13, 24, "CallMsgFilterW") }, @"
 using System.Runtime.InteropServices;
 
 public class C
@@ -78,12 +83,16 @@ public class C
     static extern void CallMsgFilterW(); // should have exactSpelling
     [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = true)]
     static extern void CallMyMessageFilter(); // should have exactSpelling
+    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = true)]
+    static extern void CallMyMessageFilterCuston(); // should have exactSpelling true
     [DllImport(""user32.dll"", ExactSpelling = true)]
     static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
     [DllImport(""user32.dll"")]
     static extern void abcdefg(); // should have nothing, method unknown
     [DllImport(""testunknown.dll"")]
     static extern void abcdefg12(); // should have nothing, dll unknown
+    static void nonExtern() {} // should have nothing, not extern
+    static extern void onlyExtern(); // should have nothing, attribute missing
 }
 ");
 

@@ -2,10 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.NetCore.Analyzers.Usage;
-using Test.Utilities;
-using Microsoft.CodeAnalysis.Generators.Generated;
 using Xunit;
-using System.Collections.Generic;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNops,
@@ -21,7 +18,6 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         [Fact]
         public async Task AsParallelToListInForeach_SingleDiagnostic()
         {
-            Assert.True(KnowApiDictionaryGenerated.KnownApis["user32.dll"].Count > 0);
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
     using System.Collections.Generic;

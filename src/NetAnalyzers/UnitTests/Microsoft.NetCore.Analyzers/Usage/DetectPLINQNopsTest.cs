@@ -2,10 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.NetCore.Analyzers.Usage;
-using Test.Utilities;
-using Microsoft.CodeAnalysis.Generators.Generated;
 using Xunit;
-using System.Collections.Generic;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNops,

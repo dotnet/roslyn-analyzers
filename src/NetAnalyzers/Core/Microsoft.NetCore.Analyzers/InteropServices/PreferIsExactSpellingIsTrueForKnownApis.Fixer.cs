@@ -35,10 +35,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static string GetEntryPointName(IMethodSymbol methodSymbol, AttributeData dllImportAttribute)
         {
-
             var hasEntryPointParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
-            var hasExactSpellingParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("ExactSpelling", StringComparison.Ordinal));
-
             return hasEntryPointParameter.Key is null ? methodSymbol.Name : hasEntryPointParameter.Value.Value.ToString();
         }
 

@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var dllImportAttribute = methodSymbol
                 .GetAttributes()
                 .FirstOrDefault(x => x.AttributeClass.Name.Equals("DllImportAttribute", StringComparison.Ordinal));
-            var dllName = dllImportAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty;
+            var dllName = dllImportAttribute.ConstructorArguments.First().Value.ToString();
             string title = MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle;
             if (PreferIsExactSpellingIsTrueForKnownApisAnalyzer.KnownApis.Value.TryGetValue(dllName, out var methods))
             {

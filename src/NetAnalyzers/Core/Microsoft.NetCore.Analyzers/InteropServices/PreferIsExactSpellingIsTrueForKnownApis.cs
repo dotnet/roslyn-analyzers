@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
     /// <summary>
-    /// CA1839: Prefer ExactSpelling=true for known analyzers
+    /// CA1839: Prefer ExactSpelling=true for known Apis analyzer
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class PreferIsExactSpellingIsTrueForKnownApisAnalyzer : DiagnosticAnalyzer

@@ -84,15 +84,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-
-            // could be either a [DllImport] or [MarshalAs] attribute
-
             if (!methodSymbol.GetAttributes().Any(x => x.AttributeClass.Equals(dllImport)))
                 return document;
             var dllImportSyntax = methodDeclaration.AttributeLists.First(x => x.Attributes.Any(y => y.Name.ToString().Equals("DllImport", StringComparison.Ordinal)));
             IReadOnlyList<SyntaxNode> arguments = generator.GetAttributeArguments(dllImportSyntax);
 
-            // [DllImport] attribute, add or replace ExactSpelling parameter
+            // [DllImport] attribute -> add or replace ExactSpelling parameter
             SyntaxNode argumentValue = generator.TrueLiteralExpression();
             SyntaxNode newCharSetArgument = generator.AttributeArgument(ExactSpellingText, argumentValue);
 

@@ -23,41 +23,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
         [Fact]
         public async Task CA1839CSharpTest()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System.Runtime.InteropServices;
-
-public class C
-{
-    [DllImport(""user32.dll"")]
-    static extern void CallMsgFilter(); // should have exactSpelling and W rule
-    [DllImport(""user32.dll"")]
-    static extern void CallMsgFilterW(); // should have exactSpelling
-    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"")]
-    static extern void CallMyMessageFilter(); // should have exactSpelling
-    [DllImport(""user32.dll"", ExactSpelling = true)]
-    static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
-    [DllImport(""user32.dll"")]
-    static extern void abcdefg(); // should have nothing, method unknown
-    [DllImport(""testunknown.dll"")]
-    static extern void abcdefg12(); // should have nothing, dll unknown
-}
-",
-                CA1839_WideRule(7, 24, "CallMsgFilter"),
-                CA1839_DefaultRule(9, 24, "CallMsgFilterW"),
-                CA1839_DefaultRule(11, 24, "CallMsgFilterW"));
 
             await VerifyCS.VerifyCodeFixAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
 {
-    [DllImport(""advapi32.dll"")]
-    static extern void ProcessIdleTasks(); // should have exactSpelling and W rule
+    [DllImport(""advapi32.dll"", CharSet = CharSet.Unicode)]
+    static extern void ProcessIdleTasksW(); // should have exactSpelling
     [DllImport(""user32.dll"")]
-    static extern void CallMsgFilterW(); // should have exactSpelling
-    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"")]
-    static extern void CallMyMessageFilter(); // should have exactSpelling
-    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = false)]
+    static extern void CharToOemBuff(); // should have exactSpelling and A suffix
+    [DllImport(""user32.dll"", EntryPoint = ""GetWindowModuleFileName"")]
+    static extern void CustomMethodNameRename(); // should have exactSpelling and a suffix, name derived from attribute
+    [DllImport(""user32.dll"", EntryPoint = ""CharToOemA"", ExactSpelling = false)]
     static extern void CallMyMessageFilterCuston(); // should have exactSpelling true
     [DllImport(""user32.dll"", ExactSpelling = true)]
     static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
@@ -65,25 +43,29 @@ public class C
     static extern void abcdefg(); // should have nothing, method unknown
     [DllImport(""testunknown.dll"")]
     static extern void abcdefg12(); // should have nothing, dll unknown
+    [DllImport(""user32.dll"", ExactSpelling = true)]
+    static extern void BroadcastSystemMessageA(); // should have nothing
+    [DllImport(""user32.dll"", ExactSpelling = true)]
+    static extern void BroadcastSystemMessage(); // should have nothing, perhaps we want to call method without a or w suffix
     static void nonExtern() {} // should have nothing, not extern
     static extern void onlyExtern(); // should have nothing, attribute missing
 }
 ",
-                new[]{CA1839_WideRule(7, 24, "ProcessIdleTasks"),
-                CA1839_DefaultRule(9, 24, "CallMsgFilterW"),
-                CA1839_DefaultRule(11, 24, "CallMsgFilterW"),
-                CA1839_DefaultRule(13, 24, "CallMsgFilterW") }, @"
+                new[]{CA1839_WideRule(7, 24, "ProcessIdleTasksW"),
+                CA1839_DefaultRule(9, 24, "CharToOemBuff"),
+                CA1839_DefaultRule(11, 24, "GetWindowModuleFileNameA"),
+                CA1839_DefaultRule(13, 24, "CharToOemA") }, @"
 using System.Runtime.InteropServices;
 
 public class C
 {
-    [DllImport(""advapi32.dll"", ExactSpelling = true)]
-    static extern void ProcessIdleTasksW(); // should have exactSpelling and W rule
-    [DllImport(""user32.dll"", ExactSpelling = true)]
-    static extern void CallMsgFilterW(); // should have exactSpelling
-    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = true)]
-    static extern void CallMyMessageFilter(); // should have exactSpelling
-    [DllImport(""user32.dll"", EntryPoint = ""CallMsgFilterW"", ExactSpelling = true)]
+    [DllImport(""advapi32.dll"", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    static extern void ProcessIdleTasksW(); // should have exactSpelling
+    [DllImport(""user32.dll"", ExactSpelling = true, EntryPoint = ""CharToOemBuffA"")]
+    static extern void CharToOemBuff(); // should have exactSpelling and A suffix
+    [DllImport(""user32.dll"", EntryPoint = ""GetWindowModuleFileNameA"", ExactSpelling = true)]
+    static extern void CustomMethodNameRename(); // should have exactSpelling and a suffix, name derived from attribute
+    [DllImport(""user32.dll"", EntryPoint = ""CharToOemA"", ExactSpelling = true)]
     static extern void CallMyMessageFilterCuston(); // should have exactSpelling true
     [DllImport(""user32.dll"", ExactSpelling = true)]
     static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
@@ -91,6 +73,10 @@ public class C
     static extern void abcdefg(); // should have nothing, method unknown
     [DllImport(""testunknown.dll"")]
     static extern void abcdefg12(); // should have nothing, dll unknown
+    [DllImport(""user32.dll"", ExactSpelling = true)]
+    static extern void BroadcastSystemMessageA(); // should have nothing
+    [DllImport(""user32.dll"", ExactSpelling = true)]
+    static extern void BroadcastSystemMessage(); // should have nothing, perhaps we want to call method without a or w suffix
     static void nonExtern() {} // should have nothing, not extern
     static extern void onlyExtern(); // should have nothing, attribute missing
 }

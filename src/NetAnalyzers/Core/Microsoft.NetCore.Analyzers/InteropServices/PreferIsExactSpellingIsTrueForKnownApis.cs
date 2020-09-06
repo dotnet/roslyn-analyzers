@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
 using Analyzer.Utilities;
@@ -27,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             public string? Dll { get; set; }
 #pragma warning disable CA1819 // Properties should not return arrays
-            public string[]? Methods { get; set; }
+            public string[]? Methods { get; set; } // DTO object may ignore this warning
 #pragma warning restore CA1819 // Properties should not return arrays
         }
         internal const string RuleId = "CA1839";
@@ -70,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                              isDataflowRule: false,
                                                                              isEnabledByDefaultInFxCopAnalyzers: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, WideRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -92,22 +93,34 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             var hasEntryPointParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
             var hasExactSpellingParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("ExactSpelling", StringComparison.Ordinal));
+            var hasCharSetParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("CharSet", StringComparison.Ordinal));
 
             var methodName = hasEntryPointParameter.Key is null ? methodSymbol.Name : hasEntryPointParameter.Value.Value.ToString();
             var isExactSpelling = !(hasExactSpellingParameter.Key is null) && (bool)hasExactSpellingParameter.Value.Value;
+            var isCharSetUnicode = !(hasCharSetParameter.Key is null) && ((CharSet)hasCharSetParameter.Value.Value == CharSet.Unicode);
             var dllName = dllImportAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty;
             if (KnownApis.Value.TryGetValue(dllName, out var methods))
             {
-                if (methods.Contains(methodName))
+                if (methods.Contains(methodName)) //Whatever exactspelling is is wrong, wide method should be preferred
                 {
-                    Diagnostic? diagnostic = null;
-                    if (methods.Contains(methodName + "W")) //Whatever exactspelling is is wrong, wide method should be preferred
+                    if (isCharSetUnicode && !isExactSpelling && methodName.EndsWith("W", StringComparison.Ordinal))
                     {
-                        diagnostic = Diagnostic.Create(WideRule, methodSymbol.Locations[0], methodName);
+                        var diagnostic = Diagnostic.Create(WideRule, methodSymbol.Locations[0], methodName);
+                        context.ReportDiagnostic(diagnostic);
+                        return;
                     }
+                    if (!isCharSetUnicode && !isExactSpelling && methodName.EndsWith("A", StringComparison.Ordinal))
+                    {
+                        var diagnostic = Diagnostic.Create(DefaultRule, methodSymbol.Locations[0], methodName);
+                        context.ReportDiagnostic(diagnostic);
+                        return;
+                    }
+                }
+                if (methods.Contains(methodName + "A") && !isCharSetUnicode)
+                {
                     if (isExactSpelling) //Known method has parameter set to true
                         return;
-                    diagnostic ??= Diagnostic.Create(DefaultRule, methodSymbol.Locations[0], methodName);
+                    var diagnostic = Diagnostic.Create(DefaultRule, methodSymbol.Locations[0], methodName);
                     context.ReportDiagnostic(diagnostic);
 
                 }

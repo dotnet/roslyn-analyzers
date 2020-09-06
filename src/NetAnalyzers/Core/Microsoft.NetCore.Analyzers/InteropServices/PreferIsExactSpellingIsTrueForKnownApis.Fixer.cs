@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return;
                     }
                 }
-                if(methods.Contains(actualName + "A"))
+                if (methods.Contains(actualName + "A"))
                 {
                     context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => { await AddASuffix(context.Document, methodDeclaration, actualName, editor, ct).ConfigureAwait(false); return editor.GetChangedDocument(); },
@@ -87,7 +87,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
         }
 
-        public static async Task AddExactSpelling(Document document, MethodDeclarationSyntax methodDeclaration,DocumentEditor editor, CancellationToken cancellationToken)
+        public static async Task AddExactSpelling(Document document, MethodDeclarationSyntax methodDeclaration, DocumentEditor editor, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = editor.Generator;
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -110,7 +110,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         public static async Task AddASuffix(Document document, MethodDeclarationSyntax methodDeclaration, string actualExternalName, DocumentEditor editor, CancellationToken cancellationToken)
         {
-            await AddExactSpelling(document, methodDeclaration,editor, cancellationToken).ConfigureAwait(false);
+            await AddExactSpelling(document, methodDeclaration, editor, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var dllImportSyntax = methodDeclaration.AttributeLists.First(x => x.Attributes.Any(y => y.Name.ToString().Equals("DllImport", StringComparison.Ordinal)));

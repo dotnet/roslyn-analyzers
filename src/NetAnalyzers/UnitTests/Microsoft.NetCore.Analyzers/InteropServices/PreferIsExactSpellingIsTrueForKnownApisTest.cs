@@ -11,14 +11,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public sealed class PreferIsExactSpellingIsTrueForKnownApisTest
     {
-        private DiagnosticResult CA1839_DefaultRule(int location, params string[] arguments)
+        private DiagnosticResult CA1839_DefaultRule(int markupId, params string[] arguments)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.DefaultRule)
-               .WithLocation(location)
+               .WithLocation(markupId)
                .WithArguments(arguments);
 
-        private DiagnosticResult CA1839_WideRule(int location, params string[] arguments)
+        private DiagnosticResult CA1839_WideRule(int markupId, params string[] arguments)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.WideRule)
-               .WithLocation(location)
+               .WithLocation(markupId)
                .WithArguments(arguments);
 
         [Fact]
@@ -81,7 +81,6 @@ public class C
     static extern void onlyExtern(); // should have nothing, attribute missing
 }
 ");
-
         }
     }
 }

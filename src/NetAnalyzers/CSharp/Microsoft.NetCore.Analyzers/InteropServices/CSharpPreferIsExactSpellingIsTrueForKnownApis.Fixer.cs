@@ -13,14 +13,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.NetCore.Analyzers;
+using Microsoft.NetCore.Analyzers.InteropServices;
 
-namespace Microsoft.NetCore.Analyzers.InteropServices
+namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
 {
     /// <summary>
     /// CA1839: Prefer ExactSpelling=true for known Apis fixer
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = PreferIsExactSpellingIsTrueForKnownApisAnalyzer.RuleId), Shared]
-    public sealed class PreferIsExactSpellingIsTrueForKnownApisFixer : CodeFixProvider
+    public sealed class CSharpPreferIsExactSpellingIsTrueForKnownApis : CodeFixProvider
     {
         private const string ExactSpellingText = "ExactSpelling";
         private const string EntryPointText = "EntryPoint";
@@ -59,11 +61,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (dllImportType is null)
-            {
-                return;
-            }
-
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             if (root.FindNode(context.Span) is not MethodDeclarationSyntax methodDeclaration)
             {
@@ -78,6 +75,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var dllImportAttribute = methodSymbol
                 .GetAttributes()
                 .FirstOrDefault(x => x.AttributeClass.Equals(dllImportType));
+            if (dllImportAttribute is null)
+            {
+                return;
+            }
+
             var dllName = dllImportAttribute.ConstructorArguments.First().Value.ToString();
             string title = MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle;
 

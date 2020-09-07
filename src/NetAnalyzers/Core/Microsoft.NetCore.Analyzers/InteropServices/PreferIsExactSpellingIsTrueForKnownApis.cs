@@ -98,6 +98,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 return;
             }
+
             if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
             {
                 return;
@@ -111,7 +112,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            var hasEntryPointParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
             var hasExactSpellingParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("ExactSpelling", StringComparison.Ordinal));
             var hasCharSetParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("CharSet", StringComparison.Ordinal));
 
@@ -125,11 +125,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (methods.Contains(methodName)) //Whatever exactspelling is is wrong, wide method should be preferred
+            if (methods.Contains(methodName))
             {
                 if (isCharSetUnicode && !isExactSpelling && methodName.EndsWith("W", StringComparison.Ordinal))
                 {
-                    var diagnostic = Diagnostic.Create(WideRule, methodSymbol.Locations[0], methodName);
+                    var diagnostic = methodSymbol.CreateDiagnostic(WideRule, methodName);
                     context.ReportDiagnostic(diagnostic);
                     return;
                 }

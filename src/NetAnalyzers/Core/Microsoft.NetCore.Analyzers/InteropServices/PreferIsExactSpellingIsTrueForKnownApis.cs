@@ -10,11 +10,21 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices
 {
+    internal static class PreferIsExactSpellingIsTrueForKownApisHelpers
+    {
+        internal static string GetActualExternName(this IMethodSymbol methodSymbol, AttributeData attribte)
+        {
+            var hasEntryPointParameter = attribte.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
+            return hasEntryPointParameter.Key is null ? methodSymbol.Name : hasEntryPointParameter.Value.Value.ToString();
+        }
+    }
+
     /// <summary>
     /// CA1839: Prefer ExactSpelling=true for known Apis analyzer
     /// </summary>
@@ -31,6 +41,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public string[]? Methods { get; set; } // DTO object may ignore this warning
 #pragma warning restore CA1819 // Properties should not return arrays
         }
+
         internal const string RuleId = "CA1839";
 
         internal static readonly Lazy<Dictionary<string, HashSet<string>>> KnownApis = new Lazy<Dictionary<string, HashSet<string>>>(() => CreateKnownApis());
@@ -41,14 +52,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var str = MicrosoftNetCoreAnalyzersResources.ResourceManager.GetObject("KnownApiList", CultureInfo.InvariantCulture);
             using var stringReader = new StringReader(str.ToString());
             using var reader = XmlReader.Create(stringReader);
-            var knownApis = (serializer.Deserialize(reader) as KnownApi[])!;
+            var knownApis = (KnownApi[])serializer.Deserialize(reader);
             return knownApis.ToDictionary(x => x.Dll!, x => new HashSet<string>(x.Methods!));
         }
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionWideSuffix = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisWithSuffixDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageWideSuffix = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisWithSuffixMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
@@ -63,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         internal static DiagnosticDescriptor WideRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableDescriptionWideSuffix,
+                                                                             s_localizableMessageWideSuffix,
                                                                              DiagnosticCategory.Performance,
                                                                              RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
@@ -84,46 +95,59 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
             if (!methodSymbol.IsExtern)
+            {
                 return;
+            }
+            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
+            {
+                return;
+            }
             var dllImportAttribute = methodSymbol
                 .GetAttributes()
-                .FirstOrDefault(x => x.AttributeClass.Name.Equals("DllImportAttribute", StringComparison.Ordinal));
+                .FirstOrDefault(x => x.AttributeClass.Equals(dllImportType));
+
             if (dllImportAttribute is null)
+            {
                 return;
+            }
 
             var hasEntryPointParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
             var hasExactSpellingParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("ExactSpelling", StringComparison.Ordinal));
             var hasCharSetParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("CharSet", StringComparison.Ordinal));
 
-            var methodName = hasEntryPointParameter.Key is null ? methodSymbol.Name : hasEntryPointParameter.Value.Value.ToString();
-            var isExactSpelling = !(hasExactSpellingParameter.Key is null) && (bool)hasExactSpellingParameter.Value.Value;
-            var isCharSetUnicode = !(hasCharSetParameter.Key is null) && ((CharSet)hasCharSetParameter.Value.Value == CharSet.Unicode);
+            var methodName = methodSymbol.GetActualExternName(dllImportAttribute);
+            var isExactSpelling = hasExactSpellingParameter.Key is not null && bool.TryParse(hasExactSpellingParameter.Value.Value.ToString(), out var isExact) && isExact;
+            var isCharSetUnicode = hasCharSetParameter.Key is not null && Enum.TryParse<CharSet>(hasCharSetParameter.Value.Value.ToString(), out var actualCharSet) && actualCharSet == CharSet.Unicode;
             var dllName = dllImportAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty;
-            if (KnownApis.Value.TryGetValue(dllName, out var methods))
-            {
-                if (methods.Contains(methodName)) //Whatever exactspelling is is wrong, wide method should be preferred
-                {
-                    if (isCharSetUnicode && !isExactSpelling && methodName.EndsWith("W", StringComparison.Ordinal))
-                    {
-                        var diagnostic = Diagnostic.Create(WideRule, methodSymbol.Locations[0], methodName);
-                        context.ReportDiagnostic(diagnostic);
-                        return;
-                    }
-                    if (!isCharSetUnicode && !isExactSpelling && methodName.EndsWith("A", StringComparison.Ordinal))
-                    {
-                        var diagnostic = Diagnostic.Create(DefaultRule, methodSymbol.Locations[0], methodName);
-                        context.ReportDiagnostic(diagnostic);
-                        return;
-                    }
-                }
-                if (methods.Contains(methodName + "A") && !isCharSetUnicode)
-                {
-                    if (isExactSpelling) //Known method has parameter set to true
-                        return;
-                    var diagnostic = Diagnostic.Create(DefaultRule, methodSymbol.Locations[0], methodName);
-                    context.ReportDiagnostic(diagnostic);
 
+            if (!KnownApis.Value.TryGetValue(dllName, out var methods))
+            {
+                return;
+            }
+
+            if (methods.Contains(methodName)) //Whatever exactspelling is is wrong, wide method should be preferred
+            {
+                if (isCharSetUnicode && !isExactSpelling && methodName.EndsWith("W", StringComparison.Ordinal))
+                {
+                    var diagnostic = Diagnostic.Create(WideRule, methodSymbol.Locations[0], methodName);
+                    context.ReportDiagnostic(diagnostic);
+                    return;
                 }
+
+                if (!isCharSetUnicode && !isExactSpelling && methodName.EndsWith("A", StringComparison.Ordinal))
+                {
+                    var diagnostic = methodSymbol.CreateDiagnostic(DefaultRule, methodName);
+                    context.ReportDiagnostic(diagnostic);
+                    return;
+                }
+            }
+
+            if (methods.Contains(methodName + "A") && !isCharSetUnicode)
+            {
+                if (isExactSpelling) //Known method has parameter set to true
+                    return;
+                var diagnostic = methodSymbol.CreateDiagnostic(DefaultRule, methodName);
+                context.ReportDiagnostic(diagnostic);
             }
         }
     }

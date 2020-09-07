@@ -28,62 +28,91 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.RuleId);
 
-        private static SyntaxNode FindNamedArgument(IReadOnlyList<SyntaxNode> arguments, string argumentName)
+        private static SyntaxNode? FindNamedArgument(IReadOnlyList<SyntaxNode> arguments, string argumentName)
         {
             return arguments.OfType<AttributeArgumentSyntax>().FirstOrDefault(arg => arg.NameEquals != null && arg.NameEquals.Name.Identifier.Text == argumentName);
         }
 
-        private static string GetEntryPointName(IMethodSymbol methodSymbol, AttributeData dllImportAttribute)
+        private static void AddOrUpdateParameterOnAttribute(DocumentEditor editor, AttributeListSyntax list, SyntaxNode? possibleExistingArgument, SyntaxNode replacement)
         {
-            var hasEntryPointParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("EntryPoint", StringComparison.Ordinal));
-            return hasEntryPointParameter.Key is null ? methodSymbol.Name : hasEntryPointParameter.Value.Value.ToString();
+            if (possibleExistingArgument == null)
+            {
+                editor.AddAttributeArgument(list, replacement);
+            }
+            else
+            {
+                editor.ReplaceNode(possibleExistingArgument, replacement);
+            }
+        }
+
+        private static async Task<Document> ApplixFixAndGetChangedDocument(DocumentEditor editor, Task fixingTask)
+        {
+            await fixingTask.ConfigureAwait(false);
+            return editor.GetChangedDocument();
         }
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            INamedTypeSymbol? dllImportType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute);
-            if (dllImportType is null)
+            if (!model.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
+            {
                 return;
+            }
+
+            if (dllImportType is null)
+            {
+                return;
+            }
+
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)root.FindNode(context.Span);
-            IMethodSymbol methodSymbol = (IMethodSymbol)model.GetDeclaredSymbol(methodDeclaration, context.CancellationToken);
+            if (root.FindNode(context.Span) is not MethodDeclarationSyntax methodDeclaration)
+            {
+                return;
+            }
+
+            if (model.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
+            {
+                return;
+            }
+
             var dllImportAttribute = methodSymbol
                 .GetAttributes()
-                .FirstOrDefault(x => x.AttributeClass.Name.Equals("DllImportAttribute", StringComparison.Ordinal));
+                .FirstOrDefault(x => x.AttributeClass.Equals(dllImportType));
             var dllName = dllImportAttribute.ConstructorArguments.First().Value.ToString();
             string title = MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle;
 
             var editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
-            if (PreferIsExactSpellingIsTrueForKnownApisAnalyzer.KnownApis.Value.TryGetValue(dllName, out var methods))
+            if (!PreferIsExactSpellingIsTrueForKnownApisAnalyzer.KnownApis.Value.TryGetValue(dllName, out var methods))
             {
-                var actualName = GetEntryPointName(methodSymbol, dllImportAttribute);
-                if (methods.Contains(actualName))
-                {
-                    if (actualName.EndsWith("W", StringComparison.OrdinalIgnoreCase))
-                    {
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => { await AddExactSpelling(context.Document, methodDeclaration, editor, ct).ConfigureAwait(false); return editor.GetChangedDocument(); },
-                                                         equivalenceKey: title),
-                                        context.Diagnostics);
-                        return;
-                    }
-                    if (actualName.EndsWith("A", StringComparison.OrdinalIgnoreCase))
-                    {
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => { await AddExactSpelling(context.Document, methodDeclaration, editor, ct).ConfigureAwait(false); return editor.GetChangedDocument(); },
-                                                         equivalenceKey: title),
-                                        context.Diagnostics);
-                        return;
-                    }
-                }
-                if (methods.Contains(actualName + "A"))
+                return;
+            }
+
+            var actualName = methodSymbol.GetActualExternName(dllImportAttribute);
+            if (methods.Contains(actualName))
+            {
+                if (actualName.EndsWith("W", StringComparison.OrdinalIgnoreCase))
                 {
                     context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => { await AddASuffix(context.Document, methodDeclaration, actualName, editor, ct).ConfigureAwait(false); return editor.GetChangedDocument(); },
-                                                         equivalenceKey: title),
-                                        context.Diagnostics);
+                                                     async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
+                                                     equivalenceKey: title),
+                                    context.Diagnostics);
+                    return;
                 }
+                if (actualName.EndsWith("A", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.RegisterCodeFix(new MyCodeAction(title,
+                                                     async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
+                                                     equivalenceKey: title),
+                                    context.Diagnostics);
+                    return;
+                }
+            }
+            if (methods.Contains(actualName + "A"))
+            {
+                context.RegisterCodeFix(new MyCodeAction(title,
+                                                     async ct => await ApplixFixAndGetChangedDocument(editor, AddASuffix(context.Document, methodDeclaration, actualName, editor, ct)).ConfigureAwait(false),
+                                                     equivalenceKey: title),
+                                    context.Diagnostics);
             }
         }
 
@@ -97,15 +126,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             // [DllImport] attribute -> add or replace ExactSpelling parameter
             SyntaxNode argumentValue = generator.TrueLiteralExpression();
             SyntaxNode newExactSpellingArgument = generator.AttributeArgument(ExactSpellingText, argumentValue);
-            SyntaxNode exactSpellingArgument = FindNamedArgument(arguments, ExactSpellingText);
-            if (exactSpellingArgument == null)
-            {
-                editor.AddAttributeArgument(dllImportSyntax, newExactSpellingArgument);
-            }
-            else
-            {
-                editor.ReplaceNode(exactSpellingArgument, newExactSpellingArgument);
-            }
+            SyntaxNode? exactSpellingArgument = FindNamedArgument(arguments, ExactSpellingText);
+            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, exactSpellingArgument, newExactSpellingArgument);
         }
 
         public static async Task AddASuffix(Document document, MethodDeclarationSyntax methodDeclaration, string actualExternalName, DocumentEditor editor, CancellationToken cancellationToken)
@@ -118,17 +140,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             // [DllImport] attribute -> add or replace ExactSpelling parameter
             SyntaxNode argumentValue = generator.LiteralExpression(actualExternalName + "A");
-            SyntaxNode newExactSpellingArgument = generator.AttributeArgument(EntryPointText, argumentValue);
+            SyntaxNode newEntryPointText = generator.AttributeArgument(EntryPointText, argumentValue);
 
-            SyntaxNode entryPointNode = FindNamedArgument(arguments, EntryPointText);
-            if (entryPointNode == null)
-            {
-                editor.AddAttributeArgument(dllImportSyntax, newExactSpellingArgument);
-            }
-            else
-            {
-                editor.ReplaceNode(entryPointNode, newExactSpellingArgument);
-            }
+            SyntaxNode? entryPointNode = FindNamedArgument(arguments, EntryPointText);
+            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, entryPointNode, newEntryPointText);
         }
         private class MyCodeAction : DocumentChangeAction
         {

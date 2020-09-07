@@ -6,37 +6,37 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.InteropServices.PreferIsExactSpellingIsTrueForKnownApisAnalyzer,
     Microsoft.NetCore.Analyzers.InteropServices.PreferIsExactSpellingIsTrueForKnownApisFixer>;
+
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public sealed class PreferIsExactSpellingIsTrueForKnownApisTest
     {
-        private DiagnosticResult CA1839_DefaultRule(int line, int column, params string[] arguments)
+        private DiagnosticResult CA1839_DefaultRule(int location, params string[] arguments)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.DefaultRule)
-               .WithLocation(line, column)
+               .WithLocation(location)
                .WithArguments(arguments);
 
-        private DiagnosticResult CA1839_WideRule(int line, int column, params string[] arguments)
+        private DiagnosticResult CA1839_WideRule(int location, params string[] arguments)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.WideRule)
-               .WithLocation(line, column)
+               .WithLocation(location)
                .WithArguments(arguments);
 
         [Fact]
         public async Task CA1839CSharpTest()
         {
-
             await VerifyCS.VerifyCodeFixAsync(@"
 using System.Runtime.InteropServices;
 
 public class C
 {
     [DllImport(""advapi32.dll"", CharSet = CharSet.Unicode)]
-    static extern void ProcessIdleTasksW(); // should have exactSpelling
+    static extern void {|#0:ProcessIdleTasksW|}(); // should have exactSpelling
     [DllImport(""user32.dll"")]
-    static extern void CharToOemBuff(); // should have exactSpelling and A suffix
+    static extern void {|#1:CharToOemBuff|}(); // should have exactSpelling and A suffix
     [DllImport(""user32.dll"", EntryPoint = ""GetWindowModuleFileName"")]
-    static extern void CustomMethodNameRename(); // should have exactSpelling and a suffix, name derived from attribute
+    static extern void {|#2:CustomMethodNameRename|}(); // should have exactSpelling and a suffix, name derived from attribute
     [DllImport(""user32.dll"", EntryPoint = ""CharToOemA"", ExactSpelling = false)]
-    static extern void CallMyMessageFilterCuston(); // should have exactSpelling true
+    static extern void {|#3:CallMyMessageFilterCuston|}(); // should have exactSpelling true
     [DllImport(""user32.dll"", ExactSpelling = true)]
     static extern void CallMsgFilterA(); // should have nothing, exactspelling present and is present in known api
     [DllImport(""user32.dll"")]
@@ -51,10 +51,10 @@ public class C
     static extern void onlyExtern(); // should have nothing, attribute missing
 }
 ",
-                new[]{CA1839_WideRule(7, 24, "ProcessIdleTasksW"),
-                CA1839_DefaultRule(9, 24, "CharToOemBuff"),
-                CA1839_DefaultRule(11, 24, "GetWindowModuleFileNameA"),
-                CA1839_DefaultRule(13, 24, "CharToOemA") }, @"
+                new[]{CA1839_WideRule(0, "ProcessIdleTasksW"),
+                CA1839_DefaultRule(1, "CharToOemBuff"),
+                CA1839_DefaultRule(2, "GetWindowModuleFileNameA"),
+                CA1839_DefaultRule(3, "CharToOemA") }, @"
 using System.Runtime.InteropServices;
 
 public class C

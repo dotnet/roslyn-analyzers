@@ -1479,6 +1479,9 @@
   <data name="PlatformCompatibilityCheckSupportedOsMessage" xml:space="preserve">
     <value>'{0}' is supported on '{1}'</value>
   </data>
+  <data name="PreferStringContainsOverIndexOfCodeFixTitle" xml:space="preserve">
+    <value>Replace with 'string.Contains'</value>
+  </data>
   <data name="PreferIsExactSpellingIsTrueForKnownApisDescription" xml:space="preserve">
     <value>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</value>
   </data>

@@ -149,7 +149,7 @@ namespace GenerateGlobalAnalyzerConfigs
                         outputDir,
                         $"AnalysisLevel_{analysisLevelVersionString}_{analysisMode}.editorconfig",
                         $"Rules from '{version}' release with '{analysisMode}' analysis mode",
-                        $"Rules with enabled by default state from '{version}' release with '{analysisMode}' analysis mode. Rules that are first released in a version later then '{version}' are disabled.",
+                        $"Rules with enabled-by-default state from '{version}' release with '{analysisMode}' analysis mode. Rules that are first released in a version later than '{version}' are disabled.",
                         (AnalysisMode)analysisMode!,
                         allRulesById,
                         (shippedFilesData, version));

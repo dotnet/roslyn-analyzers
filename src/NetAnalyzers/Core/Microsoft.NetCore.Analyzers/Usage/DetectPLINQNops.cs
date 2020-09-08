@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -37,36 +38,78 @@ namespace Microsoft.NetCore.Analyzers.Usage
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterSyntaxNodeAction(AnalyzeSymbol, SyntaxKind.InvocationExpression);
+            context.RegisterCompilationStartAction(ctx =>
+            {
+                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqParallelEnumerable, out var parallelEnumerable))
+                {
+                    return;
+                }
+
+                var asParallelSymbols = parallelEnumerable.GetMembers("AsParallel").ToImmutableHashSet();
+                var toArraySymbols = parallelEnumerable.GetMembers("ToArray").ToImmutableHashSet();
+                var toListSymbols = parallelEnumerable.GetMembers("ToList").ToImmutableHashSet();
+
+                ctx.RegisterSyntaxNodeAction(x => AnalyzeSymbol(x, asParallelSymbols, toArraySymbols, toListSymbols), SyntaxKind.InvocationExpression);
+            });
         }
 
-        private static void AnalyzeSymbol(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeSymbol(SyntaxNodeAnalysisContext context, ImmutableHashSet<ISymbol> asParallelSymbols, ImmutableHashSet<ISymbol> toArraySymbols, ImmutableHashSet<ISymbol> toListSymbols)
         {
             var invocation = (InvocationExpressionSyntax)context.Node;
 
-            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
+            if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess) // we are only interested in calls on a member
             {
-                if (!memberAccess.Name.Identifier.ValueText.Equals("AsParallel", StringComparison.Ordinal))
+                return;
+            }
+
+            if (context.SemanticModel.GetSymbolInfo(invocation.Expression).Symbol is not IMethodSymbol methodSymbol)
+            {
+                return;
+            }
+
+            if (methodSymbol.ReducedFrom is null) //if we have no reduction it can not match the symbol definition
+            {
+                return;
+            }
+
+            if (!asParallelSymbols.Contains(methodSymbol.ReducedFrom))
+            {
+                if (!(toArraySymbols.Contains(methodSymbol.ReducedFrom) || toListSymbols.Contains(methodSymbol.ReducedFrom))) //Not toList or ToArray call nor AsParallel
                 {
-                    if (!(s_knownCalls.Contains(memberAccess.Name.Identifier.ValueText)
-                && memberAccess.Expression is InvocationExpressionSyntax nestedInvocation
-                && nestedInvocation.Expression is MemberAccessExpressionSyntax possibleAsParallelCall
-                && possibleAsParallelCall.Name.Identifier.ValueText.Equals("AsParallel", StringComparison.Ordinal)))
+                    return;
+                }
+
+                if(memberAccess.Expression is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax) //AsParallel may precede this call, making it a no-op as well
+                {
+                    if (context.SemanticModel.GetSymbolInfo(nestedInvocation.Expression).Symbol is not IMethodSymbol nestedSymbol || nestedSymbol.ReducedFrom is null)
                     {
                         return;
                     }
-                }//true when it is the last statement or second last
-            }
-            if (invocation.Parent is ForEachStatementSyntax parentForEach)
-            {
-                if (parentForEach.Expression.IsEquivalentTo(invocation) || //Last call is AsParallel
-                    parentForEach.Expression is MemberAccessExpressionSyntax mem && s_knownCalls.Contains(mem.Name.Identifier.ValueText) //OrToList and ToValue
-                    )
+
+                    if (!asParallelSymbols.Contains(nestedSymbol.ReducedFrom))
+                    {
+                        return;
+                    }
+                }
+                else
                 {
-                    var diagnostic = Diagnostic.Create(DefaultRule, invocation.GetLocation(), invocation);
-                    context.ReportDiagnostic(diagnostic);
+                    return;//true when it is not the last statement or second last
                 }
             }
+
+            if (invocation.Parent is not ForEachStatementSyntax parentForEach)
+            {
+                return;
+            }
+
+            if (!parentForEach.Expression.IsEquivalentTo(invocation) && //Last call is AsParallel
+                (!(parentForEach.Expression is MemberAccessExpressionSyntax mem) || !s_knownCalls.Contains(mem.Name.Identifier.ValueText))) //OrToList and ToValue. Compare by string is safe as we compare by type earlier
+            {
+                return;
+            }
+
+            var diagnostic = Diagnostic.Create(DefaultRule, invocation.GetLocation(), invocation);
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

@@ -1480,12 +1480,12 @@
     <value>'{0}' is supported on '{1}'</value>
   </data>
   <data name="DetectPLINQNopsDescription" xml:space="preserve">
-    <value>AsParallel() does not have an effect if it is the last Expression or the only remaining Expressions are ToList() or ToArray().</value>
+    <value>'AsParallel' does not have an effect if it is the last Expression or the only remaining Expressions are 'ToList' or 'ToArray'.</value>
   </data>
   <data name="DetectPLINQNopsMessage" xml:space="preserve">
-    <value>AsParallel() Expression '{0}' has no effect</value>
+    <value>'AsParallel' in Expression '{0}' has no effect</value>
   </data>
   <data name="DetectPLINQNopsTitle" xml:space="preserve">
-    <value>AsParallel() at the end of a LINQ query does not have an effect</value>
+    <value>'AsParallel' at the end of a LINQ query does not have an effect</value>
   </data>
 </root>

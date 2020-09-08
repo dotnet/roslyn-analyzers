@@ -1558,8 +1558,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisDescription">
-        <source>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</source>
-        <target state="new">|{0}| is a known invocation on Windows without an equivalent -W suffix. Use ExactSpelling=true.</target>
+        <source>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</source>
+        <target state="new">|{0}| is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisMessage">
@@ -1568,8 +1568,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisTitle">
-        <source>Add 'ExactSpelling=true to DllImport declaration</source>
-        <target state="new">Add 'ExactSpelling=true to DllImport declaration</target>
+        <source>Add 'ExactSpelling=true to 'DllImport' declaration</source>
+        <target state="new">Add 'ExactSpelling=true to 'DllImport' declaration</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisWithSuffixMessage">

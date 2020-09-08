@@ -103,6 +103,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 return;
             }
+
             var dllImportAttribute = methodSymbol
                 .GetAttributes()
                 .FirstOrDefault(x => x.AttributeClass.Equals(dllImportType));

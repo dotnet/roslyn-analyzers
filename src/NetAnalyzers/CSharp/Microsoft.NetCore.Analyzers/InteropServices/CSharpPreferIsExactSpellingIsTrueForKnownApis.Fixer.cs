@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
     /// CA1839: Prefer ExactSpelling=true for known Apis fixer
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = PreferIsExactSpellingIsTrueForKnownApisAnalyzer.RuleId), Shared]
-    public sealed class CSharpPreferIsExactSpellingIsTrueForKnownApis : CodeFixProvider
+    public sealed class CSharpPreferIsExactSpellingIsTrueForKnownApisFixer : CodeFixProvider
     {
         private const string ExactSpellingText = "ExactSpelling";
         private const string EntryPointText = "EntryPoint";
@@ -147,17 +147,18 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             SyntaxNode? entryPointNode = FindNamedArgument(arguments, EntryPointText);
             AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, entryPointNode, newEntryPointText);
         }
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
         private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
                 : base(title, createChangedDocument, equivalenceKey)
             {
             }
-        }
-
-        public sealed override FixAllProvider GetFixAllProvider()
-        {
-            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

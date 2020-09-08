@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.InteropServices.PreferIsExactSpellingIsTrueForKnownApisAnalyzer,
-    Microsoft.NetCore.Analyzers.InteropServices.PreferIsExactSpellingIsTrueForKnownApisFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.InteropServices.CSharpPreferIsExactSpellingIsTrueForKnownApisFixer>;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {

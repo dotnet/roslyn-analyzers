@@ -281,7 +281,7 @@ namespace GenerateGlobalAnalyzerConfigs
 
                     (bool isEnabledByDefault, DiagnosticSeverity effectiveSeverity) GetEnabledByDefaultAndSeverity(DiagnosticDescriptor rule, AnalysisMode analysisMode)
                     {
-                        if (analysisMode == AnalysisMode.AllDisabled)
+                        if (analysisMode == AnalysisMode.AllDisabledByDefault)
                         {
                             return (isEnabledByDefault: false, DiagnosticSeverity.Warning);
                         }
@@ -289,7 +289,7 @@ namespace GenerateGlobalAnalyzerConfigs
                         var isEnabledByDefault = rule.IsEnabledByDefault;
                         var effectiveSeverity = rule.DefaultSeverity;
 
-                        var isEnabledRuleInAggressiveMode = analysisMode == AnalysisMode.AllEnabled &&
+                        var isEnabledRuleInAggressiveMode = analysisMode == AnalysisMode.AllEnabledByDefault &&
                             rule.CustomTags.Contains(WellKnownDiagnosticTagsExtensions.EnabledRuleInAggressiveMode);
                         if (isEnabledRuleInAggressiveMode)
                         {
@@ -559,8 +559,8 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
         private enum AnalysisMode
         {
             Default,
-            AllDisabled,
-            AllEnabled,
+            AllDisabledByDefault,
+            AllEnabledByDefault,
         }
     }
 }

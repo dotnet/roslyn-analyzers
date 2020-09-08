@@ -72,9 +72,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return;
             }
 
-            if (!asParallelSymbols.Contains(methodSymbol.ReducedFrom))
+            var reducedSymbol = methodSymbol.ReducedFrom;
+            if (!asParallelSymbols.Contains(reducedSymbol))
             {
-                if (!(toArraySymbols.Contains(methodSymbol.ReducedFrom) || toListSymbols.Contains(methodSymbol.ReducedFrom))) //Not toList or ToArray call nor AsParallel
+                if (!(toArraySymbols.Contains(reducedSymbol) || toListSymbols.Contains(reducedSymbol))) //Not toList or ToArray call nor AsParallel
                 {
                     return;
                 }
@@ -108,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return;
             }
 
-            var diagnostic = Diagnostic.Create(DefaultRule, invocation.GetLocation(), invocation);
+            var diagnostic = invocation.CreateDiagnostic(DefaultRule, invocation);
             context.ReportDiagnostic(diagnostic);
         }
     }

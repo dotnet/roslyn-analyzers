@@ -44,6 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             var originalSolution = document.Project.Solution;
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             ExpressionSyntax possibleInvocation = invocationExpression;
+
             do
             {
                 var newExpression = ((possibleInvocation as InvocationExpressionSyntax)!.Expression as MemberAccessExpressionSyntax)!.Expression;

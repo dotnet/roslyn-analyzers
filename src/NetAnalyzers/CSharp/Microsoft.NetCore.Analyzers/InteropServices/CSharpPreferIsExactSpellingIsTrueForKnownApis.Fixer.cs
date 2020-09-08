@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                 return;
             }
 
-            var dllName = dllImportAttribute.ConstructorArguments.First().Value.ToString();
+            var dllName = dllImportAttribute.ConstructorArguments[0].Value.ToString();
             string title = MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle;
 
             var editor = await DocumentEditor.CreateAsync(context.Document, context.CancellationToken).ConfigureAwait(false);
@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             {
                 if (actualName.EndsWith("W", StringComparison.OrdinalIgnoreCase))
                 {
-                    context.RegisterCodeFix(new MyCodeAction(title,
+                    context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
                                                      async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
                                                      equivalenceKey: title),
                                     context.Diagnostics);
@@ -102,7 +102,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                 }
                 if (actualName.EndsWith("A", StringComparison.OrdinalIgnoreCase))
                 {
-                    context.RegisterCodeFix(new MyCodeAction(title,
+                    context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
                                                      async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
                                                      equivalenceKey: title),
                                     context.Diagnostics);
@@ -111,7 +111,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             }
             if (methods.Contains(actualName + "A"))
             {
-                context.RegisterCodeFix(new MyCodeAction(title,
+                context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
                                                      async ct => await ApplixFixAndGetChangedDocument(editor, AddASuffix(context.Document, methodDeclaration, actualName, editor, ct)).ConfigureAwait(false),
                                                      equivalenceKey: title),
                                     context.Diagnostics);
@@ -148,14 +148,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, entryPointNode, newEntryPointText);
         }
 
-        public sealed override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider GetFixAllProvider()
         {
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        private class MyCodeAction : DocumentChangeAction
+        private sealed class PreferIsExactSpellingChangeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+            public PreferIsExactSpellingChangeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
                 : base(title, createChangedDocument, equivalenceKey)
             {
             }

@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     {
         [Serializable]
 #pragma warning disable CA1034 // Nested types should not be visible
-        public class KnownApi //Only made public as XmlSerializer requires it
+        public sealed class KnownApi //Only made public as XmlSerializer requires it
 #pragma warning restore CA1034 // Nested types should not be visible
         {
             public string? Dll { get; set; }

@@ -11,15 +11,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public sealed class PreferIsExactSpellingIsTrueForKnownApisTest
     {
-        private DiagnosticResult CA1839_DefaultRule(int markupId, params string[] arguments)
+        private DiagnosticResult CA1839_DefaultRule(int markupId, string knownApiName)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.DefaultRule)
                .WithLocation(markupId)
-               .WithArguments(arguments);
+               .WithArguments(knownApiName);
 
-        private DiagnosticResult CA1839_WideRule(int markupId, params string[] arguments)
+        private DiagnosticResult CA1839_WideRule(int markupId, string knownApiName)
            => VerifyCS.Diagnostic(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.WideRule)
                .WithLocation(markupId)
-               .WithArguments(arguments);
+               .WithArguments(knownApiName);
 
         [Fact]
         public async Task CA1839CSharpTest()

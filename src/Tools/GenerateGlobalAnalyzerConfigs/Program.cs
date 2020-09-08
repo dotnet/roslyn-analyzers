@@ -555,6 +555,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             }
         }
 
+        // NOTE: **Do not** change the names of the fields for this enum - that would be a breaking change for user visible property setting for `AnalysisMode` property in MSBuild project file.
         private enum AnalysisMode
         {
             Default,

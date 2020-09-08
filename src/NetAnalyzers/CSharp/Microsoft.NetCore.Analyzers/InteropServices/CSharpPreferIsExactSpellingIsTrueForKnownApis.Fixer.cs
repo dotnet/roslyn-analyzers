@@ -140,7 +140,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             var dllImportSyntax = methodDeclaration.AttributeLists.First(x => x.Attributes.Any(y => y.Name.ToString().Equals("DllImport", StringComparison.Ordinal)));
             IReadOnlyList<SyntaxNode> arguments = generator.GetAttributeArguments(dllImportSyntax);
 
-            // [DllImport] attribute -> add or replace ExactSpelling parameter
+            // [DllImport] attribute -> add or replace EntryPoint parameter
             SyntaxNode argumentValue = generator.LiteralExpression(actualExternalName + "A");
             SyntaxNode newEntryPointText = generator.AttributeArgument(EntryPointText, argumentValue);
 

@@ -88,18 +88,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            analysisContext.RegisterSymbolAction(AnalyzeExternMethod, SymbolKind.Method);
+            analysisContext.RegisterCompilationStartAction(ctx =>
+            {
+
+                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
+                {
+                    return;
+                }
+
+                ctx.RegisterSymbolAction(x => AnalyzeExternMethod(x, dllImportType), SymbolKind.Method);
+            });
         }
 
-        private static void AnalyzeExternMethod(SymbolAnalysisContext context)
+        private static void AnalyzeExternMethod(SymbolAnalysisContext context, INamedTypeSymbol dllImportType)
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
             if (!methodSymbol.IsExtern)
-            {
-                return;
-            }
-
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
             {
                 return;
             }
@@ -117,8 +121,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var hasCharSetParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("CharSet", StringComparison.Ordinal));
 
             var methodName = methodSymbol.GetActualExternName(dllImportAttribute);
-            var isExactSpelling = hasExactSpellingParameter.Key is not null && bool.TryParse(hasExactSpellingParameter.Value.Value.ToString(), out var isExact) && isExact;
-            var isCharSetUnicode = hasCharSetParameter.Key is not null && Enum.TryParse<CharSet>(hasCharSetParameter.Value.Value.ToString(), out var actualCharSet) && actualCharSet == CharSet.Unicode;
+            var isExactSpelling = hasExactSpellingParameter.Key is not null && hasExactSpellingParameter.Value.Kind != TypedConstantKind.Array && bool.TryParse(hasExactSpellingParameter.Value.Value?.ToString(), out var isExact) && isExact;
+            var isCharSetUnicode = hasCharSetParameter.Key is not null && hasCharSetParameter.Value.Kind != TypedConstantKind.Array && Enum.TryParse<CharSet>(hasCharSetParameter.Value.Value?.ToString(), out var actualCharSet) && actualCharSet == CharSet.Unicode;
             var dllName = dllImportAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty;
 
             if (!KnownApis.Value.TryGetValue(dllName, out var methods))

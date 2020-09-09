@@ -1719,5 +1719,28 @@ End Module"
             await VerifyVB.VerifyAnalyzerAsync(@"
 <assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(""Category"", ""Id"")>");
         }
+
+        [Fact, WorkItem(4150, "https://github.com/dotnet/roslyn-analyzers/issues/4150")]
+        public async Task GlobalAssemblyAttributes_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+class Program
+{
+    static void Main()
+    {
+        foreach (System.Diagnostics.ProcessModule mod in System.Diagnostics.Process.GetCurrentProcess().Modules)
+            System.Console.WriteLine(mod.FileName);
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Module Program
+    Sub Main()
+        For Each m As System.Diagnostics.ProcessModule In System.Diagnostics.Process.GetCurrentProcess().Modules
+            System.Console.WriteLine(m.FileName)
+        Next
+    End Sub
+End Module");
+        }
     }
 }

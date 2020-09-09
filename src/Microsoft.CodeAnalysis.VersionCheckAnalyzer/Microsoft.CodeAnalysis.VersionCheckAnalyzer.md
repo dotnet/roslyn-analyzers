@@ -1,4 +1,13 @@
+# Microsoft.CodeAnalysis.VersionCheckAnalyzer
 
-Sr. No. | Rule ID | Title | Category | Enabled | Severity | CodeFix | Description |
---------|---------|-------|----------|---------|----------|---------|--------------------------------------------------------------------------------------------------------------|
-1 | CA9999 | Analyzer version mismatch | Reliability | True | Warning | False | Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version. |
+## CA9999: Analyzer version mismatch
+
+Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---

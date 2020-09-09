@@ -1721,7 +1721,7 @@ End Module"
         }
 
         [Fact, WorkItem(4150, "https://github.com/dotnet/roslyn-analyzers/issues/4150")]
-        public async Task GlobalAssemblyAttributes_NoDiagnostic()
+        public async Task Test_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 class Program

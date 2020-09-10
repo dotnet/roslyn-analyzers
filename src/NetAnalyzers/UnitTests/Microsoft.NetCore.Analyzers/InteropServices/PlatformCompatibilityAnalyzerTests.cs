@@ -49,7 +49,9 @@ public class Test
             yield return new object[] { "build_property.TargetFramework = uap10.0", false };
             yield return new object[] { "build_property.TargetFramework = netstandard2.1", false };
             yield return new object[] { "build_property.TargetFramework = net5", true };
-            yield return new object[] { "build_property.TargetFramework = net99", true };
+            yield return new object[] { "build_property.TargetFramework = net5.0-windows", true };
+            yield return new object[] { "build_property.TargetFramework = net5.0-ios14.0", true };
+            yield return new object[] { "build_property.TargetFramework = Net99", true };
             yield return new object[] { "build_property.TargetFramework = netcoreapp5", false };
         }
 
@@ -86,7 +88,7 @@ namespace CallerTargetsBelow5_0
             yield return new object[] { "build_property.TargetFramework = net472\ndotnet_code_quality.enable_platform_analyzer=true", true };
             yield return new object[] { "build_property.TargetFramework = net472\ndotnet_code_quality.enable_platform_analyzer=false", false };
             yield return new object[] { "build_property.TargetFramework = netcoreapp1.0\ndotnet_code_quality.enable_platform_analyzer=true", true };
-            yield return new object[] { "build_property.TargetFramework = netcoreapp1.0\ndotnet_code_quality.enable_platform_analyzer=false", false };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp1.0\ndotnet_code_quality.CA1416.enable_platform_analyzer=false", false };
             yield return new object[] { "build_property.TargetFramework = dotnet\ndotnet_code_quality.enable_platform_analyzer=true", true };
             yield return new object[] { "build_property.TargetFramework = uap10.0\ndotnet_code_quality.enable_platform_analyzer=false", false };
             yield return new object[] { "build_property.TargetFramework = netstandard2.1\ndotnet_code_quality.enable_platform_analyzer=true", true };

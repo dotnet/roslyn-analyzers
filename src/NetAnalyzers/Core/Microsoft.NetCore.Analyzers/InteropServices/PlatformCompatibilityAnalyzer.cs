@@ -174,50 +174,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var tfmString = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFramework, compilation, token);
 
             if (tfmString != null &&
-               TryParseTfm(tfmString, out var platform, out var version))
+                tfmString.Length >= 4 &&
+                tfmString.StartsWith(Net, StringComparison.OrdinalIgnoreCase) &&
+                int.TryParse(tfmString[3].ToString(), out var major) &&
+                major >= 5)
             {
-                if (platform.Equals(Net, StringComparison.OrdinalIgnoreCase) &&
-                    version != null &&
-                    int.TryParse(version[0].ToString(), out var value) &&
-                    value >= 5)
-                {
-                    return true;
-                }
-                else
-                {
-                    return LowerTargetsEnabled(options, compilation, token);
-                }
+                return true;
             }
-
-            return false;
+            else
+            {
+                return LowerTargetsEnabled(options, compilation, token);
+            }
         }
 
         private static bool LowerTargetsEnabled(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
             compilation.SyntaxTrees.FirstOrDefault() is { } tree &&
             options.GetBoolOptionValue(EditorConfigOptionNames.EnablePlatformAnalyzer, SupportedOsRule, tree, compilation, false, cancellationToken);
-
-        private static bool TryParseTfm(string tfm, [NotNullWhen(true)] out string? platform, out string? version)
-        {
-            version = null;
-            for (int i = 0; i < tfm.Length; i++)
-            {
-                if (char.IsDigit(tfm[i]))
-                {
-                    if (i > 0)
-                    {
-                        platform = tfm.Substring(0, i);
-                        version = tfm[i..];
-                        return true;
-                    }
-
-                    platform = null;
-                    return false;
-                }
-            }
-
-            platform = tfm;
-            return true;
-        }
 
         private void AnalyzeOperationBlock(
             OperationBlockStartAnalysisContext context,

@@ -29,7 +29,7 @@ namespace Analyzer.Utilities
         public const string ExcludeAsyncVoidMethods = "exclude_async_void_methods";
 
         /// <summary>
-        /// Boolean option to enable platform commpatibility analyzer for lower version than 5.0.
+        /// Boolean option to enable platform commpatibility analyzer for TFMs with lower version than net5.0 (https://docs.microsoft.com/visualstudio/code-quality/ca1416).
         /// </summary>
         public const string EnablePlatformAnalyzer = "enable_platform_analyzer";
 

@@ -49,7 +49,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string IsOSPlatform = nameof(IsOSPlatform);
         private const string IsPrefix = "Is";
         private const string OptionalSuffix = "VersionAtLeast";
-        private const char SeparatorSemicolon = ';';
         private const string Net = "net";
 
         internal static DiagnosticDescriptor SupportedOsVersionRule = DiagnosticDescriptorHelper.Create(RuleId,
@@ -159,6 +158,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     return methods.Add(runtimeIsOSPlatformMethod);
                 }
+
                 return methods;
             }
 
@@ -172,30 +172,24 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static bool PlatformAnalysisAllowed(AnalyzerOptions options, Compilation compilation, CancellationToken token)
         {
             var tfmString = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFramework, compilation, token);
-            if (tfmString != null)
-            {
-                foreach (var tfm in tfmString.Split(SeparatorSemicolon))
-                {
-                    if (TryParseTfm(tfm, out var platform, out var version))
-                    {
-                        if (platform.Equals(Net, StringComparison.OrdinalIgnoreCase) &&
-                            version != null &&
-                            int.TryParse(version[0].ToString(), out var value)
-                            && value >= 5)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return LowerTargetsEnabled(options, compilation, token);
-                        }
-                    }
-                }
 
-                return false;
+            if (tfmString != null &&
+               TryParseTfm(tfmString, out var platform, out var version))
+            {
+                if (platform.Equals(Net, StringComparison.OrdinalIgnoreCase) &&
+                    version != null &&
+                    int.TryParse(version[0].ToString(), out var value) &&
+                    value >= 5)
+                {
+                    return true;
+                }
+                else
+                {
+                    return LowerTargetsEnabled(options, compilation, token);
+                }
             }
 
-            return true;
+            return false;
         }
 
         private static bool LowerTargetsEnabled(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
@@ -215,10 +209,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         version = tfm[i..];
                         return true;
                     }
+
                     platform = null;
                     return false;
                 }
             }
+
             platform = tfm;
             return true;
         }

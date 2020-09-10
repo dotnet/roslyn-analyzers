@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
-        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser, ios";//\nbuild_property.TargetFramework=net5.0";
+        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser, ios;\nbuild_property.TargetFramework=net5.0";
 
         [Fact(Skip = "TODO need to be fixed: Test for for wrong arguments, not sure how to report the Compiler error diagnostic")]
         public async Task TestOsPlatformAttributesWithNonStringArgument()
@@ -92,7 +92,7 @@ namespace CallerTargetsBelow5_0
             yield return new object[] { "build_property.TargetFramework = netstandard2.1\ndotnet_code_quality.enable_platform_analyzer=true", true };
             yield return new object[] { "build_property.TargetFramework = netstandard2.1\ndotnet_code_quality.enable_platform_analyzer=false", false };
             yield return new object[] { "build_property.TargetFramework = net5\ndotnet_code_quality.enable_platform_analyzer=false", true };
-            yield return new object[] { "build_property.TargetFramework = net99\ndotnet_code_quality.enable_platform_analyzer=false", true };
+            yield return new object[] { "build_property.TargetFramework = net6.0\ndotnet_code_quality.enable_platform_analyzer=false", true };
             yield return new object[] { "build_property.TargetFramework = netcoreapp5\ndotnet_code_quality.enable_platform_analyzer=false", false };
         }
 
@@ -1793,7 +1793,7 @@ namespace PlatformCompatDemo.SupportedUnupported
         }
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
-            => await PopulateTestCs(sourceCode, expectedDiagnostics).RunAsync();
+            => await VerifyAnalyzerAsyncCs(sourceCode, "build_property.TargetFramework = net5", expectedDiagnostics);
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, string editorconfigText, params DiagnosticResult[] expectedDiagnostics)
         {
@@ -1810,7 +1810,7 @@ namespace PlatformCompatDemo.SupportedUnupported
         }
 
         private static async Task VerifyAnalyzerAsyncVb(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
-            => await PopulateTestVb(sourceCode, expectedDiagnostics).RunAsync();
+            => await VerifyAnalyzerAsyncVb(sourceCode, "build_property.TargetFramework = net5", expectedDiagnostics);
 
         private static async Task VerifyAnalyzerAsyncVb(string sourceCode, string editorconfigText, params DiagnosticResult[] expectedDiagnostics)
         {

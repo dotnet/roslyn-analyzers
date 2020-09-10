@@ -31,7 +31,7 @@ namespace Analyzer.Utilities
         /// <summary>
         /// Boolean option to enable platform commpatibility analyzer for TFMs with lower version than net5.0 (https://docs.microsoft.com/visualstudio/code-quality/ca1416).
         /// </summary>
-        public const string EnablePlatformAnalyzer = "enable_platform_analyzer";
+        public const string EnablePlatformAnalyzerOnPreNet5Target = "enable_platform_analyzer_on_pre_net5_target";
 
         /// <summary>
         /// Option to configure analyzed output kinds, i.e. <see cref="Microsoft.CodeAnalysis.CompilationOptions.OutputKind"/> of the compilation.

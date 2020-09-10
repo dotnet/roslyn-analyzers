@@ -173,8 +173,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             var tfmString = options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.TargetFramework, compilation, token);
 
-            if (tfmString != null &&
-                tfmString.Length >= 4 &&
+            if (tfmString?.Length >= 4 &&
                 tfmString.StartsWith(Net, StringComparison.OrdinalIgnoreCase) &&
                 int.TryParse(tfmString[3].ToString(), out var major) &&
                 major >= 5)
@@ -189,7 +188,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool LowerTargetsEnabled(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken) =>
             compilation.SyntaxTrees.FirstOrDefault() is { } tree &&
-            options.GetBoolOptionValue(EditorConfigOptionNames.EnablePlatformAnalyzer, SupportedOsRule, tree, compilation, false, cancellationToken);
+            options.GetBoolOptionValue(EditorConfigOptionNames.EnablePlatformAnalyzerOnPreNet5Target, SupportedOsRule, tree, compilation, false, cancellationToken);
 
         private void AnalyzeOperationBlock(
             OperationBlockStartAnalysisContext context,

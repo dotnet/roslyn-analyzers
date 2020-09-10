@@ -29,6 +29,11 @@ namespace Analyzer.Utilities
         public const string ExcludeAsyncVoidMethods = "exclude_async_void_methods";
 
         /// <summary>
+        /// Boolean option to enable platform commpatibility analyzer for lower version than 5.0.
+        /// </summary>
+        public const string EnablePlatformAnalyzer = "enable_platform_analyzer";
+
+        /// <summary>
         /// Option to configure analyzed output kinds, i.e. <see cref="Microsoft.CodeAnalysis.CompilationOptions.OutputKind"/> of the compilation.
         /// Allowed option values: One or more fields of <see cref="Microsoft.CodeAnalysis.CompilationOptions.OutputKind"/> as a comma separated list.
         /// </summary>

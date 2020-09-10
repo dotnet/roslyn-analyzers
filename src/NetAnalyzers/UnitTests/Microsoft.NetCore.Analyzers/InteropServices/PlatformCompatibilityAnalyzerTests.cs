@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
-        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser, ios";
+        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser, ios";//\nbuild_property.TargetFramework=net5.0";
 
         [Fact(Skip = "TODO need to be fixed: Test for for wrong arguments, not sure how to report the Compiler error diagnostic")]
         public async Task TestOsPlatformAttributesWithNonStringArgument()
@@ -39,6 +39,89 @@ public class Test
 " + MockAttributesCsSource;
 
             await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        public static IEnumerable<object[]> Create_DifferentTfms()
+        {
+            yield return new object[] { "build_property.TargetFramework = net472", false };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp1.0", false };
+            yield return new object[] { "build_property.TargetFramework = dotnet", false };
+            yield return new object[] { "build_property.TargetFramework = uap10.0", false };
+            yield return new object[] { "build_property.TargetFramework = netstandard2.1", false };
+            yield return new object[] { "build_property.TargetFramework = net5", true };
+            yield return new object[] { "build_property.TargetFramework = net99", true };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp5", false };
+        }
+
+        [Theory]
+        [MemberData(nameof(Create_DifferentTfms))]
+        public async Task Net5OrHigherTfmWarns_LowerThanNet5NotWarn(string tfm, bool warn)
+        {
+            var invocation = warn ? "[|Target.WindowsOnlyMethod()|]" : "Target.WindowsOnlyMethod()";
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerTargetsBelow5_0
+{
+    class Caller
+    {
+        public static void TestWindowsOnlyMethod()
+        {
+            " + invocation + @";
+        }
+    }
+
+    class Target
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void WindowsOnlyMethod() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source, tfm);
+        }
+
+        public static IEnumerable<object[]> Create_DifferentTfmsWithOption()
+        {
+            yield return new object[] { "build_property.TargetFramework = net472\ndotnet_code_quality.enable_platform_analyzer=true", true };
+            yield return new object[] { "build_property.TargetFramework = net472\ndotnet_code_quality.enable_platform_analyzer=false", false };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp1.0\ndotnet_code_quality.enable_platform_analyzer=true", true };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp1.0\ndotnet_code_quality.enable_platform_analyzer=false", false };
+            yield return new object[] { "build_property.TargetFramework = dotnet\ndotnet_code_quality.enable_platform_analyzer=true", true };
+            yield return new object[] { "build_property.TargetFramework = uap10.0\ndotnet_code_quality.enable_platform_analyzer=false", false };
+            yield return new object[] { "build_property.TargetFramework = netstandard2.1\ndotnet_code_quality.enable_platform_analyzer=true", true };
+            yield return new object[] { "build_property.TargetFramework = netstandard2.1\ndotnet_code_quality.enable_platform_analyzer=false", false };
+            yield return new object[] { "build_property.TargetFramework = net5\ndotnet_code_quality.enable_platform_analyzer=false", true };
+            yield return new object[] { "build_property.TargetFramework = net99\ndotnet_code_quality.enable_platform_analyzer=false", true };
+            yield return new object[] { "build_property.TargetFramework = netcoreapp5\ndotnet_code_quality.enable_platform_analyzer=false", false };
+        }
+
+        [Theory]
+        [MemberData(nameof(Create_DifferentTfmsWithOption))]
+        public async Task Net5OrHigherTfmWarns_LowerThanNet5WarnsIfEnabled(string tfmAndOption, bool warn)
+        {
+            var invocation = warn ? "[|Target.WindowsOnlyMethod()|]" : "Target.WindowsOnlyMethod()";
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerTargetsBelow5_0
+{
+    class Caller
+    {
+        public static void TestWindowsOnlyMethod()
+        {
+            " + invocation + @";
+        }
+    }
+
+    class Target
+    {
+        [SupportedOSPlatform(""windows"")]
+        public static void WindowsOnlyMethod() { }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source, tfmAndOption);
         }
 
         [Fact]

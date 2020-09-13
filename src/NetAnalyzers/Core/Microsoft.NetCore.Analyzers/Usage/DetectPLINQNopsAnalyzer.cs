@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.Usage
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DetectPLINQNops : DiagnosticAnalyzer
+    public sealed class DetectPLINQNopsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2250";
         private static readonly string[] s_knownCalls = new string[] { "ToList", "ToArray" };
@@ -52,7 +52,17 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 ctx.RegisterSyntaxNodeAction(x => AnalyzeSymbol(x, asParallelSymbols, toArraySymbols, toListSymbols), SyntaxKind.InvocationExpression);
             });
         }
-
+        private abstract class C
+        {
+            protected abstract void Call2(params string[] arr);
+        }
+        private class D : C
+        {
+            protected override void Call2(string[] arr)
+            {
+                throw new NotImplementedException();
+            }
+        }
         private static void AnalyzeSymbol(SyntaxNodeAnalysisContext context, ImmutableHashSet<ISymbol> asParallelSymbols, ImmutableHashSet<ISymbol> toArraySymbols, ImmutableHashSet<ISymbol> toListSymbols)
         {
             var invocation = (InvocationExpressionSyntax)context.Node;
@@ -80,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     return;
                 }
 
-                if(memberAccess.Expression is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax) //AsParallel may precede this call, making it a no-op as well
+                if (memberAccess.Expression is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax) //AsParallel may precede this call, making it a no-op as well
                 {
                     if (context.SemanticModel.GetSymbolInfo(nestedInvocation.Expression).Symbol is not IMethodSymbol nestedSymbol || nestedSymbol.ReducedFrom is null)
                     {

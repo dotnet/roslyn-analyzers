@@ -13,12 +13,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microsoft.NetCore.Analyzers.Usage
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNops.RuleId), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNopsAnalyzer.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider
     {
         private static readonly string[] removableEnds = new string[] { "ToList", "ToArray", "AsParallel" };
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DetectPLINQNops.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DetectPLINQNopsAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

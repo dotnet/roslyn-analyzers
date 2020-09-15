@@ -14,16 +14,62 @@ namespace Analyzer.Utilities.Extensions
         public static bool IsMethodNotImplementedOrSupported(this OperationBlockStartAnalysisContext context)
 #pragma warning restore RS1012 // Start action has no registered actions.
         {
-            // Note that VB method bodies with 1 action have 3 operations.
-            // The first is the actual operation, the second is a label statement, and the third is a return
-            // statement. The last two are implicit in these scenarios.
+            var methodBlock = FindMethodBlockOperation(context);
 
+            if (methodBlock != null &&
+                IsSingleStatementBody(methodBlock) &&
+                methodBlock.Operations[0].GetTopmostExplicitDescendants() is { } descendants &&
+                descendants.Length == 1 &&
+                descendants[0] is IThrowOperation throwOperation &&
+                throwOperation.GetThrownExceptionType() is ITypeSymbol createdExceptionType)
+            {
+                if (Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException), createdExceptionType.OriginalDefinition)
+                    || Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException), createdExceptionType.OriginalDefinition))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+
+            static bool IsSingleStatementBody(IBlockOperation body)
+            {
+                // Note that VB method bodies with 1 action have 3 operations.
+                // The first is the actual operation, the second is a label statement, and the third is a return
+                // statement. The last two are implicit in these scenarios.
+
+                return body.Operations.Length == 1 ||
+                    (body.Operations.Length == 3 && body.Syntax.Language == LanguageNames.VisualBasic &&
+                     body.Operations[1] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
+                     body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
+            }
+        }
+
+#pragma warning disable RS1012 // Start action has no registered actions.
+        public static bool IsEmptyMethod(this OperationBlockStartAnalysisContext context)
+#pragma warning restore RS1012 // Start action has no registered actions.
+        {
+            var methodBlock = FindMethodBlockOperation(context);
+
+            return methodBlock != null &&
+                (methodBlock.Operations.Length == 0 || IsVisualBasicEmptyMethod(methodBlock));
+
+            static bool IsVisualBasicEmptyMethod(IBlockOperation methodBlock)
+                => methodBlock.Operations.Length == 2 &&
+                methodBlock.Syntax.Language == LanguageNames.VisualBasic &&
+                methodBlock.Operations[0] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
+                methodBlock.Operations[1] is IReturnOperation returnOp && returnOp.IsImplicit;
+        }
+
+#pragma warning disable RS1012 // Start action has no registered actions.
+        public static IBlockOperation? FindMethodBlockOperation(this OperationBlockStartAnalysisContext context)
+#pragma warning restore RS1012 // Start action has no registered actions.
+        {
             var operationBlocks = context.OperationBlocks.WhereAsArray(operation => !operation.IsOperationNoneRoot());
 
-            IBlockOperation? methodBlock = null;
             if (operationBlocks.Length == 1 && operationBlocks[0].Kind == OperationKind.Block)
             {
-                methodBlock = (IBlockOperation)operationBlocks[0];
+                return (IBlockOperation)operationBlocks[0];
             }
             else if (operationBlocks.Length > 1)
             {
@@ -31,37 +77,12 @@ namespace Analyzer.Utilities.Extensions
                 {
                     if (block.Kind == OperationKind.Block)
                     {
-                        methodBlock = (IBlockOperation)block;
-                        break;
+                        return (IBlockOperation)block;
                     }
                 }
             }
 
-            if (methodBlock != null)
-            {
-                static bool IsSingleStatementBody(IBlockOperation body)
-                {
-                    return body.Operations.Length == 1 ||
-                        (body.Operations.Length == 3 && body.Syntax.Language == LanguageNames.VisualBasic &&
-                         body.Operations[1] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
-                         body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
-                }
-
-                if (IsSingleStatementBody(methodBlock) &&
-                    methodBlock.Operations[0].GetTopmostExplicitDescendants() is { } descendants &&
-                    descendants.Length == 1 &&
-                    descendants[0] is IThrowOperation throwOperation &&
-                    throwOperation.GetThrownExceptionType() is ITypeSymbol createdExceptionType)
-                {
-                    if (Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException), createdExceptionType.OriginalDefinition)
-                        || Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException), createdExceptionType.OriginalDefinition))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return null;
         }
     }
 }

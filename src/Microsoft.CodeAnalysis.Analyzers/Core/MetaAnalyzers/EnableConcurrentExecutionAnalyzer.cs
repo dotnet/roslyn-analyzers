@@ -55,7 +55,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 }
 
                 var method = (IMethodSymbol)context.OwningSymbol;
-                if (method.Name != nameof(DiagnosticAnalyzer.Initialize))
+                if (method.Name != nameof(DiagnosticAnalyzer.Initialize) ||
+                    context.IsEmptyMethod())
                 {
                     return;
                 }

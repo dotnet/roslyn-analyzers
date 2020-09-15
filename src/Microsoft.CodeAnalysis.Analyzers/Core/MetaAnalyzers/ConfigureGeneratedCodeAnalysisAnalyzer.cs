@@ -60,6 +60,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     return;
                 }
 
+                if (context.IsEmptyMethod())
+                {
+                    // Do not report for empty method (see https://github.com/dotnet/roslyn-analyzers/issues/4101)
+                    return;
+                }
+
                 IParameterSymbol? analysisContextParameter = null;
                 foreach (var parameter in method.Parameters)
                 {

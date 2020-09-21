@@ -108,23 +108,19 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             End While
 
-            Dim invocationExpression As InvocationExpressionSyntax = Nothing
-
             If isAsync Then
 
                 Dim awaitExpressionSyntax = TryCast(sourceExpression, AwaitExpressionSyntax)
 
                 If Not awaitExpressionSyntax Is Nothing Then
 
-                    invocationExpression = TryCast(awaitExpressionSyntax.Expression, InvocationExpressionSyntax)
+                    sourceExpression = awaitExpressionSyntax.Expression
 
                 End If
 
-            Else
-
-                invocationExpression = TryCast(sourceExpression, InvocationExpressionSyntax)
-
             End If
+
+            Dim invocationExpression As InvocationExpressionSyntax = TryCast(sourceExpression, InvocationExpressionSyntax)
 
             If invocationExpression IsNot Nothing Then
 
@@ -134,7 +130,9 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             End If
 
+            '  Try to get source expression as MemberAccessExpression which is only legal on VB.
             Dim memberAccessExpression = TryCast(sourceExpression, MemberAccessExpressionSyntax)
+
             If memberAccessExpression IsNot Nothing Then ' This case happens for something like: x = GetData().Count where Count method is called without parentheses.
                 expression = memberAccessExpression.Expression
                 arguments = Enumerable.Empty(Of SyntaxNode)()

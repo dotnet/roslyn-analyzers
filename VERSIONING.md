@@ -1,5 +1,4 @@
-﻿Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
-=================================================================
+﻿# Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
 
 Following is the versioning scheme that is being used for analyzer packages:
 
@@ -9,8 +8,7 @@ Following is the versioning scheme that is being used for analyzer packages:
 
 **NOTE**: An exception was applied to the above versioning scheme when we moved the analyzer packages to version 1.1.0, while still depending on version 1.0.0 of Microsoft.CodeAnalysis. This was done as we had mistakenly published 1.1.0-beta1 pre-release packages for some analyzer packages on nuget.org.
 
-Current and Released Versions of Analyzer Packages
-==================================================
+## Current and Released Versions of Analyzer Packages
 
 Current version of all analyzer packages that are built out of this repo are tracked by the `VersionPrefix` property defined in [Versions.Props](.//eng//Versions.props)
 
@@ -51,3 +49,6 @@ Sr. No. |  Release Version | Commit Tag       | Commit SHA                      
 31       | 3.0.0-beta2.final (pre-release)             | v3.0.0-beta2.final          | [6dc3658](https://github.com/dotnet/roslyn-analyzers/commit/6dc3658cb0b16fc57997979afce092245b087c1c)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.Metrics, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
 32       | 3.0.0-beta3.final (pre-release)             | v3.0.0-beta3.final          | [f902405](https://github.com/dotnet/roslyn-analyzers/commit/f902405734ee5206912ea46537947576d02f954f)   | Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers
 33       | 3.0.0             | v3.0.0          | [39d189a](https://github.com/dotnet/roslyn-analyzers/commit/39d189ab8b48b3811978edbafdc0aef190025f53)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.Metrics, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
+34       | 3.3.0-beta1.final (pre-release)             | v3.3.0-beta1.final          | [d752929](https://github.com/dotnet/roslyn-analyzers/commit/d7529293a04f71e007f1a7b74cba6378979589f3)   | Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers
+35       | 3.3.0-beta2.final (pre-release)             | v3.3.0-beta2.final          | [303d517](https://github.com/dotnet/roslyn-analyzers/commit/303d517d74aaaade61c2e46c9d8965c23758ee7d)   | Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers
+36       | 3.3.0             | v3.3.0          | [0a95f9e](https://github.com/dotnet/roslyn-analyzers/commit/0a95f9e9a53519ee3cd59b9cf96be6326ef9955b)   | Microsoft.CodeAnalysis.Analyzers, Microsoft.CodeAnalysis.AnalyzerUtilities, Microsoft.CodeAnalysis.FxCopAnalyzers, Microsoft.CodeAnalysis.Metrics, Microsoft.CodeAnalysis.VersionCheckAnalyzer, Microsoft.CodeQuality.Analyzers, Microsoft.NetCore.Analyzers, Microsoft.NetFramework.Analyzers, Roslyn.Diagnostics.Analyzers, Microsoft.CodeAnalysis.PublicApiAnalyzers, Microsoft.CodeAnalysis.BannedApiAnalyzers

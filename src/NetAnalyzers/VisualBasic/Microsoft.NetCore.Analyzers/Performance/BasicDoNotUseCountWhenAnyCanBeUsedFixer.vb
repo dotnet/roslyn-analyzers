@@ -56,13 +56,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not invocation Is Nothing AndAlso invocation.ArgumentList.Arguments.Count = 1 Then
 
-                        If TryGetExpressionAndInvocationArguments(
+                        Return TryGetExpressionAndInvocationArguments(
                             sourceExpression:=invocation.ArgumentList.Arguments(0).GetExpression(),
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments) Then
-                            Return True
-                        End If
+                            arguments:=arguments)
 
                     End If
 
@@ -72,14 +70,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not binary Is Nothing Then
 
-                        If TryGetExpressionAndInvocationArguments(
+                        Return TryGetExpressionAndInvocationArguments(
                             sourceExpression:=binary.Left,
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments) Then
-                            Return True
-                        End If
-
+                            arguments:=arguments)
                     End If
 
                 Case UseCountProperlyAnalyzer.OperationBinaryRight
@@ -88,13 +83,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                     If Not binary Is Nothing Then
 
-                        If TryGetExpressionAndInvocationArguments(
+                        Return TryGetExpressionAndInvocationArguments(
                             sourceExpression:=binary.Right,
                             isAsync:=isAsync,
                             expression:=expression,
-                            arguments:=arguments) Then
-                            Return True
-                        End If
+                            arguments:=arguments)
 
                     End If
 

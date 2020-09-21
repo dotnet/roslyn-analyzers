@@ -22,8 +22,7 @@ jobs:
         _configuration: Release
         _codeCoverage: False
   pool:
-    name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Open
+    vmImage: 'windows-latest'
   timeoutInMinutes: 40
 
   steps:

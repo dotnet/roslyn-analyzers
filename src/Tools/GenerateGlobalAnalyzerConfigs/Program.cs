@@ -371,7 +371,7 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
             File.WriteAllText(fileWithPath, fileContents);
 
             static string GetCommonContents(string packageName)
-                => GetGlobalAnalyzerConfigTargetContents(packageName) + GetMSBuildContentForPropertyAndItemOptions();
+                => GetGlobalAnalyzerConfigTargetContents(packageName) + GetMSBuildContentForPropertyAndItemOptions() + GetCodeAnalysisTreatWarningsAsErrorsTargetContents();
 
             static string GetGlobalAnalyzerConfigTargetContents(string packageName)
             {
@@ -475,6 +475,22 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
                     AddItemGroupForCompilerVisibleProperties(compilerVisibleProperties, builder);
                 }
+            }
+
+            static string GetCodeAnalysisTreatWarningsAsErrorsTargetContents()
+            {
+                return $@"
+  <!--
+    Design-time target to prevent the rule ids implemented in this package to be bumped to errors in the IDE
+    when 'CodeAnalysisTreatWarningsAsErrors' = 'false'. Note that a similar 'WarningsNotAsErrors'
+    property group is present in the generated props file to ensure this functionality on command line builds.
+  -->
+  <Target Name=""_CodeAnalysisTreatWarningsNotAsErrors"" BeforeTargets=""CoreCompile"" Condition=""'$(CodeAnalysisTreatWarningsAsErrors)' == 'false' AND ('$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true')"">
+    <PropertyGroup>
+      <WarningsNotAsErrors>$(WarningsNotAsErrors);$(CodeAnalysisRuleIds)</WarningsNotAsErrors>
+    </PropertyGroup>    
+  </Target>
+";
             }
 
             static string GetPackageSpecificContents(string packageName)

@@ -1,5 +1,4 @@
-﻿Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
-=================================================================
+﻿# Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
 
 Following is the versioning scheme that is being used for analyzer packages:
 
@@ -9,8 +8,7 @@ Following is the versioning scheme that is being used for analyzer packages:
 
 **NOTE**: An exception was applied to the above versioning scheme when we moved the analyzer packages to version 1.1.0, while still depending on version 1.0.0 of Microsoft.CodeAnalysis. This was done as we had mistakenly published 1.1.0-beta1 pre-release packages for some analyzer packages on nuget.org.
 
-Current and Released Versions of Analyzer Packages
-==================================================
+## Current and Released Versions of Analyzer Packages
 
 Current version of all analyzer packages that are built out of this repo are tracked by the `VersionPrefix` property defined in [Versions.Props](.//eng//Versions.props)
 

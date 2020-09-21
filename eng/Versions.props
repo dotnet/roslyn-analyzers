@@ -2,8 +2,8 @@
   <PropertyGroup>
     <VersionPrefix>3.3.1</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>5.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>rc2</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>

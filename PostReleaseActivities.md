@@ -1,5 +1,6 @@
-﻿Post-release activities
-=================================================================
+﻿# Post-release activities
+
+## Steps to generate Packages
 
 Please follow the below steps after publishing analyzer NuGet packages from this repo onto NuGet.org:
 
@@ -20,8 +21,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
    7. Move all the entries from `AnalyzerReleases.Unshipped.md` to `AnalyzerReleases.Shipped.md` for various analyzer NuGet package projects under a new "Release" section in the shipped file.
    8. Create and submit a PR with the above changes.
 
-Steps to generate Release Notes
-=================================================================
+## Steps to generate Release Notes
 
 1. Checkout the sources for the release branch locally. This would normally be the master branch.
 2. Build.

@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -53,7 +53,7 @@
         "CA1305": {
           "id": "CA1305",
           "shortDescription": "Specify IFormatProvider",
-          "fullDescription": "A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'",
+          "fullDescription": "A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1305",
           "properties": {
@@ -72,13 +72,13 @@
         },
         "CA1307": {
           "id": "CA1307",
-          "shortDescription": "Specify StringComparison",
-          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "shortDescription": "Specify StringComparison for clarity",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. It is recommended to use the overload with StringComparison parameter for clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1307",
           "properties": {
             "category": "Globalization",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "SpecifyStringComparisonAnalyzer",
             "languages": [
               "C#",
@@ -110,6 +110,25 @@
             ]
           }
         },
+        "CA1310": {
+          "id": "CA1310",
+          "shortDescription": "Specify StringComparison for correctness",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter, hence its behavior could vary based on the current user's locale settings. It is strongly recommended to use the overload with StringComparison parameter for correctness and clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1310",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": true,
+            "typeName": "SpecifyStringComparisonAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA1401": {
           "id": "CA1401",
           "shortDescription": "P/Invokes should not be visible",
@@ -126,6 +145,44 @@
             ],
             "tags": [
               "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1416": {
+          "id": "CA1416",
+          "shortDescription": "Validate platform compatibility",
+          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1416",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "PlatformCompatabilityAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1417": {
+          "id": "CA1417",
+          "shortDescription": "Do not use 'OutAttribute' on string parameters for P/Invokes",
+          "fullDescription": "String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1417",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseOutAttributeStringPInvokeParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry"
             ]
           }
@@ -211,7 +268,7 @@
         },
         "CA1826": {
           "id": "CA1826",
-          "shortDescription": "Do not use Enumerable methods on indexable collections. Instead use the collection directly",
+          "shortDescription": "Do not use Enumerable methods on indexable collections",
           "fullDescription": "This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1826",
@@ -287,7 +344,7 @@
         },
         "CA1830": {
           "id": "CA1830",
-          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder.",
+          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder",
           "fullDescription": "StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1830",
@@ -363,7 +420,7 @@
         },
         "CA1834": {
           "id": "CA1834",
-          "shortDescription": "Consider using 'StringBuilder.Append(char)' when applicable.",
+          "shortDescription": "Consider using 'StringBuilder.Append(char)' when applicable",
           "fullDescription": "'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1834",
@@ -409,6 +466,44 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "UseCountProperlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1837": {
+          "id": "CA1837",
+          "shortDescription": "Use 'Environment.ProcessId'",
+          "fullDescription": "'Environment.ProcessId' is simpler and faster than 'Process.GetCurrentProcess().Id'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1837",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseEnvironmentProcessId",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1838": {
+          "id": "CA1838",
+          "shortDescription": "Avoid 'StringBuilder' parameters for P/Invokes",
+          "fullDescription": "Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1838",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "AvoidStringBuilderPInvokeParametersAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -537,7 +632,7 @@
         },
         "CA2014": {
           "id": "CA2014",
-          "shortDescription": "Do not use stackalloc in loops.",
+          "shortDescription": "Do not use stackalloc in loops",
           "fullDescription": "Stack space allocated by a stackalloc is only released at the end of the current method's invocation.  Using it in a loop can result in unbounded stack growth and eventual stack overflow conditions.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2014",
@@ -856,7 +951,7 @@
         },
         "CA2247": {
           "id": "CA2247",
-          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum.",
+          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum",
           "fullDescription": "TaskCompletionSource has constructors that take TaskCreationOptions that control the underlying Task, and constructors that take object state that's stored in the task.  Accidentally passing a TaskContinuationOptions instead of a TaskCreationOptions will result in the call treating the options as state.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2247",
@@ -895,7 +990,7 @@
         "CA2249": {
           "id": "CA2249",
           "shortDescription": "Consider using 'string.Contains' instead of 'string.IndexOf'",
-          "fullDescription": "Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'",
+          "fullDescription": "Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2249",
           "properties": {
@@ -1208,8 +1303,8 @@
         },
         "CA2350": {
           "id": "CA2350",
-          "shortDescription": "Do not use insecure deserialization with DataTable.ReadXml()",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.",
+          "shortDescription": "Do not use DataTable.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2350",
           "properties": {
@@ -1227,8 +1322,8 @@
         },
         "CA2351": {
           "id": "CA2351",
-          "shortDescription": "Do not use insecure deserialization with DataSet.ReadXml()",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.",
+          "shortDescription": "Do not use DataSet.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2351",
           "properties": {
@@ -1266,7 +1361,7 @@
         "CA2353": {
           "id": "CA2353",
           "shortDescription": "Unsafe DataSet or DataTable in serializable type",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2353",
           "properties": {
@@ -1285,7 +1380,7 @@
         "CA2354": {
           "id": "CA2354",
           "shortDescription": "Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2354",
           "properties": {
@@ -1304,7 +1399,7 @@
         "CA2355": {
           "id": "CA2355",
           "shortDescription": "Unsafe DataSet or DataTable type found in deserializable object graph",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2355",
           "properties": {
@@ -1323,13 +1418,51 @@
         "CA2356": {
           "id": "CA2356",
           "shortDescription": "Unsafe DataSet or DataTable type in web deserializable object graph",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2356",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DataSetDataTableInWebSerializableObjectGraphAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2361": {
+          "id": "CA2361",
+          "shortDescription": "Ensure autogenerated class containing DataSet.ReadXml() is not used with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. Make sure that autogenerated class containing the '{0}' call is not deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2361",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2362": {
+          "id": "CA2362",
+          "shortDescription": "Unsafe DataSet or DataTable in autogenerated serializable type can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the autogenerated type is never deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2362",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableTypeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2527,19 +2660,57 @@
               "Telemetry"
             ]
           }
+        },
+        "IL3000": {
+          "id": "IL3000",
+          "shortDescription": "Avoid using accessing Assembly file path when publishing as a single-file",
+          "fullDescription": "'{0}' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/il3000",
+          "properties": {
+            "category": "Publish",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidAssemblyLocationInSingleFile",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "IL3001": {
+          "id": "IL3001",
+          "shortDescription": "Avoid using accessing Assembly file path when publishing as a single-file",
+          "fullDescription": "'{0}' will throw for assemblies embedded in a single-file app",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/il3001",
+          "properties": {
+            "category": "Publish",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidAssemblyLocationInSingleFile",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
         "CA1309": {
           "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
+          "shortDescription": "Use ordinal string comparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
@@ -2577,7 +2748,7 @@
         },
         "CA1825": {
           "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
+          "shortDescription": "Avoid zero-length array allocations",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",
@@ -2616,13 +2787,13 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
         "CA1309": {
           "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
+          "shortDescription": "Use ordinal string comparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
@@ -2660,7 +2831,7 @@
         },
         "CA1825": {
           "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
+          "shortDescription": "Avoid zero-length array allocations",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",

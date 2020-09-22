@@ -1,6 +1,7 @@
 # Branches that trigger a build on commit
 trigger:
   - master
+  - release/*
   - 2.9.x
 
 variables:

@@ -1,11 +1,13 @@
 # Branches that trigger a build on commit
 trigger:
 - master
+- release/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
+- release/*
 - 2.9.x
 
 jobs:

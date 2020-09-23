@@ -131,7 +131,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             '  Try to get source expression as MemberAccessExpression which is only legal on VB.
             Dim memberAccessExpression = TryCast(sourceExpression, MemberAccessExpressionSyntax)
 
-             ' This case happens for something like: x = GetData().Count where Count method is called without parentheses.
+            ' This case happens for something like: x = GetData().Count where Count method is called without parentheses.
             If memberAccessExpression IsNot Nothing Then
                 expression = memberAccessExpression.Expression
                 arguments = Enumerable.Empty(Of SyntaxNode)()

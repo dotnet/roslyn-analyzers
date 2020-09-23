@@ -38,13 +38,11 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
                         If Not member Is Nothing Then
 
-                            If TryGetExpressionAndInvocationArguments(
+                            Return TryGetExpressionAndInvocationArguments(
                                 sourceExpression:=member.Expression,
                                 isAsync:=isAsync,
                                 expression:=expression,
-                                arguments:=arguments) Then
-                                Return True
-                            End If
+                                arguments:=arguments)
 
                         End If
 

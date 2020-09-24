@@ -994,7 +994,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             return attributes != null;
 
-            static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, [NotNullWhen(true)] ref SmallDictionary<string, PlatformAttributes>? parentAttributes)
+            static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, ref SmallDictionary<string, PlatformAttributes>? parentAttributes)
             {
                 SmallDictionary<string, PlatformAttributes>? childAttributes = null;
                 foreach (AttributeData attribute in immediateAttributes)
@@ -1005,68 +1005,71 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                if (childAttributes != null)
+                if (childAttributes == null)
                 {
-                    if (parentAttributes != null && parentAttributes.Any())
+                    return;
+                }
+
+                if (parentAttributes != null && parentAttributes.Any())
+                {
+                    foreach (var (platform, attributes) in parentAttributes)
                     {
-                        foreach (var (platform, attributes) in parentAttributes)
+                        if (DenyList(attributes) &&
+                            !parentAttributes.Any(ca => AllowList(ca.Value)))
                         {
-                            if (DenyList(attributes) &&
-                                !parentAttributes.Any(ca => AllowList(ca.Value)))
+                            // if all are deny list then we can add the child attributes
+                            foreach (var (name, childAttribute) in childAttributes)
                             {
-                                // if all are deny list then we can add the child attributes
-                                foreach (var (name, childAttribute) in childAttributes)
+                                if (parentAttributes.TryGetValue(name, out var existing))
                                 {
-                                    if (parentAttributes.TryGetValue(name, out var existing))
+                                    // but don't override existing unless narrowing the support
+                                    if (childAttribute.UnsupportedFirst != null &&
+                                        childAttribute.UnsupportedFirst < attributes.UnsupportedFirst)
                                     {
-                                        // but don't override existing unless narrowing the support
-                                        if (childAttribute.UnsupportedFirst != null &&
-                                            childAttribute.UnsupportedFirst < attributes.UnsupportedFirst)
-                                        {
-                                            attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        parentAttributes[name] = childAttribute;
-                                    }
-                                }
-                                return;
-                            }
-                            else if (AllowList(attributes))
-                            {
-                                // only attributes with same platform matter, could narrow the list
-                                if (childAttributes.TryGetValue(platform, out var childAttribute))
-                                {
-                                    // Only later versions could narrow, other versions ignored 
-                                    if (childAttribute.SupportedFirst > attributes.SupportedFirst)
-                                    {
-                                        attributes.SupportedSecond = childAttribute.SupportedFirst;
-                                    }
-
-                                    if (childAttribute.UnsupportedFirst != null)
-                                    {
-                                        if (childAttribute.UnsupportedFirst <= attributes.SupportedFirst)
-                                        {
-                                            attributes.SupportedFirst = null;
-                                            attributes.SupportedSecond = null;
-                                        }
-                                        else if (childAttribute.UnsupportedFirst <= attributes.SupportedSecond)
-                                        {
-                                            attributes.SupportedSecond = null;
-                                        }
-
                                         attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
                                     }
                                 }
-                                // other platform attributes are ignored as the list couldn't be extended
+                                else
+                                {
+                                    parentAttributes[name] = childAttribute;
+                                }
                             }
+                            // merged all attributes, no need to continue looping
+                            return;
+                        }
+                        else if (AllowList(attributes))
+                        {
+                            // only attributes with same platform matter, could narrow the list
+                            if (childAttributes.TryGetValue(platform, out var childAttribute))
+                            {
+                                // only later versions could narrow, other versions ignored 
+                                if (childAttribute.SupportedFirst > attributes.SupportedFirst)
+                                {
+                                    attributes.SupportedSecond = childAttribute.SupportedFirst;
+                                }
+
+                                if (childAttribute.UnsupportedFirst != null)
+                                {
+                                    if (childAttribute.UnsupportedFirst <= attributes.SupportedFirst)
+                                    {
+                                        attributes.SupportedFirst = null;
+                                        attributes.SupportedSecond = null;
+                                    }
+                                    else if (childAttribute.UnsupportedFirst <= attributes.SupportedSecond)
+                                    {
+                                        attributes.SupportedSecond = null;
+                                    }
+
+                                    attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
+                                }
+                            }
+                            // other platform attributes are ignored as the list couldn't be extended
                         }
                     }
-                    else
-                    {
-                        parentAttributes = childAttributes;
-                    }
+                }
+                else
+                {
+                    parentAttributes = childAttributes;
                 }
             }
         }

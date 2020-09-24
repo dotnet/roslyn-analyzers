@@ -181,7 +181,11 @@ visual_basic_style_unused_value_assignment_preference = unused_local_variable:wa
 ### Configuration for IDE code style by diagnostic IDs ###
 [*.{cs,vb}]
 
+# Default severity for all IDE code style rules with category 'Style'
 dotnet_analyzer_diagnostic.category-Style.severity = warning
+
+# Default severity for all IDE code quality rules with category 'CodeQuality'
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
 
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion

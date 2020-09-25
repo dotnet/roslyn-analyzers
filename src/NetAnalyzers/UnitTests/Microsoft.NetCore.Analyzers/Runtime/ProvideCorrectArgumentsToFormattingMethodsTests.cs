@@ -15,10 +15,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class ProvideCorrectArgumentsToFormattingMethodsTests
     {
-        #region Diagnostic Tests
-
-        [Fact]
-        public async Task CA2241CSharpString()
+        [Theory]
+        [InlineData("Console.Write")]
+        [InlineData("Console.WriteLine")]
+        public async Task CA2241_MoreArgsThanFormatItem_VoidMethods_Diagnostic(string invocation)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -27,34 +27,108 @@ public class C
 {
     void Method()
     {
-        var a = String.Format("""", 1);
-        var b = String.Format(""{0}"", 1, 2);
-        var c = String.Format(""{0} {1}"", 1, 2, 3);
-        var d = String.Format(""{0} {1} {2}"", 1, 2, 3, 4);
-        var e = string.Format(""{0} {0}"", 1, 2);
-
-        IFormatProvider p = null;
-        var f = String.Format(p, """", 1);
-        var g = String.Format(p, ""{0}"", 1, 2);
-        var h = String.Format(p, ""{0} {1}"", 1, 2, 3);
-        var i = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4);
+        {|#0:" + invocation + @"("""", 1)|};
+        {|#1:" + invocation + @"(""{0}"", 1, 2)|};
+        {|#2:" + invocation + @"(""{0} {1}"", 1, 2, 3)|};
+        {|#3:" + invocation + @"(""{0} {1} {2}"", 1, 2, 3, 4)|};
+        {|#4:" + invocation + @"(""{0} {0}"", 1, 2)|};
     }
 }
 ",
-            GetCSharpResultAt(8, 17),
-            GetCSharpResultAt(9, 17),
-            GetCSharpResultAt(10, 17),
-            GetCSharpResultAt(11, 17),
-            GetCSharpResultAt(12, 17),
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2),
+            VerifyCS.Diagnostic().WithLocation(3),
+            VerifyCS.Diagnostic().WithLocation(4));
 
-            GetCSharpResultAt(15, 17),
-            GetCSharpResultAt(16, 17),
-            GetCSharpResultAt(17, 17),
-            GetCSharpResultAt(18, 17));
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method()
+        {|#0:" + invocation + @"("""", 1)|}
+        {|#1:" + invocation + @"(""{0}"", 1, 2)|}
+        {|#2:" + invocation + @"(""{0} {1}"", 1, 2, 3)|}
+        {|#3:" + invocation + @"(""{0} {1} {2}"", 1, 2, 3, 4)|}
+        {|#4:" + invocation + @"(""{0} {0}"", 1, 2)|}
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2),
+            VerifyVB.Diagnostic().WithLocation(3),
+            VerifyVB.Diagnostic().WithLocation(4));
         }
 
         [Fact]
-        public async Task CA2241CSharpConsoleWrite()
+        public async Task CA2241_MoreArgsThanFormatItem_StringFormatMethods_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    void Method(IFormatProvider p)
+    {
+        var a = {|#0:String.Format("""", 1)|};
+        var b = {|#1:String.Format(""{0}"", 1, 2)|};
+        var c = {|#2:String.Format(""{0} {1}"", 1, 2, 3)|};
+        var d = {|#3:String.Format(""{0} {1} {2}"", 1, 2, 3, 4)|};
+        var e = {|#4:string.Format(""{0} {0}"", 1, 2)|};
+
+        var f = {|#5:String.Format(p, """", 1)|};
+        var g = {|#6:String.Format(p, ""{0}"", 1, 2)|};
+        var h = {|#7:String.Format(p, ""{0} {1}"", 1, 2, 3)|};
+        var i = {|#8:String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4)|};
+        var j = {|#9:String.Format(p, ""{0} {0}"", 1, 2)|};
+    }
+}
+",
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2),
+            VerifyCS.Diagnostic().WithLocation(3),
+            VerifyCS.Diagnostic().WithLocation(4),
+            VerifyCS.Diagnostic().WithLocation(5),
+            VerifyCS.Diagnostic().WithLocation(6),
+            VerifyCS.Diagnostic().WithLocation(7),
+            VerifyCS.Diagnostic().WithLocation(8),
+            VerifyCS.Diagnostic().WithLocation(9));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method(p As IFormatProvider)
+        Dim a = {|#0:String.Format("""", 1)|}
+        Dim b = {|#1:String.Format(""{0}"", 1, 2)|}
+        Dim c = {|#2:String.Format(""{0} {1}"", 1, 2, 3)|}
+        Dim d = {|#3:String.Format(""{0} {1} {2}"", 1, 2, 3, 4)|}
+        Dim e = {|#4:string.Format(""{0} {0}"", 1, 2)|}
+
+        Dim f = {|#5:String.Format(p, """", 1)|}
+        Dim g = {|#6:String.Format(p, ""{0}"", 1, 2)|}
+        Dim h = {|#7:String.Format(p, ""{0} {1}"", 1, 2, 3)|}
+        Dim i = {|#8:String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4)|}
+        Dim j = {|#9:String.Format(p, ""{0} {0}"", 1, 2)|}
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2),
+            VerifyVB.Diagnostic().WithLocation(3),
+            VerifyVB.Diagnostic().WithLocation(4),
+            VerifyVB.Diagnostic().WithLocation(5),
+            VerifyVB.Diagnostic().WithLocation(6),
+            VerifyVB.Diagnostic().WithLocation(7),
+            VerifyVB.Diagnostic().WithLocation(8),
+            VerifyVB.Diagnostic().WithLocation(9));
+        }
+
+        [Theory]
+        [InlineData("Console.Write")]
+        [InlineData("Console.WriteLine")]
+        public async Task CA2241_LessArgsThanFormatItem_VoidMethods_Diagnostic(string invocation)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -63,48 +137,106 @@ public class C
 {
     void Method()
     {
-        Console.Write("""", 1);
-        Console.Write(""{0}"", 1, 2);
-        Console.Write(""{0} {1}"", 1, 2, 3);
-        Console.Write(""{0} {1} {2}"", 1, 2, 3, 4);
-        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
+        {|#0:" + invocation + @"(""{0} {1}"", 1)|};
+        {|#1:" + invocation + @"(""{0} {1} {2}"", 1)|};
+        {|#2:" + invocation + @"(""{0} {1} {2}"", 1, 2)|};
+
+        // These cases are not handled as we cannot find a parameter named format
+        " + invocation + @"(""{0}"");
+        " + invocation + @"(""{0} {1}"");
     }
 }
 ",
-            GetCSharpResultAt(8, 9),
-            GetCSharpResultAt(9, 9),
-            GetCSharpResultAt(10, 9),
-            GetCSharpResultAt(11, 9),
-            GetCSharpResultAt(12, 9));
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method()
+        {|#0:" + invocation + @"(""{0} {1}"", 1)|}
+        {|#1:" + invocation + @"(""{0} {1} {2}"", 1)|}
+        {|#2:" + invocation + @"(""{0} {1} {2}"", 1, 2)|}
+
+        ' These cases are not handled as we cannot find a parameter named format
+        " + invocation + @"(""{0}"")
+        " + invocation + @"(""{0} {1}"")
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2));
         }
 
         [Fact]
-        public async Task CA2241CSharpConsoleWriteLine()
+        public async Task CA2241_LessArgsThanFormatItem_StringFormatMethods_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class C
 {
-    void Method()
+    void Method(IFormatProvider p)
     {
-        Console.WriteLine("""", 1);
-        Console.WriteLine(""{0}"", 1, 2);
-        Console.WriteLine(""{0} {1}"", 1, 2, 3);
-        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4);
-        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5);
+        var a = {|#0:String.Format(""{0}"")|};
+        var b = {|#1:String.Format(""{0} {1}"", 1)|};
+        var c = {|#2:String.Format(""{0} {1} {2}"", 1)|};
+        var d = {|#3:String.Format(""{0} {1} {2}"", 1, 2)|};
+        var e = {|#4:String.Format(""{0} {0}"")|};
+
+        var f = {|#5:String.Format(p, ""{0}"")|};
+        var g = {|#6:String.Format(p, ""{0} {1}"", 1)|};
+        var h = {|#7:String.Format(p, ""{0} {1} {2}"", 1)|};
+        var i = {|#8:String.Format(p, ""{0} {1} {2}"", 1, 2)|};
+        var j = {|#9:String.Format(p, ""{0} {0}"")|};
     }
 }
 ",
-            GetCSharpResultAt(8, 9),
-            GetCSharpResultAt(9, 9),
-            GetCSharpResultAt(10, 9),
-            GetCSharpResultAt(11, 9),
-            GetCSharpResultAt(12, 9));
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2),
+            VerifyCS.Diagnostic().WithLocation(3),
+            VerifyCS.Diagnostic().WithLocation(4),
+            VerifyCS.Diagnostic().WithLocation(5),
+            VerifyCS.Diagnostic().WithLocation(6),
+            VerifyCS.Diagnostic().WithLocation(7),
+            VerifyCS.Diagnostic().WithLocation(8),
+            VerifyCS.Diagnostic().WithLocation(9));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method(p As IFormatProvider)
+        Dim a = {|#0:String.Format(""{0}"")|}
+        Dim b = {|#1:String.Format(""{0} {1}"", 1)|}
+        Dim c = {|#2:String.Format(""{0} {1} {2}"", 1)|}
+        Dim d = {|#3:String.Format(""{0} {1} {2}"", 1, 2)|}
+        Dim e = {|#4:String.Format(""{0} {0}"")|}
+
+        Dim f = {|#5:String.Format(p, ""{0}"")|}
+        Dim g = {|#6:String.Format(p, ""{0} {1}"", 1)|}
+        Dim h = {|#7:String.Format(p, ""{0} {1} {2}"", 1)|}
+        Dim i = {|#8:String.Format(p, ""{0} {1} {2}"", 1, 2)|}
+        Dim j = {|#9:String.Format(p, ""{0} {0}"")|}
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2),
+            VerifyVB.Diagnostic().WithLocation(3),
+            VerifyVB.Diagnostic().WithLocation(4),
+            VerifyVB.Diagnostic().WithLocation(5),
+            VerifyVB.Diagnostic().WithLocation(6),
+            VerifyVB.Diagnostic().WithLocation(7),
+            VerifyVB.Diagnostic().WithLocation(8),
+            VerifyVB.Diagnostic().WithLocation(9));
         }
 
         [Fact]
-        public async Task CA2241CSharpPassing()
+        public async Task CA2241_ValidInvocation_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -118,6 +250,7 @@ public class C
         var c = String.Format(""{0} {1} {2}"", 1, 2, 3);
         var d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4);
         var e = String.Format(""{0} {1} {2} {0}"", 1, 2, 3);
+        var f = String.Format(""abc"");
 
         Console.Write(""{0}"", 1);
         Console.Write(""{0} {1}"", 1, 2);
@@ -133,35 +266,86 @@ public class C
         Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5);
         Console.WriteLine(""{0} {1} {2} {3} {0}"", 1, 2, 3, 4);
     }
-}
-");
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method()
+        Dim a = String.Format(""{0}"", 1)
+        Dim b = String.Format(""{0} {1}"", 1, 2)
+        Dim c = String.Format(""{0} {1} {2}"", 1, 2, 3)
+        Dim d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Dim e = String.Format(""{0} {1} {2} {0}"", 1, 2, 3)
+        Dim f = String.Format(""abc"")
+
+        Console.Write(""{0}"", 1)
+        Console.Write(""{0} {1}"", 1, 2)
+        Console.Write(""{0} {1} {2}"", 1, 2, 3)
+        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Console.Write(""{0} {1} {2} {0}"", 1, 2, 3)
+
+        Console.WriteLine(""{0}"", 1)
+        Console.WriteLine(""{0} {1}"", 1, 2)
+        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3)
+        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4)
+        Console.WriteLine(""{0} {1} {2} {0}"", 1, 2, 3)
+    End Sub
+End Class");
         }
 
         [Fact]
-        public async Task CA2241CSharpExplicitObjectArraySupported()
+        public async Task CA2241_ExplicitObjectArray()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class C
 {
-    void Method()
+    void Diag()
     {
-        var s = String.Format(""{0} {1} {2} {3}"", new object[] {1, 2});
-        Console.Write(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
-        Console.WriteLine(""{0} {1} {2} {3}"", new object[] {1, 2, 3, 4, 5});
+        var s = {|#0:String.Format(""{0} {1} {2}"", new object[] { 1, 2, 3, 4 })|};
+        {|#1:Console.Write(""{0} {1} {2}"", new object[] { 1, 2, 3, 4 })|};
+        {|#2:Console.WriteLine(""{0} {1} {2}"", new object[] { 1, 2, 3, 4 })|};
+    }
+
+    void NoDiag()
+    {
+        var s = String.Format(""{0} {1} {2}"", new object[] { 1, 2, 3 });
+        Console.Write(""{0} {1} {2}"", new object[] { 1, 2, 3 });
+        Console.WriteLine(""{0} {1} {2}"", new object[] { 1, 2, 3 });
     }
 }
 ",
-            GetCSharpResultAt(8, 17),
-            GetCSharpResultAt(9, 9),
-            GetCSharpResultAt(10, 9));
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Diag()
+        Dim s = {|#0:String.Format(""{0} {1} {2}"", New Object() { 1, 2, 3, 4 })|}
+        {|#1:Console.Write(""{0} {1} {2}"", New Object() { 1, 2, 3, 4 })|}
+        {|#2:Console.WriteLine(""{0} {1} {2}"", New Object() { 1, 2, 3, 4 })|}
+    End Sub
+
+    Sub NoDiag()
+        Dim s = String.Format(""{0} {1} {2}"", New Object() { 1, 2, 3 })
+        Console.Write(""{0} {1} {2}"", New Object() { 1, 2, 3 })
+        Console.WriteLine(""{0} {1} {2}"", New Object() { 1, 2, 3 })
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2));
         }
 
         [Fact]
-        public async Task CA2241CSharpVarArgsNotSupported()
+        public async Task CA2241_VarArgsNotSupported()
         {
-            // currently not supported due to "https://github.com/dotnet/roslyn/issues/7346"
             await new VerifyCS.Test
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
@@ -181,147 +365,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA2241VBString()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class C
-    Sub Method()
-        Dim a = String.Format("""", 1)
-        Dim b = String.Format(""{0}"", 1, 2)
-        Dim c = String.Format(""{0} {1}"", 1, 2, 3)
-        Dim d = String.Format(""{0} {1} {2}"", 1, 2, 3, 4)
-
-        Dim p as IFormatProvider = Nothing
-        Dim e = String.Format(p, """", 1)
-        Dim f = String.Format(p, ""{0}"", 1, 2)
-        Dim g = String.Format(p, ""{0} {1}"", 1, 2, 3)
-        Dim h = String.Format(p, ""{0} {1} {2}"", 1, 2, 3, 4)
-    End Sub
-End Class
-",
-            GetBasicResultAt(6, 17),
-            GetBasicResultAt(7, 17),
-            GetBasicResultAt(8, 17),
-            GetBasicResultAt(9, 17),
-
-            GetBasicResultAt(12, 17),
-            GetBasicResultAt(13, 17),
-            GetBasicResultAt(14, 17),
-            GetBasicResultAt(15, 17));
-        }
-
-        [Fact]
-        public async Task CA2241VBConsoleWrite()
-        {
-            // this works in VB
-            // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
-            // since VB bind it to __arglist version where we skip analysis
-            // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class C
-    Sub Method()
-        Console.Write("""", 1)
-        Console.Write(""{0}"", 1, 2)
-        Console.Write(""{0} {1}"", 1, 2, 3)
-        Console.Write(""{0} {1} {2}"", 1, 2, 3, 4)
-        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5)
-    End Sub
-End Class
-",
-            GetBasicResultAt(6, 9),
-            GetBasicResultAt(7, 9),
-            GetBasicResultAt(8, 9),
-#if NETCOREAPP
-            GetBasicResultAt(9, 9),
-#endif
-            GetBasicResultAt(10, 9));
-        }
-
-        [Fact]
-        public async Task CA2241VBConsoleWriteLine()
-        {
-            // this works in VB
-            // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
-            // since VB bind it to __arglist version where we skip analysis
-            // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class C
-    Sub Method()
-        Console.WriteLine("""", 1)
-        Console.WriteLine(""{0}"", 1, 2)
-        Console.WriteLine(""{0} {1}"", 1, 2, 3)
-        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
-        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4, 5)
-    End Sub
-End Class
-",
-            GetBasicResultAt(6, 9),
-            GetBasicResultAt(7, 9),
-            GetBasicResultAt(8, 9),
-#if NETCOREAPP
-            GetBasicResultAt(9, 9),
-#endif
-            GetBasicResultAt(10, 9));
-        }
-
-        [Fact]
-        public async Task CA2241VBPassing()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class C
-    Sub Method()
-        Dim a = String.Format(""{0}"", 1)
-        Dim b = String.Format(""{0} {1}"", 1, 2)
-        Dim c = String.Format(""{0} {1} {2}"", 1, 2, 3)
-        Dim d = String.Format(""{0} {1} {2} {3}"", 1, 2, 3, 4)
-
-        Console.Write(""{0}"", 1)
-        Console.Write(""{0} {1}"", 1, 2)
-        Console.Write(""{0} {1} {2}"", 1, 2, 3)
-        Console.Write(""{0} {1} {2} {3}"", 1, 2, 3, 4)
-        Console.Write(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
-
-        Console.WriteLine(""{0}"", 1)
-        Console.WriteLine(""{0} {1}"", 1, 2)
-        Console.WriteLine(""{0} {1} {2}"", 1, 2, 3)
-        Console.WriteLine(""{0} {1} {2} {3}"", 1, 2, 3, 4)
-        Console.WriteLine(""{0} {1} {2} {3} {4}"", 1, 2, 3, 4, 5)
-    End Sub
-End Class
-");
-        }
-
-        [Fact]
-        public async Task CA2241VBExplicitObjectArraySupported()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Public Class C
-    Sub Method()
-        Dim s = String.Format(""{0} {1} {2} {3}"", New Object() {1, 2})
-        Console.Write(""{0} {1} {2} {3}"", New Object() {1, 2, 3, 4, 5})
-        Console.WriteLine(""{0} {1} {2} {3}"", New Object() {1, 2, 3, 4, 5})
-    End Sub
-End Class
-",
-            GetBasicResultAt(6, 17),
-            GetBasicResultAt(7, 9),
-            GetBasicResultAt(8, 9));
-        }
-
-        [Fact]
-        public async Task CA2241CSharpFormatStringParser()
+        public async Task CA2241_FormatStringParser_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -345,6 +389,126 @@ public class C
 ");
         }
 
+        [Theory, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]
+        [InlineData("Console.Write")]
+        [InlineData("Console.WriteLine")]
+        public async Task CA2241_MissingStringFormatItem_VoidMethods_Diagnostic(string invocation)
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    void Method()
+    {
+        {|#0:" + invocation + @"(""{0} {2}"", 1)|};
+        {|#1:" + invocation + @"(""{0} {2}"", 1, 2)|};
+        {|#2:" + invocation + @"(""{0} {2}"", 1, 2, 3)|};
+        {|#3:" + invocation + @"(""{2} {0}"", 1)|};
+        {|#4:" + invocation + @"(""{0} {2} {0} {2}"", 1)|};
+        {|#5:" + invocation + @"(""{0} {2} {4} {5}"", 1)|};
+    }
+}",
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2),
+            VerifyCS.Diagnostic().WithLocation(3),
+            VerifyCS.Diagnostic().WithLocation(4),
+            VerifyCS.Diagnostic().WithLocation(5));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method()
+        {|#0:" + invocation + @"(""{0} {2}"", 1)|}
+        {|#1:" + invocation + @"(""{0} {2}"", 1, 2)|}
+        {|#2:" + invocation + @"(""{0} {2}"", 1, 2, 3)|}
+        {|#3:" + invocation + @"(""{2} {0}"", 1)|}
+        {|#4:" + invocation + @"(""{0} {2} {0} {2}"", 1)|}
+        {|#5:" + invocation + @"(""{0} {2} {4} {5}"", 1)|}
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2),
+            VerifyVB.Diagnostic().WithLocation(3),
+            VerifyVB.Diagnostic().WithLocation(4),
+            VerifyVB.Diagnostic().WithLocation(5));
+        }
+
+        [Fact, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]
+        public async Task CA2241_MissingStringFormatItem_StringFormatMethods_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    void Method(IFormatProvider p)
+    {
+        {|#0:string.Format(""{0} {2}"", 1)|};
+        {|#1:string.Format(""{0} {2}"", 1, 2)|};
+        {|#2:string.Format(""{0} {2}"", 1, 2, 3)|};
+        {|#3:string.Format(""{2} {0}"", 1)|};
+        {|#4:string.Format(""{0} {2} {0} {2}"", 1)|};
+        {|#5:string.Format(""{0} {2} {4} {5}"", 1)|};
+
+        {|#6:string.Format(p, ""{0} {2}"", 1)|};
+        {|#7:string.Format(p, ""{0} {2}"", 1, 2)|};
+        {|#8:string.Format(p, ""{0} {2}"", 1, 2, 3)|};
+        {|#9:string.Format(p, ""{2} {0}"", 1)|};
+        {|#10:string.Format(p, ""{0} {2} {0} {2}"", 1)|};
+        {|#11:string.Format(p, ""{0} {2} {4} {5}"", 1)|};
+    }
+}",
+            VerifyCS.Diagnostic().WithLocation(0),
+            VerifyCS.Diagnostic().WithLocation(1),
+            VerifyCS.Diagnostic().WithLocation(2),
+            VerifyCS.Diagnostic().WithLocation(3),
+            VerifyCS.Diagnostic().WithLocation(4),
+            VerifyCS.Diagnostic().WithLocation(5),
+            VerifyCS.Diagnostic().WithLocation(6),
+            VerifyCS.Diagnostic().WithLocation(7),
+            VerifyCS.Diagnostic().WithLocation(8),
+            VerifyCS.Diagnostic().WithLocation(9),
+            VerifyCS.Diagnostic().WithLocation(10),
+            VerifyCS.Diagnostic().WithLocation(11));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class C
+    Sub Method(p As IFormatProvider)
+        {|#0:string.Format(""{0} {2}"", 1)|}
+        {|#1:string.Format(""{0} {2}"", 1, 2)|}
+        {|#2:string.Format(""{0} {2}"", 1, 2, 3)|}
+        {|#3:string.Format(""{2} {0}"", 1)|}
+        {|#4:string.Format(""{0} {2} {0} {2}"", 1)|}
+        {|#5:string.Format(""{0} {2} {4} {5}"", 1)|}
+
+        {|#6:string.Format(p, ""{0} {2}"", 1)|}
+        {|#7:string.Format(p, ""{0} {2}"", 1, 2)|}
+        {|#8:string.Format(p, ""{0} {2}"", 1, 2, 3)|}
+        {|#9:string.Format(p, ""{2} {0}"", 1)|}
+        {|#10:string.Format(p, ""{0} {2} {0} {2}"", 1)|}
+        {|#11:string.Format(p, ""{0} {2} {4} {5}"", 1)|}
+    End Sub
+End Class",
+            VerifyVB.Diagnostic().WithLocation(0),
+            VerifyVB.Diagnostic().WithLocation(1),
+            VerifyVB.Diagnostic().WithLocation(2),
+            VerifyVB.Diagnostic().WithLocation(3),
+            VerifyVB.Diagnostic().WithLocation(4),
+            VerifyVB.Diagnostic().WithLocation(5),
+            VerifyVB.Diagnostic().WithLocation(6),
+            VerifyVB.Diagnostic().WithLocation(7),
+            VerifyVB.Diagnostic().WithLocation(8),
+            VerifyVB.Diagnostic().WithLocation(9),
+            VerifyVB.Diagnostic().WithLocation(10),
+            VerifyVB.Diagnostic().WithLocation(11));
+        }
+
         [Theory]
         [WorkItem(2799, "https://github.com/dotnet/roslyn-analyzers/issues/2799")]
         // No configuration - validate no diagnostics in default configuration
@@ -353,7 +517,7 @@ public class C
         [InlineData(false)]
         // Configured and enabled
         [InlineData(true)]
-        public async Task EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethods(bool? editorConfig)
+        public async Task CA2241_EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethods(bool? editorConfig)
         {
             string editorConfigText = editorConfig == null ? string.Empty :
                 "dotnet_code_quality.try_determine_additional_string_formatting_methods_automatically = " + editorConfig.Value;
@@ -383,7 +547,7 @@ class Test
             {
                 csharpTest.ExpectedDiagnostics.Add(
                     // Test0.cs(8,17): warning CA2241: Provide correct arguments to formatting methods
-                    GetCSharpResultAt(8, 17));
+                    VerifyCS.Diagnostic().WithLocation(8, 17));
             }
 
             await csharpTest.RunAsync();
@@ -413,7 +577,7 @@ End Class"
             {
                 basicTest.ExpectedDiagnostics.Add(
                     // Test0.vb(8,17): warning CA2241: Provide correct arguments to formatting methods
-                    GetBasicResultAt(8, 17));
+                    VerifyVB.Diagnostic().WithLocation(8, 17));
             }
 
             await basicTest.RunAsync();
@@ -431,7 +595,7 @@ End Class"
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = Test.MyFormat(System.String,System.Object[])~System.String")]
         // Match by documentation ID with "M:" prefix
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = M:Test.MyFormat(System.String,System.Object[])~System.String")]
-        public async Task EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
+        public async Task CA2241_EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -458,7 +622,7 @@ class Test
             {
                 csharpTest.ExpectedDiagnostics.Add(
                     // Test0.cs(8,17): warning CA2241: Provide correct arguments to formatting methods
-                    GetCSharpResultAt(8, 17));
+                    VerifyCS.Diagnostic().WithLocation(8, 17));
             }
 
             await csharpTest.RunAsync();
@@ -488,20 +652,10 @@ End Class"
             {
                 basicTest.ExpectedDiagnostics.Add(
                     // Test0.vb(8,17): warning CA2241: Provide correct arguments to formatting methods
-                    GetBasicResultAt(8, 17));
+                    VerifyVB.Diagnostic().WithLocation(8, 17));
             }
 
             await basicTest.RunAsync();
         }
-
-        #endregion
-
-        private static DiagnosticResult GetCSharpResultAt(int line, int column)
-            => VerifyCS.Diagnostic()
-                .WithLocation(line, column);
-
-        private static DiagnosticResult GetBasicResultAt(int line, int column)
-            => VerifyVB.Diagnostic()
-                .WithLocation(line, column);
     }
 }

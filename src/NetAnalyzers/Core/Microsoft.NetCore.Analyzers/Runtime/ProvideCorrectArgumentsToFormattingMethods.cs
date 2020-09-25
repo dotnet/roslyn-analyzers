@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -41,23 +42,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            analysisContext.RegisterCompilationStartAction(context =>
             {
-                var formatInfo = new StringFormatInfo(compilationContext.Compilation);
+                var formatInfo = new StringFormatInfo(context.Compilation);
 
-                compilationContext.RegisterOperationAction(operationContext =>
+                context.RegisterOperationAction(context =>
                 {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
+                    var invocation = (IInvocationOperation)context.Operation;
 
-                    StringFormatInfo.Info? info = formatInfo.TryGet(invocation.TargetMethod, operationContext);
+                    StringFormatInfo.Info? info = formatInfo.TryGet(invocation.TargetMethod, context);
                     if (info == null || invocation.Arguments.Length <= info.FormatStringIndex)
                     {
                         // not a target method
                         return;
                     }
 
+                    if (info.ExpectedStringFormatArgumentCount >= 0 &&
+                        invocation.TargetMethod.IsVararg)
+                    {
+                        // __arglist is not supported here (see https://github.com/dotnet/roslyn/issues/7346)
+                        return;
+                    }
+
                     IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
-                    if (!object.Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
+                    if (!Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
                     {
                         // wrong argument
@@ -65,21 +73,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
-                    int expectedStringFormatArgumentCount = GetFormattingArguments(stringFormat);
+                    var stringFormatIndexes = GetStringFormatItemIndexes(stringFormat);
+                    int expectedStringFormatArgumentCount = stringFormatIndexes?.Count ?? -1;
+
+                    // Validate string format item indexes
+                    if (expectedStringFormatArgumentCount > 0)
+                    {
+                        var missingIndexes = Enumerable.Range(0, stringFormatIndexes.Max())
+                            .Except(stringFormatIndexes);
+                        if (missingIndexes.Any())
+                        {
+                            context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
+                            // There are some missing format indexes, we don't know if they are just missing
+                            // or if the bigger numbers have been shifted so there is no need to analyze the
+                            // arguments actually provided to the invocation.
+                            return;
+                        }
+                    }
 
                     // explicit parameter case
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
-                        // __arglist is not supported here
-                        if (invocation.TargetMethod.IsVararg)
-                        {
-                            // can't deal with this for now.
-                            return;
-                        }
-
                         if (info.ExpectedStringFormatArgumentCount != expectedStringFormatArgumentCount)
                         {
-                            operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
                         }
 
                         return;
@@ -95,7 +112,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (paramsArgument.Value is not IArrayCreationOperation arrayCreation ||
                         arrayCreation.GetElementType() is not ITypeSymbol elementType ||
-                        !object.Equals(elementType, formatInfo.Object) ||
+                        !Equals(elementType, formatInfo.Object) ||
                         arrayCreation.DimensionSizes.Length != 1)
                     {
                         // wrong format
@@ -114,13 +131,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     int actualArgumentCount = intializer.ElementValues.Length;
                     if (actualArgumentCount != expectedStringFormatArgumentCount)
                     {
-                        operationContext.ReportDiagnostic(operationContext.Operation.Syntax.CreateDiagnostic(Rule));
+                        context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
                     }
                 }, OperationKind.Invocation);
             });
         }
 
-        private static int GetFormattingArguments(string format)
+        private static HashSet<int>? GetStringFormatItemIndexes(string format)
         {
             // code is from mscorlib
             // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
@@ -148,7 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                         else
                         {
-                            return -1;
+                            return null;
                         }
                     }
 
@@ -177,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (pos == len || (ch = format[pos]) < '0' || ch > '9')
                 {
                     // finished with "{x"
-                    return -1;
+                    return null;
                 }
 
                 // searching for index
@@ -190,7 +207,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (pos == len)
                     {
                         // wrong index format
-                        return -1;
+                        return null;
                     }
 
                     ch = format[pos];
@@ -217,7 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (pos == len)
                     {
                         // wrong format, reached end without "}"
-                        return -1;
+                        return null;
                     }
 
                     ch = format[pos];
@@ -228,7 +245,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (pos == len)
                         {
                             // wrong format. reached end without "}"
-                            return -1;
+                            return null;
                         }
 
                         ch = format[pos];
@@ -237,7 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (ch is < '0' or > '9')
                     {
                         // wrong format after "-"
-                        return -1;
+                        return null;
                     }
 
                     do
@@ -248,7 +265,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (pos == len)
                         {
                             // wrong width format
-                            return -1;
+                            return null;
                         }
 
                         ch = format[pos];
@@ -271,7 +288,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (pos == len)
                         {
                             // reached end without "}"
-                            return -1;
+                            return null;
                         }
 
                         ch = format[pos];
@@ -282,7 +299,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (pos < len && format[pos] == '{')  // Treat as escape character for {{
                                 pos++;
                             else
-                                return -1;
+                                return null;
                         }
                         else if (ch == '}')
                         {
@@ -302,7 +319,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (ch != '}')
                 {
                     // "}" is expected
-                    return -1;
+                    return null;
                 }
 
                 pos++;
@@ -311,7 +328,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             } // end of main loop
 
-            return uniqueNumbers.Count;
+            return uniqueNumbers;
         }
 
         private class StringFormatInfo

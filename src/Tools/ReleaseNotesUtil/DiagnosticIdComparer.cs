@@ -1,5 +1,8 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace ReleaseNotesUtil
@@ -8,9 +11,9 @@ namespace ReleaseNotesUtil
     {
         public static readonly DiagnosticIdComparer Instance = new DiagnosticIdComparer();
 
-        public bool Equals(DiagnosticDescriptor x, DiagnosticDescriptor y)
+        public bool Equals([AllowNull] DiagnosticDescriptor x, [AllowNull] DiagnosticDescriptor y)
         {
-            return StringComparer.Ordinal.Equals(x.Id, y.Id);
+            return StringComparer.Ordinal.Equals(x?.Id, y?.Id);
         }
 
         public int GetHashCode(DiagnosticDescriptor obj)

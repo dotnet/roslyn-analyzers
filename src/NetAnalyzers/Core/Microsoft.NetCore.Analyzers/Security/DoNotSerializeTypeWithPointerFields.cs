@@ -59,8 +59,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
 
                     var nonSerializedAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
-                    var visitedType = new ConcurrentDictionary<ITypeSymbol, bool>();
-                    var pointerFields = new ConcurrentDictionary<IFieldSymbol, bool>();
+                    ConcurrentDictionary<ITypeSymbol, bool> visitedType = new ConcurrentDictionary<ITypeSymbol, bool>();
+                    ConcurrentDictionary<IFieldSymbol, bool> pointerFields = new ConcurrentDictionary<IFieldSymbol, bool>();
 
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
@@ -91,8 +91,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (typeSymbol is IPointerTypeSymbol pointerTypeSymbol)
                         {
                             // If the field is a valid pointer.
-                            if (pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Struct ||
-                                pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Pointer)
+                            if (pointerTypeSymbol.PointedAtType.TypeKind is TypeKind.Struct or
+                                TypeKind.Pointer)
                             {
                                 RoslynDebug.Assert(relatedFieldSymbol != null);
                                 pointerFields.TryAdd(relatedFieldSymbol, true);

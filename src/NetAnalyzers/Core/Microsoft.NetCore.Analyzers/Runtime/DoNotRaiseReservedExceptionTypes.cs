@@ -12,12 +12,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
     /// CA2201: Do not raise reserved exception types
-    /// 
+    ///
     /// Too generic:
     ///     System.Exception
     ///     System.ApplicationException
-    ///     System.SystemException 
-    ///     
+    ///     System.SystemException
+    ///
     /// Reserved:
     ///     System.OutOfMemoryException
     ///     System.IndexOutOfRangeException
@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     System.Runtime.InteropServices.COMException
     ///     System.Runtime.InteropServices.SEHException
     ///     System.AccessViolationException
-    ///     
+    ///
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotRaiseReservedExceptionTypesAnalyzer : DiagnosticAnalyzer
@@ -86,9 +86,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationStartContext =>
                 {
                     ImmutableHashSet<INamedTypeSymbol> tooGenericExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_tooGenericExceptions);
-                    ImmutableHashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions); ;
+                    ImmutableHashSet<INamedTypeSymbol> reservedExceptionSymbols = CreateSymbolSet(compilationStartContext.Compilation, s_reservedExceptions);
 
-                    if (tooGenericExceptionSymbols.Count == 0 && reservedExceptionSymbols.Count == 0)
+                    if (tooGenericExceptionSymbols.IsEmpty && reservedExceptionSymbols.IsEmpty)
                     {
                         return;
                     }
@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return set != null ? set.ToImmutableHashSet() : ImmutableHashSet<INamedTypeSymbol>.Empty;
         }
 
-        private void AnalyzeObjectCreation(
+        private static void AnalyzeObjectCreation(
             OperationAnalysisContext context,
             ImmutableHashSet<INamedTypeSymbol> tooGenericExceptionSymbols,
             ImmutableHashSet<INamedTypeSymbol> reservedExceptionSymbols)

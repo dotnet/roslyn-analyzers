@@ -139,8 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var systemObjectSymbol = context.Compilation.GetSpecialType(SpecialType.System_Object);
-                    var isNetStandardAssembly = systemObjectSymbol.ContainingAssembly.Name != "mscorlib";
+                    var isNetStandardAssembly = !context.Compilation.TargetsDotNetFramework();
 
                     var symbolAnalyzer = new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol, isNetStandardAssembly);
                     context.RegisterSymbolAction(symbolAnalyzer.AnalyzeSymbol, SymbolKind.NamedType);
@@ -175,7 +174,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public void AnalyzeSymbol(SymbolAnalysisContext context)
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-                if (namedTypeSymbol.TypeKind == TypeKind.Delegate || namedTypeSymbol.TypeKind == TypeKind.Interface)
+                if (namedTypeSymbol.TypeKind is TypeKind.Delegate or TypeKind.Interface)
                 {
                     return;
                 }
@@ -200,10 +199,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         // Look for a serialization constructor.
                         // A serialization constructor takes two params of type SerializationInfo and StreamingContext.
                         IMethodSymbol serializationCtor = namedTypeSymbol.Constructors
-                            .FirstOrDefault(
-                                c => c.Parameters.Length == 2 &&
-                                     c.Parameters[0].Type.Equals(_serializationInfoTypeSymbol) &&
-                                     c.Parameters[1].Type.Equals(_streamingContextTypeSymbol));
+                            .FirstOrDefault(c => c.IsSerializationConstructor(_serializationInfoTypeSymbol, _streamingContextTypeSymbol));
 
                         // There is no serialization ctor - issue a diagnostic.
                         if (serializationCtor == null)
@@ -235,7 +231,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     foreach (ISymbol member in namedTypeSymbol.GetMembers())
                     {
                         // Only process field members
-                        if (!(member is IFieldSymbol field))
+                        if (member is not IFieldSymbol field)
                         {
                             continue;
                         }

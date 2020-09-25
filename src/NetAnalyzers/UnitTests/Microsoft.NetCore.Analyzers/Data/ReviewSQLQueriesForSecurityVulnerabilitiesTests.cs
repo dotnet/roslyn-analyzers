@@ -3,7 +3,6 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Data.ReviewSqlQueriesForSecurityVulnerabilities,
@@ -1637,7 +1636,6 @@ End Class");
                     {
                         GetCSharpResultAt(102, 21, "string Command.CommandText", "Page_Load")
                     }
-
                 }
             }.RunAsync();
         }
@@ -1647,7 +1645,7 @@ End Class");
         [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality." + ReviewSqlQueriesForSecurityVulnerabilities.RuleId + ".excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -1710,6 +1708,16 @@ End Module"
             }
 
             await vbTest.RunAsync();
+        }
+
+        [Fact, WorkItem(3613, "https://github.com/dotnet/roslyn-analyzers/issues/3613")]
+        public async Task GlobalAssemblyAttributes_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(""Category"", ""Id"")]");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+<assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(""Category"", ""Id"")>");
         }
     }
 }

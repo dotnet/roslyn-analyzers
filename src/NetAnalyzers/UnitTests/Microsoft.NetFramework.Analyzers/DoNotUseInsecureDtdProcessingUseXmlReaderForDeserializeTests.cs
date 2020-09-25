@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -24,7 +23,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         [Fact]
         public async Task UseXmlSerializerDeserializeShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -43,7 +44,9 @@ namespace TestNamespace
                 GetCA3075DeserializeCSharpResultAt(13, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization
@@ -63,7 +66,9 @@ End Namespace",
         [Fact]
         public async Task UseXmlSerializerDeserializeInGetShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -83,7 +88,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(13, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -104,7 +111,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInSetShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -130,7 +139,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(16, 17)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -156,7 +167,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInTryShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -178,7 +191,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(14, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -202,7 +217,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInCatchShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -223,7 +240,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(14, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -246,7 +265,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInFinallyShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -267,7 +288,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(15, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -291,7 +314,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInDelegateShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -310,7 +335,9 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(13, 9)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -332,7 +359,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeInAsyncAwaitShouldGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -355,7 +384,9 @@ class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(12, 13)
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Threading.Tasks
 Imports System.Xml.Serialization
@@ -380,7 +411,9 @@ End Class",
         [Fact]
         public async Task UseXmlSerializerDeserializeWithXmlReaderShouldNoGenerateDiagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCSharpAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -398,7 +431,9 @@ namespace TestNamespace
 }"
             );
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVisualBasicAnalyzerAsync(
+                ReferenceAssemblies.NetFramework.Net472.Default,
+                @"
 Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization

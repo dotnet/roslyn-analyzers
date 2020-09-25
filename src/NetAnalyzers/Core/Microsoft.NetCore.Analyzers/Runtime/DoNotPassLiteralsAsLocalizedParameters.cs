@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Analyzer.Utilities.PooledObjects;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -59,14 +60,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
-                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
-                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    if (operationBlockStartContext.OwningSymbol is not IMethodSymbol containingMethod ||
+                        operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, containingMethod, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
                     }
 
-                    var lazyValueContentResult = new Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>?>(
+                    Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>?> lazyValueContentResult = new Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>?>(
                         valueFactory: ComputeValueContentAnalysisResult, isThreadSafe: false);
 
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         if (ShouldAnalyze(targetMethod))
                         {
-                            AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
+                            AnalyzeArgument(argument.Parameter, containingPropertySymbol: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic, GetUseNamingHeuristicOption(operationContext));
                         }
                     }, OperationKind.Argument);
 
@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             ShouldAnalyze(propertyReference.Property))
                         {
                             IParameterSymbol valueSetterParam = propertyReference.Property.SetMethod.Parameters[0];
-                            AnalyzeArgument(valueSetterParam, propertyReference.Property, assignment, operationContext.ReportDiagnostic);
+                            AnalyzeArgument(valueSetterParam, propertyReference.Property, assignment, operationContext.ReportDiagnostic, GetUseNamingHeuristicOption(operationContext));
                         }
                     }, OperationKind.PropertyReference);
 
@@ -108,19 +108,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // Local functions
                     bool ShouldAnalyze(ISymbol? symbol)
-                        => symbol != null && !symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
+                        => symbol != null && !operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, symbol, operationBlockStartContext.OwningSymbol, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
 
-                    void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol? containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
+                    static bool GetUseNamingHeuristicOption(OperationAnalysisContext operationContext)
+                        => operationContext.Options.GetBoolOptionValue(EditorConfigOptionNames.UseNamingHeuristic, Rule,
+                            operationContext.Operation.Syntax.SyntaxTree, operationContext.Compilation, defaultValue: false, operationContext.CancellationToken);
+
+                    void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol? containingPropertySymbol, IOperation operation, Action<Diagnostic> reportDiagnostic, bool useNamingHeuristic)
                     {
-                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbol?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore, useNamingHeuristic) &&
                             lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
                             {
-                                Debug.Assert(stringContentValue.LiteralValues.Count > 0);
+                                Debug.Assert(!stringContentValue.LiteralValues.IsEmpty);
 
-                                if (stringContentValue.LiteralValues.Any(l => !(l is string)))
+                                if (stringContentValue.LiteralValues.Any(l => l is not string))
                                 {
                                     return;
                                 }
@@ -165,7 +169,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
                             return ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                                operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
+                                operationBlockStartContext.Options, Rule, PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties, operationBlockStartContext.CancellationToken);
                         }
 
                         return null;
@@ -213,11 +217,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool ShouldBeLocalized(
             IParameterSymbol parameterSymbol,
-            IPropertySymbol? containingPropertySymbolOpt,
+            IPropertySymbol? containingPropertySymbol,
             INamedTypeSymbol? localizableStateAttributeSymbol,
             INamedTypeSymbol? conditionalAttributeSymbol,
             INamedTypeSymbol? systemConsoleSymbol,
-            ImmutableHashSet<INamedTypeSymbol> typesToIgnore)
+            ImmutableHashSet<INamedTypeSymbol> typesToIgnore,
+            bool useNamingHeuristic)
         {
             Debug.Assert(parameterSymbol.ContainingSymbol.Kind == SymbolKind.Method);
 
@@ -259,14 +264,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];
                 if (Equals(overridenParameter.Type, parameterSymbol.Type))
                 {
-                    return ShouldBeLocalized(overridenParameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore);
+                    return ShouldBeLocalized(overridenParameter, containingPropertySymbol, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore, useNamingHeuristic);
                 }
             }
 
-            if (IsLocalizableByNameHeuristic(parameterSymbol) ||
-                containingPropertySymbolOpt != null && IsLocalizableByNameHeuristic(containingPropertySymbolOpt))
+            if (useNamingHeuristic)
             {
-                return true;
+                if (IsLocalizableByNameHeuristic(parameterSymbol) ||
+                    containingPropertySymbol != null && IsLocalizableByNameHeuristic(containingPropertySymbol))
+                {
+                    return true;
+                }
             }
 
             if (method.ContainingType.Equals(systemConsoleSymbol) &&
@@ -350,7 +358,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Call the trim function to remove any spaces around the beginning and end of the string so we can more accurately detect
             // XML strings
             string trimmedLiteral = literal.Trim();
-            return trimmedLiteral.Length > 2 && trimmedLiteral[0] == '<' && trimmedLiteral[trimmedLiteral.Length - 1] == '>';
+            return trimmedLiteral.Length > 2 && trimmedLiteral[0] == '<' && trimmedLiteral[^1] == '>';
         }
 
         /// <summary>

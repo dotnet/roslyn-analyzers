@@ -74,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
-                    if (!(operationBlockContext.OwningSymbol is IMethodSymbol methodSymbol))
+                    if (operationBlockContext.OwningSymbol is not IMethodSymbol methodSymbol)
                     {
                         return;
                     }
@@ -291,7 +291,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return true;
                 }
 
-
                 INamedTypeSymbol? iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
@@ -340,7 +339,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!method.IsStatic || !method.IsPublic())
                 return false;
-            return (method.Name == WellKnownMemberNames.ImplicitConversionName);
+            return method.Name == WellKnownMemberNames.ImplicitConversionName;
         }
     }
 }

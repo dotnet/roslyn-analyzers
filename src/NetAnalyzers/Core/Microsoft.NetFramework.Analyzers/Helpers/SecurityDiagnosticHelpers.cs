@@ -168,7 +168,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public static bool IsExpressionEqualsIntZero([NotNullWhen(returnValue: true)] IOperation? operation)
         {
 
-            if (!(operation is ILiteralOperation literal) || !literal.ConstantValue.HasValue)
+            if (operation is not ILiteralOperation literal || !literal.ConstantValue.HasValue)
             {
                 return false;
             }
@@ -180,19 +180,17 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         {
             if (symbol != null && namedType != null)
             {
-                IPropertySymbol property = (IPropertySymbol)symbol;
-                return property.MatchPropertyByName(namedType, propertyName);
+                return symbol.MatchPropertyByName(namedType, propertyName);
             }
 
             return false;
         }
 
-        private static bool IsSpecifiedPropertyDerived([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, [NotNullWhen(returnValue: true)]  INamedTypeSymbol? namedType, string propertyName)
+        private static bool IsSpecifiedPropertyDerived([NotNullWhen(returnValue: true)] IPropertySymbol? symbol, [NotNullWhen(returnValue: true)] INamedTypeSymbol? namedType, string propertyName)
         {
             if (symbol != null && namedType != null)
             {
-                IPropertySymbol property = (IPropertySymbol)symbol;
-                return property.MatchPropertyDerivedByName(namedType, propertyName);
+                return symbol.MatchPropertyDerivedByName(namedType, propertyName);
             }
 
             return false;
@@ -262,7 +260,7 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
                 current = parent;
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

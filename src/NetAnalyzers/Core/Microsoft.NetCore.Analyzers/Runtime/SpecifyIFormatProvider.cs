@@ -60,6 +60,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
+        private static readonly ImmutableArray<string> s_dateInvariantFormats = ImmutableArray.Create("o", "O", "r", "R", "s", "u");
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IFormatProviderAlternateStringRule, IFormatProviderAlternateRule, UICultureStringRule, UICultureRule);
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -78,13 +80,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 var objectType = csaContext.Compilation.GetSpecialType(SpecialType.System_Object);
-                var charType = csaContext.Compilation.GetSpecialType(SpecialType.System_Char);
-                var boolType = csaContext.Compilation.GetSpecialType(SpecialType.System_Boolean);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 if (objectType == null || stringType == null)
                 {
                     return;
                 }
+
+                var charType = csaContext.Compilation.GetSpecialType(SpecialType.System_Char);
+                var boolType = csaContext.Compilation.GetSpecialType(SpecialType.System_Boolean);
+                var guidType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGuid);
+
+                var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                builder.AddIfNotNull(charType);
+                builder.AddIfNotNull(boolType);
+                builder.AddIfNotNull(stringType);
+                builder.AddIfNotNull(guidType);
+                var invariantToStringTypes = builder.ToImmutableHashSet();
+
+                var dateTimeType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDateTime);
+                var dateTimeOffsetType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDateTimeOffset);
+                var timeSpanType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTimeSpan);
 
                 var stringFormatMembers = stringType.GetMembers("Format").OfType<IMethodSymbol>();
 
@@ -131,14 +146,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
-                    const string ToStringMethodName = "ToString";
-                    if (targetMethod.IsGenericMethod || targetMethod.ContainingType.IsErrorType() ||
-                        ((activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
-                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)) ||
-                         (targetMethod.Name == ToStringMethodName &&
-                            (stringType != null && stringType.Equals(targetMethod.ContainingType)) ||
-                            (charType != null && charType.Equals(targetMethod.ContainingType)) ||
-                            (boolType != null && boolType.Equals(targetMethod.ContainingType)))))
+                    if (targetMethod.IsGenericMethod ||
+                        targetMethod.ContainingType.IsErrorType() ||
+                        (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
+                        (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)) ||
+                        IsValidToStringCall(invocationExpression, invariantToStringTypes, dateTimeType, dateTimeOffsetType, timeSpanType))
                     {
                         return;
                     }
@@ -201,9 +213,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (argument != null && currentUICultureProperty != null &&
                             installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
                         {
-                            var semanticModel = oaContext.Compilation.GetSemanticModel(argument.Syntax.SyntaxTree);
+                            var semanticModel = argument.SemanticModel;
 
-                            var symbol = semanticModel.GetSymbolInfo(argument.Value.Syntax).Symbol;
+                            var symbol = semanticModel.GetSymbolInfo(argument.Value.Syntax, oaContext.CancellationToken).Symbol;
 
                             if (symbol != null &&
                                 (symbol.Equals(currentUICultureProperty) ||
@@ -237,7 +249,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static IEnumerable<int> GetIndexesOfParameterType(IMethodSymbol targetMethod, INamedTypeSymbol formatProviderType)
         {
             return targetMethod.Parameters
-                .Select((Parameter, Index) => new { Parameter, Index })
+                .Select((Parameter, Index) => (Parameter, Index))
                 .Where(x => x.Parameter.Type.Equals(formatProviderType))
                 .Select(x => x.Index);
         }
@@ -245,6 +257,43 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
         {
             return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
+        }
+
+        private static bool IsValidToStringCall(IInvocationOperation invocationOperation, ImmutableHashSet<INamedTypeSymbol> invariantToStringTypes,
+            INamedTypeSymbol? dateTimeType, INamedTypeSymbol? dateTimeOffsetType, INamedTypeSymbol? timeSpanType)
+        {
+            var targetMethod = invocationOperation.TargetMethod;
+
+            if (targetMethod.Name != "ToString")
+            {
+                return false;
+            }
+
+            if (invariantToStringTypes.Contains(targetMethod.ContainingType))
+            {
+                return true;
+            }
+
+            if (invocationOperation.Arguments.Length != 1 ||
+                !invocationOperation.Arguments[0].Value.ConstantValue.HasValue ||
+                invocationOperation.Arguments[0].Value.ConstantValue.Value is not string format)
+            {
+                return false;
+            }
+
+            // Handle invariant format specifiers, see https://github.com/dotnet/roslyn-analyzers/issues/3507
+            if ((dateTimeType != null && targetMethod.ContainingType.Equals(dateTimeType)) ||
+                (dateTimeOffsetType != null && targetMethod.ContainingType.Equals(dateTimeOffsetType)))
+            {
+                return s_dateInvariantFormats.Contains(format);
+            }
+
+            if (timeSpanType != null && targetMethod.ContainingType.Equals(timeSpanType))
+            {
+                return format == "c";
+            }
+
+            return false;
         }
     }
 }

@@ -33,12 +33,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private ImmutableArray<(string, string[])> DangerousCallable = ImmutableArray.Create<(string, string[])>
             (
-                (WellKnownTypeNames.SystemIOFileFullName, new[] { "WriteAllBytes", "WriteAllLines", "WriteAllText", "Copy", "Move", "AppendAllLines", "AppendAllText", "AppendText", "Delete" }),
+                (WellKnownTypeNames.SystemIOFile, new[] { "WriteAllBytes", "WriteAllLines", "WriteAllText", "Copy", "Move", "AppendAllLines", "AppendAllText", "AppendText", "Delete" }),
                 (WellKnownTypeNames.SystemIODirectory, new[] { "Delete" }),
                 (WellKnownTypeNames.SystemIOFileInfo, new[] { "Delete" }),
                 (WellKnownTypeNames.SystemIODirectoryInfo, new[] { "Delete" }),
                 (WellKnownTypeNames.SystemIOLogLogStore, new[] { "Delete" }),
-                (WellKnownTypeNames.SystemReflectionAssemblyFullName, new[] { "GetLoadedModules", "Load", "LoadFile", "LoadFrom", "LoadModule", "LoadWithPartialName", "ReflectionOnlyLoad", "ReflectionOnlyLoadFrom", "UnsafeLoadFrom" })
+                (WellKnownTypeNames.SystemReflectionAssembly, new[] { "GetLoadedModules", "Load", "LoadFile", "LoadFrom", "LoadModule", "LoadWithPartialName", "ReflectionOnlyLoad", "ReflectionOnlyLoadFrom", "UnsafeLoadFrom" })
             );
 
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         break;
 
                                     case IFieldReferenceOperation fieldReferenceOperation:
-                                        var fieldSymbol = (IFieldSymbol)fieldReferenceOperation.Field;
+                                        var fieldSymbol = fieldReferenceOperation.Field;
                                         possibleDelegateSymbol = fieldSymbol.Type; // Delegate field.
 
                                         if (possibleDelegateSymbol.TypeKind != TypeKind.Delegate)
@@ -180,8 +180,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 calledMethods.TryAdd(calledSymbol, true);
 
+                                // calledSymbol.ContainingSymbol.Kind == SymbolKind.Method => local function
+                                // For the purposes of this rule, we'll treat invocations inside the local function as part of
+                                // the containing method's set of invocations.
                                 if (!calledSymbol.IsInSource() ||
                                     calledSymbol.ContainingType.TypeKind == TypeKind.Interface ||
+                                    calledSymbol.ContainingSymbol.Kind == SymbolKind.Method ||
                                     calledSymbol.IsAbstract ||
                                     possibleDelegateSymbol.TypeKind == TypeKind.Delegate)
                                 {
@@ -202,7 +206,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
                                 var flagSerializable = methodSymbol.ContainingType.HasAttribute(serializableAttributeTypeSymbol);
                                 var parameters = methodSymbol.GetParameters();
-                                var flagHasDeserializeAttributes = attributeTypeSymbols.Length != 0
+                                var flagHasDeserializeAttributes = !attributeTypeSymbols.IsEmpty
                                     && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
                                     && parameters.Length == 1
                                     && parameters[0].Type.Equals(streamingContextTypeSymbol);

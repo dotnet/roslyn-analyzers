@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -464,7 +465,15 @@ End Class
         [Fact]
         public async Task ParameterWithLocalizableAttribute_MultipleStringLiteralArguments_Method_Diagnostic()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            const string editorConfigText = "dotnet_code_quality.CA1303.use_naming_heuristic = true";
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System.ComponentModel;
 
 public class C
@@ -484,12 +493,25 @@ public class Test
     }
 }
 ",
-            // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param, string message)", "a"),
-            // Test0.cs(17,18): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'message' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "m".
-            GetCSharpResultAt(17, 18, "void Test.M1(C c)", "message", "void C.M(string param, string message)", "m"));
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                        GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param, string message)", "a"),
+                        // Test0.cs(17,18): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'message' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "m".
+                        GetCSharpResultAt(17, 18, "void Test.M1(C c)", "message", "void C.M(string param, string message)", "m"),
+                    },
+                },
+            }.RunAsync();
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System.ComponentModel
 
 Public Class C
@@ -505,10 +527,17 @@ Public Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String, message As String)", "a"),
-            // Test0.vb(13,18): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'message' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "m".
-            GetBasicResultAt(13, 18, "Sub Test.M1(c As C)", "message", "Sub C.M(param As String, message As String)", "m"));
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "a".
+                        GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String, message As String)", "a"),
+                        // Test0.vb(13,18): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'message' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "m".
+                        GetBasicResultAt(13, 18, "Sub Test.M1(c As C)", "message", "Sub C.M(param As String, message As String)", "m"),
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
@@ -1255,16 +1284,39 @@ End Class
 ");
         }
 
-        [InlineData("message")]
-        [InlineData("text")]
-        [InlineData("caption")]
-        [InlineData("Message")]
-        [InlineData("Text")]
-        [InlineData("Caption")]
+        [InlineData("message", false)]
+        [InlineData("message", true)]
+        [InlineData("message", null)]
+        [InlineData("text", false)]
+        [InlineData("text", true)]
+        [InlineData("text", null)]
+        [InlineData("caption", false)]
+        [InlineData("caption", true)]
+        [InlineData("caption", null)]
+        [InlineData("Message", false)]
+        [InlineData("Message", true)]
+        [InlineData("Message", null)]
+        [InlineData("Text", false)]
+        [InlineData("Text", true)]
+        [InlineData("Text", null)]
+        [InlineData("Caption", false)]
+        [InlineData("Caption", true)]
+        [InlineData("Caption", null)]
         [Theory]
-        public async Task ParameterWithLocalizableName_StringLiteralArgument_Method_Diagnostic(string parameterName)
+        public async Task ParameterWithLocalizableName_StringLiteralArgument_Method_Diagnostic(string parameterName, bool? useNameHeuristic)
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            // The null case represents the default value which is 'false'
+            string editorConfigText = useNameHeuristic != null
+                ? $"dotnet_code_quality.CA1303.use_naming_heuristic = {useNameHeuristic}"
+                : "";
+
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 public class C
 {{
     public void M(string {parameterName})
@@ -1281,10 +1333,25 @@ public class Test
     }}
 }}
 ",
-            // Test0.cs(14,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(14, 13, "void Test.M1(C c)", parameterName, $"void C.M(string {parameterName})", "a"));
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                },
+            };
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            if (useNameHeuristic == true)
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCSharpResultAt(14, 13, "void Test.M1(C c)", parameterName, $"void C.M(string {parameterName})", "a"));
+            }
+
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Public Class C
     Public Sub M({parameterName} As String)
     End Sub
@@ -1297,20 +1364,52 @@ Public Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(10,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(10, 13, "Sub Test.M1(c As C)", parameterName, $"Sub C.M({parameterName} As String)", "a"));
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                },
+            };
+
+            if (useNameHeuristic == true)
+            {
+                vbTest.ExpectedDiagnostics.Add(GetBasicResultAt(10, 13, "Sub Test.M1(c As C)", parameterName, $"Sub C.M({parameterName} As String)", "a"));
+            }
+
+            await vbTest.RunAsync();
         }
 
-        [InlineData("message")]
-        [InlineData("text")]
-        [InlineData("caption")]
-        [InlineData("Message")]
-        [InlineData("Text")]
-        [InlineData("Caption")]
+        [InlineData("message", false)]
+        [InlineData("message", true)]
+        [InlineData("message", null)]
+        [InlineData("text", false)]
+        [InlineData("text", true)]
+        [InlineData("text", null)]
+        [InlineData("caption", false)]
+        [InlineData("caption", true)]
+        [InlineData("caption", null)]
+        [InlineData("Message", false)]
+        [InlineData("Message", true)]
+        [InlineData("Message", null)]
+        [InlineData("Text", false)]
+        [InlineData("Text", true)]
+        [InlineData("Text", null)]
+        [InlineData("Caption", false)]
+        [InlineData("Caption", true)]
+        [InlineData("Caption", null)]
         [Theory]
-        public async Task PropertyWithLocalizableName_StringLiteralArgument_Diagnostic(string propertyName)
+        public async Task PropertyWithLocalizableName_StringLiteralArgument_Diagnostic(string propertyName, bool? useNameHeuristic)
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            // The null case represents the default value which is 'false'
+            string editorConfigText = useNameHeuristic != null
+                ? $"dotnet_code_quality.CA1303.use_naming_heuristic = {useNameHeuristic}"
+                : "";
+
+            var csharpTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 public class C
 {{
     public string {propertyName} {{ get; set; }}
@@ -1325,11 +1424,25 @@ public class Test
     }}
 }}
 ",
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                },
+            };
 
-            // Test0.cs(12,9): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'value' of a call to 'void C.caption.set'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(12, 9, "void Test.M1(C c)", "value", $"void C.{propertyName}.set", "a"));
+            if (useNameHeuristic == true)
+            {
+                csharpTest.ExpectedDiagnostics.Add(GetCSharpResultAt(12, 9, "void Test.M1(C c)", "value", $"void C.{propertyName}.set", "a"));
+            }
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await csharpTest.RunAsync();
+
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Public Class C
     Public Property {propertyName} As String
 End Class
@@ -1341,15 +1454,29 @@ Public Class Test
     End Sub
 End Class
 ",
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                },
+            };
 
-            // Test0.vb(9,9): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'AutoPropertyValue' of a call to 'Property Set C.caption(AutoPropertyValue As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(9, 9, "Sub Test.M1(c As C)", "AutoPropertyValue", $"Property Set C.{propertyName}(AutoPropertyValue As String)", "a"));
+            if (useNameHeuristic == true)
+            {
+                vbTest.ExpectedDiagnostics.Add(GetBasicResultAt(9, 9, "Sub Test.M1(c As C)", "AutoPropertyValue", $"Property Set C.{propertyName}(AutoPropertyValue As String)", "a"));
+            }
+
+            await vbTest.RunAsync();
         }
 
         [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
         public async Task ShouldBeLocalizedRegressionTest()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 internal static class Program
 {
     public static void Main()
@@ -1367,14 +1494,27 @@ internal static class Program
         public override T Generic<T>(string text) => base.Generic<T>(text);
     }
 }",
-            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
-            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+                        GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number")
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
         public async Task ShouldBeLocalizedRegressionTest_02()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 internal static class Program
 {
     public static void Main()
@@ -1391,8 +1531,15 @@ internal static class Program
         public override T {|CS0115:Generic|}<T>(string text) => base.{|CS0117:Generic<T>|}(text);
     }
 }",
-            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
-            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+                    },
+                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.CA1303.use_naming_heuristic = true"), },
+                    ExpectedDiagnostics =
+                    {
+                        // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+                        GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number")
+                    },
+                },
+            }.RunAsync();
         }
 
         [Theory, WorkItem(2602, "https://github.com/dotnet/roslyn-analyzers/issues/2602")]
@@ -1473,6 +1620,9 @@ public class Test
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = N:System")]
         public async Task ShouldBeLocalized_ConstructorExcludedByConfiguration_NoDiagnostic(string editorConfigText)
         {
+            var editorConfigTextWithNamingHeuristic = editorConfigText + @"
+dotnet_code_quality.CA1303.use_naming_heuristic = true";
+
             var csharpTest = new VerifyCS.Test
             {
                 TestState =
@@ -1491,16 +1641,22 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
                 }
             };
 
             if (string.IsNullOrEmpty(editorConfigText))
             {
+#if !NETCOREAPP
+                const string StringArgType = "string";
+#else
+                const string StringArgType = "string?";
+#endif
+
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
-                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a")
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", $"Exception.Exception({StringArgType} message)", "a")
                 });
             }
 
@@ -1518,6 +1674,9 @@ public class Test
         [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = T:System.Exception")]
         public async Task ShouldBeLocalized_SubTypesExcludedByConfiguration_NoDiagnostic(string editorConfigText)
         {
+            var editorConfigTextWithNamingHeuristic = editorConfigText + @"
+dotnet_code_quality.CA1303.use_naming_heuristic = true";
+
             var csharpTest = new VerifyCS.Test
             {
                 TestState =
@@ -1538,20 +1697,26 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
                 }
             };
 
             if (string.IsNullOrEmpty(editorConfigText))
             {
+#if !NETCOREAPP
+                const string StringArgType = "string";
+#else
+                const string StringArgType = "string?";
+#endif
+
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
-                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a"),
-                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", "ArgumentException.ArgumentException(string message)", "a"),
-                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", "InvalidOperationException.InvalidOperationException(string message)", "a")
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", $"Exception.Exception({StringArgType} message)", "a"),
+                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", $"ArgumentException.ArgumentException({StringArgType} message)", "a"),
+                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", $"InvalidOperationException.InvalidOperationException({StringArgType} message)", "a")
                 });
             }
 
@@ -1563,8 +1728,11 @@ public class Test
         [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality." + DoNotPassLiteralsAsLocalizedParameters.RuleId + ".excluded_symbol_names = M1")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
-        public async Task EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
+            var editorConfigTextWithNamingHeuristic = editorConfigText + @"
+dotnet_code_quality.CA1303.use_naming_heuristic = true";
+
             var csharpTest = new VerifyCS.Test
             {
                 TestState =
@@ -1585,24 +1753,109 @@ public class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AdditionalFiles = { (".editorconfig", editorConfigTextWithNamingHeuristic) }
                 }
             };
 
             if (string.IsNullOrEmpty(editorConfigText))
             {
+#if !NETCOREAPP
+                const string StringArgType = "string";
+#else
+                const string StringArgType = "string?";
+#endif
+
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
-                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a"),
-                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", "ArgumentException.ArgumentException(string message)", "a"),
-                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
-                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", "InvalidOperationException.InvalidOperationException(string message)", "a")
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", $"Exception.Exception({StringArgType} message)", "a"),
+                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", $"ArgumentException.ArgumentException({StringArgType} message)", "a"),
+                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string? message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", $"InvalidOperationException.InvalidOperationException({StringArgType} message)", "a")
                 });
             }
 
             await csharpTest.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(PointsToAnalysisKind.None)]
+        [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
+        [InlineData(PointsToAnalysisKind.Complete)]
+        public async Task TestPointsToAnalysisKind(PointsToAnalysisKind? pointsToAnalysisKind)
+        {
+            var editorConfig = pointsToAnalysisKind.HasValue ?
+                $"dotnet_code_quality.CA1303.points_to_analysis_kind = {pointsToAnalysisKind}" :
+                string.Empty;
+
+            var csCode = @"
+using System.ComponentModel;
+
+public class C
+{
+    public void M([LocalizableAttribute(true)] string param)
+    {
+    }
+}
+
+public class Test
+{
+    private string str;
+    public void M1(C c)
+    {
+        str = ""a\na"";
+        c.M(str);
+    }
+}
+";
+            var csTest = new VerifyCS.Test()
+            {
+                TestCode = csCode,
+                AnalyzerConfigDocument = editorConfig
+            };
+
+            if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
+            {
+                csTest.ExpectedDiagnostics.Add(
+                    // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a a".
+                    GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a a"));
+            }
+
+            await csTest.RunAsync();
+
+            var vbCode = @"
+Imports Microsoft.VisualBasic
+Imports System.ComponentModel
+
+Public Class C
+    Public Sub M(<LocalizableAttribute(True)> param As String)
+    End Sub
+End Class
+
+Public Class Test
+    Dim str As String
+    Public Sub M1(c As C)
+        str = ""a"" & vbCrLf & ""a""
+        c.M(str)
+    End Sub
+End Class
+";
+            var vbTest = new VerifyVB.Test()
+            {
+                TestCode = vbCode,
+                AnalyzerConfigDocument = editorConfig
+            };
+
+            if (pointsToAnalysisKind == PointsToAnalysisKind.Complete)
+            {
+                vbTest.ExpectedDiagnostics.Add(
+                    // Test0.vb(14,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String)'. Retrieve the following string(s) from a resource table instead: "a a".
+                    GetBasicResultAt(14, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a a"));
+            }
+
+            await vbTest.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)

@@ -40,11 +40,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyze properties, methods
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
+            analysisContext.RegisterCompilationStartAction(context =>
+            {
+                var obsoleteAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+
+                // Analyze properties, methods
+                context.RegisterSymbolAction(ctx => AnalyzeSymbol(ctx, obsoleteAttributeType), SymbolKind.Property, SymbolKind.Method);
+            });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol? obsoleteAttributeType)
         {
             string identifier;
             var symbol = context.Symbol;
@@ -60,8 +65,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
-            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);
+            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, context.Symbol, context.Compilation, SymbolVisibilityGroup.Public, context.CancellationToken);
             if (!configuredVisibilities.Contains(symbol.GetResultantVisibility()))
+            {
+                return;
+            }
+
+            // If either the property or method is marked as obsolete, bail out
+            // see https://github.com/dotnet/roslyn-analyzers/issues/2956
+            if (symbol.HasAttribute(obsoleteAttributeType))
             {
                 return;
             }
@@ -74,7 +86,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             else if (symbol.Kind == SymbolKind.Method && symbol.Name.StartsWith(Get, StringComparison.Ordinal))
             {
                 // Want to look for properties named the same as the method sans 'Get'
-                identifier = symbol.Name.Substring(3);
+                identifier = symbol.Name[3..];
             }
             else
             {
@@ -103,10 +115,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
+                    // If either the property or method is marked as obsolete, bail out
+                    // see https://github.com/dotnet/roslyn-analyzers/issues/2956
+                    if (member.HasAttribute(obsoleteAttributeType))
+                    {
+                        continue;
+                    }
+
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, identifier);
+                        diagnostic = symbol.CreateDiagnostic(Rule, symbol.Name, identifier);
                         break;
                     }
 
@@ -115,7 +134,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         && member.Kind == SymbolKind.Property
                         && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
+                        diagnostic = symbol.CreateDiagnostic(Rule, identifier, symbol.Name);
                         break;
                     }
                 }

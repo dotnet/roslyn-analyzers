@@ -148,7 +148,10 @@ namespace @namespace
     public class D {}
 }",
                 // Diagnostic for only one of the two occurrences.
-                GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
+                VerifyCS.Diagnostic(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule)
+                    .WithSpan(2, 11, 2, 21)
+                    .WithSpan(7, 11, 7, 21)
+                    .WithArguments("namespace", "namespace"));
         }
 
         [Fact]
@@ -165,7 +168,94 @@ Namespace [Namespace]
     End Class
 End Namespace
 ",
-                GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
+                VerifyVB.Diagnostic(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule)
+                    .WithSpan(2, 11, 2, 22)
+                    .WithSpan(7, 11, 7, 22)
+                    .WithArguments("Namespace", "Namespace"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.analyzed_symbol_kinds = NamedType")]
+        [InlineData("dotnet_code_quality.analyzed_symbol_kinds = Method, Property")]
+        [InlineData("dotnet_code_quality.CA1716.analyzed_symbol_kinds = NamedType")]
+        [InlineData("dotnet_code_quality.CA1716.analyzed_symbol_kinds = Method, Property")]
+        public async Task UserOptionDoesNotIncludeNamespace_NoDiagnostic(string editorConfigText)
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+namespace @namespace
+{
+    public class C {}
+}
+",
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                },
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Namespace [Namespace]
+    Public Class C
+    End Class
+End Namespace",
+            },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                },
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.analyzed_symbol_kinds = Namespace")]
+        [InlineData("dotnet_code_quality.analyzed_symbol_kinds = Namespace, Property")]
+        [InlineData("dotnet_code_quality.CA1716.analyzed_symbol_kinds = Namespace")]
+        [InlineData("dotnet_code_quality.CA1716.analyzed_symbol_kinds = Namespace, Property")]
+        public async Task UserOptionIncludesNamespace_Diagnostic(string editorConfigText)
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+namespace @namespace
+{
+    public class C {}
+}
+",
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    ExpectedDiagnostics = { GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"), },
+                },
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Namespace [Namespace]
+    Public Class C
+    End Class
+End Namespace",
+            },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    ExpectedDiagnostics = { GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"), },
+                },
+            }.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)

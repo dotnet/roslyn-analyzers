@@ -57,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
-    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
+    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.IsEmpty)
                     {
                         ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreation);
                     }
@@ -121,7 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsCompilerGeneratedParamsArray(IArrayCreationOperation arrayCreationExpression, OperationAnalysisContext context)
         {
-            var model = context.Compilation.GetSemanticModel(arrayCreationExpression.Syntax.SyntaxTree);
+            var model = arrayCreationExpression.SemanticModel;
 
             // Compiler generated array creation seems to just use the syntax from the parent.
             var parent = model.GetOperation(arrayCreationExpression.Syntax, context.CancellationToken);
@@ -157,7 +157,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var parameters = targetSymbol.GetParameters();
-            if (parameters.Length == 0 || !parameters[parameters.Length - 1].IsParams)
+            if (parameters.IsEmpty || !parameters[^1].IsParams)
             {
                 return false;
             }

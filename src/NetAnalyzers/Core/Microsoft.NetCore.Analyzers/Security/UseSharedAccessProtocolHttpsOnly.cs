@@ -7,6 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -88,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule,
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol,
                             operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
@@ -134,20 +135,22 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (protocolsArgumentOperation != null)
                             {
-                                var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
-                                if (cfg != null)
+                                if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                                 {
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                                                        operationBlockStartContext.Options,
+                                                                        operationAnalysisContext.Options,
                                                                         SupportedDiagnostics,
+                                                                        protocolsArgumentOperation.Syntax.SyntaxTree,
+                                                                        operationAnalysisContext.Compilation,
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                                        cancellationToken: operationBlockStartContext.CancellationToken,
+                                                                        cancellationToken: operationAnalysisContext.CancellationToken,
                                                                         defaultMaxInterproceduralMethodCallChain: 1);
                                     var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                                                                                 cfg,
                                                                                                 owningSymbol,
                                                                                                 operationAnalysisContext.Options,
                                                                                                 wellKnownTypeProvider,
+                                                                                                PointsToAnalysisKind.Complete,
                                                                                                 interproceduralAnalysisConfig,
                                                                                                 out var copyAnalysisResult,
                                                                                                 out var pointsToAnalysisResult);

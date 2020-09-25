@@ -1,9 +1,22 @@
 {
   "tools": {
-    "dotnet": "2.1.503",
-    "vswhere": "2.2.7"
+    "dotnet": "5.0.100-preview.7.20366.6",
+    "runtimes": {
+      "dotnet": [
+        "3.1.7"
+      ]
+    },
+    "vs": {
+      "version": "16.6"
+    },
+    "xcopy-msbuild": "16.6.5-alpha1"
+  },
+  "sdk": {
+    "version": "5.0.100-preview.7.20366.6",
+    "allowPrerelease": true,
+    "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "1.0.0-beta.18476.3"
+    "Microsoft.DotNet.Arcade.Sdk": "5.0.0-beta.20459.8"
   }
 }

@@ -15,6 +15,8 @@ using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
+#pragma warning disable RS1029 // Do not use reserved diagnostic IDs. - fires for this analyzer file included in unit test project.
+
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
@@ -113,8 +115,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var reportCA1714 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1714, context.CancellationToken);
-            var reportCA1717 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1717, context.CancellationToken);
+            var reportCA1714 = context.Options.MatchesConfiguredVisibility(Rule_CA1714, symbol, context.Compilation, context.CancellationToken);
+            var reportCA1717 = context.Options.MatchesConfiguredVisibility(Rule_CA1717, symbol, context.Compilation, context.CancellationToken);
             if (!reportCA1714 && !reportCA1717)
             {
                 return;
@@ -133,7 +135,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
+            bool hasFlagsAttribute = symbol.GetAttributes().Any(a => flagsAttribute.Equals(a.AttributeClass));
             if (hasFlagsAttribute)
             {
                 if (reportCA1714 && !IsPlural(symbol.Name)) // Checking Rule CA1714

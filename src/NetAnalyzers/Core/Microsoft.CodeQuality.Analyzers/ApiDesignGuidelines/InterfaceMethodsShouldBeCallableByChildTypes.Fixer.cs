@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public async override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            if (!(semanticModel.GetDeclaredSymbol(nodeToFix, context.CancellationToken) is IMethodSymbol methodSymbol))
+            if (semanticModel.GetDeclaredSymbol(nodeToFix, context.CancellationToken) is not IMethodSymbol methodSymbol)
             {
                 return;
             }

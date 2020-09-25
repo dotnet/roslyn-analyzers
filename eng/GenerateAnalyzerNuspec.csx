@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 
 string nuspecFile = Args[0];
@@ -21,6 +22,7 @@ var analyzerSarifFileDir = Args[17];
 var analyzerSarifFileName = Args[18];
 var analyzerConfigurationFileDir = Args[19];
 var analyzerConfigurationFileName = Args[20];
+var globalAnalyzerConfigsDir = Args[21];
 
 var result = new StringBuilder();
 
@@ -215,6 +217,21 @@ if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
         foreach (string editorconfig in Directory.EnumerateFiles(directory))
         {
             result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"editorconfig\\{directoryName}"));
+        }
+    }
+}
+
+if (globalAnalyzerConfigsDir.Length > 0 && Directory.Exists(globalAnalyzerConfigsDir))
+{
+    foreach (string editorconfig in Directory.EnumerateFiles(globalAnalyzerConfigsDir))
+    {
+        if (Path.GetExtension(editorconfig) == ".editorconfig")
+        {
+            result.AppendLine(FileElement(Path.Combine(globalAnalyzerConfigsDir, editorconfig), $"build\\config"));
+        }
+        else
+        {
+            throw new InvalidDataException($"Encountered a file with unexpected extension: {editorconfig}");
         }
     }
 }

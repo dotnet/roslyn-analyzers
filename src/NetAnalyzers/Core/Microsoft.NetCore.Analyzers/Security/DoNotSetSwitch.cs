@@ -9,6 +9,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
@@ -122,9 +123,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationAnalysisContext.ContainingSymbol,
                             operationAnalysisContext.Options,
                             wellKnownTypeProvider,
+                            PointsToAnalysisKind.Complete,
                             InterproceduralAnalysisConfiguration.Create(
                                 operationAnalysisContext.Options,
                                 SupportedDiagnostics,
+                                invocationOperation.Syntax.SyntaxTree,
+                                operationAnalysisContext.Compilation,
                                 InterproceduralAnalysisKind.None,   // Just looking for simple cases.
                                 operationAnalysisContext.CancellationToken),
                             out _,
@@ -159,7 +163,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             });
         }
 
-        static bool IsConfiguredToSkipAnalysis(DiagnosticDescriptor rule, OperationAnalysisContext context)
-            => context.ContainingSymbol.IsConfiguredToSkipAnalysis(context.Options, rule, context.Compilation, context.CancellationToken);
+        private static bool IsConfiguredToSkipAnalysis(DiagnosticDescriptor rule, OperationAnalysisContext context)
+            => context.Options.IsConfiguredToSkipAnalysis(rule, context.ContainingSymbol, context.Compilation, context.CancellationToken);
     }
 }

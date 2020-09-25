@@ -68,8 +68,8 @@ namespace Microsoft.NetCore.Analyzers.Security
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
 
-            Debug.Assert(!String.IsNullOrWhiteSpace(this.DeserializerTypeMetadataName));
-            Debug.Assert(!String.IsNullOrWhiteSpace(this.SerializationBinderPropertyMetadataName));
+            Debug.Assert(!string.IsNullOrWhiteSpace(this.DeserializerTypeMetadataName));
+            Debug.Assert(!string.IsNullOrWhiteSpace(this.SerializationBinderPropertyMetadataName));
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
             Debug.Assert(this.BinderDefinitelyNotSetDescriptor != null);
             Debug.Assert(this.BinderMaybeNotSetDescriptor != null);
@@ -110,10 +110,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderDefinitelyNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    BinderMaybeNotSetDescriptor!, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(BinderDefinitelyNotSetDescriptor!,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(BinderMaybeNotSetDescriptor!,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -191,6 +191,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
+                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));
                                 }
@@ -230,8 +232,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
                 });

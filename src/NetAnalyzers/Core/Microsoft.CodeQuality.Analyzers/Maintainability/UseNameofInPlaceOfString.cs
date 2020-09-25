@@ -53,9 +53,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var argument = (IArgumentOperation)context.Operation;
-            if ((argument.Value.Kind != OperationKind.Literal
+            if (argument.Value.Kind != OperationKind.Literal
                 || argument.ArgumentKind != ArgumentKind.Explicit
-                || argument.Value.Type.SpecialType != SpecialType.System_String))
+                || argument.Value.Type.SpecialType != SpecialType.System_String)
             {
                 return;
             }
@@ -75,16 +75,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var parametersInScope = GetParametersInScope(context);
                     if (HasAMatchInScope(stringText, parametersInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(
-                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText));
+                        context.ReportDiagnostic(argument.Value.CreateDiagnostic(RuleWithSuggestion, stringText));
                     }
                     return;
                 case PropertyName:
                     var propertiesInScope = GetPropertiesInScope(context);
                     if (HasAMatchInScope(stringText, propertiesInScope))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(
-                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText));
+                        context.ReportDiagnostic(argument.Value.CreateDiagnostic(RuleWithSuggestion, stringText));
                     }
                     return;
                 default:

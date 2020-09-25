@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    class DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver : DiagnosticAnalyzer
+    internal class DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor DefinitelyWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
@@ -89,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (IMethodSymbol constructorMethod, IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
                         {
                             PropertySetAbstractValueKind kind;
-                            if (constructorMethod.Parameters.Length == 0)
+                            if (constructorMethod.Parameters.IsEmpty)
                             {
                                 kind = PropertySetAbstractValueKind.Unflagged;
                             }
@@ -106,14 +106,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         break;
 
                                     case PointsToAbstractValueKind.KnownLocations:
-                                        if (pointsTo.Locations.Any(l => !l.IsNull && simpleTypeResolverSymbol.Equals(l.LocationTypeOpt)))
+                                        if (pointsTo.Locations.Any(l => !l.IsNull && simpleTypeResolverSymbol.Equals(l.LocationType)))
                                         {
                                             kind = PropertySetAbstractValueKind.Flagged;
                                         }
                                         else if (pointsTo.Locations.Any(l =>
                                                     !l.IsNull
-                                                    && javaScriptTypeResolverSymbol.Equals(l.LocationTypeOpt)
-                                                    && (l.CreationOpt == null || l.CreationOpt.Kind != OperationKind.ObjectCreation)))
+                                                    && javaScriptTypeResolverSymbol.Equals(l.LocationType)
+                                                    && (l.Creation == null || l.Creation.Kind != OperationKind.ObjectCreation)))
                                         {
                                             // Points to a JavaScriptTypeResolver, but we don't know if the instance is a SimpleTypeResolver.
                                             kind = PropertySetAbstractValueKind.MaybeFlagged;
@@ -153,10 +153,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyWithSimpleTypeResolver, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeWithSimpleTypeResolver, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyWithSimpleTypeResolver,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeWithSimpleTypeResolver,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -220,6 +220,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
+                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));
                                 }
@@ -259,8 +261,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
                 });

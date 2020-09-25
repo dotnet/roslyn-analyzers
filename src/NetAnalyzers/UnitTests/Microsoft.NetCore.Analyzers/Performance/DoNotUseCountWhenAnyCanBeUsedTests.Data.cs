@@ -1,18 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Linq;
-using System.Net;
-using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -121,8 +110,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         {
             { 0, BinaryOperatorKind.Equals             , true }, // !Any
             { 0, BinaryOperatorKind.NotEquals          , false }, // Any
-            { 0, BinaryOperatorKind.LessThan           , true }, // !Any
-            { 0, BinaryOperatorKind.GreaterThanOrEqual , false }, // Any
+            { 0, BinaryOperatorKind.LessThan           , false }, // Any
+            { 0, BinaryOperatorKind.GreaterThanOrEqual , true }, // !Any
             { 1, BinaryOperatorKind.GreaterThan        , true }, // !Any
             { 1, BinaryOperatorKind.LessThanOrEqual    , false }, // Any
         };

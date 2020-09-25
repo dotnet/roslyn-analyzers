@@ -1,5 +1,48 @@
 #!/usr/bin/env bash
 
+# Stop script if unbound variable found (use ${var:-} if intentional)
+set -u
+
+# Stop script if command returns non-zero exit code.
+# Prevents hidden errors caused by missing error code propagation.
+set -e
+
+usage()
+{
+  echo "Common settings:"
+  echo "  --configuration <value>    Build configuration: 'Debug' or 'Release' (short: -c)"
+  echo "  --verbosity <value>        Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  echo "  --binaryLog                Create MSBuild binary log (short: -bl)"
+  echo "  --help                     Print help and exit (short: -h)"
+  echo ""
+
+  echo "Actions:"
+  echo "  --restore                  Restore dependencies (short: -r)"
+  echo "  --build                    Build solution (short: -b)"
+  echo "  --rebuild                  Rebuild solution"
+  echo "  --test                     Run all unit tests in the solution (short: -t)"
+  echo "  --integrationTest          Run all integration tests in the solution"
+  echo "  --performanceTest          Run all performance tests in the solution"
+  echo "  --pack                     Package build outputs into NuGet packages and Willow components"
+  echo "  --sign                     Sign build outputs"
+  echo "  --publish                  Publish artifacts (e.g. symbols)"
+  echo "  --clean                    Clean the solution"
+  echo ""
+
+  echo "Advanced settings:"
+  echo "  --projects <value>       Project or solution file(s) to build"
+  echo "  --ci                     Set when running on CI server"
+  echo "  --excludeCIBinarylog     Don't output binary log (short: -nobl)"
+  echo "  --prepareMachine         Prepare machine for CI run, clean up processes after build"
+  echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
+  echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
+  echo "  --useDefaultDotnetInstall <value> Use dotnet-install.* scripts from public location as opposed to from eng common folder"
+  
+  echo ""
+  echo "Command line arguments not listed above are passed thru to msbuild."
+  echo "Arguments can also be passed in with a single hyphen."
+}
+
 source="${BASH_SOURCE[0]}"
 
 # resolve $source until the file is no longer a symlink
@@ -12,249 +55,138 @@ while [[ -h "$source" ]]; do
 done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
-help=false
 restore=false
 build=false
 rebuild=false
 test=false
-pack=false
 integration_test=false
 performance_test=false
+pack=false
+publish=false
 sign=false
 public=false
 ci=false
+clean=false
+
+warn_as_error=true
+node_reuse=true
+binary_log=false
+exclude_ci_binary_log=false
+pipelines_log=false
 
 projects=''
 configuration='Debug'
 prepare_machine=false
 verbosity='minimal'
-properties=''
+runtime_source_feed=''
+runtime_source_feed_key=''
+use_default_dotnet_install=false
 
-while (($# > 0)); do
-  lowerI="$(echo $1 | awk '{print tolower($0)}')"
-  case $lowerI in
-    --build)
-      build=true
-      shift 1
-      ;;
-    --ci)
-      ci=true
-      shift 1
-      ;;
-    --configuration)
-      configuration=$2
-      shift 2
-      ;;
-    --help)
-      echo "Common settings:"
-      echo "  --configuration <value>  Build configuration Debug, Release"
-      echo "  --verbosity <value>      Msbuild verbosity (q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic])"
-      echo "  --help                   Print help and exit"
-      echo ""
-      echo "Actions:"
-      echo "  --restore                Restore dependencies"
-      echo "  --build                  Build solution"
-      echo "  --rebuild                Rebuild solution"
-      echo "  --test                   Run all unit tests in the solution"
-      echo "  --sign                   Sign build outputs"
-      echo "  --pack                   Package build outputs into NuGet packages and Willow components"
-      echo ""
-      echo "Advanced settings:"
-      echo "  --solution <value>       Path to solution to build"
-      echo "  --ci                     Set when running on CI server"
-      echo "  --prepareMachine         Prepare machine for CI run"
-      echo ""
-      echo "Command line arguments not listed above are passed through to MSBuild."
+properties=''
+while [[ $# > 0 ]]; do
+  opt="$(echo "${1/#--/-}" | awk '{print tolower($0)}')"
+  case "$opt" in
+    -help|-h)
+      usage
       exit 0
       ;;
-    --pack)
-      pack=true
-      shift 1
+    -clean)
+      clean=true
       ;;
-    --preparemachine)
-      prepare_machine=true
-      shift 1
+    -configuration|-c)
+      configuration=$2
+      shift
       ;;
-    --rebuild)
-      rebuild=true
-      shift 1
-      ;;
-    --restore)
-      restore=true
-      shift 1
-      ;;
-    --sign)
-      sign=true
-      shift 1
-      ;;
-    --solution)
-      solution=$2
-      shift 2
-      ;;
-    --test)
-      test=true
-      shift 1
-      ;;
-    --integrationtest)
-      integration_test=true
-      shift 1
-      ;;
-    --performancetest)
-      performance_test=true
-      shift 1
-      ;;
-    --publish)
-      publish=true
-      shift 1
-      ;;
-    --verbosity)
+    -verbosity|-v)
       verbosity=$2
-      shift 2
+      shift
+      ;;
+    -binarylog|-bl)
+      binary_log=true
+      ;;
+    -excludeCIBinarylog|-nobl)
+      exclude_ci_binary_log=true
+      ;;
+    -pipelineslog|-pl)
+      pipelines_log=true
+      ;;
+    -restore|-r)
+      restore=true
+      ;;
+    -build|-b)
+      build=true
+      ;;
+    -rebuild)
+      rebuild=true
+      ;;
+    -pack)
+      pack=true
+      ;;
+    -test|-t)
+      test=true
+      ;;
+    -integrationtest)
+      integration_test=true
+      ;;
+    -performancetest)
+      performance_test=true
+      ;;
+    -sign)
+      sign=true
+      ;;
+    -publish)
+      publish=true
+      ;;
+    -preparemachine)
+      prepare_machine=true
+      ;;
+    -projects)
+      projects=$2
+      shift
+      ;;
+    -ci)
+      ci=true
+      ;;
+    -warnaserror)
+      warn_as_error=$2
+      shift
+      ;;
+    -nodereuse)
+      node_reuse=$2
+      shift
+      ;;
+    -runtimesourcefeed)
+      runtime_source_feed=$2
+      shift
+      ;;
+    -runtimesourcefeedkey)
+      runtime_source_feed_key=$2
+      shift
+      ;;
+    -usedefaultdotnetinstall)
+      use_default_dotnet_install=$2
+      shift
       ;;
     *)
       properties="$properties $1"
-      shift 1
       ;;
   esac
+
+  shift
 done
 
-repo_root="$scriptroot/../.."
-eng_root="$scriptroot/.."
-artifacts_dir="$repo_root/artifacts"
-toolset_dir="$artifacts_dir/toolset"
-log_dir="$artifacts_dir/log/$configuration"
-build_log="$log_dir/Build.binlog"
-toolset_restore_log="$log_dir/ToolsetRestore.binlog"
-temp_dir="$artifacts_dir/tmp/$configuration"
-
-global_json_file="$repo_root/global.json"
-build_driver=""
-toolset_build_proj=""
-
-# ReadVersionFromJson [json key]
-function ReadGlobalVersion {
-  local key=$1
-
-  local unamestr="$(uname)"
-  local sedextended='-r'
-  if [[ "$unamestr" == 'Darwin' ]]; then
-    sedextended='-E'
-  fi;
-
-  local version="$(grep -m 1 "\"$key\"" $global_json_file | sed $sedextended 's/^ *//;s/.*: *"//;s/",?//')"
-  if [[ ! "$version" ]]; then
-    echo "Error: Cannot find \"$key\" in $global_json_file" >&2;
-    ExitWithExitCode 1
-  fi;
-
-  # return value
-  echo "$version"
-}
-
-function InitializeDotNetCli {
-  # Disable first run since we want to control all package sources
-  export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-
-  # Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
-  export DOTNET_MULTILEVEL_LOOKUP=0
-
-  # Source Build uses DotNetCoreSdkDir variable
-  if [[ -n "$DotNetCoreSdkDir" ]]; then
-    export DOTNET_INSTALL_DIR="$DotNetCoreSdkDir"
+if [[ "$ci" == true ]]; then
+  pipelines_log=true
+  node_reuse=false
+  if [[ "$exclude_ci_binary_log" == false ]]; then
+    binary_log=true
   fi
+fi
 
-  
-  local dotnet_sdk_version=`ReadGlobalVersion "dotnet"`
-  local dotnet_root=""
-
-  # Use dotnet installation specified in DOTNET_INSTALL_DIR if it contains the required SDK version, 
-  # otherwise install the dotnet CLI and SDK to repo local .dotnet directory to avoid potential permission issues.
-  if [[ -d "$DOTNET_INSTALL_DIR/sdk/$dotnet_sdk_version" ]]; then
-    dotnet_root="$DOTNET_INSTALL_DIR"
-  else
-    dotnet_root="$repo_root/.dotnet"
-    export DOTNET_INSTALL_DIR="$dotnet_root"
-
-    if [[ "$restore" == true ]]; then
-      InstallDotNetSdk $dotnet_root $dotnet_sdk_version
-    fi
-  fi
-
-  build_driver="$dotnet_root/dotnet"
-}
-
-function InstallDotNetSdk {
-  local root=$1
-  local version=$2
-
-  local install_script=`GetDotNetInstallScript $root`
-
-  bash "$install_script" --version $version --install-dir $root
-  local lastexitcode=$?
-
-  if [[ $lastexitcode != 0 ]]; then
-    echo "Failed to install dotnet SDK (exit code '$lastexitcode')."
-    ExitWithExitCode $lastexitcode
-  fi
-}
-
-function GetDotNetInstallScript {
-  local root=$1
-  local install_script="$root/dotnet-install.sh"
-
-  if [[ ! -a "$install_script" ]]; then
-    mkdir -p "$root"
-
-    # Use curl if available, otherwise use wget
-    if command -v curl > /dev/null; then
-      curl "https://dot.net/v1/dotnet-install.sh" -sSL --retry 10 --create-dirs -o "$install_script"
-    else
-      wget -q -O "$install_script" "https://dot.net/v1/dotnet-install.sh"
-    fi
-  fi
-
-  # return value
-  echo "$install_script"
-}
-
-function InitializeToolset {
-  local toolset_version=`ReadGlobalVersion "Microsoft.DotNet.Arcade.Sdk"`
-  local toolset_location_file="$toolset_dir/$toolset_version.txt"
-
-  if [[ -a "$toolset_location_file" ]]; then
-    local path=`cat $toolset_location_file`
-    if [[ -a "$path" ]]; then
-      toolset_build_proj=$path
-      return
-    fi
-  fi  
-
-  if [[ "$restore" != true ]]; then
-    echo "Toolset version $toolsetVersion has not been restored."
-    ExitWithExitCode 2
-  fi
-  
-  local proj="$toolset_dir/restore.proj"
-
-  echo '<Project Sdk="Microsoft.DotNet.Arcade.Sdk"/>' > $proj
-  "$build_driver" msbuild $proj /t:__WriteToolsetLocation /m /nologo /clp:None /warnaserror /bl:$toolset_restore_log /v:$verbosity /p:__ToolsetLocationOutputFile=$toolset_location_file 
-  local lastexitcode=$?
-
-  if [[ $lastexitcode != 0 ]]; then
-    echo "Failed to restore toolset (exit code '$lastexitcode'). See log: $toolset_restore_log"
-    ExitWithExitCode $lastexitcode
-  fi
-
-  toolset_build_proj=`cat $toolset_location_file`
-
-  if [[ ! -a "$toolset_build_proj" ]]; then
-    echo "Invalid toolset path: $toolset_build_proj"
-    ExitWithExitCode 3
-  fi
-}
+. "$scriptroot/tools.sh"
 
 function InitializeCustomToolset {
-  local script="$eng_root/RestoreToolset.sh"
+  local script="$eng_root/restore-toolset.sh"
 
   if [[ -a "$script" ]]; then
     . "$script"
@@ -262,80 +194,46 @@ function InitializeCustomToolset {
 }
 
 function Build {
-  "$build_driver" msbuild $toolset_build_proj \
-    /m /nologo /clp:Summary /warnaserror \
-    /v:$verbosity \
-    /bl:$build_log \
+  InitializeToolset
+  InitializeCustomToolset
+
+  if [[ ! -z "$projects" ]]; then
+    properties="$properties /p:Projects=$projects"
+  fi
+
+  local bl=""
+  if [[ "$binary_log" == true ]]; then
+    bl="/bl:\"$log_dir/Build.binlog\""
+  fi
+
+  MSBuild $_InitializeToolset \
+    $bl \
     /p:Configuration=$configuration \
-    /p:Projects=$projects \
     /p:RepoRoot="$repo_root" \
     /p:Restore=$restore \
     /p:Build=$build \
     /p:Rebuild=$rebuild \
-    /p:Deploy=$deploy \
     /p:Test=$test \
     /p:Pack=$pack \
     /p:IntegrationTest=$integration_test \
     /p:PerformanceTest=$performance_test \
     /p:Sign=$sign \
     /p:Publish=$publish \
-    /p:ContinuousIntegrationBuild=$ci \
     $properties
-  local lastexitcode=$?
 
-  if [[ $lastexitcode != 0 ]]; then
-    echo "Failed to build $toolset_build_proj"
-    ExitWithExitCode $lastexitcode
-  fi
+  ExitWithExitCode 0
 }
 
-function ExitWithExitCode {
-  if [[ "$ci" == true && "$prepare_machine" == true ]]; then
-    StopProcesses
+if [[ "$clean" == true ]]; then
+  if [ -d "$artifacts_dir" ]; then
+    rm -rf $artifacts_dir
+    echo "Artifacts directory deleted."
   fi
-  exit $1
-}
+  exit 0
+fi
 
-function StopProcesses {
-  echo "Killing running build processes..."
-  pkill -9 "dotnet"
-  pkill -9 "vbcscompiler"
-}
+if [[ "$restore" == true ]]; then
+  InitializeNativeTools
+fi
 
-function Main {
-  # HOME may not be defined in some scenarios, but it is required by NuGet
-  if [[ -z $HOME ]]; then
-    export HOME="$repo_root/artifacts/.home/"
-    mkdir -p "$HOME"
-  fi
-
-  if [[ -z $projects ]]; then
-    projects="$repo_root/*.sln"
-  fi
-
-  if [[ -z $NUGET_PACKAGES ]]; then
-    if [[ $ci ]]; then
-      export NUGET_PACKAGES="$repo_root/.packages"
-    else
-      export NUGET_PACKAGES="$HOME/.nuget/packages"
-    fi
-  fi
-
-  mkdir -p "$toolset_dir"
-  mkdir -p "$log_dir"
-  
-  if [[ $ci ]]; then
-    mkdir -p "$temp_dir"
-    export TEMP="$temp_dir"
-    export TMP="$temp_dir"
-  fi
-
-  InitializeDotNetCli
-  InitializeToolset
-  InitializeCustomToolset
-
-  Build
-  ExitWithExitCode $?
-}
-
-Main
+Build

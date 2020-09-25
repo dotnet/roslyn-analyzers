@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+#if !CODEANALYSIS_V3_OR_BETTER
 using System.Reflection;
+#endif
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -144,11 +146,13 @@ namespace Analyzer.Utilities.Extensions
                      messageArgs: args);
         }
 
+#if !CODEANALYSIS_V3_OR_BETTER
         /// <summary>
         /// TODO: Revert this reflection based workaround once we move to Microsoft.CodeAnalysis version 3.0
         /// </summary>
         private static readonly PropertyInfo? s_syntaxTreeDiagnosticOptionsProperty =
             typeof(SyntaxTree).GetTypeInfo().GetDeclaredProperty("DiagnosticOptions");
+#endif
 
         public static void ReportNoLocationDiagnostic(
             this CompilationAnalysisContext context,
@@ -184,15 +188,22 @@ namespace Analyzer.Utilities.Extensions
 
             DiagnosticSeverity? GetEffectiveSeverity()
             {
+#if !CODEANALYSIS_V3_OR_BETTER
                 if (s_syntaxTreeDiagnosticOptionsProperty == null)
                 {
                     return rule.DefaultSeverity;
                 }
+#endif
 
                 ReportDiagnostic? overriddenSeverity = null;
                 foreach (var tree in compilation.SyntaxTrees)
                 {
-                    var options = (ImmutableDictionary<string, ReportDiagnostic>)s_syntaxTreeDiagnosticOptionsProperty.GetValue(tree)!;
+                    var options =
+#if CODEANALYSIS_V3_OR_BETTER
+                        tree.DiagnosticOptions;
+#else
+                        (ImmutableDictionary<string, ReportDiagnostic>)s_syntaxTreeDiagnosticOptionsProperty.GetValue(tree)!;
+#endif
                     if (options.TryGetValue(rule.Id, out var configuredValue))
                     {
                         if (configuredValue == ReportDiagnostic.Suppress)

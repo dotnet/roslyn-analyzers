@@ -151,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return true;
                 }
             }
-            retrun false;
+            return false;
         }
     }
 }

@@ -102,10 +102,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // Ignore parameters that hav any of these attributes.
                     // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
-                    var callerInformationAttributes = ImmutableArray.Create<INamedTypeSymbol>(
-                        compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerFilePathAttribute).FullName),
-                        compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName),
-                        compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
+                    var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerFilePathAttribute).FullName));
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName));
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
+                    var callerInformationAttributes = builder.ToImmutable();
 
                     while (last >= 0
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
@@ -135,7 +136,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableArray<INamedTypeSymbol> callerAttributes)
+        private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableHashSet<INamedTypeSymbol> callerAttributes)
         {
             if (!parameter.IsOptional)
             {

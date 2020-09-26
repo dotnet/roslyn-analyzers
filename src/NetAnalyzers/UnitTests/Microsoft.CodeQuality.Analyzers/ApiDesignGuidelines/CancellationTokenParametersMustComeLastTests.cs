@@ -338,7 +338,7 @@ End Class",
         [Fact]
         public async Task CA1068_CallerAttributes()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -359,7 +359,7 @@ public class C
         [Fact]
         public async Task CA1068_CallerAttributes2()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;

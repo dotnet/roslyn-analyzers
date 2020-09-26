@@ -103,9 +103,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // Ignore parameters that hav any of these attributes.
                     // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
                     var callerInformationAttributes = ImmutableArray.Create<INamedTypeSymbol>(
-                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerFilePathAttribute).FullName),
-                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerLineNumberAttribute).FullName),
-                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerMemberNameAttribute).FullName));
+                        compilationContext.Compilation.GetTypeByMetadataName(typeof(CallerFilePathAttribute).FullName),
+                        compilationContext.Compilation.GetTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName),
+                        compilationContext.Compilation.GetTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
 
                     while (last >= 0
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))

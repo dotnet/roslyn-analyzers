@@ -107,7 +107,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerLineNumberAttribute).FullName),
                         compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerMemberNameAttribute).FullName));
 
-                    while (last >= 0 && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
+                    while (last >= 0
+                        && methodSymbol.Parameters[last].IsOptional
+                        && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {
                         last--;
                     }

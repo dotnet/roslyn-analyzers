@@ -334,5 +334,47 @@ End Class",
             VerifyVB.Diagnostic().WithLocation(7, 21)
                 .WithArguments("Public Function SomeAsync(cancellationToken As System.Threading.CancellationToken, progress1 As System.IProgress(Of Integer), progress2 As System.IProgress(Of Integer)) As System.Threading.Tasks.Task"));
         }
+
+        [Fact]
+        public async Task CA1068_CallerAttributes()
+        {
+        	await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class C
+{
+    public Task SomeAsync(CancellationToken cancellationToken,
+        [CallerMemberName] string memberName = """",
+        [CallerFilePath] string sourceFilePath = """",
+        [CallerLineNumber] int sourceLineNumber = 0)
+    {
+        throw new NotImplementedException();
+    }
+}");
+        }
+
+        [Fact]
+        public async Task CA1068_CallerAttributes2()
+        {
+        	await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class C
+{
+    public Task SomeAsync(CancellationToken cancellationToken = default,
+        [CallerMemberName] string memberName = """",
+        [CallerFilePath] string sourceFilePath = """",
+        [CallerLineNumber] int sourceLineNumber = 0)
+    {
+        throw new NotImplementedException();
+    }
+}");
+        }
     }
 }

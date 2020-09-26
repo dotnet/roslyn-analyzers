@@ -108,7 +108,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerMemberNameAttribute).FullName));
 
                     while (last >= 0
-                        && methodSymbol.Parameters[last].IsOptional
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {
                         last--;
@@ -138,6 +137,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableArray<INamedTypeSymbol> callerAttributes)
         {
+            if (!parameter.IsOptional)
+            {
+                // The compiler doesn't allow caller info attributes on non-optional parameters.
+                return false;
+            }
+
             var attributes = parameter.GetAttributes();
             foreach (var attribute in attributes)
             {

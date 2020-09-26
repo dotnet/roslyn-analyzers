@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -99,6 +100,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         last--;
                     }
 
+                    // Ignore parameters that hav any of these attributes.
+                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
+                    var callerInformationAttributes = ImmutableArray.Create<INamedTypeSymbol>(
+                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerFilePathAttribute).FullName),
+                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerLineNumberAttribute).FullName),
+                        compilationContext.Compilation.GetTypeByMetadaName(typeof(CallerMemberNameAttribute).FullName));
+
+                    while (last >= 0 && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
+                    {
+                        last--;
+                    }
+
                     for (int i = last - 1; i >= 0; i--)
                     {
                         ITypeSymbol parameterType = methodSymbol.Parameters[i].Type;
@@ -119,6 +132,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 },
                 SymbolKind.Method);
             });
+        }
+
+        private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableArray<INamedTypeSymbol> callerAttributes)
+        {
+            var attributes = parameter.GetAttributes();
+            foreach (var attribute in attributes)
+            {
+                if (callerAttributes.Any(callerAttribute => SymbolEqualityComparer.Default.Equals(callerAttribute, attribute.AttributeClass)))
+                {
+                    return true;
+                }
+            }
+            retrun false;
         }
     }
 }

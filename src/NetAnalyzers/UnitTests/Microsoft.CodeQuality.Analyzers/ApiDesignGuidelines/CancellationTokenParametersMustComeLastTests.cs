@@ -335,7 +335,7 @@ End Class",
                 .WithArguments("Public Function SomeAsync(cancellationToken As System.Threading.CancellationToken, progress1 As System.IProgress(Of Integer), progress2 As System.IProgress(Of Integer)) As System.Threading.Tasks.Task"));
         }
 
-        [Fact]
+        [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         public async Task CA1068_CallerAttributesWithNonOptionalCancellationToken()
         {
         	await VerifyCS.VerifyAnalyzerAsync(@"
@@ -357,7 +357,7 @@ public class C
         }
 
         [Fact]
-        public async Task CA1068_CallerAttributesWithOptionalCancellationToken()
+        [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         {
         	await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

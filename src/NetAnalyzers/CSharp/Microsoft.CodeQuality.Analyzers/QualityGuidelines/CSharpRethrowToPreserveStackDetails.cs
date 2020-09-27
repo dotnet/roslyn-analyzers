@@ -62,6 +62,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     case SyntaxKind.AnonymousMethodExpression:
                     case SyntaxKind.ClassDeclaration:
                     case SyntaxKind.StructDeclaration:
+                    case SyntaxKind.RecordDeclaration:
                         return;
                 }
             }

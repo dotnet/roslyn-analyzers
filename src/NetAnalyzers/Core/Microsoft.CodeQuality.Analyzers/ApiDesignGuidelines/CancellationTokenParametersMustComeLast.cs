@@ -63,6 +63,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         last--;
                     }
 
+                    // Ignore parameters that have any of these attributes.
+                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
+                    var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerFilePathAttribute).FullName));
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName));
+                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
+                    var callerInformationAttributes = builder.ToImmutable();
+
+                    while (last >= 0
+                        && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
+                    {
+                        last--;
+                    }
+
                     // Skip optional parameters, UNLESS one of them is a CancellationToken
                     // AND it's not the last one.
                     if (last >= 0 && methodSymbol.Parameters[last].IsOptional
@@ -97,20 +111,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     if (last >= 0
                         && iprogressType != null
                         && methodSymbol.Parameters[last].Type.OriginalDefinition.Equals(iprogressType))
-                    {
-                        last--;
-                    }
-
-                    // Ignore parameters that hav any of these attributes.
-                    // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
-                    var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerFilePathAttribute).FullName));
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName));
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
-                    var callerInformationAttributes = builder.ToImmutable();
-
-                    while (last >= 0
-                        && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {
                         last--;
                     }

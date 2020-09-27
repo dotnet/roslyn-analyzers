@@ -338,7 +338,7 @@ End Class",
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         public async Task CA1068_CallerAttributesWithNonOptionalCancellationToken()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -359,7 +359,7 @@ public class C
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         public async Task CA1068_CallerAttributesWithOptionalCancellationToken()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -380,7 +380,7 @@ public class C
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         public async Task CA1068_CallerAttributesWithOptionalCancellationToken2()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -401,7 +401,7 @@ public class C
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
         public async Task CA1068_CallerAttributesWithOptionalCancellationToken3()
         {
-        	await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;

@@ -62,7 +62,9 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     case SyntaxKind.AnonymousMethodExpression:
                     case SyntaxKind.ClassDeclaration:
                     case SyntaxKind.StructDeclaration:
+#if CODEANALYSIS_V3_OR_BETTER
                     case SyntaxKind.RecordDeclaration:
+#endif
                         return;
                 }
             }

@@ -495,6 +495,23 @@ End Class
 ");
         }
 
+        [Fact]
+        public async Task CA2200_NoDiagnosticsForFieldInClassOrRecord()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class C
+{
+    private string s = default(string) ?? throw new Exception();
+}
+
+public record R
+{
+    private string s = default(string) ?? throw new Exception();
+}");
+        }
+
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);

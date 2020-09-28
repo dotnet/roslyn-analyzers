@@ -378,7 +378,7 @@ public class C
         }
 
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
-        public async Task CA1068_CallerAttributesWithOptionalCancellationToken2()
+        public async Task CA1068_CallerAttributesWithOptionalCancellationTokenAsLastParameter()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -399,7 +399,7 @@ public class C
         }
 
         [Fact, WorkItem(4227, "https://github.com/dotnet/roslyn-analyzers/issues/4227")]
-        public async Task CA1068_CallerAttributesWithOptionalCancellationToken3()
+        public async Task CA1068_CallerAttributesWithOptionalCancellationTokenAsMiddleParameter()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;

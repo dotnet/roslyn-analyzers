@@ -138,10 +138,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         }
 
         private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableHashSet<INamedTypeSymbol> callerAttributes)
-        {
-            return parameter.GetAttributes().Any(
+            => parameter.GetAttributes().Any(
                 attribute => callerAttributes.Any(
                     callerAttribute => SymbolEqualityComparer.Default.Equals(callerAttribute, attribute.AttributeClass)));;
-        }
     }
 }

@@ -139,21 +139,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool HasCallerInformationAttribute(IParameterSymbol parameter, ImmutableHashSet<INamedTypeSymbol> callerAttributes)
         {
-            if (!parameter.IsOptional)
-            {
-                // The compiler doesn't allow caller info attributes on non-optional parameters.
-                return false;
-            }
-
-            var attributes = parameter.GetAttributes();
-            foreach (var attribute in attributes)
-            {
-                if (callerAttributes.Any(callerAttribute => SymbolEqualityComparer.Default.Equals(callerAttribute, attribute.AttributeClass)))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return parameter.GetAttributes().Any(
+                attribute => callerAttributes.Any(
+                    callerAttribute => SymbolEqualityComparer.Default.Equals(callerAttribute, attribute.AttributeClass)));;
         }
     }
 }

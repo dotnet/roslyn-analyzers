@@ -2,7 +2,6 @@
 
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -43,6 +42,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
                 INamedTypeSymbol? cancellationTokenType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
                 INamedTypeSymbol? iprogressType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIProgress1);
+
+                var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerFilePathAttribute));
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerLineNumberAttribute));
+                builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesCallerMemberNameAttribute));
+                var callerInformationAttributes = builder.ToImmutable();
+
                 if (cancellationTokenType == null)
                 {
                     return;
@@ -65,12 +71,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // Ignore parameters that have any of these attributes.
                     // C# reserved attributes: https://docs.microsoft.com/dotnet/csharp/language-reference/attributes/caller-information
-                    var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerFilePathAttribute).FullName));
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerLineNumberAttribute).FullName));
-                    builder.AddIfNotNull(compilationContext.Compilation.GetOrCreateTypeByMetadataName(typeof(CallerMemberNameAttribute).FullName));
-                    var callerInformationAttributes = builder.ToImmutable();
-
                     while (last >= 0
                         && HasCallerInformationAttribute(methodSymbol.Parameters[last], callerInformationAttributes))
                     {

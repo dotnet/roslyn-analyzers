@@ -57,13 +57,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (info.ExpectedStringFormatArgumentCount >= 0 &&
-                        invocation.TargetMethod.IsVararg)
-                    {
-                        // __arglist is not supported here (see https://github.com/dotnet/roslyn/issues/7346)
-                        return;
-                    }
-
                     IArgumentOperation formatStringArgument = invocation.Arguments[info.FormatStringIndex];
                     if (!Equals(formatStringArgument?.Value?.Type, formatInfo.String) ||
                         !(formatStringArgument?.Value?.ConstantValue.Value is string))
@@ -89,6 +82,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             // arguments actually provided to the invocation.
                             return;
                         }
+                    }
+
+                    // __arglist is not supported here (see https://github.com/dotnet/roslyn/issues/7346)
+                    // but we want to skip it only in C# since VB doesn't support __arglist
+                    if (info.ExpectedStringFormatArgumentCount >= 0 &&
+                        invocation.TargetMethod.IsVararg &&
+                        invocation.Language == LanguageNames.CSharp)
+                    {
+                        return;
                     }
 
                     // explicit parameter case

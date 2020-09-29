@@ -509,6 +509,32 @@ End Class",
             VerifyVB.Diagnostic().WithLocation(11));
         }
 
+        [Fact]
+        public async Task CA2241_VarArgsNotSupported_ButStillCatchesMissingStringFormatItems()
+        {
+            await new VerifyCS.Test
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = @"
+using System;
+
+public class C
+{
+    void Method()
+    {
+        {|#0:Console.Write(""{0} {1} {2} {2} {4}"", 1, 2, 3, 4, __arglist(5))|};
+        {|#1:Console.WriteLine(""{0} {1} {2} {2} {4}"", 1, 2, 3, 4, __arglist(5))|};
+    }
+}
+",
+                ExpectedDiagnostics =
+                {
+                    VerifyCS.Diagnostic().WithLocation(0),
+                    VerifyCS.Diagnostic().WithLocation(1),
+                },
+            }.RunAsync();
+        }
+
         [Theory]
         [WorkItem(2799, "https://github.com/dotnet/roslyn-analyzers/issues/2799")]
         // No configuration - validate no diagnostics in default configuration

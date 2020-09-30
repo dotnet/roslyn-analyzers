@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
@@ -59,6 +60,134 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
         #endregion
 
         #region Fix tests
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task NoObliviousWhenUnannotatedClassConstraint()
+        {
+            var source = @"
+#nullable enable
+public class C<T> where T : class
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+C<T>
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task NoObliviousWhenAnnotatedClassConstraint()
+        {
+            var source = @"
+#nullable enable
+public class C<T> where T : class?
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+C<T>
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task ObliviousWhenObliviousClassConstraint()
+        {
+            var source = @"
+#nullable enable
+public class {|RS0041:C|}<T> // oblivious
+#nullable disable
+    where T : class
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+~C<T>
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task NoObliviousWhenUnannotatedReferenceTypeConstraint()
+        {
+            var source = @"
+#nullable enable
+public class D { }
+public class C<T> where T : D
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+C<T>
+D
+D.D() -> void
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task NoObliviousWhenAnnotatedReferenceTypeConstraint()
+        {
+            var source = @"
+#nullable enable
+public class D { }
+public class C<T> where T : D?
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+C<T>
+D
+D.D() -> void
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
+
+        [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
+        public async Task ObliviousWhenObliviousReferenceTypeConstraint()
+        {
+            var source = @"
+#nullable enable
+public class D { }
+
+public class {|RS0041:C|}<T> // oblivious
+#nullable disable
+    where T : D
+{
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = @"#nullable enable
+C<T>.C() -> void
+~C<T>
+D
+D.D() -> void
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+        }
 
         [Fact]
         public async Task DoNotAnnotateMemberInUnannotatedUnshippedAPI_Nullable()

@@ -556,7 +556,39 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
-                    return ObliviousDetector.IgnoreTopLevelNullabilityInstance.Visit(symbol);
+                    if (ObliviousDetector.IgnoreTopLevelNullabilityInstance.Visit(symbol))
+                    {
+                        return true;
+                    }
+
+                    var typeParameters = ((INamedTypeSymbol)symbol).TypeParameters;
+                    foreach (var typeParameter in typeParameters)
+                    {
+                        if (ObliviousDetector.CheckTypeParameterConstraints(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+                else if (symbol.Kind == SymbolKind.Method)
+                {
+                    if (ObliviousDetector.Instance.Visit(symbol))
+                    {
+                        return true;
+                    }
+
+                    var typeParameters = ((IMethodSymbol)symbol).TypeParameters;
+                    foreach (var typeParameter in typeParameters)
+                    {
+                        if (ObliviousDetector.CheckTypeParameterConstraints(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
                 }
 
                 return ObliviousDetector.Instance.Visit(symbol);
@@ -772,7 +804,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
+                // There are cases where we want to ignore top-level nullability
+                // For type definitions, `class C<...>`
+                // For outer types, `Outer<...>.Inner`
                 public static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+
                 public static readonly ObliviousDetector Instance = new ObliviousDetector(ignoreTopLevelNullability: false);
 
                 private readonly bool _ignoreTopLevelNullability;
@@ -802,14 +838,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
-                    foreach (var typeParameter in symbol.TypeParameters)
-                    {
-                        if (Visit(typeParameter))
-                        {
-                            return true;
-                        }
-                    }
-
                     return false;
                 }
 
@@ -834,24 +862,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     foreach (var typeArgument in symbol.TypeArguments)
                     {
-                        // type parameters will already have been checked on the type defining them, so we can just do a shallow check
-                        if (typeArgument.TypeKind == TypeKind.TypeParameter)
+                        if (typeArgument.TypeKind == TypeKind.TypeParameter
+                            && typeArgument.ContainingType.Equals(symbol))
                         {
-                            if (typeArgument.IsReferenceType &&
-                                typeArgument.NullableAnnotation() == NullableAnnotation.None)
-                            {
-                                return true;
-                            }
+                            // type parameters will already have been checked on the type defining them, so we don't need to check their use
                         }
                         else if (Instance.Visit(typeArgument))
-                        {
-                            return true;
-                        }
-                    }
-
-                    foreach (var typeParameter in symbol.TypeParameters)
-                    {
-                        if (Instance.Visit(typeParameter))
                         {
                             return true;
                         }
@@ -875,10 +891,27 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return Visit(symbol.PointedAtType);
                 }
 
+                /// <summary>This only checks the use of a type parameter. We're checking their definition (looking at type constraints) elsewhere.</summary>
                 public override bool VisitTypeParameter(ITypeParameterSymbol symbol)
                 {
-                    if (symbol.HasReferenceTypeConstraint() && symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
+                    if (symbol.IsReferenceType &&
+                        symbol.NullableAnnotation() == NullableAnnotation.None)
                     {
+                        // Example:
+                        // I<TReferenceType~>
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                /// <summary>This is checking the definition of a type parameter (as opposed to its usage).</summary>
+                public static bool CheckTypeParameterConstraints(ITypeParameterSymbol symbol)
+                {
+                    if (symbol.HasReferenceTypeConstraint() &&
+                        symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
+                    {
+                        // where T : class~
                         return true;
                     }
 
@@ -886,6 +919,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     {
                         if (Instance.Visit(constraintType))
                         {
+                            // Examples:
+                            // where T : SomeReferenceType~
+                            // where T : I<SomeReferenceType~>
                             return true;
                         }
                     }

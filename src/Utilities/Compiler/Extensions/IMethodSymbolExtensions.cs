@@ -685,6 +685,9 @@ namespace Analyzer.Utilities.Extensions
         /// Check if the given <paramref name="methodSymbol"/> is an implicitly generated method for top level statements.
         /// </summary>
         public static bool IsTopLevelStatementsEntryPointMethod([NotNullWhen(true)] this IMethodSymbol? methodSymbol)
-            => false;
+        {
+            _ = methodSymbol;
+            return false;
+        }
     }
 }

@@ -39,7 +39,7 @@
 
 1. Navigate to the root of the Roslyn-analyzers repo and run these commands:
     - `cd roslyn-analyzers`
-    - Set RUNTIMEPACKAGEVERSION variable with the version which ever the runtime/roslyn-analyzers repo is using: `set RUNTIMEPACKAGEVERSION=5.0.0`
+    - Set RUNTIMEPACKAGEVERSION variable with the version which ever the [runtime](https://github.com/dotnet/runtime/blob/master/eng/Analyzers.props#L9)/[roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers/blob/master/eng/Versions.props#L26) repo is using: `set RUNTIMEPACKAGEVERSION=5.0.0`
     - `build.cmd -ci /p:AssemblyVersion=%RUNTIMEPACKAGEVERSION% /p:AutoGenerateAssemblyVersion=false /p:OfficialBuild=true`
     - For testing against `dotnet/runtime`:
         - `cd artifacts\bin\Microsoft.CodeAnalysis.CSharp.NetAnalyzers\Debug\netstandard2.0`

@@ -25,7 +25,7 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0</MicrosoftCodeAnalysisForShippedApisVersion>
+    <MicrosoftCodeAnalysisVersionForTests>3.7.0</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.0</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>

@@ -73,6 +73,7 @@
 The diagnostics reported by the analyzer will be listed in Output.txt.
 
 ## Debugging analyzer with runtime repo projects
+
 1. Copy over debug build of analyzer assemblies on top of NetAnalyzers nuget package in your packages folder. (Instructions are same as the step 1 and 2 of [Testing against the Runtime repo step](#Testing-against-the-Runtime-and-Roslyn-analyzers-repo))
 2. Start VS and open a project you want to debug
 3. Note the process ID for `ServiceHub.RoslynCodeAnalysisService.exe` corresponding to that VS instance
@@ -80,3 +81,4 @@ The diagnostics reported by the analyzer will be listed in Output.txt.
 5. Attach to above process ID with the RoslynAnalyzers debugger: `Debug -> Attach to Process...`
 6. Start typing in the other project, the breakpoints should hit
     - If breakpoints are not hitting then the RoslynAnalyzers.sln build might not the same as the build you copied to the step 1 repeat the step again or check if you copied into the correct path
+    

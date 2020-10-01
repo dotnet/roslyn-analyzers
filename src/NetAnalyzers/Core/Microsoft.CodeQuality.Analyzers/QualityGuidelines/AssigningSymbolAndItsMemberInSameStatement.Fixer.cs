@@ -15,8 +15,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-#nullable enable
-
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = AssigningSymbolAndItsMemberInSameStatement.RuleId), Shared]
@@ -58,7 +56,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             while (members.Count > 2)
             {
                 replacements.Add(GetAssignmentExpressionStatement(members, leadingTrivia, trailingTrivia));
-                trailingTrivia = SyntaxTriviaList.Empty; // Take the trailing trivia on the first assignment only.
+                // For the first statement, take all trivia.
+                // For following statements, take only whitespace trivia.
+                trailingTrivia = trailingTrivia.Where(t => t.IsKind(SyntaxKind.WhitespaceTrivia)).ToSyntaxTriviaList();
             }
 
             var title = MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle;

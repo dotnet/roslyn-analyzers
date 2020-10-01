@@ -57,7 +57,7 @@ public class Test
         }
 
         [Theory]
-        [InlineData(0, "a.Property = a = b;")]
+        [InlineData(0, "a.Property = b;")]
         [InlineData(1, "a.Property = c;")]
 
         public async Task CSharpReassignLocalVariableAndReferToItsProperty(int codeActionIndex, string fix)
@@ -88,7 +88,8 @@ public class Test
     public void Method()
     {{
         C a = new C(), b = new C(), c;
-        c = a = b;
+        a = b;
+        c = a;
         {fix}
     }}
 }}
@@ -146,7 +147,7 @@ public class Test
         }
 
         [Theory]
-        [InlineData(0, "a.Property.Property = a = b;")]
+        [InlineData(0, "a.Property.Property = b;")]
         [InlineData(1, "a.Property.Property = a.Property;")]
         public async Task CSharpReassignLocalVariableAndItsPropertyAndReferToItsProperty(int codeActionIndex, string fix)
         {
@@ -176,7 +177,8 @@ public class Test
     public void Method()
     {{
         C a = new C(), b = new C();
-        a.Property = a = b;
+        a = b;
+        a.Property = a;
         {fix}
     }}
 }}

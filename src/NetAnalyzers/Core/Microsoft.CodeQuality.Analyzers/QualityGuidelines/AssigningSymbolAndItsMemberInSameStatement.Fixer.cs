@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 #nullable enable
 
@@ -22,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssigningSymbolAndItsMemberInSameStatement.RuleId);
 
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             // For something like `a.x = a = b;`, we offer 3 code fixes:
             // First:
@@ -36,102 +38,81 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             //     a = b;
             //     temp.x = b;
 
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            if (root.FindNode(context.Span).Parent is not AssignmentExpressionSyntax assignment)
+            {
+                return;
+            }
+
+            var members = GetAssignmentMembers(assignment);
+            if (members.Count < 3)
+            {
+                return;
+            }
+
+            var mostRightMember = members.Peek(); // Don't move this near its usage. The result will be different.
+            var leadingTrivia = assignment.Parent.GetLeadingTrivia();
+            var trailingTrivia = assignment.Parent.GetTrailingTrivia();
+            var replacements = new List<SyntaxNode>(members.Count - 1);
+
+            while (members.Count > 2)
+            {
+                replacements.Add(GetAssignmentExpressionStatement(members, leadingTrivia, trailingTrivia));
+                trailingTrivia = SyntaxTriviaList.Empty; // Take the trailing trivia on the first assignment only.
+            }
+
             var title = MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle;
-            context.RegisterCodeFix(new MyCodeAction(title,
-                 async ct => await SplitAssignmentFirstOption(context.Document, context.Span, ct).ConfigureAwait(false),
-                 equivalenceKey: title + "0"),
-            context.Diagnostics);
-            context.RegisterCodeFix(new MyCodeAction(title,
-                 async ct => await SplitAssignmentSecondOption(context.Document, context.Span, ct).ConfigureAwait(false),
-                 equivalenceKey: title + "1"),
-            context.Diagnostics);
-            return Task.CompletedTask;
+
+            var replacements1 = replacements.Concat(GetAssignmentExpressionStatement(assignment.Left, mostRightMember, leadingTrivia, trailingTrivia));
+            var replacements2 = replacements.Concat(GetAssignmentExpressionStatement(members, leadingTrivia, trailingTrivia));
+
+            var nestedCodeAction = CodeAction.Create(title, ImmutableArray.Create<CodeAction>(
+                new MyCodeAction($"{title} 1", ct => GetDocument(context.Document, root, assignment.Parent, replacements1)),
+                new MyCodeAction($"{title} 2", ct => GetDocument(context.Document, root, assignment.Parent, replacements2))
+                ), isInlinable: false);
+
+            context.RegisterCodeFix(nestedCodeAction, context.Diagnostics);
         }
 
-        private static async Task<Document> SplitAssignmentFirstOption(Document document, TextSpan span, CancellationToken cancellationToken)
+        /// <summary>
+        /// If the assignment expression is:  a = b = c = d
+        /// Return a stack containing a, b, c, d with `a` at the bottom and `d` at the top.
+        /// </summary>
+        private static Stack<ExpressionSyntax> GetAssignmentMembers(AssignmentExpressionSyntax node)
         {
-            // This method splits `a.x = a = b` to:
-            // a = b;
-            // a.x = b;
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            // a.x = a = b;
-            var parentAssignment = root.FindNode(span).Parent;
-
-            if (!TryGetAssignmentExpressionParts(parentAssignment, out _, out var right) ||
-                !TryGetAssignmentExpressionParts(right, out _, out var rightOfRight))
+            var stack = new Stack<ExpressionSyntax>();
+            ExpressionSyntax current = node;
+            while (current is AssignmentExpressionSyntax assignment)
             {
-                return document;
+                stack.Push(assignment.Left);
+                current = assignment.Right;
             }
-
-            // a = b;
-            right = GetExpressionFromAssignment(right).WithTriviaFrom(parentAssignment.Parent);
-
-            // a.x = b;
-            var firstEqualsLastAssignment = GetExpressionFromAssignment(GetAssignmentWithRight(parentAssignment, rightOfRight));
-
-            root = root.ReplaceNode(parentAssignment.Parent, new[] { right, firstEqualsLastAssignment });
-            return document.WithSyntaxRoot(root);
+            stack.Push(current);
+            return stack;
         }
 
-        private static async Task<Document> SplitAssignmentSecondOption(Document document, TextSpan span, CancellationToken cancellationToken)
+        private static ExpressionStatementSyntax GetAssignmentExpressionStatement(Stack<ExpressionSyntax> stack, SyntaxTriviaList leadingTrivia, SyntaxTriviaList trailingTrivia)
         {
-            // This method splits `a.x = a = b` to:
-            // a = b;
-            // a.x = a;
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            // a.x = a = b;
-            var parentAssignment = root.FindNode(span).Parent;
-
-            if (!TryGetAssignmentExpressionParts(parentAssignment, out _, out var right) ||
-                !TryGetAssignmentExpressionParts(right, out var leftOfRight, out _))
-            {
-                return document;
-            }
-
-            // a = b;
-            right = GetExpressionFromAssignment(right).WithTriviaFrom(parentAssignment.Parent);
-
-            // a.x = a;
-            var firstEqualsSecondAssignment = GetExpressionFromAssignment(GetAssignmentWithRight(parentAssignment, leftOfRight));
-
-            root = root.ReplaceNode(parentAssignment.Parent, new[] { right, firstEqualsSecondAssignment });
-            return document.WithSyntaxRoot(root);
+            var right = stack.Pop();
+            var left = stack.Peek();
+            return GetAssignmentExpressionStatement(left, right, leadingTrivia, trailingTrivia);
         }
 
-        private static SyntaxNode GetAssignmentWithRight(SyntaxNode assignmentExpression, SyntaxNode newRight)
-        {
-            return ((AssignmentExpressionSyntax)assignmentExpression).WithRight((ExpressionSyntax)newRight);
-        }
+        private static ExpressionStatementSyntax GetAssignmentExpressionStatement(ExpressionSyntax left, ExpressionSyntax right, SyntaxTriviaList leadingTrivia, SyntaxTriviaList trailingTrivia)
+            => SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, left, right))
+                    .WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
 
-        private static SyntaxNode GetExpressionFromAssignment(SyntaxNode assignmentExpression)
-        {
-            return SyntaxFactory.ExpressionStatement((AssignmentExpressionSyntax)assignmentExpression);
-        }
-
-        private static bool TryGetAssignmentExpressionParts(SyntaxNode assignmentExpression, [NotNullWhen(true)] out SyntaxNode? left, [NotNullWhen(true)] out SyntaxNode? right)
-        {
-            if (assignmentExpression is AssignmentExpressionSyntax assignment)
-            {
-                left = assignment.Left;
-                right = assignment.Right;
-                return true;
-            }
-            left = null;
-            right = null;
-            return false;
-        }
+        private static Task<Document> GetDocument(Document document, SyntaxNode root, SyntaxNode oldNode, IEnumerable<SyntaxNode> replacements)
+            => Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(oldNode, replacements)));
 
         public override FixAllProvider GetFixAllProvider()
-        {
-            return WellKnownFixAllProviders.BatchFixer;
-        }
+            => WellKnownFixAllProviders.BatchFixer;
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
+                : base(title, createChangedDocument, title)
             {
             }
         }

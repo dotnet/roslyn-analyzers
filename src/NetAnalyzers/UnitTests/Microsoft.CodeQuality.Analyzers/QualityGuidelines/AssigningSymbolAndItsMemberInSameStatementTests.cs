@@ -28,7 +28,7 @@ public class Test
     public void Method()
     {
         C a = new C(), b = new C();
-        a.Field = a = b;
+        [|a.Field|] = a = b;
     }
 }
 ";
@@ -237,7 +237,7 @@ public class Test
 
         [Theory]
         [InlineData(0, "x.Property.Property = y;")]
-        [InlineData(1, "x.Property.Property = x;")]
+        [InlineData(1, "x.Property.Property = x.Property;")]
         public async Task CSharpReassignGlobalVariableAndReferToItsField(int codeActionIndex, string fix)
         {
             var code = @"

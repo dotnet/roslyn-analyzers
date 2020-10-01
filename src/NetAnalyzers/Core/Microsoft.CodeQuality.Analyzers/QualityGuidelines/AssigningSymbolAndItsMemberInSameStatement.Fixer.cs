@@ -39,11 +39,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var title = MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle;
             context.RegisterCodeFix(new MyCodeAction(title,
                  async ct => await SplitAssignmentFirstOption(context.Document, context.Span, ct).ConfigureAwait(false),
-                 equivalenceKey: title),
+                 equivalenceKey: title + "0"),
             context.Diagnostics);
             context.RegisterCodeFix(new MyCodeAction(title,
                  async ct => await SplitAssignmentSecondOption(context.Document, context.Span, ct).ConfigureAwait(false),
-                 equivalenceKey: title),
+                 equivalenceKey: title + "1"),
             context.Diagnostics);
             return Task.CompletedTask;
         }

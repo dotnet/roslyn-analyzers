@@ -188,7 +188,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask, out INamedTypeSymbol? genericTaskType))
+            if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out INamedTypeSymbol? genericTaskType))
             {
                 return;
             }
@@ -222,7 +222,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     DiagnosticDescriptor rule;
                     string ruleMessageMethod;
                     string ruleMessagePreferredMethod;
-                    string ruleMessageMemoryType;
 
                     // Verify if the method is an undesired Async overload
                     if (method.Equals(undesiredReadAsyncMethod) ||
@@ -230,24 +229,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         rule = PreferStreamReadAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredReadAsyncMethod.Name;
-                        ruleMessagePreferredMethod = preferredReadAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
-                        ruleMessageMemoryType = memoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessagePreferredMethod = preferredReadAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
                     }
                     else if (method.Equals(undesiredWriteAsyncMethod) ||
                              method.Equals(undesiredWriteAsyncMethodWithCancellationToken))
                     {
                         rule = PreferStreamWriteAsyncMemoryOverloadsRule;
                         ruleMessageMethod = undesiredWriteAsyncMethod.Name;
-                        ruleMessagePreferredMethod = preferredWriteAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
-                        ruleMessageMemoryType = readOnlyMemoryType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                        ruleMessagePreferredMethod = preferredWriteAsyncMethod.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
                     }
                     else
                     {
                         // Prevent use of unassigned variables error
                         return;
                     }
-
-                    context.ReportDiagnostic(invocation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod, ruleMessageMemoryType));
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(rule, ruleMessageMethod, ruleMessagePreferredMethod));
                 }
             },
             OperationKind.Await);
@@ -265,7 +261,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             actualMethod = null;
 
             // The await should have a known operation child, check its kind
-            if (!(awaitOperation.Operation is IInvocationOperation awaitedInvocation))
+            if (awaitOperation.Operation is not IInvocationOperation awaitedInvocation)
             {
                 return false;
             }

@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -29,7 +29,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -156,7 +156,7 @@
         },
         "CA1012": {
           "id": "CA1012",
-          "shortDescription": "Abstract types should not have constructors",
+          "shortDescription": "Abstract types should not have public constructors",
           "fullDescription": "Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1012",
@@ -237,7 +237,7 @@
         "CA1018": {
           "id": "CA1018",
           "shortDescription": "Mark attributes with AttributeUsageAttribute",
-          "fullDescription": "Specify AttributeUsage on {0}.",
+          "fullDescription": "Specify AttributeUsage on {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1018",
           "properties": {
@@ -534,6 +534,26 @@
             ]
           }
         },
+        "CA1046": {
+          "id": "CA1046",
+          "shortDescription": "Do not overload equality operator on reference types",
+          "fullDescription": "For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1046",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotOverloadOperatorEqualsOnReferenceTypes",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1047": {
           "id": "CA1047",
           "shortDescription": "Do not declare protected member in sealed type",
@@ -615,8 +635,8 @@
         },
         "CA1054": {
           "id": "CA1054",
-          "shortDescription": "Uri parameters should not be strings",
-          "fullDescription": "If a method takes a string representation of a URI, a corresponding overload should be provided that takes an instance of the URI class, which provides these services in a safe and secure manner.",
+          "shortDescription": "URI-like parameters should not be strings",
+          "fullDescription": "This rule assumes that the parameter represents a Uniform Resource Identifier (URI). A string representation or a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. 'System.Uri' class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1054",
           "properties": {
@@ -635,7 +655,7 @@
         },
         "CA1055": {
           "id": "CA1055",
-          "shortDescription": "Uri return values should not be strings",
+          "shortDescription": "URI-like return values should not be strings",
           "fullDescription": "This rule assumes that the method returns a URI. A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1055",
@@ -655,7 +675,7 @@
         },
         "CA1056": {
           "id": "CA1056",
-          "shortDescription": "Uri properties should not be strings",
+          "shortDescription": "URI-like properties should not be strings",
           "fullDescription": "This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1056",
@@ -834,7 +854,7 @@
         "CA1069": {
           "id": "CA1069",
           "shortDescription": "Enums values should not be duplicated",
-          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization.",
+          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1069",
           "properties": {
@@ -853,7 +873,7 @@
         "CA1070": {
           "id": "CA1070",
           "shortDescription": "Do not declare event fields as virtual",
-          "fullDescription": "Do not declare virtual events in a base class and override them in a derived class. The C# compiler does not handle these correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
+          "fullDescription": "Do not declare virtual events in a base class. Overridden events in a derived class have undefined behavior. The C# compiler does not handle this correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1070",
           "properties": {
@@ -951,7 +971,7 @@
         "CA1508": {
           "id": "CA1508",
           "shortDescription": "Avoid dead conditional code",
-          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
+          "fullDescription": "'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1508",
           "properties": {
@@ -971,7 +991,7 @@
         "CA1509": {
           "id": "CA1509",
           "shortDescription": "Invalid entry in code metrics rule specification file",
-          "fullDescription": "Invalid entry in code metrics rule specification file",
+          "fullDescription": "Invalid entry in code metrics rule specification file.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1509",
           "properties": {
@@ -1150,7 +1170,7 @@
         "CA1715": {
           "id": "CA1715",
           "shortDescription": "Identifiers should have correct prefix",
-          "fullDescription": "Identifiers should have correct prefix",
+          "fullDescription": "The name of an externally visible interface does not start with an uppercase \"\"I\"\". The name of a generic type parameter on an externally visible type or method does not start with an uppercase \"\"T\"\".",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1715",
           "properties": {
@@ -1327,16 +1347,16 @@
             ]
           }
         },
-        "CA1806": {
-          "id": "CA1806",
-          "shortDescription": "Do not ignore method results",
-          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
+        "CA1805": {
+          "id": "CA1805",
+          "shortDescription": "Do not initialize unnecessarily",
+          "fullDescription": "The .NET runtime initializes all fields of reference types to their default values before running the constructor. In most cases, explicitly initializing a field to its default value in a constructor is redundant, adding maintenance costs and potentially degrading performance (such as with increased assembly size), and the explicit initialization can be removed.  In some cases, such as with static readonly fields that permanently retain their default value, consider instead changing them to be constants or properties.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1805",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
+            "typeName": "DoNotInitializeUnnecessarilyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1347,16 +1367,16 @@
             ]
           }
         },
-        "CA1812": {
-          "id": "CA1812",
-          "shortDescription": "Avoid uninstantiated internal classes",
-          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+        "CA1806": {
+          "id": "CA1806",
+          "shortDescription": "Do not ignore method results",
+          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "AvoidUninstantiatedInternalClassesAnalyzer",
+            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1525,6 +1545,26 @@
             ]
           }
         },
+        "CA2109": {
+          "id": "CA2109",
+          "shortDescription": "Review visible event handlers",
+          "fullDescription": "A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2109",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "ReviewVisibleEventHandlersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2119": {
           "id": "CA2119",
           "shortDescription": "Seal methods that satisfy private interfaces",
@@ -1688,7 +1728,7 @@
         "CA2231": {
           "id": "CA2231",
           "shortDescription": "Overload operator equals on overriding value type Equals",
-          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals",
+          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2231",
           "properties": {
@@ -1725,8 +1765,8 @@
         },
         "CA2245": {
           "id": "CA2245",
-          "shortDescription": "Do not assign a property to itself.",
-          "fullDescription": "The property {0} should not be assigned to itself.",
+          "shortDescription": "Do not assign a property to itself",
+          "fullDescription": "The property {0} should not be assigned to itself",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2245",
           "properties": {
@@ -1744,7 +1784,7 @@
         },
         "CA2246": {
           "id": "CA2246",
-          "shortDescription": "Assigning symbol and its member in the same statement.",
+          "shortDescription": "Assigning symbol and its member in the same statement",
           "fullDescription": "Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2246",
@@ -1765,7 +1805,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -1791,7 +1831,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -1881,10 +1921,29 @@
             ]
           }
         },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {
@@ -1924,7 +1983,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -1950,7 +2009,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -2040,10 +2099,29 @@
             ]
           }
         },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {
@@ -2121,7 +2199,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -2169,7 +2247,7 @@
         "CA1305": {
           "id": "CA1305",
           "shortDescription": "Specify IFormatProvider",
-          "fullDescription": "A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'",
+          "fullDescription": "A method or constructor calls one or more members that have overloads that accept a System.IFormatProvider parameter, and the method or constructor does not call the overload that takes the IFormatProvider parameter. When a System.Globalization.CultureInfo or IFormatProvider object is not supplied, the default value that is supplied by the overloaded member might not have the effect that you want in all locales. If the result will be based on the input from/output displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider'. Otherwise, if the result will be stored and accessed by software, such as when it is loaded from disk/database and when it is persisted to disk/database, specify 'CultureInfo.InvariantCulture'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1305",
           "properties": {
@@ -2188,13 +2266,13 @@
         },
         "CA1307": {
           "id": "CA1307",
-          "shortDescription": "Specify StringComparison",
-          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "shortDescription": "Specify StringComparison for clarity",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter. It is recommended to use the overload with StringComparison parameter for clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1307",
           "properties": {
             "category": "Globalization",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "SpecifyStringComparisonAnalyzer",
             "languages": [
               "C#",
@@ -2226,6 +2304,25 @@
             ]
           }
         },
+        "CA1310": {
+          "id": "CA1310",
+          "shortDescription": "Specify StringComparison for correctness",
+          "fullDescription": "A string comparison operation uses a method overload that does not set a StringComparison parameter, hence its behavior could vary based on the current user's locale settings. It is strongly recommended to use the overload with StringComparison parameter for correctness and clarity of intent. If the result will be displayed to the user, such as when sorting a list of items for display in a list box, specify 'StringComparison.CurrentCulture' or 'StringComparison.CurrentCultureIgnoreCase' as the 'StringComparison' parameter. If comparing case-insensitive identifiers, such as file paths, environment variables, or registry keys and values, specify 'StringComparison.OrdinalIgnoreCase'. Otherwise, if comparing case-sensitive identifiers, specify 'StringComparison.Ordinal'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1310",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": true,
+            "typeName": "SpecifyStringComparisonAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA1401": {
           "id": "CA1401",
           "shortDescription": "P/Invokes should not be visible",
@@ -2236,6 +2333,64 @@
             "category": "Interoperability",
             "isEnabledByDefault": true,
             "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1416": {
+          "id": "CA1416",
+          "shortDescription": "Validate platform compatibility",
+          "fullDescription": "Using platform dependent API on a component makes the code no longer work across all platforms.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1416",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "PlatformCompatabilityAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1417": {
+          "id": "CA1417",
+          "shortDescription": "Do not use 'OutAttribute' on string parameters for P/Invokes",
+          "fullDescription": "String parameters passed by value with the 'OutAttribute' can destabilize the runtime if the string is an interned string.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1417",
+          "properties": {
+            "category": "Interoperability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseOutAttributeStringPInvokeParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "InitializeStaticFieldsInlineAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2307,7 +2462,7 @@
         },
         "CA1826": {
           "id": "CA1826",
-          "shortDescription": "Do not use Enumerable methods on indexable collections. Instead use the collection directly",
+          "shortDescription": "Do not use Enumerable methods on indexable collections",
           "fullDescription": "This collection is directly indexable. Going through LINQ here causes unnecessary allocations and CPU work.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1826",
@@ -2333,7 +2488,7 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "typeName": "UseCountProperlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2352,7 +2507,26 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "typeName": "UseCountProperlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseCountProperlyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2364,7 +2538,7 @@
         },
         "CA1830": {
           "id": "CA1830",
-          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder.",
+          "shortDescription": "Prefer strongly-typed Append and Insert method overloads on StringBuilder",
           "fullDescription": "StringBuilder.Append and StringBuilder.Insert provide overloads for multiple types beyond System.String.  When possible, prefer the strongly-typed overloads over using ToString() and the string-based overload.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1830",
@@ -2440,7 +2614,7 @@
         },
         "CA1834": {
           "id": "CA1834",
-          "shortDescription": "Consider using 'StringBuilder.Append(char)' when applicable.",
+          "shortDescription": "Consider using 'StringBuilder.Append(char)' when applicable",
           "fullDescription": "'StringBuilder.Append(char)' is more efficient than 'StringBuilder.Append(string)' when the string is a single character. When calling 'Append' with a constant, prefer using a constant char rather than a constant string containing one character.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1834",
@@ -2448,6 +2622,82 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "PreferConstCharOverConstUnitStringAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1835": {
+          "id": "CA1835",
+          "shortDescription": "Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'",
+          "fullDescription": "'Stream' has a 'ReadAsync' overload that takes a 'Memory<Byte>' as the first argument, and a 'WriteAsync' overload that takes a 'ReadOnlyMemory<Byte>' as the first argument. Prefer calling the memory based overloads, which are more efficient.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1835",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferStreamAsyncMemoryOverloads",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1836": {
+          "id": "CA1836",
+          "shortDescription": "Prefer IsEmpty over Count",
+          "fullDescription": "For determining whether the object contains or not any items, prefer using 'IsEmpty' property rather than retrieving the number of items from the 'Count' property and comparing it to 0 or 1.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1836",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseCountProperlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1837": {
+          "id": "CA1837",
+          "shortDescription": "Use 'Environment.ProcessId'",
+          "fullDescription": "'Environment.ProcessId' is simpler and faster than 'Process.GetCurrentProcess().Id'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1837",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseEnvironmentProcessId",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1838": {
+          "id": "CA1838",
+          "shortDescription": "Avoid 'StringBuilder' parameters for P/Invokes",
+          "fullDescription": "Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1838",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": false,
+            "typeName": "AvoidStringBuilderPInvokeParametersAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2576,7 +2826,7 @@
         },
         "CA2014": {
           "id": "CA2014",
-          "shortDescription": "Do not use stackalloc in loops.",
+          "shortDescription": "Do not use stackalloc in loops",
           "fullDescription": "Stack space allocated by a stackalloc is only released at the end of the current method's invocation.  Using it in a loop can result in unbounded stack growth and eventual stack overflow conditions.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2014",
@@ -2662,6 +2912,26 @@
             "category": "Usage",
             "isEnabledByDefault": false,
             "typeName": "DoNotRaiseReservedExceptionTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "InitializeStaticFieldsInlineAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -2875,7 +3145,7 @@
         },
         "CA2247": {
           "id": "CA2247",
-          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum.",
+          "shortDescription": "Argument passed to TaskCompletionSource constructor should be TaskCreationOptions enum instead of TaskContinuationOptions enum",
           "fullDescription": "TaskCompletionSource has constructors that take TaskCreationOptions that control the underlying Task, and constructors that take object state that's stored in the task.  Accidentally passing a TaskContinuationOptions instead of a TaskCreationOptions will result in the call treating the options as state.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2247",
@@ -2883,6 +3153,44 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "DoNotCreateTaskCompletionSourceWithWrongArguments",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2248": {
+          "id": "CA2248",
+          "shortDescription": "Provide correct 'enum' argument to 'Enum.HasFlag'",
+          "fullDescription": "'Enum.HasFlag' method expects the 'enum' argument to be of the same 'enum' type as the instance on which the method is invoked and that this 'enum' is marked with 'System.FlagsAttribute'. If these are different 'enum' types, an unhandled exception will be thrown at runtime. If the 'enum' type is not marked with 'System.FlagsAttribute' the call will always return 'false' at runtime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2248",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "ProvideCorrectArgumentToEnumHasFlag",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2249": {
+          "id": "CA2249",
+          "shortDescription": "Consider using 'string.Contains' instead of 'string.IndexOf'",
+          "fullDescription": "Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2249",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "PreferStringContainsOverIndexOfAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3183,6 +3491,177 @@
             ],
             "tags": [
               "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2350": {
+          "id": "CA2350",
+          "shortDescription": "Do not use DataTable.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2350",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseDataTableReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2351": {
+          "id": "CA2351",
+          "shortDescription": "Do not use DataSet.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2351",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2352": {
+          "id": "CA2352",
+          "shortDescription": "Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2352",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableTypeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2353": {
+          "id": "CA2353",
+          "shortDescription": "Unsafe DataSet or DataTable in serializable type",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2353",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableTypeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2354": {
+          "id": "CA2354",
+          "shortDescription": "Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2354",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInIFormatterSerializableObjectGraphAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2355": {
+          "id": "CA2355",
+          "shortDescription": "Unsafe DataSet or DataTable type found in deserializable object graph",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2355",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableObjectGraphAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2356": {
+          "id": "CA2356",
+          "shortDescription": "Unsafe DataSet or DataTable type in web deserializable object graph",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2356",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInWebSerializableObjectGraphAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2361": {
+          "id": "CA2361",
+          "shortDescription": "Ensure autogenerated class containing DataSet.ReadXml() is not used with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. Make sure that autogenerated class containing the '{0}' call is not deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2361",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2362": {
+          "id": "CA2362",
+          "shortDescription": "Unsafe DataSet or DataTable in autogenerated serializable type can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the autogenerated type is never deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2362",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableTypeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
               "Telemetry"
             ]
           }
@@ -3563,14 +4042,14 @@
         },
         "CA5362": {
           "id": "CA5362",
-          "shortDescription": "Do Not Refer Self In Serializable Class",
-          "fullDescription": "This can allow an attacker to DOS or exhaust the memory of the process.",
+          "shortDescription": "Potential reference cycle in deserialized object graph",
+          "fullDescription": "Review code that processes untrusted deserialized data for handling of unexpected reference cycles. An unexpected reference cycle should not cause the code to enter an infinite loop. Otherwise, an unexpected reference cycle can allow an attacker to DOS or exhaust the memory of the process when deserializing untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5362",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
-            "typeName": "DoNotReferSelfInSerializableClass",
+            "typeName": "PotentialReferenceCycleInDeserializedObjectGraph",
             "languages": [
               "C#",
               "Visual Basic"
@@ -4375,19 +4854,57 @@
               "Telemetry"
             ]
           }
+        },
+        "IL3000": {
+          "id": "IL3000",
+          "shortDescription": "Avoid using accessing Assembly file path when publishing as a single-file",
+          "fullDescription": "'{0}' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/il3000",
+          "properties": {
+            "category": "Publish",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidAssemblyLocationInSingleFile",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "IL3001": {
+          "id": "IL3001",
+          "shortDescription": "Avoid using accessing Assembly file path when publishing as a single-file",
+          "fullDescription": "'{0}' will throw for assemblies embedded in a single-file app",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/il3001",
+          "properties": {
+            "category": "Publish",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidAssemblyLocationInSingleFile",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
         "CA1309": {
           "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
+          "shortDescription": "Use ordinal string comparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
@@ -4395,25 +4912,6 @@
             "category": "Globalization",
             "isEnabledByDefault": false,
             "typeName": "CSharpUseOrdinalStringComparisonAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
             "languages": [
               "C#"
             ],
@@ -4444,7 +4942,7 @@
         },
         "CA1825": {
           "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
+          "shortDescription": "Avoid zero-length array allocations",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",
@@ -4460,39 +4958,20 @@
             ]
           }
         },
-        "CA1829": {
-          "id": "CA1829",
-          "shortDescription": "Use Length/Count property instead of Count() when available",
-          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+        "CA2016": {
+          "id": "CA2016",
+          "shortDescription": "Forward the 'CancellationToken' parameter to methods that take one",
+          "fullDescription": "Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2016",
           "properties": {
-            "category": "Performance",
+            "category": "Reliability",
             "isEnabledByDefault": true,
-            "typeName": "CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
+            "typeName": "CSharpForwardCancellationTokenToInvocationsAnalyzer",
             "languages": [
               "C#"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -4502,13 +4981,13 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
         "CA1309": {
           "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
+          "shortDescription": "Use ordinal string comparison",
           "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309",
@@ -4516,25 +4995,6 @@
             "category": "Globalization",
             "isEnabledByDefault": false,
             "typeName": "BasicUseOrdinalStringComparisonAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
             "languages": [
               "Visual Basic"
             ],
@@ -4565,7 +5025,7 @@
         },
         "CA1825": {
           "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
+          "shortDescription": "Avoid zero-length array allocations",
           "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1825",
@@ -4581,39 +5041,20 @@
             ]
           }
         },
-        "CA1829": {
-          "id": "CA1829",
-          "shortDescription": "Use Length/Count property instead of Count() when available",
-          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+        "CA2016": {
+          "id": "CA2016",
+          "shortDescription": "Forward the 'CancellationToken' parameter to methods that take one",
+          "fullDescription": "Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2016",
           "properties": {
-            "category": "Performance",
+            "category": "Reliability",
             "isEnabledByDefault": true,
-            "typeName": "BasicUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
+            "typeName": "BasicForwardCancellationTokenToInvocationsAnalyzer",
             "languages": [
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -4623,7 +5064,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -4650,7 +5091,7 @@
         "CA2153": {
           "id": "CA2153",
           "shortDescription": "Do Not Catch Corrupted State Exceptions",
-          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception",
+          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2153",
           "properties": {
@@ -4688,7 +5129,7 @@
         "CA3147": {
           "id": "CA3147",
           "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
-          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
+          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147",
           "properties": {
@@ -4709,7 +5150,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -4754,7 +5195,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {

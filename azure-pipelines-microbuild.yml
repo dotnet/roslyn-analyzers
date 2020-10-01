@@ -1,6 +1,7 @@
 # Branches that trigger a build on commit
 trigger:
   - master
+  - release/*
   - 2.9.x
 
 variables:
@@ -68,6 +69,7 @@ stages:
 
 - template: eng\common\templates\post-build\post-build.yml
   parameters:
+    publishingInfraVersion: 3
     enableSymbolValidation: false
     enableSigningValidation: false
     enableSourceLinkValidation: false

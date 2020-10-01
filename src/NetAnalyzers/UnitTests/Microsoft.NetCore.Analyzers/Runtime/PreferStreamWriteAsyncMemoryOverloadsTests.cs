@@ -2,8 +2,6 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Humanizer;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
@@ -568,6 +566,42 @@ class C
                                         "(new byte[]{ 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 }).AsMemory(0, 8), new CancellationToken()" };
         }
 
+        [Fact]
+        public Task CS_Fixer_Diagnostic_EnsureSystemNamespaceAutoAdded()
+        {
+            string originalCode = @"
+using System.IO;
+using System.Threading;
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            await s.WriteAsync(buffer, 0, buffer.Length);
+        }
+    }
+}";
+            string fixedCode = @"
+using System.IO;
+using System.Threading;
+using System;
+
+class C
+{
+    public async void M()
+    {
+        using (FileStream s = File.Open(""path.txt"", FileMode.Open))
+        {
+            byte[] buffer = { 0xBA, 0x5E, 0xBA, 0x11, 0xF0, 0x07, 0xBA, 0x11 };
+            await s.WriteAsync(buffer.AsMemory(0, buffer.Length));
+        }
+    }
+}";
+            return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetCSharpResult(11, 19, 11, 57));
+        }
+
         [Theory]
         [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
         [MemberData(nameof(CSharpNamedArgumentsTestData))]
@@ -720,6 +754,38 @@ End Module
                                         @"(New Byte() {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}).AsMemory(0, 8), New CancellationToken()" };
         }
 
+        [Fact]
+        public Task VB_Fixer_Diagnostic_EnsureSystemNamespaceAutoAdded()
+        {
+            string originalCode = @"
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync(buffer, 0, buffer.Length)
+        End Using
+    End Sub
+End Class
+";
+            string fixedCode = @"
+Imports System.IO
+Imports System.Threading
+Imports System
+
+Class C
+    Public Async Sub M()
+        Using s As FileStream = File.Open(""path.txt"", FileMode.Open)
+            Dim buffer As Byte() = {&HBA, &H5E, &HBA, &H11, &HF0, &H07, &HBA, &H11}
+            Await s.WriteAsync(buffer.AsMemory(0, buffer.Length))
+        End Using
+    End Sub
+End Class
+";
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalCode, fixedCode, GetVisualBasicResult(8, 19, 8, 57));
+        }
+
         [Theory]
         [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
         [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
@@ -747,7 +813,6 @@ End Module
         [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
         public Task VB_Fixer_Diagnostic_AsStream_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, streamTypeName: "Stream", isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
-
 
         [Theory]
         [MemberData(nameof(VisualBasicInlinedByteArrayTestData))]
@@ -872,13 +937,13 @@ End Class
         protected DiagnosticResult GetCSharpResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetCSResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamWriteAsyncMemoryOverloadsRule,
-                "WriteAsync", "System.IO.Stream.WriteAsync(System.ReadOnlyMemory<byte>, System.Threading.CancellationToken)");
+                "WriteAsync", "Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)");
 
         // Returns a VB diagnostic result using the specified rule, lines, columns and preferred method signature for the WriteAsync method.
         protected DiagnosticResult GetVisualBasicResult(int startLine, int startColumn, int endLine, int endColumn)
             => GetVBResultForRule(startLine, startColumn, endLine, endColumn,
                 PreferStreamAsyncMemoryOverloads.PreferStreamWriteAsyncMemoryOverloadsRule,
-                "WriteAsync", "System.IO.Stream.WriteAsync(System.ReadOnlyMemory(Of Byte), System.Threading.CancellationToken)");
+                "WriteAsync", "Stream.WriteAsync(ReadOnlyMemory(Of Byte), CancellationToken)");
 
         #endregion
     }

@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Humanizer",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -14,7 +14,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -141,7 +141,7 @@
         },
         "CA1012": {
           "id": "CA1012",
-          "shortDescription": "Abstract types should not have constructors",
+          "shortDescription": "Abstract types should not have public constructors",
           "fullDescription": "Constructors on abstract types can be called only by derived types. Because public constructors create instances of a type, and you cannot create instances of an abstract type, an abstract type that has a public constructor is incorrectly designed.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1012",
@@ -222,7 +222,7 @@
         "CA1018": {
           "id": "CA1018",
           "shortDescription": "Mark attributes with AttributeUsageAttribute",
-          "fullDescription": "Specify AttributeUsage on {0}.",
+          "fullDescription": "Specify AttributeUsage on {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1018",
           "properties": {
@@ -519,6 +519,26 @@
             ]
           }
         },
+        "CA1046": {
+          "id": "CA1046",
+          "shortDescription": "Do not overload equality operator on reference types",
+          "fullDescription": "For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1046",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotOverloadOperatorEqualsOnReferenceTypes",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA1047": {
           "id": "CA1047",
           "shortDescription": "Do not declare protected member in sealed type",
@@ -600,8 +620,8 @@
         },
         "CA1054": {
           "id": "CA1054",
-          "shortDescription": "Uri parameters should not be strings",
-          "fullDescription": "If a method takes a string representation of a URI, a corresponding overload should be provided that takes an instance of the URI class, which provides these services in a safe and secure manner.",
+          "shortDescription": "URI-like parameters should not be strings",
+          "fullDescription": "This rule assumes that the parameter represents a Uniform Resource Identifier (URI). A string representation or a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. 'System.Uri' class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1054",
           "properties": {
@@ -620,7 +640,7 @@
         },
         "CA1055": {
           "id": "CA1055",
-          "shortDescription": "Uri return values should not be strings",
+          "shortDescription": "URI-like return values should not be strings",
           "fullDescription": "This rule assumes that the method returns a URI. A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1055",
@@ -640,7 +660,7 @@
         },
         "CA1056": {
           "id": "CA1056",
-          "shortDescription": "Uri properties should not be strings",
+          "shortDescription": "URI-like properties should not be strings",
           "fullDescription": "This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1056",
@@ -819,7 +839,7 @@
         "CA1069": {
           "id": "CA1069",
           "shortDescription": "Enums values should not be duplicated",
-          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization.",
+          "fullDescription": "The field reference '{0}' is duplicated in this bitwise initialization",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1069",
           "properties": {
@@ -838,7 +858,7 @@
         "CA1070": {
           "id": "CA1070",
           "shortDescription": "Do not declare event fields as virtual",
-          "fullDescription": "Do not declare virtual events in a base class and override them in a derived class. The C# compiler does not handle these correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
+          "fullDescription": "Do not declare virtual events in a base class. Overridden events in a derived class have undefined behavior. The C# compiler does not handle this correctly and it is unpredictable whether a subscriber to the derived event will actually be subscribing to the base class event.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1070",
           "properties": {
@@ -936,7 +956,7 @@
         "CA1508": {
           "id": "CA1508",
           "shortDescription": "Avoid dead conditional code",
-          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
+          "fullDescription": "'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1508",
           "properties": {
@@ -956,7 +976,7 @@
         "CA1509": {
           "id": "CA1509",
           "shortDescription": "Invalid entry in code metrics rule specification file",
-          "fullDescription": "Invalid entry in code metrics rule specification file",
+          "fullDescription": "Invalid entry in code metrics rule specification file.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1509",
           "properties": {
@@ -1135,7 +1155,7 @@
         "CA1715": {
           "id": "CA1715",
           "shortDescription": "Identifiers should have correct prefix",
-          "fullDescription": "Identifiers should have correct prefix",
+          "fullDescription": "The name of an externally visible interface does not start with an uppercase \"\"I\"\". The name of a generic type parameter on an externally visible type or method does not start with an uppercase \"\"T\"\".",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1715",
           "properties": {
@@ -1312,16 +1332,16 @@
             ]
           }
         },
-        "CA1806": {
-          "id": "CA1806",
-          "shortDescription": "Do not ignore method results",
-          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
+        "CA1805": {
+          "id": "CA1805",
+          "shortDescription": "Do not initialize unnecessarily",
+          "fullDescription": "The .NET runtime initializes all fields of reference types to their default values before running the constructor. In most cases, explicitly initializing a field to its default value in a constructor is redundant, adding maintenance costs and potentially degrading performance (such as with increased assembly size), and the explicit initialization can be removed.  In some cases, such as with static readonly fields that permanently retain their default value, consider instead changing them to be constants or properties.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1805",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
+            "typeName": "DoNotInitializeUnnecessarilyAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1332,16 +1352,16 @@
             ]
           }
         },
-        "CA1812": {
-          "id": "CA1812",
-          "shortDescription": "Avoid uninstantiated internal classes",
-          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+        "CA1806": {
+          "id": "CA1806",
+          "shortDescription": "Do not ignore method results",
+          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "typeName": "AvoidUninstantiatedInternalClassesAnalyzer",
+            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1510,6 +1530,26 @@
             ]
           }
         },
+        "CA2109": {
+          "id": "CA2109",
+          "shortDescription": "Review visible event handlers",
+          "fullDescription": "A public or protected event-handling method was detected. Event-handling methods should not be exposed unless absolutely necessary.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2109",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "ReviewVisibleEventHandlersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2119": {
           "id": "CA2119",
           "shortDescription": "Seal methods that satisfy private interfaces",
@@ -1673,7 +1713,7 @@
         "CA2231": {
           "id": "CA2231",
           "shortDescription": "Overload operator equals on overriding value type Equals",
-          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals",
+          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2231",
           "properties": {
@@ -1710,8 +1750,8 @@
         },
         "CA2245": {
           "id": "CA2245",
-          "shortDescription": "Do not assign a property to itself.",
-          "fullDescription": "The property {0} should not be assigned to itself.",
+          "shortDescription": "Do not assign a property to itself",
+          "fullDescription": "The property {0} should not be assigned to itself",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2245",
           "properties": {
@@ -1729,7 +1769,7 @@
         },
         "CA2246": {
           "id": "CA2246",
-          "shortDescription": "Assigning symbol and its member in the same statement.",
+          "shortDescription": "Assigning symbol and its member in the same statement",
           "fullDescription": "Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2246",
@@ -1750,7 +1790,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -1776,7 +1816,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -1866,10 +1906,29 @@
             ]
           }
         },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {
@@ -1909,7 +1968,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "language": "en-US"
       },
       "rules": {
@@ -1935,7 +1994,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019",
           "properties": {
@@ -2025,10 +2084,29 @@
             ]
           }
         },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidUninstantiatedInternalClasses",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry"
+            ]
+          }
+        },
         "CA2200": {
           "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
           "properties": {

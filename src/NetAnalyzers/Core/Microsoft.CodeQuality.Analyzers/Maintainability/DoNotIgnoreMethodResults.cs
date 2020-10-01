@@ -108,7 +108,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
-
         internal static DiagnosticDescriptor TryParseRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTryParse,
@@ -152,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
-                    if (!(osContext.OwningSymbol is IMethodSymbol method))
+                    if (osContext.OwningSymbol is not IMethodSymbol method)
                     {
                         return;
                     }
@@ -164,7 +163,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         var userDefinedMethods = compilationContext.Options.GetAdditionalUseResultsMethodsOption(UserDefinedMethodRule, expression.Syntax.SyntaxTree, compilationContext.Compilation, compilationContext.CancellationToken);
 
                         DiagnosticDescriptor? rule = null;
-                        string? targetMethodName = null;
+                        string targetMethodName = "";
                         switch (expression.Kind)
                         {
                             case OperationKind.ObjectCreation:
@@ -220,7 +219,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 return;
                             }
 
-                            Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
+                            Diagnostic diagnostic = expression.CreateDiagnostic(rule, method.Name, targetMethodName);
                             opContext.ReportDiagnostic(diagnostic);
                         }
                     }, OperationKind.ExpressionStatement);
@@ -266,7 +265,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Get the enclosing block.
-            if (!(operationContext.Operation.Parent is IBlockOperation enclosingBlock))
+            if (operationContext.Operation.Parent is not IBlockOperation enclosingBlock)
             {
                 return false;
             }

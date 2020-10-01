@@ -25,7 +25,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <value>The fixable diagnostic ids.</value>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UseCountProperlyAnalyzer.CA1829);
 
-
         /// <summary>
         /// Gets an optional <see cref="FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
         /// Return null if the provider doesn't support fix all/multiple occurrences.
@@ -48,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var node = root.FindNode(context.Span);
+            var node = root.FindNode(context.Span, getInnermostNodeForTie: true);
 
             if (node is object &&
                 context.Diagnostics[0].Properties.TryGetValue(UseCountProperlyAnalyzer.PropertyNameKey, out var propertyName) &&

@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using System.Linq;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Data
 {
@@ -107,7 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                         }
 
                         // Make sure we're in assignment statement
-                        if (!(propertyReference.Parent is IAssignmentOperation assignment))
+                        if (propertyReference.Parent is not IAssignmentOperation assignment)
                         {
                             return;
                         }
@@ -202,8 +203,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                                                  ISymbol invokedSymbol,
                                                  ISymbol containingMethod)
         {
-            if (containingMethod.IsConfiguredToSkipAnalysis(operationContext.Options,
-                    Rule, operationContext.Compilation, operationContext.CancellationToken))
+            if (operationContext.Options.IsConfiguredToSkipAnalysis(Rule, containingMethod, operationContext.Compilation, operationContext.CancellationToken))
             {
                 return false;
             }
@@ -215,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
                     var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                        operationContext.Options, Rule, operationContext.CancellationToken);
+                        operationContext.Options, Rule, PointsToAnalysisKind.Complete, operationContext.CancellationToken);
                     if (valueContentResult != null)
                     {
                         ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];

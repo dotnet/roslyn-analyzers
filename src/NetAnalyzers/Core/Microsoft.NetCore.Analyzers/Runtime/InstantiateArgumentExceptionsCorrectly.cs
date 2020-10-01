@@ -91,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (creation.Arguments.Length == 0)
+            if (creation.Arguments.IsEmpty)
             {
                 if (HasParameters(owningSymbol))
                 {
@@ -132,10 +132,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context) =>
-             owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation,
+             context.Options.MatchesConfiguredVisibility(RuleIncorrectParameterName, owningSymbol, context.Compilation,
                  context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
 
-        private static bool HasParameters(ISymbol owningSymbol) => owningSymbol.GetParameters().Length > 0;
+        private static bool HasParameters(ISymbol owningSymbol) => !owningSymbol.GetParameters().IsEmpty;
 
         private static Diagnostic? CheckArgument(
             ISymbol targetSymbol,
@@ -171,7 +171,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsParameterName(IParameterSymbol parameter)
         {
-            return parameter.Name == "paramName" || parameter.Name == "parameterName";
+            return parameter.Name is "paramName" or "parameterName";
         }
 
         private static bool HasParameterNameConstructor(ITypeSymbol type)
@@ -251,7 +251,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 }
-
             }
             return false;
         }

@@ -52,7 +52,7 @@ This section documents the list of supported .editorconfig key-value options for
 
 Option Name: `api_surface`
 
-Configurable Rules: 
+Configurable Rules:
 [CA1000](https://docs.microsoft.com/visualstudio/code-quality/ca1000),
 [CA1002](https://docs.microsoft.com/visualstudio/code-quality/ca1002),
 [CA1003](https://docs.microsoft.com/visualstudio/code-quality/ca1003),
@@ -71,6 +71,7 @@ Configurable Rules:
 [CA1043](https://docs.microsoft.com/visualstudio/code-quality/ca1043),
 [CA1044](https://docs.microsoft.com/visualstudio/code-quality/ca1044),
 [CA1045](https://docs.microsoft.com/visualstudio/code-quality/ca1045),
+[CA1046](https://docs.microsoft.com/visualstudio/code-quality/ca1046),
 [CA1047](https://docs.microsoft.com/visualstudio/code-quality/ca1047),
 [CA1051](https://docs.microsoft.com/visualstudio/code-quality/ca1051),
 [CA1052](https://docs.microsoft.com/visualstudio/code-quality/ca1052),
@@ -79,7 +80,9 @@ Configurable Rules:
 [CA1056](https://docs.microsoft.com/visualstudio/code-quality/ca1056),
 [CA1058](https://docs.microsoft.com/visualstudio/code-quality/ca1058),
 [CA1063](https://docs.microsoft.com/visualstudio/code-quality/ca1063),
+[CA1070](https://docs.microsoft.com/visualstudio/code-quality/ca1070),
 [CA1700](https://docs.microsoft.com/visualstudio/code-quality/ca1700),
+[CA1707](https://docs.microsoft.com/visualstudio/code-quality/ca1707),
 [CA1708](https://docs.microsoft.com/visualstudio/code-quality/ca1708),
 [CA1710](https://docs.microsoft.com/visualstudio/code-quality/ca1710),
 [CA1711](https://docs.microsoft.com/visualstudio/code-quality/ca1711),
@@ -94,6 +97,7 @@ Configurable Rules:
 [CA1802](https://docs.microsoft.com/visualstudio/code-quality/ca1802),
 [CA1815](https://docs.microsoft.com/visualstudio/code-quality/ca1815),
 [CA1819](https://docs.microsoft.com/visualstudio/code-quality/ca1819),
+[CA1822](https://docs.microsoft.com/visualstudio/code-quality/ca1822),
 [CA2208](https://docs.microsoft.com/visualstudio/code-quality/ca2208),
 [CA2217](https://docs.microsoft.com/visualstudio/code-quality/ca2217),
 [CA2225](https://docs.microsoft.com/visualstudio/code-quality/ca2225),
@@ -257,9 +261,9 @@ Example: `dotnet_code_quality.try_determine_additional_string_formatting_methods
 Option Name: `excluded_symbol_names`
 
 Configurable Rules:
-[CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303),
 [CA1062](https://docs.microsoft.com/visualstudio/code-quality/ca1062),
-[CA1304](https://docs.microsoft.com/visualstudio/code-quality/ca1304), 
+[CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303),
+[CA1304](https://docs.microsoft.com/visualstudio/code-quality/ca1304),
 [CA1508](https://docs.microsoft.com/visualstudio/code-quality/ca1508),
 [CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000),
 [CA2100](https://docs.microsoft.com/visualstudio/code-quality/ca2100),
@@ -302,10 +306,13 @@ Configurable Rules:
 Option Values: Names of symbols (separated by '|') that are excluded for analysis.
 Allowed symbol name formats:
 
-  1. Symbol name only (includes all symbols with the name, regardless of the containing type or namespace)
-  2. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format).
-     Note that each symbol name requires a symbol kind prefix, such as "M:" prefix for methods, "T:" prefix for types, "N:" prefix for namespaces, etc.
-  3. `.ctor` for constructors and `.cctor` for static constructors
+  1. Symbol name (includes all symbols with the name, regardless of the containing type or name3pace)
+  2. Symbol name ending with a wildcard symbol (includes all symbols whose name starts with the given name, regardless of the containing type or namespace)
+  3. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format).
+    Note that each symbol name requires a symbol kind prefix, such as "M:" prefix for methods, "T:" prefix for types, "N:" prefix for namespaces, etc.
+  4. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format) and ending with the wildcard symbol.
+    Note that each symbol name requires a symbol kind prefix, such as "M:" prefix for methods, "T:" prefix for types, "N:" prefix for namespaces, etc.
+  5. `.ctor` for constructors and `.cctor` for static constructors
 
 Default Value: None
 
@@ -317,6 +324,9 @@ Examples:
 |`dotnet_code_quality.excluded_symbol_names = Validate1\|Validate2` | Matches all symbols named either 'Validate1' or 'Validate2' in the compilation
 |`dotnet_code_quality.excluded_symbol_names = M:NS.MyType.Validate(ParamType)` | Matches specific method 'Validate' with given fully qualified signature
 |`dotnet_code_quality.excluded_symbol_names = M:NS1.MyType1.Validate1(ParamType)\|M:NS2.MyType2.Validate2(ParamType)` | Matches specific methods 'Validate1' and 'Validate2' with respective fully qualified signature
+|`dotnet_code_quality.excluded_symbol_names = My*` | Matches all symbols whose name starts with 'My' |
+|`dotnet_code_quality.excluded_symbol_names = T:NS.My*` | Matches all type symbols whose name starts with 'My' in the namespace 'NS' |
+|`dotnet_code_quality.excluded_symbol_names = N:My*` | Matches all symbols whose containing namespace starts with 'My' |
 
 Additionally, all the dataflow analysis based rules can be configured with a single entry `dotnet_code_quality.dataflow.excluded_symbol_names = ...`
 
@@ -324,13 +334,56 @@ Additionally, all the dataflow analysis based rules can be configured with a sin
 
 Option Name: `excluded_type_names_with_derived_types`
 
-Configurable Rules: [CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303)
+Configurable Rules:
+[CA1303](https://docs.microsoft.com/visualstudio/code-quality/ca1303),
+[CA1062](https://docs.microsoft.com/visualstudio/code-quality/ca1062),
+[CA1304](https://docs.microsoft.com/visualstudio/code-quality/ca1304), 
+[CA1508](https://docs.microsoft.com/visualstudio/code-quality/ca1508),
+[CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000),
+[CA2100](https://docs.microsoft.com/visualstudio/code-quality/ca2100),
+[CA2301](https://docs.microsoft.com/visualstudio/code-quality/ca2301),
+[CA2302](https://docs.microsoft.com/visualstudio/code-quality/ca2302),
+[CA2311](https://docs.microsoft.com/visualstudio/code-quality/ca2311),
+[CA2312](https://docs.microsoft.com/visualstudio/code-quality/ca2312),
+[CA2321](https://docs.microsoft.com/visualstudio/code-quality/ca2321),
+[CA2322](https://docs.microsoft.com/visualstudio/code-quality/ca2322),
+[CA2327](https://docs.microsoft.com/visualstudio/code-quality/ca2327),
+[CA2328](https://docs.microsoft.com/visualstudio/code-quality/ca2328),
+[CA2329](https://docs.microsoft.com/visualstudio/code-quality/ca2329),
+[CA2330](https://docs.microsoft.com/visualstudio/code-quality/ca2330),
+[CA3001](https://docs.microsoft.com/visualstudio/code-quality/ca3001),
+[CA3002](https://docs.microsoft.com/visualstudio/code-quality/ca3002),
+[CA3003](https://docs.microsoft.com/visualstudio/code-quality/ca3003),
+[CA3004](https://docs.microsoft.com/visualstudio/code-quality/ca3004),
+[CA3005](https://docs.microsoft.com/visualstudio/code-quality/ca3005),
+[CA3006](https://docs.microsoft.com/visualstudio/code-quality/ca3006),
+[CA3007](https://docs.microsoft.com/visualstudio/code-quality/ca3007),
+[CA3008](https://docs.microsoft.com/visualstudio/code-quality/ca3008),
+[CA3009](https://docs.microsoft.com/visualstudio/code-quality/ca3009),
+[CA3010](https://docs.microsoft.com/visualstudio/code-quality/ca3010),
+[CA3011](https://docs.microsoft.com/visualstudio/code-quality/ca3011),
+[CA3012](https://docs.microsoft.com/visualstudio/code-quality/ca3012),
+[CA5361](https://docs.microsoft.com/visualstudio/code-quality/ca5361),
+[CA5376](https://docs.microsoft.com/visualstudio/code-quality/ca5376),
+[CA5377](https://docs.microsoft.com/visualstudio/code-quality/ca5377),
+[CA5378](https://docs.microsoft.com/visualstudio/code-quality/ca5378),
+[CA5380](https://docs.microsoft.com/visualstudio/code-quality/ca5380),
+[CA5381](https://docs.microsoft.com/visualstudio/code-quality/ca5381),
+[CA5382](https://docs.microsoft.com/visualstudio/code-quality/ca5382),
+[CA5383](https://docs.microsoft.com/visualstudio/code-quality/ca5383),
+[CA5384](https://docs.microsoft.com/visualstudio/code-quality/ca5384),
+[CA5387](https://docs.microsoft.com/visualstudio/code-quality/ca5387),
+[CA5388](https://docs.microsoft.com/visualstudio/code-quality/ca5388),
+[CA5389](https://docs.microsoft.com/visualstudio/code-quality/ca5389),
+[CA5390](https://docs.microsoft.com/visualstudio/code-quality/ca5390)
 
 Option Values: Names of types (separated by '|'), such that the type and all its derived types are excluded for analysis.
 Allowed symbol name formats:
 
   1. Type name only (includes all types with the name, regardless of the containing type or namespace)
-  2. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format) with an optional "T:" prefix.
+  2. Type name only ending with the wildcard symbol (includes all types whose name starts with the given name, regardless of the containing type or namespace)
+  3. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format) with an optional "T:" prefix.
+  4. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format) with an optional "T:" prefix and ending with the wildcard symbol.
 
 Default Value: None
 
@@ -400,7 +453,7 @@ Configurable Rules:
 [CA1508](https://docs.microsoft.com/visualstudio/code-quality/ca1508),
 [CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000),
 [CA2100](https://docs.microsoft.com/visualstudio/code-quality/ca2100),
-[CA2213](https://docs.microsoft.com/visualstudio/code-quality/ca2213), 
+[CA2213](https://docs.microsoft.com/visualstudio/code-quality/ca2213),
 Taint analysis rules
 
 #### Interprocedural analysis Kind
@@ -435,7 +488,7 @@ Option Name: `max_interprocedural_lambda_or_local_function_call_chain`
 
 Option Values: Unsigned integer
 
-Default Value: 10
+Default Value: 3
 
 Example: `dotnet_code_quality.max_interprocedural_lambda_or_local_function_call_chain = 5`
 
@@ -522,6 +575,24 @@ class Test
     }
 }
 ```
+
+#### Points to analysis kind for DFA rules based on PointsToAnalysis
+
+Option Name: `points_to_analysis_kind`
+
+Configurable Rules: All DFA rules
+
+Option Values:
+
+| Option Value | Summary |
+| --- | --- |
+| `None` | PointsToAnalysis is disabled. |
+| `PartialWithoutTrackingFieldsAndProperties` | Partial analysis that does not track PointsToData for fields and properties for improved performance. |
+| `Complete` | Complete analysis that also tracks PointsToData for fields and properties. |
+
+Default Value: Depends on each rule.
+
+Example: `dotnet_code_quality.points_to_analysis_kind = Complete`
 
 #### Configure execution of Copy analysis (tracks value and reference copies)
 
@@ -675,6 +746,7 @@ Default Value: Namespace, NamedType, Method, Property, Event, Parameter
 Example: `dotnet_code_quality.CA1716.analyzed_symbol_kinds = Namespace, Property`
 
 ### Use naming heuristic
+
 Option Name: `use_naming_heuristic`
 
 Configurable Rules: [CA1303](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303)
@@ -686,14 +758,16 @@ Default Value: `false`
 Example: `dotnet_code_quality.CA1303.use_naming_heuristic = true`
 
 ### Additional use results methods
+
 Option Name: `additional_use_results_methods`
 
 Configurable Rules: [CA1806](https://docs.microsoft.com/en-us/visualstudio/code-quality/CA1806)
 
 Option Values: Names of additional methods (separated by '|') for CA1806.
 Allowed method name formats:
+
   1. Method name only (includes all methods with the name, regardless of the containing type or namespace)
-  2. Fully qualified names in the symbol's documentation ID format: https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format
+  2. Fully qualified names in the [symbol's documentation ID format](https://github.com/dotnet/csharplang/blob/master/spec/documentation-comments.md#id-string-format)
      with an optional "M:" prefix.
 
 Default Value: None
@@ -706,3 +780,49 @@ Examples:
 |`dotnet_code_quality.CA1806.additional_use_results_methods = MyMethod1\|MyMethod2` | Matches all methods named either 'MyMethod1' or 'MyMethod2' in the compilation
 |`dotnet_code_quality.CA1806.additional_use_results_methods = M:NS.MyType.MyMethod(ParamType)` | Matches specific method 'MyMethod' with given fully qualified signature
 |`dotnet_code_quality.CA1806.additional_use_results_methods = M:NS1.MyType1.MyMethod1(ParamType)\|M:NS2.MyType2.MyMethod2(ParamType)` | Matches specific methods 'MyMethod1' and 'MyMethod2' with respective fully qualified signature
+
+### Allowed suffixes
+
+Option Name: `allowed_suffixes`
+
+Configurable Rules: [CA1711](https://docs.microsoft.com/visualstudio/code-quality/ca1711)
+
+Option Values: List (separated by '|') of allowed suffixes
+
+Example: `dotnet_code_quality.CA1711.allowed_suffixes = Flag|Flags`
+
+### Enable platform compatibility analyzer for TFMs <= net5.0
+
+Option Name: `enable_platform_analyzer_on_pre_net5_target`
+
+Configurable Rules: [CA14016](https://docs.microsoft.com/visualstudio/code-quality/ca1416)
+
+Option Values: Boolean values
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.enable_platform_analyzer_on_pre_net5_target = true` or `dotnet_code_quality.CA1416.enable_platform_analyzer_on_pre_net5_target = true`
+
+### Exclude structs
+
+Option Name: `exclude_structs`
+
+Configurable Rules: [CA1051](https://docs.microsoft.com/visualstudio/code-quality/ca1051)
+
+Option Values: Boolean values
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.CA1051.exclude_structs = true`
+
+### Exclude FirstOrDefault and LastOrDefault methods
+
+Option Name: `exclude_ordefault_methods`
+
+Configurable Rules: [CA1826](https://docs.microsoft.com/visualstudio/code-quality/CA1826)
+
+Option Values: Boolean values
+
+Default Value: `false`
+
+Example: `dotnet_code_quality.CA1826.exclude_ordefault_methods = true`

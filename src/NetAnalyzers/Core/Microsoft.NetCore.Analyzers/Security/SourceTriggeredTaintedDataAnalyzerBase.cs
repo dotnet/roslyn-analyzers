@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
                             AnalyzerOptions options = operationBlockStartContext.Options;
                             CancellationToken cancellationToken = operationBlockStartContext.CancellationToken;
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(options, TaintedDataEnteringSinkDescriptor, compilation, cancellationToken))
+                            if (options.IsConfiguredToSkipAnalysis(TaintedDataEnteringSinkDescriptor, owningSymbol, compilation, cancellationToken))
                             {
                                 return;
                             }
@@ -99,8 +99,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                 owningSymbol,
                                                                 options,
                                                                 wellKnownTypeProvider,
+                                                                PointsToAnalysisKind.Complete,
                                                                 interproceduralAnalysisConfiguration,
-                                                                interproceduralAnalysisPredicateOpt: null);
+                                                                interproceduralAnalysisPredicate: null);
                                 });
                             Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)> valueContentFactory = new Lazy<(PointsToAnalysisResult?, ValueContentAnalysisResult?)>(
                                 () =>
@@ -115,6 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                     owningSymbol,
                                                                     options,
                                                                     wellKnownTypeProvider,
+                                                                    PointsToAnalysisKind.Complete,
                                                                     interproceduralAnalysisConfiguration,
                                                                     out _,
                                                                     out PointsToAnalysisResult? p);
@@ -137,6 +139,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
                                 },
                                 OperationKind.PropertyReference);
+
+                            if (sourceInfoSymbolMap.RequiresParameterReferenceAnalysis)
+                            {
+                                operationBlockStartContext.RegisterOperationAction(
+                                    operationAnalysisContext =>
+                                    {
+                                        IParameterReferenceOperation parameterReferenceOperation = (IParameterReferenceOperation)operationAnalysisContext.Operation;
+                                        if (sourceInfoSymbolMap.IsSourceParameter(parameterReferenceOperation.Parameter, wellKnownTypeProvider))
+                                        {
+                                            lock (rootOperationsNeedingAnalysis)
+                                            {
+                                                rootOperationsNeedingAnalysis.Add(parameterReferenceOperation.GetRoot());
+                                            }
+                                        }
+                                    },
+                                    OperationKind.ParameterReference);
+                            }
 
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
@@ -237,7 +256,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
                                     finally
                                     {
-                                        rootOperationsNeedingAnalysis.Free();
+                                        rootOperationsNeedingAnalysis.Free(compilationContext.CancellationToken);
                                     }
                                 });
                         });

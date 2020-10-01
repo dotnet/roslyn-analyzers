@@ -1,11 +1,13 @@
 # Branches that trigger a build on commit
 trigger:
 - master
+- release/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
+- release/*
 - 2.9.x
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.10.Amd64.VS2019.Open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self
@@ -39,7 +41,7 @@ jobs:
       condition: always()
     - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
       displayName: Upload coverage to codecov.io
-      condition: and(succeeded(), eq(variables['_codeCoverage'], True))
+      condition: and(always(), eq(variables['_codeCoverage'], True)) # Upload coverage to codecov.io is flaky, so do not fail build on upload failure
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
@@ -54,7 +56,7 @@ jobs:
   pool:
     name: NetCorePublic-Pool
     queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
-  timeoutInMinutes: 30
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self

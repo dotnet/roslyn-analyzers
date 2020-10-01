@@ -613,16 +613,22 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task CS_Fixer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
         [Theory]
-        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task CS_Fixer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
@@ -637,16 +643,22 @@ class C
             CSharpVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task CS_Fixer_Diagnostic_AwaitInvocationPassedAsArgument(string originalArgs, string fixedArgs) =>
             CS_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_Internal(originalArgs, fixedArgs, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(CSharpUnnamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsTestData))]
-        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(CSharpUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(CSharpNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task CS_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             CS_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_Internal(originalArgs, fixedArgs, isEmptyConfigureAwait: false);
 
@@ -698,7 +710,7 @@ class C
         using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
-            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 1 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
         }
     }
 }
@@ -715,7 +727,7 @@ class C
         using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
-            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(1 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
         }
     }
 }
@@ -742,7 +754,7 @@ class C
         using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
-            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer /* BufferTrailingTrivia */, 1 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
         }
     }
 }
@@ -759,7 +771,7 @@ class C
         using (FileStream s = new FileStream(""path.txt"", FileMode.Create))
         {
             byte[] buffer = new byte[s.Length];
-            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(0 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
+            /* AwaitLeadingTrivia */ await /* InvocationLeadingTrivia */ s.ReadAsync(buffer.AsMemory(1 /* OffsetTrailingTrivia */, buffer.Length /* CountTrailingTrivia */) /* BufferTrailingTrivia */, new CancellationToken() /* CancellationTokenTrailingTrivia */).ConfigureAwait(/* ConfigureAwaitArgLeadingTrivia */ false /* ConfigureAwaitArgTrailngTrivia */) /* InvocationTrailingTrivia */; /* AwaitTrailingTrivia */
         }
     }
 }
@@ -827,16 +839,22 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task VB_Fixer_Diagnostic_ArgumentNaming(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task VB_Fixer_Diagnostic_ArgumentNaming_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: false, isEmptyConfigureAwait: false);
 
@@ -851,16 +869,22 @@ End Class
             VisualBasicVerifyCodeFixAsync(originalArgs, fixedArgs, isEmptyByteDeclaration: true, isEmptyConfigureAwait: false);
 
         [Theory]
-        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task VB_Fixer_Diagnostic_AwaitInvocationPassedAsArgument(string originalArgs, string fixedArgs) =>
             VB_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_Internal(originalArgs, fixedArgs, isEmptyConfigureAwait: true);
 
         [Theory]
-        [MemberData(nameof(VisualBasicUnnamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsTestData))]
-        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsFullBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenFullBufferTestData))]
+        [MemberData(nameof(VisualBasicUnnamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsPartialBufferTestData))]
+        [MemberData(nameof(VisualBasicNamedArgumentsWithCancellationTokenPartialBufferTestData))]
         public Task VB_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_WithConfigureAwait(string originalArgs, string fixedArgs) =>
             VB_Fixer_Diagnostic_AwaitInvocationPassedAsArgument_Internal(originalArgs, fixedArgs, isEmptyConfigureAwait: false);
 

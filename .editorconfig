@@ -206,9 +206,6 @@ dotnet_diagnostic.IDE0002.severity = silent
 # IDE0003: Name can be simplified
 dotnet_diagnostic.IDE0003.severity = silent
 
-# IDE005_gen: Remove unnecessary usings in generated code
-dotnet_diagnostic.IDE0005_gen.severity = silent
-
 # IDE0007: Use 'var' instead of explicit type
 dotnet_diagnostic.IDE0007.severity = silent
 

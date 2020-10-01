@@ -66,10 +66,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var replacements1 = replacements.Concat(GetAssignmentExpressionStatement(assignment.Left, mostRightMember, leadingTrivia, trailingTrivia));
             var replacements2 = replacements.Concat(GetAssignmentExpressionStatement(members, leadingTrivia, trailingTrivia));
 
+#pragma warning disable RS1010 // Provide an explicit value for EquivalenceKey - false positve 
             var nestedCodeAction = CodeAction.Create(title, ImmutableArray.Create<CodeAction>(
                 new MyCodeAction($"{title} 1", ct => GetDocument(context.Document, root, assignment.Parent, replacements1)),
                 new MyCodeAction($"{title} 2", ct => GetDocument(context.Document, root, assignment.Parent, replacements2))
                 ), isInlinable: false);
+#pragma warning restore RS1010
 
             context.RegisterCodeFix(nestedCodeAction, context.Diagnostics);
         }

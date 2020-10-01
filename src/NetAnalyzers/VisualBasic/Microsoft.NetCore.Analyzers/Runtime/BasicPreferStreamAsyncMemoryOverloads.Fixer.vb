@@ -59,5 +59,38 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         End Function
 
+        Protected Overrides Function IsPassingZeroAndBufferLength(bufferValueNode As SyntaxNode, offsetValueNode As SyntaxNode, countValueNode As SyntaxNode) As Boolean
+
+            ' First argument should be an identifier name node
+            Dim firstArgumentIdentifierName As IdentifierNameSyntax = TryCast(bufferValueNode, IdentifierNameSyntax)
+            If firstArgumentIdentifierName Is Nothing Then
+                Return False
+            End If
+
+            ' Second argument should be a literal expression node and its value should be zero
+            Dim secondArgumentLiteralExpression As LiteralExpressionSyntax = TryCast(offsetValueNode, LiteralExpressionSyntax)
+            If secondArgumentLiteralExpression Is Nothing Or
+                secondArgumentLiteralExpression.Token.ValueText IsNot "0" Then
+                Return False
+            End If
+
+            ' Third argument should be a member access node...
+            Dim thirdArgumentMemberAccessExpression As MemberAccessExpressionSyntax = TryCast(countValueNode, MemberAccessExpressionSyntax)
+            If thirdArgumentMemberAccessExpression Is Nothing Then
+                Return False
+            End If
+
+            ' whose identifier is an identifier name node, and its value is the same as the value of first argument, and the member name is `Length`
+            Dim thirdArgumentIdentifierName As IdentifierNameSyntax = TryCast(thirdArgumentMemberAccessExpression.Expression, IdentifierNameSyntax)
+            If thirdArgumentIdentifierName Is Nothing Or
+            thirdArgumentIdentifierName.Identifier.ValueText IsNot firstArgumentIdentifierName.Identifier.ValueText Or
+            thirdArgumentMemberAccessExpression.Name.Identifier.ValueText IsNot "Length" Then
+                Return False
+            End If
+
+            Return True
+
+        End Function
+
     End Class
 End Namespace

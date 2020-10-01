@@ -51,5 +51,23 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
             return false;
         }
+
+        protected override bool IsPassingZeroAndBufferLength(SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode)
+        {
+            return
+                // First argument should be an identifier name node
+                bufferValueNode is IdentifierNameSyntax firstArgumentIdentifierName &&
+                // Second argument should be a literal expression node...
+                offsetValueNode is LiteralExpressionSyntax secondArgumentLiteralExpression &&
+                // and its value should be zero
+                secondArgumentLiteralExpression.Token.ValueText == "0" &&
+                // Third argument should be a member access node...
+                countValueNode is MemberAccessExpressionSyntax thirdArgumentMemberAccessExpression &&
+                thirdArgumentMemberAccessExpression.Expression is IdentifierNameSyntax thirdArgumentIdentifierName &&
+                // whose identifier is that of the first argument...
+                firstArgumentIdentifierName.Identifier.ValueText == thirdArgumentIdentifierName.Identifier.ValueText &&
+                // and the member name is `Length`
+                thirdArgumentMemberAccessExpression.Name.Identifier.ValueText == "Length";
+        }
     }
 }

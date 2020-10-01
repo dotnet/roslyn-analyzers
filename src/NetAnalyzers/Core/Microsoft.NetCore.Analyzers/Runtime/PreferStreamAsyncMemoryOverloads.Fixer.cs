@@ -122,11 +122,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Depending on the arguments being passed to Read/WriteAsync, it's the substitution we will make
             SyntaxNode replacedInvocationNode;
 
-            if(IsPassingZeroAndBufferLength(bufferValueNode, offsetValueNode, countValueNode))
+            if (IsPassingZeroAndBufferLength(bufferValueNode, offsetValueNode, countValueNode))
             {
                 // Remove 0 and buffer.length
                 replacedInvocationNode =
-                        (isBufferNamed ? generator.Argument(name: "buffer", RefKind.None, bufferValueNode) : bufferValueNode)
+                    (isBufferNamed ? generator.Argument(name: "buffer", RefKind.None, bufferValueNode) : bufferValueNode)
                     .WithTriviaFrom(bufferValueNode);
             }
             else
@@ -146,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 // Generate the new buffer argument, ensuring we include the buffer argument name if the user originally indicated one
                 replacedInvocationNode =
-                        (isBufferNamed ? generator.Argument(name: "buffer", RefKind.None, asMemoryInvocationNode) : asMemoryInvocationNode)
+                    (isBufferNamed ? generator.Argument(name: "buffer", RefKind.None, asMemoryInvocationNode) : asMemoryInvocationNode)
                     .WithTriviaFrom(bufferValueNode);
             }
 

@@ -37,15 +37,15 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             For Each import As SyntaxNode In importList
 
-                Dim importsStatement As ImportsStatementSyntax = TryCast(import, ImportsStatementSyntax)
+                Dim importsStatement = TryCast(import, ImportsStatementSyntax)
                 If importsStatement IsNot Nothing Then
 
                     For Each clause As ImportsClauseSyntax In importsStatement.ImportsClauses
 
-                        Dim simpleClause As SimpleImportsClauseSyntax = TryCast(clause, SimpleImportsClauseSyntax)
+                        Dim simpleClause = TryCast(clause, SimpleImportsClauseSyntax)
                         If simpleClause IsNot Nothing Then
 
-                            Dim identifier As IdentifierNameSyntax = TryCast(simpleClause.Name, IdentifierNameSyntax)
+                            Dim identifier = TryCast(simpleClause.Name, IdentifierNameSyntax)
                             If identifier IsNot Nothing AndAlso identifier.Identifier.Text = "System" Then
                                 Return True
                             End If
@@ -62,29 +62,29 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
         Protected Overrides Function IsPassingZeroAndBufferLength(bufferValueNode As SyntaxNode, offsetValueNode As SyntaxNode, countValueNode As SyntaxNode) As Boolean
 
             ' First argument should be an identifier name node
-            Dim firstArgumentIdentifierName As IdentifierNameSyntax = TryCast(bufferValueNode, IdentifierNameSyntax)
+            Dim firstArgumentIdentifierName = TryCast(bufferValueNode, IdentifierNameSyntax)
             If firstArgumentIdentifierName Is Nothing Then
                 Return False
             End If
 
             ' Second argument should be a literal expression node and its value should be zero
-            Dim secondArgumentLiteralExpression As LiteralExpressionSyntax = TryCast(offsetValueNode, LiteralExpressionSyntax)
+            Dim secondArgumentLiteralExpression = TryCast(offsetValueNode, LiteralExpressionSyntax)
             If secondArgumentLiteralExpression Is Nothing Or
                 secondArgumentLiteralExpression.Token.ValueText IsNot "0" Then
                 Return False
             End If
 
             ' Third argument should be a member access node...
-            Dim thirdArgumentMemberAccessExpression As MemberAccessExpressionSyntax = TryCast(countValueNode, MemberAccessExpressionSyntax)
+            Dim thirdArgumentMemberAccessExpression = TryCast(countValueNode, MemberAccessExpressionSyntax)
             If thirdArgumentMemberAccessExpression Is Nothing Then
                 Return False
             End If
 
             ' whose identifier is an identifier name node, and its value is the same as the value of first argument, and the member name is `Length`
-            Dim thirdArgumentIdentifierName As IdentifierNameSyntax = TryCast(thirdArgumentMemberAccessExpression.Expression, IdentifierNameSyntax)
+            Dim thirdArgumentIdentifierName = TryCast(thirdArgumentMemberAccessExpression.Expression, IdentifierNameSyntax)
             If thirdArgumentIdentifierName Is Nothing Or
-            thirdArgumentIdentifierName.Identifier.ValueText IsNot firstArgumentIdentifierName.Identifier.ValueText Or
-            thirdArgumentMemberAccessExpression.Name.Identifier.ValueText IsNot "Length" Then
+                thirdArgumentIdentifierName.Identifier.ValueText IsNot firstArgumentIdentifierName.Identifier.ValueText Or
+                thirdArgumentMemberAccessExpression.Name.Identifier.ValueText IsNot "Length" Then
                 Return False
             End If
 

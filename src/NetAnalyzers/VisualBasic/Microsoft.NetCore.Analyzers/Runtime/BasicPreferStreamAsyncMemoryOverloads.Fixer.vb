@@ -59,7 +59,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
         End Function
 
-        Protected Overrides Function IsPassingZeroAndBufferLength(bufferValueNode As SyntaxNode, offsetValueNode As SyntaxNode, countValueNode As SyntaxNode) As Boolean
+        Protected Overrides Function IsPassingZeroAndBufferLength(model As SemanticModel, bufferValueNode As SyntaxNode, offsetValueNode As SyntaxNode, countValueNode As SyntaxNode) As Boolean
 
             ' First argument should be an identifier name node
             Dim firstArgumentIdentifierName = TryCast(bufferValueNode, IdentifierNameSyntax)
@@ -67,10 +67,17 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
                 Return False
             End If
 
-            ' Second argument should be a literal expression node and its value should be zero
-            Dim secondArgumentLiteralExpression = TryCast(offsetValueNode, LiteralExpressionSyntax)
-            If secondArgumentLiteralExpression Is Nothing Or
-                secondArgumentLiteralExpression.Token.ValueText IsNot "0" Then
+            ' Second argument should be a literal expression node with a constant value...
+            Dim optionalValue As [Optional](Of Object) = model.GetConstantValue(offsetValueNode)
+
+            ' And must be an integer...
+            If Not optionalValue.HasValue Or TypeOf optionalValue.Value IsNot Integer Then
+                Return False
+            End If
+
+            ' with a value of zero
+            Dim value = DirectCast(optionalValue.Value, Integer)
+            If value <> 0 Then
                 Return False
             End If
 
@@ -82,13 +89,13 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             ' whose identifier is an identifier name node, and its value is the same as the value of first argument, and the member name is `Length`
             Dim thirdArgumentIdentifierName = TryCast(thirdArgumentMemberAccessExpression.Expression, IdentifierNameSyntax)
-            If thirdArgumentIdentifierName Is Nothing Or
-                thirdArgumentIdentifierName.Identifier.ValueText IsNot firstArgumentIdentifierName.Identifier.ValueText Or
-                thirdArgumentMemberAccessExpression.Name.Identifier.ValueText IsNot "Length" Then
-                Return False
+            If thirdArgumentIdentifierName IsNot Nothing And
+                thirdArgumentIdentifierName.Identifier.Text = firstArgumentIdentifierName.Identifier.Text And
+                thirdArgumentMemberAccessExpression.Name.Identifier.Text = "Length" Then
+                Return True
             End If
 
-            Return True
+            Return False
 
         End Function
 

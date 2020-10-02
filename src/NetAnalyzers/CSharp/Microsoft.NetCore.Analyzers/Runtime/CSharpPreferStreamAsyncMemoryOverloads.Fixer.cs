@@ -52,15 +52,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return false;
         }
 
-        protected override bool IsPassingZeroAndBufferLength(SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode)
+        protected override bool IsPassingZeroAndBufferLength(SemanticModel model, SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode)
         {
             return
                 // First argument should be an identifier name node
                 bufferValueNode is IdentifierNameSyntax firstArgumentIdentifierName &&
-                // Second argument should be a literal expression node...
-                offsetValueNode is LiteralExpressionSyntax secondArgumentLiteralExpression &&
-                // and its value should be zero
-                secondArgumentLiteralExpression.Token.ValueText == "0" &&
+                // Second argument should be a literal expression node with a constant value of zero
+                model.GetConstantValue(offsetValueNode) is Optional<object> optionalValue && optionalValue.HasValue && optionalValue.Value is int value && value == 0 &&
                 // Third argument should be a member access node...
                 countValueNode is MemberAccessExpressionSyntax thirdArgumentMemberAccessExpression &&
                 thirdArgumentMemberAccessExpression.Expression is IdentifierNameSyntax thirdArgumentIdentifierName &&

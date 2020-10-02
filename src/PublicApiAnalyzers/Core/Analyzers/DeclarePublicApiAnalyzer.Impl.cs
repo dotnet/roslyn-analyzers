@@ -556,34 +556,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
-                    var typeParameters = ((INamedTypeSymbol)symbol).TypeParameters;
-                    foreach (var typeParameter in typeParameters)
-                    {
-                        if (ObliviousDetector.CheckTypeParameterConstraints(typeParameter))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-                else if (symbol.Kind == SymbolKind.Method)
-                {
-                    if (ObliviousDetector.Instance.Visit(symbol))
-                    {
-                        return true;
-                    }
-
-                    var typeParameters = ((IMethodSymbol)symbol).TypeParameters;
-                    foreach (var typeParameter in typeParameters)
-                    {
-                        if (ObliviousDetector.CheckTypeParameterConstraints(typeParameter))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return ObliviousDetector.VisitNamedTypeDeclaration((INamedTypeSymbol)symbol);
                 }
 
                 return ObliviousDetector.Instance.Visit(symbol);
@@ -831,9 +804,18 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
+                    foreach (var typeParameter in symbol.TypeParameters)
+                    {
+                        if (CheckTypeParameterConstraints(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
                     return false;
                 }
 
+                /// <summary>This is visiting type references, not type definitions (that's done elsewhere).</summary>
                 public override bool VisitNamedType(INamedTypeSymbol symbol)
                 {
                     if (!_ignoreTopLevelNullability)
@@ -893,8 +875,21 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return false;
                 }
 
-                /// <summary>This is checking the definition of a type parameter (as opposed to its usage).</summary>
-                public static bool CheckTypeParameterConstraints(ITypeParameterSymbol symbol)
+                /// <summary>This is checking the definition of a type (as opposed to its usage).</summary>
+                public static bool VisitNamedTypeDeclaration(INamedTypeSymbol symbol)
+                {
+                    foreach (var typeParameter in symbol.TypeParameters)
+                    {
+                        if (CheckTypeParameterConstraints(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                private static bool CheckTypeParameterConstraints(ITypeParameterSymbol symbol)
                 {
                     if (symbol.HasReferenceTypeConstraint() &&
                         symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)

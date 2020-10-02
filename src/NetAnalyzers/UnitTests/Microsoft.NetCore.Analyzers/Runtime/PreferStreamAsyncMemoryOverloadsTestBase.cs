@@ -426,62 +426,62 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             // Normal argument order is: (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
             // Cancellation token as fourth argument
             yield return new object[] { "buffer, offset:=0, count:=buffer.Length, cancellationToken:=CancellationToken.None",
-                                        "buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "buffer:=buffer, offset:=0, count:=buffer.Length, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "buffer:=buffer, count:=buffer.Length, offset:=0, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "count:=buffer.Length, offset:=0, buffer:=buffer, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "count:=buffer.Length, buffer:=buffer, offset:=0, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "offset:=0, buffer:=buffer, count:=buffer.Length, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "offset:=0, count:=buffer.Length, buffer:=buffer, cancellationToken:=CancellationToken.None",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             // Cancellation token as third argument
-            yield return new object[] { "buffer, offset:=0, cancellationToken:=default(CancellationToken), count:=buffer.Length",
-                                        "buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "buffer:=buffer, offset:=0, cancellationToken:=default(CancellationToken), count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "buffer:=buffer, count:=buffer.Length, cancellationToken:=default(CancellationToken), offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "count:=buffer.Length, offset:=0, cancellationToken:=default(CancellationToken), buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "count:=buffer.Length, buffer:=buffer, cancellationToken:=default(CancellationToken), offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "offset:=0, buffer:=buffer, cancellationToken:=default(CancellationToken), count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "offset:=0, count:=buffer.Length, cancellationToken:=default(CancellationToken), buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
+            yield return new object[] { "buffer, offset:=0, cancellationToken:=CancellationToken.None, count:=buffer.Length",
+                                        "buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "buffer:=buffer, offset:=0, cancellationToken:=CancellationToken.None, count:=buffer.Length",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "buffer:=buffer, count:=buffer.Length, cancellationToken:=CancellationToken.None, offset:=0",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "count:=buffer.Length, offset:=0, cancellationToken:=CancellationToken.None, buffer:=buffer",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "count:=buffer.Length, buffer:=buffer, cancellationToken:=CancellationToken.None, offset:=0",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "offset:=0, buffer:=buffer, cancellationToken:=CancellationToken.None, count:=buffer.Length",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "offset:=0, count:=buffer.Length, cancellationToken:=CancellationToken.None, buffer:=buffer",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             // Cancellation token as second argument
             yield return new object[] { "buffer, cancellationToken:=CancellationToken.None, offset:=0, count:=buffer.Length",
-                                        "buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "buffer:=buffer, cancellationToken:=CancellationToken.None, offset:=0, count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "buffer:=buffer, cancellationToken:=CancellationToken.None, count:=buffer.Length, offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "count:=buffer.Length, cancellationToken:=CancellationToken.None, offset:=0, buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "count:=buffer.Length, cancellationToken:=CancellationToken.None, buffer:=buffer, offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "offset:=0, cancellationToken:=CancellationToken.None, buffer:=buffer, count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             yield return new object[] { "offset:=0, cancellationToken:=CancellationToken.None, count:=buffer.Length, buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=CancellationToken.None" };
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
             // Cancellation token as first argument
-            yield return new object[] { "cancellationToken:=default(CancellationToken), buffer:=buffer, offset:=0, count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "cancellationToken:=default(CancellationToken), buffer:=buffer, count:=buffer.Length, offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "cancellationToken:=default(CancellationToken), count:=buffer.Length, offset:=0, buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "cancellationToken:=default(CancellationToken), count:=buffer.Length, buffer:=buffer, offset:=0",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "cancellationToken:=default(CancellationToken), offset:=0, buffer:=buffer, count:=buffer.Length",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
-            yield return new object[] { "cancellationToken:=default(CancellationToken), offset:=0, count:=buffer.Length, buffer:=buffer",
-                                        "buffer:=buffer.AsMemory(start:=0, length:=buffer.Length), cancellationToken:=default(CancellationToken)" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, buffer:=buffer, offset:=0, count:=buffer.Length",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, buffer:=buffer, count:=buffer.Length, offset:=0",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, count:=buffer.Length, offset:=0, buffer:=buffer",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, count:=buffer.Length, buffer:=buffer, offset:=0",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, offset:=0, buffer:=buffer, count:=buffer.Length",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
+            yield return new object[] { "cancellationToken:=CancellationToken.None, offset:=0, count:=buffer.Length, buffer:=buffer",
+                                        "buffer:=buffer, cancellationToken:=CancellationToken.None" };
         }
     }
 }

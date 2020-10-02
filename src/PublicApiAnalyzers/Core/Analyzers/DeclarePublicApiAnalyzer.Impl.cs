@@ -556,11 +556,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
-                    if (ObliviousDetector.IgnoreTopLevelNullabilityInstance.Visit(symbol))
-                    {
-                        return true;
-                    }
-
                     var typeParameters = ((INamedTypeSymbol)symbol).TypeParameters;
                     foreach (var typeParameter in typeParameters)
                     {
@@ -804,10 +799,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
-                // There are cases where we want to ignore top-level nullability
-                // For type definitions, `class C<...>`
-                // For outer types, `Outer<...>.Inner`
-                public static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+                // We need to ignore top-level nullability for outer types: `Outer<...>.Inner`
+                private static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
 
                 public static readonly ObliviousDetector Instance = new ObliviousDetector(ignoreTopLevelNullability: false);
 
@@ -862,12 +855,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     foreach (var typeArgument in symbol.TypeArguments)
                     {
-                        if (typeArgument.TypeKind == TypeKind.TypeParameter
-                            && typeArgument.ContainingType.Equals(symbol))
-                        {
-                            // type parameters will already have been checked on the type defining them, so we don't need to check their use
-                        }
-                        else if (Instance.Visit(typeArgument))
+                        if (Instance.Visit(typeArgument))
                         {
                             return true;
                         }

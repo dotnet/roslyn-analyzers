@@ -91,7 +91,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
             Dim thirdArgumentIdentifierName = TryCast(thirdArgumentMemberAccessExpression.Expression, IdentifierNameSyntax)
             If thirdArgumentIdentifierName IsNot Nothing And
                 thirdArgumentIdentifierName.Identifier.Text = firstArgumentIdentifierName.Identifier.Text And
-                thirdArgumentMemberAccessExpression.Name.Identifier.Text = "Length" Then
+                thirdArgumentMemberAccessExpression.Name.Identifier.Text = WellKnownMemberNames.LengthPropertyName Then
                 Return True
             End If
 

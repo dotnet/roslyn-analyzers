@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Verifies if the user passed `0` as the 1st argument (`offset`) and `buffer.Length` as the 2nd argument (`count`),
         // where `buffer` is the name of the variable passed as the 0th argument.
-        protected abstract bool IsPassingZeroAndBufferLength(SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode);
+        protected abstract bool IsPassingZeroAndBufferLength(SemanticModel model, SyntaxNode bufferValueNode, SyntaxNode offsetValueNode, SyntaxNode countValueNode);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
             ImmutableArray.Create(PreferStreamAsyncMemoryOverloads.RuleId);
@@ -94,7 +94,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.PreferStreamAsyncMemoryOverloadsTitle;
 
-            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(doc, root, invocation, invocation.TargetMethod.Name,
+            Task<Document> createChangedDocument(CancellationToken _) => FixInvocation(model, doc, root,
+                                                         invocation, invocation.TargetMethod.Name,
                                                          bufferOperation.Value.Syntax, isBufferNamed,
                                                          offsetOperation.Value.Syntax, isOffsetNamed,
                                                          countOperation.Value.Syntax, isCountNamed,
@@ -108,7 +109,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.Diagnostics);
         }
 
-        private Task<Document> FixInvocation(Document doc, SyntaxNode root, IInvocationOperation invocation, string methodName,
+        private Task<Document> FixInvocation(SemanticModel model, Document doc, SyntaxNode root,
+            IInvocationOperation invocation, string methodName,
             SyntaxNode bufferValueNode, bool isBufferNamed,
             SyntaxNode offsetValueNode, bool isOffsetNamed,
             SyntaxNode countValueNode, bool isCountNamed,
@@ -122,7 +124,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Depending on the arguments being passed to Read/WriteAsync, it's the substitution we will make
             SyntaxNode replacedInvocationNode;
 
-            if (IsPassingZeroAndBufferLength(bufferValueNode, offsetValueNode, countValueNode))
+            if (IsPassingZeroAndBufferLength(model, bufferValueNode, offsetValueNode, countValueNode))
             {
                 // Remove 0 and buffer.length
                 replacedInvocationNode =

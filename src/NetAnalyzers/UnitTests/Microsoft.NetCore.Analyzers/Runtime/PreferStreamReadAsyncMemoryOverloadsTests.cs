@@ -933,7 +933,7 @@ Class C
             Dim buffer As Byte() = New Byte(s.Length - 1) { }
             Await s.ReadAsync( ' OpeningParenthesisComment
                 buffer, ' BufferComment
-                0, ' OffsetComment
+                1, ' OffsetComment
                 buffer.Length, ' CountComment
                 New CancellationToken() ' CancellationTokenComment
                 ) ' InvocationTrailingComment
@@ -951,7 +951,7 @@ Class C
     Public Async Sub M()
         Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
             Dim buffer As Byte() = New Byte(s.Length - 1) { }
-            Await s.ReadAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+            Await s.ReadAsync(buffer.AsMemory(1, buffer.Length), New CancellationToken() ' CancellationTokenComment
 ) ' InvocationTrailingComment
             ' AwaitComment
         End Using
@@ -963,7 +963,52 @@ End Class
         }
 
         [Fact]
-        public Task VB_Fixer_Diagnostic_WithTrivia_WithConfigureAwait()
+        public Task VB_Fixer_Diagnostic_WithTrivia_WithConfigureAwait_PartialBuffer()
+        {
+            // Notes:
+            // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
+            // - Only the last comment in the arguments section remains ("CancellationTokenComment"), the rest get discarded
+            string originalSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync( ' OpeningParenthesisComment
+                buffer, ' BufferComment
+                1, ' OffsetComment
+                buffer.Length, ' CountComment
+                New CancellationToken() ' CancellationTokenComment
+                ).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            string fixedSource = @"
+Imports System
+Imports System.IO
+Imports System.Threading
+Class C
+    Public Async Sub M()
+        Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
+            Dim buffer As Byte() = New Byte(s.Length - 1) { }
+            Await s.ReadAsync(buffer.AsMemory(1, buffer.Length), New CancellationToken() ' CancellationTokenComment
+).ConfigureAwait(False) ' InvocationTrailingComment
+            ' AwaitComment
+        End Using
+    End Sub
+End Class
+            ";
+
+            return VisualBasicVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetVisualBasicResult(9, 19, 14, 18));
+        }
+
+        [Fact]
+        public Task VB_Fixer_Diagnostic_WithTrivia_WithConfigureAwait_FullBuffer()
         {
             // Notes:
             // - Visual Basic does not allow inline comments like in C#: /**/, only at the end of the line
@@ -996,7 +1041,7 @@ Class C
     Public Async Sub M()
         Using s As FileStream = New FileStream(""path.txt"", FileMode.Create)
             Dim buffer As Byte() = New Byte(s.Length - 1) { }
-            Await s.ReadAsync(buffer.AsMemory(0, buffer.Length), New CancellationToken() ' CancellationTokenComment
+            Await s.ReadAsync(buffer, New CancellationToken() ' CancellationTokenComment
 ).ConfigureAwait(False) ' InvocationTrailingComment
             ' AwaitComment
         End Using

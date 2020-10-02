@@ -77,7 +77,7 @@ C<T>.C() -> void
 C<T>
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
@@ -96,7 +96,7 @@ C<T>.C() -> void
 C<T>
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
@@ -117,7 +117,7 @@ C<T>.C() -> void
 ~C<T>
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
@@ -139,7 +139,7 @@ D
 D.D() -> void
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
@@ -161,7 +161,7 @@ D
 D.D() -> void
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(4040, "https://github.com/dotnet/roslyn-analyzers/issues/4040")]
@@ -186,7 +186,7 @@ D
 D.D() -> void
 ";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact]
@@ -205,7 +205,7 @@ public class C
 C.C() -> void
 C.Field -> string";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact]
@@ -224,7 +224,7 @@ public class C
 C.C() -> void
 C.Field2 -> string";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact]
@@ -245,7 +245,7 @@ C.Field -> string
 C.Field2 -> string";
             var unshippedText = @"";
 
-            await VerifyCSharpAsync(source, shippedText, unshippedText, System.Array.Empty<DiagnosticResult>());
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
         }
 
         [Fact]

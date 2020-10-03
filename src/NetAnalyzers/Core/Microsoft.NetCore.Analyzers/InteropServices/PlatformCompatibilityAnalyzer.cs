@@ -124,16 +124,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 var msBuildPlatforms = GetSupportedPlatforms(context.Options, context.Compilation, context.CancellationToken);
-                var runtimeIsOSPlatformMethod = runtimeInformationType?.GetMembers().OfType<IMethodSymbol>().Where(m =>
-                    IsOSPlatform == m.Name &&
-                    m.IsStatic &&
-                    m.ReturnType.SpecialType == SpecialType.System_Boolean &&
-                    m.Parameters.Length == 1 &&
-                    m.Parameters[0].Type.Equals(osPlatformType)).FirstOrDefault();
+                var runtimeIsOSPlatformMethod = runtimeInformationType?.GetMembers().OfType<IMethodSymbol>().
+                    FirstOrDefault((m) =>
+                        IsOSPlatform == m.Name &&
+                        m.IsStatic &&
+                        m.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                        m.Parameters.Length == 1 &&
+                        m.Parameters[0].Type.Equals(osPlatformType));
 
                 var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType);
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
-                var osPlatformTypeArray = ImmutableArray.Create(osPlatformType);
+                var osPlatformTypeArray = osPlatformType != null ? ImmutableArray.Create(osPlatformType) : ImmutableArray<INamedTypeSymbol>.Empty;
                 var osPlatformCreateMethod = osPlatformType?.GetMembers("Create").OfType<IMethodSymbol>().Where(m =>
                     m.IsStatic &&
                     m.ReturnType.Equals(osPlatformType) &&
@@ -194,7 +195,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             ImmutableArray<IMethodSymbol> guardMethods,
             IMethodSymbol? runtimeIsOSPlatformMethod,
             IMethodSymbol? osPlatformCreateMethod,
-            ImmutableArray<INamedTypeSymbol?> osPlatformTypeArray,
+            ImmutableArray<INamedTypeSymbol> osPlatformTypeArray,
             INamedTypeSymbol stringType,
             ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
             ImmutableArray<string> msBuildPlatforms)
@@ -235,8 +236,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         context.Options, SupportedOsRule, performValueContentAnalysis,
                         pessimisticAnalysis: false,
                         context.CancellationToken, out var valueContentAnalysisResult,
-                        additionalSupportedValueTypes: osPlatformTypeArray!,
-                        getValueContentValueForAdditionalSupportedValueTypeOperation: GetValueContentValue);
+                        additionalSupportedValueTypes: osPlatformTypeArray,
+                        getValueContentValueForAdditionalSupportedValueTypeOperation: !osPlatformTypeArray.IsEmpty ? GetValueContentValue : null);
 
                     if (analysisResult == null)
                     {

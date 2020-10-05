@@ -124,8 +124,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 var msBuildPlatforms = GetSupportedPlatforms(context.Options, context.Compilation, context.CancellationToken);
-                var runtimeIsOSPlatformMethod = runtimeInformationType?.GetMembers().OfType<IMethodSymbol>().
-                    FirstOrDefault((m) =>
+                var runtimeIsOSPlatformMethod = runtimeInformationType?.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(m =>
                         IsOSPlatform == m.Name &&
                         m.IsStatic &&
                         m.ReturnType.SpecialType == SpecialType.System_Boolean &&
@@ -135,11 +134,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType);
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?>();
                 var osPlatformTypeArray = osPlatformType != null ? ImmutableArray.Create(osPlatformType) : ImmutableArray<INamedTypeSymbol>.Empty;
-                var osPlatformCreateMethod = osPlatformType?.GetMembers("Create").OfType<IMethodSymbol>().Where(m =>
+                var osPlatformCreateMethod = osPlatformType?.GetMembers("Create").OfType<IMethodSymbol>().FirstOrDefault(m =>
                     m.IsStatic &&
                     m.ReturnType.Equals(osPlatformType) &&
                     m.Parameters.Length == 1 &&
-                    m.Parameters[0].Type.SpecialType == SpecialType.System_String).FirstOrDefault();
+                    m.Parameters[0].Type.SpecialType == SpecialType.System_String);
 
                 context.RegisterOperationBlockStartAction(
                     context => AnalyzeOperationBlock(context, guardMethods, runtimeIsOSPlatformMethod, osPlatformCreateMethod,

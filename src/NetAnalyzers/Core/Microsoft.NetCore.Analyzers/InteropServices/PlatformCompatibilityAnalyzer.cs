@@ -235,7 +235,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         pessimisticAnalysis: false,
                         context.CancellationToken, out var valueContentAnalysisResult,
                         additionalSupportedValueTypes: osPlatformTypeArray,
-                        getValueContentValueForAdditionalSupportedValueTypeOperation: !osPlatformTypeArray.IsEmpty ? GetValueContentValue : null);
+                        getValueContentValueForAdditionalSupportedValueTypeOperation: osPlatformTypeArray.IsEmpty ? null : GetValueContentValue);
 
                     if (analysisResult == null)
                     {

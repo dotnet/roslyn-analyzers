@@ -407,6 +407,7 @@ public class C
         {|#3:" + invocation + @"(""{2} {0}"", 1)|};
         {|#4:" + invocation + @"(""{0} {2} {0} {2}"", 1)|};
         {|#5:" + invocation + @"(""{0} {2} {4} {5}"", 1)|};
+        {|#6:" + invocation + @"(""{0} {1} {3}"", 1, 2, 3)|};
     }
 }",
             VerifyCS.Diagnostic().WithLocation(0),
@@ -414,7 +415,8 @@ public class C
             VerifyCS.Diagnostic().WithLocation(2),
             VerifyCS.Diagnostic().WithLocation(3),
             VerifyCS.Diagnostic().WithLocation(4),
-            VerifyCS.Diagnostic().WithLocation(5));
+            VerifyCS.Diagnostic().WithLocation(5),
+            VerifyCS.Diagnostic().WithLocation(6));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -427,6 +429,7 @@ Public Class C
         {|#3:" + invocation + @"(""{2} {0}"", 1)|}
         {|#4:" + invocation + @"(""{0} {2} {0} {2}"", 1)|}
         {|#5:" + invocation + @"(""{0} {2} {4} {5}"", 1)|}
+        {|#6:" + invocation + @"(""{0} {1} {3}"", 1, 2, 3)|}
     End Sub
 End Class",
             VerifyVB.Diagnostic().WithLocation(0),
@@ -434,7 +437,8 @@ End Class",
             VerifyVB.Diagnostic().WithLocation(2),
             VerifyVB.Diagnostic().WithLocation(3),
             VerifyVB.Diagnostic().WithLocation(4),
-            VerifyVB.Diagnostic().WithLocation(5));
+            VerifyVB.Diagnostic().WithLocation(5),
+            VerifyVB.Diagnostic().WithLocation(6));
         }
 
         [Fact, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]

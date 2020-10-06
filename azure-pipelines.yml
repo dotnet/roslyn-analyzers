@@ -78,3 +78,12 @@ jobs:
         ArtifactName: 'Windows Desktop Spanish'
       continueOnError: true
       condition: not(succeeded())
+
+- job: Markdownlint
+  pool:
+      vmImage: ubuntu-latest
+  steps:
+    - script: sudo npm install -g markdownlint-cli
+      displayName: Install markdownlint-cli
+    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+      displayName: Run markdownlint

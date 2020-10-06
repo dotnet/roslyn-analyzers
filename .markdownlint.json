@@ -1,0 +1,17 @@
+{
+    "default": true,
+    "MD013": false,
+    "MD026": false,
+    "MD041": false,
+    "MD046": {
+        "style": "fenced"
+    },
+    "proper-names": {
+        "code_blocks": false,
+        "names": [
+            "ASP.NET",
+            "PowerShell",
+            "C#"
+        ]
+    }
+}

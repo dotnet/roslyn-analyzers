@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -46,6 +47,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             description: s_localizableDescription,
             isPortedFxCopRule: true,
             isDataflowRule: false);
+
+        /// <summary>
+        /// This regex is used to remove escaped brackets from the format string before looking for valid {} pairs.
+        /// </summary>
+        private static readonly Regex s_removeEscapedBracketsRegex = new("{{");
+
+        /// <summary>
+        /// This regex is used to extract the text between the brackets and save the contents in a MatchCollection.
+        /// </summary>
+        private static readonly Regex s_extractPlaceholdersRegex = new("{(.*?)}");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IncorrectNumberOfArgsRule);
 
@@ -89,9 +100,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (missingIndexes.Any())
                         {
                             context.ReportDiagnostic(invocation.CreateDiagnostic(MissingFormatItemRule));
+
                             // There are some missing format indexes, we don't know if they are just missing
-                            // or if the bigger numbers have been shifted so there is no need to analyze the
-                            // arguments actually provided to the invocation.
+                            // or if the highest numbers have been shifted so skip the arguments actually
+                            // provided to the invocation.
                             return;
                         }
                     }
@@ -151,198 +163,47 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             });
         }
 
-        private static HashSet<int>? GetStringFormatItemIndexes(string format)
+        private static HashSet<int> GetStringFormatItemIndexes(string stringFormat)
         {
-            // code is from mscorlib
-            // https://github.com/dotnet/runtime/blob/f1e131a4bef5bd5373a3dab65523851b54a94306/src/libraries/System.Private.CoreLib/src/System/Text/StringBuilder.cs#L1538
+            // removing escaped left brackets and replacing with space characters so they won't
+            // impede the extraction of placeholders, yet the locations of the placeholders are
+            // the same as in the original string.
+            var formatStringWithEscapedBracketsChangedToSpaces = s_removeEscapedBracketsRegex.Replace(stringFormat, "  ");
 
-            // return count of this format - {index[,alignment][:formatString]}
-            var pos = 0;
-            int len = format.Length;
-            var uniqueNumbers = new HashSet<int>();
+            var matches = s_extractPlaceholdersRegex.Matches(formatStringWithEscapedBracketsChangedToSpaces);
+            var indexes = new HashSet<int>();
 
-            // main loop
-            while (true)
+            foreach (Match match in matches)
             {
-                // loop to find starting "{"
-                char ch;
-                while (pos < len)
+                var formatItemIndex = ExtractFormatItemIndex(match.Groups[1].Value);
+                if (formatItemIndex.HasValue)
                 {
-                    ch = format[pos];
-
-                    pos++;
-                    if (ch == '}')
-                    {
-                        if (pos < len && format[pos] == '}') // Treat as escape character for }}
-                        {
-                            pos++;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-
-                    if (ch == '{')
-                    {
-                        if (pos < len && format[pos] == '{') // Treat as escape character for {{
-                        {
-                            pos++;
-                        }
-                        else
-                        {
-                            pos--;
-                            break;
-                        }
-                    }
+                    indexes.Add(formatItemIndex.Value);
                 }
+            }
 
-                // finished with "{"
-                if (pos == len)
-                {
-                    break;
-                }
+            return indexes;
+        }
 
-                pos++;
+        private static int? ExtractFormatItemIndex(string textInsideBrackets)
+        {
+            var formatItemText = textInsideBrackets.IndexOf(",", StringComparison.OrdinalIgnoreCase) > 0
+                ? textInsideBrackets.Split(',')[0]
+                : textInsideBrackets.Split(':')[0];
 
-                if (pos == len || (ch = format[pos]) < '0' || ch > '9')
-                {
-                    // finished with "{x"
-                    return null;
-                }
+            // placeholders cannot begin with whitespace
+            if (formatItemText.Length > 0 && char.IsWhiteSpace(formatItemText, 0))
+            {
+                return null;
+            }
 
-                // searching for index
-                var index = 0;
-                do
-                {
-                    index = index * 10 + ch - '0';
+            if (!int.TryParse(formatItemText, out var formatItemIndex) ||
+                formatItemIndex < 0)
+            {
+                return null;
+            }
 
-                    pos++;
-                    if (pos == len)
-                    {
-                        // wrong index format
-                        return null;
-                    }
-
-                    ch = format[pos];
-                } while (ch >= '0' && ch <= '9' && index < 1000000);
-
-                // eat up whitespace
-                while (pos < len && (ch = format[pos]) == ' ')
-                {
-                    pos++;
-                }
-
-                // searching for alignment
-                var width = 0;
-                if (ch == ',')
-                {
-                    pos++;
-
-                    // eat up whitespace
-                    while (pos < len && format[pos] == ' ')
-                    {
-                        pos++;
-                    }
-
-                    if (pos == len)
-                    {
-                        // wrong format, reached end without "}"
-                        return null;
-                    }
-
-                    ch = format[pos];
-                    if (ch == '-')
-                    {
-                        pos++;
-
-                        if (pos == len)
-                        {
-                            // wrong format. reached end without "}"
-                            return null;
-                        }
-
-                        ch = format[pos];
-                    }
-
-                    if (ch is < '0' or > '9')
-                    {
-                        // wrong format after "-"
-                        return null;
-                    }
-
-                    do
-                    {
-                        width = width * 10 + ch - '0';
-                        pos++;
-
-                        if (pos == len)
-                        {
-                            // wrong width format
-                            return null;
-                        }
-
-                        ch = format[pos];
-                    } while (ch >= '0' && ch <= '9' && width < 1000000);
-                }
-
-                // eat up whitespace
-                while (pos < len && (ch = format[pos]) == ' ')
-                {
-                    pos++;
-                }
-
-                // searching for embedded format string
-                if (ch == ':')
-                {
-                    pos++;
-
-                    while (true)
-                    {
-                        if (pos == len)
-                        {
-                            // reached end without "}"
-                            return null;
-                        }
-
-                        ch = format[pos];
-                        pos++;
-
-                        if (ch == '{')
-                        {
-                            if (pos < len && format[pos] == '{')  // Treat as escape character for {{
-                                pos++;
-                            else
-                                return null;
-                        }
-                        else if (ch == '}')
-                        {
-                            if (pos < len && format[pos] == '}')  // Treat as escape character for }}
-                            {
-                                pos++;
-                            }
-                            else
-                            {
-                                pos--;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (ch != '}')
-                {
-                    // "}" is expected
-                    return null;
-                }
-
-                pos++;
-
-                uniqueNumbers.Add(index);
-
-            } // end of main loop
-
-            return uniqueNumbers;
+            return formatItemIndex;
         }
 
         private class StringFormatInfo

@@ -1667,9 +1667,14 @@
         <target state="translated">System.String.Format으로 전달된 format 인수에 각 개체 인수에 해당하는 format 항목이 포함되지 않으며 그 반대의 경우도 마찬가지입니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">
-        <source>Provide correct arguments to formatting methods</source>
-        <target state="translated">서식 지정 메서드에 올바른 인수를 제공하세요.</target>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageArgs">
+        <source>Incorrect number of arguments passed to this formatting method call</source>
+        <target state="new">Incorrect number of arguments passed to this formatting method call</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem">
+        <source>Some string format items are missing from this formatting method call</source>
+        <target state="new">Some string format items are missing from this formatting method call</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsTitle">

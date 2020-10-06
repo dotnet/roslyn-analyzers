@@ -1667,9 +1667,14 @@
         <target state="translated">Das an "System.String.Format" übergebene Formatargument enthält kein Formatelement, das den einzelnen Objektargumenten entspricht bzw. umgekehrt.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">
-        <source>Provide correct arguments to formatting methods</source>
-        <target state="translated">Geeignete Argumente für Formatierungsmethoden angeben</target>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageArgs">
+        <source>Incorrect number of arguments passed to this formatting method call</source>
+        <target state="new">Incorrect number of arguments passed to this formatting method call</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem">
+        <source>Some string format items are missing from this formatting method call</source>
+        <target state="new">Some string format items are missing from this formatting method call</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsTitle">

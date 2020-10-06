@@ -1667,9 +1667,14 @@
         <target state="translated">System.String.Format に渡される書式引数には、各オブジェクト引数に対応する書式項目が含まれていないか、各書式項目に対応するオブジェクト引数が含まれていません。</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">
-        <source>Provide correct arguments to formatting methods</source>
-        <target state="translated">書式設定メソッドに正しい引数を指定します</target>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageArgs">
+        <source>Incorrect number of arguments passed to this formatting method call</source>
+        <target state="new">Incorrect number of arguments passed to this formatting method call</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem">
+        <source>Some string format items are missing from this formatting method call</source>
+        <target state="new">Some string format items are missing from this formatting method call</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsTitle">

@@ -23,19 +23,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageArgs = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessageArgs), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageFormatItem = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.BuildWarningCandidate,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+        internal static DiagnosticDescriptor IncorrectNumberOfArgsRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessageArgs,
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        internal static DiagnosticDescriptor MissingFormatItemRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessageFormatItem,
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarningCandidate,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IncorrectNumberOfArgsRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -76,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             .Except(stringFormatIndexes);
                         if (missingIndexes.Any())
                         {
-                            context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(invocation.CreateDiagnostic(MissingFormatItemRule));
                             // There are some missing format indexes, we don't know if they are just missing
                             // or if the bigger numbers have been shifted so there is no need to analyze the
                             // arguments actually provided to the invocation.
@@ -98,7 +110,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (info.ExpectedStringFormatArgumentCount != expectedStringFormatArgumentCount)
                         {
-                            context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(invocation.CreateDiagnostic(IncorrectNumberOfArgsRule));
                         }
 
                         return;
@@ -133,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     int actualArgumentCount = intializer.ElementValues.Length;
                     if (actualArgumentCount != expectedStringFormatArgumentCount)
                     {
-                        context.ReportDiagnostic(invocation.CreateDiagnostic(Rule));
+                        context.ReportDiagnostic(invocation.CreateDiagnostic(IncorrectNumberOfArgsRule));
                     }
                 }, OperationKind.Invocation);
             });
@@ -367,7 +379,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Check if this the underlying method is user configured string formatting method.
-                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, context.CancellationToken);
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(IncorrectNumberOfArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, context.CancellationToken);
                 if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
                     TryGetFormatInfo(method, out info))
                 {
@@ -377,7 +389,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Check if the user configured automatic determination of formatting methods.
                 // If so, check if the method called has a 'string format' parameter followed by an params array.
                 var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
-                        Rule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
+                        IncorrectNumberOfArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
                 if (determineAdditionalStringFormattingMethodsAutomatically &&
                     TryGetFormatInfo(method, out info) &&
                     info.ExpectedStringFormatArgumentCount == -1)

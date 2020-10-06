@@ -1667,9 +1667,14 @@
         <target state="translated">L'argument de mise en forme passé à System.String.Format ne contient aucun élément de mise en forme pour chaque argument d'objet correspondant, ou vice versa.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessage">
-        <source>Provide correct arguments to formatting methods</source>
-        <target state="translated">Indiquer le nombre correct d'arguments dans les méthodes de mise en forme</target>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageArgs">
+        <source>Incorrect number of arguments passed to this formatting method call</source>
+        <target state="new">Incorrect number of arguments passed to this formatting method call</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem">
+        <source>Some string format items are missing from this formatting method call</source>
+        <target state="new">Some string format items are missing from this formatting method call</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideCorrectArgumentsToFormattingMethodsTitle">

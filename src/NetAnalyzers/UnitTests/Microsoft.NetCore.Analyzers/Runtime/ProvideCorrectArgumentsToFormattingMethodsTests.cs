@@ -410,13 +410,13 @@ public class C
         {|#6:" + invocation + @"(""{0} {1} {3}"", 1, 2, 3)|};
     }
 }",
-            VerifyCS.Diagnostic().WithLocation(0),
-            VerifyCS.Diagnostic().WithLocation(1),
-            VerifyCS.Diagnostic().WithLocation(2),
-            VerifyCS.Diagnostic().WithLocation(3),
-            VerifyCS.Diagnostic().WithLocation(4),
-            VerifyCS.Diagnostic().WithLocation(5),
-            VerifyCS.Diagnostic().WithLocation(6));
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(0),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(1),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(2),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(3),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(4),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(5),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(6));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -432,13 +432,13 @@ Public Class C
         {|#6:" + invocation + @"(""{0} {1} {3}"", 1, 2, 3)|}
     End Sub
 End Class",
-            VerifyVB.Diagnostic().WithLocation(0),
-            VerifyVB.Diagnostic().WithLocation(1),
-            VerifyVB.Diagnostic().WithLocation(2),
-            VerifyVB.Diagnostic().WithLocation(3),
-            VerifyVB.Diagnostic().WithLocation(4),
-            VerifyVB.Diagnostic().WithLocation(5),
-            VerifyVB.Diagnostic().WithLocation(6));
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(0),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(1),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(2),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(3),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(4),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(5),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(6));
         }
 
         [Fact, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]
@@ -466,18 +466,18 @@ public class C
         {|#11:string.Format(p, ""{0} {2} {4} {5}"", 1)|};
     }
 }",
-            VerifyCS.Diagnostic().WithLocation(0),
-            VerifyCS.Diagnostic().WithLocation(1),
-            VerifyCS.Diagnostic().WithLocation(2),
-            VerifyCS.Diagnostic().WithLocation(3),
-            VerifyCS.Diagnostic().WithLocation(4),
-            VerifyCS.Diagnostic().WithLocation(5),
-            VerifyCS.Diagnostic().WithLocation(6),
-            VerifyCS.Diagnostic().WithLocation(7),
-            VerifyCS.Diagnostic().WithLocation(8),
-            VerifyCS.Diagnostic().WithLocation(9),
-            VerifyCS.Diagnostic().WithLocation(10),
-            VerifyCS.Diagnostic().WithLocation(11));
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(0),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(1),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(2),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(3),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(4),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(5),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(6),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(7),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(8),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(9),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(10),
+            VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(11));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -499,18 +499,18 @@ Public Class C
         {|#11:string.Format(p, ""{0} {2} {4} {5}"", 1)|}
     End Sub
 End Class",
-            VerifyVB.Diagnostic().WithLocation(0),
-            VerifyVB.Diagnostic().WithLocation(1),
-            VerifyVB.Diagnostic().WithLocation(2),
-            VerifyVB.Diagnostic().WithLocation(3),
-            VerifyVB.Diagnostic().WithLocation(4),
-            VerifyVB.Diagnostic().WithLocation(5),
-            VerifyVB.Diagnostic().WithLocation(6),
-            VerifyVB.Diagnostic().WithLocation(7),
-            VerifyVB.Diagnostic().WithLocation(8),
-            VerifyVB.Diagnostic().WithLocation(9),
-            VerifyVB.Diagnostic().WithLocation(10),
-            VerifyVB.Diagnostic().WithLocation(11));
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(0),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(1),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(2),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(3),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(4),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(5),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(6),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(7),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(8),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(9),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(10),
+            VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(11));
         }
 
         [Fact]
@@ -533,8 +533,8 @@ public class C
 ",
                 ExpectedDiagnostics =
                 {
-                    VerifyCS.Diagnostic().WithLocation(0),
-                    VerifyCS.Diagnostic().WithLocation(1),
+                    VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(0),
+                    VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.MissingFormatItemRule).WithLocation(1),
                 },
             }.RunAsync();
         }

@@ -142,7 +142,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static HashSet<int>? GetStringFormatItemIndexes(string format)
         {
             // code is from mscorlib
-            // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Text/StringBuilder.cs#L1312
+            // https://github.com/dotnet/runtime/blob/f1e131a4bef5bd5373a3dab65523851b54a94306/src/libraries/System.Private.CoreLib/src/System/Text/StringBuilder.cs#L1538
 
             // return count of this format - {index[,alignment][:formatString]}
             var pos = 0;

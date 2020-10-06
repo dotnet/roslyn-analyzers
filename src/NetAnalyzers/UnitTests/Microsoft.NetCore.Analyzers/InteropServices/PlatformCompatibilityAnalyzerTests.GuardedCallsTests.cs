@@ -3655,7 +3655,7 @@ class Test
         {
             Action a = () =>
             {
-                WindowsOnly(); // Not warns, interprocedural analysis  enabled
+                WindowsOnly(); // Not warn, interprocedural analysis enabled
             };
 
             Func<string> greetings = () =>
@@ -3674,7 +3674,7 @@ class Test
 
         Action a = () =>
         {
-            WindowsOnly(); // Not warns, interprocedural analysis  enabled
+            WindowsOnly(); // Not warn, interprocedural analysis enabled
         };
             
         Func<string> greetings = () =>

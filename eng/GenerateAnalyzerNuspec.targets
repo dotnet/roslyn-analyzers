@@ -88,7 +88,11 @@
       <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
       <AnalyzerRulesetAssembly Update="@(AnalyzerRulesetAssembly)" Condition="'%(AnalyzerRulesetAssembly.TargetFramework)' == ''" TargetFramework="$(TargetFramework)" />
     </ItemGroup>
-    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateDocumentationAndConfigFilesPath)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) false' />
+
+    <!-- Only run validate only in CI builds. Running them in local builds will prevent refreshing auto-generated files. -->
+    <Exec Condition="'$(Sign)' == 'true'" Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateDocumentationAndConfigFilesPath)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "-validateOnly:true"' />
+
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateDocumentationAndConfigFilesPath)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "-validateOnly:false"' />
 
     <MSBuild Projects="$(RepoRoot)src\Tools\GenerateGlobalAnalyzerConfigs\GenerateGlobalAnalyzerConfigs.csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateGlobalAnalyzerConfigsPath"/>

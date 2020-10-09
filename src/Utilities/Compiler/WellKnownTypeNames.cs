@@ -267,6 +267,7 @@ namespace Analyzer.Utilities
         public const string MicrosoftVisualStudioTestToolsUnitTestingStringAssert = "Microsoft.VisualStudio.TestTools.UnitTesting.StringAssert";
         public const string XunitAssert = "Xunit.Assert";
         public const string XunitFactAttribute = "Xunit.FactAttribute";
+        public const string XunitSkippableFactAttribute = "Xunit.SkippableFactAttribute";
         public const string XunitTheoryAttribute = "Xunit.TheoryAttribute";
         public const string NUnitFrameworkAssert = "NUnit.Framework.Assert";
         public const string NUnitFrameworkOneTimeSetUpAttribute = "NUnit.Framework.OneTimeSetUpAttribute";

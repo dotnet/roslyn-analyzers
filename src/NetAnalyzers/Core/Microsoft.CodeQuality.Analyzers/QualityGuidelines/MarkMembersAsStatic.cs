@@ -298,6 +298,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // XUnit attributes
             Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitFactAttribute));
+            Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitSkippableFactAttribute));
 
             // NUnit Attributes
             Add(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkSetUpAttribute));

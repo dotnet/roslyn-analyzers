@@ -86,8 +86,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Perf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers", "src\PerformanceSensitiveAnalyzers\Core\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj", "{F2985136-DCB2-492F-A66D-32968A0266F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers", "src\PerformanceSensitiveAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj", "{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Setup", "src\PerformanceSensitiveAnalyzers\Setup\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Setup.csproj", "{5C9B8805-6489-41C5-8FE6-195599C6497F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests", "src\PerformanceSensitiveAnalyzers\UnitTests\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.UnitTests.csproj", "{F86DCF03-7C4D-40FE-91D2-6206D532DEFD}"
@@ -162,8 +160,13 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Refactoring.CSharp.Utilitie
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Refactoring.VisualBasic.Utilities", "src\Utilities\Refactoring.VisualBasic\Refactoring.VisualBasic.Utilities.shproj", "{4C362C30-C4B1-4C4B-A545-DBF67C7E9153}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers", "src\PerformanceSensitiveAnalyzers\CSharp\Analyzers\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj", "{8197A037-FF9E-4660-8C6D-2F722FEA0C10}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes", "src\PerformanceSensitiveAnalyzers\CSharp\CodeFixes\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes.csproj", "{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{046419a7-c60d-40ff-ad7e-2bae461b7ce5}*SharedItemsImports = 5
 		src\Utilities\Compiler\Analyzer.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{0a0621f2-d1dc-47ff-b643-c6646557505e}*SharedItemsImports = 5
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{0dc347c1-660d-45d8-bdc8-dc439c2e4a67}*SharedItemsImports = 5
@@ -300,10 +303,6 @@ Global
 		{F2985136-DCB2-492F-A66D-32968A0266F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2985136-DCB2-492F-A66D-32968A0266F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2985136-DCB2-492F-A66D-32968A0266F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C9B8805-6489-41C5-8FE6-195599C6497F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C9B8805-6489-41C5-8FE6-195599C6497F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C9B8805-6489-41C5-8FE6-195599C6497F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -416,6 +415,14 @@ Global
 		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{563654BA-4C05-4EA2-91D3-28A14723B7D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8197A037-FF9E-4660-8C6D-2F722FEA0C10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8197A037-FF9E-4660-8C6D-2F722FEA0C10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8197A037-FF9E-4660-8C6D-2F722FEA0C10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8197A037-FF9E-4660-8C6D-2F722FEA0C10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -449,7 +456,6 @@ Global
 		{18CE822A-A46D-494B-BBFC-C52EF1D048BE} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
 		{04CDAFD7-7EC6-43A0-AC42-84FFD56E78B6} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{F2985136-DCB2-492F-A66D-32968A0266F1} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
-		{37F2A7AD-FABE-4AEA-AB3D-CE8543D8134E} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{5C9B8805-6489-41C5-8FE6-195599C6497F} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{F86DCF03-7C4D-40FE-91D2-6206D532DEFD} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{9A3072A5-FC2D-4183-9420-DE5DE323441E} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
@@ -486,6 +492,8 @@ Global
 		{68528C1C-B163-49A6-A19D-24E10F500F90} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{3055F932-0D1E-4823-A03A-7B62C7639BDA} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{4C362C30-C4B1-4C4B-A545-DBF67C7E9153} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{8197A037-FF9E-4660-8C6D-2F722FEA0C10} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

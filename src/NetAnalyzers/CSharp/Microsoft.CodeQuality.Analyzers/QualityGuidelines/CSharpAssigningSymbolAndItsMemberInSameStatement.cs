@@ -7,14 +7,15 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeQuality.Analyzers;
 
-namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2246: Prevent objects from being referenced in statements where they are reassigned
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class AssigningSymbolAndItsMemberInSameStatement : DiagnosticAnalyzer
+    public sealed class CSharpAssigningSymbolAndItsMemberInSameStatement : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2246";
 

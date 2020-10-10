@@ -14,13 +14,14 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeQuality.Analyzers;
 
-namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = AssigningSymbolAndItsMemberInSameStatement.RuleId), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = CSharpAssigningSymbolAndItsMemberInSameStatement.RuleId), Shared]
     public sealed class AssigningSymbolAndItsMemberInSameStatementFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AssigningSymbolAndItsMemberInSameStatement.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CSharpAssigningSymbolAndItsMemberInSameStatement.RuleId);
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {

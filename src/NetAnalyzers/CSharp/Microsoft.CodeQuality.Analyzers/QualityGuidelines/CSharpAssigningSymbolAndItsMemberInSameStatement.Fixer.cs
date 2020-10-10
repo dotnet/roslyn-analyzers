@@ -19,7 +19,7 @@ using Microsoft.CodeQuality.Analyzers;
 namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = CSharpAssigningSymbolAndItsMemberInSameStatement.RuleId), Shared]
-    public sealed class AssigningSymbolAndItsMemberInSameStatementFixer : CodeFixProvider
+    public sealed class CSharpAssigningSymbolAndItsMemberInSameStatementFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CSharpAssigningSymbolAndItsMemberInSameStatement.RuleId);
 

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.AssigningSymbolAndItsMemberInSameStatement,
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.AssigningSymbolAndItsMemberInSameStatementFixer>;
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAssigningSymbolAndItsMemberInSameStatement,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAssigningSymbolAndItsMemberInSameStatementFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
 {

@@ -49,7 +49,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -69,7 +70,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -89,7 +91,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -130,6 +133,7 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
+              "EnabledRuleInAggressiveMode",
               "RuleNoZero"
             ]
           }
@@ -150,7 +154,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -170,7 +175,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -190,7 +196,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -210,7 +217,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -250,7 +258,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -290,7 +299,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -310,7 +320,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -330,7 +341,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -350,7 +362,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -370,7 +383,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -390,7 +404,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -410,7 +425,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -430,7 +446,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -450,7 +467,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -470,7 +488,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -490,7 +509,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -510,7 +530,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -550,7 +571,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -569,7 +591,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -589,7 +612,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -609,7 +633,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -629,7 +654,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -649,7 +675,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -669,7 +696,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -689,7 +717,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -729,7 +758,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -750,7 +780,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -770,7 +801,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -790,7 +822,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -809,7 +842,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -828,7 +862,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -847,7 +882,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -866,7 +902,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -884,7 +921,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -984,7 +1022,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1023,7 +1062,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1043,7 +1083,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1063,7 +1104,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1083,7 +1125,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1103,7 +1146,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1123,7 +1167,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1143,7 +1188,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1163,7 +1209,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1183,7 +1230,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1203,7 +1251,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1223,7 +1272,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1243,7 +1293,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1263,7 +1314,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1283,7 +1335,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1303,7 +1356,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1323,7 +1377,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1343,7 +1398,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1363,7 +1419,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1383,7 +1440,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1403,7 +1461,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1423,7 +1482,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1443,7 +1503,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1463,7 +1524,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1483,7 +1545,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1503,7 +1566,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1522,7 +1586,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1541,7 +1606,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1561,7 +1627,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1581,7 +1648,29 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "RethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1601,7 +1690,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1621,7 +1711,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1641,7 +1732,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1661,7 +1753,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1681,7 +1774,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1701,7 +1795,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1721,7 +1816,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1741,7 +1837,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1759,7 +1856,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1778,7 +1876,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1796,7 +1895,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -1824,7 +1924,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1843,7 +1944,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1862,7 +1964,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1881,7 +1984,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1899,7 +2003,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1917,7 +2022,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1936,26 +2042,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details",
-          "fullDescription": "Re-throwing caught exception changes stack information",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpRethrowToPreserveStackDetailsAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -1974,7 +2062,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -2002,7 +2091,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2021,7 +2111,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2040,7 +2131,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2059,7 +2151,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2077,7 +2170,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2095,7 +2189,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2114,26 +2209,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details",
-          "fullDescription": "Re-throwing caught exception changes stack information",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "BasicRethrowToPreserveStackDetailsAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2152,7 +2229,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2171,7 +2249,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2190,7 +2269,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -2220,7 +2300,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2240,7 +2321,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2260,7 +2342,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2280,7 +2363,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2300,7 +2384,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2319,7 +2404,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2339,7 +2425,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2352,13 +2439,14 @@
           "properties": {
             "category": "Interoperability",
             "isEnabledByDefault": true,
-            "typeName": "PlatformCompatabilityAnalyzer",
+            "typeName": "PlatformCompatibilityAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2377,7 +2465,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2397,7 +2486,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2417,7 +2507,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2437,7 +2528,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2456,7 +2548,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2475,7 +2568,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2494,7 +2588,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2513,7 +2608,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2532,7 +2628,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2551,7 +2648,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2570,7 +2668,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2589,7 +2688,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2608,7 +2708,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2627,7 +2728,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2646,7 +2748,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2665,7 +2768,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2684,7 +2788,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2703,7 +2808,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2724,7 +2830,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2744,7 +2851,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2763,7 +2871,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2782,7 +2891,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2801,7 +2911,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2820,7 +2931,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2838,7 +2950,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2857,7 +2970,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2878,7 +2992,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2898,7 +3013,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2918,7 +3034,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2938,7 +3055,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2958,7 +3076,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2979,7 +3098,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -2999,7 +3119,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3019,7 +3140,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3039,7 +3161,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3059,7 +3182,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3079,7 +3203,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3099,7 +3224,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3119,7 +3245,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3139,7 +3266,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3158,7 +3286,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3177,7 +3306,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3196,7 +3326,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3215,7 +3346,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3235,7 +3367,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3255,7 +3388,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3274,7 +3408,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3293,7 +3428,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3313,7 +3449,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3333,7 +3470,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3352,7 +3490,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3372,7 +3511,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3392,7 +3532,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3411,7 +3552,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3431,7 +3573,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3451,7 +3594,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3471,7 +3615,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3491,7 +3636,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3510,7 +3656,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3529,7 +3676,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3548,7 +3696,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3567,7 +3716,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3586,7 +3736,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3605,7 +3756,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3624,14 +3776,15 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA2361": {
           "id": "CA2361",
-          "shortDescription": "Ensure autogenerated class containing DataSet.ReadXml() is not used with untrusted data",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. Make sure that autogenerated class containing the '{0}' call is not deserialized with untrusted data.",
+          "shortDescription": "Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. Make sure that auto-generated class containing the '{0}' call is not deserialized with untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2361",
           "properties": {
@@ -3643,14 +3796,15 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA2362": {
           "id": "CA2362",
-          "shortDescription": "Unsafe DataSet or DataTable in autogenerated serializable type can be vulnerable to remote code execution attacks",
-          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the autogenerated type is never deserialized with untrusted data.",
+          "shortDescription": "Unsafe DataSet or DataTable in auto-generated serializable type can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the auto-generated type is never deserialized with untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2362",
           "properties": {
@@ -3662,7 +3816,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3682,7 +3837,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3702,7 +3858,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3722,7 +3879,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3742,7 +3900,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3762,7 +3921,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3782,7 +3942,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3802,7 +3963,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3822,7 +3984,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3842,7 +4005,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3862,7 +4026,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3882,7 +4047,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3902,7 +4068,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3921,7 +4088,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3940,7 +4108,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3959,7 +4128,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3978,7 +4148,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -3997,7 +4168,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4016,14 +4188,15 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5361": {
           "id": "CA5361",
           "shortDescription": "Do Not Disable SChannel Use of Strong Crypto",
-          "fullDescription": "Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.",
+          "fullDescription": "Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommended to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
           "properties": {
@@ -4036,7 +4209,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4055,7 +4229,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4074,7 +4249,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4093,7 +4269,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4112,13 +4289,14 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5366": {
           "id": "CA5366",
-          "shortDescription": "Use XmlReader For DataSet Read Xml",
+          "shortDescription": "Use XmlReader for 'DataSet.ReadXml()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5366",
@@ -4131,7 +4309,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4150,7 +4329,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4169,13 +4349,14 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5369": {
           "id": "CA5369",
-          "shortDescription": "Use XmlReader For Deserialize",
+          "shortDescription": "Use XmlReader for 'XmlSerializer.Deserialize()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5369",
@@ -4188,13 +4369,14 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5370": {
           "id": "CA5370",
-          "shortDescription": "Use XmlReader For Validating Reader",
+          "shortDescription": "Use XmlReader for XmlValidatingReader constructor",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5370",
@@ -4207,13 +4389,14 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5371": {
           "id": "CA5371",
-          "shortDescription": "Use XmlReader For Schema Read",
+          "shortDescription": "Use XmlReader for 'XmlSchema.Read()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5371",
@@ -4226,13 +4409,14 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
         "CA5372": {
           "id": "CA5372",
-          "shortDescription": "Use XmlReader For XPathDocument",
+          "shortDescription": "Use XmlReader for XPathDocument constructor",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5372",
@@ -4245,7 +4429,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4264,7 +4449,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4283,7 +4469,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4302,7 +4489,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4322,7 +4510,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4342,7 +4531,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4362,7 +4552,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4381,7 +4572,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4401,7 +4593,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4421,7 +4614,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4441,7 +4635,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4461,7 +4656,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4480,7 +4676,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4499,7 +4696,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4518,7 +4716,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4538,7 +4737,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4558,7 +4758,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4578,7 +4779,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4598,7 +4800,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4617,7 +4820,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4636,7 +4840,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4655,7 +4860,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4674,7 +4880,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4693,7 +4900,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4713,7 +4921,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4732,7 +4941,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4751,7 +4961,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4771,7 +4982,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4791,7 +5003,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4811,7 +5024,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4831,7 +5045,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4851,7 +5066,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4870,7 +5086,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4889,7 +5106,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -4917,7 +5135,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4936,7 +5155,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4954,7 +5174,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -4972,7 +5193,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -5000,7 +5222,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5019,7 +5242,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5037,7 +5261,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5055,7 +5280,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -5084,7 +5310,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5103,7 +5330,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5122,7 +5350,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5141,7 +5370,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -5157,7 +5387,7 @@
         "CA3076": {
           "id": "CA3076",
           "shortDescription": "Insecure XSLT script processing.",
-          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
+          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argument with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3076",
           "properties": {
@@ -5168,7 +5398,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5186,7 +5417,8 @@
               "C#"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }
@@ -5202,7 +5434,7 @@
         "CA3076": {
           "id": "CA3076",
           "shortDescription": "Insecure XSLT script processing.",
-          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
+          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argument with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3076",
           "properties": {
@@ -5213,7 +5445,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },
@@ -5231,7 +5464,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
             ]
           }
         }

@@ -141,7 +141,7 @@ Specify AttributeUsage on {0}
 |Category|Design|
 |Enabled|True|
 |Severity|Warning|
-|CodeFix|False|
+|CodeFix|True|
 ---
 
 ## [CA1019](https://docs.microsoft.com/visualstudio/code-quality/ca1019): Define accessors for attribute arguments

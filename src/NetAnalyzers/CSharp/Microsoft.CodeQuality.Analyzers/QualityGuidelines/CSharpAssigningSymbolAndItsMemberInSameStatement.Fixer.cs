@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 replacements.Add(GetAssignmentExpressionStatement(members, leadingTrivia, trailingTrivia));
                 // For the first statement, take all trivia.
                 // For following statements, take only whitespace trivia.
-                trailingTrivia = trailingTrivia.Where(t => t.IsKind(SyntaxKind.WhitespaceTrivia)).ToSyntaxTriviaList();
+                trailingTrivia = trailingTrivia.Where(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)).ToSyntaxTriviaList();
             }
 
             var title = MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle;

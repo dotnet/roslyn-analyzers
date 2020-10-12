@@ -1638,6 +1638,27 @@
             ]
           }
         },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details",
+          "fullDescription": "Re-throwing caught exception changes stack information",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "RethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2211": {
           "id": "CA2211",
           "shortDescription": "Non-constant fields should not be visible",
@@ -2011,26 +2032,6 @@
             ]
           }
         },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details",
-          "fullDescription": "Re-throwing caught exception changes stack information",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpRethrowToPreserveStackDetailsAnalyzer",
-            "languages": [
-              "C#"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
         "CA2234": {
           "id": "CA2234",
           "shortDescription": "Pass system uri objects instead of strings",
@@ -2188,26 +2189,6 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "BasicAvoidUninstantiatedInternalClasses",
-            "languages": [
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details",
-          "fullDescription": "Re-throwing caught exception changes stack information",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "BasicRethrowToPreserveStackDetailsAnalyzer",
             "languages": [
               "Visual Basic"
             ],

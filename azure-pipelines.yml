@@ -23,7 +23,7 @@ jobs:
         _codeCoverage: False
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Open
+    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
   timeoutInMinutes: 40
 
   steps:

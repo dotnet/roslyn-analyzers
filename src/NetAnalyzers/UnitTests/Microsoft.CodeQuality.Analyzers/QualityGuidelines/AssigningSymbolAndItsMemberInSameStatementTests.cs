@@ -49,8 +49,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -95,8 +95,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -139,8 +139,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -184,8 +184,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -230,8 +230,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -276,8 +276,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -323,8 +323,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -372,8 +372,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }
@@ -476,8 +476,8 @@ public class Test
 ";
             await new VerifyCS.Test
             {
-                TestState = { Sources = { code } },
-                FixedState = { Sources = { fixedCode } },
+                TestCode = code,
+                FixedCode = fixedCode,
                 CodeActionIndex = codeActionIndex,
             }.RunAsync();
         }

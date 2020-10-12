@@ -79,7 +79,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 
         /// <summary>
         /// If the assignment expression is:  a = b = c = d
-        /// Return a stack containing a, b, c, d with `a` at the bottom and `d` at the top.
+        /// Return a stack containing a, b, c, d with 'a' at the bottom and 'd' at the top.
         /// </summary>
         private static Stack<ExpressionSyntax> GetAssignmentMembers(AssignmentExpressionSyntax node)
         {

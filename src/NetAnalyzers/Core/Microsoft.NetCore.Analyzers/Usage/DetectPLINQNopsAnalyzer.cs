@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -41,23 +42,22 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 }
 
                 var asParallelSymbols = parallelEnumerable.GetMembers("AsParallel").ToImmutableHashSet();
-                var toArraySymbols = parallelEnumerable.GetMembers("ToArray").ToImmutableHashSet();
-                var toListSymbols = parallelEnumerable.GetMembers("ToList").ToImmutableHashSet();
+                var collectionSymbols = parallelEnumerable.GetMembers("ToArray").Concat(parallelEnumerable.GetMembers("ToList")).ToImmutableHashSet();
 
-                ctx.RegisterOperationAction(x => AnalyzeOperation(x, asParallelSymbols, toArraySymbols, toListSymbols), OperationKind.Invocation);
+                ctx.RegisterOperationAction(x => AnalyzeOperation(x, asParallelSymbols, collectionSymbols), OperationKind.Invocation);
             });
         }
 
         public static bool ParentIsForEachStatement(IInvocationOperation operation) => operation.Parent is IForEachLoopOperation || operation.Parent?.Parent is IForEachLoopOperation;
 
-        public static bool TryGetParentIsToArrayOrToList(IInvocationOperation operation, ImmutableHashSet<ISymbol> toArraySymbols, ImmutableHashSet<ISymbol> toListSymbols, out IInvocationOperation parentInvocation)
+        public static bool TryGetParentIsToArrayOrToList(IInvocationOperation operation, ImmutableHashSet<ISymbol> collectionSymbols, out IInvocationOperation parentInvocation)
         {
             parentInvocation = operation;
             if (operation.Parent?.Parent is not IInvocationOperation invocation)
             {
                 return false;
             }
-            if (toListSymbols.Contains(invocation.TargetMethod.OriginalDefinition) || toArraySymbols.Contains(invocation.TargetMethod.OriginalDefinition))
+            if (collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition))
             {
                 parentInvocation = invocation;
                 return true;
@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             return false;
         }
 
-        private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableHashSet<ISymbol> asParallelSymbols, ImmutableHashSet<ISymbol> toArraySymbols, ImmutableHashSet<ISymbol> toListSymbols)
+        private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableHashSet<ISymbol> asParallelSymbols, ImmutableHashSet<ISymbol> collectionSymbols)
         {
             var invocation = (IInvocationOperation)context.Operation;
             var reducedMethod = invocation.TargetMethod.OriginalDefinition;
@@ -82,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             IInvocationOperation? diagnosticInvocation = null;
             if (!ParentIsForEachStatement(invocation))
             {
-                if (!TryGetParentIsToArrayOrToList(invocation, toArraySymbols, toListSymbols, out var parentInvocation) || !ParentIsForEachStatement(parentInvocation))
+                if (!TryGetParentIsToArrayOrToList(invocation, collectionSymbols, out var parentInvocation) || !ParentIsForEachStatement(parentInvocation))
                 {
                     return;
                 }

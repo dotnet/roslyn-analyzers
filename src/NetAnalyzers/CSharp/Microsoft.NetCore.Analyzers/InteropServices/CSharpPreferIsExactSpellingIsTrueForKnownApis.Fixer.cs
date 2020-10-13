@@ -26,14 +26,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
     {
         private const string ExactSpellingText = "ExactSpelling";
         private const string EntryPointText = "EntryPoint";
-        internal const string RuleId = "CA1839";
 
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferIsExactSpellingIsTrueForKnownApisAnalyzer.RuleId);
 
-        private static SyntaxNode? FindNamedArgument(IReadOnlyList<SyntaxNode> arguments, string argumentName)
-        {
-            return arguments.OfType<AttributeArgumentSyntax>().FirstOrDefault(arg => arg.NameEquals != null && arg.NameEquals.Name.Identifier.Text == argumentName);
-        }
+        private static SyntaxNode? FindNamedArgument(IReadOnlyList<SyntaxNode> arguments, string argumentName) => arguments.OfType<AttributeArgumentSyntax>().FirstOrDefault(arg => arg.NameEquals != null && arg.NameEquals.Name.Identifier.Text == argumentName);
 
         private static void AddOrUpdateParameterOnAttribute(DocumentEditor editor, AttributeListSyntax list, SyntaxNode? possibleExistingArgument, SyntaxNode replacement)
         {
@@ -92,15 +88,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             var actualName = methodSymbol.GetActualExternName(dllImportAttribute);
             if (methods.Contains(actualName))
             {
-                if (actualName.EndsWith("W", StringComparison.OrdinalIgnoreCase))
-                {
-                    context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
-                                                     async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
-                                                     equivalenceKey: title),
-                                    context.Diagnostics);
-                    return;
-                }
-                if (actualName.EndsWith("A", StringComparison.OrdinalIgnoreCase))
+                //CreateDCW, CreateDC exists as well.
+                //BroadcastSystemMessageA exists, BroadcastSystemMessageW and BroadcastSystemMessage as well.
+                if (actualName.EndsWith("W", StringComparison.OrdinalIgnoreCase) || actualName.EndsWith("A", StringComparison.OrdinalIgnoreCase))
                 {
                     context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
                                                      async ct => await ApplixFixAndGetChangedDocument(editor, AddExactSpelling(context.Document, methodDeclaration, editor, ct)).ConfigureAwait(false),
@@ -109,6 +99,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
                     return;
                 }
             }
+
+            //GetWindowModuleFileName should use GetWindowModuleFileNameA
             if (methods.Contains(actualName + "A"))
             {
                 context.RegisterCodeFix(new PreferIsExactSpellingChangeAction(title,
@@ -129,7 +121,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             SyntaxNode argumentValue = generator.TrueLiteralExpression();
             SyntaxNode newExactSpellingArgument = generator.AttributeArgument(ExactSpellingText, argumentValue);
             SyntaxNode? exactSpellingArgument = FindNamedArgument(arguments, ExactSpellingText);
-            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, exactSpellingArgument, newExactSpellingArgument);
+            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax, exactSpellingArgument, newExactSpellingArgument);
         }
 
         public static async Task AddASuffix(Document document, MethodDeclarationSyntax methodDeclaration, string actualExternalName, DocumentEditor editor, CancellationToken cancellationToken)
@@ -145,13 +137,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.InteropServices
             SyntaxNode newEntryPointText = generator.AttributeArgument(EntryPointText, argumentValue);
 
             SyntaxNode? entryPointNode = FindNamedArgument(arguments, EntryPointText);
-            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax!, entryPointNode, newEntryPointText);
+            AddOrUpdateParameterOnAttribute(editor, dllImportSyntax, entryPointNode, newEntryPointText);
         }
 
-        public override FixAllProvider GetFixAllProvider()
-        {
-            return WellKnownFixAllProviders.BatchFixer;
-        }
+        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         private sealed class PreferIsExactSpellingChangeAction : DocumentChangeAction
         {

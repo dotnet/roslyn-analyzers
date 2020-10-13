@@ -1559,8 +1559,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisDescription">
-        <source>|{0}| is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</source>
-        <target state="new">|{0}| is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</target>
+        <source>'{0}' is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</source>
+        <target state="new">'{0}' is a known invocation on Windows without an equivalent -W suffix. Use 'ExactSpelling=true'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisMessage">
@@ -1574,8 +1574,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferIsExactSpellingIsTrueForKnownApisWithSuffixMessage">
-        <source>|{0}| is a known invocation on Windows withan equivalent -W suffix. Use 'ExactSpelling=true' and use the method without string encoding differences.</source>
-        <target state="new">|{0}| is a known invocation on Windows withan equivalent -W suffix. Use 'ExactSpelling=true' and use the method without string encoding differences.</target>
+        <source>'{0}' is a known invocation on Windows withan equivalent -W suffix. Use 'ExactSpelling=true' and use the method without string encoding differences.</source>
+        <target state="new">'{0}' is a known invocation on Windows withan equivalent -W suffix. Use 'ExactSpelling=true' and use the method without string encoding differences.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferStreamAsyncMemoryOverloadsDescription">

@@ -36,10 +36,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         public sealed class KnownApi //Only made public as XmlSerializer requires it
 #pragma warning restore CA1034 // Nested types should not be visible
         {
-            public string? Dll { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+            public string Dll { get; set; }
 #pragma warning disable CA1819 // Properties should not return arrays
-            public string[]? Methods { get; set; } // DTO object may ignore this warning
+            public string[] Methods { get; set; } // DTO object may ignore this warning
 #pragma warning restore CA1819 // Properties should not return arrays
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         }
 
         internal const string RuleId = "CA1839";
@@ -53,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             using var stringReader = new StringReader(str.ToString());
             using var reader = XmlReader.Create(stringReader);
             var knownApis = (KnownApi[])serializer.Deserialize(reader);
-            return knownApis.ToDictionary(x => x.Dll!, x => new HashSet<string>(x.Methods!));
+            return knownApis.ToDictionary(x => x.Dll, x => new HashSet<string>(x.Methods));
         }
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferIsExactSpellingIsTrueForKnownApisTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -90,13 +92,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             analysisContext.RegisterCompilationStartAction(ctx =>
             {
-
-                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
+                if (ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute, out var dllImportType))
                 {
-                    return;
+                    ctx.RegisterSymbolAction(x => AnalyzeExternMethod(x, dllImportType), SymbolKind.Method);
                 }
-
-                ctx.RegisterSymbolAction(x => AnalyzeExternMethod(x, dllImportType), SymbolKind.Method);
             });
         }
 

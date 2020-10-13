@@ -8,7 +8,7 @@ coverage:
     patch:
       default: false
   fixes:
-    - "build/src/::src/"
+    - "eng/src/::src/"
 
 comment:
-  layout: "diff, flags, files, footer"
+  layout: "diff"

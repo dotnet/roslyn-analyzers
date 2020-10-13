@@ -1,6 +1,7 @@
 # Branches that trigger a build on commit
 trigger:
   - master
+  - release/*
   - 2.9.x
 
 variables:
@@ -25,7 +26,7 @@ stages:
       - job: Signed_Build
         pool:
           name: NetCoreInternal-Pool
-          queue: BuildPool.Windows.10.Amd64.VS2019
+          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
@@ -68,6 +69,7 @@ stages:
 
 - template: eng\common\templates\post-build\post-build.yml
   parameters:
+    publishingInfraVersion: 3
     enableSymbolValidation: false
     enableSigningValidation: false
     enableSourceLinkValidation: false

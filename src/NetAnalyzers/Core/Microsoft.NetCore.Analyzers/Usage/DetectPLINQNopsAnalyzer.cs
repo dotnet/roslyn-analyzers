@@ -41,8 +41,17 @@ namespace Microsoft.NetCore.Analyzers.Usage
                     return;
                 }
 
+                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var linqEnumerable))
+                {
+                    return;
+                }
+
                 var asParallelSymbols = parallelEnumerable.GetMembers("AsParallel").ToImmutableHashSet();
-                var collectionSymbols = parallelEnumerable.GetMembers("ToArray").Concat(parallelEnumerable.GetMembers("ToList")).ToImmutableHashSet();
+                var collectionSymbols = parallelEnumerable.GetMembers("ToArray")
+                .Concat(parallelEnumerable.GetMembers("ToList"))
+                .Concat(parallelEnumerable.GetMembers("ToDictionary"))
+                .Concat(linqEnumerable.GetMembers("ToHashSet"))
+                .ToImmutableHashSet();
 
                 ctx.RegisterOperationAction(x => AnalyzeOperation(x, asParallelSymbols, collectionSymbols), OperationKind.Invocation);
             });
@@ -50,14 +59,20 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
         public static bool ParentIsForEachStatement(IInvocationOperation operation) => operation.Parent is IForEachLoopOperation || operation.Parent?.Parent is IForEachLoopOperation;
 
-        public static bool TryGetParentIsToArrayOrToList(IInvocationOperation operation, ImmutableHashSet<ISymbol> collectionSymbols, out IInvocationOperation parentInvocation)
+        public static bool TryGetParentIsToCollection(IInvocationOperation operation, ImmutableHashSet<ISymbol> collectionSymbols, out IInvocationOperation parentInvocation)
         {
             parentInvocation = operation;
             if (operation.Parent?.Parent is not IInvocationOperation invocation)
             {
+                if (operation.Parent?.Parent?.Parent is IInvocationOperation nestedInvocation) // Happens on ToHashSet calls
+                {
+                    parentInvocation = nestedInvocation;
+                    return true;
+                }
+
                 return false;
             }
-            if (collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition))
+            if (collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition) || collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition.ReducedFrom))
             {
                 parentInvocation = invocation;
                 return true;
@@ -75,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 return;
             }
 
-            if (!asParallelSymbols.Contains(reducedMethod))
+            if (!(asParallelSymbols.Contains(reducedMethod) || asParallelSymbols.Contains(reducedMethod.ReducedFrom)))
             {
                 return;
             }
@@ -83,7 +98,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             IInvocationOperation? diagnosticInvocation = null;
             if (!ParentIsForEachStatement(invocation))
             {
-                if (!TryGetParentIsToArrayOrToList(invocation, collectionSymbols, out var parentInvocation) || !ParentIsForEachStatement(parentInvocation))
+                if (!TryGetParentIsToCollection(invocation, collectionSymbols, out var parentInvocation) || !ParentIsForEachStatement(parentInvocation))
                 {
                     return;
                 }

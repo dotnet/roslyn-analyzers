@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.NetCore.Analyzers;
 using Microsoft.NetCore.Analyzers.Usage;
@@ -18,7 +19,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNopsAnalyzer.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider
     {
-        private static readonly string[] removableEnds = new string[] { "ToList", "ToArray", "AsParallel" };
+        private static readonly string[] removableEnds = new string[] { "ToList", "ToArray", "AsParallel", "ToDictionary", "ToHashSet" };
+
+        private static readonly string[] requiredAppendableEnds = new string[] { "ToDictionary", "ToHashSet" };
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DetectPLINQNopsAnalyzer.RuleId);
 
@@ -50,9 +53,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 
             do
             {
-                var newExpression = ((MemberAccessExpressionSyntax)((InvocationExpressionSyntax)possibleInvocation).Expression)!.Expression;
+                var newExpression = ((possibleInvocation as InvocationExpressionSyntax)!.Expression as MemberAccessExpressionSyntax)!.Expression;
                 possibleInvocation = newExpression;
             } while (possibleInvocation is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax member && removableEnds.Contains(member.Name.Identifier.ValueText));
+
+            if (invocationExpression.Expression is MemberAccessExpressionSyntax directMember && requiredAppendableEnds.Contains(directMember.Name.Identifier.ValueText))
+            {
+                possibleInvocation = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, possibleInvocation, directMember.Name), invocationExpression.ArgumentList);
+            }
 
             return originalSolution.WithDocumentSyntaxRoot(document.Id, root.ReplaceNode(invocationExpression, possibleInvocation));
         }

@@ -7,9 +7,6 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsAnalyzer,
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsFixer>;
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsAnalyzer,
-    Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsFixer>;
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Usage
 {
@@ -65,7 +62,7 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
         }
 
         [Fact]
-        public async Task AsParallelAtEndOfGenericMethod_SingleDiagnostic()
+        public async Task AsParallelToListAtEndOfGenericMethod_SingleDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
     using System;
@@ -78,6 +75,22 @@ namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyz
                 public void Test<T>(IEnumerable<T> enumerable) { foreach(var s in {|#0:enumerable.AsParallel().ToList()|});}
         }
     }", VerifyCS.Diagnostic(DetectPLINQNopsAnalyzer.DefaultRule).WithLocation(0).WithArguments("enumerable.AsParallel().ToList()"));
+        }
+
+        [Fact]
+        public async Task AsParallelAtEndOfGenericMethod_SingleDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    namespace ConsoleApplication1
+    {
+        class TypeName
+        {   
+                public void Test<T>(IEnumerable<T> enumerable) { foreach(var s in {|#0:enumerable.AsParallel()|});}
+        }
+    }", VerifyCS.Diagnostic(DetectPLINQNopsAnalyzer.DefaultRule).WithLocation(0).WithArguments("enumerable.AsParallel()"));
         }
 
         [Fact]

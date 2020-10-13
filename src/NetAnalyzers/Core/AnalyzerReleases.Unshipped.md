@@ -2,4 +2,4 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-CA2250 | Usage | Warning | DetectPLINQNops, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2250)
+CA2250 | Usage | Info | DetectPLINQNopsAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2250)

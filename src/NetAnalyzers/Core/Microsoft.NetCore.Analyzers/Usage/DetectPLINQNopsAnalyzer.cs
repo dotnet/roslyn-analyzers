@@ -62,6 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 parentInvocation = invocation;
                 return true;
             }
+
             return false;
         }
 
@@ -86,6 +87,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 {
                     return;
                 }
+
                 diagnosticInvocation = parentInvocation;
             }
 

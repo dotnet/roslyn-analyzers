@@ -1483,12 +1483,12 @@
     <value>Replace with 'string.Contains'</value>
   </data>
   <data name="DetectPLINQNopsDescription" xml:space="preserve">
-    <value>'AsParallel' does not have an effect if it is the last Expression or the only remaining Expressions are 'ToList' or 'ToArray'.</value>
+    <value>'AsParallel' has no effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.</value>
   </data>
   <data name="DetectPLINQNopsMessage" xml:space="preserve">
     <value>'AsParallel' in expression '{0}' has no effect</value>
   </data>
   <data name="DetectPLINQNopsTitle" xml:space="preserve">
-    <value>'AsParallel' at the end of a LINQ query does not have an effect</value>
+    <value>'AsParallel' at the end of a LINQ query has no effect</value>
   </data>
 </root>

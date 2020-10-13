@@ -57,11 +57,13 @@ namespace Microsoft.NetCore.Analyzers.Usage
             {
                 return false;
             }
+
             if (toListSymbols.Contains(invocation.TargetMethod.OriginalDefinition) || toArraySymbols.Contains(invocation.TargetMethod.OriginalDefinition))
             {
                 parentInvocation = invocation;
                 return true;
             }
+
             return false;
         }
 
@@ -86,6 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
                 {
                     return;
                 }
+
                 diagnosticInvocation = parentInvocation;
             }
 

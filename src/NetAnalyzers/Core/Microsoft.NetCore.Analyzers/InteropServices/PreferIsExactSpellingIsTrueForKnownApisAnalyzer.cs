@@ -121,8 +121,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             var hasCharSetParameter = dllImportAttribute.NamedArguments.FirstOrDefault(x => x.Key.Equals("CharSet", StringComparison.Ordinal));
 
             var methodName = methodSymbol.GetActualExternName(dllImportAttribute);
-            var isExactSpelling = hasExactSpellingParameter.Key is not null && hasExactSpellingParameter.Value.Kind != TypedConstantKind.Array && bool.TryParse(hasExactSpellingParameter.Value.Value?.ToString(), out var isExact) && isExact;
-            var isCharSetUnicode = hasCharSetParameter.Key is not null && hasCharSetParameter.Value.Kind != TypedConstantKind.Array && Enum.TryParse<CharSet>(hasCharSetParameter.Value.Value?.ToString(), out var actualCharSet) && actualCharSet == CharSet.Unicode;
+            var isExactSpelling = hasExactSpellingParameter.Key is not null
+                && hasExactSpellingParameter.Value.Kind != TypedConstantKind.Array
+                && bool.TryParse(hasExactSpellingParameter.Value.Value?.ToString(), out var isExact)
+                && isExact;
+            var isCharSetUnicode = hasCharSetParameter.Key is not null
+                && hasCharSetParameter.Value.Kind != TypedConstantKind.Array
+                && Enum.TryParse<CharSet>(hasCharSetParameter.Value.Value?.ToString(), out var actualCharSet)
+                && actualCharSet == CharSet.Unicode;
             var dllName = dllImportAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty;
 
             if (!KnownApis.Value.TryGetValue(dllName, out var methods))
@@ -149,7 +155,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (methods.Contains(methodName + "A") && !isCharSetUnicode)
             {
-                if (isExactSpelling) //Known method has parameter set to true
+                if (isExactSpelling) //Bail out if known method has parameter set to true
                     return;
                 var diagnostic = methodSymbol.CreateDiagnostic(DefaultRule, methodName);
                 context.ReportDiagnostic(diagnostic);

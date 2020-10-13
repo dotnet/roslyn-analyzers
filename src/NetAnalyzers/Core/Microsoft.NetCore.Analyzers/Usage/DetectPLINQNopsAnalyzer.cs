@@ -72,6 +72,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 return false;
             }
+
             if (collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition) || collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition.ReducedFrom))
             {
                 parentInvocation = invocation;

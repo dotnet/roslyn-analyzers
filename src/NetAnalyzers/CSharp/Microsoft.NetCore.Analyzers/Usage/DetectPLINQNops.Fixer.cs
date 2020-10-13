@@ -10,8 +10,10 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.NetCore.Analyzers;
+using Microsoft.NetCore.Analyzers.Usage;
 
-namespace Microsoft.NetCore.Analyzers.Usage
+namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNopsAnalyzer.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider
@@ -26,7 +28,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            if (root.FindNode(context.Span) is not InvocationExpressionSyntax declaration)
+            var node = root.FindNode(context.Span);
+            if (node is not InvocationExpressionSyntax declaration)
             {
                 return;
             }
@@ -47,7 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
             do
             {
-                var newExpression = ((possibleInvocation as InvocationExpressionSyntax)!.Expression as MemberAccessExpressionSyntax)!.Expression;
+                var newExpression = ((MemberAccessExpressionSyntax)((InvocationExpressionSyntax)possibleInvocation).Expression)!.Expression;
                 possibleInvocation = newExpression;
             } while (possibleInvocation is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax member && removableEnds.Contains(member.Name.Identifier.ValueText));
 
@@ -56,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
         private class AsParallelCodeAction : SolutionChangeAction
         {
-            public AsPArallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
+            public AsParallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
                 : base(title, createChangedSolution, equivalenceKey)
             {
             }

@@ -6,7 +6,7 @@ using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsAnalyzer,
-    Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Usage.DetectPLINQNopsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 {

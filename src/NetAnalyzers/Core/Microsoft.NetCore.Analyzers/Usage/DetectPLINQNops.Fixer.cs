@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
 
             context.RegisterCodeFix(
-                new AsPArallelCodeAction(
+                new AsParallelCodeAction(
                     title: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall,
                     createChangedSolution: c => RemoveAsParallelCall(context.Document, declaration, c),
                     equivalenceKey: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall),
@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             return originalSolution.WithDocumentSyntaxRoot(document.Id, root.ReplaceNode(invocationExpression, possibleInvocation));
         }
 
-        private class AsPArallelCodeAction : SolutionChangeAction
+        private class AsParallelCodeAction : SolutionChangeAction
         {
             public AsPArallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
                 : base(title, createChangedSolution, equivalenceKey)

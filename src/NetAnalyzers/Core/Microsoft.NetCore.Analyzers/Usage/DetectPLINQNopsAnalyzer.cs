@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
         public static bool TryGetParentIsToArrayOrToList(IInvocationOperation operation, ImmutableHashSet<ISymbol> toArraySymbols, ImmutableHashSet<ISymbol> toListSymbols, out IInvocationOperation parentInvocation)
         {
-            parentInvocation = null;
+            parentInvocation = operation;
             if (operation.Parent?.Parent is not IInvocationOperation invocation)
             {
                 return false;

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReleaseNotesUtil
 {
@@ -12,15 +13,15 @@ namespace ReleaseNotesUtil
     {
         public static CategoryThenIdComparer Instance = new CategoryThenIdComparer();
 
-        public int Compare(RuleInfo x, RuleInfo y)
+        public int Compare([AllowNull] RuleInfo x, [AllowNull] RuleInfo y)
         {
-            int c = string.Compare(x.Category, y.Category, StringComparison.InvariantCulture);
+            int c = string.Compare(x?.Category, y?.Category, StringComparison.InvariantCulture);
             if (c != 0)
             {
                 return c;
             }
 
-            return string.Compare(x.Id, y.Id, StringComparison.InvariantCulture);
+            return string.Compare(x?.Id, y?.Id, StringComparison.InvariantCulture);
         }
     }
 }

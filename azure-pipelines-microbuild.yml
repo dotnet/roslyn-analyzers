@@ -1,70 +1,76 @@
-resources:
-- repo: self
-  clean: true
-queue:
-  name: VSEng-MicroBuildVS2019
-  demands: Cmd
+# Branches that trigger a build on commit
+trigger:
+  - master
+  - release/*
+  - 2.9.x
+
 variables:
-  BuildConfiguration: Release
-  TeamName: Roslyn
+  - name: _TeamName
+    value: Roslyn
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
 
-steps:
-- task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
-  displayName: Install Signing Plugin
-  inputs:
-    signType: $(SignType)
-    esrpSigning: true
-  condition: and(succeeded(), ne(variables['SignType'], ''))
-
-- script: eng\common\CIBuild.cmd 
-            -configuration $(BuildConfiguration)
-            /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-            /p:DotNetSignType=$(SignType)
-            /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-            /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+stages:
+- stage: build
   displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+      jobs:
+      - job: Signed_Build
+        pool:
+          name: NetCoreInternal-Pool
+          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
+        variables:
+          - group: DotNet-Blob-Feed
+          - group: Publish-Build-Assets
+          - name: _BuildConfig
+            value: Release
+          - name: _SignType
+            value: real
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\CIBuild.cmd 
+                    -configuration $(_BuildConfig)
+                    /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+                    /p:DotNetSignType=$(_SignType)
+                    /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+                    /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+                    /p:PublishToSymbolServer=true
+                    /p:DotNetPublishToBlobFeed=true
+                    /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
+                    /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+                    /p:DotNetArtifactsCategory=$(_DotNetArtifactsCategory)
+                    /p:DotnetPublishUsingPipelines=true
+          displayName: Build and Test
 
-- task: NuGetPublisher@0
-  displayName: Publish NuGet Packages to MyGet
-  inputs:
-    searchPattern: 'artifacts\packages\$(BuildConfiguration)\Shipping\*.nupkg'
-    connectedServiceName: 'RoslynAnalyzers NuGet feed'
-    nuGetVersion: 4.0.0.2283
-  condition: succeeded()
+        # Archive NuGet packages to DevOps.
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Artifact Packages
+          inputs:
+            PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
+            ArtifactName: 'Packages'
+          condition: succeeded()
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish Logs
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
-    ArtifactName: 'Logs'
-  continueOnError: true
-  condition: not(succeeded())
+        # Archive VSIX packages to DevOps.
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Artifact VSIXes
+          inputs:
+            PathtoPublish: 'artifacts\VSSetup\$(_BuildConfig)'
+            ArtifactName: 'VSIXes'
+          condition: succeeded()
 
-- task: PublishTestResults@2
-  displayName: Publish Test Results
-  inputs:
-    testRunner: XUnit
-    testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
-    mergeTestResults: true
-    testRunTitle: 'Unit Tests'
-  condition: always()
-
-# Archive NuGet packages to DevOps.
-- task: PublishBuildArtifacts@1
-  displayName: Publish Artifact Packages
-  inputs:
-    PathtoPublish: 'artifacts\packages\$(BuildConfiguration)'
-    ArtifactName: 'Packages'
-  condition: succeeded()
-
-# Archive VSIX packages to DevOps.
-- task: PublishBuildArtifacts@1
-  displayName: Publish Artifact VSIXes
-  inputs:
-    PathtoPublish: 'artifacts\VSSetup\$(BuildConfiguration)'
-    ArtifactName: 'VSIXes'
-  condition: succeeded()
-
-- task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
-  displayName: Cleanup
-  condition: always()
+- template: eng\common\templates\post-build\post-build.yml
+  parameters:
+    publishingInfraVersion: 3
+    enableSymbolValidation: false
+    enableSigningValidation: false
+    enableSourceLinkValidation: false
+    enableNugetValidation: false

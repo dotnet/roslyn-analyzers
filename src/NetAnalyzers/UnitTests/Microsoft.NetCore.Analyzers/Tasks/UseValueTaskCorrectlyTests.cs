@@ -23,6 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
             {
                 public static System.Threading.Tasks.ValueTask ReturnsValueTask() => throw null;
                 public static System.Threading.Tasks.ValueTask<T> ReturnsValueTaskOfT<T>() => throw null;
+                public static System.Threading.Tasks.ValueTask<T> ReturnsValueTaskOfT<T>(T value) => throw null;
                 public static System.Threading.Tasks.ValueTask<int> ReturnsValueTaskOfInt() => throw null;
 
                 public static void AcceptsValueTask(System.Threading.Tasks.ValueTask vt) => throw null;
@@ -338,6 +339,13 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                     public ValueTask<T> ReturnValueTaskOfTExpression<T>() => Helpers.ReturnsValueTaskOfT<T>();
 
                     public ValueTask<int> ReturnValueTaskOfIntExpression() => Helpers.ReturnsValueTaskOfInt();
+
+                    public ValueTask<(string, string)> ReturnTupleWithConsts() => Helpers.ReturnsValueTaskOfT<(string, string)>(("""", """"));
+
+                    public ValueTask<(string, string)> ReturnTupleWithCalls() => Helpers.ReturnsValueTaskOfT((SomeMethod(), SomeProp));
+
+                    private string SomeProp => """";
+                    private string SomeMethod() => """";
 
                     public ValueTask ReturnValueTask()
                     {
@@ -883,6 +891,51 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
                 GetBasicResultAt(10, 25, UseValueTasksCorrectlyAnalyzer.UnconsumedRule),
                 GetBasicResultAt(11, 25, UseValueTasksCorrectlyAnalyzer.UnconsumedRule),
                 GetBasicResultAt(12, 25, UseValueTasksCorrectlyAnalyzer.UnconsumedRule)
+            );
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StoreLocalUnused()
+        {
+            // NOTE: This is a false negative.  Ideally the analyzer would catch
+            // this case, but the validation to ensure the local is properly consumed
+            // is challenging and we prefer false negatives over false positives.
+            await VerifyCS.VerifyAnalyzerAsync(CSBoilerplate(@"
+                using System;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    public void StoreLocalUnused()
+                    {
+                        ValueTask vt0 = Helpers.ReturnsValueTask();
+                        ValueTask<string> vt1 = Helpers.ReturnsValueTaskOfT<string>();
+                        ValueTask<int> vt2 = Helpers.ReturnsValueTaskOfInt();
+                    }
+                }")
+            );
+        }
+
+        [Fact]
+        public async Task NoDiagnostics_StoreLocalUnused_Guarded()
+        {
+            // NOTE: This is a false negative.  Ideally the analyzer would catch
+            // this case, but the validation to ensure the local is properly consumed
+            // is challenging and we prefer false negatives over false positives.
+            await VerifyCS.VerifyAnalyzerAsync(CSBoilerplate(@"
+                using System;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    public void StoreLocalUnused(bool guard)
+                    {
+                        if (guard) throw new Exception();
+                        ValueTask vt0 = Helpers.ReturnsValueTask();
+                        ValueTask<string> vt1 = Helpers.ReturnsValueTaskOfT<string>();
+                        ValueTask<int> vt2 = Helpers.ReturnsValueTaskOfInt();
+                    }
+                }")
             );
         }
 

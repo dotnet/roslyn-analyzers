@@ -20,6 +20,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
     public class ReviewUnusedParametersTests
     {
         #region Unit tests for no analyzer diagnostic
+        [Fact]
+        [WorkItem(4039, "https://github.com/dotnet/roslyn-analyzers/issues/4039")]
+        public async Task NoDiagnosticForUnnamedParameterTest()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class NeatCode
+{
+    public void DoSomething(string)
+    {
+    }
+}
+", DiagnosticResult.CompilerError("CS1001").WithLocation(4, 35));
+        }
 
         [Fact]
         [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
@@ -214,7 +227,6 @@ class C
 }
 ");
         }
-
 
         [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
@@ -1166,6 +1178,25 @@ public class Class1
 ");
         }
 
+        [Fact, WorkItem(4052, "https://github.com/dotnet/roslyn-analyzers/issues/4052")]
+        public async Task CA1801_TopLevelStatements_NoDiagnostic()
+        {
+            await new VerifyCS.Test()
+            {
+                TestCode = @"int x = 0;",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var project = solution.GetProject(projectId);
+                        project = project.WithCompilationOptions(project.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+                        return project.Solution;
+                    },
+                }
+            }.RunAsync();
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)
@@ -1318,7 +1349,6 @@ public class C
 }",
                 GetCSharpUnusedParameterResultAt(9, 32, "x", "LocalFunction"));
         }
-
 
         [Fact]
         public async Task DiagnosticForMethodsInNestedTypes()

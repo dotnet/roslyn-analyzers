@@ -108,13 +108,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // FxCop compat: only fire on externally visible types by default.
-            if (!symbol.MatchesConfiguredVisibility(context.Options, RuleMultipleZero, context.Compilation, context.CancellationToken))
+            if (!context.Options.MatchesConfiguredVisibility(RuleMultipleZero, symbol, context.Compilation, context.CancellationToken))
             {
                 return;
             }
 
-            Debug.Assert(symbol.MatchesConfiguredVisibility(context.Options, RuleNoZero, context.Compilation, context.CancellationToken));
-            Debug.Assert(symbol.MatchesConfiguredVisibility(context.Options, RuleRename, context.Compilation, context.CancellationToken));
+            Debug.Assert(context.Options.MatchesConfiguredVisibility(RuleNoZero, symbol, context.Compilation, context.CancellationToken));
+            Debug.Assert(context.Options.MatchesConfiguredVisibility(RuleRename, symbol, context.Compilation, context.CancellationToken));
 
             ImmutableArray<IFieldSymbol> zeroValuedFields = GetZeroValuedFields(symbol).ToImmutableArray();
 
@@ -157,7 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void CheckNonFlags(INamedTypeSymbol namedType, ImmutableArray<IFieldSymbol> zeroValuedFields, Action<Diagnostic> addDiagnostic)
         {
-            if (zeroValuedFields.Length == 0)
+            if (zeroValuedFields.IsEmpty)
             {
                 // Add a member to {0} that has a value of zero with a suggested name of 'None'.
                 addDiagnostic(namedType.CreateDiagnostic(RuleNoZero, namedType.Name));

@@ -136,14 +136,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(
-                                    operationBlockStartAnalysisContext.Options,
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(
                                     DefinitelyDisableHttpClientCRLCheckRule,
+                                    owningSymbol,
                                     operationBlockStartAnalysisContext.Compilation,
                                     operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(
-                                    operationBlockStartAnalysisContext.Options,
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(
                                     MaybeDisableHttpClientCRLCheckRule,
+                                    owningSymbol,
                                     operationBlockStartAnalysisContext.Compilation,
                                     operationBlockStartAnalysisContext.CancellationToken))
                             {
@@ -158,7 +158,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                     if (objectCreationOperation.Type.GetBaseTypesAndThis().Contains(httpClientTypeSymbol))
                                     {
-                                        if (objectCreationOperation.Arguments.Length != 0)
+                                        if (!objectCreationOperation.Arguments.IsEmpty)
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {
@@ -237,8 +237,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
                 });

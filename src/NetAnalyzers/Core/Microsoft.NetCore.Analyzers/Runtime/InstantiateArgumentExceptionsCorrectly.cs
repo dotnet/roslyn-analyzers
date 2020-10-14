@@ -86,14 +86,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol argumentExceptionType)
         {
             var creation = (IObjectCreationOperation)context.Operation;
-            if (!creation.Type.Inherits(argumentExceptionType) || !MatchesConfiguredVisibility(owningSymbol, context))
+            if (!creation.Type.Inherits(argumentExceptionType) || !MatchesConfiguredVisibility(owningSymbol, context) || !HasParameterNameConstructor(creation.Type))
             {
                 return;
             }
 
-            if (creation.Arguments.Length == 0)
+            if (creation.Arguments.IsEmpty)
             {
-                if (HasParameters(owningSymbol) && HasMessageOrParameterNameConstructor(creation.Type))
+                if (HasParameters(owningSymbol))
                 {
                     // Call the {0} constructor that contains a message and/ or paramName parameter
                     context.ReportDiagnostic(context.Operation.Syntax.CreateDiagnostic(RuleNoArguments, creation.Type.Name));
@@ -132,10 +132,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool MatchesConfiguredVisibility(ISymbol owningSymbol, OperationAnalysisContext context) =>
-             owningSymbol.MatchesConfiguredVisibility(context.Options, RuleIncorrectParameterName, context.Compilation,
+             context.Options.MatchesConfiguredVisibility(RuleIncorrectParameterName, owningSymbol, context.Compilation,
                  context.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.All);
 
-        private static bool HasParameters(ISymbol owningSymbol) => owningSymbol.GetParameters().Length > 0;
+        private static bool HasParameters(ISymbol owningSymbol) => !owningSymbol.GetParameters().IsEmpty;
 
         private static Diagnostic? CheckArgument(
             ISymbol targetSymbol,
@@ -171,10 +171,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsParameterName(IParameterSymbol parameter)
         {
-            return parameter.Name == "paramName" || parameter.Name == "parameterName";
+            return parameter.Name is "paramName" or "parameterName";
         }
 
-        private static bool HasMessageOrParameterNameConstructor(ITypeSymbol type)
+        private static bool HasParameterNameConstructor(ITypeSymbol type)
         {
             foreach (ISymbol member in type.GetMembers())
             {
@@ -186,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 foreach (IParameterSymbol parameter in member.GetParameters())
                 {
                     if (parameter.Type.SpecialType == SpecialType.System_String
-                        && (IsMessage(parameter) || IsParameterName(parameter)))
+                        && IsParameterName(parameter))
                     {
                         return true;
                     }
@@ -251,7 +251,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 }
-
             }
             return false;
         }

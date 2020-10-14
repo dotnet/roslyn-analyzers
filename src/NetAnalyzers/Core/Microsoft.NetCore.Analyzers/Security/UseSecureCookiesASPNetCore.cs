@@ -103,10 +103,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyUseSecureCookiesASPNetCoreRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeUseSecureCookiesASPNetCoreRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyUseSecureCookiesASPNetCoreRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeUseSecureCookiesASPNetCoreRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -220,8 +220,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
 

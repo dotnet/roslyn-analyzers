@@ -75,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                             out var rfc2898DeriveBytesTypeSymbol) ||
-                        !(compilationStartAnalysisContext.Compilation.SyntaxTrees.FirstOrDefault() is SyntaxTree tree))
+                        compilationStartAnalysisContext.Compilation.SyntaxTrees.FirstOrDefault() is not SyntaxTree tree)
                     {
                         return;
                     }
@@ -118,10 +118,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -222,8 +222,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
 

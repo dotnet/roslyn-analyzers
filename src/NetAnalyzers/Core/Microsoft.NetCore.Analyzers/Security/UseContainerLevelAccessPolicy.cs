@@ -48,7 +48,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                                     ("Queue", "accessPolicyIdentifier"),
                                                                                                     ("Table", "accessPolicyIdentifier"));
 
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
@@ -104,8 +103,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
-                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
                     }
@@ -138,8 +136,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 if (argumentOperation != null)
                                 {
-                                    var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
-                                    if (cfg != null)
+                                    if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                                     {
                                         var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                                                 operationAnalysisContext.Options,
@@ -154,8 +151,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                         owningSymbol,
                                                                         operationBlockStartContext.Options,
                                                                         wellKnownTypeProvider,
+                                                                        PointsToAnalysisKind.Complete,
                                                                         interproceduralAnalysisConfig,
-                                                                        interproceduralAnalysisPredicateOpt: null,
+                                                                        interproceduralAnalysisPredicate: null,
                                                                         false);
                                         if (pointsToAnalysisResult == null)
                                         {
@@ -169,11 +167,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
                                     }
+                                    else
+                                    {
+                                        return;
+                                    }
                                 }
 
                                 operationAnalysisContext.ReportDiagnostic(
-                                            invocationOperation.CreateDiagnostic(
-                                                Rule));
+                                    invocationOperation.CreateDiagnostic(
+                                        Rule));
                             }
                         }
                     }, OperationKind.Invocation);

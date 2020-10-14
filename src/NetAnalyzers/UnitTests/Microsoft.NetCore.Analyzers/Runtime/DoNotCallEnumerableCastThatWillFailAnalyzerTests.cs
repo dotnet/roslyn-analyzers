@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
+
 using Microsoft.CodeAnalysis.Testing;
+
 using Xunit;
+
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotCallEnumerableCastThatWillFailAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
@@ -104,7 +106,6 @@ Module M
 	End Sub
 End Module
 ",
-
     // /0/Test0.vb(26, 17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
     VerifyVB.Diagnostic(castRule).WithSpan(26, 17, 26, 50).WithArguments("Object", "Integer"),
     // /0/Test0.vb(27,17): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
@@ -124,10 +125,7 @@ End Module
     // /0/Test0.vb(58,18): info CA9999: If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.
     VerifyVB.Diagnostic(castRule).WithSpan(58, 18, 58, 48).WithArguments("Apple", "Salad")
    );
-
         }
-
-
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodName)
         {

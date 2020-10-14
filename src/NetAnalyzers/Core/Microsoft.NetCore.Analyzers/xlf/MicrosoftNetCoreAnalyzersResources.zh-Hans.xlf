@@ -327,6 +327,21 @@
         <target state="translated">请勿使用已弃用的 SslProtocols 值</target>
         <note />
       </trans-unit>
+      <trans-unit id="DetectPLINQNopsDescription">
+        <source>'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.</source>
+        <target state="new">'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsMessage">
+        <source>'AsParallel' in expression '{0}' has no effect</source>
+        <target state="new">'AsParallel' in expression '{0}' has no effect</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsTitle">
+        <source>'AsParallel' at the end of a LINQ query does not have an effect</source>
+        <target state="new">'AsParallel' at the end of a LINQ query does not have an effect</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
         <target state="translated">实现 System.IDisposable 的类型将声明一些字段，这些字段所属的类型还实现 IDisposable。字段的 Dispose 方法不由声明类型的 Dispose 方法调用。若要修复此规则的违规行为，如果你负责分配和释放该字段持有的非托管资源，请在其所属类型实现 IDisposable 的字段上调用 Dispose。</target>

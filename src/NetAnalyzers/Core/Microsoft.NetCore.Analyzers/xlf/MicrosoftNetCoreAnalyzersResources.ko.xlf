@@ -327,6 +327,21 @@
         <target state="translated">사용되지 않는 SslProtocols 값 사용 안 함</target>
         <note />
       </trans-unit>
+      <trans-unit id="DetectPLINQNopsDescription">
+        <source>'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.</source>
+        <target state="new">'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsMessage">
+        <source>'AsParallel' in expression '{0}' has no effect</source>
+        <target state="new">'AsParallel' in expression '{0}' has no effect</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPLINQNopsTitle">
+        <source>'AsParallel' at the end of a LINQ query does not have an effect</source>
+        <target state="new">'AsParallel' at the end of a LINQ query does not have an effect</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
         <target state="translated">System.IDisposable을 구현하는 형식은 IDisposable도 구현하는 형식의 필드를 선언합니다. 필드의 Dispose 메서드는 선언 형식의 Dispose 메서드에 의해 호출되지 않습니다. 이 규칙 위반 문제를 해결하려면 필드에 포함되는 비관리형 리소스를 할당 및 해제해야 하는 경우 IDisposable을 구현하는 형식의 필드에서 Dispose를 호출합니다.</target>

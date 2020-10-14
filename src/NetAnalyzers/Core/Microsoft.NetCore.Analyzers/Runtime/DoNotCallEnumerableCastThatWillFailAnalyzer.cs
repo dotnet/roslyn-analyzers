@@ -44,14 +44,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
-        private static readonly ImmutableDictionary<string, DiagnosticDescriptor> methodMetadataNames = new Dictionary<string, DiagnosticDescriptor>
-        {
-            ["OfType"] = OfTypeRule,
-            ["Cast"] = CastRule,
-        }.ToImmutableDictionary();
+        private static readonly ImmutableArray<(string MethodName, DiagnosticDescriptor Rule)> methodMetadataNames = ImmutableArray.Create(
+            ("OfType", OfTypeRule),
+            ("Cast", CastRule)
+        );
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            => methodMetadataNames.Values.ToImmutableArray();
+            => ImmutableArray.Create(OfTypeRule, CastRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -60,8 +59,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(context =>
             {
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var enumerableType)
-                 || !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1, out var genericIEnumerableType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var enumerableType))
+                {
+                    return;
+                }
+
+                var methodRuleDictionary = methodMetadataNames
+                    .SelectMany(m => enumerableType.GetMembers(m.MethodName)
+                                                   .OfType<IMethodSymbol>()
+                                                   .Where(method => method.TypeParameters.HasExactly(1)
+                                                                 && method.Parameters.HasExactly(1))
+                                                   .Select(method => (method, m.Rule)))
+                    .ToImmutableDictionary(key => key.method, v => v.Rule, SymbolEqualityComparer.Default);
+
+                if (methodRuleDictionary.IsEmpty)
                 {
                     return;
                 }
@@ -70,39 +81,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)context.Operation;
 
-                    var targetMethod = invocation.TargetMethod.OriginalDefinition;
-                    if (!methodMetadataNames.TryGetValue(targetMethod.Name, out var rule))
+                    var targetMethod = invocation.TargetMethod.OriginalDefinition.ReducedFrom ?? invocation.TargetMethod.OriginalDefinition;
+
+                    if (!methodRuleDictionary.TryGetValue(targetMethod, out var rule))
                     {
                         return;
                     }
 
-                    if (!invocation.TargetMethod.TypeParameters.HasExactly(1))
+                    var instanceArg = invocation.GetInstance(); // "this" argument of an extension method
+
+                    // because the type of the parameter is actually the non-generic IEnumerable,
+                    // we have to reach back through conversion operator(s) to get the "real" type of the argument
+                    if (instanceArg is not IConversionOperation conversionOperation)
                     {
                         return;
                     }
 
-                    var numberOfArguments = invocation.IsExtensionMethodAndHasNoInstance() ? 1 : 0;
-                    if (!invocation.Arguments.HasExactly(numberOfArguments))
+                    var argIEnumerableType = conversionOperation.Operand.Type.AllInterfaces.SingleOrDefault(t => t.OriginalDefinition.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T);
+                    if (argIEnumerableType is null)
                     {
                         return;
                     }
 
-                    var arg = invocation.IsExtensionMethodAndHasNoInstance()
-                            ? invocation.Arguments[0].Value
-                            : invocation.Instance;
-
-                    if (arg is not IConversionOperation conversionOperation)
-                    {
-                        return;
-                    }
-
-                    var ienumerable = conversionOperation.Operand.Type.AllInterfaces.SingleOrDefault(t => t.OriginalDefinition.Equals(genericIEnumerableType));
-                    if (ienumerable is null)
-                    {
-                        return;
-                    }
-
-                    var castFrom = ienumerable.TypeArguments.Single();
+                    var castFrom = argIEnumerableType.TypeArguments.Single();
                     var castTo = invocation.TargetMethod.TypeArguments.Single();
 
                     if (CastWillAlwaysFail(castFrom, castTo))

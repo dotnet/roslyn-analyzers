@@ -1104,6 +1104,9 @@
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle" xml:space="preserve">
     <value>The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</value>
   </data>
+  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
+    <value>The type of the elements in the source sequence is not compatible with the type passed to OfType&lt;T&gt;, therefore no elements will ever be returned. Change the type of the elements in the source sequence, the type passed to OfType&lt;T&gt;, or remove the call.</value>
+  </data>
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerTitle" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
@@ -1496,8 +1499,5 @@
   </data>
   <data name="PreferStringContainsOverIndexOfCodeFixTitle" xml:space="preserve">
     <value>Replace with 'string.Contains'</value>
-  </data>
-  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
-    <value>The type of the elements in the source sequence is not compatible with the type passed to OfType&lt;T&gt;, therefore no elements will ever be returned. Change the type of the elements in the source sequence, the type passed to OfType&lt;T&gt;, or remove the call.</value>
   </data>
 </root>

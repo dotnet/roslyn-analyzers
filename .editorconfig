@@ -8,10 +8,6 @@ root = true
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
-# RS1024: Compare symbols correctly
-# https://github.com/dotnet/roslyn-analyzers/issues/3389
-dotnet_diagnostic.RS1024.severity = none
-
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4

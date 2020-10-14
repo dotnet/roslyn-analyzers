@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CAxxxx: Do not call Enumerable.Cast with incompatible types.
+    /// CA2250: Do not call Enumerable.Cast or Enumerable.OfType with incompatible types.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallEnumerableCastThatWillFailAnalyzer : DiagnosticAnalyzer
@@ -81,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)context.Operation;
 
-                    var targetMethod = invocation.TargetMethod.OriginalDefinition.ReducedFrom ?? invocation.TargetMethod.OriginalDefinition;
+                    var targetMethod = (invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod).OriginalDefinition;
 
                     if (!methodRuleDictionary.TryGetValue(targetMethod, out var rule))
                     {
@@ -103,8 +103,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var castFrom = argIEnumerableType.TypeArguments.Single();
-                    var castTo = invocation.TargetMethod.TypeArguments.Single();
+                    var castFrom = argIEnumerableType.TypeArguments[0];
+                    var castTo = invocation.TargetMethod.TypeArguments[0];
 
                     if (CastWillAlwaysFail(castFrom, castTo))
                     {
@@ -131,17 +131,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     case (TypeKind.Struct, TypeKind.Struct):
                     case (TypeKind.Struct, TypeKind.Enum):
                     case (TypeKind.Enum, TypeKind.Struct):
-                        if (castFrom.DerivesFrom(castTo))
-                        {
-                            return false;
-                        }
-
-                        if (castTo.DerivesFrom(castFrom))
-                        {
-                            return false;
-                        }
-
-                        return true;
+                        return !castFrom.DerivesFrom(castTo)
+                            && !castTo.DerivesFrom(castFrom);
 
                     case (TypeKind.Interface, TypeKind.Class):
                         return castTo.IsSealed && !castTo.AllInterfaces.Contains(castFrom);

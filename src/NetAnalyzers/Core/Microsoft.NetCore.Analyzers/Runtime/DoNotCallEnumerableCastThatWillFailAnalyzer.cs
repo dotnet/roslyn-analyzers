@@ -44,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
-        private static readonly ImmutableArray<(string MethodName, DiagnosticDescriptor Rule)> methodMetadataNames = ImmutableArray.Create(
+        private static readonly ImmutableArray<(string MethodName, DiagnosticDescriptor Rule)> s_methodMetadataNames = ImmutableArray.Create(
             ("OfType", OfTypeRule),
             ("Cast", CastRule)
         );
@@ -64,7 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                var methodRuleDictionary = methodMetadataNames
+                var methodRuleDictionary = s_methodMetadataNames
                     .SelectMany(m => enumerableType.GetMembers(m.MethodName)
                                                    .OfType<IMethodSymbol>()
                                                    .Where(method => method.TypeParameters.HasExactly(1)

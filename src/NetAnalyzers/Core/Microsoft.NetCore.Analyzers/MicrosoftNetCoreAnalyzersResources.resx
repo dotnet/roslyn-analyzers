@@ -1099,10 +1099,10 @@
     <value>Do not call 'Enumerable.Cast&lt;T&gt;' with incompatible types</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage" xml:space="preserve">
-    <value>Type '{0}' can never be OfType '{1}' and will always result in an empty sequence</value>
+    <value>Type '{0}' can never be 'OfType' '{1}' and will always result in an empty sequence</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle" xml:space="preserve">
-    <value>Do not call OfType&lt;T&gt; with incompatible types, as the enumerable returned will never return any values</value>
+    <value>Do not call 'OfType&lt;T&gt;' with incompatible types, as the enumerable returned will never return any values</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
     <value>This call to 'OfType' will always result in an empty sequence. Make sure the types are compatible or remove this call.</value>

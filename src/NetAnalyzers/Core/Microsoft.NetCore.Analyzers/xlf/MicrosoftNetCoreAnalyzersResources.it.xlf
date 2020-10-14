@@ -448,8 +448,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage">
-        <source>Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'.</source>
-        <target state="new">Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'.</target>
+        <source>Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'</source>
+        <target state="new">Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription">
@@ -458,8 +458,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle">
-        <source>The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</source>
-        <target state="new">The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</target>
+        <source>The enumerable returned by this call to OfType&lt;T&gt; will never return any values</source>
+        <target state="new">The enumerable returned by this call to OfType&lt;T&gt; will never return any values</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailDescription">
@@ -468,13 +468,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
-        <source>Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail.</source>
-        <target state="new">Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail.</target>
+        <source>Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail</source>
+        <target state="new">Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">
-        <source>Do not call Enumerable.Cast&lt;T&gt; with incompatible types.</source>
-        <target state="new">Do not call Enumerable.Cast&lt;T&gt; with incompatible types.</target>
+        <source>Do not call Enumerable.Cast&lt;T&gt; with incompatible types</source>
+        <target state="new">Do not call Enumerable.Cast&lt;T&gt; with incompatible types</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">

@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             ? invocation.Arguments[0].Value
                             : invocation.Instance;
 
-                    if (!(arg is IConversionOperation conversionOperation))
+                    if (arg is not IConversionOperation conversionOperation)
                     {
                         return;
                     }
@@ -112,7 +112,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         operationContext.ReportDiagnostic(invocation.CreateDiagnostic(rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
                     }
-
                 }, OperationKind.Invocation);
             });
 

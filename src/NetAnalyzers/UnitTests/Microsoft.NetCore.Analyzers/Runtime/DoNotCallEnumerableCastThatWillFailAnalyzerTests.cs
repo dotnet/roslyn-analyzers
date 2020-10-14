@@ -42,7 +42,7 @@ class C
         public async Task DiagnosticCasesVB()
         {
             var castRule = DoNotCallEnumerableCastThatWillFailAnalyzer.CastRule;
-  
+
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Linq
 

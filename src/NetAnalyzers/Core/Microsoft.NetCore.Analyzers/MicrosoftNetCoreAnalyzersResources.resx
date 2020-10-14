@@ -1090,7 +1090,7 @@
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailDescription" xml:space="preserve">
-    <value>If the source sequence contains any element, the call to 'Cast' will throw an  'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</value>
+    <value>If the source sequence contains any element, the call to 'Cast' will throw an 'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailMessage" xml:space="preserve">
     <value>Type '{0}' is incompatible with type '{1}' and will cause an exception at runtime</value>

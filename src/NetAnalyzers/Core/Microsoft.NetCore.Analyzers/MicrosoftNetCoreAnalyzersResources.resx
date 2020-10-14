@@ -1081,16 +1081,16 @@
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailDescription" xml:space="preserve">
-    <value>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated.</value>
+    <value>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated. Change the type(s) to those that are compatible or remove the call.</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailMessage" xml:space="preserve">
-    <value>Casting type '{0}' to type '{1}' fail.</value>
+    <value>Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail.</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailTitle" xml:space="preserve">
     <value>Do not call Enumerable.Cast&lt;T&gt; with incompatible types.</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage" xml:space="preserve">
-    <value>Type '{0}' will never be type '{1}'.</value>
+    <value>Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'.</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle" xml:space="preserve">
     <value>The enumerable returned by this call to OfType&lt;T&gt; will never return any values.</value>
@@ -1337,5 +1337,8 @@
   </data>
   <data name="PreferConstCharOverConstUnitStringInStringBuilderTitle" xml:space="preserve">
     <value>Consider using 'StringBuilder.Append(char)' when applicable.</value>
+  </data>
+  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
+    <value>The type of the elements in the source sequence is not compatible with the type passed to OfType&lt;T&gt;, therefore no elements will ever be returned. Change the type of the elements in the source sequence, the type passed to OfType&lt;T&gt;, or remove the call.</value>
   </data>
 </root>

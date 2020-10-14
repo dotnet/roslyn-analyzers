@@ -25,12 +25,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static readonly LocalizableString s_localizableOfTypeTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableOfTypeMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableOfTypeDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor CastRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableCastTitle,
                                                                              s_localizableCastMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.IdeSuggestion,
+                                                                             RuleLevel.BuildWarningCandidate,
                                                                              s_localizableCastDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
@@ -39,8 +40,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableOfTypeTitle,
                                                                              s_localizableOfTypeMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.IdeSuggestion,
-                                                                             description: null,
+                                                                             RuleLevel.BuildWarningCandidate,
+                                                                             description: s_localizableOfTypeDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 

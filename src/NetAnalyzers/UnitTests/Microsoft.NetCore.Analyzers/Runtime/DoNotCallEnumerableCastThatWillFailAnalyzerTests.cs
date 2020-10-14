@@ -126,15 +126,5 @@ End Module
     VerifyVB.Diagnostic(castRule).WithSpan(58, 18, 58, 48).WithArguments("Apple", "Salad")
    );
         }
-
-        private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodName)
-        {
-            return VerifyCS.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.OfTypeRule).WithLocation(line, column).WithArguments(methodName, methodName);
-        }
-
-        private static DiagnosticResult GetBasicResultAt(int line, int column, string methodName)
-        {
-            return VerifyVB.Diagnostic(DoNotCallEnumerableCastThatWillFailAnalyzer.OfTypeRule).WithLocation(line, column).WithArguments(methodName, methodName);
-        }
     }
 }

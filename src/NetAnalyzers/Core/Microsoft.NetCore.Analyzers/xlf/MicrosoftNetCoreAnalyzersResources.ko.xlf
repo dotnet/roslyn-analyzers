@@ -448,8 +448,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage">
-        <source>Type '{0}' is incompatible with type '{1}' and will result in an empty sequence</source>
-        <target state="new">Type '{0}' is incompatible with type '{1}' and will result in an empty sequence</target>
+        <source>Type '{0}' can never be OfType '{1}' and will always result in an empty sequence</source>
+        <target state="new">Type '{0}' can never be OfType '{1}' and will always result in an empty sequence</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription">
@@ -458,18 +458,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle">
-        <source>The enumerable returned by this call to OfType&lt;T&gt; will never return any values</source>
-        <target state="new">The enumerable returned by this call to OfType&lt;T&gt; will never return any values</target>
+        <source>Do not call OfType&lt;T&gt; with incompatible types, as the enumerable returned will never return any values</source>
+        <target state="new">Do not call OfType&lt;T&gt; with incompatible types, as the enumerable returned will never return any values</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailDescription">
-        <source>If the source sequence contains any element, the call to 'Cast' will throw an  'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</source>
-        <target state="new">If the source sequence contains any element, the call to 'Cast' will throw an  'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</target>
+        <source>If the source sequence contains at least 1 element, the call to 'Cast' will throw a InvalidCastException at runtime when enumerated. Make sure the types are compatible or remove this call.</source>
+        <target state="new">If the source sequence contains at least 1 element, the call to 'Cast' will throw a InvalidCastException at runtime when enumerated. Make sure the types are compatible or remove this call.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
-        <source>Type '{0}' is incompatible with type '{1}' and will cause an exception at runtime</source>
-        <target state="new">Type '{0}' is incompatible with type '{1}' and will cause an exception at runtime</target>
+        <source>Elements of type '{0}' cannot be converted to type incompatible type '{1}' and will cause a InvalidCastException to be thrown when enumerated</source>
+        <target state="new">Elements of type '{0}' cannot be converted to type incompatible type '{1}' and will cause a InvalidCastException to be thrown when enumerated</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">

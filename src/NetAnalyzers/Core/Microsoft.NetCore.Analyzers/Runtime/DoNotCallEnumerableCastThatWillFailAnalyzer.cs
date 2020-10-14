@@ -73,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
                     var targetMethod = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
-                    if (targetMethod == null || !methodMetadataNames.TryGetValue(targetMethod.Name, out var rule))
+                    if (!methodMetadataNames.TryGetValue(targetMethod.Name, out var rule))
                     {
                         return;
                     }

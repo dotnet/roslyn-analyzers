@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallEnumerableCastThatWillFailAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA9999";
+        internal const string RuleId = "CA2250";
         private static readonly LocalizableString s_localizableCastTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableCastMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableCastDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallEnumerableCastThatWillFailDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableCastTitle,
                                                                              s_localizableCastMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.BuildWarningCandidate,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              s_localizableCastDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableOfTypeTitle,
                                                                              s_localizableOfTypeMessage,
                                                                              DiagnosticCategory.Reliability,
-                                                                             RuleLevel.BuildWarningCandidate,
+                                                                             RuleLevel.IdeSuggestion,
                                                                              description: s_localizableOfTypeDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
@@ -58,19 +58,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                var enumerableType = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable);
-                var genericIEnumerableType = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
-
-                if (enumerableType == null || genericIEnumerableType == null)
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var enumerableType)
+                 || !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1, out var genericIEnumerableType))
                 {
                     return;
                 }
 
-                compilationStartContext.RegisterOperationAction(operationContext =>
+                context.RegisterOperationAction(context =>
                 {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
+                    var invocation = (IInvocationOperation)context.Operation;
 
                     var targetMethod = invocation.TargetMethod.OriginalDefinition;
                     if (!methodMetadataNames.TryGetValue(targetMethod.Name, out var rule))
@@ -109,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (CastWillAlwaysFail(castFrom, castTo))
                     {
-                        operationContext.ReportDiagnostic(invocation.CreateDiagnostic(rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
+                        context.ReportDiagnostic(invocation.CreateDiagnostic(rule, castFrom.ToDisplayString(), castTo.ToDisplayString()));
                     }
                 }, OperationKind.Invocation);
             });

@@ -1093,13 +1093,13 @@
     <value>If the source sequence contains any element, the call to 'Cast' will throw an  'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailMessage" xml:space="preserve">
-    <value>Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail</value>
+    <value>Type '{0}' is incompatible with type '{1}' and will cause an exception at runtime</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailTitle" xml:space="preserve">
-    <value>Do not call Enumerable.Cast&lt;T&gt; with incompatible types</value>
+    <value>Do not call 'Enumerable.Cast&lt;T&gt;' with incompatible types</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage" xml:space="preserve">
-    <value>Source sequence elements are of type '{1}' which is not compatible with provided result element type '{0}'</value>
+    <value>Type '{0}' is incompatible with type '{1}' and will result in an empty sequence</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle" xml:space="preserve">
     <value>The enumerable returned by this call to OfType&lt;T&gt; will never return any values</value>

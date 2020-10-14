@@ -1090,7 +1090,7 @@
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailDescription" xml:space="preserve">
-    <value>If the source sequence contains any elements, the sequence returned by Cast will throw InvalidCastException at runtime when enumerated. Change the type(s) to those that are compatible or remove the call.</value>
+    <value>If the source sequence contains any element, the call to 'Cast' will throw an  'InvalidCastException' at runtime when enumerated. Make sure the types are compatible or remove this call.</value>
   </data>
   <data name="DoNotCallEnumerableCastThatWillFailMessage" xml:space="preserve">
     <value>Enumerable.Cast&lt;T&gt; will '{0}' can not be castetype '{1}' will fail</value>
@@ -1105,7 +1105,7 @@
     <value>The enumerable returned by this call to OfType&lt;T&gt; will never return any values</value>
   </data>
   <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
-    <value>The type of the elements in the source sequence is not compatible with the type passed to OfType&lt;T&gt;, therefore no elements will ever be returned. Change the type of the elements in the source sequence, the type passed to OfType&lt;T&gt;, or remove the call.</value>
+    <value>This call to 'OfType' will always results in an empty sequence. Make sure the types are compatible or remove this call.</value>
   </data>
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerTitle" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>

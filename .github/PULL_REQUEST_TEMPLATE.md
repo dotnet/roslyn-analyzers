@@ -7,4 +7,8 @@ you have any of the following changes that affect auto-generated files. Otherwis
 - Adding or updating resource strings used by analyzers and code fixes
 - Updating analyzer package versions in [Versions.props](../eng/Versions.props)
 
+If you're adding a new rule, Make sure to read the guidlines in: https://github.com/dotnet/roslyn-analyzers/blob/master/GuidelinesForNewRules.md.
+Also, see https://docs.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis#contribute-docs-for-caxxxx-rules for documentation guidelines.
+
+
 -->

@@ -64,7 +64,7 @@
       <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
       <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
       <_RunOnCore>false</_RunOnCore>
-      <_RunOnCore Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">true</_RunOnCore>
+      <_RunOnCore Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">true</_RunOnCore>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"

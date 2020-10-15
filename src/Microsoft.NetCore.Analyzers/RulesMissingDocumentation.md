@@ -2,4 +2,4 @@
 
 Rule ID | Missing Help Link | Title |
 --------|-------------------|-------|
-CA1416 | https://docs.microsoft.com/visualstudio/code-quality/ca1416 | Validate platform compatibility |
+CA2250 | https://docs.microsoft.com/visualstudio/code-quality/ca2250 | 'AsParallel' at the end of a LINQ query does not have an effect |

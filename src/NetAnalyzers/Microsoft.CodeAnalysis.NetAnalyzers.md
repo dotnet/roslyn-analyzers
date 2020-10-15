@@ -1860,6 +1860,18 @@ Calls to 'string.IndexOf' where the result is used to check for the presence/abs
 |CodeFix|True|
 ---
 
+## [CA2250](https://docs.microsoft.com/visualstudio/code-quality/ca2250): 'AsParallel' at the end of a LINQ query does not have an effect
+
+'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA2300](https://docs.microsoft.com/visualstudio/code-quality/ca2300): Do not use insecure deserializer BinaryFormatter
 
 The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.

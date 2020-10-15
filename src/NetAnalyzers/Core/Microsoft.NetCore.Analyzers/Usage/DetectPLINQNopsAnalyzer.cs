@@ -36,22 +36,17 @@ namespace Microsoft.NetCore.Analyzers.Usage
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(ctx =>
             {
-                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqParallelEnumerable, out var parallelEnumerable))
-                {
-                    return;
-                }
-
-                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var linqEnumerable))
+                if (!ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqParallelEnumerable, out var parallelEnumerable) || !ctx.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var linqEnumerable))
                 {
                     return;
                 }
 
                 var asParallelSymbols = parallelEnumerable.GetMembers("AsParallel").ToImmutableHashSet();
                 var collectionSymbols = parallelEnumerable.GetMembers("ToArray")
-                .Concat(parallelEnumerable.GetMembers("ToList"))
-                .Concat(parallelEnumerable.GetMembers("ToDictionary"))
-                .Concat(linqEnumerable.GetMembers("ToHashSet"))
-                .ToImmutableHashSet();
+					.Concat(parallelEnumerable.GetMembers("ToList"))
+					.Concat(parallelEnumerable.GetMembers("ToDictionary"))
+					.Concat(linqEnumerable.GetMembers("ToHashSet"))
+					.ToImmutableHashSet();
 
                 ctx.RegisterOperationAction(x => AnalyzeOperation(x, asParallelSymbols, collectionSymbols), OperationKind.Invocation);
             });

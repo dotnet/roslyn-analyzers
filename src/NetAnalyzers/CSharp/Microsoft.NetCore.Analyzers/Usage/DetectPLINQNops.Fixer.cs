@@ -19,9 +19,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNopsAnalyzer.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider
     {
-        private static readonly string[] removableEnds = new string[] { "ToList", "ToArray", "AsParallel", "ToDictionary", "ToHashSet" };
+        private static readonly string[] s_removableEnds = new string[] { "ToList", "ToArray", "AsParallel", "ToDictionary", "ToHashSet" };
 
-        private static readonly string[] requiredAppendableEnds = new string[] { "ToDictionary", "ToHashSet" };
+        private static readonly string[] s_requiredAppendableEnds = new string[] { "ToDictionary", "ToHashSet" };
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DetectPLINQNopsAnalyzer.RuleId);
 
@@ -40,8 +40,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
             context.RegisterCodeFix(
                 new AsParallelCodeAction(
                     title: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall,
-                    createChangedSolution: c => RemoveAsParallelCall(context.Document, declaration, c),
-                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall),
+                    createChangedSolution: c => RemoveAsParallelCall(context.Document, declaration, c)),
                 context.Diagnostics);
         }
 
@@ -55,9 +54,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
             {
                 var newExpression = ((possibleInvocation as InvocationExpressionSyntax)!.Expression as MemberAccessExpressionSyntax)!.Expression;
                 possibleInvocation = newExpression;
-            } while (possibleInvocation is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax member && removableEnds.Contains(member.Name.Identifier.ValueText));
+            } while (possibleInvocation is InvocationExpressionSyntax nestedInvocation && nestedInvocation.Expression is MemberAccessExpressionSyntax member && s_removableEnds.Contains(member.Name.Identifier.ValueText));
 
-            if (invocationExpression.Expression is MemberAccessExpressionSyntax directMember && requiredAppendableEnds.Contains(directMember.Name.Identifier.ValueText))
+            if (invocationExpression.Expression is MemberAccessExpressionSyntax directMember && s_requiredAppendableEnds.Contains(directMember.Name.Identifier.ValueText))
             {
                 possibleInvocation = SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, possibleInvocation, directMember.Name), invocationExpression.ArgumentList);
             }
@@ -67,8 +66,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 
         private class AsParallelCodeAction : SolutionChangeAction
         {
-            public AsParallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution, string equivalenceKey)
-                : base(title, createChangedSolution, equivalenceKey)
+            public AsParallelCodeAction(string title, Func<CancellationToken, Task<Solution>> createChangedSolution)
+                : base(title, createChangedSolution, title)
             {
             }
         }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -43,10 +44,10 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
                 var asParallelSymbols = parallelEnumerable.GetMembers("AsParallel").ToImmutableHashSet();
                 var collectionSymbols = parallelEnumerable.GetMembers("ToArray")
-					.Concat(parallelEnumerable.GetMembers("ToList"))
-					.Concat(parallelEnumerable.GetMembers("ToDictionary"))
-					.Concat(linqEnumerable.GetMembers("ToHashSet"))
-					.ToImmutableHashSet();
+                    .Concat(parallelEnumerable.GetMembers("ToList"))
+                    .Concat(parallelEnumerable.GetMembers("ToDictionary"))
+                    .Concat(linqEnumerable.GetMembers("ToHashSet"))
+                    .ToImmutableHashSet();
 
                 ctx.RegisterOperationAction(x => AnalyzeOperation(x, asParallelSymbols, collectionSymbols), OperationKind.Invocation);
             });
@@ -54,23 +55,38 @@ namespace Microsoft.NetCore.Analyzers.Usage
 
         public static bool ParentIsForEachStatement(IInvocationOperation operation) => operation.Parent is IForEachLoopOperation || operation.Parent?.Parent is IForEachLoopOperation;
 
-        public static bool TryGetParentIsToCollection(IInvocationOperation operation, ImmutableHashSet<ISymbol> collectionSymbols, out IInvocationOperation parentInvocation)
+        private static bool FindFirstInvocationParent(IOperation operation, [NotNullWhen(true)] out IInvocationOperation? invocationOperation)
         {
-            parentInvocation = operation;
-            if (operation.Parent?.Parent is not IInvocationOperation invocation)
+            invocationOperation = null;
+            do
             {
-                if (operation.Parent?.Parent?.Parent is IInvocationOperation nestedInvocation) // Happens on ToHashSet calls
+                operation = operation.Parent;
+                if (operation is IInvocationOperation invocation)
                 {
-                    parentInvocation = nestedInvocation;
+                    invocationOperation = invocation;
                     return true;
                 }
 
+                if (operation is ILocalFunctionOperation or IAnonymousFunctionOperation)
+                    return false;
+            } while (operation != null);
+
+            return false;
+        }
+
+        public static bool TryGetParentIsToCollection(IInvocationOperation operation, ImmutableHashSet<ISymbol> collectionSymbols, out IInvocationOperation parentInvocation)
+        {
+            parentInvocation = operation;
+            var hasParentInvocation = FindFirstInvocationParent(operation, out var invocationParent);
+            if (!hasParentInvocation)
+            {
                 return false;
             }
 
-            if (collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition) || collectionSymbols.Contains(invocation.TargetMethod.OriginalDefinition.ReducedFrom))
+            var targetMethod = (invocationParent!.TargetMethod.ReducedFrom ?? invocationParent.TargetMethod).OriginalDefinition;
+            if (collectionSymbols.Contains(targetMethod))
             {
-                parentInvocation = invocation;
+                parentInvocation = invocationParent;
                 return true;
             }
 

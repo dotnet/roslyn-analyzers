@@ -28,7 +28,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableMessageFormatItem = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        internal static DiagnosticDescriptor IncorrectNumberOfArgsRule = DiagnosticDescriptorHelper.Create(
+        //internal static DiagnosticDescriptor IncorrectNumberOfArgsRule = DiagnosticDescriptorHelper.Create(
+        //    RuleId,
+        //    s_localizableTitle,
+        //    s_localizableMessageArgs,
+        //    DiagnosticCategory.Usage,
+        //    RuleLevel.BuildWarningCandidate,
+        //    description: s_localizableDescription,
+        //    isPortedFxCopRule: true,
+        //    isDataflowRule: false);
+
+        //internal static DiagnosticDescriptor MissingFormatItemRule = DiagnosticDescriptorHelper.Create(
+        //    RuleId,
+        //    s_localizableTitle,
+        //    s_localizableMessageFormatItem,
+        //    DiagnosticCategory.Usage,
+        //    RuleLevel.BuildWarningCandidate,
+        //    description: s_localizableDescription,
+        //    isPortedFxCopRule: true,
+        //    isDataflowRule: false);
+
+        // e.g. Console.WriteLine("{0} {1}", 42);
+        internal static DiagnosticDescriptor NotEnoughArgsRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
@@ -38,27 +59,89 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
-        internal static DiagnosticDescriptor MissingFormatItemRule = DiagnosticDescriptorHelper.Create(
+        // e.g. Console.WriteLine("{1}", 42);
+        internal static DiagnosticDescriptor NotEnoughArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
-            s_localizableMessageFormatItem,
+            s_localizableMessageArgs,
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarningCandidate,
             description: s_localizableDescription,
             isPortedFxCopRule: true,
             isDataflowRule: false);
 
+        // e.g. Console.WriteLine("{0}", 1, 2)
+        internal static DiagnosticDescriptor TooManyArgsRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessageArgs,
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        // e.g. Console.WriteLine("{1}", 1, 2, 3)
+        internal static DiagnosticDescriptor TooManyArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessageArgs,
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        // e.g. Console.WriteLine("{1}", 1, 2)
+        internal static DiagnosticDescriptor EnoughArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            s_localizableTitle,
+            s_localizableMessageArgs,
+            DiagnosticCategory.Usage,
+            RuleLevel.IdeSuggestion,
+            description: s_localizableDescription,
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
+
+        //// e.g. Console.WriteLine("{0} {1}") -> resolves to the overload expecting a string, not a format string
+        //internal static DiagnosticDescriptor FormatItemInNonStringFormatMethodRule = DiagnosticDescriptorHelper.Create(
+        //    RuleId,
+        //    s_localizableTitle,
+        //    s_localizableMessageArgs,
+        //    DiagnosticCategory.Usage,
+        //    RuleLevel.IdeSuggestion,
+        //    description: s_localizableDescription,
+        //    isPortedFxCopRule: true,
+        //    isDataflowRule: false);
+
+        //// e.g. Console.WriteLine("{1}")
+        //internal static DiagnosticDescriptor FormatItemInNonStringFormatMethodMissingFormatItemRule = DiagnosticDescriptorHelper.Create(
+        //    RuleId,
+        //    s_localizableTitle,
+        //    s_localizableMessageArgs,
+        //    DiagnosticCategory.Usage,
+        //    RuleLevel.IdeSuggestion,
+        //    description: s_localizableDescription,
+        //    isPortedFxCopRule: true,
+        //    isDataflowRule: false);
+
         /// <summary>
         /// This regex is used to remove escaped brackets from the format string before looking for valid {} pairs.
         /// </summary>
-        private static readonly Regex s_removeEscapedBracketsRegex = new("{{");
+        private static readonly Regex s_removeEscapedBracketsRegex = new("{{", RegexOptions.Compiled);
 
         /// <summary>
         /// This regex is used to extract the text between the brackets and save the contents in a MatchCollection.
         /// </summary>
-        private static readonly Regex s_extractPlaceholdersRegex = new("{(.*?)}");
+        private static readonly Regex s_extractPlaceholdersRegex = new("{(.*?)}", RegexOptions.Compiled);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IncorrectNumberOfArgsRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            => ImmutableArray.Create(
+                NotEnoughArgsRule,
+                NotEnoughArgsMissingFormatIndexRule,
+                EnoughArgsMissingFormatIndexRule,
+                TooManyArgsRule,
+                TooManyArgsMissingFormatIndexRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -88,26 +171,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
-                    var stringFormatIndexes = GetStringFormatItemIndexes(stringFormat);
-                    int expectedStringFormatArgumentCount = stringFormatIndexes?.Count ?? -1;
-
-                    // Validate string format item indexes
-                    if (expectedStringFormatArgumentCount > 0)
-                    {
-                        var missingIndexes = Enumerable.Range(0, stringFormatIndexes.Max())
-                            .Except(stringFormatIndexes);
-                        if (missingIndexes.Any())
-                        {
-                            context.ReportDiagnostic(invocation.CreateDiagnostic(MissingFormatItemRule));
-
-                            // There are some missing format indexes, we don't know if they are just missing
-                            // or if the highest numbers have been shifted so skip the arguments actually
-                            // provided to the invocation.
-                            return;
-                        }
-                    }
-
                     // __arglist is not supported here (see https://github.com/dotnet/roslyn/issues/7346)
                     // but we want to skip it only in C# since VB doesn't support __arglist
                     if (info.ExpectedStringFormatArgumentCount >= 0 &&
@@ -117,16 +180,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    // explicit parameter case
+                    var stringFormat = (string)formatStringArgument.Value.ConstantValue.Value;
+                    var stringFormatIndexes = GetStringFormatItemIndexes(stringFormat);
+
+                    // Target method resolves to an overload with a non variable (e.g. params) argument count
+                    // so we can easily analyze the arguments.
                     if (info.ExpectedStringFormatArgumentCount >= 0)
                     {
-                        if (info.ExpectedStringFormatArgumentCount != expectedStringFormatArgumentCount)
-                        {
-                            context.ReportDiagnostic(invocation.CreateDiagnostic(IncorrectNumberOfArgsRule));
-                        }
-
+                        ReportOnArgumentsMismatch(stringFormat, info.ExpectedStringFormatArgumentCount, context, invocation);
                         return;
                     }
+
+                    // Target method resolves to an overload with a variable argument count so we need
+                    // to try to understand the number of arguments passed.
 
                     // ensure argument is an array
                     IArgumentOperation paramsArgument = invocation.Arguments[info.FormatStringIndex + 1];
@@ -155,10 +221,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // REVIEW: "ElementValues" is a bit confusing where I need to double dot those to get number of elements
                     int actualArgumentCount = intializer.ElementValues.Length;
-                    if (actualArgumentCount != expectedStringFormatArgumentCount)
-                    {
-                        context.ReportDiagnostic(invocation.CreateDiagnostic(IncorrectNumberOfArgsRule));
-                    }
+                    ReportOnArgumentsMismatch(stringFormat, actualArgumentCount, context, invocation);
                 }, OperationKind.Invocation);
             });
         }
@@ -206,6 +269,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return formatItemIndex;
         }
 
+        private static void ReportOnArgumentsMismatch(string stringFormat, int actualArgumentCount,
+            OperationAnalysisContext context, IInvocationOperation invocation)
+        {
+            var stringFormatIndexes = GetStringFormatItemIndexes(stringFormat);
+
+            var expectedArgumentCount = stringFormatIndexes.Count > 0
+                ? stringFormatIndexes.Max() + 1
+                : 0;
+
+            if (actualArgumentCount > expectedArgumentCount)
+            {
+                if (HasAnyMissingFormatIndex(stringFormatIndexes, expectedArgumentCount))
+                {
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(TooManyArgsMissingFormatIndexRule));
+                }
+                else
+                {
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(TooManyArgsRule));
+                }
+
+                return;
+            }
+            else if (actualArgumentCount < expectedArgumentCount)
+            {
+                if (HasAnyMissingFormatIndex(stringFormatIndexes, expectedArgumentCount))
+                {
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(NotEnoughArgsMissingFormatIndexRule));
+                }
+                else
+                {
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(NotEnoughArgsRule));
+                }
+
+                return;
+            }
+            else
+            {
+                if (HasAnyMissingFormatIndex(stringFormatIndexes, expectedArgumentCount))
+                {
+                    context.ReportDiagnostic(invocation.CreateDiagnostic(EnoughArgsMissingFormatIndexRule));
+                }
+
+                return;
+            }
+
+            static bool HasAnyMissingFormatIndex(HashSet<int> stringFormatIndexes, int expectedArgumentCount)
+                => stringFormatIndexes.Count > 0 &&
+                    Enumerable.Range(0, expectedArgumentCount - 1).Except(stringFormatIndexes).Any();
+        }
+
         private class StringFormatInfo
         {
             private const string Format = "format";
@@ -240,7 +353,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Check if this the underlying method is user configured string formatting method.
-                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(IncorrectNumberOfArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, context.CancellationToken);
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(NotEnoughArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation,
+                    context.CancellationToken);
                 if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
                     TryGetFormatInfo(method, out info))
                 {
@@ -250,7 +364,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Check if the user configured automatic determination of formatting methods.
                 // If so, check if the method called has a 'string format' parameter followed by an params array.
                 var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
-                        IncorrectNumberOfArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
+                    NotEnoughArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
                 if (determineAdditionalStringFormattingMethodsAutomatically &&
                     TryGetFormatInfo(method, out info) &&
                     info.ExpectedStringFormatArgumentCount == -1)

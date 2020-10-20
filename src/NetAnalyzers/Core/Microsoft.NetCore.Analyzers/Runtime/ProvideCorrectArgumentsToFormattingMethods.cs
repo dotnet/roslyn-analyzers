@@ -20,37 +20,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ProvideCorrectArgumentsToFormattingMethodsAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2241";
+        internal const string DefaultRuleId = "CA2241";
+        internal const string NotEnoughArgsRuleId = "CA2250";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageArgs = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessageArgs), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFormatItem = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessageFormatItem), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        //internal static DiagnosticDescriptor IncorrectNumberOfArgsRule = DiagnosticDescriptorHelper.Create(
-        //    RuleId,
-        //    s_localizableTitle,
-        //    s_localizableMessageArgs,
-        //    DiagnosticCategory.Usage,
-        //    RuleLevel.BuildWarningCandidate,
-        //    description: s_localizableDescription,
-        //    isPortedFxCopRule: true,
-        //    isDataflowRule: false);
-
-        //internal static DiagnosticDescriptor MissingFormatItemRule = DiagnosticDescriptorHelper.Create(
-        //    RuleId,
-        //    s_localizableTitle,
-        //    s_localizableMessageFormatItem,
-        //    DiagnosticCategory.Usage,
-        //    RuleLevel.BuildWarningCandidate,
-        //    description: s_localizableDescription,
-        //    isPortedFxCopRule: true,
-        //    isDataflowRule: false);
 
         // e.g. Console.WriteLine("{0} {1}", 42);
         internal static DiagnosticDescriptor NotEnoughArgsRule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+            NotEnoughArgsRuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
             DiagnosticCategory.Usage,
@@ -61,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // e.g. Console.WriteLine("{1}", 42);
         internal static DiagnosticDescriptor NotEnoughArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+            NotEnoughArgsRuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
             DiagnosticCategory.Usage,
@@ -72,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // e.g. Console.WriteLine("{0}", 1, 2)
         internal static DiagnosticDescriptor TooManyArgsRule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+            DefaultRuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
             DiagnosticCategory.Usage,
@@ -83,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // e.g. Console.WriteLine("{1}", 1, 2, 3)
         internal static DiagnosticDescriptor TooManyArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+            DefaultRuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
             DiagnosticCategory.Usage,
@@ -94,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // e.g. Console.WriteLine("{1}", 1, 2)
         internal static DiagnosticDescriptor EnoughArgsMissingFormatIndexRule = DiagnosticDescriptorHelper.Create(
-            RuleId,
+            DefaultRuleId,
             s_localizableTitle,
             s_localizableMessageArgs,
             DiagnosticCategory.Usage,
@@ -352,24 +332,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return info;
                 }
 
-                // Check if this the underlying method is user configured string formatting method.
-                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(NotEnoughArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation,
-                    context.CancellationToken);
-                if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
-                    TryGetFormatInfo(method, out info))
+                foreach (var descriptor in new[] { NotEnoughArgsRule, TooManyArgsRule })
                 {
-                    return info;
-                }
+                    // Check if this the underlying method is user configured string formatting method.
+                    var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(descriptor,
+                        context.Operation.Syntax.SyntaxTree, context.Compilation, context.CancellationToken);
+                    if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
+                        TryGetFormatInfo(method, out info))
+                    {
+                        return info;
+                    }
 
-                // Check if the user configured automatic determination of formatting methods.
-                // If so, check if the method called has a 'string format' parameter followed by an params array.
-                var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically,
-                    NotEnoughArgsRule, context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
-                if (determineAdditionalStringFormattingMethodsAutomatically &&
-                    TryGetFormatInfo(method, out info) &&
-                    info.ExpectedStringFormatArgumentCount == -1)
-                {
-                    return info;
+                    // Check if the user configured automatic determination of formatting methods.
+                    // If so, check if the method called has a 'string format' parameter followed by an params array.
+                    var determineAdditionalStringFormattingMethodsAutomatically = context.Options.GetBoolOptionValue(
+                        EditorConfigOptionNames.TryDetermineAdditionalStringFormattingMethodsAutomatically, descriptor,
+                        context.Operation.Syntax.SyntaxTree, context.Compilation, defaultValue: false, context.CancellationToken);
+                    if (determineAdditionalStringFormattingMethodsAutomatically &&
+                        TryGetFormatInfo(method, out info) &&
+                        info.ExpectedStringFormatArgumentCount == -1)
+                    {
+                        return info;
+                    }
                 }
 
                 return null;

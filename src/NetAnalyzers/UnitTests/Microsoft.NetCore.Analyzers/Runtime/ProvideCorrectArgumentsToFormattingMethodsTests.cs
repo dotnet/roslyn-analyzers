@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -254,7 +255,7 @@ End Class",
         [Theory]
         [InlineData("Console.Write")]
         [InlineData("Console.WriteLine")]
-        public async Task CA2241_NotEnoughArgs_ConsoleWriteMethods_Diagnostic(string invocation)
+        public async Task CA2250_NotEnoughArgs_ConsoleWriteMethods_Diagnostic(string invocation)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -299,7 +300,7 @@ End Class",
         [Theory, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]
         [InlineData("Console.Write")]
         [InlineData("Console.WriteLine")]
-        public async Task CA2241_NotEnoughArgsMissingFormatIndexRule_ConsoleWriteMethods_Diagnostic(string invocation)
+        public async Task CA2250_NotEnoughArgsMissingFormatIndexRule_ConsoleWriteMethods_Diagnostic(string invocation)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -338,7 +339,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA2241_NotEnoughArgs_StringFormatMethods_Diagnostic()
+        public async Task CA2250_NotEnoughArgs_StringFormatMethods_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -415,7 +416,7 @@ End Class",
         }
 
         [Fact, WorkItem(1254, "https://github.com/dotnet/roslyn-analyzers/issues/1254")]
-        public async Task CA2241_NotEnoughArgsMissingFormatIndex_StringFormatMethods_Diagnostic()
+        public async Task CA2250_NotEnoughArgsMissingFormatIndex_StringFormatMethods_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -648,7 +649,7 @@ End Class");
         [Theory]
         [InlineData("Console.Write")]
         [InlineData("Console.WriteLine")]
-        public async Task CA2241_ExplicitObjectArray_ConsoleWriteMethods(string invocation)
+        public async Task CA2241_CA2250_ExplicitObjectArray_ConsoleWriteMethods(string invocation)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -710,7 +711,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA2241_ExplicitObjectArray_StringFormatMethods()
+        public async Task CA2241_CA2250_ExplicitObjectArray_StringFormatMethods()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -772,7 +773,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA2241_CSharp_VarArgsNotSupported()
+        public async Task CA2241_CA2250_CSharp_VarArgsNotSupported()
         {
             await new VerifyCS.Test
             {
@@ -799,7 +800,7 @@ End Class",
         }
 
         [Fact]
-        public async Task CA2241_FormatStringParser_NoDiagnostic()
+        public async Task CA2241_CA2250_FormatStringParser_NoDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
         using System;
@@ -831,7 +832,7 @@ End Class",
         [InlineData(false)]
         // Configured and enabled
         [InlineData(true)]
-        public async Task CA2241_EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethods(bool? editorConfig)
+        public async Task CA2241_CA2250_EditorConfigConfiguration_HeuristicAdditionalStringFormattingMethods(bool? editorConfig)
         {
             string editorConfigText = editorConfig == null ? string.Empty :
                 "dotnet_code_quality.try_determine_additional_string_formatting_methods_automatically = " + editorConfig.Value;
@@ -936,12 +937,15 @@ End Class"
         // Match by method name
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = MyFormat")]
         // Setting only for Rule ID
-        [InlineData("dotnet_code_quality." + ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId + ".additional_string_formatting_methods = MyFormat")]
+        [InlineData(@"dotnet_code_quality.CA2241.additional_string_formatting_methods = MyFormat
+                      dotnet_code_quality.CA2250.additional_string_formatting_methods = MyFormat")]
+        [InlineData(@"dotnet_code_quality.CA2241.additional_string_formatting_methods = MyFormat")]
+        [InlineData(@"dotnet_code_quality.CA2250.additional_string_formatting_methods = MyFormat")]
         // Match by documentation ID without "M:" prefix
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = Test.MyFormat(System.String,System.Object[])~System.String")]
         // Match by documentation ID with "M:" prefix
         [InlineData("dotnet_code_quality.additional_string_formatting_methods = M:Test.MyFormat(System.String,System.Object[])~System.String")]
-        public async Task CA2241_EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
+        public async Task CA2241_CA2250_EditorConfigConfiguration_AdditionalStringFormattingMethods(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
             {
@@ -977,6 +981,7 @@ class Test
 
             if (editorConfigText.Length > 0)
             {
+                // TODO: Make sure to report only the right diagnostic not both
                 csharpTest.ExpectedDiagnostics.AddRange(new[]
                 {
                     VerifyCS.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.TooManyArgsRule).WithLocation(9, 18),
@@ -1023,6 +1028,7 @@ End Class"
 
             if (editorConfigText.Length > 0)
             {
+                // TODO: Make sure to report only the right diagnostic not both
                 basicTest.ExpectedDiagnostics.AddRange(new[]
                 {
                     VerifyVB.Diagnostic(ProvideCorrectArgumentsToFormattingMethodsAnalyzer.TooManyArgsRule).WithLocation(9, 18),

@@ -119,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
             }
 
             diagnosticInvocation ??= invocation;
-            var diagnostic = diagnosticInvocation.CreateDiagnostic(DefaultRule, diagnosticInvocation.Syntax);
+            var diagnostic = diagnosticInvocation.CreateDiagnostic(DefaultRule);
             context.ReportDiagnostic(diagnostic);
         }
     }

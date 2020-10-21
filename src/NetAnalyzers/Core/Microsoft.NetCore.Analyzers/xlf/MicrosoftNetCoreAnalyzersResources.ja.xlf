@@ -333,8 +333,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DetectPLINQNopsMessage">
-        <source>'AsParallel' in expression '{0}' has no effect</source>
-        <target state="new">'AsParallel' in expression '{0}' has no effect</target>
+        <source>'AsParallel' has no effect within a foreach statement</source>
+        <target state="new">'AsParallel' has no effect within a foreach statement</target>
         <note />
       </trans-unit>
       <trans-unit id="DetectPLINQNopsTitle">

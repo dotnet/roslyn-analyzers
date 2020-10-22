@@ -41,8 +41,8 @@
 
     <PropertyGroup Condition="'$(GenerateAnalyzerRulesMissingDocumentationFile)' == ''">
       <!-- Generate rules missing documentation file by default for local builds and normal CI builds (to validate the existing files). -->
-      <!-- Skip it for internal signed builds that are kicked off after each PR merge builds for improved CI throughput. -->
       <GenerateAnalyzerRulesMissingDocumentationFile>true</GenerateAnalyzerRulesMissingDocumentationFile>
+      <!-- Skip it for internal signed builds that are kicked off after each PR merge builds for improved CI throughput. -->
       <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(Sign)' == 'true'">false</GenerateAnalyzerRulesMissingDocumentationFile>
     </PropertyGroup>
 

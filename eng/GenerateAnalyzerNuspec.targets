@@ -37,12 +37,7 @@
       <GenerateAnalyzerMdFile Condition="'$(GenerateAnalyzerMdFile)' == ''">true</GenerateAnalyzerMdFile>
       <GenerateAnalyzerSarifFile Condition="'$(GenerateAnalyzerSarifFile)' == ''">true</GenerateAnalyzerSarifFile>
       <GenerateAnalyzerConfigurationFile Condition="'$(GenerateAnalyzerConfigurationFile)' == ''">true</GenerateAnalyzerConfigurationFile>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(GenerateAnalyzerRulesMissingDocumentationFile)' == ''">
-      <!-- Generate rules missing documentation file by default for local builds. Skip it for CI/signed builds for improved CI throughput. -->
-      <GenerateAnalyzerRulesMissingDocumentationFile>true</GenerateAnalyzerRulesMissingDocumentationFile>
-      <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(Sign)' == 'true'">false</GenerateAnalyzerRulesMissingDocumentationFile>
+      <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(GenerateAnalyzerRulesMissingDocumentationFile)' == ''">true</GenerateAnalyzerRulesMissingDocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">

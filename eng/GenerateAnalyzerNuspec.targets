@@ -37,7 +37,13 @@
       <GenerateAnalyzerMdFile Condition="'$(GenerateAnalyzerMdFile)' == ''">true</GenerateAnalyzerMdFile>
       <GenerateAnalyzerSarifFile Condition="'$(GenerateAnalyzerSarifFile)' == ''">true</GenerateAnalyzerSarifFile>
       <GenerateAnalyzerConfigurationFile Condition="'$(GenerateAnalyzerConfigurationFile)' == ''">true</GenerateAnalyzerConfigurationFile>
-      <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(GenerateAnalyzerRulesMissingDocumentationFile)' == ''">true</GenerateAnalyzerRulesMissingDocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GenerateAnalyzerRulesMissingDocumentationFile)' == ''">
+      <!-- Generate rules missing documentation file by default for local builds and normal CI builds (to validate the existing files). -->
+      <!-- Skip it for internal signed builds that are kicked off after each PR merge builds for improved CI throughput. -->
+      <GenerateAnalyzerRulesMissingDocumentationFile>true</GenerateAnalyzerRulesMissingDocumentationFile>
+      <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(Sign)' == 'true'">false</GenerateAnalyzerRulesMissingDocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">

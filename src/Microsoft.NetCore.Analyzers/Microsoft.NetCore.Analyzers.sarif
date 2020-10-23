@@ -825,7 +825,8 @@
               "PortedFromFxCop",
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1094,7 +1095,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1115,7 +1117,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1176,7 +1179,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1197,7 +1201,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1238,7 +1243,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1259,7 +1265,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1300,7 +1307,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1321,7 +1329,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1342,7 +1351,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1363,7 +1373,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1915,7 +1926,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1956,7 +1968,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2056,7 +2069,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2320,7 +2334,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2341,7 +2356,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2362,7 +2378,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2383,7 +2400,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2464,7 +2482,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2485,7 +2504,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2547,7 +2567,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2627,7 +2648,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2648,7 +2670,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2709,7 +2732,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2730,7 +2754,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2751,7 +2776,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2772,7 +2798,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2882,7 +2909,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2969,7 +2997,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },

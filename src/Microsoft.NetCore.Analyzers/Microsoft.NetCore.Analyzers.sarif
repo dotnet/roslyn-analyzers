@@ -825,8 +825,7 @@
               "PortedFromFxCop",
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode",
-              "CompilationEnd"
+              "EnabledRuleInAggressiveMode"
             ]
           }
         },

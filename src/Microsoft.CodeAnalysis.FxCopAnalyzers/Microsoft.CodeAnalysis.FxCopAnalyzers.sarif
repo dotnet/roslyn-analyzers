@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -29,7 +29,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -130,7 +130,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -170,7 +171,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -827,7 +829,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1067,7 +1070,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1107,7 +1111,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1167,7 +1172,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1247,7 +1253,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1267,7 +1274,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1530,7 +1538,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -1727,7 +1735,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -1962,7 +1970,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -2380,7 +2388,8 @@
             "tags": [
               "PortedFromFxCop",
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2559,7 +2568,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2579,7 +2589,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2637,7 +2648,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2657,7 +2669,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2696,7 +2709,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2716,7 +2730,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2755,7 +2770,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2775,7 +2791,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2795,7 +2812,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -2815,14 +2833,15 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
         "CA2350": {
           "id": "CA2350",
-          "shortDescription": "Do not use insecure deserialization with DataTable.ReadXml()",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.",
+          "shortDescription": "Do not use DataTable.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2350",
           "properties": {
@@ -2840,8 +2859,8 @@
         },
         "CA2351": {
           "id": "CA2351",
-          "shortDescription": "Do not use insecure deserialization with DataSet.ReadXml()",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. If deserializing untrusted data, replace with TBD.",
+          "shortDescription": "Do not use DataSet.ReadXml() with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2351",
           "properties": {
@@ -2879,7 +2898,7 @@
         "CA2353": {
           "id": "CA2353",
           "shortDescription": "Unsafe DataSet or DataTable in serializable type",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2353",
           "properties": {
@@ -2898,7 +2917,7 @@
         "CA2354": {
           "id": "CA2354",
           "shortDescription": "Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2354",
           "properties": {
@@ -2917,7 +2936,7 @@
         "CA2355": {
           "id": "CA2355",
           "shortDescription": "Unsafe DataSet or DataTable type found in deserializable object graph",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2355",
           "properties": {
@@ -2936,13 +2955,51 @@
         "CA2356": {
           "id": "CA2356",
           "shortDescription": "Unsafe DataSet or DataTable type in web deserializable object graph",
-          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}.",
+          "fullDescription": "When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2356",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DataSetDataTableInWebSerializableObjectGraphAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2361": {
+          "id": "CA2361",
+          "shortDescription": "Ensure autogenerated class containing DataSet.ReadXml() is not used with untrusted data",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data. Make sure that autogenerated class containing the '{0}' call is not deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2361",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2362": {
+          "id": "CA2362",
+          "shortDescription": "Unsafe DataSet or DataTable in autogenerated serializable type can be vulnerable to remote code execution attacks",
+          "fullDescription": "When deserializing untrusted input with an IFormatter-based serializer, deserializing a {0} object is insecure. '{1}' either is or derives from {0}. Ensure that the autogenerated type is never deserialized with untrusted data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2362",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DataSetDataTableInSerializableTypeAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3302,7 +3359,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3341,7 +3399,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3404,7 +3463,7 @@
         },
         "CA5366": {
           "id": "CA5366",
-          "shortDescription": "Use XmlReader For DataSet Read Xml",
+          "shortDescription": "Use XmlReader for 'DataSet.ReadXml()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5366",
@@ -3436,7 +3495,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3461,7 +3521,7 @@
         },
         "CA5369": {
           "id": "CA5369",
-          "shortDescription": "Use XmlReader For Deserialize",
+          "shortDescription": "Use XmlReader for 'XmlSerializer.Deserialize()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5369",
@@ -3480,7 +3540,7 @@
         },
         "CA5370": {
           "id": "CA5370",
-          "shortDescription": "Use XmlReader For Validating Reader",
+          "shortDescription": "Use XmlReader for XmlValidatingReader constructor",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5370",
@@ -3499,7 +3559,7 @@
         },
         "CA5371": {
           "id": "CA5371",
-          "shortDescription": "Use XmlReader For Schema Read",
+          "shortDescription": "Use XmlReader for 'XmlSchema.Read()'",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5371",
@@ -3518,7 +3578,7 @@
         },
         "CA5372": {
           "id": "CA5372",
-          "shortDescription": "Use XmlReader For XPathDocument",
+          "shortDescription": "Use XmlReader for XPathDocument constructor",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5372",
@@ -3654,7 +3714,7 @@
         },
         "CA5379": {
           "id": "CA5379",
-          "shortDescription": "Do Not Use Weak Key Derivation Function Algorithm",
+          "shortDescription": "Ensure Key Derivation Function algorithm is sufficiently strong",
           "fullDescription": "Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5379",
@@ -3687,7 +3747,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3707,7 +3768,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3727,7 +3789,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3747,7 +3810,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3824,7 +3888,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3844,7 +3909,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3903,7 +3969,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3979,7 +4046,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -3999,7 +4067,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4057,7 +4126,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4077,7 +4147,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4097,7 +4168,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4117,7 +4189,8 @@
             ],
             "tags": [
               "Dataflow",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4146,7 +4219,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -4203,7 +4276,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4285,7 +4359,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -4342,7 +4416,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -4424,7 +4499,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -4510,7 +4585,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.CSharp.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {
@@ -4555,7 +4630,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
-        "version": "2.9.10",
+        "version": "2.9.12",
         "language": "en-US"
       },
       "rules": {

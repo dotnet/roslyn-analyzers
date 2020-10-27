@@ -81,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                                       isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-            SupportedOsRule, SupportedOsRule, UnsupportedOsRule);
+            SupportedOsRule, OnlySupportedOsRule, UnsupportedOsRule);
 
         public override void Initialize(AnalysisContext context)
         {

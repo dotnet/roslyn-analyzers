@@ -167,6 +167,21 @@
         <target state="translated">Metoda Dispose powinna wywoływać metodę SuppressFinalize</target>
         <note />
       </trans-unit>
+      <trans-unit id="CallSiteCrossPlatformSuffix">
+        <source>but this call site is reachable on all platforms.</source>
+        <target state="new">but this call site is reachable on all platforms.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CallSiteReachableOnPlatformSuffix">
+        <source>but this call site is reachable on {0}.</source>
+        <target state="new">but this call site is reachable on {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CallSiteUnreachableOnPlatformSuffix">
+        <source>but this call site is unreachable on {0}.</source>
+        <target state="new">but this call site is unreachable on {0}.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CategoryReliability">
         <source>Reliability</source>
         <target state="translated">Niezawodność</target>
@@ -1512,34 +1527,49 @@
         <target state="translated">Elementy P/Invoke nie powinny być widoczne</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckDescription">
+      <trans-unit id="PlatformCompatibilityDescription">
         <source>Using platform dependent API on a component makes the code no longer work across all platforms.</source>
-        <target state="translated">Użycie w składniku interfejsu API zależnego od platformy powoduje, że kod nie działa na różnych platformach.</target>
+        <target state="new">Using platform dependent API on a component makes the code no longer work across all platforms.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckSupportedOsMessage">
-        <source>'{0}' is supported on '{1}'</source>
-        <target state="translated">Element „{0}” jest obsługiwany przez system „{1}”</target>
+      <trans-unit id="PlatformCompatibilityOnlySupportedMessage">
+        <source>'{0}' is only supported on: {1}</source>
+        <target state="new">'{0}' is only supported on: {1}</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckSupportedOsVersionMessage">
-        <source>'{0}' is supported on '{1}' {2} and later</source>
-        <target state="translated">Element „{0}” jest obsługiwany przez system „{1}” {2} i nowsze</target>
+      <trans-unit id="PlatformCompatibilitySupportedMessage">
+        <source>'{0}' is supported on: {1}</source>
+        <target state="new">'{0}' is supported on: {1}</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckTitle">
+      <trans-unit id="PlatformCompatibilityTitle">
         <source>Validate platform compatibility</source>
-        <target state="translated">Weryfikuj zgodność z platformą</target>
+        <target state="new">Validate platform compatibility</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckUnsupportedOsMessage">
-        <source>'{0}' is unsupported on '{1}'</source>
-        <target state="translated">Element „{0}” nie jest obsługiwany przez system „{1}”</target>
+      <trans-unit id="PlatformCompatibilityUnsupportedMessage">
+        <source>'{0}' is unsupported on: {1}</source>
+        <target state="new">'{0}' is unsupported on: {1}</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckUnsupportedOsVersionMessage">
-        <source>'{0}' is unsupported on '{1}' {2} and later</source>
-        <target state="translated">Element „{0}” nie jest obsługiwany przez system „{1}” {2} i nowsze</target>
+      <trans-unit id="PlatformFromVersionAndLaterSuffix">
+        <source>'{0}' from version {1} and later, </source>
+        <target state="new">'{0}' from version {1} and later, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformFromVersionToVersionSuffix">
+        <source>'{0}' from version {1} to {2}, </source>
+        <target state="new">'{0}' from version {1} to {2}, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformVersionAndBeforeSuffix">
+        <source>'{0}' {1} and before, </source>
+        <target state="new">'{0}' {1} and before, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformVersionAndLaterSuffix">
+        <source>'{0}' {1} and later, </source>
+        <target state="new">'{0}' {1} and later, </target>
         <note />
       </trans-unit>
       <trans-unit id="PotentialReferenceCycleInDeserializedObjectGraphDescription">

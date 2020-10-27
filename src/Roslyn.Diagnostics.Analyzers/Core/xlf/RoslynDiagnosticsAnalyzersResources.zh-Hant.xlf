@@ -187,6 +187,21 @@
         <target state="translated">修正已編號的註解</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyDescription">
+        <source>Imported members should not be read-only.</source>
+        <target state="new">Imported members should not be read-only.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyMessage">
+        <source>Imported members should not be read-only</source>
+        <target state="new">Imported members should not be read-only</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyTitle">
+        <source>Imported members should not be read-only</source>
+        <target state="new">Imported members should not be read-only</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImportingConstructorShouldBeObsoleteCodeFix_ErrorSetToFalse">
         <source>Set 'ObsoleteAttribute.Error' to 'true'</source>
         <target state="translated">將 'ObsoleteAttribute.Error' 設定為 'true'</target>

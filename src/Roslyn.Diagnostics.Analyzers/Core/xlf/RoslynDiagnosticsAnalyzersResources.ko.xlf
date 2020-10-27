@@ -187,6 +187,21 @@
         <target state="translated">번호가 매겨진 주석 수정</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyDescription">
+        <source>Imported members should not be read-only.</source>
+        <target state="new">Imported members should not be read-only.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyMessage">
+        <source>Imported members should not be read-only</source>
+        <target state="new">Imported members should not be read-only</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImportedMembersShouldNotBeReadOnlyTitle">
+        <source>Imported members should not be read-only</source>
+        <target state="new">Imported members should not be read-only</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImportingConstructorShouldBeObsoleteCodeFix_ErrorSetToFalse">
         <source>Set 'ObsoleteAttribute.Error' to 'true'</source>
         <target state="translated">'ObsoleteAttribute.Error'를 'true'로 설정</target>

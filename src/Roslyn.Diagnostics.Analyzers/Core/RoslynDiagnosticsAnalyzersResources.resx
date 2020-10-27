@@ -366,4 +366,13 @@
   <data name="BlankLinesTitle" xml:space="preserve">
     <value>Avoid multiple blank lines</value>
   </data>
+  <data name="ImportedMembersShouldNotBeReadOnlyDescription" xml:space="preserve">
+    <value>Imported members should not be read-only.</value>
+  </data>
+  <data name="ImportedMembersShouldNotBeReadOnlyMessage" xml:space="preserve">
+    <value>Imported members should not be read-only</value>
+  </data>
+  <data name="ImportedMembersShouldNotBeReadOnlyTitle" xml:space="preserve">
+    <value>Imported members should not be read-only</value>
+  </data>
 </root>

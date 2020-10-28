@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -29,7 +29,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -1538,7 +1538,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -1735,7 +1735,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -1970,7 +1970,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -4219,7 +4219,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -4359,7 +4359,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -4499,7 +4499,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -4585,7 +4585,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.CSharp.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {
@@ -4630,7 +4630,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
-        "version": "2.9.12",
+        "version": "2.9.13",
         "language": "en-US"
       },
       "rules": {

@@ -12,9 +12,9 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.NetCore.Analyzers;
-using Microsoft.NetCore.Analyzers.Usage;
+using Microsoft.NetCore.Analyzers.Performance;
 
-namespace Microsoft.NetCore.CSharp.Analyzers.Usage
+namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = DetectPLINQNopsAnalyzer.RuleId), Shared]
     public sealed class DetectPLINQNopsFixer : CodeFixProvider

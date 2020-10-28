@@ -9,12 +9,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.NetCore.Analyzers.Usage
+namespace Microsoft.NetCore.Analyzers.Performance
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DetectPLINQNopsAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2250";
+        internal const string RuleId = "CA1839";
         internal static readonly LocalizableString localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPLINQNopsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPLINQNopsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -23,8 +23,8 @@ namespace Microsoft.NetCore.Analyzers.Usage
         internal static readonly DiagnosticDescriptor DefaultRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              localizableTitle,
                                                                              s_localizableMessageDefault,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.IdeSuggestion,
+                                                                             DiagnosticCategory.Performance,
+                                                                             RuleLevel.BuildWarning,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);

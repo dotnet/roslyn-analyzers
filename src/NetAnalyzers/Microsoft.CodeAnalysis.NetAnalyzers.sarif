@@ -2255,6 +2255,25 @@
             ]
           }
         },
+        "CA1839": {
+          "id": "CA1839",
+          "shortDescription": "'AsParallel' at the end of a LINQ query does not have an effect",
+          "fullDescription": "'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1839",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DetectPLINQNopsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -3051,25 +3070,6 @@
             "category": "Usage",
             "isEnabledByDefault": true,
             "typeName": "PreferStringContainsOverIndexOfAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2250": {
-          "id": "CA2250",
-          "shortDescription": "'AsParallel' at the end of a LINQ query does not have an effect",
-          "fullDescription": "'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.",
-          "defaultLevel": "note",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2250",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "typeName": "DetectPLINQNopsAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsAnalyzer,
-    Microsoft.NetCore.CSharp.Analyzers.Usage.DetectPLINQNopsFixer>;
+    Microsoft.NetCore.Analyzers.Performance.DetectPLINQNopsAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Performance.DetectPLINQNopsFixer>;
 
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Usage.DetectPLINQNopsAnalyzer,
+    Microsoft.NetCore.Analyzers.Performance.DetectPLINQNopsAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
+namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public sealed class DetectPLINQNopsTest
     {

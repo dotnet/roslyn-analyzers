@@ -1308,6 +1308,18 @@ Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in
 |CodeFix|False|
 ---
 
+## [CA1839](https://docs.microsoft.com/visualstudio/code-quality/ca1839): 'AsParallel' at the end of a LINQ query does not have an effect
+
+'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [CA2000](https://docs.microsoft.com/visualstudio/code-quality/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1851,18 +1863,6 @@ TaskCompletionSource has constructors that take TaskCreationOptions that control
 ## [CA2249](https://docs.microsoft.com/visualstudio/code-quality/ca2249): Consider using 'string.Contains' instead of 'string.IndexOf'
 
 Calls to 'string.IndexOf' where the result is used to check for the presence/absence of a substring can be replaced by 'string.Contains'.
-
-|Item|Value|
-|-|-|
-|Category|Usage|
-|Enabled|True|
-|Severity|Info|
-|CodeFix|True|
----
-
-## [CA2250](https://docs.microsoft.com/visualstudio/code-quality/ca2250): 'AsParallel' at the end of a LINQ query does not have an effect
-
-'AsParallel' does not have an effect if it is the last expression in chain or if the only remaining expressions are 'ToList' or 'ToArray'.
 
 |Item|Value|
 |-|-|

@@ -9,4 +9,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.NetAnalyzers.UnitTests" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Microsoft.NetCore.Analyzers\Usage\" />
+  </ItemGroup>
 </Project>

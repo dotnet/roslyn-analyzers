@@ -23,7 +23,7 @@ jobs:
         _codeCoverage: False
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.VS2019.Open
+    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
   timeoutInMinutes: 40
 
   steps:
@@ -41,7 +41,7 @@ jobs:
       condition: always()
     - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
       displayName: Upload coverage to codecov.io
-      condition: and(succeeded(), eq(variables['_codeCoverage'], True))
+      condition: and(always(), eq(variables['_codeCoverage'], True)) # Upload coverage to codecov.io is flaky, so do not fail build on upload failure
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:

@@ -9,7 +9,7 @@ assignees: ''
 
 ### Analyzer
 
-**Diagnostic ID**: [CA2013](https://docs.microsoft.com/visualstudio/code-quality/ca2013): `Do not use ReferenceEquals with value types`
+**Diagnostic ID**: [CA2013](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2013): `Do not use ReferenceEquals with value types`
 
 ### Analyzer source
 

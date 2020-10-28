@@ -29,6 +29,11 @@ namespace Analyzer.Utilities
         public const string ExcludeAsyncVoidMethods = "exclude_async_void_methods";
 
         /// <summary>
+        /// Boolean option to enable platform compatibility analyzer for TFMs with lower version than net5.0 (https://docs.microsoft.com/visualstudio/code-quality/ca1416).
+        /// </summary>
+        public const string EnablePlatformAnalyzerOnPreNet5Target = "enable_platform_analyzer_on_pre_net5_target";
+
+        /// <summary>
         /// Option to configure analyzed output kinds, i.e. <see cref="Microsoft.CodeAnalysis.CompilationOptions.OutputKind"/> of the compilation.
         /// Allowed option values: One or more fields of <see cref="Microsoft.CodeAnalysis.CompilationOptions.OutputKind"/> as a comma separated list.
         /// </summary>
@@ -108,7 +113,7 @@ namespace Analyzer.Utilities
 
         /// <summary>
         /// Enumeration option to configure unsafe DllImportSearchPath bits when using DefaultDllImportSearchPaths attribute.
-        /// Do not use the OR operator to represent the bitwise combination of its member values, use the integeral value directly.
+        /// Do not use the OR operator to represent the bitwise combination of its member values, use the integral value directly.
         /// </summary>
         public const string UnsafeDllImportSearchPathBits = "unsafe_DllImportSearchPath_bits";
 
@@ -188,5 +193,16 @@ namespace Analyzer.Utilities
         /// Configurable rule: CA1711 (https://docs.microsoft.com/visualstudio/code-quality/ca1711).
         /// </summary>
         public const string AllowedSuffixes = "allowed_suffixes";
+
+        /// <summary>
+        /// Boolean option to configure whether to exclude structs when considering public fields.
+        /// </summary>
+        public const string ExcludeStructs = "exclude_structs";
+
+        /// <summary>
+        /// Boolean option to configure whether to exclude 'FirstOrDefault' and 'LastOrDefault' methods for
+        /// CA1826 (Do not use Enumerable methods on indexable collections. Instead use the collection directly).
+        /// </summary>
+        public const string ExcludeOrDefaultMethods = "exclude_ordefault_methods";
     }
 }

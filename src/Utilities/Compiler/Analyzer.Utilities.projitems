@@ -16,7 +16,7 @@
     <HasIOperation>true</HasIOperation>
     <!-- Explicitly enable nullable for all projects that link Analyzer.Utilities.
 	     This is needed as this project is linked into test projects which don't yet have nullable enabled,
-		 and building the test projects without the explict enable nullable below leads to following warnings:
+		 and building the test projects without the explicit enable nullable below leads to following warnings:
 			"warning CS8632: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context" -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -73,6 +73,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Options\SymbolNamesWithValueOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Options\SymbolModifiers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Options\Unit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\ValueUsageInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PooledObjects\PooledConcurrentSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PooledObjects\PooledConcurrentDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PooledObjects\PooledDictionary.cs" />

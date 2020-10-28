@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's message.</param>
         /// <param name="ruleLevel">Indicates the <see cref="RuleLevel"/> for this rule.</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's descrption.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's description.</param>
         /// <param name="isPortedFxCopRule">Flag indicating if this is a rule ported from legacy FxCop.</param>
         /// <param name="isDataflowRule">Flag indicating if this is a dataflow analysis based rule.</param>
         /// <returns>new DiagnosticDescriptor</returns>
@@ -35,6 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             RuleLevel ruleLevel,
             bool isPortedFxCopRule,
             bool isDataflowRule,
+            bool isReportedAtCompilationEnd,
             string? descriptionResourceStringName = null)
         {
             return CreateDiagnosticDescriptor(
@@ -45,6 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 ruleLevel,
                 isPortedFxCopRule,
                 isDataflowRule,
+                isReportedAtCompilationEnd,
                 descriptionResourceStringName);
         }
 
@@ -56,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's message.</param>
         /// <param name="ruleLevel">Indicates the <see cref="RuleLevel"/> for this rule.</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's descrption.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's description.</param>
         /// <param name="isPortedFxCopRule">Flag indicating if this is a rule ported from legacy FxCop.</param>
         /// <param name="isDataflowRule">Flag indicating if this is a dataflow analysis based rule.</param>
         /// <returns>new DiagnosticDescriptor</returns>
@@ -68,6 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             RuleLevel ruleLevel,
             bool isPortedFxCopRule,
             bool isDataflowRule,
+            bool isReportedAtCompilationEnd,
             string? descriptionResourceStringName = null)
         {
             return DiagnosticDescriptorHelper.Create(
@@ -79,7 +82,8 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 descriptionResourceStringName != null ? GetResourceString(resourceSource, descriptionResourceStringName) : null,
                 isPortedFxCopRule,
                 isDataflowRule,
-                isEnabledByDefaultInFxCopAnalyzers: ruleLevel != RuleLevel.Disabled);
+                isEnabledByDefaultInFxCopAnalyzers: ruleLevel != RuleLevel.Disabled,
+                isReportedAtCompilationEnd: isReportedAtCompilationEnd);
         }
 
         /// <summary>

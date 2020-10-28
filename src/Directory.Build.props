@@ -28,8 +28,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Language)' == 'VB'">
-    <!-- https://github.com/dotnet/roslyn-analyzers/issues/2095 tracks uncommenting the below -->
-    <!-- <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" /> -->
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
   </ItemGroup>
 
   <!-- Setup the correct code analysis rulesets -->

@@ -30,9 +30,9 @@
     <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" />
     <!-- Copy the shipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
     <!-- Include shipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
-    <None Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md">
+    <None Update="AnalyzerReleases.Shipped.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>$(OutputDirectory)\AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
+      <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
     </None>
   </ItemGroup>
   

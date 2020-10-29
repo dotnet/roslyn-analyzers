@@ -538,7 +538,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static void ReportDiagnostics(IOperation operation, SmallDictionary<string, PlatformAttributes> attributes,
             OperationBlockAnalysisContext context, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers)
         {
-            var symbol = operation is IObjectCreationOperation creation ? creation.Constructor.ContainingType : GetOperationSymbol(operation);
+            var symbol = GetOperationSymbol(operation);
 
             if (symbol == null)
             {
@@ -549,8 +549,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 symbol = GetAccessorMethod(platformSpecificMembers, symbol, GetPropertyAccessors(property, operation));
             }
-
-            if (symbol is IEventSymbol iEvent)
+            else if (symbol is IEventSymbol iEvent)
             {
                 var accessor = GetEventAccessor(iEvent, operation);
                 if (accessor != null)
@@ -558,6 +557,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     symbol = accessor;
                 }
             }
+            else if (symbol is IMethodSymbol method)
+            {
+                var typeArguments = method.TypeArguments;
+                if (!method.IsGenericMethod && method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
+                {
+                    typeArguments = namedType.TypeArguments;
+                }
+
+                foreach (var typeArgument in typeArguments)
+                {
+                    if (platformSpecificMembers.TryGetValue(typeArgument, out var foundAttributes) &&
+                        foundAttributes != null &&
+                        foundAttributes.Any())
+                    {
+                        symbol = typeArgument;
+                        break;
+                    }
+                }
+            }
+
+            if (operation is IObjectCreationOperation creation && symbol is not ITypeSymbol)
+            {
+                symbol = creation.Constructor.ContainingType;
+            }
+
             var operationName = symbol.ToDisplayString(GetLanguageSpecificFormat(operation));
 
             foreach (var platformName in attributes.Keys)
@@ -694,6 +718,23 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             else
             {
                 CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol);
+                if (symbol is IMethodSymbol method)
+                {
+                    if (method.IsGenericMethod)
+                    {
+                        foreach (var typeArgument in method.TypeArguments)
+                        {
+                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
+                        }
+                    }
+                    else if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
+                    {
+                        foreach (var typeArgument in namedType.TypeArguments)
+                        {
+                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
+                        }
+                    }
+                }
             }
 
             static void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<IOperation,

@@ -132,6 +132,54 @@ namespace CallerTargetsBelow5_0
         }
 
         [Fact]
+        public async Task MethodsWithOsDependentTypeParameterWarns()
+        {
+            var csSource = @"
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+public class Test
+{
+    void GenericMethod<T>() {}
+    void GenericMethod2<T1, T2>() {}
+    void M1()
+    {
+        [|GenericMethod<WindowsOnlyType>()|];
+        [|GenericMethod2<Test, WindowsOnlyType>()|];
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        [Fact]
+        public async Task ConstructorWithOsDependentTypeParameterWarns()
+        {
+            var csSource = @"
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+class GenericClass<T> {}
+
+public class Test
+{
+    void MethodWithGenericParameter(GenericClass<WindowsOnlyType> a) {}
+
+    void M1()
+    {
+        GenericClass<WindowsOnlyType> obj = [|new GenericClass<WindowsOnlyType>()|];
+        MethodWithGenericParameter([|new GenericClass<WindowsOnlyType>()|]);
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        [Fact]
         public async Task OsDependentMethodsCalledWarns()
         {
             var csSource = @"

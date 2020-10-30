@@ -57,7 +57,7 @@
       Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
 
-  <Target Name="OuterGenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
+  <Target Name="OuterGenerateCoverageResult" BeforeTargets="Test" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="InnerGenerateCoverageResult"
@@ -70,7 +70,7 @@
           Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 
   <Target Name="InnerGenerateCoverageResult"
-          AfterTargets="RunTests"
+          BeforeTargets="Test"
           DependsOnTargets="GenerateCoverageResult"
           Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 </Project>

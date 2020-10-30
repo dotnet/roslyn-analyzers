@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Humanizer",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -14,7 +14,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -1899,7 +1899,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -2067,7 +2067,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {

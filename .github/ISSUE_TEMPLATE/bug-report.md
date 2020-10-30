@@ -15,13 +15,13 @@ assignees: ''
 
 **SDK**: [Built-in CA analyzers in .NET 5 SDK or later](https://docs.microsoft.com/dotnet/fundamentals/productivity/code-analysis)
 
-**Version**: [SDK 5.0.100-preview.8](https://dotnet.microsoft.com/download/dotnet/5.0)
+**Version**: [SDK 5.0.100-rc.2](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 _OR_
 
 **NuGet Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-**Version**: v3.3.0 (Latest)
+**Version**: v3.3.1 (Latest)
 
 ### Describe the bug
 

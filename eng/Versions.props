@@ -18,8 +18,8 @@
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>16.5.2044</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
-    <CodecovVersion>1.10.0</CodecovVersion>
-    <CoverletVersion>2.8.1</CoverletVersion>
+    <CodecovVersion>1.12.3</CodecovVersion>
+    <CoverletVersion>2.9.0</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>

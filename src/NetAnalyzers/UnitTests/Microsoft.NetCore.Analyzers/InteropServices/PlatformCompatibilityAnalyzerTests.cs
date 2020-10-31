@@ -135,6 +135,7 @@ namespace CallerTargetsBelow5_0
         public async Task MethodsWithOsDependentTypeParameterWarns()
         {
             var csSource = @"
+using System;
 using System.Runtime.Versioning;
 
 [SupportedOSPlatform(""windows"")]
@@ -148,6 +149,7 @@ public class Test
     {
         [|GenericMethod<WindowsOnlyType>()|];
         [|GenericMethod2<Test, WindowsOnlyType>()|];
+        [|GenericMethod<Action<WindowsOnlyType>>()|];
     }
 }
 " + MockAttributesCsSource;
@@ -173,6 +175,35 @@ public class Test
     {
         GenericClass<WindowsOnlyType> obj = [|new GenericClass<WindowsOnlyType>()|];
         MethodWithGenericParameter([|new GenericClass<WindowsOnlyType>()|]);
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        [Fact]
+        public async Task ApiContainingTypeHasOsDependentTypeParameterWarns()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+class GenericClass<T>
+{
+    public static void M<V>() { }
+    public static void M2() {}
+}
+
+public class Test
+{
+    void M1()
+    {
+        [|GenericClass<WindowsOnlyType>.M<int>()|];
+        [|GenericClass<WindowsOnlyType>.M2()|];
+        [|GenericClass<Action<WindowsOnlyType>>.M2()|];
     }
 }
 " + MockAttributesCsSource;

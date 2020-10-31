@@ -556,21 +556,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else if (symbol is IMethodSymbol method)
             {
-                var typeArguments = method.TypeArguments;
-                if (!method.IsGenericMethod && method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
+                if (method.IsGenericMethod && TryGetSymbol(platformSpecificMembers, out var foundSymbol, method.TypeArguments))
                 {
-                    typeArguments = namedType.TypeArguments;
+                    symbol = foundSymbol;
                 }
-
-                foreach (var typeArgument in typeArguments)
+                else if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType &&
+                        TryGetSymbol(platformSpecificMembers, out var fSymbol, namedType.TypeArguments))
                 {
-                    if (platformSpecificMembers.TryGetValue(typeArgument, out var foundAttributes) &&
-                        foundAttributes != null &&
-                        foundAttributes.Any())
-                    {
-                        symbol = typeArgument;
-                        break;
-                    }
+                    symbol = fSymbol;
                 }
             }
 
@@ -602,6 +595,36 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     ReportUnsupportedDiagnostic(operation, context, operationName, platformName, VersionToString(attribute.UnsupportedSecond));
                 }
+            }
+
+            static bool TryGetSymbol(ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                [NotNullWhen(true)] out ISymbol? symbol, ImmutableArray<ITypeSymbol> typeArguments)
+            {
+                foreach (var typeArgument in typeArguments)
+                {
+                    if (platformSpecificMembers.TryGetValue(typeArgument, out var foundAttributes) &&
+                        foundAttributes != null &&
+                        foundAttributes.Any())
+                    {
+                        symbol = typeArgument;
+                        return true;
+                    }
+                    if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
+                    {
+                        foreach (var tArgument in nType.TypeArguments)
+                        {
+                            if (platformSpecificMembers.TryGetValue(tArgument, out var fAttributes) &&
+                                fAttributes != null &&
+                                fAttributes.Any())
+                            {
+                                symbol = tArgument;
+                                return true;
+                            }
+                        }
+                    }
+                }
+                symbol = null;
+                return false;
             }
 
             static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string name, string platformName, string? version = null) =>
@@ -684,7 +707,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             var symbol = GetOperationSymbol(operation);
 
-            if (symbol == null)
+            if (symbol == null || symbol is ITypeSymbol type && type.SpecialType != SpecialType.None)
             {
                 return;
             }
@@ -693,9 +716,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 foreach (var accessor in GetPropertyAccessors(property, operation))
                 {
-                    if (accessor != null)
+                    if (accessor != null && CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor))
                     {
-                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                        break;
                     }
                 }
             }
@@ -714,27 +737,50 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else
             {
-                CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol);
-                if (symbol is IMethodSymbol method)
+                if (!CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol) && symbol is IMethodSymbol method)
                 {
                     if (method.IsGenericMethod)
                     {
-                        foreach (var typeArgument in method.TypeArguments)
+                        if (CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms))
                         {
-                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
+                            return;
                         }
                     }
-                    else if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
+                    if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
                     {
-                        foreach (var typeArgument in namedType.TypeArguments)
-                        {
-                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
-                        }
+                        CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
                     }
                 }
             }
 
-            static void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<IOperation,
+            static bool CheckTypeArguments(ImmutableArray<ITypeSymbol> namedTypes, IOperation operation, OperationAnalysisContext context,
+                PooledConcurrentDictionary<IOperation, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
+                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
+            {
+                foreach (var typeArgument in namedTypes)
+                {
+                    if (typeArgument.SpecialType == SpecialType.None)
+                    {
+                        if (CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument))
+                        {
+                            return true;
+                        }
+                        else if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
+                        {
+                            foreach (var tArgument in nType.TypeArguments)
+                            {
+                                if (tArgument.SpecialType == SpecialType.None && CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            static bool CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<IOperation,
                 SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
                 ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
             {
@@ -745,6 +791,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
                         {
                             platformSpecificOperations.TryAdd(operation, notSuppressedAttributes);
+                            return true;
                         }
                     }
                     else
@@ -752,9 +799,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
                         {
                             platformSpecificOperations.TryAdd(operation, copiedAttributes);
+                            return true;
                         }
                     }
                 }
+                return false;
             }
         }
 

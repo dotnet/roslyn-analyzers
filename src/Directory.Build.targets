@@ -75,8 +75,7 @@
       <_CoreRuntimeConfigPath>$(TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
       <_CoreDepsPath>$(TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
 
-      <!-- TODO: xUnit doesn't support -html on CoreCLR currently (see https://github.com/xunit/xunit/issues/977) -->
-      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
+      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
       <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
     </PropertyGroup>
 

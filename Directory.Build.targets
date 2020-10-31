@@ -57,38 +57,20 @@
       Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
 
-  <Target Name="OuterGenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
+  <Target Name="OuterGenerateCoverageResult" BeforeTargets="Test" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' == ''">
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="InnerGenerateCoverageResult"
       Properties="TargetFramework=%(_TargetFramework.Identity)" />
   </Target>
 
-  <Target Name="InnerInstrumentModulesNoBuild" BeforeTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != ''">
-    <Coverlet.MSbuild.Tasks.InstrumentationTask
-      Condition="'$(CollectCoverage)' == 'true'"
-      Path="$(TargetPath)"
-      Include="$(Include)"
-      IncludeDirectory="$(IncludeDirectory)"
-      Exclude="$(Exclude)"
-      ExcludeByFile="$(ExcludeByFile)"
-      ExcludeByAttribute="$(ExcludeByAttribute)"
-      IncludeTestAssembly="$(IncludeTestAssembly)"
-      SingleHit="$(SingleHit)"
-      MergeWith="$(MergeWith)"
-      UseSourceLink="$(UseSourceLink)" >
-      <Output TaskParameter="InstrumenterState" PropertyName="InstrumenterState"/>
-    </Coverlet.MSbuild.Tasks.InstrumentationTask>
-  </Target>
+  <Target Name="InnerInstrumentModulesNoBuild"
+          BeforeTargets="RunTests"
+          DependsOnTargets="InstrumentModules"
+          Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 
-  <Target Name="InnerGenerateCoverageResult" AfterTargets="RunTests" Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != ''">
-    <Coverlet.MSbuild.Tasks.CoverageResultTask
-      Condition="'$(CollectCoverage)' == 'true'"
-      Output="$(CoverletOutput)"
-      OutputFormat="$(CoverletOutputFormat)"
-      Threshold="$(Threshold)"
-      ThresholdType="$(ThresholdType)"
-      ThresholdStat="$(ThresholdStat)"
-      InstrumenterState="$(InstrumenterState)"/>
-  </Target>
+  <Target Name="InnerGenerateCoverageResult"
+          BeforeTargets="Test"
+          DependsOnTargets="GenerateCoverageResult"
+          Condition="'$(IsUnitTestProject)' == 'true' AND '$(TargetFramework)' != '' AND '$(CollectCoverage)' == 'true'" />
 </Project>

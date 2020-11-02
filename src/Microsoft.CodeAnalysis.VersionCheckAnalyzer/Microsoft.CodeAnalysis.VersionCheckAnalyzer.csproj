@@ -20,10 +20,12 @@
   </Choose>
 
   <ItemGroup>
+    <Compile Include="..\Utilities\Compiler\Debug.cs" Link="Debug.cs" />
     <Compile Include="..\Utilities\Compiler\DiagnosticCategory.cs" Link="DiagnosticCategory.cs" />
     <Compile Include="..\Utilities\Compiler\DiagnosticHelpers.cs" Link="DiagnosticHelpers.cs" />
     <Compile Include="..\Utilities\Compiler\Extensions\DiagnosticExtensions.cs" Link="DiagnosticExtensions.cs" />
     <Compile Include="..\Utilities\Compiler\Extensions\ReportDiagnosticExtensions.cs" Link="ReportDiagnosticExtensions.cs" />
+    <Compile Include="..\Utilities\Compiler\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisVersion)" />

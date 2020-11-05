@@ -635,10 +635,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
-            {
-                CheckWithCallSiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, operationAttributes);
-            }
+            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, true);
 
             if (symbol is IPropertySymbol property)
             {
@@ -650,7 +647,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else if (symbol is IMethodSymbol method)
             {
-                AnalyzeTypeParameter(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, method);
+                AnalyzeTypeParameters(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, method);
             }
 
             static void CheckTypeArguments(ImmutableArray<ITypeSymbol> namedTypes, IOperation operation, OperationAnalysisContext context,
@@ -661,7 +658,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (typeArgument.SpecialType == SpecialType.None)
                     {
-                        CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
+                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, false);
 
                         if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                         {
@@ -669,21 +666,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 if (tArgument.SpecialType == SpecialType.None)
                                 {
-                                    CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument);
+                                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument, false);
                                 }
                             }
                         }
                     }
-                }
-            }
-
-            static void CheckImmediateAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
-                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-                ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
-            {
-                if (TryGetOrCreateImmediatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
-                {
-                    CheckWithCallSiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, operationAttributes);
                 }
             }
 
@@ -695,7 +682,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (accessor != null)
                     {
-                        CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
                     }
                 }
             }
@@ -708,11 +695,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (accessor != null)
                 {
-                    CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
                 }
             }
 
-            static void AnalyzeTypeParameter(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+            static void AnalyzeTypeParameters(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
                 SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
                 ImmutableArray<string> msBuildPlatforms, IMethodSymbol method)
             {
@@ -720,43 +707,34 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
                 }
+
                 if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
                 {
                     CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
                 }
             }
 
-            static void CheckWithCallSiteAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+            static void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
                 SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-                ImmutableArray<string> msBuildPlatforms, ISymbol symbol, SmallDictionary<string, PlatformAttributes> operationAttributes)
+                ImmutableArray<string> msBuildPlatforms, ISymbol symbol, bool checkParents)
             {
-                if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
+                if (TryGetOrCreatePlatformAttributes(symbol, checkParents, platformSpecificMembers, out var operationAttributes))
                 {
-                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                    if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, true, platformSpecificMembers, out var callSiteAttributes))
                     {
-                        platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), notSuppressedAttributes);
+                        if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                        {
+                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), notSuppressedAttributes);
+                        }
+                    }
+                    else
+                    {
+                        if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
+                        {
+                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), copiedAttributes);
+                        }
                     }
                 }
-                else
-                {
-                    if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
-                    {
-                        platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), copiedAttributes);
-                    }
-                }
-            }
-
-            static bool TryGetOrCreateImmediatePlatformAttributes(ISymbol symbol, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-                [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
-            {
-                if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
-                {
-                    MergePlatformAttributes(symbol.GetAttributes(), ref attributes);
-
-                    attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
-                }
-
-                return attributes != null;
             }
 
             static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
@@ -1002,110 +980,112 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             bo.OperatorKind == BinaryOperatorKind.LessThanOrEqual);
 
         private static bool TryGetOrCreatePlatformAttributes(
-            ISymbol symbol,
+            ISymbol symbol, bool checkParents,
             ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
             [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
         {
             if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
             {
-                var container = symbol.ContainingSymbol;
-
-                // Namespaces do not have attributes
-                while (container is INamespaceSymbol)
+                if (checkParents)
                 {
-                    container = container.ContainingSymbol;
-                }
+                    var container = symbol.ContainingSymbol;
 
-                if (container != null &&
-                    TryGetOrCreatePlatformAttributes(container, platformSpecificMembers, out var containerAttributes))
-                {
-                    attributes = CopyAttributes(containerAttributes);
+                    // Namespaces do not have attributes
+                    while (container is INamespaceSymbol)
+                    {
+                        container = container.ContainingSymbol;
+                    }
+
+                    if (container != null &&
+                        TryGetOrCreatePlatformAttributes(container, checkParents, platformSpecificMembers, out var containerAttributes))
+                    {
+                        attributes = CopyAttributes(containerAttributes);
+                    }
                 }
 
                 MergePlatformAttributes(symbol.GetAttributes(), ref attributes);
-
                 attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
             }
 
             return attributes != null;
-        }
 
-        private static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, ref SmallDictionary<string, PlatformAttributes>? parentAttributes)
-        {
-            SmallDictionary<string, PlatformAttributes>? childAttributes = null;
-            foreach (AttributeData attribute in immediateAttributes)
+            static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, ref SmallDictionary<string, PlatformAttributes>? parentAttributes)
             {
-                if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
+                SmallDictionary<string, PlatformAttributes>? childAttributes = null;
+                foreach (AttributeData attribute in immediateAttributes)
                 {
-                    TryAddValidAttribute(ref childAttributes, attribute);
-                }
-            }
-
-            if (childAttributes == null)
-            {
-                return;
-            }
-
-            if (parentAttributes != null && parentAttributes.Any())
-            {
-                foreach (var (platform, attributes) in parentAttributes)
-                {
-                    if (DenyList(attributes) &&
-                        !parentAttributes.Any(ca => AllowList(ca.Value)))
+                    if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
                     {
-                        // if all are deny list then we can add the child attributes
-                        foreach (var (name, childAttribute) in childAttributes)
+                        TryAddValidAttribute(ref childAttributes, attribute);
+                    }
+                }
+
+                if (childAttributes == null)
+                {
+                    return;
+                }
+
+                if (parentAttributes != null && parentAttributes.Any())
+                {
+                    foreach (var (platform, attributes) in parentAttributes)
+                    {
+                        if (DenyList(attributes) &&
+                            !parentAttributes.Any(ca => AllowList(ca.Value)))
                         {
-                            if (parentAttributes.TryGetValue(name, out var existing))
+                            // if all are deny list then we can add the child attributes
+                            foreach (var (name, childAttribute) in childAttributes)
                             {
-                                // but don't override existing unless narrowing the support
-                                if (childAttribute.UnsupportedFirst != null &&
-                                    childAttribute.UnsupportedFirst < attributes.UnsupportedFirst)
+                                if (parentAttributes.TryGetValue(name, out var existing))
                                 {
+                                    // but don't override existing unless narrowing the support
+                                    if (childAttribute.UnsupportedFirst != null &&
+                                        childAttribute.UnsupportedFirst < attributes.UnsupportedFirst)
+                                    {
+                                        attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
+                                    }
+                                }
+                                else
+                                {
+                                    parentAttributes[name] = childAttribute;
+                                }
+                            }
+                            // merged all attributes, no need to continue looping
+                            return;
+                        }
+                        else if (AllowList(attributes))
+                        {
+                            // only attributes with same platform matter, could narrow the list
+                            if (childAttributes.TryGetValue(platform, out var childAttribute))
+                            {
+                                // only later versions could narrow, other versions ignored 
+                                if (childAttribute.SupportedFirst > attributes.SupportedFirst)
+                                {
+                                    attributes.SupportedSecond = childAttribute.SupportedFirst;
+                                }
+
+                                if (childAttribute.UnsupportedFirst != null)
+                                {
+                                    if (childAttribute.UnsupportedFirst <= attributes.SupportedFirst)
+                                    {
+                                        attributes.SupportedFirst = null;
+                                        attributes.SupportedSecond = null;
+                                    }
+                                    else if (childAttribute.UnsupportedFirst <= attributes.SupportedSecond)
+                                    {
+                                        attributes.SupportedSecond = null;
+                                    }
+
                                     attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
                                 }
                             }
-                            else
-                            {
-                                parentAttributes[name] = childAttribute;
-                            }
+                            // other platform attributes are ignored as the list couldn't be extended
                         }
-                        // merged all attributes, no need to continue looping
-                        return;
-                    }
-                    else if (AllowList(attributes))
-                    {
-                        // only attributes with same platform matter, could narrow the list
-                        if (childAttributes.TryGetValue(platform, out var childAttribute))
-                        {
-                            // only later versions could narrow, other versions ignored 
-                            if (childAttribute.SupportedFirst > attributes.SupportedFirst)
-                            {
-                                attributes.SupportedSecond = childAttribute.SupportedFirst;
-                            }
-
-                            if (childAttribute.UnsupportedFirst != null)
-                            {
-                                if (childAttribute.UnsupportedFirst <= attributes.SupportedFirst)
-                                {
-                                    attributes.SupportedFirst = null;
-                                    attributes.SupportedSecond = null;
-                                }
-                                else if (childAttribute.UnsupportedFirst <= attributes.SupportedSecond)
-                                {
-                                    attributes.SupportedSecond = null;
-                                }
-
-                                attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
-                            }
-                        }
-                        // other platform attributes are ignored as the list couldn't be extended
                     }
                 }
-            }
-            else
-            {
-                parentAttributes = childAttributes;
+                else
+                {
+                    parentAttributes = childAttributes;
+                }
             }
         }
 

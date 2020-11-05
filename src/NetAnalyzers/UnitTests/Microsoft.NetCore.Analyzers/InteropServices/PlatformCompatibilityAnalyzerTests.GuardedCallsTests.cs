@@ -96,6 +96,43 @@ public class Test
         }
 
         [Fact]
+        public async Task PlatformDependentMethodsAndTypeParametersGuarded()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""browser"")]
+class BrowserOnlyType {}
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+public class Test
+{
+    [SupportedOSPlatform(""windows"")]
+    void WindowsOnlyMethod<T>() {}
+    void GenericMethod<T1, T2>() {}
+    void M1()
+    {
+        if (OperatingSystemHelper.IsWindows())
+        {
+            [|WindowsOnlyMethod<BrowserOnlyType>()|];  // should flag for BrowserOnlyType parameter
+            [|GenericMethod<WindowsOnlyType, BrowserOnlyType>()|]; // same
+        }
+        else
+        {
+            [|WindowsOnlyMethod<BrowserOnlyType>()|];  // should flag for WindowsOnlyMethod method and BrowserOnlyType parameter
+            [|GenericMethod<WindowsOnlyType, BrowserOnlyType>()|]; // should flag for WindowsOnlyType and BrowserOnlyType parameters
+        }
+    }
+}
+" + MockAttributesCsSource + MockOperatingSystemApiSource;
+            await VerifyAnalyzerAsyncCs(csSource, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(24, 13).WithArguments("Test.WindowsOnlyMethod<BrowserOnlyType>()", "windows"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(25, 13).WithArguments("WindowsOnlyType", "windows"));
+        }
+
+        [Fact]
         public async Task SupportedUnsupportedRange_GuardedWithOr()
         {
             var source = @"

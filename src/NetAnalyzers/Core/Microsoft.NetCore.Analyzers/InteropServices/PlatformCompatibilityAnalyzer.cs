@@ -661,7 +661,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (typeArgument.SpecialType == SpecialType.None)
                     {
-                        CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
+                        CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument);
 
                         if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                         {
@@ -669,7 +669,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 if (tArgument.SpecialType == SpecialType.None)
                                 {
-                                    CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument);
+                                    CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument);
                                 }
                             }
                         }
@@ -677,7 +677,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            static void CheckImmedaiteAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+            static void CheckImmediateAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
                 SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
                 ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
             {
@@ -695,7 +695,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (accessor != null)
                     {
-                        CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                        CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
                     }
                 }
             }
@@ -708,7 +708,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (accessor != null)
                 {
-                    CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                    CheckImmediateAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
                 }
             }
 

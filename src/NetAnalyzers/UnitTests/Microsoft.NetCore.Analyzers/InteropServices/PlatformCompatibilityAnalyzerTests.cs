@@ -721,7 +721,7 @@ public class Test
     public void M1()
     {
         C instance = [|new C()|];
-        //instance.M2();
+        instance.M2();
     }
 }
 

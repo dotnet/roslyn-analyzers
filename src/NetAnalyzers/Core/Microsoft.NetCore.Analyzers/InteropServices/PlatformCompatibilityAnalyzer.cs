@@ -635,37 +635,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol);
+            if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
+            {
+                CheckWithCallSiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, operationAttributes);
+            }
 
             if (symbol is IPropertySymbol property)
             {
-                foreach (var accessor in GetPropertyAccessors(property, operation))
-                {
-                    if (accessor != null)
-                    {
-                        CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
-                    }
-                }
+                AnalyzePropertyAccessors(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, property);
             }
             else if (symbol is IEventSymbol iEvent)
             {
-                var accessor = GetEventAccessor(iEvent, operation);
-
-                if (accessor != null)
-                {
-                    CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
-                }
+                AnalyzeEventAccessor(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, iEvent);
             }
             else if (symbol is IMethodSymbol method)
             {
-                if (method.IsGenericMethod)
-                {
-                    CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
-                }
-                if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
-                {
-                    CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
-                }
+                AnalyzeTypeParameter(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, method);
             }
 
             static void CheckTypeArguments(ImmutableArray<ITypeSymbol> namedTypes, IOperation operation, OperationAnalysisContext context,
@@ -692,79 +677,102 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            static void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
-                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
-            {
-                if (TryGetOrCreatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
-                {
-                    if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
-                    {
-                        if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
-                        {
-                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), notSuppressedAttributes);
-                        }
-                    }
-                    else
-                    {
-                        if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
-                        {
-                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), copiedAttributes);
-                        }
-                    }
-                }
-            }
-
-            static void CheckImmedaiteAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
+            static void CheckImmedaiteAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                ImmutableArray<string> msBuildPlatforms, ISymbol symbol)
             {
                 if (TryGetOrCreateImmediatePlatformAttributes(symbol, platformSpecificMembers, out var operationAttributes))
                 {
-                    if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
-                    {
-                        if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
-                        {
-                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), notSuppressedAttributes);
-                        }
-                    }
-                    else
-                    {
-                        if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
-                        {
-                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), copiedAttributes);
-                        }
-                    }
+                    CheckWithCallSiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, operationAttributes);
                 }
             }
-        }
 
-        private static bool TryGetOrCreateImmediatePlatformAttributes(ISymbol symbol,
-            ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-            [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
-        {
-            if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
+            static void AnalyzePropertyAccessors(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                ImmutableArray<string> msBuildPlatforms, IPropertySymbol property)
             {
-                MergePlatformAttributes(symbol.GetAttributes(), ref attributes);
-
-                attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
-            }
-
-            return attributes != null;
-        }
-
-        private static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
-            ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
-        {
-            copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
-            foreach (var (platformName, attributes) in operationAttributes)
-            {
-                if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
+                foreach (var accessor in GetPropertyAccessors(property, operation))
                 {
-                    copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
+                    if (accessor != null)
+                    {
+                        CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                    }
                 }
             }
 
-            return copiedAttributes.Any();
+            static void AnalyzeEventAccessor(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                ImmutableArray<string> msBuildPlatforms, IEventSymbol iEvent)
+            {
+                var accessor = GetEventAccessor(iEvent, operation);
+
+                if (accessor != null)
+                {
+                    CheckImmedaiteAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor);
+                }
+            }
+
+            static void AnalyzeTypeParameter(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                ImmutableArray<string> msBuildPlatforms, IMethodSymbol method)
+            {
+                if (method.IsGenericMethod)
+                {
+                    CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                }
+                if (method.ReceiverType is INamedTypeSymbol namedType && namedType.IsGenericType)
+                {
+                    CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                }
+            }
+
+            static void CheckWithCallSiteAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                ImmutableArray<string> msBuildPlatforms, ISymbol symbol, SmallDictionary<string, PlatformAttributes> operationAttributes)
+            {
+                if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, platformSpecificMembers, out var callSiteAttributes))
+                {
+                    if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                    {
+                        platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), notSuppressedAttributes);
+                    }
+                }
+                else
+                {
+                    if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
+                    {
+                        platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), copiedAttributes);
+                    }
+                }
+            }
+
+            static bool TryGetOrCreateImmediatePlatformAttributes(ISymbol symbol, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
+                [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
+            {
+                if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
+                {
+                    MergePlatformAttributes(symbol.GetAttributes(), ref attributes);
+
+                    attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
+                }
+
+                return attributes != null;
+            }
+
+            static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
+                ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
+            {
+                copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
+                foreach (var (platformName, attributes) in operationAttributes)
+                {
+                    if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
+                    {
+                        copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
+                    }
+                }
+
+                return copiedAttributes.Any();
+            }
         }
 
         private static SmallDictionary<string, PlatformAttributes> CopyAttributes(SmallDictionary<string, PlatformAttributes> copyAttributes)

@@ -639,11 +639,22 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             if (symbol is IPropertySymbol property)
             {
-                AnalyzePropertyAccessors(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, property);
+                foreach (var accessor in GetPropertyAccessors(property, operation))
+                {
+                    if (accessor != null)
+                    {
+                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
+                    }
+                }
             }
             else if (symbol is IEventSymbol iEvent)
             {
-                AnalyzeEventAccessor(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, iEvent);
+                var accessor = GetEventAccessor(iEvent, operation);
+
+                if (accessor != null)
+                {
+                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
+                }
             }
             else if (symbol is IMethodSymbol method)
             {
@@ -671,31 +682,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
                     }
-                }
-            }
-
-            static void AnalyzePropertyAccessors(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
-                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-                ImmutableArray<string> msBuildPlatforms, IPropertySymbol property)
-            {
-                foreach (var accessor in GetPropertyAccessors(property, operation))
-                {
-                    if (accessor != null)
-                    {
-                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
-                    }
-                }
-            }
-
-            static void AnalyzeEventAccessor(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
-                SmallDictionary<string, PlatformAttributes>> platformSpecificOperations, ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-                ImmutableArray<string> msBuildPlatforms, IEventSymbol iEvent)
-            {
-                var accessor = GetEventAccessor(iEvent, operation);
-
-                if (accessor != null)
-                {
-                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, false);
                 }
             }
 
@@ -736,21 +722,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
             }
+        }
 
-            static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
-                ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
+        private static bool TryCopyAttributesNotSuppressedByMsBuild(SmallDictionary<string, PlatformAttributes> operationAttributes,
+            ImmutableArray<string> msBuildPlatforms, out SmallDictionary<string, PlatformAttributes> copiedAttributes)
+        {
+            copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (platformName, attributes) in operationAttributes)
             {
-                copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
-                foreach (var (platformName, attributes) in operationAttributes)
+                if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
                 {
-                    if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
-                    {
-                        copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
-                    }
+                    copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
                 }
-
-                return copiedAttributes.Any();
             }
+
+            return copiedAttributes.Any();
         }
 
         private static SmallDictionary<string, PlatformAttributes> CopyAttributes(SmallDictionary<string, PlatformAttributes> copyAttributes)

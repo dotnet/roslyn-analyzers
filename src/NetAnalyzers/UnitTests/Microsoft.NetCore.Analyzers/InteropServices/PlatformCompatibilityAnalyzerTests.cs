@@ -223,6 +223,66 @@ public class Test
         }
 
         [Fact]
+        public async Task AssemblyLevelAttribteWithPropertyEventNotWarn()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[assembly: SupportedOSPlatform(""windows"")]
+namespace WindowsOnlyAssembly
+{
+    public class Test
+    {
+        private bool _enabled;
+        private int _field = 9;
+        public int Property
+        {
+            get => _field;
+            set
+            {
+                _field = value;
+            }
+        }
+        public void WindowsEventHandler(object sender, EventArgs e) { }
+        public event EventHandler SampleEvent
+        {
+            add { }
+            remove { }
+        }
+
+        public int TestProperty
+        {
+            get
+            {
+                Property = _field;
+                return Property;
+            }
+            set
+            {
+                SampleEvent += WindowsEventHandler;
+                _field = value;
+            }
+        }
+
+        public bool Enabled
+        {
+            get
+            {
+                return _enabled;
+            }
+            set
+            {
+                _enabled = value;
+            }
+        }
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        [Fact]
         public async Task OsDependentMethodsCalledWarns()
         {
             var csSource = @"

@@ -674,7 +674,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (typeArgument.SpecialType == SpecialType.None)
                     {
-                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: false);
+                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: true);
 
                         if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                         {
@@ -682,7 +682,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 if (tArgument.SpecialType == SpecialType.None)
                                 {
-                                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument, checkParents: false);
+                                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument, checkParents: true);
                                 }
                             }
                         }
@@ -696,7 +696,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 if (TryGetOrCreatePlatformAttributes(symbol, checkParents, platformSpecificMembers, out var operationAttributes))
                 {
-                    if (TryGetOrCreatePlatformAttributes(context.ContainingSymbol, true, platformSpecificMembers, out var callSiteAttributes))
+                    var containingSymbol = context.ContainingSymbol;
+                    if (containingSymbol is IMethodSymbol method && method.IsAccessorMethod())
+                    {
+                        containingSymbol = method.AssociatedSymbol;
+                    }
+
+                    if (TryGetOrCreatePlatformAttributes(containingSymbol, true, platformSpecificMembers, out var callSiteAttributes))
                     {
                         if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
                         {

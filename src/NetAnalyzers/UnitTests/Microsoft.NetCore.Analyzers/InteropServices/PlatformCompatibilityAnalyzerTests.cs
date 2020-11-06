@@ -195,15 +195,27 @@ class GenericClass<T>
 {
     public static void M<V>() { }
     public static void M2() {}
+    public static int Field;
+    public static int Property {get;}
+    public static event EventHandler SampleEvent
+    {
+        add { }
+        remove { }
+    }
 }
 
 public class Test
 {
+    public static void WindowsEventHandler(object sender, EventArgs e) { }
+
     void M1()
     {
         [|GenericClass<WindowsOnlyType>.M<int>()|];
         [|GenericClass<WindowsOnlyType>.M2()|];
         [|GenericClass<Action<WindowsOnlyType>>.M2()|];
+        [|GenericClass<WindowsOnlyType>.Field|] = 1;
+        var val = [|GenericClass<WindowsOnlyType>.Property|];
+        [|GenericClass<WindowsOnlyType>.SampleEvent|] += WindowsEventHandler;
     }
 }
 " + MockAttributesCsSource;

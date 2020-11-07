@@ -658,31 +658,38 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else if (symbol is IMethodSymbol method && method.IsGenericMethod)
             {
-                CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, PooledHashSet<ITypeSymbol>.GetInstance());
+                CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
             }
 
             if (symbol.ContainingSymbol is INamedTypeSymbol namedType && namedType.IsGenericType)
             {
-                CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, PooledHashSet<ITypeSymbol>.GetInstance());
+                CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
             }
 
             static void CheckTypeArguments(ImmutableArray<ITypeSymbol> typeArguments, IOperation operation, OperationAnalysisContext context,
                 PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms,
-                PooledHashSet<ITypeSymbol> visitedTypes)
+                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
+            {
+                using var workingSet = PooledHashSet<ITypeSymbol>.GetInstance();
+                CheckTypeArgumentsCore(typeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, workingSet);
+            }
+
+            static void CheckTypeArgumentsCore(ImmutableArray<ITypeSymbol> typeArguments, IOperation operation, OperationAnalysisContext context,
+                PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
+                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, PooledHashSet<ITypeSymbol> workingSet)
             {
                 foreach (var typeArgument in typeArguments)
                 {
-                    if (!visitedTypes.Contains(typeArgument))
+                    if (!workingSet.Contains(typeArgument))
                     {
-                        visitedTypes.Add(typeArgument);
+                        workingSet.Add(typeArgument);
                         if (typeArgument.SpecialType == SpecialType.None)
                         {
                             CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: true);
 
                             if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                             {
-                                CheckTypeArguments(nType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, visitedTypes);
+                                CheckTypeArgumentsCore(nType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, workingSet);
                             }
                         }
                     }

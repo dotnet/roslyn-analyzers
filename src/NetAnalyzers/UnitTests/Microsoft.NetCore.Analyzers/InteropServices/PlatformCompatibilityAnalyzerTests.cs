@@ -283,6 +283,42 @@ namespace WindowsOnlyAssembly
         }
 
         [Fact]
+        public async Task ApiContainingMultipleNestedTypeParameter()
+        {
+            var csSource = @"
+using System;
+using System.Runtime.Versioning;
+
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType {}
+
+class GenericClass<T>
+{
+    public static void M<V>() { }
+    public static void M2() {}
+}
+
+class GenericType<T> { }
+class AnotherType<T> { }
+
+public class Test
+{
+    public static void WindowsEventHandler(object sender, EventArgs e) { }
+
+    void M1()
+    {
+        [|GenericClass<GenericType<AnotherType<WindowsOnlyType>>>.M<int>()|];
+        [|GenericClass<GenericType<AnotherType<int>>>.M<GenericClass<GenericType<AnotherType<WindowsOnlyType>>>>()|];
+        [|GenericClass<GenericType<AnotherType<Action<WindowsOnlyType>>>>.M2()|];
+        [|GenericClass<GenericType<Action<GenericClass<GenericClass<GenericType<Action<GenericClass<WindowsOnlyType>>>>>>>>.M2()|];
+        GenericClass<GenericType<Action<GenericClass<GenericClass<GenericType<Action<GenericClass<int>>>>>>>>.M2();
+    }
+}
+" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(csSource);
+        }
+
+        [Fact]
         public async Task OsDependentMethodsCalledWarns()
         {
             var csSource = @"

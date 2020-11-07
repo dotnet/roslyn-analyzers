@@ -658,32 +658,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
             else if (symbol is IMethodSymbol method && method.IsGenericMethod)
             {
-                CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, PooledHashSet<ITypeSymbol>.GetInstance());
             }
 
             if (symbol.ContainingSymbol is INamedTypeSymbol namedType && namedType.IsGenericType)
             {
-                CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, PooledHashSet<ITypeSymbol>.GetInstance());
             }
 
             static void CheckTypeArguments(ImmutableArray<ITypeSymbol> typeArguments, IOperation operation, OperationAnalysisContext context,
                 PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, SmallDictionary<string, PlatformAttributes>> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
+                ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms,
+                PooledHashSet<ITypeSymbol> visitedTypes)
             {
                 foreach (var typeArgument in typeArguments)
                 {
-                    if (typeArgument.SpecialType == SpecialType.None)
+                    if (!visitedTypes.Contains(typeArgument))
                     {
-                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: true);
-
-                        if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
+                        visitedTypes.Add(typeArgument);
+                        if (typeArgument.SpecialType == SpecialType.None)
                         {
-                            foreach (var tArgument in nType.TypeArguments)
+                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: true);
+
+                            if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                             {
-                                if (tArgument.SpecialType == SpecialType.None)
-                                {
-                                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, tArgument, checkParents: true);
-                                }
+                                CheckTypeArguments(nType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, visitedTypes);
                             }
                         }
                     }

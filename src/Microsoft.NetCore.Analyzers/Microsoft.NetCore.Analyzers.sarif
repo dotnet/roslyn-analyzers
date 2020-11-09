@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -1094,7 +1094,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1115,7 +1116,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1176,7 +1178,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1197,7 +1200,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1238,7 +1242,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1259,7 +1264,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1300,7 +1306,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1321,7 +1328,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1342,7 +1350,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1363,7 +1372,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1915,7 +1925,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1956,7 +1967,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2056,7 +2068,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2320,7 +2333,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2341,7 +2355,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2362,7 +2377,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2383,7 +2399,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2464,7 +2481,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2485,7 +2503,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2547,7 +2566,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2627,7 +2647,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2648,7 +2669,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2709,7 +2731,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2730,7 +2753,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2751,7 +2775,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2772,7 +2797,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2842,7 +2868,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -2882,7 +2908,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -2929,7 +2956,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "3.3.1",
+        "version": "3.3.2",
         "language": "en-US"
       },
       "rules": {
@@ -2969,7 +2996,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },

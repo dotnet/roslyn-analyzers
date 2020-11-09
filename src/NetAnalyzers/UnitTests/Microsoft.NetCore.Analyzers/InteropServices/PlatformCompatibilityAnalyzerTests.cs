@@ -2326,7 +2326,7 @@ namespace PlatformCompatDemo.SupportedUnupported
             var test = new VerifyCS.Test
             {
                 TestCode = sourceCode,
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 TestState = { }
             };
@@ -2366,7 +2366,7 @@ namespace PlatformCompatDemo.SupportedUnupported
             var test = new VerifyVB.Test
             {
                 TestCode = sourceCode,
-                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 TestState = { },
             };

@@ -14,6 +14,14 @@ Current version of all analyzer packages that are built out of this repo are tra
 
 Released versions of analyzer packages, with the last GitHub Commit Tag and SHA are below:
 
+### Microsoft.CodeAnalysis.NetAnalyzers
+
+Sr. No. | Release         |
+--------|-----------------|
+1       | [5.0.0](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.0)           |
+
+### Other analyzers
+
 Sr. No. |  Release Version | Commit Tag       | Commit SHA                                                                                            | Released Packages                                                                                               |
 --------|------------------|------------------|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 1       |  1.1.0           | v1.1.0    | [d96fbd4](https://github.com/dotnet/roslyn-analyzers/commit/d96fbd4e4b6c1fc5b01e3dc5af80d2b15034cc8c)   | MicrosoftCodeAnalysisAnalyzers, FxCopAnalyzers, DesktopAnalyzers, SystemRuntimeAnalyzers, SystemRuntimeInteropServicesAnalyzers, SystemSecurityCryptographyHashingAlgorithmsAnalyzers, AnalyzerPowerPack

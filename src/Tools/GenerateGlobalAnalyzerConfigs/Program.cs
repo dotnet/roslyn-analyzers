@@ -189,7 +189,7 @@ namespace GenerateGlobalAnalyzerConfigs
             }
 
             static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
-                => throw e.Exception;
+                => throw e.Exception ?? new InvalidOperationException(e.Message);
 
             string GetAssemblyPath(string assembly)
             {

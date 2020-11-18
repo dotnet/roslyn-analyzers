@@ -18,7 +18,7 @@
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.CSharp.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.VisualBasic.Analyzers.dll" />
-    <AnalyzerNupkgAssembly Include="$(NuGetPackageRoot)Humanizer.Core\$(HumanizerVersion)\lib\netstandard1.0\Humanizer.dll" />
+    <AnalyzerNupkgAssembly Include="$(NuGetPackageRoot)humanizer.core\$(HumanizerVersion)\lib\netstandard1.0\Humanizer.dll" />
 	</ItemGroup>
   
   <ItemGroup>

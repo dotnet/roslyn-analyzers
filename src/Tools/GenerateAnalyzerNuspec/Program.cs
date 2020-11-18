@@ -1,5 +1,17 @@
-using System.Diagnostics;
+#pragma warning disable CA1820, CS8600, IDE0055, IDE0057, IDE0062, IDE0078, IDE0073
+
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace GenerateAnalyzerNuspec
+{
+    public static class Program
+    {
+        public static void Main(string[] Args)
+        {
 
 string nuspecFile = Args[0];
 string assetsDir = Args[1];
@@ -281,3 +293,6 @@ result.AppendLine(@"  </files>");
 result.AppendLine(@"</package>");
 
 File.WriteAllText(nuspecFile, result.ToString());
+        }
+    }
+}

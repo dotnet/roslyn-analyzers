@@ -146,7 +146,7 @@ The .NET Framework class library provides methods for retrieving custom attribut
 
 ## [CA1816](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1816): Dispose methods should call SuppressFinalize
 
-A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).
+A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual Basic).
 
 |Item|Value|
 |-|-|

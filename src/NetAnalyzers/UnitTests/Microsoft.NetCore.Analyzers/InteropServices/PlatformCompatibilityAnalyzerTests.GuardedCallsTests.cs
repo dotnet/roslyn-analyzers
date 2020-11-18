@@ -76,7 +76,7 @@ class Test
             Api();
         }
 
-        [|Api()|]; // Two diagnostics expected
+        [|Api()|]; // 'Test.Api()' is supported on: 'windows' 10.0.19041 and later. This call site is reachable on all platforms.
     }
 
     [UnsupportedOSPlatform(""windows"")]
@@ -86,8 +86,7 @@ class Test
     }
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule)
-                .WithLocation(15, 9).WithArguments("Test.Api()", "windows"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -105,8 +104,10 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
         {
             if (OperatingSystemHelper.IsWindows() || OperatingSystemHelper.IsBrowser())
             {
-                [|Target.SupportedOnWindows()|];
+                [|Target.SupportedOnWindows()|]; // 'Target.SupportedOnWindows()' is only supported on: 'windows'. This call site is reachable on all platforms.
                 [|Target.SupportedOnWindows10()|];
+                Target.SupportedOnWindowsAndBrowser();
+                [|Target.SupportedOnWindows10AndBrowser()|]; // 'Target.SupportedOnWindows10AndBrowser()' is only supported on: 'windows' 10.0 and later, 'browser'. This call site is reachable on all platforms.
             }
         }
     }
@@ -145,18 +146,18 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
         {
             if (!OperatingSystemHelper.IsWindows())
             {
-                [|Target.SupportedOnWindows()|];
+                [|Target.SupportedOnWindows()|]; // 'Target.SupportedOnWindows()' is only supported on: 'windows'. This call site is reachable on all platforms.
                 [|Target.SupportedOnWindows10()|];
-                [|Target.SupportedOnWindowsAndBrowser()|];   // expected two diagnostics - supported on windows and browser
+                [|Target.SupportedOnWindowsAndBrowser()|];   // Target.SupportedOnWindowsAndBrowser()' is only supported on: 'windows', 'browser'. This call site is reachable on all platforms.
                 [|Target.SupportedOnWindows10AndBrowser()|]; // expected two diagnostics - supported on windows 10 and browser
             }
 
             if (OperatingSystemHelper.IsWindows())
             {
                 Target.SupportedOnWindows();
-                [|Target.SupportedOnWindows10()|];
+                [|Target.SupportedOnWindows10()|]; // 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later. This call site is reachable on: 'Windows'
                 Target.SupportedOnWindowsAndBrowser();       // no diagnostic expected - the API is supported on windows, no need to warn for other platforms support
-                [|Target.SupportedOnWindows10AndBrowser()|]; // expected two diagnostics - supported on windows 10 and browser
+                [|Target.SupportedOnWindows10AndBrowser()|]; // 'Target.SupportedOnWindows10AndBrowser()' is only supported on: 'windows' 10.0 and later, 'browser'. This call site is reachable on: 'Windows'.
             }
 
             if (OperatingSystemHelper.IsWindowsVersionAtLeast(10))
@@ -169,7 +170,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
 
             if (OperatingSystemHelper.IsBrowser())
             {
-                [|Target.SupportedOnWindows()|];
+                [|Target.SupportedOnWindows()|]; // 'Target.SupportedOnWindows()' is only supported on: 'windows'. This call site is reachable on: 'Browser'
                 [|Target.SupportedOnWindows10()|];
                 Target.SupportedOnWindowsAndBrowser();   // No diagnostic expected - the API is supported on browser, no need to warn for other platforms support
                 Target.SupportedOnWindows10AndBrowser(); // The same, no diagnostic expected
@@ -177,16 +178,16 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
 
             if (OperatingSystemHelper.IsWindows() || OperatingSystemHelper.IsBrowser())
             {
-                [|Target.SupportedOnWindows()|]; // No diagnostic expected because of it was windows
-                [|Target.SupportedOnWindows10()|];
+                [|Target.SupportedOnWindows()|]; // 'Target.SupportedOnWindows()' is only supported on: 'windows'. This call site is reachable on: 'Windows', 'Browser'.
+                [|Target.SupportedOnWindows10()|]; // 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later. This call site is reachable on: 'Browser'.
                 Target.SupportedOnWindowsAndBrowser();
-                [|Target.SupportedOnWindows10AndBrowser()|]; // two diagnostic expected windows 10 and browser
+                [|Target.SupportedOnWindows10AndBrowser()|]; //'Target.SupportedOnWindows10AndBrowser()' is only supported on: 'windows' 10.0 and later, 'browser'. This call site is reachable on: 'Browser', 'Windows'.
             }
 
            if (OperatingSystemHelper.IsWindowsVersionAtLeast(10) || OperatingSystemHelper.IsBrowser())
             {
-                [|Target.SupportedOnWindows()|];
-                [|Target.SupportedOnWindows10()|]; 
+                [|Target.SupportedOnWindows()|]; //  'Target.SupportedOnWindows()' is only supported on: 'windows'. This call site is reachable on: 'Windows' 10.0 and later, 'Browser'.
+                [|Target.SupportedOnWindows10()|]; // 'Target.SupportedOnWindows10()' is only supported on: 'windows' 10.0 and later. This call site is reachable on: 'Windows' 10.0 and later, 'Browser'. 
                 Target.SupportedOnWindowsAndBrowser();
                 Target.SupportedOnWindows10AndBrowser();
             }
@@ -209,11 +210,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
     }
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(15, 17).WithArguments("Target.SupportedOnWindowsAndBrowser()", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(16, 17).WithArguments("Target.SupportedOnWindows10AndBrowser()", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(24, 17).WithArguments("Target.SupportedOnWindows10AndBrowser()", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(48, 17).WithArguments("Target.SupportedOnWindows10AndBrowser()", "browser"));
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -232,55 +229,49 @@ namespace PlatformCompatDemo.SupportedUnupported
             if (OperatingSystemHelper.IsBrowser())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
 
                 var unsupportedOnWindows = new TypeUnsupportedOnWindows();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
+                unsupportedOnWindows.FunctionSupportedOnWindows11();
+                unsupportedOnWindows.FunctionSupportedOnWindows11UnsupportedOnWindows12();
+                unsupportedOnWindows.FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
 
-                var unsupportedOnBrowser = [|new TypeUnsupportedOnBrowser()|];
-                [|unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionSupportedOnBrowser()|]; // warn for unsupported browser type
+                var unsupportedOnBrowser = [|new TypeUnsupportedOnBrowser()|]; // 'TypeUnsupportedOnBrowser' is unsupported on: 'browser'. This call site is reachable on: 'Browser'.
+                [|unsupportedOnBrowser.FunctionSupportedOnBrowser()|]; // warn for unsupported browser type
 
                 var unsupportedOnWindowsSupportedOnWindows11 = new TypeUnsupportedOnWindowsSupportedOnWindows11(); 
-                unsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12();
-                unsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12SupportedOnWindows13();
+                unsupportedOnWindowsSupportedOnWindows11.FunctionUnsupportedOnWindows12();
+                unsupportedOnWindowsSupportedOnWindows11.FunctionUnsupportedOnWindows12SupportedOnWindows13();
 
                 var unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12 = new TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
-                unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12.TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12_FunctionSupportedOnWindows13();
+                unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12.FunctionSupportedOnWindows13();
             }
 
             if (OperatingSystemHelper.IsWindows())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
-                [|withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11()|];
-                [|withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()|];
-                [|withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13()|];
+                [|withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11()' is supported on: 'windows' 11.0 and later. This call site is reachable on: 'Windows'.
+                [|withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()' is supported on: 'windows' from version 11.0 to 12.0. This call site is reachable on: 'Windows'.
+                [|withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13()' is supported on: 'windows' from version 11.0 to 12.0. This call site is reachable on: 'Windows'.
 
-                var unsupportedOnWindows = [|new TypeUnsupportedOnWindows()|];
-                [|unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11()|];  // should only warn for unsupported type, function attribute ignored
+                var unsupportedOnWindows = [|new TypeUnsupportedOnWindows()|]; // 'TypeUnsupportedOnWindows' is unsupported on: 'windows'. This call site is reachable on: 'Windows'.
+                [|unsupportedOnWindows.FunctionSupportedOnWindows11()|];  // should only warn for unsupported type, function attribute ignored
 
                 var unsupportedOnBrowser = new TypeUnsupportedOnBrowser();
-                unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionSupportedOnBrowser();
+                unsupportedOnBrowser.FunctionSupportedOnBrowser();
 
-                var unsupportedOnWindowsSupportedOnWindows11 = [|new TypeUnsupportedOnWindowsSupportedOnWindows11()|];
-                [|unsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12SupportedOnWindows13()|];
+                var unsupportedOnWindowsSupportedOnWindows11 = [|new TypeUnsupportedOnWindowsSupportedOnWindows11()|]; // 'TypeUnsupportedOnWindowsSupportedOnWindows11' is supported on: 'windows' 11.0 and later. This call site is reachable on: 'Windows'.
+                [|unsupportedOnWindowsSupportedOnWindows11.FunctionUnsupportedOnWindows12SupportedOnWindows13()|];
 
-                var unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12 = [|new TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()|];
+                var unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12 = [|new TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()|]; // 'TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12' is supported on: 'windows' from version 11.0 to 12.0. This call site is reachable on: 'Windows'.
             }
         }
     }
 }" + TargetTypesForTest + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(37, 17).WithArguments("TypeWithoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11()", "windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(38, 17).WithArguments("TypeWithoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12()", "windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(39, 17).WithArguments("TypeWithoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13()", "windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(47, 64).WithArguments("TypeUnsupportedOnWindowsSupportedOnWindows11", "windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(48, 17).WithArguments("TypeUnsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12SupportedOnWindows13()", "windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(50, 86).WithArguments("TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12", "windows"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -299,29 +290,29 @@ namespace PlatformCompatDemo.SupportedUnupported
             if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10))
             {
                 var unsupported = new TypeWithoutAttributes();
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows()|];
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnBrowser()|];
-                unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows10();
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindowsAndBrowser()|];
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows10AndBrowser()|];
+                [|unsupported.FunctionUnsupportedOnWindows()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindows()' is unsupported on: 'windows'. This call site is reachable on all platforms.
+                [|unsupported.FunctionUnsupportedOnBrowser()|];
+                unsupported.FunctionUnsupportedOnWindows10();
+                [|unsupported.FunctionUnsupportedOnWindowsAndBrowser()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindowsAndBrowser()' is unsupported on: 'windows', 'browser'. This call site is reachable on all platforms.
+                [|unsupported.FunctionUnsupportedOnWindows10AndBrowser()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindows10AndBrowser()' is unsupported on: 'browser'. This call site is reachable on all platforms.
 
                 var unsupportedOnWindows = [|new TypeUnsupportedOnWindows()|];
-                [|unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionUnsupportedOnWindows11()|];
+                [|unsupportedOnWindows.FunctionUnsupportedOnWindows11()|];
 
                 var unsupportedOnBrowser = [|new TypeUnsupportedOnBrowser()|];
-                [|unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows()|];
-                [|unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows10()|];
+                [|unsupportedOnBrowser.FunctionUnsupportedOnWindows()|]; // 'TypeUnsupportedOnBrowser.FunctionUnsupportedOnWindows()' is unsupported on: 'browser', 'windows'. This call site is reachable on all platforms.
+                [|unsupportedOnBrowser.FunctionUnsupportedOnWindows10()|]; // 'TypeUnsupportedOnBrowser.FunctionUnsupportedOnWindows10()' is unsupported on: 'browser'. This call site is reachable on all platforms.
 
                 var unsupportedOnWindows10 = new TypeUnsupportedOnWindows10();
-                [|unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnBrowser()|];
-                unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11(); // We should ignore above version of unsupported if there is no supported in between
-                [|unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11AndBrowser()|];
+                [|unsupportedOnWindows10.FunctionUnsupportedOnBrowser()|];
+                unsupportedOnWindows10.FunctionUnsupportedOnWindows11(); // We should ignore above version of unsupported if there is no supported in between
+                [|unsupportedOnWindows10.FunctionUnsupportedOnWindows11AndBrowser()|];
 
                 var unsupportedOnWindowsAndBrowser = [|new TypeUnsupportedOnWindowsAndBrowser()|];
-                [|unsupportedOnWindowsAndBrowser.TypeUnsupportedOnWindowsAndBrowser_FunctionUnsupportedOnWindows11()|];
+                [|unsupportedOnWindowsAndBrowser.FunctionUnsupportedOnWindows11()|]; // 'TypeUnsupportedOnWindowsAndBrowser.FunctionUnsupportedOnWindows11()' is unsupported on: 'windows', 'browser'. This call site is reachable on all platforms.
 
                 var unsupportedOnWindows10AndBrowser = [|new TypeUnsupportedOnWindows10AndBrowser()|];
-                [|unsupportedOnWindows10AndBrowser.TypeUnsupportedOnWindows10AndBrowser_FunctionUnsupportedOnWindows11()|];
+                [|unsupportedOnWindows10AndBrowser.FunctionUnsupportedOnWindows11()|];
             }
         }
 
@@ -330,34 +321,34 @@ namespace PlatformCompatDemo.SupportedUnupported
             if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10) && !OperatingSystemHelper.IsBrowser())
             {
                 var unsupported = new TypeWithoutAttributes();
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows()|];
-                unsupported.TypeWithoutAttributes_FunctionUnsupportedOnBrowser();
-                unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows10();
-                [|unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindowsAndBrowser()|];
-                unsupported.TypeWithoutAttributes_FunctionUnsupportedOnWindows10AndBrowser();
+                [|unsupported.FunctionUnsupportedOnWindows()|]; // 'TypeWithoutAttributes.FunctionUnsupportedOnWindows()' is unsupported on: 'windows'. This call site is reachable on all platforms.
+                unsupported.FunctionUnsupportedOnBrowser();
+                unsupported.FunctionUnsupportedOnWindows10();
+                [|unsupported.FunctionUnsupportedOnWindowsAndBrowser()|];
+                unsupported.FunctionUnsupportedOnWindows10AndBrowser();
 
                 var unsupportedOnWindows = [|new TypeUnsupportedOnWindows()|];
-                [|unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionUnsupportedOnBrowser()|];
-                [|unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionUnsupportedOnWindows11()|];
-                [|unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionUnsupportedOnWindows11AndBrowser()|];
+                [|unsupportedOnWindows.FunctionUnsupportedOnBrowser()|];
+                [|unsupportedOnWindows.FunctionUnsupportedOnWindows11()|];
+                [|unsupportedOnWindows.FunctionUnsupportedOnWindows11AndBrowser()|]; // 'TypeUnsupportedOnWindows.FunctionUnsupportedOnWindows11AndBrowser()' is unsupported on: 'windows'. This call site is reachable on all platforms.
 
                 var unsupportedOnBrowser = new TypeUnsupportedOnBrowser();
-                [|unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows()|];
-                unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows10();
+                [|unsupportedOnBrowser.FunctionUnsupportedOnWindows()|]; // 'TypeUnsupportedOnBrowser.FunctionUnsupportedOnWindows()' is unsupported on: 'windows'. This call site is reachable on all platforms.
+                unsupportedOnBrowser.FunctionUnsupportedOnWindows10();
 
                 var unsupportedOnWindows10 = new TypeUnsupportedOnWindows10();
-                unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnBrowser();
-                unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11();
-                unsupportedOnWindows10.TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11AndBrowser();
+                unsupportedOnWindows10.FunctionUnsupportedOnBrowser();
+                unsupportedOnWindows10.FunctionUnsupportedOnWindows11();
+                unsupportedOnWindows10.FunctionUnsupportedOnWindows11AndBrowser();
 
-                var unsupportedOnWindowsAndBrowser = [|new TypeUnsupportedOnWindowsAndBrowser()|];
-                [|unsupportedOnWindowsAndBrowser.TypeUnsupportedOnWindowsAndBrowser_FunctionUnsupportedOnWindows11()|];
+                var unsupportedOnWindowsAndBrowser = [|new TypeUnsupportedOnWindowsAndBrowser()|]; // 'TypeUnsupportedOnWindowsAndBrowser' is unsupported on: 'windows'. This call site is reachable on all platforms.
+                [|unsupportedOnWindowsAndBrowser.FunctionUnsupportedOnWindows11()|]; // 'TypeUnsupportedOnWindowsAndBrowser.FunctionUnsupportedOnWindows11()' is unsupported on: 'windows'. This call site is reachable on all platforms.
 
                 var unsupportedOnWindows10AndBrowser = new TypeUnsupportedOnWindows10AndBrowser();
-                unsupportedOnWindows10AndBrowser.TypeUnsupportedOnWindows10AndBrowser_FunctionUnsupportedOnWindows11();
+                unsupportedOnWindows10AndBrowser.FunctionUnsupportedOnWindows11();
 
                 var unsupportedCombinations = new TypeUnsupportedOnBrowser();
-                unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionSupportedOnBrowser();
+                unsupportedOnBrowser.FunctionSupportedOnBrowser();
             }
         }
 
@@ -366,34 +357,30 @@ namespace PlatformCompatDemo.SupportedUnupported
             if (!OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsBrowser())
             {
                 var withoutAttributes = new TypeWithoutAttributes();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
-                withoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
+                withoutAttributes.FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
 
                 var unsupportedOnWindows = new TypeUnsupportedOnWindows();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12();
-                unsupportedOnWindows.TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
+                unsupportedOnWindows.FunctionSupportedOnWindows11();
+                unsupportedOnWindows.FunctionSupportedOnWindows11UnsupportedOnWindows12();
+                unsupportedOnWindows.FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13();
 
                 var unsupportedOnBrowser = new TypeUnsupportedOnBrowser();
-                unsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionSupportedOnBrowser();
+                unsupportedOnBrowser.FunctionSupportedOnBrowser();
 
                 var unsupportedOnWindowsSupportedOnWindows11 = new TypeUnsupportedOnWindowsSupportedOnWindows11();
-                unsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12();
-                unsupportedOnWindowsSupportedOnWindows11.TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12SupportedOnWindows13();
+                unsupportedOnWindowsSupportedOnWindows11.FunctionUnsupportedOnWindows12();
+                unsupportedOnWindowsSupportedOnWindows11.FunctionUnsupportedOnWindows12SupportedOnWindows13();
 
                 var unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12 = new TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12();
-                unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12.TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12_FunctionSupportedOnWindows13();
+                unsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12.FunctionSupportedOnWindows13();
             }
         }
     }
 }" + TargetTypesForTest + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(17, 17).WithArguments("TypeWithoutAttributes.TypeWithoutAttributes_FunctionUnsupportedOnWindowsAndBrowser()", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(24, 17).WithArguments("TypeUnsupportedOnBrowser.TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows()", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(32, 54).WithArguments("TypeUnsupportedOnWindowsAndBrowser", "browser"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(33, 17).WithArguments("TypeUnsupportedOnWindowsAndBrowser.TypeUnsupportedOnWindowsAndBrowser_FunctionUnsupportedOnWindows11()", "browser"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -413,35 +400,35 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
             {
                 Target.UnsupportedInWindows();
                 Target.UnsupportedInWindows10();
-                [|Target.UnsupportedOnBrowser()|]; // row 15 expected diagnostic - browser unsupported
-                [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected diagnostic - browser unsupported
-                [|Target.UnsupportedOnWindows10AndBrowser()|]; // expected diagnostic - browser unsupported
+                [|Target.UnsupportedOnBrowser()|]; // row 15 'Target.UnsupportedOnBrowser()' is unsupported on: 'browser'. This call site is reachable on all platforms.
+                [|Target.UnsupportedOnWindowsAndBrowser()|]; // 'Target.UnsupportedOnWindowsAndBrowser()' is unsupported on: 'browser'. This call site is reachable on all platforms.
+                [|Target.UnsupportedOnWindows10AndBrowser()|]; // 'Target.UnsupportedOnWindows10AndBrowser()' is unsupported on: 'browser'. This call site is reachable on all platforms.
             }
 
             if (!OperatingSystemHelper.IsWindowsVersionAtLeast(10))
             {
-                [|Target.UnsupportedInWindows()|]; // row 22 expected diagnostic - windows unsupported
+                [|Target.UnsupportedInWindows()|]; // 'Target.UnsupportedInWindows()' is unsupported on: 'windows'. This call site is reachable on all platforms.
                 Target.UnsupportedInWindows10();
-                [|Target.UnsupportedOnBrowser()|]; // expected diagnostic - browser unsupported
-                [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected 2 diagnostics - windows and browser unsupported
+                [|Target.UnsupportedOnBrowser()|]; // 'Target.UnsupportedOnBrowser()' is unsupported on: 'browser'. This call site is reachable on all platforms.
+                [|Target.UnsupportedOnWindowsAndBrowser()|]; // 'Target.UnsupportedOnWindowsAndBrowser()' is unsupported on: 'windows', 'browser'. This call site is reachable on all platforms.
                 [|Target.UnsupportedOnWindows10AndBrowser()|]; // expected diagnostic - browser unsupported
             }
 
             if (OperatingSystemHelper.IsWindows())
             {
-                [|Target.UnsupportedInWindows()|]; // row 31 expected diagnostic - windows unsupported
+                [|Target.UnsupportedInWindows()|]; // 'Target.UnsupportedInWindows()' is unsupported on: 'windows'. This call site is reachable on: 'Windows'.
                 [|Target.UnsupportedInWindows10()|]; // expected diagnostic - windows 10 unsupported
                 Target.UnsupportedOnBrowser();
                 [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected diagnostic - windows unsupported
-                [|Target.UnsupportedOnWindows10AndBrowser()|]; // expected diagnostic - windows 10 unsupported
+                [|Target.UnsupportedOnWindows10AndBrowser()|]; // 'Target.UnsupportedOnWindows10AndBrowser()' is unsupported on: 'windows' 10.0 and later. This call site is reachable on: 'Windows'.
             }
 
             if (OperatingSystemHelper.IsWindows() && !OperatingSystemHelper.IsWindowsVersionAtLeast(10))
             {
-                [|Target.UnsupportedInWindows()|]; // row 40 expected diagnostic - windows unsupported
+                [|Target.UnsupportedInWindows()|]; // 'Target.UnsupportedInWindows()' is unsupported on: 'windows'. This call site is reachable on: 'Windows'.
                 Target.UnsupportedInWindows10();
                 Target.UnsupportedOnBrowser(); 
-                [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected diagnostic - windows unsupported
+                [|Target.UnsupportedOnWindowsAndBrowser()|]; // 'Target.UnsupportedOnWindowsAndBrowser()' is unsupported on: 'windows'. This call site is reachable on: 'Windows'.
                 Target.UnsupportedOnWindows10AndBrowser();
             }
 
@@ -449,9 +436,9 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
             {
                 Target.UnsupportedInWindows();
                 Target.UnsupportedInWindows10();
-                [|Target.UnsupportedOnBrowser()|}; // row 51 expected diagnostic - browser unsupported
-                [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected diagnostic - browser unsupported
-                [|Target.UnsupportedOnWindows10AndBrowser()|]; // expected diagnostic - browser unsupported
+                [|Target.UnsupportedOnBrowser()|}; // 'Target.UnsupportedOnBrowser()' is unsupported on: 'browser'. This call site is reachable on: 'Browser'.
+                [|Target.UnsupportedOnWindowsAndBrowser()|]; // expected diagnostic - browser unsupported, same
+                [|Target.UnsupportedOnWindows10AndBrowser()|]; // 'Target.UnsupportedOnWindows10AndBrowser()' is unsupported on: 'browser'. This call site is reachable on: 'Browser'.
             }
         }
     }
@@ -475,8 +462,7 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundUnsupported
     }
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(25, 17).WithArguments("Target.UnsupportedOnWindowsAndBrowser()", "browser"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -495,7 +481,7 @@ class Test
         {
             Api();
         }
-        [|Api()|]; // two diagnostics expected
+        [|Api()|]; // 'Test.Api()' is only supported on: 'ios' from version 12.0 to 14.0. This call site is reachable on all platforms.
     }
 
     [SupportedOSPlatform(""ios12.0"")]
@@ -505,9 +491,7 @@ class Test
     }
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsVersionRule).WithLocation(14, 9)
-                .WithArguments("Test.Api()", "ios", "14.0"));
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]
@@ -701,7 +685,7 @@ class Test
 
         [Theory]
         [MemberData(nameof(OperatingSystem_IsOsNameVersionAtLeast_MethodsTestData))]
-        public async Task GuardedWith_IsOsNameVersionAtLeast_impleIfElse(string osName, string isOsMethod, string version, bool versionMatch)
+        public async Task GuardedWith_IsOsNameVersionAtLeast_SimpleIfElse(string osName, string isOsMethod, string version, bool versionMatch)
         {
             var match = versionMatch ? "OsSpecificMethod()" : "[|OsSpecificMethod()|]";
             var source = @"
@@ -977,14 +961,10 @@ class Test
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(0).WithArguments("Test.M2()", "Linux"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(0).WithArguments("Test.M2()", "Windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(1).WithArguments("Test.M2()", "Linux"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(1).WithArguments("Test.M2()", "Windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(2).WithArguments("Test.M2()", "Linux"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(2).WithArguments("Test.M2()", "Windows"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(3).WithArguments("Test.M2()", "Linux"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsRule).WithLocation(3).WithArguments("Test.M2()", "Windows")
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(3).WithArguments("Test.M2()", "'Windows', 'Linux'", "")
             );
         }
 
@@ -1038,7 +1018,7 @@ static class Program
         }
         else
         {
-            [|Some.WindowsSpecificApi()|]; // should show 2 diagnostic
+            {|#0:Some.WindowsSpecificApi()|}; // 'Some.WindowsSpecificApi()' is supported on: 'windows' 10.0 and later. This call site is reachable on: 'windows'.
         }
     }
 }
@@ -1054,8 +1034,8 @@ static class Some
 " + MockAttributesCsSource + MockOperatingSystemApiSource;
 
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedOsVersionRule).WithLocation(16, 13)
-                .WithArguments("Some.WindowsSpecificApi()", "windows", "10.0"));
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsReachable).WithLocation(0).
+                WithArguments("Some.WindowsSpecificApi()", "'windows' 10.0 and later", "'windows'"));
         }
 
         [Fact]
@@ -3218,7 +3198,7 @@ class Test
         }
         else
         {
-            [|M2()|]; // Two diagnostics expected
+            [|M2()|]; // 'Test.M2()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004. This call site is reachable on all platforms.
         }
     }
 
@@ -3230,8 +3210,7 @@ class Test
     }
 }"
 + MockAttributesCsSource + MockOperatingSystemApiSource;
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(16, 13).WithArguments("Test.M2()", "windows"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
 
             var vbSource = @"
 Imports System.Runtime.Versioning
@@ -3253,8 +3232,7 @@ Class Test
     End Sub
 End Class
 " + MockRuntimeApiSourceVb + MockAttributesVbSource;
-            await VerifyAnalyzerAsyncVb(vbSource, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedOsRule).WithLocation(10, 13).WithArguments("Private Sub M2()", "Windows"));
+            await VerifyAnalyzerAsyncVb(vbSource, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -3718,157 +3696,157 @@ namespace PlatformCompatDemo.SupportedUnupported
     public class TypeWithoutAttributes
     {
         [UnsupportedOSPlatform(""windows"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindows() { }
+        public void FunctionUnsupportedOnWindows() { }
 
         [UnsupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnBrowser() { }
+        public void FunctionUnsupportedOnBrowser() { }
 
         [UnsupportedOSPlatform(""windows10.0"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindows10() { }
+        public void FunctionUnsupportedOnWindows10() { }
 
         [UnsupportedOSPlatform(""windows""), UnsupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindowsAndBrowser() { }
+        public void FunctionUnsupportedOnWindowsAndBrowser() { }
 
         [UnsupportedOSPlatform(""windows10.0""), UnsupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindows10AndBrowser() { }
+        public void FunctionUnsupportedOnWindows10AndBrowser() { }
 
         [UnsupportedOSPlatform(""windows""), SupportedOSPlatform(""windows11.0"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11() { }
+        public void FunctionUnsupportedOnWindowsSupportedOnWindows11() { }
 
         [UnsupportedOSPlatform(""windows""), SupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""windows12.0"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12() { }
+        public void FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12() { }
 
         [UnsupportedOSPlatform(""windows""), SupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""windows12.0""), SupportedOSPlatform(""windows13.0"")]
-        public void TypeWithoutAttributes_FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13() { }
+        public void FunctionUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13() { }
 
         [SupportedOSPlatform(""windows"")]
-        public void TypeWithoutAttributes_FunctionSupportedOnWindows() { }
+        public void FunctionSupportedOnWindows() { }
 
         [SupportedOSPlatform(""windows10.0"")]
-        public void TypeWithoutAttributes_FunctionSupportedOnWindows10() { }
+        public void FunctionSupportedOnWindows10() { }
 
         [SupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionSupportedOnBrowser() { }
+        public void FunctionSupportedOnBrowser() { }
 
         [SupportedOSPlatform(""windows""), SupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionSupportedOnWindowsAndBrowser() { }
+        public void FunctionSupportedOnWindowsAndBrowser() { }
 
         [SupportedOSPlatform(""windows10.0""), SupportedOSPlatform(""browser"")]
-        public void TypeWithoutAttributes_FunctionSupportedOnWindows10AndBrowser() { }
+        public void FunctionSupportedOnWindows10AndBrowser() { }
     }
 
     [UnsupportedOSPlatform(""windows"")]
     public class TypeUnsupportedOnWindows {
         [UnsupportedOSPlatform(""browser"")] // more restrictive should be OK
-        public void TypeUnsupportedOnWindows_FunctionUnsupportedOnBrowser() { }
+        public void FunctionUnsupportedOnBrowser() { }
 
         [UnsupportedOSPlatform(""windows11.0"")]
-        public void TypeUnsupportedOnWindows_FunctionUnsupportedOnWindows11() { }
+        public void FunctionUnsupportedOnWindows11() { }
 
         [UnsupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""browser"")]
-        public void TypeUnsupportedOnWindows_FunctionUnsupportedOnWindows11AndBrowser() { }
+        public void FunctionUnsupportedOnWindows11AndBrowser() { }
 
         [SupportedOSPlatform(""windows11.0"")]
-        public void TypeUnsupportedOnWindows_FunctionSupportedOnWindows11() { }
+        public void FunctionSupportedOnWindows11() { }
 
         [SupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""windows12.0"")]
-        public void TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12() { }
+        public void FunctionSupportedOnWindows11UnsupportedOnWindows12() { }
 
         [SupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""windows12.0""), SupportedOSPlatform(""windows13.0"")]
-        public void TypeUnsupportedOnWindows_FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13() { }
+        public void FunctionSupportedOnWindows11UnsupportedOnWindows12SupportedOnWindows13() { }
     }
 
     [UnsupportedOSPlatform(""browser"")]
     public class TypeUnsupportedOnBrowser
     {
         [UnsupportedOSPlatform(""windows"")] // more restrictive should be OK
-        public void TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows() { }
+        public void FunctionUnsupportedOnWindows() { }
 
         [UnsupportedOSPlatform(""windows10.0"")] // more restrictive should be OK
-        public void TypeUnsupportedOnBrowser_FunctionUnsupportedOnWindows10() { }
+        public void FunctionUnsupportedOnWindows10() { }
         
         [SupportedOSPlatform(""browser"")]
-        public void TypeUnsupportedOnBrowser_FunctionSupportedOnBrowser() { }
+        public void FunctionSupportedOnBrowser() { }
         }
 
     [UnsupportedOSPlatform(""windows10.0"")]
     public class TypeUnsupportedOnWindows10
     {
         [UnsupportedOSPlatform(""browser"")] // more restrictive should be OK
-        public void TypeUnsupportedOnWindows10_FunctionUnsupportedOnBrowser() { }
+        public void FunctionUnsupportedOnBrowser() { }
 
         [UnsupportedOSPlatform(""windows11.0"")]
-        public void TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11() { }
+        public void FunctionUnsupportedOnWindows11() { }
 
         [UnsupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""browser"")]
-        public void TypeUnsupportedOnWindows10_FunctionUnsupportedOnWindows11AndBrowser() { }
+        public void FunctionUnsupportedOnWindows11AndBrowser() { }
     }
 
     [UnsupportedOSPlatform(""windows""), UnsupportedOSPlatform(""browser"")]
     public class TypeUnsupportedOnWindowsAndBrowser
     {
         [UnsupportedOSPlatform(""windows11.0"")]
-        public void TypeUnsupportedOnWindowsAndBrowser_FunctionUnsupportedOnWindows11() { }
+        public void FunctionUnsupportedOnWindows11() { }
     }
 
     [UnsupportedOSPlatform(""windows10.0""), UnsupportedOSPlatform(""browser"")]
     public class TypeUnsupportedOnWindows10AndBrowser
     {
         [UnsupportedOSPlatform(""windows11.0"")]
-        public void TypeUnsupportedOnWindows10AndBrowser_FunctionUnsupportedOnWindows11() { }
+        public void FunctionUnsupportedOnWindows11() { }
     }
 
     [UnsupportedOSPlatform(""windows""), SupportedOSPlatform(""windows11.0"")]
     public class TypeUnsupportedOnWindowsSupportedOnWindows11
     {
         [UnsupportedOSPlatform(""windows12.0"")]
-        public void TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12() { }
+        public void FunctionUnsupportedOnWindows12() { }
 
         [UnsupportedOSPlatform(""windows12.0""), SupportedOSPlatform(""windows13.0"")]
-        public void TypeUnsupportedOnWindowsSupportedOnWindows11_FunctionUnsupportedOnWindows12SupportedOnWindows13() { }
+        public void FunctionUnsupportedOnWindows12SupportedOnWindows13() { }
     }
 
     [UnsupportedOSPlatform(""windows""), SupportedOSPlatform(""windows11.0""), UnsupportedOSPlatform(""windows12.0"")]
     public class TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12
     {
         [SupportedOSPlatform(""windows13.0"")]
-        public void TypeUnsupportedOnWindowsSupportedOnWindows11UnsupportedOnWindows12_FunctionSupportedOnWindows13() { }
+        public void FunctionSupportedOnWindows13() { }
     }
     [SupportedOSPlatform(""windows"")]
     public class TypeSupportedOnWindows {
         [SupportedOSPlatform(""browser"")]
-        public void TypeSupportedOnWindows_FunctionSupportedOnBrowser() { }
+        public void FunctionSupportedOnBrowser() { }
 
         [SupportedOSPlatform(""windows11.0"")] // more restrictive should be OK
-        public void TypeSupportedOnWindows_FunctionSupportedOnWindows11() { }
+        public void FunctionSupportedOnWindows11() { }
 
         [SupportedOSPlatform(""windows11.0""), SupportedOSPlatform(""browser"")]
-        public void TypeSupportedOnWindows_FunctionSupportedOnWindows11AndBrowser() { }
+        public void FunctionSupportedOnWindows11AndBrowser() { }
     }
     [SupportedOSPlatform(""browser"")]
     public class TypeSupportedOnBrowser
     {
         [SupportedOSPlatform(""windows"")]
-        public void TypeSupportedOnBrowser_FunctionSupportedOnWindows() { }
+        public void FunctionSupportedOnWindows() { }
 
         [SupportedOSPlatform(""windows11.0"")]
-        public void TypeSupportedOnBrowser_FunctionSupportedOnWindows11() { }
+        public void FunctionSupportedOnWindows11() { }
     }
 
     [SupportedOSPlatform(""windows10.0"")]
     public class TypeSupportedOnWindows10
     {
         [SupportedOSPlatform(""windows"")] // less restrictive should be OK
-        public void TypeSupportedOnWindows10_FunctionSupportedOnWindows() { }
+        public void FunctionSupportedOnWindows() { }
 
         [SupportedOSPlatform(""browser"")]
-        public void TypeSupportedOnWindows10_FunctionSupportedOnBrowser() { }
+        public void FunctionSupportedOnBrowser() { }
 
         [SupportedOSPlatform(""windows11.0"")] // more restrictive should be OK
-        public void TypeSupportedOnWindows10_FunctionSupportedOnWindows11() { }
+        public void FunctionSupportedOnWindows11() { }
 
         [SupportedOSPlatform(""windows11.0""), SupportedOSPlatform(""browser"")]
-        public void TypeSupportedOnWindows10_FunctionSupportedOnWindows11AndBrowser() { }
+        public void FunctionSupportedOnWindows11AndBrowser() { }
     }
 
 
@@ -3876,7 +3854,7 @@ namespace PlatformCompatDemo.SupportedUnupported
     public class TypeSupportedOnWindowsAndBrowser
     {
         [SupportedOSPlatform(""windows11.0"")] // more restrictive should be OK
-        public void TypeSupportedOnWindowsAndBrowser_FunctionSupportedOnWindows11() { }
+        public void FunctionSupportedOnWindows11() { }
     }
 
     [SupportedOSPlatform(""windows10.0""), SupportedOSPlatform(""browser"")]

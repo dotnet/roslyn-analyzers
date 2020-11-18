@@ -172,6 +172,11 @@
         <target state="translated">안정성</target>
         <note />
       </trans-unit>
+      <trans-unit id="CommaSeparator">
+        <source>, </source>
+        <target state="new">, </target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">신뢰할 수 없는 입력을 역직렬화하는 경우 {0} 개체를 역직렬화하는 것은 안전하지 않습니다. '{1}'은(는) {0}이거나 이 항목에서 파생됩니다.</target>
@@ -1512,34 +1517,64 @@
         <target state="translated">P/Invokes를 표시하지 않아야 합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckDescription">
+      <trans-unit id="PlatformCompatibilityDescription">
         <source>Using platform dependent API on a component makes the code no longer work across all platforms.</source>
-        <target state="translated">구성 요소에서 플랫폼 종속 API를 사용하면 모든 플랫폼에서 코드가 더 이상 작동하지 않습니다.</target>
+        <target state="new">Using platform dependent API on a component makes the code no longer work across all platforms.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckSupportedOsMessage">
-        <source>'{0}' is supported on '{1}'</source>
-        <target state="translated">'{0}'은(는) '{1}'에서 지원됨</target>
+      <trans-unit id="PlatformCompatibilityFromVersionToVersion">
+        <source>'{0}' from version {1} to {2}</source>
+        <target state="new">'{0}' from version {1} to {2}</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckSupportedOsVersionMessage">
-        <source>'{0}' is supported on '{1}' {2} and later</source>
-        <target state="translated">'{0}'은(는) '{1}' {2} 이상에서 지원됨</target>
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsAllPlatformMessage">
+        <source>'{0}' is only supported on: {1}. This call site is reachable on all platforms.</source>
+        <target state="new">'{0}' is only supported on: {1}. This call site is reachable on all platforms.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckTitle">
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsReachableMessage">
+        <source>'{0}' is only supported on: {1}. This call site is reachable on: {2}.</source>
+        <target state="new">'{0}' is only supported on: {1}. This call site is reachable on: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityOnlySupportedCsUnreachableMessage">
+        <source>'{0}' is only supported on: {1}. This call site is unreachable on: {2}.</source>
+        <target state="new">'{0}' is only supported on: {1}. This call site is unreachable on: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilitySupportedCsAllPlatformMessage">
+        <source>'{0}' is supported on: {1}. This call site is reachable on all platforms.</source>
+        <target state="new">'{0}' is supported on: {1}. This call site is reachable on all platforms.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilitySupportedCsReachableMessage">
+        <source>'{0}' is supported on: {1}. This call site is reachable on: {2}.</source>
+        <target state="new">'{0}' is supported on: {1}. This call site is reachable on: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityTitle">
         <source>Validate platform compatibility</source>
-        <target state="translated">플랫폼 호환성 유효성 검사</target>
+        <target state="new">Validate platform compatibility</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckUnsupportedOsMessage">
-        <source>'{0}' is unsupported on '{1}'</source>
-        <target state="translated">'{0}'은(는) '{1}'에서 지원되지 않음</target>
+      <trans-unit id="PlatformCompatibilityUnsupportedCsAllPlatformMessage">
+        <source>'{0}' is unsupported on: {1}. This call site is reachable on all platforms.</source>
+        <target state="new">'{0}' is unsupported on: {1}. This call site is reachable on all platforms.</target>
         <note />
       </trans-unit>
-      <trans-unit id="PlatformCompatibilityCheckUnsupportedOsVersionMessage">
-        <source>'{0}' is unsupported on '{1}' {2} and later</source>
-        <target state="translated">'{0}'은(는) '{1}' {2} 이상에서 지원되지 않음</target>
+      <trans-unit id="PlatformCompatibilityUnsupportedCsReachableMessage">
+        <source>'{0}' is unsupported on: {1}. This call site is reachable on: {2}.</source>
+        <target state="new">'{0}' is unsupported on: {1}. This call site is reachable on: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityVersionAndBefore">
+        <source>'{0}' {1} and before</source>
+        <target state="new">'{0}' {1} and before</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlatformCompatibilityVersionAndLater">
+        <source>'{0}' {1} and later</source>
+        <target state="new">'{0}' {1} and later</target>
         <note />
       </trans-unit>
       <trans-unit id="PotentialReferenceCycleInDeserializedObjectGraphDescription">

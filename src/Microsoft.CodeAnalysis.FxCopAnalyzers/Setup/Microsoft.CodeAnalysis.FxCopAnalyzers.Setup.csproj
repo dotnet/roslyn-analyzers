@@ -9,6 +9,7 @@
     <ImportVSSDKTargets>true</ImportVSSDKTargets>
     <CreateVsixContainer>true</CreateVsixContainer>
     <PublishWindowsPdb>false</PublishWindowsPdb>
+    <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="EULA.rtf">

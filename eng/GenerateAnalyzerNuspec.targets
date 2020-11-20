@@ -113,9 +113,24 @@
     </ItemGroup>
   </Target>
   
+  <PropertyGroup>
+    <!-- Ideally, we would extract this from the MSBuild task, but we need this as the Target Output before that task is executed -->
+    <_GenerateAnalyzerNuspecPath>$(ArtifactsBinDir)GenerateAnalyzerNuspec\$(Configuration)\netcoreapp3.1\GenerateAnalyzerNuspec.dll</_GenerateAnalyzerNuspecPath>
+  </PropertyGroup>
+
+  <Target Name="BuildGenerateAnalyzerNuspecFile"
+          Inputs="$(RepoRoot)src\Tools\GenerateAnalyzerNuspec\Program.cs"
+          Outputs="$(_GenerateAnalyzerNuspecPath)">
+
+    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateAnalyzerNuspec\GenerateAnalyzerNuspec.csproj"
+             Targets="Restore;Build" >
+    </MSBuild>
+
+  </Target>
+
   <Target Name="GenerateAnalyzerNuspecFile"
           BeforeTargets="GenerateNuspec"
-          DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerConfigAndDocumentationFiles" 
+          DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerConfigAndDocumentationFiles;BuildGenerateAnalyzerNuspecFile"
           Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != '' or '@(AnalyzerNupkgLibrary)' != ''">
     <ItemGroup>
       <_NuspecMetadata Include="version=$(PackageVersion)" />
@@ -136,10 +151,6 @@
       <_NuspecMetadata Include="repositoryCommit=$(SourceRevisionId)" />
       <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
-
-    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateAnalyzerNuspec\GenerateAnalyzerNuspec.csproj" Targets="Restore;Build">
-      <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerNuspecPath"/>
-    </MSBuild>
 
     <Exec Command='"$(DotNetExecutable)" "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
   </Target>

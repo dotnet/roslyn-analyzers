@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <NonShipping>true</NonShipping>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UseAppHost>false</UseAppHost>
     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>  
   <ItemGroup>

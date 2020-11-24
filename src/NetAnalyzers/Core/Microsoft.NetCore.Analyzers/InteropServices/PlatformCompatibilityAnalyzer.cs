@@ -901,7 +901,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     if (checkSupport)
                     {
                         var supportedVersion = attribute.SupportedSecond ?? attribute.SupportedFirst;
-                        version = supportedVersion != null && supportedVersion >= version ? supportedVersion : version;
+                        if (supportedVersion != null)
+                        {
+                            version = version == null || supportedVersion >= version ? supportedVersion : version;
+                        }
+                        else
+                        {
+                            version = supportedVersion;
+                        }
                     }
                     if (version != null && !IsEmptyVersion(version))
                     {

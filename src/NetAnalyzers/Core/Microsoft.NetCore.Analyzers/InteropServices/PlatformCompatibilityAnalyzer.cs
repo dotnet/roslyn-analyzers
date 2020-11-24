@@ -647,15 +647,16 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             static void ReportSupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string operationName,
                  SmallDictionary<string, PlatformAttributes> attributes, SmallDictionary<string, PlatformAttributes>? callsiteAttributes)
             {
-                var supportedRule = GetSupportedPlatforms(attributes, out var platformNames);
+                var supportedRule = GetSupportedPlatforms(attributes, callsiteAttributes, out var platformNames);
                 var platforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
-                var callSitePlatforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, GetCallsitePlatforms(attributes, callsiteAttributes, out var callsite));
+                var callSitePlatforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator,
+                    GetCallsitePlatforms(attributes, callsiteAttributes, out var callsite, supported: supportedRule));
                 var rule = supportedRule ? SwitchSupportedRule(callsite) : SwitchRule(callsite, true);
 
                 context.ReportDiagnostic(operation.CreateDiagnostic(rule, operationName, platforms, callSitePlatforms));
 
-                static DiagnosticDescriptor SwitchSupportedRule(Callsite callste)
-                    => callste switch
+                static DiagnosticDescriptor SwitchSupportedRule(Callsite callsite)
+                    => callsite switch
                     {
                         Callsite.AllPlatforms => OnlySupportedCsAllPlatforms,
                         Callsite.Reachable => OnlySupportedCsReachable,
@@ -663,7 +664,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         _ => throw new NotImplementedException()
                     };
 
-                static bool GetSupportedPlatforms(SmallDictionary<string, PlatformAttributes> attributes, out List<string> platformNames)
+                static bool GetSupportedPlatforms(SmallDictionary<string, PlatformAttributes> attributes, SmallDictionary<string, PlatformAttributes>? csAttributes, out List<string> platformNames)
                 {
                     var supportedRule = true;
                     platformNames = new List<string>();
@@ -687,6 +688,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                             else if (IsEmptyVersion(supportedVersion))
                             {
+                                if (csAttributes != null && HasSameVersionedPlatformSupport(csAttributes, pName, checkSupport: false))
+                                {
+                                    platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                    continue;
+                                }
                                 platformNames.Add($"'{pName}'");
                             }
                             else
@@ -699,6 +705,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             if (IsEmptyVersion(pAttribute.UnsupportedFirst))
                             {
+                                if (csAttributes != null && HasSameVersionedPlatformSupport(csAttributes, pName, checkSupport: true))
+                                {
+                                    platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                    continue;
+                                }
                                 platformNames.Add($"'{pName}'");
                             }
                             else
@@ -713,11 +724,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            static DiagnosticDescriptor SwitchRule(Callsite callste, bool unsupported)
+            static DiagnosticDescriptor SwitchRule(Callsite callsite, bool unsupported)
             {
                 if (unsupported)
                 {
-                    return callste switch
+                    return callsite switch
                     {
                         Callsite.AllPlatforms => UnsupportedCsAllPlatforms,
                         Callsite.Reachable => UnsupportedCsReachable,
@@ -726,7 +737,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 else
                 {
-                    return callste switch
+                    return callsite switch
                     {
                         Callsite.AllPlatforms => SupportedCsAllPlatforms,
                         Callsite.Reachable => SupportedCsReachable,
@@ -738,12 +749,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             static void ReportUnsupportedDiagnostic(IOperation operation, OperationBlockAnalysisContext context, string operationName,
                 SmallDictionary<string, PlatformAttributes> attributes, SmallDictionary<string, PlatformAttributes>? callsiteAttributes)
             {
-                var unsupportedRule = GetPlatformNames(attributes, out var platformNames);
+                var unsupportedRule = GetPlatformNames(attributes, callsiteAttributes, out var platformNames);
                 var platforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
-                var callSitePlatforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, GetCallsitePlatforms(attributes, callsiteAttributes, out var callsite));
+                var callSitePlatforms = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator,
+                    GetCallsitePlatforms(attributes, callsiteAttributes, out var callsite, supported: !unsupportedRule));
                 context.ReportDiagnostic(operation.CreateDiagnostic(SwitchRule(callsite, unsupportedRule), operationName, platforms, callSitePlatforms));
 
-                static bool GetPlatformNames(SmallDictionary<string, PlatformAttributes> attributes, out List<string> platformNames)
+                static bool GetPlatformNames(SmallDictionary<string, PlatformAttributes> attributes, SmallDictionary<string, PlatformAttributes>? csAttributes, out List<string> platformNames)
                 {
                     platformNames = new List<string>();
                     var unsupportedRule = true;
@@ -772,6 +784,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 if (IsEmptyVersion(unsupportedVersion))
                                 {
+                                    if (csAttributes != null && HasSameVersionedPlatformSupport(csAttributes, pName, checkSupport: true))
+                                    {
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                        continue;
+                                    }
                                     platformNames.Add($"'{pName}'");
                                 }
                                 else
@@ -781,14 +798,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                             }
                         }
-                        else
+                        else if (supportedVersion != null)
                         {
-                            if (supportedVersion != null)
-                            {
-                                platformNames.Add(string.Format(CultureInfo.InvariantCulture,
-                                    MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, pName, supportedVersion));
-                                unsupportedRule = false;
-                            }
+                            platformNames.Add(string.Format(CultureInfo.InvariantCulture,
+                                MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, pName, supportedVersion));
+                            unsupportedRule = false;
                         }
                     }
                     return unsupportedRule;
@@ -796,7 +810,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             static List<string> GetCallsitePlatforms(SmallDictionary<string, PlatformAttributes> attributes,
-                SmallDictionary<string, PlatformAttributes>? callsiteAttributes, out Callsite callsite)
+                SmallDictionary<string, PlatformAttributes>? callsiteAttributes, out Callsite callsite, bool supported)
             {
                 callsite = Callsite.AllPlatforms;
                 var platformNames = new List<string>();
@@ -823,6 +837,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                             else if (IsEmptyVersion(supportedVersion))
                             {
+                                if (HasSameVersionedPlatformSupport(attributes, pName, supported))
+                                {
+                                    platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                    continue;
+                                }
                                 platformNames.Add($"'{pName}'");
                             }
                             else
@@ -839,6 +858,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 callsite = Callsite.Unreachable;
                                 if (IsEmptyVersion(unsupportedVersion))
                                 {
+                                    if (HasSameVersionedPlatformSupport(attributes, pName, supported))
+                                    {
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                        continue;
+                                    }
                                     platformNames.Add($"'{pName}'");
                                 }
                                 else
@@ -867,6 +891,24 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 return symbol;
+            }
+
+            static bool HasSameVersionedPlatformSupport(SmallDictionary<string, PlatformAttributes> attributes, string pName, bool checkSupport)
+            {
+                if (attributes.TryGetValue(pName, out var attribute))
+                {
+                    var version = attribute.UnsupportedSecond ?? attribute.UnsupportedFirst;
+                    if (checkSupport)
+                    {
+                        var supportedVersion = attribute.SupportedSecond ?? attribute.SupportedFirst;
+                        version = supportedVersion >= version ? supportedVersion : version;
+                    }
+                    if (version != null && !IsEmptyVersion(version))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 

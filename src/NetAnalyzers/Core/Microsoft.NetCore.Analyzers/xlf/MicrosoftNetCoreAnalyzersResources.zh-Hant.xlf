@@ -1517,6 +1517,11 @@
         <target state="translated">不應看得見 P/Invoke</target>
         <note />
       </trans-unit>
+      <trans-unit id="PlatformCompatibilityAllVersions">
+        <source>'{0}' all versions</source>
+        <target state="new">'{0}' all versions</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PlatformCompatibilityDescription">
         <source>Using platform dependent API on a component makes the code no longer work across all platforms.</source>
         <target state="new">Using platform dependent API on a component makes the code no longer work across all platforms.</target>
@@ -1528,28 +1533,28 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityOnlySupportedCsAllPlatformMessage">
-        <source>'{0}' is only supported on: {1}. This call site is reachable on all platforms.</source>
-        <target state="new">'{0}' is only supported on: {1}. This call site is reachable on all platforms.</target>
+        <source>This call site is reachable on all platforms. '{0}' is only supported on: {1}.</source>
+        <target state="new">This call site is reachable on all platforms. '{0}' is only supported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityOnlySupportedCsReachableMessage">
-        <source>'{0}' is only supported on: {1}. This call site is reachable on: {2}.</source>
-        <target state="new">'{0}' is only supported on: {1}. This call site is reachable on: {2}.</target>
+        <source>This call site is reachable on: {2}. '{0}' is only supported on: {1}.</source>
+        <target state="new">This call site is reachable on: {2}. '{0}' is only supported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityOnlySupportedCsUnreachableMessage">
-        <source>'{0}' is only supported on: {1}. This call site is unreachable on: {2}.</source>
-        <target state="new">'{0}' is only supported on: {1}. This call site is unreachable on: {2}.</target>
+        <source>This call site is unreachable on: {2}. '{0}' is only supported on: {1}.</source>
+        <target state="new">This call site is unreachable on: {2}. '{0}' is only supported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilitySupportedCsAllPlatformMessage">
-        <source>'{0}' is supported on: {1}. This call site is reachable on all platforms.</source>
-        <target state="new">'{0}' is supported on: {1}. This call site is reachable on all platforms.</target>
+        <source>This call site is reachable on all platforms. '{0}' is supported on: {1}.</source>
+        <target state="new">This call site is reachable on all platforms. '{0}' is supported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilitySupportedCsReachableMessage">
-        <source>'{0}' is supported on: {1}. This call site is reachable on: {2}.</source>
-        <target state="new">'{0}' is supported on: {1}. This call site is reachable on: {2}.</target>
+        <source>This call site is reachable on: {2}. '{0}' is supported on: {1}.</source>
+        <target state="new">This call site is reachable on: {2}. '{0}' is supported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityTitle">
@@ -1558,13 +1563,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityUnsupportedCsAllPlatformMessage">
-        <source>'{0}' is unsupported on: {1}. This call site is reachable on all platforms.</source>
-        <target state="new">'{0}' is unsupported on: {1}. This call site is reachable on all platforms.</target>
+        <source>This call site is reachable on all platforms. '{0}' is unsupported on: {1}.</source>
+        <target state="new">This call site is reachable on all platforms. '{0}' is unsupported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityUnsupportedCsReachableMessage">
-        <source>'{0}' is unsupported on: {1}. This call site is reachable on: {2}.</source>
-        <target state="new">'{0}' is unsupported on: {1}. This call site is reachable on: {2}.</target>
+        <source>This call site is reachable on: {2}. '{0}' is unsupported on: {1}.</source>
+        <target state="new">This call site is reachable on: {2}. '{0}' is unsupported on: {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="PlatformCompatibilityVersionAndBefore">

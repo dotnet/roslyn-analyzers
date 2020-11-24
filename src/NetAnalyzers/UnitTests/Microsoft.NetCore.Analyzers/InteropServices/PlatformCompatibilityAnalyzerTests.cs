@@ -1342,14 +1342,14 @@ namespace CallerSupportsSubsetOfTarget
         {
             {|#0:Target.SupportedOnWindows()|}; // This call site is reachable on all platforms. 'Target.SupportedOnWindows()' is only supported on: 'windows'.
             {|#1:Target.SupportedOnBrowser()|}; // This call site is unreachable on: 'browser'. 'Target.SupportedOnBrowser()' is only supported on: 'browser'.
-            {|#2:Target.SupportedOnWindowsAndBrowser()|}; // This call site is unreachable on: 'browser'. 'Target.SupportedOnWindowsAndBrowser()' is only supported on: 'browser', 'windows'.
-            {|#3:Target.SupportedOnWindowsAndUnsupportedOnBrowser()|}; // This call site is reachable on all platforms. 'Target.SupportedOnWindowsAndUnsupportedOnBrowser()' is only supported on: 'windows'.
+            [|Target.SupportedOnWindowsAndBrowser()|]; // This call site is unreachable on: 'browser'. 'Target.SupportedOnWindowsAndBrowser()' is only supported on: 'browser', 'windows'.
+            {|#2:Target.SupportedOnWindowsAndUnsupportedOnBrowser()|}; // This call site is reachable on all platforms. 'Target.SupportedOnWindowsAndUnsupportedOnBrowser()' is only supported on: 'windows'.
 
-            {|#4:Target.UnsupportedOnWindows()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnWindows()' is unsupported on: 'windows'.
-            {|#5:Target.UnsupportedOnWindows11()|};
+            {|#3:Target.UnsupportedOnWindows()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnWindows()' is unsupported on: 'windows'.
+            {|#4:Target.UnsupportedOnWindows11()|};
             Target.UnsupportedOnBrowser();
-            {|#6:Target.UnsupportedOnWindowsAndBrowser()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnWindowsAndBrowser()' is unsupported on: 'windows'.
-            {|#7:Target.UnsupportedOnWindowsUntilWindows11()|};
+            {|#5:Target.UnsupportedOnWindowsAndBrowser()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnWindowsAndBrowser()' is unsupported on: 'windows'.
+            {|#6:Target.UnsupportedOnWindowsUntilWindows11()|};
         }
     }
 
@@ -1387,12 +1387,11 @@ namespace CallerSupportsSubsetOfTarget
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).WithArguments("Target.SupportedOnWindows()", "'windows'", ""),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(1).WithArguments("Target.SupportedOnBrowser()", "'browser'", "'browser'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(2).WithArguments("Target.SupportedOnWindowsAndBrowser()", "'browser', 'windows'", "'browser'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(3).WithArguments("Target.SupportedOnWindowsAndUnsupportedOnBrowser()", "'windows'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(4).WithArguments("Target.UnsupportedOnWindows()", "'windows'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(5).WithArguments("Target.UnsupportedOnWindows11()", "'windows' 11.0 and later", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(6).WithArguments("Target.UnsupportedOnWindowsAndBrowser()", "'windows'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(7).WithArguments("Target.UnsupportedOnWindowsUntilWindows11()", "'windows' 11.0 and later", ""));
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Target.SupportedOnWindowsAndUnsupportedOnBrowser()", "'windows'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(3).WithArguments("Target.UnsupportedOnWindows()", "'windows'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(4).WithArguments("Target.UnsupportedOnWindows11()", "'windows' 11.0 and later", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(5).WithArguments("Target.UnsupportedOnWindowsAndBrowser()", "'windows'", ""),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(6).WithArguments("Target.UnsupportedOnWindowsUntilWindows11()", "'windows' 11.0 and later", ""));
         }
 
         [Fact]
@@ -1883,7 +1882,6 @@ public class C
         }
 
         [Fact]
-
         public async Task MultipleAttrbiutesOptionallySupportedListTest()
         {
             var source = @"
@@ -1955,7 +1953,6 @@ public class C
         }
 
         [Fact]
-
         public async Task MultipleAttrbiutesSupportedOnlyWindowsListTest()
         {
             var source = @"

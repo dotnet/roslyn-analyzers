@@ -922,7 +922,7 @@ class Test
         }
         else
         {
-            {|#0:M2()|};
+            [|M2()|];
         }
 
         if(RuntimeInformation.IsOSPlatform(windowsPlatform))
@@ -931,7 +931,7 @@ class Test
         }
         else
         {
-            {|#1:M2()|};
+            [|M2()|];
         }
 
         if (unknown.HasValue)
@@ -945,11 +945,11 @@ class Test
 
         if(RuntimeInformation.IsOSPlatform(platform))
         {
-            {|#2:M2()|};
+            [|M2()|];
         }
         else
         {
-            {|#3:M2()|};
+            [|M2()|];
         }
     }
 
@@ -960,12 +960,7 @@ class Test
     }
 }" + MockAttributesCsSource + MockOperatingSystemApiSource;
 
-            await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Test.M2()", "'Windows', 'Linux'", ""),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(3).WithArguments("Test.M2()", "'Windows', 'Linux'", "")
-            );
+            await VerifyAnalyzerAsyncCs(source);
         }
 
         [Fact]

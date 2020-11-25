@@ -1488,7 +1488,7 @@
   </data>
   <data name="CommaSeparator" xml:space="preserve">
     <value>, </value>
-    <comment>Separator used for list of platform names. {‘windows’ 10 and later, ‘browser’, ‘Linux’}</comment>
+    <comment>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</comment>
   </data>
   <data name="PlatformCompatibilityFromVersionToVersion" xml:space="preserve">
     <value>'{0}' from version {1} to {2}</value>

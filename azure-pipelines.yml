@@ -48,7 +48,7 @@ jobs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
         ArtifactName: 'Windows $(_configuration)'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
 - job: Windows_Desktop_Spanish_Unit_Tests
   strategy:

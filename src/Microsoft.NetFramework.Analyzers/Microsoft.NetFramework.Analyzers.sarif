@@ -89,6 +89,22 @@
               "EnabledRuleInAggressiveMode"
             ]
           }
+        },
+        "CA9998": {
+          "id": "CA9998",
+          "shortDescription": "Analyzer package has been deprecated",
+          "fullDescription": "FxCopAnalyzers package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK. Please refer to https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers to migrate to .NET analyzers.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DeprecationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
         }
       }
     },

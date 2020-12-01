@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>3.3.1</VersionPrefix>
+    <VersionPrefix>3.3.2</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>5.0.2</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>rtm</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
     -->
-    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">true</StabilizePackageVersion>
+    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -18,25 +18,25 @@
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>16.5.2044</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
-    <CodecovVersion>1.10.0</CodecovVersion>
-    <CoverletVersion>2.8.1</CoverletVersion>
+    <CodecovVersion>1.12.3</CodecovVersion>
+    <CoverletVersion>2.9.0</CoverletVersion>
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
+    <CodeStyleAnalyersVersion>3.8.0-3.20428.4</CodeStyleAnalyersVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisForShippedApisVersion>3.7.0</MicrosoftCodeAnalysisForShippedApisVersion>
-    <DogfoodAnalyzersVersion>3.3.0</DogfoodAnalyzersVersion>
+    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
+    <MicrosoftCodeAnalysisVersionForTests>3.8.0-4.final</MicrosoftCodeAnalysisVersionForTests>
+    <DogfoodAnalyzersVersion>3.3.1</DogfoodAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(DogfoodAnalyzersVersion)</RoslynDiagnosticsAnalyzersVersion>
-    <CodeStyleAnalyersVersion>3.8.0-2.20427.18</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20374.2</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.20521.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>

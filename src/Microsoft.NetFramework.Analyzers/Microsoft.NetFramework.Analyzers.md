@@ -38,7 +38,7 @@ Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when
 
 ## [CA3076](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca3076): Insecure XSLT script processing.
 
-Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.
+Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argument with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.
 
 |Item|Value|
 |-|-|
@@ -67,6 +67,18 @@ Missing ValidateAntiForgeryTokenAttribute on controller action {0}
 |Item|Value|
 |-|-|
 |Category|Security|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA9998](https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers): Analyzer package has been deprecated
+
+FxCopAnalyzers package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK. Please refer to https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers to migrate to .NET analyzers.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
 |Enabled|True|
 |Severity|Warning|
 |CodeFix|False|

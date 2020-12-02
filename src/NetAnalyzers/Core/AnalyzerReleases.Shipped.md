@@ -1,4 +1,4 @@
-## Release 5.0
+﻿## Release 5.0
 
 ### New Rules
 

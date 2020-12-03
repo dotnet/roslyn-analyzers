@@ -189,7 +189,7 @@ namespace GenerateGlobalAnalyzerConfigs
             }
 
             static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
-                => throw e.Exception;
+                => throw e.Exception ?? new InvalidOperationException(e.Message);
 
             string GetAssemblyPath(string assembly)
             {
@@ -542,9 +542,9 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
 
                     case NetAnalyzersPackageName:
                         return $@"
-  <!-- Target to report a warning when SDK NetAnalyzers version is higher then the referenced NuGet NetAnalyzers version -->
+  <!-- Target to report a warning when SDK NetAnalyzers version is higher than the referenced NuGet NetAnalyzers version -->
   <Target Name=""_ReportUpgradeNetAnalyzersNuGetWarning"" BeforeTargets=""CoreCompile"" Condition=""'$(_SkipUpgradeNetAnalyzersNuGetWarning)' != 'true' "">
-    <Warning Text =""The .NET SDK has newer analyzers with version '$({NetAnalyzersSDKAssemblyVersionPropertyName})' then what is provided by version '$({NetAnalyzersNugetAssemblyVersionPropertyName})' of '{NetAnalyzersPackageName}' package. Update or remove this package reference.""
+    <Warning Text =""The .NET SDK has newer analyzers with version '$({NetAnalyzersSDKAssemblyVersionPropertyName})' than what version '$({NetAnalyzersNugetAssemblyVersionPropertyName})' of '{NetAnalyzersPackageName}' package provides. Update or remove this package reference.""
              Condition=""'$({NetAnalyzersNugetAssemblyVersionPropertyName})' != '' AND
                          '$({NetAnalyzersSDKAssemblyVersionPropertyName})' != '' AND
                           $({NetAnalyzersNugetAssemblyVersionPropertyName}) &lt; $({NetAnalyzersSDKAssemblyVersionPropertyName})""/>

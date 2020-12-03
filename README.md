@@ -18,9 +18,9 @@ Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.FxCopAnalyze
 
 ### Microsoft.CodeAnalysis.NetAnalyzers
 
-*Latest stable version:* _Not yet released_
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.NetAnalyzers&protocolType=NuGet)
+*Latest pre-release version (.NET6 analyzers):* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet6&package=Microsoft.CodeAnalysis.NetAnalyzers&protocolType=NuGet)
 
 This is the **primary analyzer package** for this repo that contains all **the .NET code analysis rules (CAxxxx)** that are built into the .NET SDK starting .NET5 release. The documentation for CA rules can be found at [docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings](https://docs.microsoft.com/visualstudio/code-quality/code-analysis-for-managed-code-warnings).
 
@@ -154,14 +154,10 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 ## Recommended version of Analyzer Packages
 
-Recommended Visual Studio Version: **Visual Studio 2019 16.3 RTW or later**
+Recommended Analyzer Package Version: **Version 5.0.0**, for example [Microsoft.CodeAnalysis.NetAnalyzers 5.0.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers/5.0.0)
 
-Recommended Analyzer Package Version: **Version 3.3.0**, for example [Microsoft.CodeAnalysis.FxCopAnalyzers 3.3.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/3.3.0)
+Required Visual Studio Version: **Visual Studio 2019 16.8 RTW or later**
 
-The documentation for FxCopAnalyzers package versions can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers)
+Required .NET SDK Version: **.NET 5.0 SDK or later**
 
-You can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects.
-
-1. For Visual Studio 2017 15.5 or later see [here](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017)
-
-2. For Visual Studio 2019 16.0 or later see [here](https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2019)
+The documentation for .NET SDK Analyzers can be found [here](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview#code-quality-analysis)

@@ -7,9 +7,9 @@
       ]
     },
     "vs": {
-      "version": "16.6"
+      "version": "16.8"
     },
-    "xcopy-msbuild": "16.6.5-alpha1"
+    "xcopy-msbuild": "16.8.0-preview2.1"
   },
   "sdk": {
     "version": "5.0.100",
@@ -17,6 +17,6 @@
     "rollForward": "patch"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "5.0.0-beta.20560.3"
+    "Microsoft.DotNet.Arcade.Sdk": "6.0.0-beta.20573.2"
   }
 }

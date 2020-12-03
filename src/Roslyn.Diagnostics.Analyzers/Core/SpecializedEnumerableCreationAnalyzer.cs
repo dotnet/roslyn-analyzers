@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+#nullable disable warnings
+
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -76,9 +79,9 @@ namespace Roslyn.Diagnostics.Analyzers
                         return;
                     }
 
-                    if (!(linqEnumerableSymbol.GetMembers(EmptyMethodName).FirstOrDefault() is IMethodSymbol genericEmptyEnumerableSymbol) ||
+                    if (linqEnumerableSymbol.GetMembers(EmptyMethodName).FirstOrDefault() is not IMethodSymbol genericEmptyEnumerableSymbol ||
                         genericEmptyEnumerableSymbol.Arity != 1 ||
-                        genericEmptyEnumerableSymbol.Parameters.Length != 0)
+                        !genericEmptyEnumerableSymbol.Parameters.IsEmpty)
                     {
                         return;
                     }
@@ -125,9 +128,9 @@ namespace Roslyn.Diagnostics.Analyzers
 
             public static ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(UseEmptyEnumerableRule, UseSingletonEnumerableRule);
 
-            protected bool ShouldAnalyzeArrayCreationExpression(SyntaxNode expression, SemanticModel semanticModel)
+            protected bool ShouldAnalyzeArrayCreationExpression(SyntaxNode expression, SemanticModel semanticModel, CancellationToken cancellationToken)
             {
-                TypeInfo typeInfo = semanticModel.GetTypeInfo(expression);
+                TypeInfo typeInfo = semanticModel.GetTypeInfo(expression, cancellationToken);
 
                 return typeInfo.ConvertedType != null &&
                     Equals(typeInfo.ConvertedType.OriginalDefinition, GenericEnumerableSymbol) &&
@@ -135,12 +138,12 @@ namespace Roslyn.Diagnostics.Analyzers
                     arrayType.Rank == 1;
             }
 
-            protected void AnalyzeMemberAccessName(SyntaxNode name, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic)
+            protected void AnalyzeMemberAccessName(SyntaxNode name, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
             {
-                if (semanticModel.GetSymbolInfo(name).Symbol is IMethodSymbol methodSymbol &&
+                if (semanticModel.GetSymbolInfo(name, cancellationToken).Symbol is IMethodSymbol methodSymbol &&
                     Equals(methodSymbol.OriginalDefinition, _genericEmptyEnumerableSymbol))
                 {
-                    addDiagnostic(Diagnostic.Create(UseEmptyEnumerableRule, name.Parent.GetLocation()));
+                    addDiagnostic(name.Parent.CreateDiagnostic(UseEmptyEnumerableRule));
                 }
             }
 
@@ -148,11 +151,11 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (length == 0)
                 {
-                    addDiagnostic(Diagnostic.Create(UseEmptyEnumerableRule, arrayCreationExpression.GetLocation()));
+                    addDiagnostic(arrayCreationExpression.CreateDiagnostic(UseEmptyEnumerableRule));
                 }
                 else if (length == 1)
                 {
-                    addDiagnostic(Diagnostic.Create(UseSingletonEnumerableRule, arrayCreationExpression.GetLocation()));
+                    addDiagnostic(arrayCreationExpression.CreateDiagnostic(UseSingletonEnumerableRule));
                 }
             }
         }

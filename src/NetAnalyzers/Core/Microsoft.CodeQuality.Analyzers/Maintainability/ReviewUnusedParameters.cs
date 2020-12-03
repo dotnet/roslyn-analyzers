@@ -130,7 +130,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             // Report diagnostics for unused parameters.
             foreach (var (parameter, used) in parameterUsageMap)
             {
-                if (used)
+                if (used || parameter.Name.Length == 0)
                 {
                     continue;
                 }
@@ -204,10 +204,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Ignore event handler methods "Handler(object, MyEventArgs)"
-            if (method.Parameters.Length == 2 &&
-                method.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                // UWP has specific EventArgs not inheriting from System.EventArgs. It was decided to go for a suffix match rather than a whitelist.
-                (method.Parameters[1].Type.Inherits(eventsArgSymbol) || method.Parameters[1].Type.Name.EndsWith("EventArgs", StringComparison.Ordinal)))
+            if (method.HasEventHandlerSignature(eventsArgSymbol))
             {
                 return false;
             }
@@ -219,9 +216,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Bail out if user has configured to skip analysis for the method.
-            if (!method.MatchesConfiguredVisibility(
-                startOperationBlockContext.Options,
+            if (!startOperationBlockContext.Options.MatchesConfiguredVisibility(
                 Rule,
+                method,
                 startOperationBlockContext.Compilation,
                 startOperationBlockContext.CancellationToken,
                 defaultRequiredVisibility: SymbolVisibilityGroup.All))
@@ -232,6 +229,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             // Check to see if the method just throws a NotImplementedException/NotSupportedException
             // We shouldn't warn about parameters in that case
             if (startOperationBlockContext.IsMethodNotImplementedOrSupported())
+            {
+                return false;
+            }
+
+            // Ignore generated method for top level statements
+            if (method.IsTopLevelStatementsEntryPointMethod())
             {
                 return false;
             }

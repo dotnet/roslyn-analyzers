@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Roslyn.Diagnostics.Analyzers;
@@ -54,9 +55,13 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             {
                 // Pointers can use 'null'
             }
+            else if (type.TypeKind == TypeKind.Error)
+            {
+                return;
+            }
             else if (type.IsValueType)
             {
-                if (!(type is INamedTypeSymbol namedType)
+                if (type is not INamedTypeSymbol namedType
                     || namedType.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
                 {
                     return;
@@ -67,7 +72,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+            context.ReportDiagnostic(context.Operation.CreateDiagnostic(Rule));
         }
     }
 }

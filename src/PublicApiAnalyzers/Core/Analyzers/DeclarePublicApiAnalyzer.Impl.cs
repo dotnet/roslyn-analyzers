@@ -69,6 +69,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         private readonly struct ApiData
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
+            public static readonly ApiData Empty = new ApiData(ImmutableArray<ApiLine>.Empty, ImmutableArray<RemovedApiLine>.Empty, nullableRank: -1);
+
             public ImmutableArray<ApiLine> ApiList { get; }
             public ImmutableArray<RemovedApiLine> RemovedApiList { get; }
             // Number for the max line where #nullable enable was found (-1 otherwise)
@@ -180,13 +182,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
                     var namedType = (INamedTypeSymbol)symbol;
-                    if (namedType.InstanceConstructors.Length == 1 &&
-                        (namedType.TypeKind == TypeKind.Class || namedType.TypeKind == TypeKind.Struct))
+                    if ((namedType.TypeKind == TypeKind.Class && namedType.InstanceConstructors.Length == 1)
+                        || namedType.TypeKind == TypeKind.Struct)
                     {
-                        var instanceConstructor = namedType.InstanceConstructors[0];
-                        if (instanceConstructor.IsImplicitlyDeclared)
+                        var implicitConstructor = namedType.InstanceConstructors.FirstOrDefault(x => x.IsImplicitlyDeclared);
+                        if (implicitConstructor != null)
                         {
-                            OnSymbolActionCore(instanceConstructor, reportDiagnostic, isImplicitlyDeclaredConstructor: true, explicitLocation: explicitLocation);
+                            OnSymbolActionCore(implicitConstructor, reportDiagnostic, isImplicitlyDeclaredConstructor: true, explicitLocation: explicitLocation);
                         }
                     }
                 }
@@ -372,8 +374,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 void reportDeclareNewApi(ISymbol symbol, bool isImplicitlyDeclaredConstructor, string publicApiName)
                 {
                     // TODO: workaround for https://github.com/dotnet/wpf/issues/2690
-                    if (publicApiName == "XamlGeneratedNamespace.GeneratedInternalTypeHelper" ||
-                        publicApiName == "XamlGeneratedNamespace.GeneratedInternalTypeHelper.GeneratedInternalTypeHelper() -> void")
+                    if (publicApiName is "XamlGeneratedNamespace.GeneratedInternalTypeHelper" or
+                        "XamlGeneratedNamespace.GeneratedInternalTypeHelper.GeneratedInternalTypeHelper() -> void")
                     {
                         return;
                     }
@@ -554,7 +556,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             {
                 if (symbol.Kind == SymbolKind.NamedType)
                 {
-                    return ObliviousDetector.IgnoreTopLevelNullabilityInstance.Visit(symbol);
+                    return ObliviousDetector.VisitNamedTypeDeclaration((INamedTypeSymbol)symbol);
                 }
 
                 return ObliviousDetector.Instance.Visit(symbol);
@@ -761,7 +763,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 // not internal, private or protected&internal
                 return !type.IsSealed &&
                     type.GetMembers(WellKnownMemberNames.InstanceConstructorName).Any(
-                        m => m.DeclaredAccessibility != Accessibility.Internal && m.DeclaredAccessibility != Accessibility.Private && m.DeclaredAccessibility != Accessibility.ProtectedAndInternal
+                        m => m.DeclaredAccessibility is not Accessibility.Internal and not Accessibility.Private and not Accessibility.ProtectedAndInternal
                     );
             }
 
@@ -770,7 +772,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// </summary>
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
-                public static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+                // We need to ignore top-level nullability for outer types: `Outer<...>.Inner`
+                private static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+
                 public static readonly ObliviousDetector Instance = new ObliviousDetector(ignoreTopLevelNullability: false);
 
                 private readonly bool _ignoreTopLevelNullability;
@@ -802,7 +806,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     foreach (var typeParameter in symbol.TypeParameters)
                     {
-                        if (Visit(typeParameter))
+                        if (CheckTypeParameterConstraints(typeParameter))
                         {
                             return true;
                         }
@@ -811,6 +815,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return false;
                 }
 
+                /// <summary>This is visiting type references, not type definitions (that's done elsewhere).</summary>
                 public override bool VisitNamedType(INamedTypeSymbol symbol)
                 {
                     if (!_ignoreTopLevelNullability)
@@ -838,14 +843,6 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         }
                     }
 
-                    foreach (var typeParameter in symbol.TypeParameters)
-                    {
-                        if (Instance.Visit(typeParameter))
-                        {
-                            return true;
-                        }
-                    }
-
                     return false;
                 }
 
@@ -864,10 +861,40 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return Visit(symbol.PointedAtType);
                 }
 
+                /// <summary>This only checks the use of a type parameter. We're checking their definition (looking at type constraints) elsewhere.</summary>
                 public override bool VisitTypeParameter(ITypeParameterSymbol symbol)
                 {
-                    if (symbol.HasReferenceTypeConstraint() && symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
+                    if (symbol.IsReferenceType &&
+                        symbol.NullableAnnotation() == NullableAnnotation.None)
                     {
+                        // Example:
+                        // I<TReferenceType~>
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                /// <summary>This is checking the definition of a type (as opposed to its usage).</summary>
+                public static bool VisitNamedTypeDeclaration(INamedTypeSymbol symbol)
+                {
+                    foreach (var typeParameter in symbol.TypeParameters)
+                    {
+                        if (CheckTypeParameterConstraints(typeParameter))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                private static bool CheckTypeParameterConstraints(ITypeParameterSymbol symbol)
+                {
+                    if (symbol.HasReferenceTypeConstraint() &&
+                        symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
+                    {
+                        // where T : class~
                         return true;
                     }
 
@@ -875,6 +902,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     {
                         if (Instance.Visit(constraintType))
                         {
+                            // Examples:
+                            // where T : SomeReferenceType~
+                            // where T : I<SomeReferenceType~>
                             return true;
                         }
                     }

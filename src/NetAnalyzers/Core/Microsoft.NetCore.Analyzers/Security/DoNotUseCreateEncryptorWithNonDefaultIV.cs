@@ -27,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCreateEncryptorWithNonDefaultIVDescription));
         internal static DiagnosticDescriptor MaybeUseCreateEncryptorWithNonDefaultIVRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5402",
@@ -35,6 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCreateEncryptorWithNonDefaultIVDescription));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
@@ -63,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     // The passed rgbIV can't be null cause CreateEncryptor method has an ANE exception.
                     // It definitely uses a non-default IV and will be flagged a diagnostic directly without PropertySetAnalysis.
                     // So, it returns Unflagged to avoid repeated diagnostic.
-                    if (methodSymbol.Parameters.Length != 0)
+                    if (!methodSymbol.Parameters.IsEmpty)
                     {
                         return HazardousUsageEvaluationResult.Unflagged;
                     }
@@ -99,10 +101,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyUseCreateEncryptorWithNonDefaultIVRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeUseCreateEncryptorWithNonDefaultIVRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyUseCreateEncryptorWithNonDefaultIVRule,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeUseCreateEncryptorWithNonDefaultIVRule,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -116,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     if (methodSymbol.ContainingType.GetBaseTypesAndThis().Contains(symmetricAlgorithmTypeSymbol) &&
                                         methodSymbol.Name == "CreateEncryptor")
                                     {
-                                        if (methodSymbol.Parameters.Length == 0)
+                                        if (methodSymbol.Parameters.IsEmpty)
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {
@@ -200,8 +202,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
-                                rootOperationsNeedingAnalysis.Free();
-                                allResults?.Free();
+                                rootOperationsNeedingAnalysis.Free(compilationAnalysisContext.CancellationToken);
+                                allResults?.Free(compilationAnalysisContext.CancellationToken);
                             }
                         });
 

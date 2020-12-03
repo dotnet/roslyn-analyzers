@@ -32,7 +32,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              RuleLevel.Disabled,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
         internal static DiagnosticDescriptor SystemRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystem,
@@ -40,7 +41,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              RuleLevel.Disabled,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
@@ -154,9 +156,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 lock (s_lock)
                 {
-#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/2180
                     if (s_wellKnownSystemNamespaceTable == null)
-#pragma warning restore CA1508 // Avoid dead conditional code
                     {
                         #region List of Well known System Namespaces
                         var wellKnownSystemNamespaces = new List<string>

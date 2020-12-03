@@ -185,7 +185,11 @@ visual_basic_style_unused_value_assignment_preference = unused_local_variable:wa
 ### Configuration for IDE code style by diagnostic IDs ###
 [*.{cs,vb}]
 
+# Default severity for all IDE code style rules with category 'Style'
 dotnet_analyzer_diagnostic.category-Style.severity = warning
+
+# Default severity for all IDE code quality rules with category 'CodeQuality'
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
 
 # IDE0066: Convert switch statement to expression
 dotnet_diagnostic.IDE0066.severity = suggestion
@@ -201,9 +205,6 @@ dotnet_diagnostic.IDE0002.severity = silent
 
 # IDE0003: Name can be simplified
 dotnet_diagnostic.IDE0003.severity = silent
-
-# IDE005_gen: Remove unnecessary usings in generated code
-dotnet_diagnostic.IDE0005_gen.severity = silent
 
 # IDE0007: Use 'var' instead of explicit type
 dotnet_diagnostic.IDE0007.severity = silent
@@ -250,3 +251,9 @@ dotnet_code_quality.CA1720.api_surface = public
 # Exclude single letter type parameter names
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+
+### Configuration for PublicAPI analyzers executed on this repo ###
+[*.{cs,vb}]
+
+# Analyzers bail-out if the PublicAPI.*.txt file is not found
+dotnet_public_api_analyzer.require_api_files = true

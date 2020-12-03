@@ -2,7 +2,7 @@
   <PropertyGroup>
     <VersionPrefix>3.3.2</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersVersionPrefix>5.0.1</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--

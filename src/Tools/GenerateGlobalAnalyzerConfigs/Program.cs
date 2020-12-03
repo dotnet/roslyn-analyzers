@@ -384,18 +384,18 @@ $@"<Project>{GetCommonContents(packageName)}{GetPackageSpecificContents(packageN
     <!-- PropertyGroup to compute global analyzer config file to be used -->
     <PropertyGroup>{propertyStringForSettingDefaultPropertyValue}
       <!-- Set the default analysis mode, if not set by the user -->
-      <_GlobalAnalyzerConfigAnalysisMode>$(AnalysisMode)</_GlobalAnalyzerConfigAnalysisMode>
-      <_GlobalAnalyzerConfigAnalysisMode Condition=""'$(_GlobalAnalyzerConfigAnalysisMode)' == ''"">{nameof(AnalysisMode.Default)}</_GlobalAnalyzerConfigAnalysisMode>
+      <_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName}>$(AnalysisMode)</_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName}>
+      <_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName} Condition=""'$(_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName})' == ''"">{nameof(AnalysisMode.Default)}</_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName}>
 
       <!-- GlobalAnalyzerConfig file name based on user specified package version '{packageVersionPropName}', if any. We replace '.' with '_' to map the version string to file name suffix. -->
-      <_GlobalAnalyzerConfigFileName Condition=""'$({packageVersionPropName})' != ''"">AnalysisLevel_$({packageVersionPropName}.Replace(""."",""_""))_$(_GlobalAnalyzerConfigAnalysisMode).editorconfig</_GlobalAnalyzerConfigFileName>
+      <_GlobalAnalyzerConfigFileName_{trimmedPackageName} Condition=""'$({packageVersionPropName})' != ''"">AnalysisLevel_$({packageVersionPropName}.Replace(""."",""_""))_$(_GlobalAnalyzerConfigAnalysisMode_{trimmedPackageName}).editorconfig</_GlobalAnalyzerConfigFileName_{trimmedPackageName}>
       
-      <_GlobalAnalyzerConfigDir Condition=""'$(_GlobalAnalyzerConfigDir)' == ''"">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir>
-      <_GlobalAnalyzerConfigFile Condition=""'$(_GlobalAnalyzerConfigFileName)' != ''"">$(_GlobalAnalyzerConfigDir)\$(_GlobalAnalyzerConfigFileName)</_GlobalAnalyzerConfigFile>
+      <_GlobalAnalyzerConfigDir_{trimmedPackageName} Condition=""'$(_GlobalAnalyzerConfigDir_{trimmedPackageName})' == ''"">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir_{trimmedPackageName}>
+      <_GlobalAnalyzerConfigFile_{trimmedPackageName} Condition=""'$(_GlobalAnalyzerConfigFileName_{trimmedPackageName})' != ''"">$(_GlobalAnalyzerConfigDir_{trimmedPackageName})\$(_GlobalAnalyzerConfigFileName_{trimmedPackageName})</_GlobalAnalyzerConfigFile_{trimmedPackageName}>
     </PropertyGroup>
 
-    <ItemGroup Condition=""Exists('$(_GlobalAnalyzerConfigFile)')"">
-      <EditorConfigFiles Include=""$(_GlobalAnalyzerConfigFile)"" />
+    <ItemGroup Condition=""Exists('$(_GlobalAnalyzerConfigFile_{trimmedPackageName})')"">
+      <EditorConfigFiles Include=""$(_GlobalAnalyzerConfigFile_{trimmedPackageName})"" />
     </ItemGroup>
   </Target>
 ";

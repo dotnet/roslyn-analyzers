@@ -19,12 +19,12 @@ assignees: ''
 
 _OR_
 
-**NuGet Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+**NuGet Package**: [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-**Version**: v3.3.1 (Latest)
+**Version**: 5.0.1 (Latest)
 
 <!--
-NOTE: FxCopAnalyzers package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK.
+NOTE: `Microsoft.CodeAnalysis.FxCopAnalyzers` package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK.
       Please refer to https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers to migrate to .NET analyzers.
 -->
 

@@ -23,6 +23,9 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+    <!-- CA1014: Mark assemblies with CLSCompliant -->
+    <NoWarn>$(NoWarn),CA1014</NoWarn>
+    
     <!--
       Make sure any documentation comments which are included in code get checked for syntax during the build, but do
       not report warnings for missing comments.

@@ -252,6 +252,25 @@ dotnet_code_quality.CA1720.api_surface = public
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
 
+# CA1002: Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = suggestion
+
+# CA1024: Use properties where appropriate
+dotnet_diagnostic.CA1024.severity = suggestion
+
+# CA1033: Interface methods should be callable by child types
+dotnet_diagnostic.CA1033.severity = suggestion
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = suggestion
+
+# CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = suggestion
+
+# CA1725: Parameter names should match base declaration
+# TODO: Enable this rule as warning and fix violations.
+dotnet_diagnostic.CA1725.severity = suggestion
+
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]
 

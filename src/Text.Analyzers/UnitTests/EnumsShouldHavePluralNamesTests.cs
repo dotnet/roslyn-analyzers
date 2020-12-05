@@ -6,13 +6,13 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumsShouldHavePluralNamesAnalyzer,
+    Text.Analyzers.EnumsShouldHavePluralNamesAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumsShouldHavePluralNamesAnalyzer,
+    Text.Analyzers.EnumsShouldHavePluralNamesAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
+namespace Text.Analyzers.UnitTests
 {
     public class EnumsShouldHavePluralNamesTests
     {

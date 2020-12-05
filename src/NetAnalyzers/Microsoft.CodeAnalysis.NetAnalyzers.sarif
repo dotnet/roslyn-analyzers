@@ -1384,6 +1384,26 @@
             ]
           }
         },
+        "CA1071": {
+          "id": "CA1071",
+          "shortDescription": "Override base.Equals(base) when implementing IEquatable&lt;T&gt;",
+          "fullDescription": "When a base class type T implements the interface IEquatable<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of a derived type can be equated using the base type.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1071",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "EquatableAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1303": {
           "id": "CA1303",
           "shortDescription": "Do not pass literals as localized parameters",

@@ -576,6 +576,18 @@ Do not declare virtual events in a base class. Overridden events in a derived cl
 |CodeFix|False|
 ---
 
+## [CA1071](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1071): Override base.Equals(base) when implementing IEquatable&lt;T&gt;
+
+When a base class type T implements the interface IEquatable\<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of a derived type can be equated using the base type.
+
+|Item|Value|
+|-|-|
+|Category|Design|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1200](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1200): Avoid using cref tags with a prefix
 
 Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.

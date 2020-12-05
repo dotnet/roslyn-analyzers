@@ -164,6 +164,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes", "src\PerformanceSensitiveAnalyzers\CSharp\CodeFixes\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes.csproj", "{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateAnalyzerNuspec", "src\Tools\GenerateAnalyzerNuspec\GenerateAnalyzerNuspec.csproj", "{81E21880-3F26-42DC-9423-9DACB8933597}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{046419a7-c60d-40ff-ad7e-2bae461b7ce5}*SharedItemsImports = 5
@@ -423,6 +425,10 @@ Global
 		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81E21880-3F26-42DC-9423-9DACB8933597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81E21880-3F26-42DC-9423-9DACB8933597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81E21880-3F26-42DC-9423-9DACB8933597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81E21880-3F26-42DC-9423-9DACB8933597}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -494,6 +500,7 @@ Global
 		{4C362C30-C4B1-4C4B-A545-DBF67C7E9153} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{8197A037-FF9E-4660-8C6D-2F722FEA0C10} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{046419A7-C60D-40FF-AD7E-2BAE461B7CE5} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{81E21880-3F26-42DC-9423-9DACB8933597} = {DB2DD702-8301-4FC6-B8C0-029C7DCC2931}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

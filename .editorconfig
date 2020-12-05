@@ -261,6 +261,9 @@ dotnet_diagnostic.CA1024.severity = suggestion
 # CA1033: Interface methods should be callable by child types
 dotnet_diagnostic.CA1033.severity = suggestion
 
+# CA1307: Specify StringComparison for clarity
+dotnet_diagnostic.CA1307.severity = suggestion
+
 # CA1711: Identifiers should not have incorrect suffix
 dotnet_diagnostic.CA1711.severity = suggestion
 

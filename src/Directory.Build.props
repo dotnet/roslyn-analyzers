@@ -6,7 +6,6 @@
     <!-- Enable flow-analysis feature flag (can be removed when we move to Microsoft.CodeAnalysis 3.0 or larger) -->
     <Features>$(Features);flow-analysis</Features>
 
-    <DefineConstants Condition="'$(BUILDING_VSIX)' == 'true'">$(DefineConstants),BUILDING_VSIX</DefineConstants>
     <DefineConstants Condition="'$(LEGACY_CODE_METRICS_MODE)' == 'true'">$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
   </PropertyGroup>
 

@@ -44,6 +44,8 @@ You do not need to manually install this NuGet package to your project if you ar
 
 ### Microsoft.CodeAnalysis.FxCopAnalyzers
 
+**NOTE:** Starting version `3.3.2`, `Microsoft.CodeAnalysis.FxCopAnalyzers` has been **deprecated** in favor of `Microsoft.CodeAnalysis.NetAnalyzers`. Documentation to migrate from FxCopAnalyzers to NetAnalyzers is available [here](https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers).
+
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.FxCopAnalyzers&protocolType=NuGet)
@@ -154,7 +156,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 ## Recommended version of Analyzer Packages
 
-Recommended Analyzer Package Version: **Version 5.0.0**, for example [Microsoft.CodeAnalysis.NetAnalyzers 5.0.0](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers/5.0.0)
+Recommended Analyzer Package Version: [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
 Required Visual Studio Version: **Visual Studio 2019 16.8 RTW or later**
 

@@ -736,8 +736,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             if (supportedVersion != null)
                             {
+                                unsupportedRule = false;
+
                                 if (supportedVersion > unsupportedVersion)
                                 {
+                                    if (csAttributes != null && csAttributes.TryGetValue(pName, out var csAttribute))
+                                    {
+                                        if (csAttribute.UnsupportedFirst != null && csAttribute.UnsupportedFirst > supportedVersion)
+                                        {
+                                            platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore,
+                                                pName, supportedVersion));
+                                            unsupportedRule = true;
+                                            continue;
+                                        }
+                                    }
                                     platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater,
                                         pName, supportedVersion));
                                 }
@@ -746,7 +758,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion,
                                         pName, supportedVersion, unsupportedVersion));
                                 }
-                                unsupportedRule = false;
                             }
                             else
                             {
@@ -821,8 +832,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         else
                         {
                             var unsupportedVersion = csAttribute.UnsupportedSecond ?? csAttribute.UnsupportedFirst;
-                            if (unsupportedVersion != null && attributes.Keys.Contains(pName))
+                            if (unsupportedVersion != null && attributes.TryGetValue(pName, out var attribute))
                             {
+                                var calledUnsupported = attribute.UnsupportedSecond ?? attribute.UnsupportedFirst;
                                 callsite = Callsite.Unreachable;
                                 if (IsEmptyVersion(unsupportedVersion))
                                 {
@@ -835,8 +847,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 }
                                 else
                                 {
-                                    platformNames.Add(string.Format(CultureInfo.InvariantCulture,
-                                        MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, pName, unsupportedVersion));
+                                    if ((attribute.SupportedFirst == null || !IsEmptyVersion(attribute.SupportedFirst)) && (calledUnsupported == null || calledUnsupported < unsupportedVersion))
+                                    {
+                                        callsite = Callsite.Reachable;
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture,
+                                        MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, pName, unsupportedVersion));
+                                    }
+                                    else
+                                    {
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture,
+                                            MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, pName, unsupportedVersion));
+                                    }
                                 }
                             }
                         }
@@ -862,7 +883,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                         else
                         {
-                            version = supportedVersion;
+                            var unsupportedVersion = attribute.UnsupportedSecond ?? attribute.UnsupportedFirst;
+                            if (unsupportedVersion != null)
+                            {
+                                version = version == null || unsupportedVersion >= version ? unsupportedVersion : version;
+                            }
+                            else
+                            {
+                                version = supportedVersion;
+                            }
                         }
                     }
                     if (version != null && !IsEmptyVersion(version))
@@ -1040,7 +1069,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             copiedAttributes = new SmallDictionary<string, PlatformAttributes>(StringComparer.OrdinalIgnoreCase);
             foreach (var (platformName, attributes) in operationAttributes)
             {
-                if (AllowList(attributes) || msBuildPlatforms.IndexOf(platformName, 0, StringComparer.OrdinalIgnoreCase) != -1)
+                if (AllowList(attributes) || msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase))
                 {
                     copiedAttributes.Add(platformName, CopyAllAttributes(new PlatformAttributes(), attributes));
                 }
@@ -1112,7 +1141,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
                     }
-                    else if (attribute.UnsupportedFirst != null) // also means Unsupported < Supported, allow list
+                    else if (attribute.UnsupportedFirst != null) // also means Unsupported < Supported, deny list
                     {
                         if (callSiteAttributes.TryGetValue(platformName, out var callSiteAttribute))
                         {
@@ -1134,12 +1163,29 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                                 }
                             }
+                            else
+                            {
+                                if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    if (!SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst))
+                                    {
+                                        diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
+                                        diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                                    }
+                                    if (attribute.UnsupportedSecond != null &&
+                                        !SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedSecond))
+                                    {
+                                        diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
+                                        diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             // Call site has no attributes for this platform, check if MsBuild list has it,
                             // then if call site has deny list, it should support its later support
-                            if (msBuildPlatforms.Contains(platformName) &&
+                            if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase) &&
                                 callSiteAttributes.Any(ca => DenyList(ca.Value)))
                             {
                                 diagnosticAttribute.SupportedFirst = (Version)attribute.SupportedFirst.Clone();
@@ -1166,8 +1212,23 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
                                 }
                             }
+                            else
+                            {
+                                if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    if (!SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst))
+                                    {
+                                        diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
+                                    }
+                                    if (attribute.UnsupportedSecond != null &&
+                                        !SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedSecond))
+                                    {
+                                        diagnosticAttribute.UnsupportedSecond = (Version)attribute.UnsupportedSecond.Clone();
+                                    }
+                                }
+                            }
                         }
-                        else if (msBuildPlatforms.Contains(platformName) &&
+                        else if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase) &&
                             !callSiteAttributes.Values.Any(v => v.SupportedFirst != null))
                         {
                             // if MsBuild list contain the platform and call site has no any other supported attribute it means global, so need to warn

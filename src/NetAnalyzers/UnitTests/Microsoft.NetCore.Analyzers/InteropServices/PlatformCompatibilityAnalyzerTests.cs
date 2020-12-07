@@ -1851,17 +1851,17 @@ public class OsDependentClass
 
         public static IEnumerable<object[]> UnsupportedAttributeTestData()
         {
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.2.3", false };
-            yield return new object[] { "windows", "10.1.2.3", "Mac", "Os10.1.3.3", true };
-            /*yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.3.1", true };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "11.1", true };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.2.2.0", true };*/
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.1.3", false };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.1.3", false };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.1.4", false };
-            yield return new object[] { "windows", "10.1.2.3", "Osx", "10.1.1.4", true };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.0.1", false };
-            yield return new object[] { "windows", "10.1.2.3", "Windows", "8.2.3.4", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.2.3", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Mac", "Os10.1.3.3", true };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.3.1", true };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "11.1", true };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.2.2.0", true };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.3", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.3", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.4", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Osx", "10.1.1.4", true };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.0.1", false };
+            yield return new object[] { "Windows", "10.1.2.3", "Windows", "8.2.3.4", false };
         }
 
         [Theory]
@@ -1890,12 +1890,12 @@ public class OsDependentClass
 
             if (warn)
             {
-                if (platform.Equals(suppressingVersion, System.StringComparison.OrdinalIgnoreCase))
+                if (platform.Equals(suppressingPlatform, System.StringComparison.OrdinalIgnoreCase))
                 {
                     await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(9, 32).
-                        WithArguments("OsDependentClass", $"'{platform}' {version} and later", $"'{suppressingPlatform}' {suppressingVersion}  and before"),
+                        WithArguments("OsDependentClass", $"'{platform}' {version} and later", $"'{suppressingPlatform}' {suppressingVersion} and before"),
                         VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(10, 9).
-                        WithArguments("OsDependentClass.M2()", $"'{platform}' {version} and later", $"'{suppressingPlatform}' {suppressingVersion}  and before"));
+                        WithArguments("OsDependentClass.M2()", $"'{platform}' {version} and later", $"'{suppressingPlatform}' {suppressingVersion} and before"));
                 }
                 else
                 {
@@ -1962,7 +1962,7 @@ public class Test
     [SupportedOSPlatform(""Linux"")]
     public void DiffferentOsNotWarn()
     {
-        obj.DoesNotWorkOnWindows();
+        obj.UnsupportedSupportedFrom1903To2004();
     }
 
     [SupportedOSPlatform(""windows"")]
@@ -1970,7 +1970,7 @@ public class Test
     public void SupporteWindows()
     {
         // Warns for UnsupportedFirst, Supported
-        obj.DoesNotWorkOnWindows(); // This call site is reachable on: 'windows' 10.0.2000 and before. 'C.DoesNotWorkOnWindows()' is supported on: 'windows' 10.0.1903 and later.
+        obj.UnsupportedSupportedFrom1903To2004(); // This call site is reachable on: 'windows' 10.0.2000 and before. 'C.UnsupportedSupportedFrom1903To2004()' is unsupported on: 'windows' 10.0.1903 and before.
     }
 
     [UnsupportedOSPlatform(""windows"")]
@@ -1978,19 +1978,19 @@ public class Test
     [UnsupportedOSPlatform(""windows10.0.2003"")]
     public void SameSupportForWindowsNotWarn()
     {
-        obj.DoesNotWorkOnWindows();
+        obj.UnsupportedSupportedFrom1903To2004();
     }
     
     public void AllSupportedWarnForAll()
     {
-        obj.DoesNotWorkOnWindows(); // This call site is reachable on all platforms. 'C.DoesNotWorkOnWindows()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.
+        obj.UnsupportedSupportedFrom1903To2004(); // This call site is reachable on all platforms. 'C.UnsupportedSupportedFrom1903To2004()' is supported on: 'windows' from version 10.0.1903 to 10.0.2004.
     }
 
     [SupportedOSPlatform(""windows10.0.2000"")]
     public void SupportedFromWindows10_0_2000()
     {
         // Should warn for [UnsupportedOSPlatform]
-        obj.DoesNotWorkOnWindows(); // This call site is reachable on: 'windows' 10.0.2000 and later. 'C.DoesNotWorkOnWindows()' is unsupported on: 'windows' 10.0.2004 and later.
+        obj.UnsupportedSupportedFrom1903To2004(); // This call site is reachable on: 'windows' 10.0.2000 and later. 'C.UnsupportedSupportedFrom1903To2004()' is unsupported on: 'windows' 10.0.2004 and later.
     }
 
     [SupportedOSPlatform(""windows10.0.1904"")]
@@ -1998,7 +1998,7 @@ public class Test
     public void SupportedWindowsFrom10_0_1904_To10_0_1909_NotWarn()
     {
         // Should not warn
-        obj.DoesNotWorkOnWindows();
+        obj.UnsupportedSupportedFrom1903To2004();
     }
 }
 
@@ -2007,15 +2007,15 @@ public class C
     [UnsupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""windows10.0.1903"")]
     [UnsupportedOSPlatform(""windows10.0.2004"")]
-    public void DoesNotWorkOnWindows() { }
+    public void UnsupportedSupportedFrom1903To2004() { }
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsReachable).WithLocation(18, 9).
-                WithArguments("C.DoesNotWorkOnWindows()", "'windows' 10.0.1903 and later", "'windows' 10.0.2000 and before"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(18, 9).
+                WithArguments("C.UnsupportedSupportedFrom1903To2004()", "'windows' 10.0.1903 and before", "'windows' 10.0.2000 and before"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(31, 9).
-                WithArguments("C.DoesNotWorkOnWindows()", "'windows' from version 10.0.1903 to 10.0.2004", ""),
+                WithArguments("C.UnsupportedSupportedFrom1903To2004()", "'windows' from version 10.0.1903 to 10.0.2004", ""),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(38, 9).
-                WithArguments("C.DoesNotWorkOnWindows()", "'windows' 10.0.2004 and later", "'windows' 10.0.2000 and later"));
+                WithArguments("C.UnsupportedSupportedFrom1903To2004()", "'windows' 10.0.2004 and later", "'windows' 10.0.2000 and later"));
         }
 
         [Fact]
@@ -2371,7 +2371,7 @@ public class Test
     {
         {|#0:DenyList.UnsupportedWindows()|}; // This call site is reachable on: 'windows' 10.0 and before. 'DenyList.UnsupportedWindows()' is unsupported on: 'windows' all versions.
         DenyList.UnsupportedWindows10();
-        {|#1:DenyList.UnsupportedSupportedWindows8To10()|}; // This call site is reachable on: 'windows' 10.0 and before. 'DenyList.UnsupportedSupportedWindows8To10()' is supported on: 'windows' 8.0 and later.
+        {|#1:DenyList.UnsupportedSupportedWindows8To10()|}; // This call site is reachable on: 'windows' 10.0 and before. 'DenyList.UnsupportedSupportedWindows8To10()' is unsupported on: 'windows' 8.0 and before.
         AllowList.WindowsOnly(); 
         {|#2:AllowList.Windows10Only()|}; // This call site is reachable on: 'windows' 10.0 and before. 'AllowList.Windows10Only()' is only supported on: 'windows' 10.0 and later.
         AllowList.WindowsOnlyUnsupportedFrom10();
@@ -2395,7 +2395,7 @@ public class Test
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("DenyList.UnsupportedWindows()", "'windows' all versions", "'windows' 10.0 and before"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsReachable).WithLocation(1).WithArguments("DenyList.UnsupportedSupportedWindows8To10()", "'windows' 8.0 and later", "'windows' 10.0 and before"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("DenyList.UnsupportedSupportedWindows8To10()", "'windows' 8.0 and before", "'windows' 10.0 and before"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("AllowList.Windows10Only()", "'windows' 10.0 and later", "'windows' 10.0 and before"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(3).WithArguments("AllowList.Windows10OnlyUnsupportedFrom11()", "'windows' from version 10.0 to 11.0", "'windows' 10.0 and before"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(4).WithArguments("DenyList.UnsupportedWindows()", "'windows' all versions", "'windows' from version 10.0 to 11.0"),
@@ -2444,22 +2444,24 @@ public class Test
     [UnsupportedOSPlatform(""windows9.0"")]
     public void UnsupportedWindows9Test()
     {
-        DenyList.UnsupportedWindows(); // TODO fix come later: This call site is reachable on: 'windows' 9.0 and before. 'DenyList.UnsupportedWindows()' is unsupported on: 'windows' all versions.
+        {|#0:DenyList.UnsupportedWindows()|}; // This call site is reachable on: 'windows' 9.0 and before. 'DenyList.UnsupportedWindows()' is unsupported on: 'windows' all versions.
         DenyList.UnsupportedWindows10();
-        DenyList.UnsupportedSupportedWindows8To10(); // This call site is reachable on: 'windows' 9.0 and before. 'DenyList.UnsupportedSupportedWindows8To10()' is unsupported on: 'windows' 8.0 and before.
-        {|#0:AllowList.WindowsOnly()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.WindowsOnly()' is only supported on: 'windows' all versions.
-        {|#1:AllowList.Windows10Only()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.Windows10Only()' is only supported on: 'windows' 10.0 and later.
-        {|#2:AllowList.WindowsOnlyUnsupportedFrom10()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.WindowsOnlyUnsupportedFrom10()' is only supported on: 'windows' 10.0 and before.
-        {|#3:AllowList.Windows10OnlyUnsupportedFrom11()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.Windows10OnlyUnsupportedFrom11()' is only supported on: 'windows' from version 10.0 to 11.0.
+        {|#1:DenyList.UnsupportedSupportedWindows8To10()|}; // This call site is reachable on: 'windows' 9.0 and before. 'DenyList.UnsupportedSupportedWindows8To10()' is unsupported on: 'windows' 8.0 and before.
+        {|#2:AllowList.WindowsOnly()|}; //This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.WindowsOnly()' is only supported on: 'windows' all versions.
+        {|#3:AllowList.Windows10Only()|}; // This call site is reachable on: 'windows' 9.0 and before. 'AllowList.Windows10Only()' is only supported on: 'windows' 10.0 and later.
+        {|#4:AllowList.WindowsOnlyUnsupportedFrom10()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.WindowsOnlyUnsupportedFrom10()' is only supported on: 'windows' 10.0 and before.
+        {|#5:AllowList.Windows10OnlyUnsupportedFrom11()|}; // This call site is unreachable on: 'windows' 9.0 and later. 'AllowList.Windows10OnlyUnsupportedFrom11()' is only supported on: 'windows' from version 10.0 to 11.0.
     }
 }
 " + AllowDenyListTestClasses;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(0).WithArguments("AllowList.WindowsOnly()", "'windows' all versions", "'windows' 9.0 and later"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(1).WithArguments("AllowList.Windows10Only()", "'windows' 10.0 and later", "'windows' 9.0 and later"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(2).WithArguments("AllowList.WindowsOnlyUnsupportedFrom10()", "'windows' 10.0 and before", "'windows' 9.0 and later"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(3).WithArguments("AllowList.Windows10OnlyUnsupportedFrom11()", "'windows' from version 10.0 to 11.0", "'windows' 9.0 and later"));
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("DenyList.UnsupportedWindows()", "'windows' all versions", "'windows' 9.0 and before"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("DenyList.UnsupportedSupportedWindows8To10()", "'windows' 8.0 and before", "'windows' 9.0 and before"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(2).WithArguments("AllowList.WindowsOnly()", "'windows' all versions", "'windows' 9.0 and later"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(3).WithArguments("AllowList.Windows10Only()", "'windows' 10.0 and later", "'windows' 9.0 and before"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(4).WithArguments("AllowList.WindowsOnlyUnsupportedFrom10()", "'windows' 10.0 and before", "'windows' 9.0 and later"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsUnreachable).WithLocation(5).WithArguments("AllowList.Windows10OnlyUnsupportedFrom11()", "'windows' from version 10.0 to 11.0", "'windows' 9.0 and later"));
         }
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)

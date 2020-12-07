@@ -152,6 +152,6 @@
       <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
 
-    <Exec Command='"$(DotNetExecutable)" "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
+    <Exec Command='"$(DotNetExecutable)" "$(_GenerateAnalyzerNuspecPath)" "$(NuspecFile)" "$(AssetsDir)$(EscapeDirectorySuffix)" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFrameworksForPackage)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(AnalyzerConfigurationFileDir)" "$(AnalyzerConfigurationFileName)" "$(_GeneratedGlobalAnalyzerConfigsDir)"' />
   </Target>
 </Project>

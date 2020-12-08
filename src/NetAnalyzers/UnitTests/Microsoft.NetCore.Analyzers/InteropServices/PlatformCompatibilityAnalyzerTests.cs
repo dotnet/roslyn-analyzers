@@ -1854,10 +1854,10 @@ public class OsDependentClass
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.2.3", false };
             yield return new object[] { "Windows", "10.1.2.3", "Mac", "Os10.1.3.3", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.3.1", true };
-            yield return new object[] { "Windows", "10.1.2.3", "Windows", "11.1", true };
+            yield return new object[] { "windows", "10.1.2.3", "Windows", "11.1", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.2.2.0", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.3", false };
-            yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.3", false };
+            yield return new object[] { "windows", "10.1.2.3", "Windows", "10.1.1.3", false };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.4", false };
             yield return new object[] { "Windows", "10.1.2.3", "Osx", "10.1.1.4", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.0.1", false };

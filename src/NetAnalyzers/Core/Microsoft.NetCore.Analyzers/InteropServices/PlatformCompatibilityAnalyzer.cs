@@ -740,15 +740,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                                 if (supportedVersion > unsupportedVersion)
                                 {
-                                    if (csAttributes != null && csAttributes.TryGetValue(pName, out var csAttribute))
+                                    if (csAttributes != null && csAttributes.TryGetValue(pName, out var csAttribute) &&
+                                        csAttribute.UnsupportedFirst != null && csAttribute.UnsupportedFirst > supportedVersion)
                                     {
-                                        if (csAttribute.UnsupportedFirst != null && csAttribute.UnsupportedFirst > supportedVersion)
-                                        {
-                                            platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore,
-                                                pName, supportedVersion));
-                                            unsupportedRule = true;
-                                            continue;
-                                        }
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture,
+                                            MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, pName, supportedVersion));
+                                        unsupportedRule = true;
+                                        continue;
                                     }
                                     platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater,
                                         pName, supportedVersion));
@@ -840,7 +838,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 {
                                     if (HasSameVersionedPlatformSupport(attributes, pName, supported))
                                     {
-                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
+                                        platformNames.Add(string.Format(CultureInfo.InvariantCulture,
+                                            MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                         continue;
                                     }
                                     platformNames.Add($"'{pName}'");
@@ -851,7 +850,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     {
                                         callsite = Callsite.Reachable;
                                         platformNames.Add(string.Format(CultureInfo.InvariantCulture,
-                                        MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, pName, unsupportedVersion));
+                                            MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, pName, unsupportedVersion));
                                     }
                                     else
                                     {

@@ -32,7 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
         internal static readonly DiagnosticDescriptor MaybeWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2322",
@@ -40,7 +41,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
@@ -220,7 +222,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

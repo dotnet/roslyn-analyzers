@@ -188,7 +188,7 @@ namespace GenerateDocumentationAndConfigFiles
 
             // Local functions.
             static void AnalyzerFileReference_AnalyzerLoadFailed(object? sender, AnalyzerLoadFailureEventArgs e)
-                => throw e.Exception;
+                => throw e.Exception ?? new NotSupportedException(e.Message);
 
             void createRulesetAndEditorconfig(
                 string fileName,
@@ -250,11 +250,7 @@ $@"<Project>
                 {
                     if (!string.IsNullOrEmpty(propsFileToDisableNetAnalyzersInNuGetPackageName))
                     {
-                        Debug.Assert(analyzerPackageName is NetAnalyzersPackageName or
-                            FxCopAnalyzersPackageName or
-                            NetCoreAnalyzersPackageName or
-                            NetFrameworkAnalyzersPackageName or
-                            CodeQualityAnalyzersPackageName);
+                        Debug.Assert(analyzerPackageName is NetAnalyzersPackageName or TextAnalyzersPackageName);
 
                         return $@"
   <!-- 

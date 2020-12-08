@@ -74,8 +74,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      description: s_localizableDescriptionCA1501,
                                                                      isPortedFxCopRule: true,
                                                                      isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false,
-                                                                     isEnabledByDefaultInAggressiveMode: false);
+                                                                     isEnabledByDefaultInAggressiveMode: false,
+                                                                     isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA1502Rule = DiagnosticDescriptorHelper.Create(CA1502RuleId,
                                                                      s_localizableTitleCA1502,
@@ -85,8 +85,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      description: s_localizableDescriptionCA1502,
                                                                      isPortedFxCopRule: true,
                                                                      isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false,
-                                                                     isEnabledByDefaultInAggressiveMode: false);
+                                                                     isEnabledByDefaultInAggressiveMode: false,
+                                                                     isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA1505Rule = DiagnosticDescriptorHelper.Create(CA1505RuleId,
                                                                      s_localizableTitleCA1505,
@@ -96,8 +96,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      description: s_localizableDescriptionCA1505,
                                                                      isPortedFxCopRule: true,
                                                                      isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false,
-                                                                     isEnabledByDefaultInAggressiveMode: false);
+                                                                     isEnabledByDefaultInAggressiveMode: false,
+                                                                     isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA1506Rule = DiagnosticDescriptorHelper.Create(CA1506RuleId,
                                                                      s_localizableTitleCA1506,
@@ -107,8 +107,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      description: s_localizableDescriptionCA1506,
                                                                      isPortedFxCopRule: true,
                                                                      isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false,
-                                                                     isEnabledByDefaultInAggressiveMode: false);
+                                                                     isEnabledByDefaultInAggressiveMode: false,
+                                                                     isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = DiagnosticDescriptorHelper.Create(CA1509RuleId,
                                                                      s_localizableTitleCA1509,
@@ -118,8 +118,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      description: s_localizableDescriptionCA1509,
                                                                      isPortedFxCopRule: false,
                                                                      isDataflowRule: false,
-                                                                     isEnabledByDefaultInFxCopAnalyzers: false,
-                                                                     isEnabledByDefaultInAggressiveMode: false);
+                                                                     isEnabledByDefaultInAggressiveMode: false,
+                                                                     isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1501Rule, CA1502Rule, CA1505Rule, CA1506Rule, InvalidEntryInCodeMetricsConfigFileRule);
 

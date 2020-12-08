@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "5.0.2",
         "language": "en-US"
       },
       "rules": {
@@ -147,6 +147,26 @@
             ]
           }
         },
+        "CA1801": {
+          "id": "CA1801",
+          "shortDescription": "Review unused parameters",
+          "fullDescription": "Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpReviewUnusedParametersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1812": {
           "id": "CA1812",
           "shortDescription": "Avoid uninstantiated internal classes",
@@ -163,7 +183,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -183,7 +204,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -288,7 +310,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "5.0.2",
         "language": "en-US"
       },
       "rules": {
@@ -456,7 +478,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -477,7 +500,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -497,7 +521,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1409,7 +1434,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1429,7 +1455,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1449,7 +1476,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1469,7 +1497,8 @@
             ],
             "tags": [
               "PortedFromFxCop",
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1509,7 +1538,8 @@
               "Visual Basic"
             ],
             "tags": [
-              "Telemetry"
+              "Telemetry",
+              "CompilationEnd"
             ]
           }
         },
@@ -1761,7 +1791,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -1775,27 +1806,6 @@
             "category": "Naming",
             "isEnabledByDefault": true,
             "typeName": "ParameterNamesShouldMatchBaseDeclarationAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ],
-            "tags": [
-              "PortedFromFxCop",
-              "Telemetry",
-              "EnabledRuleInAggressiveMode"
-            ]
-          }
-        },
-        "CA1801": {
-          "id": "CA1801",
-          "shortDescription": "Review unused parameters",
-          "fullDescription": "Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "typeName": "ReviewUnusedParametersAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1832,7 +1842,7 @@
           "id": "CA1805",
           "shortDescription": "Do not initialize unnecessarily",
           "fullDescription": "The .NET runtime initializes all fields of reference types to their default values before running the constructor. In most cases, explicitly initializing a field to its default value in a constructor is redundant, adding maintenance costs and potentially degrading performance (such as with increased assembly size), and the explicit initialization can be removed.  In some cases, such as with static readonly fields that permanently retain their default value, consider instead changing them to be constants or properties.",
-          "defaultLevel": "note",
+          "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1805",
           "properties": {
             "category": "Performance",
@@ -1957,7 +1967,7 @@
         "CA1816": {
           "id": "CA1816",
           "shortDescription": "Dispose methods should call SuppressFinalize",
-          "fullDescription": "A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual?Basic).",
+          "fullDescription": "A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual Basic).",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1816",
           "properties": {
@@ -3243,7 +3253,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3264,7 +3275,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3325,7 +3337,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3346,7 +3359,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3387,7 +3401,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3408,7 +3423,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3449,7 +3465,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3470,7 +3487,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3491,7 +3509,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -3512,7 +3531,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4104,7 +4124,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4145,7 +4166,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4245,7 +4267,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4509,7 +4532,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4530,7 +4554,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4551,7 +4576,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4572,7 +4598,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4653,7 +4680,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4674,7 +4702,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4736,7 +4765,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4816,7 +4846,8 @@
             ],
             "tags": [
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4837,7 +4868,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4898,7 +4930,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4919,7 +4952,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4940,7 +4974,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -4961,7 +4996,8 @@
             "tags": [
               "Dataflow",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -5031,7 +5067,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers",
-        "version": "6.0.0",
+        "version": "5.0.2",
         "language": "en-US"
       },
       "rules": {
@@ -5173,6 +5209,26 @@
             ]
           }
         },
+        "CA1801": {
+          "id": "CA1801",
+          "shortDescription": "Review unused parameters",
+          "fullDescription": "Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "BasicReviewUnusedParametersAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFromFxCop",
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA1812": {
           "id": "CA1812",
           "shortDescription": "Avoid uninstantiated internal classes",
@@ -5189,7 +5245,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },
@@ -5209,7 +5266,8 @@
             "tags": [
               "PortedFromFxCop",
               "Telemetry",
-              "EnabledRuleInAggressiveMode"
+              "EnabledRuleInAggressiveMode",
+              "CompilationEnd"
             ]
           }
         },

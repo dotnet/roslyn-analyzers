@@ -33,7 +33,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
         internal static readonly DiagnosticDescriptor MaybeInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2328",
@@ -41,7 +42,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
@@ -227,7 +229,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

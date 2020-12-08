@@ -15,13 +15,18 @@ assignees: ''
 
 **SDK**: [Built-in CA analyzers in .NET 5 SDK or later](https://docs.microsoft.com/dotnet/fundamentals/productivity/code-analysis)
 
-**Version**: [SDK 5.0.100-preview.8](https://dotnet.microsoft.com/download/dotnet/5.0)
+**Version**: [SDK 5.0.100](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 _OR_
 
-**NuGet Package**: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+**NuGet Package**: [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-**Version**: v3.3.0 (Latest)
+**Version**: 5.0.1 (Latest)
+
+<!--
+NOTE: `Microsoft.CodeAnalysis.FxCopAnalyzers` package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK.
+      Please refer to https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers to migrate to .NET analyzers.
+-->
 
 ### Describe the bug
 

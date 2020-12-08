@@ -6,6 +6,8 @@
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
     <!-- ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any -->
     <Rule Id="CA1062" Action="None" />
+    <!-- CA1014: Mark assemblies with CLSCompliant -->
+    <Rule Id="CA1014" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">

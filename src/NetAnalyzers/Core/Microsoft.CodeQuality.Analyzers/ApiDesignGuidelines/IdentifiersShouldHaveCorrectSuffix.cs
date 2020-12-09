@@ -179,7 +179,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 if (userMap.TryGetValue(type.OriginalDefinition, out var suffix) &&
                     !string.IsNullOrWhiteSpace(suffix))
                 {
-                    suffixInfo = SuffixInfo.Create(suffix, canSuffixBeCollection: false);
+                    suffixInfo = SuffixInfo.Create(suffix!, canSuffixBeCollection: false);
                     return true;
                 }
 

@@ -29,7 +29,7 @@ namespace MetaCompilation.Analyzers
         //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat, string description = "")
         {
-            DiagnosticDescriptor rule = new DiagnosticDescriptor(
+            DiagnosticDescriptor rule = new(
                 id: id,
                 title: title,
                 messageFormat: messageFormat,
@@ -239,7 +239,7 @@ namespace MetaCompilation.Analyzers
         #endregion
 
         public const string GoToCodeFix = "MetaAnalyzer050";
-        internal static readonly DiagnosticDescriptor GoToCodeFixRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor GoToCodeFixRule = new(
             id: GoToCodeFix,
             title: "Analyzer tutorial complete",
             messageFormat: s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
@@ -339,15 +339,15 @@ namespace MetaCompilation.Analyzers
         // Performs stateful analysis
         private class CompilationAnalyzer
         {
-            private readonly List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
-            private readonly List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
-            private readonly List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
-            private readonly List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
+            private readonly List<IMethodSymbol> _analyzerMethodSymbols = new();
+            private readonly List<IPropertySymbol> _analyzerPropertySymbols = new();
+            private readonly List<IFieldSymbol> _analyzerFieldSymbols = new();
+            private readonly List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new();
             private IMethodSymbol _initializeSymbol;
             private IPropertySymbol _propertySymbol;
             private INamedTypeSymbol _analyzerClassSymbol;
-            private readonly Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
-            private readonly List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
+            private readonly Dictionary<string, string> _branchesDict = new();
+            private readonly List<IMethodSymbol> _codeFixMethodSymbols = new();
 
             //"main" method, performs the analysis once state has been collected
             protected internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)

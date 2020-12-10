@@ -1,9 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// Enable "Humanizer" based rules only in FxCopAnalyzers package.
-// We do not have separate tests for FxCopAnalyzers package, so also keep it enabled for NetAnalyzers test project to retain test coverage.
-#if FXCOP_ANALYZERS || NET_ANALYZERS_TEST
-
 #nullable enable
 
 using System;
@@ -15,9 +11,7 @@ using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-#pragma warning disable RS1029 // Do not use reserved diagnostic IDs. - fires for this analyzer file included in unit test project.
-
-namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
+namespace Text.Analyzers
 {
     /// <summary>
     /// CA1714: Flags enums should have plural names
@@ -30,21 +24,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1714 =
             DiagnosticDescriptorHelper.Create(
@@ -61,21 +55,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
-                typeof(MicrosoftCodeQualityAnalyzersResources));
+                nameof(TextAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
+                TextAnalyzersResources.ResourceManager,
+                typeof(TextAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1717 =
             DiagnosticDescriptorHelper.Create(
@@ -156,5 +150,3 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             => word.Equals(word.Pluralize(inputIsKnownToBeSingular: false), StringComparison.OrdinalIgnoreCase);
     }
 }
-
-#endif

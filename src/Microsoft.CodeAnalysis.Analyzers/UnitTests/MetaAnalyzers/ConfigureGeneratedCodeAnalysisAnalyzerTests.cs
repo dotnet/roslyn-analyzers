@@ -26,6 +26,7 @@ class Analyzer : DiagnosticAnalyzer {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => throw null;
     public override void Initialize(AnalysisContext [|context|])
     {
+        throw new System.NotImplementedException();
     }
 }
 ";
@@ -39,6 +40,7 @@ class Analyzer : DiagnosticAnalyzer {
     public override void Initialize(AnalysisContext context)
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+        throw new System.NotImplementedException();
     }
 }
 ";
@@ -64,6 +66,7 @@ Class Analyzer
     End Property
 
     Public Overrides Sub Initialize([|context|] As AnalysisContext)
+        Throw New System.NotImplementedException
     End Sub
 End Class
 ";
@@ -83,6 +86,7 @@ Class Analyzer
 
     Public Overrides Sub Initialize(context As AnalysisContext)
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze Or GeneratedCodeAnalysisFlags.ReportDiagnostics)
+        Throw New System.NotImplementedException
     End Sub
 End Class
 ";
@@ -173,6 +177,50 @@ class Analyzer : DiagnosticAnalyzer {
 ";
 
             await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact, WorkItem(4101, "https://github.com/dotnet/roslyn-analyzers/issues/4101")]
+        public async Task TestEmptyInitialize_CSharp()
+        {
+            var code = @"
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+class Analyzer : DiagnosticAnalyzer {
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => throw null;
+    public override void Initialize(AnalysisContext context)
+    {
+    }
+}
+";
+
+            await VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Fact]
+        public async Task TestEmptyInitialize_VisualBasic()
+        {
+            var code = @"
+Imports System.Collections.Immutable
+Imports Microsoft.CodeAnalysis
+Imports Microsoft.CodeAnalysis.Diagnostics
+
+Class Analyzer
+    Inherits DiagnosticAnalyzer
+
+    Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor)
+        Get
+            Throw New System.Exception
+        End Get
+    End Property
+
+    Public Overrides Sub Initialize(context As AnalysisContext)
+    End Sub
+End Class
+";
+
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
     }
 }

@@ -2,6 +2,8 @@
 
 #if HAS_IOPERATION
 
+using System;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -10,13 +12,41 @@ namespace Analyzer.Utilities.Extensions
 {
     internal static class OperationBlockAnalysisContextExtension
     {
-#pragma warning disable RS1012 // Start action has no registered actions.
         public static bool IsMethodNotImplementedOrSupported(this OperationBlockStartAnalysisContext context)
-#pragma warning restore RS1012 // Start action has no registered actions.
+            => BlockContainsOnlyGivenStatements(context, 1,
+                operations =>
+                {
+                    operations = operations[0].GetTopmostExplicitDescendants();
+
+                    if (operations.Length != 1
+                        || operations[0] is not IThrowOperation throwOperation
+                        || throwOperation.GetThrownExceptionType() is not ITypeSymbol createdExceptionType)
+                    {
+                        return false;
+                    }
+
+                    RoslynDebug.Assert(createdExceptionType != null);
+
+                    return
+                        Equals(createdExceptionType.OriginalDefinition,
+                            context.Compilation.GetOrCreateTypeByMetadataName(
+                                WellKnownTypeNames.SystemNotImplementedException))
+                        || Equals(createdExceptionType.OriginalDefinition,
+                            context.Compilation.GetOrCreateTypeByMetadataName(
+                                WellKnownTypeNames.SystemNotSupportedException));
+                });
+
+        public static bool IsEmptyBlock(this OperationBlockStartAnalysisContext context)
+            => BlockContainsOnlyGivenStatements(context, 0, operations => true);
+
+#pragma warning disable RS1012 // Start action has no registered actions
+        private static bool BlockContainsOnlyGivenStatements(this OperationBlockStartAnalysisContext context,
+            int expectedOperationCount, Func<ImmutableArray<IOperation>, bool> areExpectedOperations)
+#pragma warning restore RS1012 // Start action has no registered actions
         {
-            // Note that VB method bodies with 1 action have 3 operations.
-            // The first is the actual operation, the second is a label statement, and the third is a return
-            // statement. The last two are implicit in these scenarios.
+            // Note that VB method bodies with X statements have X + 2 operations.
+            // The first X operations are the actual operation, and the last two are
+            // a label statement and a return statement. The last two are implicit in these scenarios.
 
             var operationBlocks = context.OperationBlocks.WhereAsArray(operation => !operation.IsOperationNoneRoot());
 
@@ -37,31 +67,24 @@ namespace Analyzer.Utilities.Extensions
                 }
             }
 
-            if (methodBlock != null)
+            return methodBlock != null
+                && HasEnoughOperations(methodBlock, expectedOperationCount)
+                && areExpectedOperations(methodBlock.Operations);
+
+            static bool HasEnoughOperations(IBlockOperation body, int expectedOperationCount)
             {
-                static bool IsSingleStatementBody(IBlockOperation body)
+                if (body.Operations.Length == expectedOperationCount)
                 {
-                    return body.Operations.Length == 1 ||
-                        (body.Operations.Length == 3 && body.Syntax.Language == LanguageNames.VisualBasic &&
-                         body.Operations[1] is ILabeledOperation labeledOp && labeledOp.IsImplicit &&
-                         body.Operations[2] is IReturnOperation returnOp && returnOp.IsImplicit);
+                    return true;
                 }
 
-                if (IsSingleStatementBody(methodBlock) &&
-                    methodBlock.Operations[0].GetTopmostExplicitDescendants() is { } descendants &&
-                    descendants.Length == 1 &&
-                    descendants[0] is IThrowOperation throwOperation &&
-                    throwOperation.GetThrownExceptionType() is ITypeSymbol createdExceptionType)
-                {
-                    if (Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException), createdExceptionType.OriginalDefinition)
-                        || Equals(context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException), createdExceptionType.OriginalDefinition))
-                    {
-                        return true;
-                    }
-                }
+                return body.Operations.Length == expectedOperationCount + 2
+                    && body.Syntax.Language == LanguageNames.VisualBasic
+                    && body.Operations[^2] is ILabeledOperation labeledOp
+                    && labeledOp.IsImplicit
+                    && body.Operations[^1] is IReturnOperation returnOp
+                    && returnOp.IsImplicit;
             }
-
-            return false;
         }
     }
 }

@@ -59,6 +59,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     return;
                 }
 
+                // Don't report on empty Initialize method.
+                if (context.IsEmptyBlock())
+                {
+                    return;
+                }
+
                 IParameterSymbol? analysisContextParameter = null;
                 foreach (var parameter in method.Parameters)
                 {

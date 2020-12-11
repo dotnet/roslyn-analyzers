@@ -33,8 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       RuleLevel.IdeHidden_BulkConfigurable,
                                                                                       description: s_localizableDescription,
                                                                                       isPortedFxCopRule: true,
-                                                                                      isDataflowRule: false,
-                                                                                      isEnabledByDefaultInFxCopAnalyzers: false);
+                                                                                      isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -69,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // types because "InternalsVisibleTo" could be set. But it might be bad for users to start seeing warnings
             // where they previously did not from FxCop.
             // Note that end user can now override this default behavior via options.
-            if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.Compilation, context.CancellationToken))
+            if (!context.Options.MatchesConfiguredVisibility(Rule, namedTypeSymbol, context.Compilation, context.CancellationToken))
             {
                 return;
             }

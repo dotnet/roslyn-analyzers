@@ -2497,7 +2497,7 @@ namespace MetaCompilation.Analyzers
                                         return emptyRuleNames;
                                     }
                                 }
-                                else if (currentArgName == "title" || currentArgName == "messageFormat" || currentArgName == "category")
+                                else if (currentArgName is "title" or "messageFormat" or "category")
                                 {
                                     var argDefaults = new Dictionary<string, string>
                                     {

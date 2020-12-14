@@ -112,7 +112,7 @@ namespace MetaCompilation.Analyzers.UnitTests
         /// <returns>A Tuple containing the Documents produced from the sources and their TextSpans if relevant</returns>
         private static Document[] GetDocuments(string[] sources, string language)
         {
-            if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
+            if (language is not LanguageNames.CSharp and not LanguageNames.VisualBasic)
             {
                 throw new ArgumentException("Unsupported Language");
             }

@@ -234,7 +234,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             ImmutableArray<string> msBuildPlatforms,
             ITypeSymbol? notSupportedExceptionType)
         {
-            if (context.IsMethodNotImplementedOrSupported(checkPlatformNotSupprted: true))
+            if (context.IsMethodNotImplementedOrSupported(checkPlatformNotSupported: true))
             {
                 return;
             }

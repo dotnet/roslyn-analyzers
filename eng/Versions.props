@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>3.3.2</VersionPrefix>
+    <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>5.0.1</NetAnalyzersVersionPrefix>
+    <NetAnalyzersVersionPrefix>5.0.2</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
@@ -23,14 +23,15 @@
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
-    <CodeStyleAnalyersVersion>3.8.0-3.20428.4</CodeStyleAnalyersVersion>
+    <MicrosoftNetCompilersToolsetVersion>3.8.0</MicrosoftNetCompilersToolsetVersion>
+    <CodeStyleAnalyersVersion>3.8.0</CodeStyleAnalyersVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
-    <MicrosoftCodeAnalysisVersionForTests>3.8.0-4.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>3.8.0</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.1</DogfoodAnalyzersVersion>
+    <DogfoodNetAnalyzersVersion>5.0.1</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisFXCopAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(DogfoodAnalyzersVersion)</RoslynDiagnosticsAnalyzersVersion>

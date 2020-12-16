@@ -11,7 +11,7 @@ namespace ReleaseNotesUtil
     /// </summary>
     internal class CategoryThenIdComparer : IComparer<RuleInfo>
     {
-        public static CategoryThenIdComparer Instance = new CategoryThenIdComparer();
+        public static CategoryThenIdComparer Instance = new();
 
         public int Compare([AllowNull] RuleInfo x, [AllowNull] RuleInfo y)
         {

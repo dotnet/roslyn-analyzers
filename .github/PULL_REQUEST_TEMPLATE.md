@@ -1,6 +1,6 @@
 <!--
 
-Make sure to run `msbuild RoslynAnalyzers.sln /t:pack` and `msbuild FxCopAnalyzers.sln /t:pack` in the repository root when
+Make sure to run `msbuild /t:pack /v:m` in the repository root when
 you have any of the following changes that affect auto-generated files. Otherwise, the CI build will fail.
 
 - Adding a new diagnostic analyzer or a code fix

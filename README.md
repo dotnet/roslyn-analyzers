@@ -58,6 +58,8 @@ This analyzer package contains all the ported FxCop rules that are applicable fo
 
 #### The following are subpackages or NuGet dependencies that are automatically installed when you install the Microsoft.CodeAnalysis.FxCopAnalyzers package:
 
+**NOTE:** Starting version `3.3.2`, `Microsoft.CodeQuality.Analyzers`, `Microsoft.NetCore.Analyzers` and `Microsoft.NetFramework.Analyzers` have also been **deprecated** in favor of `Microsoft.CodeAnalysis.NetAnalyzers`. Documentation to migrate to NetAnalyzers is available [here](https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers).
+
 #### Microsoft.CodeQuality.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)

@@ -211,7 +211,7 @@ namespace Test.Utilities
         {
             GetPositionAndSpans(input, out output, out cursorPosition, out IList<TextSpan> spans);
 
-            textSpan = spans.Count == 0 ? null : (TextSpan?)spans.Single();
+            textSpan = spans.Count == 0 ? null : spans.Single();
         }
     }
 }

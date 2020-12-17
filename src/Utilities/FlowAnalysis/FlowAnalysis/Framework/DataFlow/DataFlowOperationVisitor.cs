@@ -281,7 +281,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 DataFlowAnalysisContext.WellKnownTypeProvider,
                 getPointsToAbstractValueOpt: HasPointsToAnalysisResult ?
                     GetPointsToAbstractValue :
-                    (Func<IOperation, PointsToAbstractValue>?)null,
+                    null,
                 getIsInsideAnonymousObjectInitializer: () => IsInsideAnonymousObjectInitializer,
                 getIsLValueFlowCapture: IsLValueFlowCapture,
                 containingTypeSymbol: analysisContext.OwningSymbol.ContainingType,
@@ -1489,7 +1489,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     PerformPredicateAnalysisCore(parenthesizedOperation.Operand, targetAnalysisData);
                     return;
 
-                case IFlowCaptureReferenceOperation _:
+                case IFlowCaptureReferenceOperation:
                     var result = AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity? flowCaptureReferenceEntity);
                     Debug.Assert(result);
                     RoslynDebug.Assert(flowCaptureReferenceEntity != null);

@@ -1,21 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.AssigningSymbolAndItsMemberInSameStatement,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAssigningSymbolAndItsMemberInSameStatement,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAssigningSymbolAndItsMemberInSameStatementFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
 {
     public class AssigningSymbolAndItsMemberInSameStatementTests
     {
-        [Fact]
-        public async Task CSharpReassignLocalVariableAndReferToItsField()
+        [Theory]
+        [InlineData(0, "a.Field = b;")]
+        [InlineData(1, "a.Field = a;")]
+        public async Task CSharpReassignLocalVariableAndReferToItsField(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Field;
@@ -26,17 +27,41 @@ public class Test
     public void Method()
     {
         C a = new C(), b = new C();
-        a.Field = a = b;
+        [|a.Field|] = a = b;
     }
 }
-",
-            GetCSharpResultAt(12, 9, "a", "Field"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Field;
+}}
+
+public class Test
+{{
+    public void Method()
+    {{
+        C a = new C(), b = new C();
+        a = b;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignLocalVariableAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "a.Property = b;")]
+        [InlineData(1, "a.Property = c;")]
+
+        public async Task CSharpReassignLocalVariableAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -47,17 +72,41 @@ public class Test
     public void Method()
     {
         C a = new C(), b = new C(), c;
-        a.Property = c = a = b;
+        [|a.Property|] = c = a = b;
     }
 }
-",
-            GetCSharpResultAt(12, 9, "a", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    public void Method()
+    {{
+        C a = new C(), b = new C(), c;
+        a = b;
+        c = a;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignLocalVariablesPropertyAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "a.Property.Property = b;")]
+        [InlineData(1, "a.Property.Property = a.Property;")]
+        public async Task CSharpReassignLocalVariablesPropertyAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -68,17 +117,40 @@ public class Test
     public void Method()
     {
         C a = new C(), b = new C();
-        a.Property.Property = a.Property = b;
+        [|a.Property.Property|] = a.Property = b;
     }
 }
-",
-            GetCSharpResultAt(12, 9, "a.Property", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    public void Method()
+    {{
+        C a = new C(), b = new C();
+        a.Property = b;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignLocalVariableAndItsPropertyAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "a.Property.Property = b;")]
+        [InlineData(1, "a.Property.Property = a.Property;")]
+        public async Task CSharpReassignLocalVariableAndItsPropertyAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -89,18 +161,41 @@ public class Test
     public void Method()
     {
         C a = new C(), b = new C();
-        a.Property.Property = a.Property = a = b;
+        [|a.Property.Property|] = [|a.Property|] = a = b;
     }
 }
-",
-            GetCSharpResultAt(12, 9, "a.Property", "Property"),
-            GetCSharpResultAt(12, 31, "a", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    public void Method()
+    {{
+        C a = new C(), b = new C();
+        a = b;
+        a.Property = a;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReferToFieldOfReferenceTypeLocalVariableAfterItsReassignment()
+        [Theory]
+        [InlineData(0, "x.Field = y;")]
+        [InlineData(1, "x.Field = x;")]
+        public async Task CSharpReferToFieldOfReferenceTypeLocalVariableAfterItsReassignment(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Field;
@@ -112,17 +207,41 @@ public class Test
 
     public void Method()
     {
-        x.Field = x = y;
+        [|x.Field|] = x = y;
     }
 }
-",
-            GetCSharpResultAt(13, 9, "x", "Field"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Field;
+}}
+
+public class Test
+{{
+    static C x, y;
+
+    public void Method()
+    {{
+        x = y;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignGlobalVariableAndReferToItsField()
+        [Theory]
+        [InlineData(0, "x.Property.Property = y;")]
+        [InlineData(1, "x.Property.Property = x.Property;")]
+        public async Task CSharpReassignGlobalVariableAndReferToItsField(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -134,17 +253,41 @@ public class Test
 
     public void Method()
     {
-        x.Property.Property = x.Property = y;
+        [|x.Property.Property|] = x.Property = y;
     }
 }
-",
-            GetCSharpResultAt(13, 9, "x.Property", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    static C x, y;
+
+    public void Method()
+    {{
+        x.Property = y;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignGlobalVariableAndItsPropertyAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "x.Property.Property = y;")]
+        [InlineData(1, "x.Property.Property = x.Property;")]
+        public async Task CSharpReassignGlobalVariableAndItsPropertyAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -156,18 +299,42 @@ public class Test
 
     public void Method()
     {
-        x.Property.Property = x.Property = x = y;
+        [|x.Property.Property|] = [|x.Property|] = x = y;
     }
 }
-",
-            GetCSharpResultAt(13, 9, "x.Property", "Property"),
-            GetCSharpResultAt(13, 31, "x", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    static C x, y;
+
+    public void Method()
+    {{
+        x = y;
+        x.Property = x;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
-        [Fact]
-        public async Task CSharpReassignGlobalPropertyAndItsPropertyAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "x.Property.Property = y;")]
+        [InlineData(1, "x.Property.Property = x.Property;")]
+        public async Task CSharpReassignGlobalPropertyAndItsPropertyAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -180,12 +347,35 @@ public class Test
 
     public void Method()
     {
-        x.Property.Property = x.Property = x = y;
+        [|x.Property.Property|] = [|x.Property|] = x = y;
     }
 }
-",
-            GetCSharpResultAt(14, 9, "x.Property", "Property"),
-            GetCSharpResultAt(14, 31, "x", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    static C x {{ get; set; }}
+    static C y {{ get; set; }}
+
+    public void Method()
+    {{
+        x = y;
+        x.Property = x;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
         [Fact]
@@ -248,10 +438,12 @@ public class Test
 ");
         }
 
-        [Fact]
-        public async Task CSharpReassignMethodParameterAndReferToItsProperty()
+        [Theory]
+        [InlineData(0, "b.Property = a;")]
+        [InlineData(1, "b.Property = b;")]
+        public async Task CSharpReassignMethodParameterAndReferToItsProperty(int codeActionIndex, string fix)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            var code = @"
 public class C
 {
     public C Property { get; set; }
@@ -262,11 +454,32 @@ public class Test
     public void Method(C b)
     {
         C a = new C();
-        b.Property = b = a;
+        [|b.Property|] = b = a;
     }
 }
-",
-            GetCSharpResultAt(12, 9, "b", "Property"));
+";
+            var fixedCode = $@"
+public class C
+{{
+    public C Property {{ get; set; }}
+}}
+
+public class Test
+{{
+    public void Method(C b)
+    {{
+        C a = new C();
+        b = a;
+        {fix}
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                FixedCode = fixedCode,
+                CodeActionIndex = codeActionIndex,
+            }.RunAsync();
         }
 
         [Fact]
@@ -339,10 +552,5 @@ public static class Class1
 }
 ");
         }
-
-        private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
-            => VerifyCS.Diagnostic()
-                .WithLocation(line, column)
-                .WithArguments(arguments);
     }
 }

@@ -153,7 +153,6 @@ CA2242 | Usage | Info | TestForNaNCorrectlyAnalyzer, [Documentation](https://doc
 CA2243 | Usage | Disabled | AttributeStringLiteralsShouldParseCorrectlyAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2243)
 CA2244 | Usage | Info | AvoidDuplicateElementInitialization, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2244)
 CA2245 | Usage | Info | AvoidPropertySelfAssignment, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2245)
-CA2246 | Usage | Info | AssigningSymbolAndItsMemberInSameStatement, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2246)
 CA2247 | Usage | Warning | DoNotCreateTaskCompletionSourceWithWrongArguments, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2247)
 CA2248 | Usage | Info | ProvideCorrectArgumentToEnumHasFlag, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2248)
 CA2249 | Usage | Info | PreferStringContainsOverIndexOfAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca2249)

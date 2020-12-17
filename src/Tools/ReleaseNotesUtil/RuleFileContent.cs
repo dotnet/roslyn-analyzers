@@ -9,6 +9,8 @@ namespace ReleaseNotesUtil
     internal class RuleFileContent
     {
         [DataMember]
+#pragma warning disable CA1002 // Do not expose generic lists
         public List<RuleInfo> Rules { get; set; } = new List<RuleInfo>();
+#pragma warning restore CA1002 // Do not expose generic lists
     }
 }

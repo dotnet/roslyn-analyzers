@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
         private static readonly LocalizableString s_localizableMessageFormat = new LocalizableResourceString(nameof(MicrosoftCodeAnalysisVersionCheckAnalyzerResources.VersionCheckMessage), MicrosoftCodeAnalysisVersionCheckAnalyzerResources.ResourceManager, typeof(MicrosoftCodeAnalysisVersionCheckAnalyzerResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeAnalysisVersionCheckAnalyzerResources.VersionCheckDescription), MicrosoftCodeAnalysisVersionCheckAnalyzerResources.ResourceManager, typeof(MicrosoftCodeAnalysisVersionCheckAnalyzerResources));
 
-        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        public static readonly DiagnosticDescriptor Rule = new(
                                                         RuleId,
                                                         s_localizableTitle,
                                                         s_localizableMessageFormat,
@@ -31,8 +31,8 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
                                                         isEnabledByDefault: true,
                                                         description: s_localizableDescription);
 
-        private static readonly Version s_MicrosoftCodeAnalysisMinVersion = new Version(RequiredMicrosoftCodeAnalysisVersion);
-        private static readonly Version s_MicrosoftCodeAnalysisDogfoodVersion = new Version("42.42");
+        private static readonly Version s_MicrosoftCodeAnalysisMinVersion = new(RequiredMicrosoftCodeAnalysisVersion);
+        private static readonly Version s_MicrosoftCodeAnalysisDogfoodVersion = new("42.42");
         private static readonly Version s_MicrosoftCodeAnalysisVersion = typeof(AnalysisContext).GetTypeInfo().Assembly.GetName().Version;
 
         // Analyzers will only execute fine if we are either using dogfood bits of Microsoft.CodeAnalysis or its version is >= s_MicrosoftCodeAnalysisMinVersion

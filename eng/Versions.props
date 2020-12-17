@@ -23,8 +23,10 @@
     <ReportGeneratorVersion>4.3.6</ReportGeneratorVersion>
     <!-- Use the correct compiler version -->
     <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
-    <MicrosoftNetCompilersToolsetVersion>3.8.0</MicrosoftNetCompilersToolsetVersion>
-    <CodeStyleAnalyersVersion>3.8.0</CodeStyleAnalyersVersion>
+    <!-- Dependencies from https://github.com/dotnet/roslyn -->
+    <MicrosoftNETCoreCompilersPackageVersion>3.8.0</MicrosoftNETCoreCompilersPackageVersion>
+    <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
+    <CodeStyleAnalyersVersion>$(MicrosoftNETCoreCompilersPackageVersion)</CodeStyleAnalyersVersion>
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>

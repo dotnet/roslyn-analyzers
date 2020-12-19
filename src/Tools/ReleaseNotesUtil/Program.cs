@@ -221,9 +221,7 @@ namespace ReleaseNotesUtil
             }
         }
 
-#pragma warning disable CA1002 // Do not expose generic lists
         private static List<RuleInfo> GetRules(IEnumerable<string> dllPaths)
-#pragma warning restore CA1002 // Do not expose generic lists
         {
             List<RuleInfo> ruleInfos = new List<RuleInfo>();
             foreach (string dllPath in dllPaths)

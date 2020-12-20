@@ -1263,4 +1263,10 @@
   <data name="OperatorOverloadsHaveNamedAlternatesCodeFixTitle" xml:space="preserve">
     <value>Add operator overload named alternate</value>
   </data>
+  <data name="AddMissingInterpolationTokenMessage" xml:space="preserve">
+    <value>This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?</value>
+  </data>
+  <data name="AddMissingInterpolationTokenTitle" xml:space="preserve">
+    <value>Possible missing interpolation token</value>
+  </data>
 </root>

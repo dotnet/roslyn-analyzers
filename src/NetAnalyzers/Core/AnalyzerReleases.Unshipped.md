@@ -13,6 +13,7 @@ CA1843 | Performance | Info | DoNotUseWhenAllOrWaitAllWithSingleArgument, [Docum
 CA1844 | Performance | Info | ProvideStreamMemoryBasedAsyncOverrides, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1844)
 CA1845 | Performance | Info | UseSpanBasedStringConcat, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1845)
 CA2250 | Usage | Info | UseCancellationTokenThrowIfCancellationRequested, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
+CA2251 | Usage | Info | AddMissingInterpolationTokenAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251)
 
 ### Removed Rules
 

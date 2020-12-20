@@ -3450,6 +3450,26 @@
             ]
           }
         },
+        "CA2251": {
+          "id": "CA2251",
+          "shortDescription": "Possible missing interpolation token",
+          "fullDescription": "This string literal uses composite formatting but is not an interpolated string. Did you miss the '$' prefix?",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AddMissingInterpolationTokenAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2300": {
           "id": "CA2300",
           "shortDescription": "Do not use insecure deserializer BinaryFormatter",

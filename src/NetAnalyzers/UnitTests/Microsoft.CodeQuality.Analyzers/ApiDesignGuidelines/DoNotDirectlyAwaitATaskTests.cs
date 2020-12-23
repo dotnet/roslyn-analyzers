@@ -13,7 +13,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class DoNotDirectlyAwaitATaskFixerTests
+    public class DoNotDirectlyAwaitATaskTests
     {
         [Fact]
         public async Task CSharpNoDiagnostic()

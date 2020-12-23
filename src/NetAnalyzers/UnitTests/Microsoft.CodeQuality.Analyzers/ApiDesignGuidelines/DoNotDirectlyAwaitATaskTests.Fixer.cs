@@ -222,6 +222,13 @@ public class C
         await [|await [|t|]|]; // both have warnings.
         await [|await t.ConfigureAwait(false)|]; // outer await is wrong.
         await (await [|t|]).ConfigureAwait(false); // inner await is wrong.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
+
+        ValueTask<ValueTask> vt = default;
+        await [|await [|vt|]|]; // both have warnings.
+        await [|await vt.ConfigureAwait(false)|]; // outer await is wrong.
+        await (await [|vt|]).ConfigureAwait(false); // inner await is wrong.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
     }
 }
 ";
@@ -237,6 +244,13 @@ public class C
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // both have warnings.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
+
+        ValueTask<ValueTask> vt = default;
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // both have warnings.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
     }
 }
 ";
@@ -253,6 +267,13 @@ public class C
         await {|#1:(await t.ConfigureAwait(false)).ConfigureAwait(false)|}.{|#0:ConfigureAwait|}(false); // both have warnings.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
+
+        ValueTask<ValueTask> vt = null;
+        await {|#1:(await vt.ConfigureAwait(false)).ConfigureAwait(false)|}.{|#0:ConfigureAwait|}(false); // both have warnings.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
+        await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
     }
 }
 ";
@@ -291,6 +312,13 @@ Public Class C
         Await [|Await [|t|]|] ' both have warnings.
         Await [|Await t.ConfigureAwait(False)|] ' outer await is wrong.
         Await (Await [|t|]).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
+
+        Dim vt As ValueTask(Of ValueTask)
+        Await [|Await [|vt|]|] ' both have warnings.
+        Await [|Await vt.ConfigureAwait(False)|] ' outer await is wrong.
+        Await (Await [|vt|]).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
     End Function
 End Class
 ";
@@ -303,6 +331,13 @@ Public Class C
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' both have warnings.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
+
+        Dim vt As ValueTask(Of ValueTask)
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' both have warnings.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
     End Function
 End Class
 ";
@@ -317,6 +352,13 @@ Public Class C
         Await {|BC30456:(Await t.ConfigureAwait(False)).ConfigureAwait(False).ConfigureAwait|}(False) ' both have warnings.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
         Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
+
+        Dim vt As ValueTask(Of ValueTask)
+        Await {|BC30456:(Await vt.ConfigureAwait(False)).ConfigureAwait(False).ConfigureAwait|}(False) ' both have warnings.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
+        Await (Await vt.ConfigureAwait(False)).ConfigureAwait(False) ' both correct.
     End Function
 End Class
 ";

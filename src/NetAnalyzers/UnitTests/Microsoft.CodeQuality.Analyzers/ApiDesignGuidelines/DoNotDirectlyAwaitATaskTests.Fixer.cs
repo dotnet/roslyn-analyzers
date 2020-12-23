@@ -15,6 +15,114 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class DoNotDirectlyAwaitATaskFixerTests
     {
+        [Fact]
+        public async Task CSharpNoDiagnostic()
+        {
+            var code = @"
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task M()
+    {
+        Task t = null;
+        await t.ConfigureAwait(false);
+
+        Task<int> tg = null;
+        await tg.ConfigureAwait(false);
+
+        ValueTask vt = default;
+        await vt.ConfigureAwait(false);
+
+        ValueTask<int> vtg = default;
+        await vtg.ConfigureAwait(false);
+
+        SomeAwaitable s = null;
+        await s;
+
+        await{|CS1525:;|} // No Argument
+    }
+}
+
+public class SomeAwaitable
+{
+    public SomeAwaiter GetAwaiter()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class SomeAwaiter : INotifyCompletion
+{
+    public bool IsCompleted => true;
+
+    public void OnCompleted(Action continuation)
+    {
+    }
+
+    public void GetResult()
+    {
+    }
+}
+";
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task BasicNoDiagnostic()
+        {
+            var code = @"
+Imports System
+Imports System.Runtime.CompilerServices
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function M() As Task
+        Dim t As Task = Nothing
+        Await t.ConfigureAwait(False)
+
+        Dim tg As Task(Of Integer) = Nothing
+        Await tg.ConfigureAwait(False)
+
+        Dim vt As ValueTask
+        Await vt.ConfigureAwait(False)
+
+        Dim vtg As ValueTask(Of Integer) = Nothing
+        Await vtg.ConfigureAwait(False)
+
+        Dim s As SomeAwaitable = Nothing
+        Await s
+
+        Await {|BC30201:|}'No Argument
+    End Function
+End Class
+
+Public Class SomeAwaitable
+    Public Function GetAwaiter As SomeAwaiter
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Public Class SomeAwaiter
+    Implements INotifyCompletion
+    Public ReadOnly Property IsCompleted() As Boolean
+	    Get
+		    Throw New NotImplementedException()
+	    End Get
+    End Property
+
+    Public Sub OnCompleted(continuation As Action) Implements INotifyCompletion.OnCompleted
+    End Sub
+
+    Public Sub GetResult()
+    End Sub
+End Class
+";
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
         [Theory]
         [InlineData("Task")]
         [InlineData("Task<int>")]

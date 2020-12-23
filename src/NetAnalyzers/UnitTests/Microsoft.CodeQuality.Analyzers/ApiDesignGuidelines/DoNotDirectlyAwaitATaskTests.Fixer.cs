@@ -269,8 +269,8 @@ public class C
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
         await (await t.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
 
-        ValueTask<ValueTask> vt = null;
-        await {|#1:(await vt.ConfigureAwait(false)).ConfigureAwait(false)|}.{|#0:ConfigureAwait|}(false); // both have warnings.
+        ValueTask<ValueTask> vt = default;
+        await {|#3:(await vt.ConfigureAwait(false)).ConfigureAwait(false)|}.{|#2:ConfigureAwait|}(false); // both have warnings.
         await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
         await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
         await (await vt.ConfigureAwait(false)).ConfigureAwait(false); // both correct.
@@ -290,9 +290,13 @@ public class C
 #if !NETCOREAPP
                         // /0/Test0.cs(9,69): error CS1061: 'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)
                         DiagnosticResult.CompilerError("CS1061").WithLocation(0).WithArguments("System.Runtime.CompilerServices.ConfiguredTaskAwaitable", "ConfigureAwait"),
+                        // /0/Test0.cs(15,70): error CS1061: 'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)
+                        DiagnosticResult.CompilerError("CS1061").WithLocation(2).WithArguments("System.Runtime.CompilerServices.ConfiguredTaskAwaitable", "ConfigureAwait"),
 #else
                         // /0/Test0.cs(9,15): error CS1929: 'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and the best extension method overload 'TaskAsyncEnumerableExtensions.ConfigureAwait(IAsyncDisposable, bool)' requires a receiver of type 'IAsyncDisposable'
                         DiagnosticResult.CompilerError("CS1929").WithLocation(1).WithArguments("System.Runtime.CompilerServices.ConfiguredTaskAwaitable", "ConfigureAwait", "System.Threading.Tasks.TaskAsyncEnumerableExtensions.ConfigureAwait(System.IAsyncDisposable, bool)", "System.IAsyncDisposable"),
+                        // /0/Test0.cs(15,16): error CS1929: 'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and the best extension method overload 'TaskAsyncEnumerableExtensions.ConfigureAwait(IAsyncDisposable, bool)' requires a receiver of type 'IAsyncDisposable'
+                        DiagnosticResult.CompilerError("CS1929").WithLocation(3).WithArguments("System.Runtime.CompilerServices.ConfiguredTaskAwaitable", "ConfigureAwait", "System.Threading.Tasks.TaskAsyncEnumerableExtensions.ConfigureAwait(System.IAsyncDisposable, bool)", "System.IAsyncDisposable"),
 #endif
                     },
                 },

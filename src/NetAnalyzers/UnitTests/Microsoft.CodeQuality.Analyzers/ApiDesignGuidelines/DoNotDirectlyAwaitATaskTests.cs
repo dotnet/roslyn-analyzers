@@ -228,7 +228,7 @@ public class C
     public async Task M()
     {
         Task t = null;
-        await " + isExpectingDiagnostic ? "[|t|]" : "t" + @";
+        await " + (isExpectingDiagnostic ? "[|t|]" : "t") + @";
     }
 }
 "

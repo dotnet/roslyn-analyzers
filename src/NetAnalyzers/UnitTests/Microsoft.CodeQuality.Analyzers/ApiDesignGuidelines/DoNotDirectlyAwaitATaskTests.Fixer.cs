@@ -15,8 +15,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class DoNotDirectlyAwaitATaskFixerTests
     {
-        [Fact]
-        public async Task CSharpSimpleAwaitTask()
+        [Theory]
+        [InlineData("Task")]
+        [InlineData("Task<int>")]
+        [InlineData("ValueTask")]
+        [InlineData("ValueTask<int>")]
+        public async Task CSharpSimpleAwaitTask(string typeName)
         {
             var code = @"
 using System.Threading.Tasks;
@@ -25,7 +29,7 @@ public class C
 {
     public async Task M()
     {
-        Task t = null;
+        " + typeName + @" t = default;
         await [|t|];
     }
 }
@@ -37,7 +41,7 @@ public class C
 {
     public async Task M()
     {
-        Task t = null;
+        " + typeName + @" t = default;
         await t.ConfigureAwait(false);
     }
 }
@@ -82,15 +86,19 @@ public class C
             }.RunAsync();
         }
 
-        [Fact]
-        public async Task BasicSimpleAwaitTask()
+        [Theory]
+        [InlineData("Task")]
+        [InlineData("Task(Of Integer)")]
+        [InlineData("ValueTask")]
+        [InlineData("ValueTask(Of Integer)")]
+        public async Task BasicSimpleAwaitTask(string typeName)
         {
             var code = @"
 Imports System.Threading.Tasks
 
 Public Class C
     Public Async Function M() As Task
-        Dim t As Task
+        Dim t As " + typeName + @"
         Await [|t|]
     End Function
 End Class
@@ -101,7 +109,7 @@ Imports System.Threading.Tasks
 
 Public Class C
     Public Async Function M() As Task
-        Dim t As Task
+        Dim t As " + typeName + @"
         Await t.ConfigureAwait(False)
     End Function
 End Class

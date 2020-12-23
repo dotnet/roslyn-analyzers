@@ -15,48 +15,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class DoNotDirectlyAwaitATaskTests
     {
-        [Theory]
-        [InlineData("Task")]
-        [InlineData("Task<int>")]
-        [InlineData("ValueTask")]
-        [InlineData("ValueTask<int>")]
-        public async Task CSharpSimpleAwaitTask(string typeName)
-        {
-            var code = @"
-using System.Threading.Tasks;
-
-public class C
-{
-    public async Task M()
-    {
-        " + typeName + @" t = default;
-        await t;
-    }
-}
-";
-            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(9, 15));
-        }
-
-        [Theory]
-        [InlineData("Task")]
-        [InlineData("Task(Of Integer)")]
-        [InlineData("ValueTask")]
-        [InlineData("ValueTask(Of Integer)")]
-        public async Task BasicSimpleAwaitTask(string typeName)
-        {
-            var code = @"
-Imports System.Threading.Tasks
-
-Public Class C
-    Public Async Function M() As Task
-        Dim t As " + typeName + @"
-        Await t
-    End Function
-End Class
-";
-            await VerifyVB.VerifyAnalyzerAsync(code, GetBasicResultAt(7, 15));
-        }
-
         [Fact]
         public async Task CSharpNoDiagnostic()
         {

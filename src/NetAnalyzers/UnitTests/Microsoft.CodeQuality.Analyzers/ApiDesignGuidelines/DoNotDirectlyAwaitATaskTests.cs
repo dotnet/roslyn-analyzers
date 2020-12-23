@@ -123,55 +123,6 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
-        [Fact]
-        public async Task CSharpComplexAwaitTask()
-        {
-            var code = @"
-using System;
-using System.Threading.Tasks;
-
-public class C
-{
-    public async Task M()
-    {
-        int x = 10 + await GetTask();
-        Func<Task<int>> a = async () => await GetTask();
-        Console.WriteLine(await GetTask());
-    }
-
-    public Task<int> GetTask() { throw new NotImplementedException(); }
-}
-";
-            await VerifyCS.VerifyAnalyzerAsync(code,
-                GetCSharpResultAt(9, 28),
-                GetCSharpResultAt(10, 47),
-                GetCSharpResultAt(11, 33));
-        }
-
-        [Fact]
-        public async Task BasicComplexeAwaitTask()
-        {
-            var code = @"
-Imports System
-Imports System.Threading.Tasks
-
-Public Class C
-    Public Async Function M() As Task
-        Dim x As Integer = 10 + Await GetTask()
-        Dim a As Func(Of Task(Of Integer)) = Async Function() Await GetTask()
-        Console.WriteLine(Await GetTask())
-    End Function
-    Public Function GetTask() As Task(Of Integer)
-        Throw New NotImplementedException()
-    End Function
-End Class
-";
-            await VerifyVB.VerifyAnalyzerAsync(code,
-                GetBasicResultAt(7, 39),
-                GetBasicResultAt(8, 69),
-                GetBasicResultAt(9, 33));
-        }
-
         [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
         public async Task CSharpAsyncVoidMethod_Diagnostic()
         {

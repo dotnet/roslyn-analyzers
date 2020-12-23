@@ -123,28 +123,6 @@ End Class
             await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
-        [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
-        public async Task CSharpAsyncVoidMethod_Diagnostic()
-        {
-            var code = @"
-using System.Threading.Tasks;
-
-public class C
-{
-    private Task t;
-    public async void M()
-    {
-        await M1Async();
-    }
-
-    private async Task M1Async()
-    {
-        await t.ConfigureAwait(false);
-    }
-}";
-            await VerifyCS.VerifyAnalyzerAsync(code, GetCSharpResultAt(9, 15));
-        }
-
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
         [InlineData("dotnet_code_quality.exclude_async_void_methods = true")]
         [InlineData("dotnet_code_quality.CA2007.exclude_async_void_methods = true")]

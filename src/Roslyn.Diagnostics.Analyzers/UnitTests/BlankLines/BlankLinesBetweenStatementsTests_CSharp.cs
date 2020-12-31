@@ -30,6 +30,7 @@ class C
                 FixedCode = code,
             }.RunAsync();
         }
+
         [Fact]
         public async Task TestNotAfterMethodBlock()
         {
@@ -238,7 +239,6 @@ class C
         [Fact]
         public async Task TestBetweenBlockAndStatement1()
         {
-
             await new Verify.Test()
             {
                 TestCode = @"
@@ -270,7 +270,6 @@ class C
         [Fact]
         public async Task TestBetweenBlockAndStatement2()
         {
-
             await new Verify.Test()
             {
                 TestCode = @"
@@ -302,7 +301,6 @@ class C
         [Fact]
         public async Task TestBetweenBlockAndStatement3()
         {
-
             await new Verify.Test()
             {
                 TestCode = @"
@@ -330,7 +328,6 @@ class C
         [Fact]
         public async Task TestBetweenBlockAndStatement4()
         {
-
             await new Verify.Test()
             {
                 TestCode = @"
@@ -366,7 +363,6 @@ class C
         [Fact]
         public async Task TestFixAll1()
         {
-
             await new Verify.Test()
             {
                 TestCode = @"

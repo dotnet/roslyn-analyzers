@@ -390,4 +390,13 @@
   <data name="DoNotCopyValueNoReturnValueFromReferenceMessage" xml:space="preserve">
     <value>Cannot return a value from a reference to non-copyable type '{0}'</value>
   </data>
+  <data name="BlankLinesBetweenStatementsMessage" xml:space="preserve">
+    <value>Blank line required after block statement</value>
+  </data>
+  <data name="BlankLinesBetweenStatementsTitle" xml:space="preserve">
+    <value>Blank line required after block statement</value>
+  </data>
+  <data name="Add_blank_line_after_block" xml:space="preserve">
+    <value>Add blank line after block</value>
+  </data>
 </root>

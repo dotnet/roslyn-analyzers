@@ -2,6 +2,11 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ja" original="../RoslynDiagnosticsAnalyzersResources.resx">
     <body>
+      <trans-unit id="Add_blank_line_after_block">
+        <source>Add blank line after block</source>
+        <target state="new">Add blank line after block</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidOptSuffixForNullableEnableCodeCodeFixTitle">
         <source>Remove the 'Opt' suffix</source>
         <target state="translated">'Opt' サフィックスの削除</target>
@@ -20,6 +25,16 @@
       <trans-unit id="AvoidOptSuffixForNullableEnableCodeTitle">
         <source>Avoid the 'Opt' suffix</source>
         <target state="translated">'Opt' サフィックスを使用しない</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlankLinesBetweenStatementsMessage">
+        <source>Blank line required after block statement</source>
+        <target state="new">Blank line required after block statement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlankLinesBetweenStatementsTitle">
+        <source>Blank line required after block statement</source>
+        <target state="new">Blank line required after block statement</target>
         <note />
       </trans-unit>
       <trans-unit id="BlankLinesMessage">

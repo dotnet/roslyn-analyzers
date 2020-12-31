@@ -136,6 +136,54 @@ class C
         }
 
         [Fact]
+        public async Task TestNotAfterStatementsWithSingleBlankLines()
+        {
+            var code =
+@"
+class C
+{
+    void M()
+    {
+        if (true)
+        {
+        }
+
+        return;
+    }
+}";
+
+            await new Verify.Test()
+            {
+                TestCode = code,
+                FixedCode = code,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestNotAfterStatementsWithMultipleBlankLines()
+        {
+            var code =
+@"
+class C
+{
+    void M()
+    {
+        if (true)
+        {
+        }
+
+        return;
+    }
+}";
+
+            await new Verify.Test()
+            {
+                TestCode = code,
+                FixedCode = code,
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task TestNotAfterStatementsOnMultipleLinesWithPPDirectiveBetween1()
         {
             var code =

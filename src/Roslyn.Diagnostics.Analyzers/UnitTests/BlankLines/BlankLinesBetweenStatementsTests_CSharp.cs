@@ -447,5 +447,374 @@ class C
 }",
             }.RunAsync();
         }
+
+        [Fact]
+        public async Task TestSA1513ValidCases()
+        {
+            var code = @"using System;
+using System.Linq;
+using System.Collections.Generic;
+public class Foo
+{
+    private int x;
+    // Valid #1
+    public int Bar
+    {
+        get { return this.x; }
+        set { this.x = value; }
+    }
+    public void Baz()
+    {
+        // Valid #2
+        try
+        {
+            this.x++;
+        }
+        catch (Exception)
+        {
+            this.x = 0;
+        }
+        finally
+        {
+            this.x++;
+        }
+        // Valid #3
+        do
+        {
+            this.x++;
+        }
+        while (this.x < 10);
+        // Valid #4
+        if (this.x > 0)
+        {
+            this.x++;
+        }
+        else
+        {
+            this.x = 0;
+        }
+        // Valid #5
+        var y = new[] { 1, 2, 3 };
+        // Valid #6
+        if (this.x > 0)
+        {
+            if (y != null)
+            {
+                this.x = -this.x;
+            }
+        }
+        // Valid #7
+        if (this.x > 0)
+        {
+            this.x = 0;
+        }
+#if !SOMETHING
+        else        
+        {
+            this.x++;    
+        }
+#endif
+        // Valid #8
+#if !SOMETHING
+        if (this.x > 0)
+        {
+            this.x = 0;
+        }
+#else
+        if (this.x < 0)        
+        {
+            this.x++;    
+        }
+#endif
+        // Valid #9
+        var q1 = 
+            from a in new[] 
+            {
+                1,
+                2,
+                3
+            }
+            from b in new[] { 4, 5, 6}
+            select a*b;
+        // Valid #10
+        var q2 = 
+            from a in new[] 
+            { 
+                1,
+                2,
+                3
+            }
+            let b = new[] 
+            { 
+                a, 
+                a * a, 
+                a * a * a 
+            }
+            select b;
+        // Valid #11
+        var q3 = 
+            from a in new[] 
+            {
+                1,
+                2,
+                3
+            }
+            where a > 0
+            select a;
+        // Valid #12
+        var q4 = 
+            from a in new[] 
+            {
+                new { Number = 1 },
+                new { Number = 2 },
+                new { Number = 3 }
+            }
+            join b in new[] 
+            { 
+                new { Number = 2 },
+                new { Number = 3 },
+                new { Number = 4 }
+            }
+            on a.Number equals b.Number
+            select new { Number1 = a.Number, Number2 = b.Number };
+        // Valid #13
+        var q5 = 
+            from a in new[] 
+            {
+                new { Number = 1 },
+                new { Number = 2 },
+                new { Number = 3 }
+            }
+            orderby a.Number descending
+            select a;
+        // Valid #14
+        var q6 = 
+            from a in new[] 
+            { 
+                1,
+                2,
+                3
+            }
+            group new
+            {
+                Number = a,
+                Square = a * a
+            }
+            by a;
+        // Valid #15
+        var d = new[]
+        {
+            1, 2, 3
+        };
+        // Valid #16
+        this.Qux(i =>
+        {
+            return d[i] * 2;
+        });
+        // Valid #17
+        if (this.x > 2)
+        {
+            this.x = 3;
+        } /* Some comment */
+        // Valid #18
+        int[] testArray;
+        testArray =
+            new[]
+            {
+                1
+            };
+        // Valid #19
+        var z1 = new object[]
+        {
+            new
+            {
+                Id = 12
+            },
+            new
+            {
+                Id = 13
+            }
+        };
+        // Valid #20
+        var z2 = new System.Action[]
+        {
+            () =>
+            {
+                this.x = 3;
+            },
+            () =>
+            {
+                this.x = 4;
+            }
+        };
+        // Valid #21
+        var z3 = new
+        {
+            Value1 = new
+            {   
+                Id = 12
+            },
+            Value2 = new
+            {
+                Id = 13
+            }
+        };
+        // Valid #22
+        var z4 = new System.Collections.Generic.List<object>
+        {
+            new
+            {
+                Id = 12
+            },
+            new
+            {
+                Id = 13
+            }
+        };
+    }
+    public void Qux(Func<int, int> function)
+    {
+        this.x = function(this.x);
+    }
+    public Func<int, int> Quux()
+    {
+        // Valid #23
+#if SOMETHING
+        return null;
+#else
+        return value =>
+        {
+            return value * 2;
+        };
+#endif
+    }
+    // Valid #24 (will be handled by SA1516)
+    public int Corge
+    {
+        get 
+        { 
+            return this.x; 
+        }
+        set { this.x = value; }
+    }
+    // Valid #25 (will be handled by SA1516)
+    public int Grault
+    {
+        set 
+        { 
+            this.x = value; 
+        }
+        get 
+        { 
+            return this.x; 
+        }
+    }
+    // Valid #26 (will be handled by SA1516)
+    public event EventHandler Garply
+    {
+        add
+        {
+        }
+        remove
+        {
+        }
+    }
+    // Valid #27 (will be handled by SA1516)
+    public event EventHandler Waldo
+    {
+        remove
+        {
+        }
+        add
+        {
+        }
+    }
+    // Valid #28 - Test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1020
+    private static IEnumerable<object> Method()
+    {
+        yield return new
+        {
+            prop = ""A""
+        };
+    }
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/784
+    public void MultiLineLinqQuery()
+    {
+        var someQuery = (from f in Enumerable.Empty<int>()
+                         where f != 0
+                         select new { Fish = ""Face"" }).ToList();
+        var someOtherQuery = (from f in Enumerable.Empty<int>()
+                              where f != 0
+                              select new
+                              {
+                                  Fish = ""AreFriends"",
+                                  Not = ""Food""
+                              }).ToList();
+    }
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2306
+    public void MultiLineGroupByLinqQuery()
+    {
+        var someQuery = from f in Enumerable.Empty<int>()
+                        group f by new
+                        {
+                            f,
+                        }
+                        into a
+                        select a;
+        var someOtherQuery = from f in Enumerable.Empty<int>()
+                             group f by new { f }
+                             into a
+                             select a;
+    }
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] ExpressionBodiedProperty =>
+        new[]
+        {
+            new object()
+        };
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] ExpressionBodiedMethod() =>
+        new[]
+        {
+            new object()
+        };
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] GetterOnlyAutoProperty1 { get; } =
+        new[]
+        {
+            new object()
+        };
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] GetterOnlyAutoProperty2 { get; } =
+        {
+        };
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1173
+    bool contained =
+        new[]
+        {
+            1,
+            2,
+            3
+        }
+        .Contains(3);
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1583
+    public void TestTernaryConstruction()
+    {
+        var target = contained
+            ? new Dictionary<string, string>
+                {
+                    { ""target"", ""_parent"" }
+                }
+            : new Dictionary<string, string>();
+    }
+}
+";
+
+            await new Verify.Test()
+            {
+                TestCode = code,
+                FixedCode = code,
+            }.RunAsync();
+        }
     }
 }

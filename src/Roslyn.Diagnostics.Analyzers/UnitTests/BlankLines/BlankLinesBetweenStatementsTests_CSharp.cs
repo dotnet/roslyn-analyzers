@@ -449,7 +449,7 @@ class C
         }
 
         [Fact]
-        public async Task TestSA1513ValidCases()
+        public async Task TestSA1513NegativeCases()
         {
             var code = @"using System;
 using System.Linq;
@@ -814,6 +814,192 @@ public class Foo
             {
                 TestCode = code,
                 FixedCode = code,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestSA1513PositiveCases()
+        {
+            await new Verify.Test()
+            {
+                TestCode = @"using System;
+using System.Collections.Generic;
+public class Goo
+{
+    private int x;
+    // Invalid #1
+    public int Property1
+    {
+        get
+        {        
+            return this.x;
+        }
+        set
+        {
+            this.x = value;
+        }
+        /* some comment */
+    }
+    // Invalid #2
+    public int Property2
+    {
+        get { return this.x; }
+    }
+    public void Baz()
+    {
+        // Invalid #3
+        switch (this.x)
+        {
+            case 1:
+            {
+                this.x = 1;
+                break;
+            }
+            case 2:
+                this.x = 2;
+                break;
+        }
+        // Invalid #4
+        {
+            var temp = this.x;
+            this.x = temp * temp;
+        [|}|]
+        this.x++;
+        // Invalid #5
+        if (this.x > 1)
+        {
+            this.x = 1;
+        [|}|]
+        if (this.x < 0)
+        {
+            this.x = 0;
+        [|}|]
+        switch (this.x)
+        {
+            // Invalid #6
+            case 0:
+            if (this.x < 0)
+            {
+                this.x = -1;
+            [|}|]
+            break;
+            // Invalid #7
+            case 1:
+            {
+                var temp = this.x * this.x;
+                this.x = temp;
+            [|}|]
+            break;
+        }
+    }
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                [|}|]
+                return;
+            }
+        };
+    }
+}
+",
+                FixedCode = @"using System;
+using System.Collections.Generic;
+public class Goo
+{
+    private int x;
+    // Invalid #1
+    public int Property1
+    {
+        get
+        {        
+            return this.x;
+        }
+        set
+        {
+            this.x = value;
+        }
+        /* some comment */
+    }
+    // Invalid #2
+    public int Property2
+    {
+        get { return this.x; }
+    }
+    public void Baz()
+    {
+        // Invalid #3
+        switch (this.x)
+        {
+            case 1:
+            {
+                this.x = 1;
+                break;
+            }
+            case 2:
+                this.x = 2;
+                break;
+        }
+        // Invalid #4
+        {
+            var temp = this.x;
+            this.x = temp * temp;
+        }
+
+        this.x++;
+        // Invalid #5
+        if (this.x > 1)
+        {
+            this.x = 1;
+        }
+
+        if (this.x < 0)
+        {
+            this.x = 0;
+        }
+
+        switch (this.x)
+        {
+            // Invalid #6
+            case 0:
+            if (this.x < 0)
+            {
+                this.x = -1;
+            }
+
+            break;
+            // Invalid #7
+            case 1:
+            {
+                var temp = this.x * this.x;
+                this.x = temp;
+            }
+
+            break;
+        }
+    }
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+
+                return;
+            }
+        };
+    }
+}
+",
             }.RunAsync();
         }
     }

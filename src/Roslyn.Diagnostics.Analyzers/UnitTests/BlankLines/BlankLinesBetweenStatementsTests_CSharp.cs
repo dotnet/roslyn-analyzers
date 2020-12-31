@@ -328,6 +328,42 @@ class C
         }
 
         [Fact]
+        public async Task TestBetweenBlockAndStatement4()
+        {
+
+            await new Verify.Test()
+            {
+                TestCode = @"
+class C
+{
+    void M()
+    {
+        switch (0)
+        {
+        case 0:
+            if (true) { [|}|]
+            return;
+        }
+    }
+}",
+                FixedCode = @"
+class C
+{
+    void M()
+    {
+        switch (0)
+        {
+        case 0:
+            if (true) { }
+
+            return;
+        }
+    }
+}",
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task TestFixAll1()
         {
 

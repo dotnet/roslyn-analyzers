@@ -37,7 +37,6 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers.BlankLines
                     RoslynDiagnosticsAnalyzersResources.Add_blank_line_after_block),
                 context.Diagnostics);
             return Task.CompletedTask;
-
         }
 
         private static async Task<Document> UpdateDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

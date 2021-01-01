@@ -24,7 +24,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers.BlankLines
             => ImmutableArray.Create(RoslynDiagnosticIds.BlankLinesBetweenStatementsRuleId);
 
         public override FixAllProvider GetFixAllProvider()
-            => WellKnownFixAllProviders.BatchFixer;
+            => new CSharpBlankLinesBetweenStatementsFixAllProvider();
 
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {

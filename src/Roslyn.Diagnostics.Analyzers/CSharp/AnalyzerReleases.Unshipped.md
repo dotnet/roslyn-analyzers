@@ -2,4 +2,3 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-RS0103 | RoslynDiagnosticsMaintainability | Warning | CSharpBlankLinesBetweenStatementsDiagnosticAnalyzer

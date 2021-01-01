@@ -40,17 +40,18 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers.BlankLines
         }
 
         private static async Task<Document> UpdateDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+            => document.WithSyntaxRoot(await FixAllAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false));
+
+        public static async Task<SyntaxNode> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var closeBraceToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            var nextToken = closeBraceToken.GetNextToken();
+            var nextTokens = diagnostics.Select(d => root.FindToken(d.Location.SourceSpan.Start).GetNextToken());
+            var newRoot = root.ReplaceTokens(
+                nextTokens,
+                (original, current) => current.WithLeadingTrivia(current.LeadingTrivia.Insert(0, s_endOfLine)));
 
-            var newRoot = root.ReplaceToken(
-                nextToken,
-                nextToken.WithLeadingTrivia(nextToken.LeadingTrivia.Insert(0, s_endOfLine)));
-
-            return document.WithSyntaxRoot(newRoot);
+            return newRoot;
         }
     }
 }

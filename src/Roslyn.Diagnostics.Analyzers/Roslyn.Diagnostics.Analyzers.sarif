@@ -332,6 +332,23 @@
               "Telemetry"
             ]
           }
+        },
+        "RS0103": {
+          "id": "RS0103",
+          "shortDescription": "Blank line required after block statement",
+          "fullDescription": "Blank line required after block statement",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "RoslynDiagnosticsMaintainability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpBlankLinesBetweenStatementsDiagnosticAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },

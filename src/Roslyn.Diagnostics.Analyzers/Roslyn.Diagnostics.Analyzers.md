@@ -227,3 +227,15 @@ Braces must not have blank lines between them
 |Severity|Warning|
 |CodeFix|True|
 ---
+
+## RS0103: Blank line required after block statement
+
+Blank line required after block statement
+
+|Item|Value|
+|-|-|
+|Category|RoslynDiagnosticsMaintainability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---

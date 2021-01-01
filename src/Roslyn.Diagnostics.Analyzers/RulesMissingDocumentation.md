@@ -21,3 +21,4 @@ RS0049 |  | Instance of TemporaryArray<T>.AsRef() must be a 'using' variable |
 RS0100 |  | Statements must be placed on their own line |
 RS0101 |  | Avoid multiple blank lines |
 RS0102 |  | Braces must not have blank lines between them |
+RS0103 |  | Blank line required after block statement |

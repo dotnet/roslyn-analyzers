@@ -8,6 +8,10 @@ root = true
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
+# RS1024: Compare symbols correctly
+# https://github.com/dotnet/roslyn-analyzers/issues/3389
+dotnet_diagnostic.RS1024.severity = none
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
@@ -202,9 +206,6 @@ dotnet_diagnostic.IDE0002.severity = silent
 # IDE0003: Name can be simplified
 dotnet_diagnostic.IDE0003.severity = silent
 
-# IDE005_gen: Remove unnecessary usings in generated code
-dotnet_diagnostic.IDE0005_gen.severity = silent
-
 # IDE0007: Use 'var' instead of explicit type
 dotnet_diagnostic.IDE0007.severity = silent
 
@@ -250,3 +251,31 @@ dotnet_code_quality.CA1720.api_surface = public
 # Exclude single letter type parameter names
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+
+# CA1002: Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = suggestion
+
+# CA1024: Use properties where appropriate
+dotnet_diagnostic.CA1024.severity = suggestion
+
+# CA1033: Interface methods should be callable by child types
+dotnet_diagnostic.CA1033.severity = suggestion
+
+# CA1307: Specify StringComparison for clarity
+dotnet_diagnostic.CA1307.severity = suggestion
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = suggestion
+
+# CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = suggestion
+
+# CA1725: Parameter names should match base declaration
+# TODO: Enable this rule as warning and fix violations.
+dotnet_diagnostic.CA1725.severity = suggestion
+
+### Configuration for PublicAPI analyzers executed on this repo ###
+[*.{cs,vb}]
+
+# Analyzers bail-out if the PublicAPI.*.txt file is not found
+dotnet_public_api_analyzer.require_api_files = true

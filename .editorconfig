@@ -234,9 +234,6 @@ dotnet_diagnostic.IDE0065.severity = silent
 # IDE0072: Populate switch
 dotnet_diagnostic.IDE0072.severity = silent
 
-# IDE0090: Use 'new(...)'
-dotnet_diagnostic.IDE0090.severity = warning
-
 ### Configuration for FxCop analyzers executed on this repo ###
 [*.{cs,vb}]
 

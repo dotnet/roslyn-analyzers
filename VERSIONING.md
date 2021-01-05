@@ -20,6 +20,7 @@ Sr. No. | Release         |
 --------|-----------------|
 1       | [5.0.0](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.0)           |
 2       | [5.0.1](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.1)           |
+3       | [5.0.3](https://github.com/dotnet/roslyn-analyzers/releases/tag/5.0.3)           |
 
 ### Other analyzers
 

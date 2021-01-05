@@ -2,7 +2,7 @@
   <PropertyGroup>
     <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>5.0.3</NetAnalyzersVersionPrefix>
+    <NetAnalyzersVersionPrefix>5.0.4</NetAnalyzersVersionPrefix>
     <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
@@ -32,7 +32,7 @@
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForTests>3.8.0</MicrosoftCodeAnalysisVersionForTests>
     <DogfoodAnalyzersVersion>3.3.1</DogfoodAnalyzersVersion>
-    <DogfoodNetAnalyzersVersion>5.0.1</DogfoodNetAnalyzersVersion>
+    <DogfoodNetAnalyzersVersion>5.0.3</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>

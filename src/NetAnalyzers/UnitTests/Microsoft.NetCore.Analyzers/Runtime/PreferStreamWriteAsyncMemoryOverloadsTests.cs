@@ -743,6 +743,7 @@ class C
         [Fact]
         public Task CS_Fixer_PreserveNullability()
         {
+            // The difference with the ReadAsync test is buffer?.Length
             string originalSource = @"
 #nullable enable
 using System;
@@ -753,7 +754,7 @@ public class C
 {
     async ValueTask M(Stream? stream, byte[]? buffer)
     {
-        await stream!.WriteAsync(buffer!, offset: 0, count: buffer!.Length).ConfigureAwait(false);
+        await stream!.WriteAsync(buffer!, offset: 0, count: buffer?.Length ?? 0).ConfigureAwait(false);
     }
 }
 ";
@@ -767,7 +768,7 @@ public class C
 {
     async ValueTask M(Stream? stream, byte[]? buffer)
     {
-        await (stream!).WriteAsync((buffer!).AsMemory(start: 0, length: buffer!.Length)).ConfigureAwait(false);
+        await (stream!).WriteAsync((buffer!).AsMemory(start: 0, length: buffer?.Length ?? 0)).ConfigureAwait(false);
     }
 }
 ";
@@ -777,7 +778,7 @@ public class C
                 fixedSource,
                 ReferenceAssemblies.Net.Net50,
                 CodeAnalysis.CSharp.LanguageVersion.CSharp8,
-                GetCSharpResult(11, 15, 11, 76));
+                GetCSharpResult(11, 15, 11, 81));
         }
 
         #endregion

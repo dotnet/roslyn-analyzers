@@ -784,6 +784,7 @@ class C
         [Fact]
         public Task CS_Fixer_PreserveNullability()
         {
+            // The differences with the WriteAsync test are "condition ? 0 : 1" and "buffer!.Length".
             string originalSource = @"
 #nullable enable
 using System;
@@ -792,9 +793,9 @@ using System.Threading.Tasks;
 
 public class C
 {
-    async void M(FileStream? stream, byte[]? buffer)
+    async void M(FileStream? stream, byte[]? buffer, bool condition)
     {
-        await stream!.ReadAsync(buffer!, offset: 0, count: buffer!.Length).ConfigureAwait(false);
+        await stream!.ReadAsync(buffer!, offset: condition ? 0 : 1, count: buffer!.Length).ConfigureAwait(false);
     }
 }
 ";
@@ -806,9 +807,9 @@ using System.Threading.Tasks;
 
 public class C
 {
-    async void M(FileStream? stream, byte[]? buffer)
+    async void M(FileStream? stream, byte[]? buffer, bool condition)
     {
-        await (stream!).ReadAsync((buffer!).AsMemory(start: 0, length: buffer!.Length)).ConfigureAwait(false);
+        await (stream!).ReadAsync((buffer!).AsMemory(start: condition ? 0 : 1, length: buffer!.Length)).ConfigureAwait(false);
     }
 }
 ";
@@ -818,7 +819,7 @@ public class C
                 fixedSource,
                 ReferenceAssemblies.Net.Net50,
                 CodeAnalysis.CSharp.LanguageVersion.CSharp8,
-                GetCSharpResult(11, 15, 11, 75));
+                GetCSharpResult(11, 15, 11, 91));
         }
 
         #endregion

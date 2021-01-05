@@ -780,7 +780,6 @@ class C
             return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 254));
         }
 
-
         [Fact]
         public Task CS_Fixer_PreserveNullability()
         {

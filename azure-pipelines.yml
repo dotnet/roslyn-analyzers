@@ -114,7 +114,7 @@ jobs:
 
 - job: Markdownlint
   pool:
-      vmImage: ubuntu-latest
+      vmImage: ubuntu-18.04
   steps:
     - script: sudo npm install -g markdownlint-cli
       displayName: Install markdownlint-cli

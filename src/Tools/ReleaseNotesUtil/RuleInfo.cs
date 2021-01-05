@@ -53,25 +53,14 @@ namespace ReleaseNotesUtil
 
         // Computed properties.
         public string IdWithHelpLinkMarkdown
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(this.HelpLink)
-                    ? $"[{this.Id}]({this.HelpLink})"
-                    : this.Id ?? string.Empty;
-            }
-        }
+            => !string.IsNullOrWhiteSpace(this.HelpLink)
+                ? $"[{this.Id}]({this.HelpLink})"
+                : this.Id ?? string.Empty;
 
         public string DescriptionOrMessageFormatMarkdown
-        {
-            get
-            {
-                return
-                    (!string.IsNullOrWhiteSpace(this.Description)
-                        ? this.Description
-                        : this.MessageFormat)
-                    ?? string.Empty;
-            }
-        }
+            => (!string.IsNullOrWhiteSpace(this.Description)
+                    ? this.Description
+                    : this.MessageFormat)
+                ?? string.Empty;
     }
 }

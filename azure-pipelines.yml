@@ -113,8 +113,9 @@ jobs:
       condition: always()
 
 - job: Markdownlint
-  pool:
-      vmImage: ubuntu-latest
+ pool:
+    name: NetCorePublic-Pool
+    queue: BuildPool.Ubuntu.1604.amd64.Open
   steps:
     - script: sudo npm install -g markdownlint-cli
       displayName: Install markdownlint-cli

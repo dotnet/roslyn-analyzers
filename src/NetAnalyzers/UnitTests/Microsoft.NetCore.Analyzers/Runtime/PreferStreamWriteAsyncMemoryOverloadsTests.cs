@@ -740,6 +740,46 @@ class C
             return CSharpVerifyExpectedCodeFixDiagnosticsAsync(originalSource, fixedSource, GetCSharpResult(12, 74, 12, 255));
         }
 
+        [Fact]
+        public Task CS_Fixer_PreserveNullability()
+        {
+            string originalSource = @"
+#nullable enable
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    async ValueTask M(Stream? stream, byte[]? buffer)
+    {
+        await stream!.WriteAsync(buffer!, offset: 0, count: buffer!.Length).ConfigureAwait(false);
+    }
+}
+";
+            string fixedSource = @"
+#nullable enable
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    async ValueTask M(Stream? stream, byte[]? buffer)
+    {
+        await (stream!).WriteAsync((buffer!).AsMemory(start: 0, length: buffer!.Length)).ConfigureAwait(false);
+    }
+}
+";
+
+            return CSharpVerifyForVersionAsync(
+                originalSource,
+                fixedSource,
+                ReferenceAssemblies.Net.Net50,
+                CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                GetCSharpResult(11, 15, 11, 76));
+        }
+
         #endregion
 
         #region VB - Diagnostic

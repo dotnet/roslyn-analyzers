@@ -790,7 +790,7 @@
     <value>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</value>
   </data>
   <data name="DefinitelyUseSecureCookiesASPNetCore" xml:space="preserve">
-    <value>Use Secure Cookies In ASP.Net Core</value>
+    <value>Use Secure Cookies In ASP.NET Core</value>
   </data>
   <data name="DefinitelyUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
     <value>Set CookieOptions.Secure = true when setting a cookie</value>
@@ -985,7 +985,7 @@
     <value>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</value>
   </data>
   <data name="MaybeUseSecureCookiesASPNetCore" xml:space="preserve">
-    <value>Ensure Use Secure Cookies In ASP.Net Core</value>
+    <value>Ensure Use Secure Cookies In ASP.NET Core</value>
   </data>
   <data name="MaybeUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
     <value>Ensure that CookieOptions.Secure = true when setting a cookie</value>
@@ -1351,13 +1351,13 @@
     <value>Change the '{0}' method call to use the '{1}' overload</value>
   </data>
   <data name="ForwardCancellationTokenToInvocationsDescription" xml:space="preserve">
-    <value>Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</value>
+    <value>Forward the 'CancellationToken' parameter to methods to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.</value>
   </data>
   <data name="ForwardCancellationTokenToInvocationsMessage" xml:space="preserve">
     <value>Forward the '{0}' parameter to the '{1}' method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token</value>
   </data>
   <data name="ForwardCancellationTokenToInvocationsTitle" xml:space="preserve">
-    <value>Forward the 'CancellationToken' parameter to methods that take one</value>
+    <value>Forward the 'CancellationToken' parameter to methods</value>
   </data>
   <data name="InstantiateArgumentExceptionsCorrectlyChangeToTwoArgumentCodeFixTitle" xml:space="preserve">
     <value>Change to call the two argument constructor, pass null for the message.</value>

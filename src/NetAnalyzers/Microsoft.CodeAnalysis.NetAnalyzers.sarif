@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
-        "version": "5.0.2",
+        "version": "5.0.4",
         "language": "en-US"
       },
       "rules": {
@@ -269,8 +269,8 @@
         },
         "CA2016": {
           "id": "CA2016",
-          "shortDescription": "Forward the 'CancellationToken' parameter to methods that take one",
-          "fullDescription": "Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
+          "shortDescription": "Forward the 'CancellationToken' parameter to methods",
+          "fullDescription": "Forward the 'CancellationToken' parameter to methods to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2016",
           "properties": {
@@ -463,7 +463,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.NetAnalyzers",
-        "version": "5.0.2",
+        "version": "5.0.4",
         "language": "en-US"
       },
       "rules": {
@@ -4554,7 +4554,7 @@
         },
         "CA5382": {
           "id": "CA5382",
-          "shortDescription": "Use Secure Cookies In ASP.Net Core",
+          "shortDescription": "Use Secure Cookies In ASP.NET Core",
           "fullDescription": "Applications available over HTTPS must use secure cookies.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5382",
@@ -4576,7 +4576,7 @@
         },
         "CA5383": {
           "id": "CA5383",
-          "shortDescription": "Ensure Use Secure Cookies In ASP.Net Core",
+          "shortDescription": "Ensure Use Secure Cookies In ASP.NET Core",
           "fullDescription": "Applications available over HTTPS must use secure cookies.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5383",
@@ -5060,7 +5060,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers",
-        "version": "5.0.2",
+        "version": "5.0.4",
         "language": "en-US"
       },
       "rules": {
@@ -5305,8 +5305,8 @@
         },
         "CA2016": {
           "id": "CA2016",
-          "shortDescription": "Forward the 'CancellationToken' parameter to methods that take one",
-          "fullDescription": "Forward the 'CancellationToken' parameter to methods that take one to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
+          "shortDescription": "Forward the 'CancellationToken' parameter to methods",
+          "fullDescription": "Forward the 'CancellationToken' parameter to methods to ensure the operation cancellation notifications gets properly propagated, or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2016",
           "properties": {

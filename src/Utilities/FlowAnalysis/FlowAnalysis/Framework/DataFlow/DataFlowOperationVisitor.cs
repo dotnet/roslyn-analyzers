@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public ImmutableDictionary<IOperation, IDataFlowAnalysisResult<TAbstractAnalysisValue>> InterproceduralResultsMap => _interproceduralResultsBuilder.ToImmutable();
         public ImmutableDictionary<IMethodSymbol, IDataFlowAnalysisResult<TAbstractAnalysisValue>> StandaloneLocalFunctionAnalysisResultsMap => _standaloneLocalFunctionAnalysisResultsBuilder.ToImmutable();
         internal LambdaAndLocalFunctionAnalysisInfo LambdaAndLocalFunctionAnalysisInfo =>
-            new LambdaAndLocalFunctionAnalysisInfo(_escapedLocalFunctions, _analyzedLocalFunctions, _escapedLambdas, _analyzedLambdas);
+            new(_escapedLocalFunctions, _analyzedLocalFunctions, _escapedLambdas, _analyzedLambdas);
 
         /// <summary>
         /// Optional map from points to values of tasks to the underlying abstract value returned by the task.
@@ -187,10 +187,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 Debug.Assert(_currentBasicBlock != null);
                 return _currentBasicBlock!;
             }
-            private set
-            {
-                _currentBasicBlock = value;
-            }
+            private set => _currentBasicBlock = value;
         }
         protected ControlFlowConditionKind FlowBranchConditionKind { get; private set; }
         protected PointsToAbstractValue ThisOrMePointsToAbstractValue { get; }
@@ -259,6 +256,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             MonitorNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingMonitor);
             InterlockedNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingInterlocked);
             SerializationInfoNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationInfo);
+            StreamingContextNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext);
             GenericIEquatableNamedType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
             StringReaderType = WellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIOStringReader);
             CollectionNamedTypes = GetWellKnownCollectionTypes();
@@ -1646,7 +1644,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     PerformPredicateAnalysisCore(parenthesizedOperation.Operand, targetAnalysisData);
                     return;
 
-                case IFlowCaptureReferenceOperation _:
+                case IFlowCaptureReferenceOperation:
                     var result = AnalysisEntityFactory.TryCreate(operation, out AnalysisEntity? flowCaptureReferenceEntity);
                     Debug.Assert(result);
                     RoslynDebug.Assert(flowCaptureReferenceEntity != null);
@@ -4039,6 +4037,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// <see cref="INamedTypeSymbol"/> for 'System.Runtime.Serialization.SerializationInfo' type />
         /// </summary>
         protected INamedTypeSymbol? SerializationInfoNamedType { get; }
+
+        /// <summary>
+        /// <see cref="INamedTypeSymbol"/> for 'System.Runtime.Serialization.StreamingContext' type />
+        /// </summary>
+        protected INamedTypeSymbol? StreamingContextNamedType { get; }
 
         /// <summary>
         /// <see cref="INamedTypeSymbol"/> for <see cref="System.IEquatable{T}"/>

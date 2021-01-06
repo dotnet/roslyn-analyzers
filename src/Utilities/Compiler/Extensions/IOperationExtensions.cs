@@ -372,23 +372,18 @@ namespace Analyzer.Utilities.Extensions
         /// <param name="binaryOperation"></param>
         /// <returns></returns>
         public static bool IsComparisonOperator(this IBinaryOperation binaryOperation)
-        {
-            switch (binaryOperation.OperatorKind)
+            => binaryOperation.OperatorKind switch
             {
-                case BinaryOperatorKind.Equals:
-                case BinaryOperatorKind.NotEquals:
-                case BinaryOperatorKind.ObjectValueEquals:
-                case BinaryOperatorKind.ObjectValueNotEquals:
-                case BinaryOperatorKind.LessThan:
-                case BinaryOperatorKind.LessThanOrEqual:
-                case BinaryOperatorKind.GreaterThan:
-                case BinaryOperatorKind.GreaterThanOrEqual:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
+                BinaryOperatorKind.Equals
+                or BinaryOperatorKind.NotEquals
+                or BinaryOperatorKind.ObjectValueEquals
+                or BinaryOperatorKind.ObjectValueNotEquals
+                or BinaryOperatorKind.LessThan
+                or BinaryOperatorKind.LessThanOrEqual
+                or BinaryOperatorKind.GreaterThan
+                or BinaryOperatorKind.GreaterThanOrEqual => true,
+                _ => false,
+            };
 
         public static IOperation GetRoot(this IOperation operation)
         {
@@ -513,11 +508,17 @@ namespace Analyzer.Utilities.Extensions
 
         private static readonly ImmutableArray<OperationKind> s_LambdaAndLocalFunctionKinds =
             ImmutableArray.Create(OperationKind.AnonymousFunction, OperationKind.LocalFunction);
+
         public static bool IsWithinLambdaOrLocalFunction(this IOperation operation, [NotNullWhen(true)] out IOperation? containingLambdaOrLocalFunctionOperation)
         {
             containingLambdaOrLocalFunctionOperation = operation.GetAncestor(s_LambdaAndLocalFunctionKinds);
             return containingLambdaOrLocalFunctionOperation != null;
         }
+
+        public static bool IsWithinExpressionTree(this IOperation operation, [NotNullWhen(true)] INamedTypeSymbol? linqExpressionTreeType)
+            => linqExpressionTreeType != null
+                && operation.GetAncestor(s_LambdaAndLocalFunctionKinds)?.Parent?.Type?.OriginalDefinition is { } lambdaType
+                && linqExpressionTreeType.Equals(lambdaType);
 
         public static ITypeSymbol? GetPatternType(this IPatternOperation pattern)
         {
@@ -851,7 +852,7 @@ namespace Analyzer.Utilities.Extensions
             {
                 switch (operation.Parent)
                 {
-                    case IPatternCaseClauseOperation _:
+                    case IPatternCaseClauseOperation:
                         // A declaration pattern within a pattern case clause is a
                         // write for the declared local.
                         // For example, 'x' is defined and assigned the value from 'obj' below:
@@ -861,7 +862,7 @@ namespace Analyzer.Utilities.Extensions
                         //
                         return ValueUsageInfo.Write;
 
-                    case IRecursivePatternOperation _:
+                    case IRecursivePatternOperation:
                         // A declaration pattern within a recursive pattern is a
                         // write for the declared local.
                         // For example, 'x' is defined and assigned the value from 'obj' below:
@@ -872,7 +873,7 @@ namespace Analyzer.Utilities.Extensions
                         //
                         return ValueUsageInfo.Write;
 
-                    case ISwitchExpressionArmOperation _:
+                    case ISwitchExpressionArmOperation:
                         // A declaration pattern within a switch expression arm is a
                         // write for the declared local.
                         // For example, 'x' is defined and assigned the value from 'obj' below:
@@ -882,7 +883,7 @@ namespace Analyzer.Utilities.Extensions
                         //
                         return ValueUsageInfo.Write;
 
-                    case IIsPatternOperation _:
+                    case IIsPatternOperation:
                         // A declaration pattern within an is pattern is a
                         // write for the declared local.
                         // For example, 'x' is defined and assigned the value from 'obj' below:
@@ -890,7 +891,7 @@ namespace Analyzer.Utilities.Extensions
                         //
                         return ValueUsageInfo.Write;
 
-                    case IPropertySubpatternOperation _:
+                    case IPropertySubpatternOperation:
                         // A declaration pattern within a property sub-pattern is a
                         // write for the declared local.
                         // For example, 'x' is defined and assigned the value from 'obj.Property' below:
@@ -933,20 +934,13 @@ namespace Analyzer.Utilities.Extensions
             }
             else if (operation.Parent is IArgumentOperation argumentOperation)
             {
-                switch (argumentOperation.Parameter.RefKind)
+                return argumentOperation.Parameter.RefKind switch
                 {
-                    case RefKind.RefReadOnly:
-                        return ValueUsageInfo.ReadableReference;
-
-                    case RefKind.Out:
-                        return ValueUsageInfo.WritableReference;
-
-                    case RefKind.Ref:
-                        return ValueUsageInfo.ReadableWritableReference;
-
-                    default:
-                        return ValueUsageInfo.Read;
-                }
+                    RefKind.RefReadOnly => ValueUsageInfo.ReadableReference,
+                    RefKind.Out => ValueUsageInfo.WritableReference,
+                    RefKind.Ref => ValueUsageInfo.ReadableWritableReference,
+                    _ => ValueUsageInfo.Read,
+                };
             }
             else if (operation.Parent is IReturnOperation returnOperation)
             {
@@ -1065,17 +1059,11 @@ namespace Analyzer.Utilities.Extensions
         /// such as <code>a ??= b</code>.
         /// </summary>
         public static bool IsAnyCompoundAssignment(this IOperation operation)
-        {
-            switch (operation)
+            => operation switch
             {
-                case ICompoundAssignmentOperation _:
-                case ICoalesceAssignmentOperation _:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
+                ICompoundAssignmentOperation or ICoalesceAssignmentOperation => true,
+                _ => false,
+            };
 #endif
     }
 }

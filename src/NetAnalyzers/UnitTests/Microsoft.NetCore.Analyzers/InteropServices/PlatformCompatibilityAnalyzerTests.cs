@@ -2082,34 +2082,26 @@ public class Test
 {
     public void M1()
     {
-        OsDependentClass odc = new OsDependentClass();
-        odc.M2();
+        OsDependentClass odc = " + (warn ? "{|#0:new OsDependentClass()|}" : "new OsDependentClass()") + @";
     }
 }
 
 [UnsupportedOSPlatform(""" + platform + version + @""")]
-public class OsDependentClass
-{
-    public void M2() { }
-}";
+public class OsDependentClass { }
+";
 
             if (warn)
             {
                 if (platform.Equals(suppressingPlatform, System.StringComparison.OrdinalIgnoreCase))
                 {
-                    await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(9, 32).
+                    await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).
                         WithArguments("OsDependentClass", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, platform, version),
-                        GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, suppressingPlatform, suppressingVersion)),
-                        VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(10, 9).
-                        WithArguments("OsDependentClass.M2()", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, platform, version),
                         GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, suppressingPlatform, suppressingVersion)));
                 }
                 else
                 {
-                    await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(9, 32).
-                        WithArguments("OsDependentClass", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, platform, version)),
-                        VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(10, 9).
-                        WithArguments("OsDependentClass.M2()", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, platform, version)));
+                    await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(0).
+                        WithArguments("OsDependentClass", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, platform, version)));
                 }
             }
             else
@@ -2131,8 +2123,8 @@ public class Test
     {
         var obj = new C();
         obj.BrowserMethod();
-        C.StaticClass.LinuxMethod();
-        C.StaticClass.LinuxVersionedMethod();
+        {|#0:C.StaticClass.LinuxMethod()|};
+        {|#1:C.StaticClass.LinuxVersionedMethod()|};
     }
 }
 
@@ -2152,9 +2144,9 @@ public class C
 }";
 
             await VerifyAnalyzerAsyncCs(source, VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).
-                WithLocation(11, 9).WithArguments("C.StaticClass.LinuxMethod()", "'linux'", "'Linux'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).
-                WithLocation(12, 9).WithArguments("C.StaticClass.LinuxVersionedMethod()", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "linux", "4.8"),
+                WithLocation(0).WithArguments("C.StaticClass.LinuxMethod()", "'linux'", "'Linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("C.StaticClass.LinuxVersionedMethod()",
+                GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "linux", "4.8"),
                 GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "Linux")));
         }
 

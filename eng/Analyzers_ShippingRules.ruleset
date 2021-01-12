@@ -4,22 +4,32 @@
          ToolsVersion="14.0">
 
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
-    <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/1378 -->
-    <Rule Id="CA2222" Action="None" />
-
     <!-- ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any -->
     <Rule Id="CA1062" Action="None" />
+    <!-- CA1014: Mark assemblies with CLSCompliant -->
+    <Rule Id="CA1014" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
     <!-- DoNotPassLiteralsAsLocalizedParameters - primarily useful for libraries where public APIs throw exceptions, and the messages need to be localized -->
     <Rule Id="CA1303" Action="None" />
   </Rules>
-  
-  <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
-    <!-- Do not use types from Workspaces assembly in an analyzer -->
-    <!-- Skipped due to https://github.com/dotnet/roslyn-analyzers/issues/1711 -->
-    <Rule Id="RS1022" Action="None" />
+
+  <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Roslyn.Diagnostics.Analyzers">
+    <!-- Do not use generic 'CodeAction.Create' to create 'CodeAction', there is no agreement on what to do for roslyn-analyzer repo -->
+    <Rule Id="RS0005" Action="None" />
+    <!-- Parts exported with MEFv2 must be marked with 'SharedAttribute', un-needed here -->
+    <Rule Id="RS0023" Action="None" />
+    <!-- Exported parts should be marked with 'ImportingConstructorAttribute', un-needed here -->
+    <Rule Id="RS0034" Action="None" />
+    <!-- Use 'null' instead of 'default' for nullable types -->
+    <Rule Id="RS0038" Action="None" />
+    <!-- Statements must be placed on their own line -->
+    <Rule Id="RS0100" Action="None" />
   </Rules>
 
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+    <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
+    <Rule Id="RS0041" Action="None" />
+  </Rules>
 </RuleSet>

@@ -111,3 +111,12 @@ jobs:
         ArtifactName: 'Windows $(_configuration)'
       continueOnError: true
       condition: always()
+
+- job: Markdownlint
+  pool:
+      vmImage: ubuntu-18.04
+  steps:
+    - script: sudo npm install -g markdownlint-cli
+      displayName: Install markdownlint-cli
+    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+      displayName: Run markdownlint

@@ -29,19 +29,29 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            Document document = context.Document;
+            CancellationToken cancellationToken = context.CancellationToken;
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    new MyCodeAction(
-                        MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
-                        async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
-                        equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
-                    diagnostic);
+                SyntaxNode diagnosticNode = root.FindNode(diagnostic.Location.SourceSpan);
+                SyntaxNode declarationNode = GetParameterDeclarationNode(diagnosticNode);
+                ISymbol parameterSymbol = semanticModel.GetDeclaredSymbol(declarationNode, cancellationToken);
+                ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
+                if (IsSafeMethodToRemoveParameter(methodDeclarationSymbol))
+                {
+                    // See https://github.com/dotnet/roslyn-analyzers/issues/1466
+                    context.RegisterCodeFix(
+                        new MyCodeAction(
+                            MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
+                            async ct => await RemoveNodes(context.Document, declarationNode, ct).ConfigureAwait(false),
+                            equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
+                        diagnostic);
+                }
             }
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -59,10 +69,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         /// </summary>
         protected abstract bool CanContinuouslyLeadToObjectCreationOrInvocation(SyntaxNode node);
 
-        private async Task<Solution> RemoveNodes(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private async Task<Solution> RemoveNodes(Document document, SyntaxNode declarationNode, CancellationToken cancellationToken)
         {
             var solution = document.Project.Solution;
-            var pairs = await GetNodesToRemoveAsync(document, diagnostic, cancellationToken).ConfigureAwait(false);
+            var pairs = await GetNodesToRemoveAsync(document, declarationNode, cancellationToken).ConfigureAwait(false);
             foreach (var group in pairs.GroupBy(p => p.Key))
             {
                 DocumentEditor editor = await DocumentEditor.CreateAsync(solution.GetDocument(group.Key), cancellationToken).ConfigureAwait(false);
@@ -112,21 +122,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return null;
         }
 
-        private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, SyntaxNode declarationNode, CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode diagnosticNode = root.FindNode(diagnostic.Location.SourceSpan);
-            SyntaxNode declarationNode = GetParameterDeclarationNode(diagnosticNode);
-
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(declarationNode, cancellationToken);
             ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
-
-            if (!IsSafeMethodToRemoveParameter(methodDeclarationSymbol))
-            {
-                // See https://github.com/dotnet/roslyn-analyzers/issues/1466
-                return ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>.Empty;
-            }
 
             var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();
             nodesToRemove.Add(new KeyValuePair<DocumentId, SyntaxNode>(document.Id, declarationNode));

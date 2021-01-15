@@ -337,6 +337,11 @@
         <target state="translated">Rimuovere l'inizializzatore di elemento ridondante</target>
         <note />
       </trans-unit>
+      <trans-unit id="RenameUnusedParameterMessage">
+        <source>Rename unused parameters to '_', '_1', etc</source>
+        <target state="new">Rename unused parameters to '_', '_1', etc</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableTitle">
         <source>Types that own disposable fields should be disposable</source>
         <target state="translated">I tipi proprietari di campi Disposable devono essere Disposable</target>

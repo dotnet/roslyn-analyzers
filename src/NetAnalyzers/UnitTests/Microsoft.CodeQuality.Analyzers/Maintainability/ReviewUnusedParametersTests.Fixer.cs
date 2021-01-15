@@ -520,7 +520,14 @@ public struct Unit
     public static bool operator ==(Unit [|x|], Unit [|y|]) => true;
     public static bool operator !=(Unit [|x|], Unit [|y|]) => false;
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, code);
+
+            var fixedCode = @"
+public struct Unit
+{
+    public static bool operator ==(Unit _, Unit _1) => true;
+    public static bool operator !=(Unit _, Unit _1) => false;
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]

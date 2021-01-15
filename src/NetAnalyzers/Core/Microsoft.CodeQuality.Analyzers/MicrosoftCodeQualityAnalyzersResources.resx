@@ -1436,4 +1436,7 @@
   <data name="MarkAttributesWithAttributeUsageCodeFix" xml:space="preserve">
     <value>Apply 'AttributeUsageAttribute'</value>
   </data>
+  <data name="RenameUnusedParameterMessage" xml:space="preserve">
+    <value>Rename unused parameters to '_', '_1', etc</value>
+  </data>
 </root>

@@ -337,6 +337,11 @@
         <target state="translated">要素の冗長な初期化子の削除</target>
         <note />
       </trans-unit>
+      <trans-unit id="RenameUnusedParameterMessage">
+        <source>Rename unused parameters to '_', '_1', etc</source>
+        <target state="new">Rename unused parameters to '_', '_1', etc</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableTitle">
         <source>Types that own disposable fields should be disposable</source>
         <target state="translated">破棄可能なフィールドを所有する型は、破棄可能でなければなりません</target>

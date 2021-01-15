@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Rename;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
@@ -34,24 +36,56 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             Document document = context.Document;
             CancellationToken cancellationToken = context.CancellationToken;
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 SyntaxNode diagnosticNode = root.FindNode(diagnostic.Location.SourceSpan);
                 SyntaxNode declarationNode = GetParameterDeclarationNode(diagnosticNode);
-                ISymbol parameterSymbol = semanticModel.GetDeclaredSymbol(declarationNode, cancellationToken);
-                ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
-                if (IsSafeMethodToRemoveParameter(methodDeclarationSymbol))
+                if (semanticModel.GetDeclaredSymbol(declarationNode, cancellationToken) is not IParameterSymbol parameterSymbol)
+                {
+                    Debug.Fail("Symbol was not IParameterSymbol.");
+                    continue;
+                }
+
+                if (parameterSymbol.ContainingSymbol is not IMethodSymbol methodSymbol)
+                {
+                    Debug.Fail("ContainingSymbol of IParameterSymbol was not IMethodSymbol.");
+                    continue;
+                }
+
+                if (IsSafeMethodToRemoveParameter(methodSymbol))
                 {
                     // See https://github.com/dotnet/roslyn-analyzers/issues/1466
                     context.RegisterCodeFix(
                         new MyCodeAction(
                             MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
-                            async ct => await RemoveNodes(context.Document, declarationNode, parameterSymbol, ct).ConfigureAwait(false),
+                            async ct => await RemoveNodes(document, declarationNode, parameterSymbol, ct).ConfigureAwait(false),
                             equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
                         diagnostic);
                 }
+
+                context.RegisterCodeFix(
+                    new MyCodeAction(
+                        MicrosoftCodeQualityAnalyzersResources.RenameUnusedParameterMessage,
+                        async ct => await RenameParameter(document, parameterSymbol, methodSymbol, ct).ConfigureAwait(false),
+                        equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RenameUnusedParameterMessage),
+                    diagnostic);
             }
+        }
+
+        private static async Task<Solution> RenameParameter(Document document, IParameterSymbol parameterSymbol, IMethodSymbol methodSymbol, CancellationToken cancellationToken)
+        {
+            var parameterNames = methodSymbol.Parameters.Select(p => p.Name).ToImmutableHashSet();
+
+            // Use _, _1, _2, etc.
+            var newName = "_";
+            var suffix = 0;
+            while (parameterNames.Contains(newName))
+            {
+                newName = $"_{++suffix}";
+            }
+
+            return await Renamer.RenameSymbolAsync(document.Project.Solution, parameterSymbol, newName, document.Project.Solution.Options, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>

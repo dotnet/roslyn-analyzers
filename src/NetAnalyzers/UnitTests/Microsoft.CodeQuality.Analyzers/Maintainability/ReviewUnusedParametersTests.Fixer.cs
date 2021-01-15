@@ -415,6 +415,7 @@ class C
                     Sources = { fix },
                     MarkupHandling = MarkupMode.Allow,
                 },
+                CodeActionEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
             }.RunAsync();
         }
 
@@ -865,6 +866,7 @@ End Class
                     Sources = { fix },
                     MarkupHandling = MarkupMode.Allow,
                 },
+                CodeActionEquivalenceKey = MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
             }.RunAsync();
         }
 

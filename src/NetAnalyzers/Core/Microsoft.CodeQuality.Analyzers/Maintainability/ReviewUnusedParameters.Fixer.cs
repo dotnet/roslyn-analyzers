@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -171,7 +172,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 case SymbolKind.Method:
                     var methodSymbol = (IMethodSymbol)methodDeclarationSymbol;
                     // Should not remove parameter for a conversion operator.
-                    return methodSymbol.MethodKind != MethodKind.Conversion;
+                    return methodSymbol.MethodKind != MethodKind.Conversion && !methodSymbol.IsOperator();
                 default:
                     return true;
             }

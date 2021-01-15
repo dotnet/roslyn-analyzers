@@ -512,6 +512,18 @@ class MyValue
         }
 
         [Fact]
+        public async Task Operators_CSharp()
+        {
+            var code = @"
+public struct Unit
+{
+    public static bool operator ==(Unit [|x|], Unit [|y|]) => true;
+    public static bool operator !=(Unit [|x|], Unit [|y|]) => false;
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
         public async Task BaseScenario_Basic()
         {
             var code = @"

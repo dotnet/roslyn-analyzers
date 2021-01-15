@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     context.RegisterCodeFix(
                         new MyCodeAction(
                             MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
-                            async ct => await RemoveNodes(context.Document, declarationNode, ct).ConfigureAwait(false),
+                            async ct => await RemoveNodes(context.Document, declarationNode, parameterSymbol, ct).ConfigureAwait(false),
                             equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
                         diagnostic);
                 }
@@ -69,10 +69,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         /// </summary>
         protected abstract bool CanContinuouslyLeadToObjectCreationOrInvocation(SyntaxNode node);
 
-        private async Task<Solution> RemoveNodes(Document document, SyntaxNode declarationNode, CancellationToken cancellationToken)
+        private async Task<Solution> RemoveNodes(Document document, SyntaxNode declarationNode, ISymbol parameterSymbol, CancellationToken cancellationToken)
         {
             var solution = document.Project.Solution;
-            var pairs = await GetNodesToRemoveAsync(document, declarationNode, cancellationToken).ConfigureAwait(false);
+            var pairs = await GetNodesToRemoveAsync(document, declarationNode, parameterSymbol, cancellationToken).ConfigureAwait(false);
             foreach (var group in pairs.GroupBy(p => p.Key))
             {
                 DocumentEditor editor = await DocumentEditor.CreateAsync(solution.GetDocument(group.Key), cancellationToken).ConfigureAwait(false);
@@ -122,10 +122,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return null;
         }
 
-        private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, SyntaxNode declarationNode, CancellationToken cancellationToken)
+        private async Task<ImmutableArray<KeyValuePair<DocumentId, SyntaxNode>>> GetNodesToRemoveAsync(Document document, SyntaxNode declarationNode, ISymbol parameterSymbol, CancellationToken cancellationToken)
         {
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            ISymbol parameterSymbol = editor.SemanticModel.GetDeclaredSymbol(declarationNode, cancellationToken);
             ISymbol methodDeclarationSymbol = parameterSymbol.ContainingSymbol;
 
             var nodesToRemove = ImmutableArray.CreateBuilder<KeyValuePair<DocumentId, SyntaxNode>>();

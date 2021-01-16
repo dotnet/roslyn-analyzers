@@ -12,29 +12,15 @@ Namespace Global.Analyzer.Utilities
         Private Sub New()
         End Sub
 
-        Public ReadOnly Property EndOfFileToken As Integer Implements ISyntaxKinds.EndOfFileToken
-            Get
-                Return SyntaxKind.EndOfFileToken
-            End Get
-        End Property
+        Public ReadOnly Property EndOfFileToken As Integer = SyntaxKind.EndOfFileToken Implements ISyntaxKinds.EndOfFileToken
 
-        Public ReadOnly Property ExpressionStatement As Integer Implements ISyntaxKinds.ExpressionStatement
-            Get
-                Return SyntaxKind.ExpressionStatement
-            End Get
-        End Property
+        Public ReadOnly Property ExpressionStatement As Integer = SyntaxKind.ExpressionStatement Implements ISyntaxKinds.ExpressionStatement
 
-        Public ReadOnly Property LocalDeclarationStatement As Integer Implements ISyntaxKinds.LocalDeclarationStatement
-            Get
-                Return SyntaxKind.LocalDeclarationStatement
-            End Get
-        End Property
+        Public ReadOnly Property LocalDeclarationStatement As Integer = SyntaxKind.LocalDeclarationStatement Implements ISyntaxKinds.LocalDeclarationStatement
 
-        Public ReadOnly Property VariableDeclarator As Integer Implements ISyntaxKinds.VariableDeclarator
-            Get
-                Return SyntaxKind.VariableDeclarator
-            End Get
-        End Property
+        Public ReadOnly Property VariableDeclarator As Integer = SyntaxKind.VariableDeclarator Implements ISyntaxKinds.VariableDeclarator
+
+        Public ReadOnly Property DefaultLiteralExpression As Integer = SyntaxKind.NothingLiteralExpression Implements ISyntaxKinds.DefaultLiteralExpression
     End Class
 
 End Namespace

@@ -10,5 +10,7 @@ namespace Analyzer.Utilities
         int LocalDeclarationStatement { get; }
 
         int VariableDeclarator { get; }
+
+        int DefaultLiteralExpression { get; }
     }
 }

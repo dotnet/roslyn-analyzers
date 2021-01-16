@@ -6,6 +6,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Helpers
 {
     internal static class DiagnosticWellKnownNames
     {
+        internal const string IsKindName = "IsKind";
+        internal const string RawKindName = nameof(SyntaxToken.RawKind);
         internal const string RegisterSyntaxNodeActionName = nameof(AnalysisContext.RegisterSyntaxNodeAction);
         internal const string RegisterSymbolActionName = nameof(AnalysisContext.RegisterSymbolAction);
         internal const string RegisterCodeBlockStartActionName = nameof(AnalysisContext.RegisterCodeBlockStartAction);
@@ -20,6 +22,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Helpers
         internal const string RegisterCompilationActionName = nameof(AnalysisContext.RegisterCompilationAction);
         internal const string ReportDiagnosticName = nameof(CompilationAnalysisContext.ReportDiagnostic);
         internal const string SupportedDiagnosticsName = nameof(DiagnosticAnalyzer.SupportedDiagnostics);
+        internal const string SyntaxKindName = "SyntaxKind";
+        internal const string SyntaxKindNoneName = "None";
+
         internal const string TLanguageKindEnumName = @"TLanguageKindEnum";
     }
 }

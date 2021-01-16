@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -41,6 +42,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 (OperationAnalysisContext context) =>
                 {
                     var operation = (IBinaryOperation)context.Operation;
+
+                    if (operation.Syntax.GetDiagnostics().Any(d => d.Severity == DiagnosticSeverity.Error))
+                    {
+                        return;
+                    }
+
                     if (operation.OperatorMethod.Name is not (WellKnownMemberNames.EqualityOperatorName or WellKnownMemberNames.InequalityOperatorName))
                     {
                         return;

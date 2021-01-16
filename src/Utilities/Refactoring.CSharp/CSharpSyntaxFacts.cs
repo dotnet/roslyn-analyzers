@@ -168,5 +168,16 @@ namespace Analyzer.Utilities
             foreachStatement = node;
             return IsOnHeader(root, position, node, node.CloseParenToken);
         }
+
+        public bool IsBinaryExpression([NotNullWhen(true)] SyntaxNode? node)
+            => node is BinaryExpressionSyntax;
+
+        public void GetPartsOfBinaryExpression(SyntaxNode node, out SyntaxNode left, out SyntaxToken operatorToken, out SyntaxNode right)
+        {
+            var binaryExpression = (BinaryExpressionSyntax)node;
+            left = binaryExpression.Left;
+            operatorToken = binaryExpression.OperatorToken;
+            right = binaryExpression.Right;
+        }
     }
 }

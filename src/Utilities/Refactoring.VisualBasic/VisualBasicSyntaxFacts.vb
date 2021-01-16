@@ -171,6 +171,16 @@ Namespace Global.Analyzer.Utilities
             Return IsOnHeader(root, position, node, node.ForEachStatement)
         End Function
 
+        Public Function IsBinaryExpression(node As SyntaxNode) As Boolean Implements ISyntaxFacts.IsBinaryExpression
+            Return TypeOf node Is BinaryExpressionSyntax
+        End Function
+
+        Public Sub GetPartsOfBinaryExpression(node As SyntaxNode, ByRef left As SyntaxNode, ByRef operatorToken As SyntaxToken, ByRef right As SyntaxNode) Implements ISyntaxFacts.GetPartsOfBinaryExpression
+            Dim binaryExpression = DirectCast(node, BinaryExpressionSyntax)
+            left = binaryExpression.Left
+            operatorToken = binaryExpression.OperatorToken
+            right = binaryExpression.Right
+        End Sub
     End Class
 
 End Namespace

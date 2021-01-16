@@ -13,6 +13,8 @@ namespace Analyzer.Utilities
 
         bool IsSimpleAssignmentStatement(SyntaxNode statement);
         void GetPartsOfAssignmentExpressionOrStatement(SyntaxNode statement, out SyntaxNode left, out SyntaxToken operatorToken, out SyntaxNode right);
+        bool IsBinaryExpression([NotNullWhen(true)] SyntaxNode? node);
+        void GetPartsOfBinaryExpression(SyntaxNode node, out SyntaxNode left, out SyntaxToken operatorToken, out SyntaxNode right);
 
         SyntaxList<SyntaxNode> GetAttributeLists(SyntaxNode node);
 

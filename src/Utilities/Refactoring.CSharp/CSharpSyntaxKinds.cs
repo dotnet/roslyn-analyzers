@@ -18,5 +18,7 @@ namespace Analyzer.Utilities
         public int LocalDeclarationStatement => (int)SyntaxKind.LocalDeclarationStatement;
 
         public int VariableDeclarator => (int)SyntaxKind.VariableDeclarator;
+
+        public int DefaultLiteralExpression => (int)SyntaxKind.DefaultLiteralExpression;
     }
 }

@@ -102,6 +102,26 @@
         <target state="translated">Définir correctement le titre de diagnostic</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCompareSyntaxTokenAgainstDefaultLiteralCodeFix">
+        <source>Do not compare 'SyntaxToken'  against 'default' literal</source>
+        <target state="new">Do not compare 'SyntaxToken'  against 'default' literal</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSyntaxTokenAgainstDefaultLiteralDescription">
+        <source>Comparing a 'SyntaxToken' against 'default' literal is slower than using 'IsKind(SyntaxKind.None)' or 'token.RawKind == 0'.</source>
+        <target state="new">Comparing a 'SyntaxToken' against 'default' literal is slower than using 'IsKind(SyntaxKind.None)' or 'token.RawKind == 0'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSyntaxTokenAgainstDefaultLiteralMessage">
+        <source>Do not compare 'SyntaxToken'  against 'default' literal</source>
+        <target state="new">Do not compare 'SyntaxToken'  against 'default' literal</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCompareSyntaxTokenAgainstDefaultLiteralTitle">
+        <source>Do not compare 'SyntaxToken' against 'default' literal</source>
+        <target state="new">Do not compare 'SyntaxToken' against 'default' literal</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseCompilationGetSemanticModelDescription">
         <source>'GetSemanticModel' is an expensive method to invoke within a diagnostic analyzer because it creates a completely new semantic model, which does not share compilation data with the compiler or other analyzers. This incurs an additional performance cost during semantic analysis. Instead, consider registering a different analyzer action which allows used of a shared 'SemanticModel', such as 'RegisterOperationAction', 'RegisterSyntaxNodeAction', or 'RegisterSemanticModelAction'.</source>
         <target state="translated">'GetSemanticModel' est une méthode coûteuse à appeler dans un analyseur de diagnostic, car elle crée un modèle sémantique complètement nouveau, qui ne partage pas les données de compilation avec le compilateur ou d'autres analyseurs. Cela entraîne un coût supplémentaire au niveau des performances au moment de l'analyse sémantique. À la place, inscrivez une autre action d'analyseur qui permet d'utiliser un 'SemanticModel' partagé, par exemple 'RegisterOperationAction', 'RegisterSyntaxNodeAction' ou 'RegisterSemanticModelAction'.</target>

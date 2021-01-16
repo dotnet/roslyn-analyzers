@@ -424,6 +424,24 @@
             ]
           }
         },
+        "RS1034": {
+          "id": "RS1034",
+          "shortDescription": "Do not compare 'SyntaxToken' against 'default' literal",
+          "fullDescription": "Comparing a 'SyntaxToken' against 'default' literal is slower than using 'IsKind(SyntaxKind.None)' or 'token.RawKind == 0'.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "MicrosoftCodeAnalysisPerformance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCompareSyntaxTokenAgainstDefaultLiteralAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "RS2000": {
           "id": "RS2000",
           "shortDescription": "Add analyzer diagnostic IDs to analyzer release",

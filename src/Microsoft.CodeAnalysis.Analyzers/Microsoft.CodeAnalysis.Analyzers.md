@@ -412,6 +412,18 @@ The diagnostic description should be one or multiple sentences ending with a pun
 |CodeFix|True|
 ---
 
+## RS1034: Do not compare 'SyntaxToken' against 'default' literal
+
+Comparing a 'SyntaxToken' against 'default' literal is slower than using 'IsKind(SyntaxKind.None)' or 'token.RawKind == 0'.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisPerformance|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [RS2000](https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md): Add analyzer diagnostic IDs to analyzer release
 
 All supported analyzer diagnostic IDs should be part of an analyzer release.

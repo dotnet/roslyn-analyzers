@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Analyzer.Utilities;
@@ -443,7 +444,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         if (allowedTypesForCA1836.Contains(type.OriginalDefinition) &&
                             TypeContainsVisibleProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, invocationOperation, isEmptyPropertySymbol!))
+                            !IsPropertyGetOfIsEmptyUsingThisInstance(context, invocationOperation, isEmptyPropertySymbol))
                         {
                             ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                         }
@@ -475,7 +476,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 if (allowedTypesForCA1836.Contains(type.OriginalDefinition) &&
                     TypeContainsVisibleProperty(context, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                    !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol!))
+                    !IsPropertyGetOfIsEmptyUsingThisInstance(context, operation, isEmptyPropertySymbol))
                 {
                     ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                 }
@@ -596,12 +597,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType propertyType, out ISymbol? propertySymbol)
+        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType propertyType, [NotNullWhen(true)] out ISymbol? propertySymbol)
             => TypeContainsVisibleProperty(context, type, propertyName, propertyType, propertyType, out propertySymbol);
 
-        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, out ISymbol? propertySymbol)
+        private static bool TypeContainsVisibleProperty(OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, [NotNullWhen(true)] out ISymbol? propertySymbol)
         {
-            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol!))
+            if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol))
             {
                 return isPropertyValidAndVisible;
             }
@@ -635,7 +636,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             static bool TypeContainsMember(
                 OperationAnalysisContext context, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound,
-                out bool isPropertyValidAndVisible, out ISymbol? propertySymbol)
+                out bool isPropertyValidAndVisible, [NotNullWhen(true)] out ISymbol? propertySymbol)
             {
                 if (type.GetMembers(propertyName).FirstOrDefault() is IPropertySymbol property)
                 {

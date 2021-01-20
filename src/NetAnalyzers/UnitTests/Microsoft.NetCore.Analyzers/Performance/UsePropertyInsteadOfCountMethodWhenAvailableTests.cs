@@ -741,6 +741,29 @@ End Class
 ",
             }.RunAsync();
         }
+
+        [Fact]
+        [WorkItem(4652, "https://github.com/dotnet/roslyn-analyzers/issues/4652")]
+        public static async Task FixCausesCircularity_NoDiagnostic()
+        {
+            var code = @"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+class X : IEnumerable<int>
+{
+    public int Count => this.Count(); // Don't suggest using Count property because it'll be endless recursion.
+
+    public IEnumerator<int> GetEnumerator() => throw new NotImplementedException();
+
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+}
+";
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
     }
 
     public abstract class UsePropertyInsteadOfCountMethodWhenAvailableOverlapTests

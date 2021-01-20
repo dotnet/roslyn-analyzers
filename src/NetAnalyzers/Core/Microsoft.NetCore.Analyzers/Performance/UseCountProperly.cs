@@ -474,8 +474,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (type != null)
             {
                 if (allowedTypesForCA1836.Contains(type.OriginalDefinition) &&
-                    TypeContainsVisiblePropertyWithoutCircularity(context, operation, type, IsEmpty, SpecialType.System_Boolean, out ISymbol? isEmptyPropertySymbol) &&
-                    !IsPropertyGetterUsingThisInstance(context, operation, isEmptyPropertySymbol))
+                    TypeContainsVisiblePropertyWithoutCircularity(context, operation, type, IsEmpty, SpecialType.System_Boolean, out _))
                 {
                     ReportCA1836(context, operationKey!, shouldNegateIsEmpty, parent);
                 }

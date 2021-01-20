@@ -266,9 +266,6 @@ dotnet_diagnostic.CA1711.severity = suggestion
 # CA1309: Use ordinal string comparison
 dotnet_diagnostic.CA1309.severity = suggestion
 
-# CA1725: Parameter names should match base declaration
-dotnet_diagnostic.CA1725.severity = warning
-
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]
 

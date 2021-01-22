@@ -270,6 +270,8 @@ dotnet_diagnostic.CA1309.severity = suggestion
 # TODO: Enable this rule as warning and fix violations.
 dotnet_diagnostic.CA1725.severity = suggestion
 
+dotnet_diagnostic.CA1508.severity = warning
+
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]
 

@@ -293,12 +293,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
                 finally
                 {
-                    // Workaround for https://github.com/dotnet/roslyn/issues/46859
-                    // Do not free in presence of cancellation.
-                    if (!context.CancellationToken.IsCancellationRequested)
-                    {
-                        platformSpecificOperations.Free(context.CancellationToken);
-                    }
+                    platformSpecificOperations.Free(context.CancellationToken);
                 }
 
                 return;
@@ -930,7 +925,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             AllPlatforms,
             Reachable,
-            Unreachable
+            Unreachable,
+            Empty
         }
 
         private static ISymbol? GetOperationSymbol(IOperation operation)
@@ -1064,7 +1060,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 (SmallDictionary<string, PlatformAttributes> attributes, SmallDictionary<string, PlatformAttributes>? csAttributes)> platformSpecificOperations,
                 ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol, bool checkParents)
             {
-                if (TryGetOrCreatePlatformAttributes(symbol, checkParents, platformSpecificMembers, out var operationAttributes))
+                var callsite = Callsite.AllPlatforms;
+                if (TryGetOrCreatePlatformAttributes(symbol, checkParents, platformSpecificMembers, out var operationAttributes, ref callsite))
                 {
                     var containingSymbol = context.ContainingSymbol;
                     if (containingSymbol is IMethodSymbol method && method.IsAccessorMethod())
@@ -1072,19 +1069,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         containingSymbol = method.AssociatedSymbol;
                     }
 
-                    if (TryGetOrCreatePlatformAttributes(containingSymbol, true, platformSpecificMembers, out var callSiteAttributes))
+                    callsite = Callsite.Reachable;
+                    if (TryGetOrCreatePlatformAttributes(containingSymbol, true, platformSpecificMembers, out var callSiteAttributes, ref callsite))
                     {
-                        if (IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
+                        if (callsite != Callsite.Empty && IsNotSuppressedByCallSite(operationAttributes, callSiteAttributes, msBuildPlatforms, out var notSuppressedAttributes))
                         {
                             platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (notSuppressedAttributes, callSiteAttributes));
                         }
                     }
-                    else
+                    else if (callsite != Callsite.Empty && TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
                     {
-                        if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes, msBuildPlatforms, out var copiedAttributes))
-                        {
-                            platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (copiedAttributes, null));
-                        }
+                        platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (copiedAttributes, null));
                     }
                 }
             }
@@ -1310,7 +1305,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 foreach (var (platform, csAttributes) in callSiteAttributes)
                 {
                     if (csAttributes.SupportedFirst != null &&
-                        !supportedOnlyPlatforms.Contains(platform))
+                        !supportedOnlyPlatforms.Contains(platform) &&
+                        !notSuppressedAttributes.ContainsKey(platform))
                     {
                         foreach (var (name, version) in operationAttributes)
                         {
@@ -1385,7 +1381,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static bool TryGetOrCreatePlatformAttributes(
             ISymbol symbol, bool checkParents,
             ConcurrentDictionary<ISymbol, SmallDictionary<string, PlatformAttributes>?> platformSpecificMembers,
-            [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes)
+            [NotNullWhen(true)] out SmallDictionary<string, PlatformAttributes>? attributes, ref Callsite callsite)
         {
             if (!platformSpecificMembers.TryGetValue(symbol, out attributes))
             {
@@ -1400,19 +1396,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
 
                     if (container != null &&
-                        TryGetOrCreatePlatformAttributes(container, checkParents, platformSpecificMembers, out var containerAttributes))
+                        TryGetOrCreatePlatformAttributes(container, checkParents, platformSpecificMembers, out var containerAttributes, ref callsite))
                     {
                         attributes = CopyAttributes(containerAttributes);
                     }
                 }
 
-                MergePlatformAttributes(symbol.GetAttributes(), ref attributes);
+                MergePlatformAttributes(symbol.GetAttributes(), ref attributes, ref callsite);
                 attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
             }
 
             return attributes != null;
 
-            static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes, ref SmallDictionary<string, PlatformAttributes>? parentAttributes)
+            static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes,
+                ref SmallDictionary<string, PlatformAttributes>? parentAttributes, ref Callsite callsite)
             {
                 SmallDictionary<string, PlatformAttributes>? childAttributes = null;
                 foreach (AttributeData attribute in immediateAttributes)
@@ -1430,6 +1427,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (parentAttributes != null && parentAttributes.Any())
                 {
+                    var notFoundPlatforms = PooledHashSet<string>.GetInstance();
+                    bool supportFound = false;
                     foreach (var (platform, attributes) in parentAttributes)
                     {
                         if (DenyList(attributes) &&
@@ -1481,16 +1480,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 childAttribute = NormalizeAttribute(childAttribute);
                                 // only later versions could narrow, other versions ignored
-                                if (childAttribute.SupportedFirst > attributes.SupportedFirst &&
+                                if (childAttribute.SupportedFirst >= attributes.SupportedFirst &&
                                     (attributes.SupportedSecond == null || attributes.SupportedSecond < childAttribute.SupportedFirst))
                                 {
                                     attributes.SupportedSecond = childAttribute.SupportedFirst;
+                                    supportFound = true;
                                 }
 
                                 if (childAttribute.UnsupportedFirst != null)
                                 {
                                     if (childAttribute.UnsupportedFirst <= attributes.SupportedFirst)
                                     {
+                                        if (callsite != Callsite.AllPlatforms)
+                                        {
+                                            callsite = Callsite.Empty;
+                                        }
                                         attributes.SupportedFirst = childAttribute.SupportedFirst > attributes.SupportedFirst ? childAttribute.SupportedFirst : null;
                                         attributes.UnsupportedFirst = childAttribute.UnsupportedFirst;
                                     }
@@ -1509,7 +1513,35 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     }
                                 }
                             }
-                            // other platform attributes are ignored as the list couldn't be extended
+                            else // not existing parent platforms might need to be removed
+                            {
+                                if (callsite != Callsite.AllPlatforms)
+                                {
+                                    callsite = Callsite.Empty;
+                                }
+                                notFoundPlatforms.Add(platform);
+                            }
+                        }
+                    }
+                    // For allow list if child narrowing supported platfroms by having less platforms support than parent,
+                    // not existing parent platforms should be removed
+                    if (notFoundPlatforms.Count > 0)
+                    {
+                        if (supportFound)
+                        {
+                            childAttributes = new SmallDictionary<string, PlatformAttributes>();
+                            foreach (var (platform, attributes) in parentAttributes)
+                            {
+                                if (!notFoundPlatforms.Contains(platform))
+                                {
+                                    childAttributes.Add(platform, attributes);
+                                }
+                            }
+                            parentAttributes = childAttributes;
+                        }
+                        else if (callsite == Callsite.Empty) // child support not found and 
+                        {
+                            parentAttributes = null;
                         }
                     }
                 }
@@ -1521,6 +1553,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         parentAttributes[platform] = NormalizeAttribute(attributes);
                     }
                 }
+
                 return;
 
                 static PlatformAttributes NormalizeAttribute(PlatformAttributes attributes)

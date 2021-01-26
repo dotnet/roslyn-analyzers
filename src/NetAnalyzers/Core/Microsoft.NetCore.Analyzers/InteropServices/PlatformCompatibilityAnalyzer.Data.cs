@@ -28,6 +28,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public Version? SupportedSecond { get; set; }
             public Version? UnsupportedFirst { get; set; }
             public Version? UnsupportedSecond { get; set; }
+            public Callsite Callsite { get; set; }
             public bool HasAttribute() => SupportedFirst != null || UnsupportedFirst != null ||
                         SupportedSecond != null || UnsupportedSecond != null;
         }

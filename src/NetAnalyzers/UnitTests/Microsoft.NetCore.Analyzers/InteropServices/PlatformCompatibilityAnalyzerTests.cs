@@ -169,7 +169,7 @@ public static class SR
 [UnsupportedOSPlatform(""browser"")]
 public class Test
 {
-    /*void ThrowWithStringArgument()
+    void ThrowWithStringArgument()
     {
         SR.Message = ""nOT Warns not reachable on Browser"";
         throw new PlatformNotSupportedException(SR.Message);
@@ -191,7 +191,7 @@ public class Test
     {
         SR.Message = ""Warns not reachable on Browser"";
         throw new PlatformNotSupportedException(SR.Message, new Exception());
-    }*/
+    }
     
     void ThrowWithAnotherExceptionUsingResourceString()
     {
@@ -3390,7 +3390,7 @@ class Test
     [UnsupportedOSPlatform(""browser"")]
     private static void ApiUnsupportedOnBrowser () { }
 
-    /*[SupportedOSPlatform(""macos"")]
+    [SupportedOSPlatform(""macos"")]
     class TestMacOs // Inside only mac accessable
     {
         [SupportedOSPlatform(""windows"")]
@@ -3399,7 +3399,7 @@ class Test
             Test.ApiUnsupportedOnBrowser();
             Console.Beep(10, 20); // Windows only API
         }
-    }*/
+    }
 
     void MethodHasNoAttribute()
     {
@@ -3407,7 +3407,7 @@ class Test
         [|Console.Beep(10, 20)|];      // This call site is reachable on: 'macos', 'browser', 'windows'. 'Console.Beep(int, int)' is only supported on: 'windows'.
     }
 
-    /*[SupportedOSPlatform(""WINDOWS"")]
+    [SupportedOSPlatform(""WINDOWS"")]
     void WindowsOnly() // Nothing should warn
     {
         ApiUnsupportedOnBrowser();
@@ -3419,7 +3419,7 @@ class Test
     {
         ApiUnsupportedOnBrowser();
         Console.Beep(10, 20);
-    }*/
+    }
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }

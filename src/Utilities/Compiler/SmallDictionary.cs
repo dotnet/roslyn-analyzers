@@ -68,6 +68,8 @@ namespace Analyzer.Utilities
             return Comparer.GetHashCode(k);
         }
 
+        public bool IsEmpty => _root == null;
+
         public bool TryGetValue(K key, [MaybeNullWhen(returnValue: false)] out V value)
         {
             if (_root != null)

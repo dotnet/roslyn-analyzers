@@ -233,8 +233,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             var osPlatformTypeArray = osPlatformType != null ? ImmutableArray.Create(osPlatformType) : ImmutableArray<INamedTypeSymbol>.Empty;
-            var platformSpecificOperations = PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, (SmallDictionary<string, Versions> attributes,
-                SmallDictionary<string, Versions>? csAttributes)>.GetInstance();
+            var platformSpecificOperations = PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
+                (SmallDictionary<string, Versions> attributes, SmallDictionary<string, Versions>? csAttributes)>.GetInstance();
 
             context.RegisterOperationAction(context =>
             {
@@ -251,7 +251,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 try
                 {
-                    if (platformSpecificOperations.IsEmpty || guardMethods.IsEmpty ||
+                    if (platformSpecificOperations.IsEmpty ||
+                        guardMethods.IsEmpty ||
                         !(context.OperationBlocks.GetControlFlowGraph() is { } cfg))
                     {
                         return;
@@ -416,7 +417,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     attribute.UnsupportedFirst = null;
                                 }
 
-                                if (attribute.UnsupportedSecond != null && attribute.UnsupportedSecond <= info.Version)
+                                if (attribute.UnsupportedSecond != null &&
+                                    attribute.UnsupportedSecond <= info.Version)
                                 {
                                     attribute.UnsupportedSecond = null;
                                 }
@@ -1064,8 +1066,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (notSuppressedAttributes, callSiteAttributes.Platforms));
                         }
                     }
-                    else if (callSiteAttributes.Callsite != Callsite.Empty &&
-                        TryCopyAttributesNotSuppressedByMsBuild(operationAttributes.Platforms!, msBuildPlatforms, out var copiedAttributes))
+                    else if (TryCopyAttributesNotSuppressedByMsBuild(operationAttributes.Platforms!, msBuildPlatforms, out var copiedAttributes))
                     {
                         platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (copiedAttributes, null));
                     }
@@ -1174,8 +1175,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                 diagnosticAttribute.SupportedFirst = (Version)attributeToCheck.Clone();
                             }
 
-                            if (attribute.UnsupportedFirst != null && (!mandatorySupportFound.Value ||
-                                !(SuppressedByCallSiteSupported(attribute, callSiteAttribute.SupportedFirst) ||
+                            if (attribute.UnsupportedFirst != null &&
+                                (!mandatorySupportFound.Value ||
+                                  !(SuppressedByCallSiteSupported(attribute, callSiteAttribute.SupportedFirst) ||
                                   SuppressedByCallSiteUnsupported(callSiteAttribute, attribute.UnsupportedFirst))))
                             {
                                 diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();
@@ -1257,7 +1259,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
                     else if (msBuildPlatforms.Contains(platformName, StringComparer.OrdinalIgnoreCase) &&
-                        !callSiteAttributes.Values.Any(v => v.SupportedFirst != null))
+                             !callSiteAttributes.Values.Any(v => v.SupportedFirst != null))
                     {
                         // if MsBuild list contain the platform and call site has no any other supported attribute it means global, so need to warn
                         diagnosticAttribute.UnsupportedFirst = (Version)attribute.UnsupportedFirst.Clone();

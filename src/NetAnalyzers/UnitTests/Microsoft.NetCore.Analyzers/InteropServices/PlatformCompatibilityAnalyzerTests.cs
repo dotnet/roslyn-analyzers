@@ -171,31 +171,31 @@ public class Test
 {
     void ThrowWithStringArgument()
     {
-        SR.Message = ""nOT Warns not reachable on Browser"";
+        SR.Message = ""Not warn"";
         throw new PlatformNotSupportedException(SR.Message);
     }
 
     void ThrowNotSupportedWithStringArgument()
     {
-        SR.Message = ""Warns not reachable on Browser"";
+        SR.Message = ""Not warn"";
         throw new NotSupportedException(SR.Message);
     }
     
     void ThrowWithNoArgument()
     {
-        SR.Message = ""Warns not reachable on Browser"";
+        SR.Message = ""Not warn"";
         throw new PlatformNotSupportedException();
     }
     
     void ThrowWithStringAndExceptionConstructor()
     {
-        SR.Message = ""Warns not reachable on Browser"";
+        SR.Message = ""Not warn"";
         throw new PlatformNotSupportedException(SR.Message, new Exception());
     }
     
     void ThrowWithAnotherExceptionUsingResourceString()
     {
-        SR.Message = ""Warns not reachable on Browser"";
+        SR.Message = ""Not warn"";
         throw new PlatformNotSupportedException(SR.Message, new Exception(SR.Message));
     }
 }";

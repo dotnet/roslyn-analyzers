@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         SupportedSecond != null || UnsupportedSecond != null;
         }
 
-        private class PlatformAttributes
+        private sealed class PlatformAttributes
         {
             public PlatformAttributes() { }
 

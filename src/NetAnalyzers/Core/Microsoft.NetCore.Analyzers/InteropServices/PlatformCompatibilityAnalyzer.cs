@@ -1499,8 +1499,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     }
                                 }
                             }
-                            else // not existing parent platforms might need to be removed
+                            else
                             {
+                                // not existing parent platforms might need to be removed
                                 notFoundPlatforms.Add(platform);
                             }
                         }

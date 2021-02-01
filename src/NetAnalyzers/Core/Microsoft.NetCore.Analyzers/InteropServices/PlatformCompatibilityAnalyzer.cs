@@ -1505,21 +1505,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             }
                         }
                     }
-                    // For allow list if child narrowing supported platfroms by having less platforms support than parent,
-                    // not existing parent platforms should be removed
+
                     if (notFoundPlatforms.Count > 0)
                     {
+                        // For allow list if child narrowing supported platforms by having less platforms support than parent,
+                        // not existing parent platforms should be removed
                         if (supportFound)
                         {
-                            childAttributes = new SmallDictionary<string, Versions>(StringComparer.OrdinalIgnoreCase);
-                            foreach (var (platform, attributes) in pAttributes)
+                            foreach (var platform in notFoundPlatforms)
                             {
-                                if (!notFoundPlatforms.Contains(platform))
-                                {
-                                    childAttributes.Add(platform, attributes);
-                                }
+                                parentAttributes.Platforms!.Remove(platform);
                             }
-                            parentAttributes.Platforms = childAttributes;
                         }
                         else
                         {

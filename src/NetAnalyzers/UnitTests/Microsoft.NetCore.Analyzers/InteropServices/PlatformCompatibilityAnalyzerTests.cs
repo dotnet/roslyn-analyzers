@@ -171,31 +171,31 @@ public class Test
 {
     void ThrowWithStringArgument()
     {
-        SR.Message = ""Not warn"";
+        SR.Message = ""This does not warn because this code is not reachable on any"";
         throw new PlatformNotSupportedException(SR.Message);
     }
 
     void ThrowNotSupportedWithStringArgument()
     {
-        SR.Message = ""Not warn"";
+        SR.Message = ""This does not warn because this code is not reachable on any"";
         throw new NotSupportedException(SR.Message);
     }
     
     void ThrowWithNoArgument()
     {
-        SR.Message = ""Not warn"";
+        SR.Message = ""This does not warn because this code is not reachable on any"";
         throw new PlatformNotSupportedException();
     }
     
     void ThrowWithStringAndExceptionConstructor()
     {
-        SR.Message = ""Not warn"";
+        SR.Message = ""This does not warn because this code is not reachable on any"";
         throw new PlatformNotSupportedException(SR.Message, new Exception());
     }
     
     void ThrowWithAnotherExceptionUsingResourceString()
     {
-        SR.Message = ""Not warn"";
+        SR.Message = ""This does not warn because this code is not reachable on any"";
         throw new PlatformNotSupportedException(SR.Message, new Exception(SR.Message));
     }
 }";

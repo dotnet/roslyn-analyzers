@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
-        <source>Avoid Async Void</source>
-        <target state="translated">Async Void を使用しないでください</target>
+        <source>Avoid 'async void'.</source>
+        <target state="needs-review-translation">Async Void を使用しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidDescription">
@@ -33,13 +33,13 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidMessage">
-        <source>Avoid Async Void</source>
-        <target state="translated">Async Void を使用しないでください</target>
+        <source>Avoid 'async void'.</source>
+        <target state="needs-review-translation">Async Void を使用しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncTitle">
-        <source>Async Method Names Should End in Async</source>
-        <target state="translated">非同期メソッド名は Async で終わる必要があります</target>
+        <source>Async method names should end in 'Async'</source>
+        <target state="needs-review-translation">非同期メソッド名は Async で終わる必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncDescription">
@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AsyncMethodNamesShouldEndInAsyncMessage">
-        <source>Async Method Names Should End in Async</source>
-        <target state="translated">非同期メソッド名は Async で終わる必要があります</target>
+        <source>Async method names should end in 'Async'</source>
+        <target state="needs-review-translation">非同期メソッド名は Async で終わる必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesDescription">
@@ -58,8 +58,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesMessage">
-        <source>Consider a design where '{0}' has no more than {1} type parameters</source>
-        <target state="translated">'{0}' が {1} 個を超える型パラメーターを伴わない設計を検討してください</target>
+        <source>Consider a design where '{0}' has no more than '{1}' type parameters</source>
+        <target state="needs-review-translation">'{0}' が {1} 個を超える型パラメーターを伴わない設計を検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesTitle">
@@ -93,8 +93,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
-        <source>Avoid out parameters</source>
-        <target state="translated">out パラメーターを使用しません</target>
+        <source>Avoid 'out' parameters</source>
+        <target state="needs-review-translation">out パラメーターを使用しません</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
@@ -158,8 +158,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsDescription">
-        <source>System.Collections.Generic.List&lt;T&gt; is a generic collection that's designed for performance and not inheritance. List&lt;T&gt; does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
-        <target state="translated">System.Collections.Generic.List&lt;T&gt; は、継承のためではなく、パフォーマンスのためのジェネリック コレクションです。List&lt;T&gt; には、継承されたクラスの動作の変更を容易にする仮想メンバーが含まれていません。</target>
+        <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
+        <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt; は、継承のためではなく、パフォーマンスのためのジェネリック コレクションです。List&lt;T&gt; には、継承されたクラスの動作の変更を容易にする仮想メンバーが含まれていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
@@ -203,8 +203,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
-        <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
+        <source>Don't pass async lambdas as void returning delegate types</source>
+        <target state="needs-review-translation">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesDescription">
@@ -213,13 +213,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
-        <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
+        <source>Don't pass async lambdas as void returning delegate types</source>
+        <target state="needs-review-translation">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceDescription">
-        <source>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between out and ref parameters is not widely understood.</source>
-        <target state="translated">(out または ref を使用して) 型を参照によって渡すには、ポインターの使用経験、値型と参照型の違いの理解、および複数の戻り値を持つメソッドの処理が必要です。また、out および ref パラメーターの違いはあまり理解されていません。</target>
+        <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
+        <target state="needs-review-translation">(out または ref を使用して) 型を参照によって渡すには、ポインターの使用経験、値型と参照型の違いの理解、および複数の戻り値を持つメソッドの処理が必要です。また、out および ref パラメーターの違いはあまり理解されていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
@@ -248,8 +248,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
-        <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">デリゲート型を返す Void として非同期ラムダを格納しないでください</target>
+        <source>Don't store async lambdas as void returning delegate types</source>
+        <target state="needs-review-translation">デリゲート型を返す Void として非同期ラムダを格納しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesDescription">
@@ -258,8 +258,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage">
-        <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
-        <target state="translated">デリゲート型を返す Void として非同期ラムダを格納しないでください</target>
+        <source>Don't store async lambdas as void returning delegate types</source>
+        <target state="needs-review-translation">デリゲート型を返す Void として非同期ラムダを格納しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumShouldNotHaveDuplicatedValuesMessageDuplicatedBitwiseValuePart">
@@ -293,8 +293,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="translated">型 '{0}' からファイナライザーを削除し、Dispose(bool disposing) をオーバーライドします。その後、'disposing' が false のコード パスに finalization 論理を配置します。その他の場合、基本型 '{1}' でもファイナライザーが提供されるため、Dispose 呼び出しが重複する可能性があります。</target>
+        <source>Remove the finalizer from type '{0}', override 'Dispose(bool disposing)', and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="needs-review-translation">型 '{0}' からファイナライザーを削除し、Dispose(bool disposing) をオーバーライドします。その後、'disposing' が false のコード パスに finalization 論理を配置します。その他の場合、基本型 '{1}' でもファイナライザーが提供されるため、Dispose 呼び出しが重複する可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
@@ -303,8 +303,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
-        <source>Propagate CancellationTokens When Possible</source>
-        <target state="translated">可能な場合は CancellationToken を伝達してください</target>
+        <source>Propagate 'CancellationToken's when possible</source>
+        <target state="needs-review-translation">可能な場合は CancellationToken を伝達してください</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleDescription">
@@ -313,13 +313,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleMessage">
-        <source>Propagate CancellationTokens When Possible</source>
-        <target state="translated">可能な場合は CancellationToken を伝達してください</target>
+        <source>Propagate 'CancellationToken's when possible</source>
+        <target state="needs-review-translation">可能な場合は CancellationToken を伝達してください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMixBlockingAndAsyncTitle">
-        <source>Don't Mix Blocking and Async</source>
-        <target state="translated">ブロッキングと非同期を組み合わせないでください</target>
+        <source>Don't mix blocking and async</source>
+        <target state="needs-review-translation">ブロッキングと非同期を組み合わせないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMixBlockingAndAsyncDescription">
@@ -328,8 +328,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotMixBlockingAndAsyncMessage">
-        <source>Don't Mix Blocking and Async</source>
-        <target state="translated">ブロッキングと非同期を組み合わせないでください</target>
+        <source>Don't mix blocking and async</source>
+        <target state="needs-review-translation">ブロッキングと非同期を組み合わせないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveRedundantElementInitializationCodeFixTitle">
@@ -368,18 +368,18 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
-        <source>In enum {0}, change the name of {1} to 'None'</source>
-        <target state="translated">列挙型 {0} では、{1} の名前を 'None' に変更してください</target>
+        <source>In enum '{0}', change the name of '{1}' to 'None'</source>
+        <target state="needs-review-translation">列挙型 {0} では、{1} の名前を 'None' に変更してください</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsMultipleZeros">
-        <source>Remove all members that have the value zero from {0} except for one member that is named 'None'</source>
-        <target state="translated">'None' という名前の 1 つのメンバーを除き、値 0 を含むすべてのメンバーを {0} から削除します</target>
+        <source>Remove all members that have the value zero from '{0}' except for one member that is named 'None'</source>
+        <target state="needs-review-translation">'None' という名前の 1 つのメンバーを除き、値 0 を含むすべてのメンバーを {0} から削除します</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue">
-        <source>Add a member to {0} that has a value of zero with a suggested name of 'None'</source>
-        <target state="translated">提案された名前 'None' を伴う、値 0 を含む {0} にメンバーを追加します</target>
+        <source>Add a member to '{0}' that has a value of zero with a suggested name of 'None'</source>
+        <target state="needs-review-translation">提案された名前 'None' を伴う、値 0 を含む {0} にメンバーを追加します</target>
         <note />
       </trans-unit>
       <trans-unit id="AbstractTypesShouldNotHaveConstructorsTitle">
@@ -403,13 +403,13 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
-        <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using CLSCompliantAttribute . If this attribute is not present on an assembly, the assembly is not compliant.</source>
-        <target state="translated">共通言語仕様 (CLS) では、名前付け制限、データ型、規則が定義されています。アセンブリは、複数のプログラミング言語で使用する場合、これらに準拠する必要があります。すべてのアセンブリに CLSCompliantAttribute を使用して CLS への準拠を明示することをお勧めします。この属性がアセンブリに存在しない場合、そのアセンブリは CLS に準拠しません。</target>
+        <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
+        <target state="needs-review-translation">共通言語仕様 (CLS) では、名前付け制限、データ型、規則が定義されています。アセンブリは、複数のプログラミング言語で使用する場合、これらに準拠する必要があります。すべてのアセンブリに CLSCompliantAttribute を使用して CLS への準拠を明示することをお勧めします。この属性がアセンブリに存在しない場合、そのアセンブリは CLS に準拠しません。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">アセンブリに CLSCompliant を設定します</target>
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">アセンブリに CLSCompliant を設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
@@ -428,8 +428,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
-        <source>Mark assemblies with ComVisible</source>
-        <target state="translated">アセンブリに ComVisible を設定します</target>
+        <source>Mark assemblies with 'ComVisible'</source>
+        <target state="needs-review-translation">アセンブリに ComVisible を設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
@@ -438,8 +438,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
-        <source>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true).</source>
-        <target state="translated">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します。</target>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
+        <target state="needs-review-translation">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
@@ -448,23 +448,23 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
-        <source>Mark attributes with AttributeUsageAttribute</source>
-        <target state="translated">属性を AttributeUsageAttribute に設定します</target>
+        <source>Mark attributes with 'AttributeUsageAttribute'</source>
+        <target state="needs-review-translation">属性を AttributeUsageAttribute に設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
-        <source>When you define a custom attribute, mark it by using AttributeUsageAttribute to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
-        <target state="translated">カスタム属性を定義する場合、AttributeUsageAttribute を使用して、ソース コード内でカスタム属性を適用できる位置を示すように設定します。属性の意味と用途により、コード内での有効な位置が決まります。</target>
+        <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
+        <target state="needs-review-translation">カスタム属性を定義する場合、AttributeUsageAttribute を使用して、ソース コード内でカスタム属性を適用できる位置を示すように設定します。属性の意味と用途により、コード内での有効な位置が決まります。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
-        <source>Specify AttributeUsage on {0}</source>
-        <target state="translated">AttributeUsage を {0} で指定してください</target>
+        <source>Specify AttributeUsage on '{0}'</source>
+        <target state="needs-review-translation">AttributeUsage を {0} で指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
-        <source>Even though attribute {0} inherits AttributeUsage from its base type, you should consider explicitly specifying AttributeUsage on the type to improve code readability and documentation.</source>
-        <target state="translated">属性 {0} がその基本データ型から AttributeUsage を継承した場合でも、コードの読みやすさ、ドキュメントを改善するために、AttributeUsage をその型で明示的に指定することを検討してください。</target>
+        <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
+        <target state="needs-review-translation">属性 {0} がその基本データ型から AttributeUsage を継承した場合でも、コードの読みやすさ、ドキュメントを改善するために、AttributeUsage をその型で明示的に指定することを検討してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
@@ -478,18 +478,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageDefault">
-        <source>Add a public read-only property accessor for positional argument {0} of Attribute {1}</source>
-        <target state="translated">属性 {1} の位置引数 {0} 用にパブリックな読み取り専用プロパティ アクセサーを追加します</target>
+        <source>Add a public read-only property accessor for positional argument '{0}' of Attribute '{1}'</source>
+        <target state="needs-review-translation">属性 {1} の位置引数 {0} 用にパブリックな読み取り専用プロパティ アクセサーを追加します</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageRemoveSetter">
-        <source>Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}</source>
-        <target state="translated">プロパティ セッターが位置引数 {1} に対応しているため、これを {0} から削除するか、アクセシビリティを下げてください</target>
+        <source>Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'</source>
+        <target state="needs-review-translation">プロパティ セッターが位置引数 {1} に対応しているため、これを {0} から削除するか、アクセシビリティを下げてください</target>
         <note />
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility">
-        <source>If {0} is the property accessor for positional argument {1}, make it public</source>
-        <target state="translated">{0} が位置引数 {1} のプロパティ アクセサーである場合は、パブリックにしてください</target>
+        <source>If '{0}' is the property accessor for positional argument '{1}', make it public</source>
+        <target state="needs-review-translation">{0} が位置引数 {1} のプロパティ アクセサーである場合は、パブリックにしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateTitle">
@@ -498,8 +498,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateDescription">
-        <source>A public or protected method has a name that starts with ""Get"", takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.</source>
-        <target state="translated">パブリック メソッドまたは保護されたメソッドは、""Get"" で始まる名前を持ち、パラメーターを受け取らず、配列ではない値を返します。このメソッドは、プロパティに変更できる可能性があります。</target>
+        <source>A public or protected method has a name that starts with 'Get', takes no parameters, and returns a value that is not an array. The method might be a good candidate to become a property.</source>
+        <target state="needs-review-translation">パブリック メソッドまたは保護されたメソッドは、""Get"" で始まる名前を持ち、パラメーターを受け取らず、配列ではない値を返します。このメソッドは、プロパティに変更できる可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateMessage">
@@ -508,18 +508,18 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsTitle">
-        <source>Mark enums with FlagsAttribute</source>
-        <target state="translated">列挙型を FlagsAttribute に設定します</target>
+        <source>Mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">列挙型を FlagsAttribute に設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
-        <source>An enumeration is a value type that defines a set of related named constants. Apply FlagsAttribute to an enumeration when its named constants can be meaningfully combined.</source>
-        <target state="translated">列挙型は、関連する一連の名前付き定数を定義する値型です。名前付き定数を意味を持つように組み合わせることができる場合は、列挙型に FlagsAttribute を適用します。</target>
+        <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
+        <target state="needs-review-translation">列挙型は、関連する一連の名前付き定数を定義する値型です。名前付き定数を意味を持つように組み合わせることができる場合は、列挙型に FlagsAttribute を適用します。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
-        <source>Mark enums with FlagsAttribute</source>
-        <target state="translated">列挙型を FlagsAttribute に設定します</target>
+        <source>Mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">列挙型を FlagsAttribute に設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
@@ -543,18 +543,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesDescription">
-        <source>A public or protected type implements the System.IComparable interface. It does not override Object.Equals nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.</source>
-        <target state="translated">パブリック型または保護された型で System.IComparable インターフェイスを実装します。これにより、Object.Equals はオーバーライドされません。また、"等しい"、"等しくない"、"未満"、"以下"、"より大きい"、または "以上" を示す言語固有の演算子はオーバーロードされません。</target>
+        <source>A public or protected type implements the 'System.IComparable' interface. It does not override 'Object.Equals' nor does it overload the language-specific operator for equality, inequality, less than, less than or equal, greater than or greater than or equal.</source>
+        <target state="needs-review-translation">パブリック型または保護された型で System.IComparable インターフェイスを実装します。これにより、Object.Equals はオーバーライドされません。また、"等しい"、"等しくない"、"未満"、"以下"、"より大きい"、または "以上" を示す言語固有の演算子はオーバーロードされません。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageEquals">
-        <source>{0} should override Equals since it implements IComparable</source>
-        <target state="translated">{0} は IComparable を実装しているため、Equals をオーバーライドする必要があります</target>
+        <source>'{0}' should override 'Equals' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0} は IComparable を実装しているため、Equals をオーバーライドする必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageOperator">
-        <source>{0} should define operator(s) '{1}' since it implements IComparable</source>
-        <target state="translated">{0} は IComparable を実装しているため、演算子 '{1}' を定義する必要があります</target>
+        <source>'{0}' should define operator(s) '{1}' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0} は IComparable を実装しているため、演算子 '{1}' を定義する必要があります</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassTitle">
@@ -593,18 +593,18 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixDescription">
-        <source>The name of an externally visible interface does not start with an uppercase ""I"". The name of a generic type parameter on an externally visible type or method does not start with an uppercase ""T"".</source>
-        <target state="translated">外部から参照可能なインターフェイスの名前は大文字の ""I"" で始まりません。外部から参照可能な型またはメソッドのジェネリック型パラメーターの名前は大文字の ""T"" で始まりません。</target>
+        <source>The name of an externally visible interface does not start with an uppercase 'I'. The name of a generic type parameter on an externally visible type or method does not start with an uppercase 'T'.</source>
+        <target state="needs-review-translation">外部から参照可能なインターフェイスの名前は大文字の ""I"" で始まりません。外部から参照可能な型またはメソッドのジェネリック型パラメーターの名前は大文字の ""T"" で始まりません。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixMessageInterface">
-        <source>Prefix interface name {0} with 'I'</source>
-        <target state="translated">インターフェイス名 {0} にプレフィックスとして 'I' を指定してください</target>
+        <source>Prefix interface name '{0}' with 'I'</source>
+        <target state="needs-review-translation">インターフェイス名 {0} にプレフィックスとして 'I' を指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectPrefixMessageTypeParameter">
-        <source>Prefix generic type parameter name {0} with 'T'</source>
-        <target state="translated">ジェネリック型パラメーター名 {0} にプレフィックスとして 'T' を指定してください</target>
+        <source>Prefix generic type parameter name '{0}' with 'T'</source>
+        <target state="needs-review-translation">ジェネリック型パラメーター名 {0} にプレフィックスとして 'T' を指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="NonConstantFieldsShouldNotBeVisibleTitle">
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
-        <source>Do not mark enums with FlagsAttribute</source>
-        <target state="translated">列挙型を FlagsAttribute に設定しません</target>
+        <source>Do not mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">列挙型を FlagsAttribute に設定しません</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
-        <source>An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
-        <target state="translated">外部から参照可能な列挙型が FlagsAttribute を使用してマークされ、その列挙型に、2 の累乗でもその列挙型で定義されている他の値の組み合わせでもない値が 1 つ以上含まれています。</target>
+        <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
+        <target state="needs-review-translation">外部から参照可能な列挙型が FlagsAttribute を使用してマークされ、その列挙型に、2 の累乗でもその列挙型で定義されている他の値の組み合わせでもない値が 1 つ以上含まれています。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
-        <source>Do not mark enums with FlagsAttribute</source>
-        <target state="translated">列挙型を FlagsAttribute に設定しません</target>
+        <source>Do not mark enums with 'FlagsAttribute'</source>
+        <target state="needs-review-translation">列挙型を FlagsAttribute に設定しません</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
@@ -648,23 +648,23 @@
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageDefault">
-        <source>Provide a method named '{0}' as a friendly alternate for operator {1}</source>
-        <target state="translated">'{0}' という名前のメソッドを演算子 {1} の代替として指定してください</target>
+        <source>Provide a method named '{0}' as a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">'{0}' という名前のメソッドを演算子 {1} の代替として指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageProperty">
-        <source>Provide a property named '{0}' as a friendly alternate for operator {1}</source>
-        <target state="translated">'{0}' という名前のプロパティを演算子 {1} の代替として指定してください</target>
+        <source>Provide a property named '{0}' as a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">'{0}' という名前のプロパティを演算子 {1} の代替として指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageMultiple">
-        <source>Provide a method named '{0}' or '{1}' as an alternate for operator {2}</source>
-        <target state="translated">'{0}' または '{1}' という名前のメソッドを演算子 {2} の代替として指定してください</target>
+        <source>Provide a method named '{0}' or '{1}' as an alternate for operator '{2}'</source>
+        <target state="needs-review-translation">'{0}' または '{1}' という名前のメソッドを演算子 {2} の代替として指定してください</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesMessageVisibility">
-        <source>Mark {0} as public because it is a friendly alternate for operator {1}</source>
-        <target state="translated">演算子 {1} の代替であるため、{0} をパブリックとしてマークしてください</target>
+        <source>Mark '{0}' as public because it is a friendly alternate for operator '{1}'</source>
+        <target state="needs-review-translation">演算子 {1} の代替であるため、{0} をパブリックとしてマークしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="OperatorsShouldHaveSymmetricalOverloadsTitle">
@@ -728,18 +728,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
-        <source>Implement IEquatable when overriding Object.Equals</source>
-        <target state="translated">Object.Equals をオーバーライドする際に IEquatable を実装します</target>
+        <source>Implement 'IEquatable' when overriding 'Object.Equals'</source>
+        <target state="needs-review-translation">Object.Equals をオーバーライドする際に IEquatable を実装します</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
-        <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">型 {0} は Equals をオーバーライドするため、IEquatable&lt;T&gt; を実装する必要があります</target>
+        <source>Type '{0}' should implement 'IEquatable&lt;T&gt;' because it overrides Equals</source>
+        <target state="needs-review-translation">型 {0} は Equals をオーバーライドするため、IEquatable&lt;T&gt; を実装する必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
-        <source>CancellationToken parameters must come last</source>
-        <target state="translated">CancellationToken パラメーターは最後に指定する必要があります</target>
+        <source>'CancellationToken' parameters must come last</source>
+        <target state="needs-review-translation">CancellationToken パラメーターは最後に指定する必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
@@ -793,13 +793,13 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because {0} exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
-        <target state="translated">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します</target>
+        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <target state="needs-review-translation">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します</target>
         <note />
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level</source>
-        <target state="translated">{0} の ComVisible 属性を false に変更してから、型レベルでオプトインすることを検討してください</target>
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
+        <target state="needs-review-translation">{0} の ComVisible 属性を false に変更してから、型レベルでオプトインすることを検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementComparable">
@@ -808,23 +808,23 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
-        <source>Implement IEquatable</source>
-        <target state="translated">IEquatable を実装します</target>
+        <source>Implement 'IEquatable'</source>
+        <target state="needs-review-translation">IEquatable を実装します</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement IDisposable Interface</source>
-        <target state="translated">IDisposable インターフェイスを実装します</target>
+        <source>Implement 'IDisposable' Interface</source>
+        <target state="needs-review-translation">IDisposable インターフェイスを実装します</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
-        <source>Remove FlagsAttribute from enum.</source>
-        <target state="translated">FlagsAttribute を列挙型から削除します。</target>
+        <source>Remove 'FlagsAttribute' from enum.</source>
+        <target state="needs-review-translation">FlagsAttribute を列挙型から削除します。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
-        <source>Apply FlagsAttribute to enum.</source>
-        <target state="translated">FlagsAttribute を列挙型に適用します。</target>
+        <source>Apply 'FlagsAttribute' to enum.</source>
+        <target state="needs-review-translation">FlagsAttribute を列挙型に適用します。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
@@ -878,8 +878,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
-        <source>Enum Storage should be Int32</source>
-        <target state="translated">列挙ストレージは Int32 でなければなりません</target>
+        <source>Enum Storage should be 'Int32'</source>
+        <target state="needs-review-translation">列挙ストレージは Int32 でなければなりません</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Description">
@@ -888,8 +888,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Message">
-        <source>If possible, make the underlying type of {0} System.Int32 instead of {1}</source>
-        <target state="translated">可能な場合は、基になる型 {0} を {1} ではなく System.Int32 にしてください</target>
+        <source>If possible, make the underlying type of '{0}' 'System.Int32' instead of '{1}'</source>
+        <target state="needs-review-translation">可能な場合は、基になる型 {0} を {1} ではなく System.Int32 にしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UseEventsWhereAppropriateTitle">
@@ -918,13 +918,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementStandardExceptionConstructorsMessageMissingConstructor">
-        <source>Add the following constructor to {0}: {1}</source>
-        <target state="translated">次のコンストラクターを {0} に追加してください。{1}</target>
+        <source>Add the following constructor to '{0}': '{1}'</source>
+        <target state="needs-review-translation">次のコンストラクターを {0} に追加してください。{1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementStandardExceptionConstructorsMessageAccessibility">
-        <source>Change the accessibility of {0} to {1}.</source>
-        <target state="translated">{0} のアクセシビリティを {1} に変更します。</target>
+        <source>Change the accessibility of '{0}' to '{1}.'</source>
+        <target state="needs-review-translation">{0} のアクセシビリティを {1} に変更します。</target>
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleTitle">
@@ -938,13 +938,13 @@
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleMessageDefault">
-        <source>Do not nest type {0}. Alternatively, change its accessibility so that it is not externally visible.</source>
-        <target state="translated">型 {0} を入れ子にしないでください。外部から参照できなくするために、そのアクセシビリティを変更することもできます。</target>
+        <source>Do not nest type '{0}'. Alternatively, change its accessibility so that it is not externally visible.</source>
+        <target state="needs-review-translation">型 {0} を入れ子にしないでください。外部から参照できなくするために、そのアクセシビリティを変更することもできます。</target>
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleMessageVisualBasicModule">
-        <source>Do not nest type {0}. Alternatively, change its accessibility so that it is not externally visible. If this type is defined in a Visual Basic Module, it will be considered a nested type to other .NET languages. In that case, consider moving the type outside of the Module.</source>
-        <target state="translated">型 {0} を入れ子にしないでください。外部から参照できなくするために、そのアクセシビリティを変更することもできます。この型は、Visual Basic モジュールで定義されている場合、他の .NET 言語への入れ子にされた型と見なされます。その場合、その型をモジュールの外部へ移動することを検討してください。</target>
+        <source>Do not nest type '{0}'. Alternatively, change its accessibility so that it is not externally visible. If this type is defined in a Visual Basic Module, it will be considered a nested type to other .NET languages. In that case, consider moving the type outside of the Module.</source>
+        <target state="needs-review-translation">型 {0} を入れ子にしないでください。外部から参照できなくするために、そのアクセシビリティを変更することもできます。この型は、Visual Basic モジュールで定義されている場合、他の .NET 言語への入れ子にされた型と見なされます。その場合、その型をモジュールの外部へ移動することを検討してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidEmptyInterfacesTitle">
@@ -963,18 +963,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageTitle">
-        <source>Provide ObsoleteAttribute message</source>
-        <target state="translated">ObsoleteAttribute メッセージを指定します</target>
+        <source>Provide 'ObsoleteAttribute' message</source>
+        <target state="needs-review-translation">ObsoleteAttribute メッセージを指定します</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageDescription">
-        <source>A type or member is marked by using a System.ObsoleteAttribute attribute that does not have its ObsoleteAttribute.Message property specified. When a type or member that is marked by using ObsoleteAttribute is compiled, the Message property of the attribute is displayed. This gives the user information about the obsolete type or member.</source>
-        <target state="translated">型またはメンバーが System.ObsoleteAttribute 属性でマークされていますが、この属性では ObsoleteAttribute.Message プロパティが指定されていません。ObsoleteAttribute でマークされている型またはメンバーをコンパイルすると、属性の Message プロパティが表示されます。これにより、古いの型またはメンバーに関する情報がユーザーに表示されます。</target>
+        <source>A type or member is marked by using a 'System.ObsoleteAttribute' attribute that does not have its 'ObsoleteAttribute.Message' property specified. When a type or member that is marked by using 'ObsoleteAttribute' is compiled, the 'Message' property of the attribute is displayed. This gives the user information about the obsolete type or member.</source>
+        <target state="needs-review-translation">型またはメンバーが System.ObsoleteAttribute 属性でマークされていますが、この属性では ObsoleteAttribute.Message プロパティが指定されていません。ObsoleteAttribute でマークされている型またはメンバーをコンパイルすると、属性の Message プロパティが表示されます。これにより、古いの型またはメンバーに関する情報がユーザーに表示されます。</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideObsoleteAttributeMessageMessage">
-        <source>Provide a message for the ObsoleteAttribute that marks {0} as Obsolete</source>
-        <target state="translated">{0} を Obsolete に設定する ObsoleteAttribute のメッセージを指定します。</target>
+        <source>Provide a message for the 'ObsoleteAttribute' that marks '{0}' as 'Obsolete'</source>
+        <target state="needs-review-translation">{0} を Obsolete に設定する ObsoleteAttribute のメッセージを指定します。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyTitle">
@@ -988,13 +988,13 @@
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyMessageAddGetter">
-        <source>Because property {0} is write-only, either add a property getter with an accessibility that is greater than or equal to its setter or convert this property into a method</source>
-        <target state="translated">プロパティ {0} は書き込み専用であるため、アクセシビリティがプロパティ セッター以上のプロパティ ゲッターを追加するか、このプロパティをメソッドに変換してください</target>
+        <source>Because property '{0}' is write-only, either add a property getter with an accessibility that is greater than or equal to its setter or convert this property into a method</source>
+        <target state="needs-review-translation">プロパティ {0} は書き込み専用であるため、アクセシビリティがプロパティ セッター以上のプロパティ ゲッターを追加するか、このプロパティをメソッドに変換してください</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible">
-        <source>Because the property getter for {0} is less visible than its setter, either increase the accessibility of its getter or decrease the accessibility of its setter</source>
-        <target state="translated">{0} のプロパティ ゲッターがプロパティ セッターよりも参照範囲が小さいため、ゲッターのアクセシビリティを上げるか、セッターのアクセシビリティを下げてください</target>
+        <source>Because the property getter for '{0}' is less visible than its setter, either increase the accessibility of its getter or decrease the accessibility of its setter</source>
+        <target state="needs-review-translation">{0} のプロパティ ゲッターがプロパティ セッターよりも参照範囲が小さいため、ゲッターのアクセシビリティを上げるか、セッターのアクセシビリティを下げてください</target>
         <note />
       </trans-unit>
       <trans-unit id="DeclareTypesInNamespacesTitle">
@@ -1073,23 +1073,23 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement IDisposable Correctly</source>
-        <target state="translated">IDisposable を正しく実装します</target>
+        <source>Implement 'IDisposable' Correctly</source>
+        <target state="needs-review-translation">IDisposable を正しく実装します</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All IDisposable types should implement the Dispose pattern correctly.</source>
-        <target state="translated">すべての IDisposable 型は、Dispose パターンを正しく実装しなければなりません。</target>
+        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <target state="needs-review-translation">すべての IDisposable 型は、Dispose パターンを正しく実装しなければなりません。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
-        <target state="translated">'{0}' によって実装されたインターフェイスの一覧から IDisposable を削除してください。基本型 '{1}' によって既に実装されているためです</target>
+        <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
+        <target state="needs-review-translation">'{0}' によって実装されたインターフェイスの一覧から IDisposable を削除してください。基本型 '{1}' によって既に実装されているためです</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true</source>
-        <target state="translated">'{0}' を削除し、Dispose(bool disposing) をオーバーライドしてください。その後、'disposing' が true であるコード パスに dispose 論理を配置します</target>
+        <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
+        <target state="needs-review-translation">'{0}' を削除し、Dispose(bool disposing) をオーバーライドしてください。その後、'disposing' が true であるコード パスに dispose 論理を配置します</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
@@ -1108,18 +1108,18 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
-        <target state="translated">'{0}' を変更し、Dispose(true) を呼び出したのちに現在のオブジェクト インスタンスで GC.SuppressFinalize (Visual Basic の 'this' または 'Me') を呼び出してから戻るようにしてください</target>
+        <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
+        <target state="needs-review-translation">'{0}' を変更し、Dispose(true) を呼び出したのちに現在のオブジェクト インスタンスで GC.SuppressFinalize (Visual Basic の 'this' または 'Me') を呼び出してから戻るようにしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify '{0}' so that it calls Dispose(false) and then returns</source>
-        <target state="translated">'{0}' を変更し、Dispose(false) を呼び出してから戻るようにしてください</target>
+        <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
+        <target state="needs-review-translation">'{0}' を変更し、Dispose(false) を呼び出してから戻るようにしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">'{0}' で Dispose(bool) のオーバーライド可能な実装を提供するか、型を sealed としてマークします。Dispose(false) を呼び出す場合は、ネイティブ リソースのみがクリーンアップされます。Dispose(true) を呼び出す場合には、マネージド リソースとネイティブ リソースの両方がクリーンアップされます。</target>
+        <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">'{0}' で Dispose(bool) のオーバーライド可能な実装を提供するか、型を sealed としてマークします。Dispose(false) を呼び出す場合は、ネイティブ リソースのみがクリーンアップされます。Dispose(true) を呼び出す場合には、マネージド リソースとネイティブ リソースの両方がクリーンアップされます。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1128,8 +1128,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicDescription">
-        <source>An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from T:System.Exception, T:System.SystemException, or T:System.ApplicationException, the external code will not have sufficient information to know what to do with the exception.</source>
-        <target state="translated">内部例外を参照できるのは、それ独自の内部スコープ内でのみです。例外が内部スコープ外にあると、基本例外を使用しなければキャッチできません。内部例外が System.Exception、System.SystemException、または System.ApplicationException から継承されている場合、外部コードはその例外の処理に関する十分な情報を取得できません。</target>
+        <source>An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from 'System.Exception', 'System.SystemException', or 'System.ApplicationException', the external code will not have sufficient information to know what to do with the exception.</source>
+        <target state="needs-review-translation">内部例外を参照できるのは、それ独自の内部スコープ内でのみです。例外が内部スコープ外にあると、基本例外を使用しなければキャッチできません。内部例外が System.Exception、System.SystemException、または System.ApplicationException から継承されている場合、外部コードはその例外の処理に関する十分な情報を取得できません。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicMessage">
@@ -1148,18 +1148,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter">
-        <source>{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} は型 {1} の例外を作成します。これは、プロパティで発生させることができない例外の種類です。この例外インスタンスが発生する可能性がある場合は、別の例外の種類を使用するか、このプロパティをメソッドに変換するか、例外が発生しないようにこのプロパティのロジックを変更します。</target>
+        <source>'{0}' creates an exception of type '{1}', an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0} は型 {1} の例外を作成します。これは、プロパティで発生させることができない例外の種類です。この例外インスタンスが発生する可能性がある場合は、別の例外の種類を使用するか、このプロパティをメソッドに変換するか、例外が発生しないようにこのプロパティのロジックを変更します。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions">
-        <source>{0} creates an exception of type {1}, an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} は型 {1} の例外を作成します。これは、この型のメソッドで発生させることができない例外の種類です。この例外インスタンスが発生する可能性がある場合は、別の例外の種類を使用するか、例外が発生しないようにこのメソッドのロジックを変更します。</target>
+        <source>'{0}' creates an exception of type '{1}', an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0} は型 {1} の例外を作成します。これは、この型のメソッドで発生させることができない例外の種類です。この例外インスタンスが発生する可能性がある場合は、別の例外の種類を使用するか、例外が発生しないようにこのメソッドのロジックを変更します。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions">
-        <source>{0} creates an exception of type {1}. Exceptions should not be raised in this type of method. If this exception instance might be raised, change this method's logic so it no longer raises an exception.</source>
-        <target state="translated">{0} は型 {1} の例外を作成します。この型のメソッドでは例外を発生させることはできません。この例外インスタンスが発生する可能性がある場合は、例外が発生しないようにこのメソッドのロジックを変更します。</target>
+        <source>'{0}' creates an exception of type '{1}'. Exceptions should not be raised in this type of method. If this exception instance might be raised, change this method's logic so it no longer raises an exception.</source>
+        <target state="needs-review-translation">{0} は型 {1} の例外を作成します。この型のメソッドでは例外を発生させることはできません。この例外インスタンスが発生する可能性がある場合は、例外が発生しないようにこのメソッドのロジックを変更します。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresTitle">
@@ -1168,13 +1168,13 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresDescription">
-        <source>By convention, identifier names do not contain the underscore (_) character. This rule checks namespaces, types, members, and parameters.</source>
-        <target state="translated">規則により、識別子名にアンダースコア (_) 文字を含めることができません。この規則では名前空間、型、メンバー、およびパラメーターをチェックします。</target>
+        <source>By convention, identifier names do not contain the underscore '_' character. This rule checks namespaces, types, members, and parameters.</source>
+        <target state="needs-review-translation">規則により、識別子名にアンダースコア (_) 文字を含めることができません。この規則では名前空間、型、メンバー、およびパラメーターをチェックします。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageAssembly">
-        <source>Remove the underscores from assembly name {0}</source>
-        <target state="translated">アンダースコアをアセンブリ名 {0} から削除してください</target>
+        <source>Remove the underscores from assembly name '{0}'</source>
+        <target state="needs-review-translation">アンダースコアをアセンブリ名 {0} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageNamespace">
@@ -1183,33 +1183,33 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageType">
-        <source>Remove the underscores from type name {0}</source>
-        <target state="translated">アンダースコアを型名 {0} から削除してください</target>
+        <source>Remove the underscores from type name '{0}'</source>
+        <target state="needs-review-translation">アンダースコアを型名 {0} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMember">
-        <source>Remove the underscores from member name {0}</source>
-        <target state="translated">アンダースコアをメンバー名 {0} から削除してください</target>
+        <source>Remove the underscores from member name '{0}'</source>
+        <target state="needs-review-translation">アンダースコアをメンバー名 {0} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter">
-        <source>On type {0}, remove the underscores from generic type parameter name {1}</source>
-        <target state="translated">型 {0} で、アンダースコアをジェネリック型パラメーター名 {1} から削除してください</target>
+        <source>On type '{0}', remove the underscores from generic type parameter name '{1}'</source>
+        <target state="needs-review-translation">型 {0} で、アンダースコアをジェネリック型パラメーター名 {1} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter">
-        <source>On method {0}, remove the underscores from generic type parameter name {1}</source>
-        <target state="translated">メソッド {0} で、アンダースコアをジェネリック型パラメーター名 {1} から削除してください</target>
+        <source>On method '{0}', remove the underscores from generic type parameter name '{1}'</source>
+        <target state="needs-review-translation">メソッド {0} で、アンダースコアをジェネリック型パラメーター名 {1} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageMemberParameter">
-        <source>In member {0}, remove the underscores from parameter name {1}</source>
-        <target state="translated">メンバー {0} で、アンダースコアをパラメーター名 {1} から削除してください</target>
+        <source>In member '{0}', remove the underscores from parameter name '{1}'</source>
+        <target state="needs-review-translation">メンバー {0} で、アンダースコアをパラメーター名 {1} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainUnderscoresMessageDelegateParameter">
-        <source>In delegate {0}, remove the underscores from parameter name {1}</source>
-        <target state="translated">デリゲート {0} で、アンダースコアをパラメーター名 {1} から削除してください</target>
+        <source>In delegate '{0}', remove the underscores from parameter name '{1}'</source>
+        <target state="needs-review-translation">デリゲート {0} で、アンダースコアをパラメーター名 {1} から削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixTitle">
@@ -1223,13 +1223,13 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageDefault">
-        <source>Rename {0} to end in '{1}'</source>
-        <target state="translated">{0} の名前が '{1}' で終わるように変更してください</target>
+        <source>Rename '{0}' to end in '{1}'</source>
+        <target state="needs-review-translation">{0} の名前が '{1}' で終わるように変更してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
-        <source>Rename {0} to end in either 'Collection' or '{1}'</source>
-        <target state="translated">{0} の名前が 'Collection' または '{1}' で終わるように変更してください</target>
+        <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
+        <target state="needs-review-translation">{0} の名前が 'Collection' または '{1}' で終わるように変更してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
@@ -1243,18 +1243,18 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNoAlternate">
-        <source>Rename type name {0} so that it does not end in '{1}'</source>
-        <target state="translated">型名 {0} が '{1}' で終わらないように変更してください</target>
+        <source>Rename type name '{0}' so that it does not end in '{1}'</source>
+        <target state="needs-review-translation">型名 {0} が '{1}' で終わらないように変更してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageMemberNewerVersion">
-        <source>Either replace the suffix '{0}' in member name {1} with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the member it replaces</source>
-        <target state="translated">メンバー名 {1} のサフィックス '{0}' を推奨される数値 '2' で置き換えるか、もっと意味のあるサフィックスを指定して置き換えるメンバーと区別してください</target>
+        <source>Either replace the suffix '{0}' in member name '{1}' with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the member it replaces</source>
+        <target state="needs-review-translation">メンバー名 {1} のサフィックス '{0}' を推奨される数値 '2' で置き換えるか、もっと意味のあるサフィックスを指定して置き換えるメンバーと区別してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageTypeNewerVersion">
-        <source>Either replace the suffix '{0}' in type name {1} with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the type it replaces</source>
-        <target state="translated">型名 {1} のサフィックス '{0}' を推奨される数値 '2' で置き換えるか、もっと意味のあるサフィックスを指定して置き換える型と区別してください</target>
+        <source>Either replace the suffix '{0}' in type name '{1}' with the suggested numeric alternate '2' or provide a more meaningful suffix that distinguishes it from the type it replaces</source>
+        <target state="needs-review-translation">型名 {1} のサフィックス '{0}' を推奨される数値 '2' で置き換えるか、もっと意味のあるサフィックスを指定して置き換える型と区別してください</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixMessageMemberWithAlternate">
@@ -1273,23 +1273,23 @@
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMemberParameter">
-        <source>In virtual/interface member {0}, rename parameter {1} so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">仮想メンバーまたはインターフェイス メンバー {0} のパラメーター {1} の名前を変更して、予約されている言語キーワード '{2}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーのパラメーター名として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>
+        <source>In virtual/interface member '{0}', rename parameter '{1}' so that it no longer conflicts with the reserved language keyword '{2}'. Using a reserved keyword as the name of a parameter on a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
+        <target state="needs-review-translation">仮想メンバーまたはインターフェイス メンバー {0} のパラメーター {1} の名前を変更して、予約されている言語キーワード '{2}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーのパラメーター名として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageMember">
-        <source>Rename virtual/interface member {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
-        <target state="translated">仮想メンバーまたはインターフェイス メンバー {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーの名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>
+        <source>Rename virtual/interface member '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a virtual/interface member makes it harder for consumers in other languages to override/implement the member.</source>
+        <target state="needs-review-translation">仮想メンバーまたはインターフェイス メンバー {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。仮想メンバーまたはインターフェイス メンバーの名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがそのメンバーをオーバーライドまたは実装することが困難になります。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageType">
-        <source>Rename type {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a type makes it harder for consumers in other languages to use the type.</source>
-        <target state="translated">型 {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。型の名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがその型を使用することが困難になります。</target>
+        <source>Rename type '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a type makes it harder for consumers in other languages to use the type.</source>
+        <target state="needs-review-translation">型 {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。型の名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがその型を使用することが困難になります。</target>
         <note />
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotMatchKeywordsMessageNamespace">
-        <source>Rename namespace {0} so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.</source>
-        <target state="translated">名前空間 {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。名前空間の名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがその名前空間を使用することが困難になります。</target>
+        <source>Rename namespace '{0}' so that it no longer conflicts with the reserved language keyword '{1}'. Using a reserved keyword as the name of a namespace makes it harder for consumers in other languages to use the namespace.</source>
+        <target state="needs-review-translation">名前空間 {0} の名前を変更して、予約されている言語キーワード '{1}' と競合しないようにしてください。名前空間の名前として、予約されているキーワードを使用すると、他の言語を使用するユーザーがその名前空間を使用することが困難になります。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsTitle">
@@ -1298,8 +1298,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsDescription">
-        <source>The name of a public or protected member starts with ""Get"" and otherwise matches the name of a public or protected property. ""Get"" methods and properties should have names that clearly distinguish their function.</source>
-        <target state="translated">パブリック メンバーまたは保護されたメンバーの名前が、""Get"" から始まっているか、パブリック プロパティまたは保護されたプロパティの名前と一致します。""Get"" メソッドおよびプロパティには、その機能を明確に区別する名前が必要です。</target>
+        <source>The name of a public or protected member starts with 'Get' and otherwise matches the name of a public or protected property. 'Get' methods and properties should have names that clearly distinguish their function.</source>
+        <target state="needs-review-translation">パブリック メンバーまたは保護されたメンバーの名前が、""Get"" から始まっているか、パブリック プロパティまたは保護されたプロパティの名前と一致します。""Get"" メソッドおよびプロパティには、その機能を明確に区別する名前が必要です。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertyNamesShouldNotMatchGetMethodsMessage">
@@ -1318,13 +1318,13 @@
         <note />
       </trans-unit>
       <trans-unit id="TypeNamesShouldNotMatchNamespacesMessageDefault">
-        <source>The type name {0} conflicts in whole or in part with the namespace name '{1}'. Change either name to eliminate the conflict.</source>
-        <target state="translated">型名 {0} は、名前空間の名前 '{1}' と全体または部分的に競合します。競合を解消するには、どちらかの名前を変更してください。</target>
+        <source>The type name '{0}' conflicts in whole or in part with the namespace name '{1}'. Change either name to eliminate the conflict.</source>
+        <target state="needs-review-translation">型名 {0} は、名前空間の名前 '{1}' と全体または部分的に競合します。競合を解消するには、どちらかの名前を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypeNamesShouldNotMatchNamespacesMessageSystem">
-        <source>The type name {0} conflicts in whole or in part with the namespace name '{1}' defined in the .NET Framework. Rename the type to eliminate the conflict.</source>
-        <target state="translated">型名 {0} は、.NET Framework で定義されている名前空間の名前 '{1}' と全体または部分的に競合します。競合を解消するには、型名を変更してください。</target>
+        <source>The type name '{0}' conflicts in whole or in part with the namespace name '{1}' defined in the .NET Framework. Rename the type to eliminate the conflict.</source>
+        <target state="needs-review-translation">型名 {0} は、.NET Framework で定義されている名前空間の名前 '{1}' と全体または部分的に競合します。競合を解消するには、型名を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ParameterNamesShouldMatchBaseDeclarationTitle">
@@ -1338,8 +1338,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ParameterNamesShouldMatchBaseDeclarationMessage">
-        <source>In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}</source>
-        <target state="translated">{3} で宣言されている識別子と一致するように、メンバー {0} のパラメーター名 {1} を {2} に変更してください</target>
+        <source>In member '{0}', change parameter name '{1}' to '{2}' in order to match the identifier as it has been declared in '{3}'</source>
+        <target state="needs-review-translation">{3} で宣言されている識別子と一致するように、メンバー {0} のパラメーター名 {1} を {2} に変更してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsTitle">
@@ -1353,8 +1353,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageAssembly">
-        <source>Replace the term '{0}' in assembly name {1} with the preferred alternate '{2}'</source>
-        <target state="translated">アセンブリ名 {1} の用語 '{0}' を適切なもの '{2}' に置き換えてください</target>
+        <source>Replace the term '{0}' in assembly name '{1}' with the preferred alternate '{2}'</source>
+        <target state="needs-review-translation">アセンブリ名 {1} の用語 '{0}' を適切なもの '{2}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageNamespace">
@@ -1363,38 +1363,38 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMemberParameter">
-        <source>In member {0}, replace the term '{1}' in parameter name {2} with the preferred alternate '{3}'</source>
-        <target state="translated">メンバー {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
+        <source>In member '{0}', replace the term '{1}' in parameter name '{2}' with the preferred alternate '{3}'</source>
+        <target state="needs-review-translation">メンバー {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageDelegateParameter">
-        <source>In delegate {0}, replace the term '{1}' in parameter name {2} with the preferred alternate '{3}'</source>
-        <target state="translated">デリゲート {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
+        <source>In delegate '{0}', replace the term '{1}' in parameter name '{2}' with the preferred alternate '{3}'</source>
+        <target state="needs-review-translation">デリゲート {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageTypeTypeParameter">
-        <source>On type {0}, replace the term '{1}' in generic type parameter name {2} with the preferred alternate '{3}'</source>
-        <target state="translated">型 {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
+        <source>On type '{0}', replace the term '{1}' in generic type parameter name '{2}' with the preferred alternate '{3}'</source>
+        <target state="needs-review-translation">型 {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMethodTypeParameter">
-        <source>On method {0}, replace the term '{1}' in generic type parameter name {2} with the preferred alternate '{3}'</source>
-        <target state="translated">メソッド {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
+        <source>On method '{0}', replace the term '{1}' in generic type parameter name '{2}' with the preferred alternate '{3}'</source>
+        <target state="needs-review-translation">メソッド {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語 '{3}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageType">
-        <source>Replace the term '{0}' in type name {1} with the preferred alternate '{2}'</source>
-        <target state="translated">型名 {1} の用語 '{0}' を適切な用語 '{2}' に置き換えてください</target>
+        <source>Replace the term '{0}' in type name '{1}' with the preferred alternate '{2}'</source>
+        <target state="needs-review-translation">型名 {1} の用語 '{0}' を適切な用語 '{2}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMember">
-        <source>Replace the term '{0}' in member name {1} with the preferred alternate '{2}'</source>
-        <target state="translated">メンバー名 {1} の用語 '{0}' を適切な用語 '{2}' に置き換えてください</target>
+        <source>Replace the term '{0}' in member name '{1}' with the preferred alternate '{2}'</source>
+        <target state="needs-review-translation">メンバー名 {1} の用語 '{0}' を適切な用語 '{2}' に置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageAssemblyNoAlternate">
-        <source>Replace the term '{0}' in assembly name {1} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">アセンブリ名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>Replace the term '{0}' in assembly name '{1}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">アセンブリ名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageNamespaceNoAlternate">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMemberParameterNoAlternate">
-        <source>In member {0}, replace the term '{1}' in parameter name {2} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">メンバー {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>In member '{0}', replace the term '{1}' in parameter name '{2}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">メンバー {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageDelegateParameterNoAlternate">
-        <source>In delegate {0}, replace the term '{1}' in parameter name {2} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">デリゲート {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>In delegate '{0}', replace the term '{1}' in parameter name '{2}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">デリゲート {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageTypeTypeParameterNoAlternate">
-        <source>On type {0}, replace the term '{1}' in generic type parameter name {2} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">型 {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>On type '{0}', replace the term '{1}' in generic type parameter name '{2}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">型 {0} で、ジェネリック型パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMethodTypeParameterNoAlternate">
-        <source>On method {0}, replace the term '{1}' in generic type parameter name {2} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">メソッド {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>On method '{0}', replace the term '{1}' in generic type parameter name '{2}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">メソッド {0} で、パラメーター名 {2} の用語 '{1}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageTypeNoAlternate">
-        <source>Replace the term '{0}' in type name {1} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">型名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>Replace the term '{0}' in type name '{1}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">型名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePreferredTermsMessageMemberNoAlternate">
-        <source>Replace the term '{0}' in member name {1} with an appropriate alternate or remove it entirely</source>
-        <target state="translated">メンバー名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
+        <source>Replace the term '{0}' in member name '{1}' with an appropriate alternate or remove it entirely</source>
+        <target state="needs-review-translation">メンバー名 {1} の用語 '{0}' を適切な用語に置き換えるか、全体を削除してください</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
@@ -1443,13 +1443,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
-        <source>{0} should override Equals</source>
-        <target state="translated">{0} は Equals をオーバーライドする必要があります</target>
+        <source>'{0}' should override 'Equals'</source>
+        <target state="needs-review-translation">{0} は Equals をオーバーライドする必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality">
-        <source>{0} should override the equality (==) and inequality (!=) operators</source>
-        <target state="translated">{0} は、等値演算子 (==) および非等値演算子 (!=) をオーバーライドする必要があります</target>
+        <source>'{0}' should override the equality (==) and inequality (!=) operators</source>
+        <target state="needs-review-translation">{0} は、等値演算子 (==) および非等値演算子 (!=) をオーバーライドする必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="PropertiesShouldNotReturnArraysTitle">
@@ -1478,43 +1478,43 @@
         <note />
       </trans-unit>
       <trans-unit id="AssembliesShouldHaveValidStrongNamesMessageNoStrongName">
-        <source>Sign {0} with a strong name key.</source>
-        <target state="translated">{0} を厳密な名前キーで署名します。</target>
+        <source>Sign '{0}' with a strong name key.</source>
+        <target state="needs-review-translation">{0} を厳密な名前キーで署名します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AssembliesShouldHaveValidStrongNamesMessageNotValid">
-        <source>Verify that {0} has a valid strong name before deploying.</source>
-        <target state="translated">配置する前に、{0} に有効な厳密な名前が指定されていることを確認してください。</target>
+        <source>Verify that '{0}' has a valid strong name before deploying.</source>
+        <target state="needs-review-translation">配置する前に、{0} に有効な厳密な名前が指定されていることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsTitle">
-        <source>Override GetHashCode on overriding Equals</source>
-        <target state="translated">オーバーライドする Equals で GetHashCode をオーバーライドします</target>
+        <source>Override 'GetHashCode' on overriding 'Equals'</source>
+        <target state="needs-review-translation">オーバーライドする Equals で GetHashCode をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsDescription">
-        <source>GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.</source>
-        <target state="translated">GetHashCode は、現在のインスタンスに基づいて、ハッシュ アルゴリズムとデータ構造 (ハッシュ テーブルなど) に適した値を返します。同じ型で等しい 2 つのオブジェクトは、同じハッシュ コードを返す必要があります。</target>
+        <source>'GetHashCode' returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.</source>
+        <target state="needs-review-translation">GetHashCode は、現在のインスタンスに基づいて、ハッシュ アルゴリズムとデータ構造 (ハッシュ テーブルなど) に適した値を返します。同じ型で等しい 2 つのオブジェクトは、同じハッシュ コードを返す必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsMessage">
-        <source>Override GetHashCode on overriding Equals</source>
-        <target state="translated">オーバーライドする Equals で GetHashCode をオーバーライドします</target>
+        <source>Override 'GetHashCode' on overriding 'Equals'</source>
+        <target state="needs-review-translation">オーバーライドする Equals で GetHashCode をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsTitle">
-        <source>Override Equals on overloading operator equals</source>
-        <target state="translated">オーバーロードする演算子 equals で Equals をオーバーライドします</target>
+        <source>Override 'Equals' on overloading operator equals</source>
+        <target state="needs-review-translation">オーバーロードする演算子 equals で Equals をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsDescription">
-        <source>A public type implements the equality operator but does not override Object.Equals.</source>
-        <target state="translated">パブリック型では等値演算子が実装されますが、Object.Equals はオーバーライドされていません。</target>
+        <source>A public type implements the equality operator but does not override 'Object.Equals'.</source>
+        <target state="needs-review-translation">パブリック型では等値演算子が実装されますが、Object.Equals はオーバーライドされていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsMessage">
-        <source>Override Equals on overloading operator equals</source>
-        <target state="translated">オーバーロードする演算子 equals で Equals をオーバーライドします</target>
+        <source>Override 'Equals' on overloading operator equals</source>
+        <target state="needs-review-translation">オーバーロードする演算子 equals で Equals をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="Since_0_redefines_operator_1_it_should_also_redefine_operator_2">
@@ -1528,18 +1528,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle">
-        <source>Override object.Equals</source>
-        <target state="translated">object.Equals をオーバーライドします</target>
+        <source>Override 'object.Equals'</source>
+        <target state="needs-review-translation">object.Equals をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsOnImplementingIEquatableCodeActionTitle">
-        <source>Override object.Equals</source>
-        <target state="translated">object.Equals をオーバーライドします</target>
+        <source>Override 'object.Equals'</source>
+        <target state="needs-review-translation">object.Equals をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideGetHashCodeOnOverridingEqualsCodeActionTitle">
-        <source>Override object.GetHashCode</source>
-        <target state="translated">object.GetHashCode をオーバーライドします</target>
+        <source>Override 'object.GetHashCode'</source>
+        <target state="needs-review-translation">object.GetHashCode をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="MakeExceptionPublic">
@@ -1573,18 +1573,18 @@
         <note />
       </trans-unit>
       <trans-unit id="MakeClassStatic">
-        <source>Make Class Static</source>
-        <target state="translated">クラスを静的にします</target>
+        <source>Make class static</source>
+        <target state="needs-review-translation">クラスを静的にします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
-        <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">型 {0} は IEquatable&lt;T&gt; を実装するため、Equals をオーバーライドする必要があります</target>
+        <source>Type '{0}' should override 'Equals' because it implements 'IEquatable&lt;T&gt;'</source>
+        <target state="needs-review-translation">型 {0} は IEquatable&lt;T&gt; を実装するため、Equals をオーバーライドする必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
-        <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt; を実装するときに Object.Equals(object) をオーバーライドします</target>
+        <source>Override 'Object.Equals(object)' when implementing 'IEquatable&lt;T&gt;'</source>
+        <target state="needs-review-translation">IEquatable&lt;T&gt; を実装するときに Object.Equals(object) をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1603,18 +1603,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="translated">非同期メソッドがタスクを直接待機すると、タスクを作成したのと同じスレッドで継続が発生します。継続の意図を示すには、Task.ConfigureAwait(Boolean) の呼び出しを検討してください。タスクで ConfigureAwait(false) を呼び出して、スレッド プールへの継続をスケジュールします。その結果、UI スレッドのデッドロックを回避できます。アプリに依存しないライブラリでは、false を渡すことが適切なオプションです。タスクで ConfigureAwait(true) を呼び出すと、ConfigureAwait を明示的に呼び出さない場合と動作が同じになります。このメソッドを明示的に呼び出すことにより、元の同期コンテキストで意図的に継続を実行していることを閲覧者に示します。</target>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <target state="needs-review-translation">非同期メソッドがタスクを直接待機すると、タスクを作成したのと同じスレッドで継続が発生します。継続の意図を示すには、Task.ConfigureAwait(Boolean) の呼び出しを検討してください。タスクで ConfigureAwait(false) を呼び出して、スレッド プールへの継続をスケジュールします。その結果、UI スレッドのデッドロックを回避できます。アプリに依存しないライブラリでは、false を渡すことが適切なオプションです。タスクで ConfigureAwait(true) を呼び出すと、ConfigureAwait を明示的に呼び出さない場合と動作が同じになります。このメソッドを明示的に呼び出すことにより、元の同期コンテキストで意図的に継続を実行していることを閲覧者に示します。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
-        <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="translated">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
+        <source>Consider calling 'ConfigureAwait' on the awaited task</source>
+        <target state="needs-review-translation">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
-        <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="translated">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
+        <source>Consider calling 'ConfigureAwait' on the awaited task</source>
+        <target state="needs-review-translation">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1623,8 +1623,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">型 T が Object.Equals(object) をオーバーライドする場合、この実装は、比較を行う前にオブジェクトの引数を正しい型 T にキャストする必要があります。型が IEquatable&lt;T&gt; を実装してメソッド T.Equals(T) を提供する場合、およびコンパイル時に引数が型 T であることがわかっている場合、コンパイラは Object.Equals(object) の代わりに IEquatable&lt;T&gt;.Equals(T) を呼び出すことができ、キャストは必要ではなくなるため、パフォーマンスが向上します。</target>
+        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <target state="needs-review-translation">型 T が Object.Equals(object) をオーバーライドする場合、この実装は、比較を行う前にオブジェクトの引数を正しい型 T にキャストする必要があります。型が IEquatable&lt;T&gt; を実装してメソッド T.Equals(T) を提供する場合、およびコンパイル時に引数が型 T であることがわかっている場合、コンパイラは Object.Equals(object) の代わりに IEquatable&lt;T&gt;.Equals(T) を呼び出すことができ、キャストは必要ではなくなるため、パフォーマンスが向上します。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
@@ -1683,8 +1683,8 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
-        <source>{0} should define operator(s) '{1}' and Equals since it implements IComparable</source>
-        <target state="translated">{0} は IComparable を実装しているため、演算子 '{1}' と Equals を定義する必要があります</target>
+        <source>'{0}' should define operator(s) '{1}' and 'Equals' since it implements 'IComparable'</source>
+        <target state="needs-review-translation">{0} は IComparable を実装しているため、演算子 '{1}' と Equals を定義する必要があります</target>
         <note>1 is a comma-separated list</note>
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsTitle">
@@ -1698,53 +1698,53 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemGCCollect">
-        <source>Remove the call to GC.Collect from {0}. It is usually unnecessary to force garbage collection, and doing so can severely degrade performance.</source>
-        <target state="translated">GC.Collect への呼び出しを {0} から削除します。通常、ガベージ コレクションを強制する必要はありません。ガベージ コレクションを行うと、パフォーマンスが大幅に低下する可能性があります。</target>
+        <source>Remove the call to GC.Collect from '{0}'. It is usually unnecessary to force garbage collection, and doing so can severely degrade performance.</source>
+        <target state="needs-review-translation">GC.Collect への呼び出しを {0} から削除します。通常、ガベージ コレクションを強制する必要はありません。ガベージ コレクションを行うと、パフォーマンスが大幅に低下する可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemThreadingThreadResume">
-        <source>Remove the call to Thread.Resume from {0}. Suspending and resuming threads can be dangerous if the system is in the middle of a critical operation such as executing a class constructor of an important system type or resolving security for a shared assembly.</source>
-        <target state="translated">Thread.Resume への呼び出しを {0} から削除します。重要なシステム型のクラス コンストラクターを実行中である、または共有アセンブリのセキュリティを解決中であるなどの重大な操作をシステムが実行している場合、スレッドの中断および再開には危険性が伴います。</target>
+        <source>Remove the call to 'Thread.Resume' from '{0}'. Suspending and resuming threads can be dangerous if the system is in the middle of a critical operation such as executing a class constructor of an important system type or resolving security for a shared assembly.</source>
+        <target state="needs-review-translation">Thread.Resume への呼び出しを {0} から削除します。重要なシステム型のクラス コンストラクターを実行中である、または共有アセンブリのセキュリティを解決中であるなどの重大な操作をシステムが実行している場合、スレッドの中断および再開には危険性が伴います。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemThreadingThreadSuspend">
-        <source>Remove the call to Thread.Suspend from {0}. Suspending and resuming threads can be dangerous if the system is in the middle of a critical operation such as executing a class constructor of an important system type or resolving security for a shared assembly.</source>
-        <target state="translated">Thread.Suspend への呼び出しを {0} から削除します。重要なシステム型のクラス コンストラクターを実行中である、または共有アセンブリのセキュリティを解決中であるなどの重大な操作をシステムが実行している場合、スレッドの中断および再開には危険性が伴います。</target>
+        <source>Remove the call to 'Thread.Suspend' from '{0}'. Suspending and resuming threads can be dangerous if the system is in the middle of a critical operation such as executing a class constructor of an important system type or resolving security for a shared assembly.</source>
+        <target state="needs-review-translation">Thread.Suspend への呼び出しを {0} から削除します。重要なシステム型のクラス コンストラクターを実行中である、または共有アセンブリのセキュリティを解決中であるなどの重大な操作をシステムが実行している場合、スレッドの中断および再開には危険性が伴います。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemTypeInvokeMember">
-        <source>Remove the call to System.Type.InvokeMember with BindingFlags.NonPublic from {0}. Taking a dependency on a private member increases the chance of a breaking change in the future.</source>
-        <target state="translated">BindingFlags.NonPublic を伴う System.Type.InvokeMember への呼び出しを {0} から削除します。プライベート メンバーの依存関係を取得すると、今後のコードに対する重大な変更が発生する可能性を高めます。</target>
+        <source>Remove the call to 'System.Type.InvokeMember' with 'BindingFlags.NonPublic' from '{0}'. Taking a dependency on a private member increases the chance of a breaking change in the future.</source>
+        <target state="needs-review-translation">BindingFlags.NonPublic を伴う System.Type.InvokeMember への呼び出しを {0} から削除します。プライベート メンバーの依存関係を取得すると、今後のコードに対する重大な変更が発生する可能性を高めます。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoInitializeSecurity">
-        <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called after the runtime has been initialized. The workaround is to write an unmanaged shim that will call the routine and then activate and call into managed code. You can do this using an export from a mixed-mode C++ DLL, by registering a managed component for use by COM, or by using the runtime hosting API.</source>
-        <target state="translated">{0} は、ランタイムが初期化された後に正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。次善策としては、そのルーチンを呼び出してからマネージ コードをアクティブ化し、そのマネージ コードに呼び出しを行うアンマネージ shim を書き込むことです。COM によって使用するためにマネージ コンポーネントを登録することによって、またはランタイムをホストする API を使用することによって、混合モードの C++ DLL からのエクスポートを使用してこの動作を行うことができます。</target>
+        <source>'{0}' is a P/Invoke declaration to an OLE32 API that cannot be reliably called after the runtime has been initialized. The workaround is to write an unmanaged shim that will call the routine and then activate and call into managed code. You can do this using an export from a mixed-mode C++ DLL, by registering a managed component for use by COM, or by using the runtime hosting API.</source>
+        <target state="needs-review-translation">{0} は、ランタイムが初期化された後に正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。次善策としては、そのルーチンを呼び出してからマネージ コードをアクティブ化し、そのマネージ コードに呼び出しを行うアンマネージ shim を書き込むことです。COM によって使用するためにマネージ コンポーネントを登録することによって、またはランタイムをホストする API を使用することによって、混合モードの C++ DLL からのエクスポートを使用してこの動作を行うことができます。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoSetProxyBlanket">
-        <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
-        <target state="translated">{0} は、ランタイム呼び出しラッパー (COM オブジェクトをラップするマネージ オブジェクト) に対して正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。ランタイム呼び出しラッパーはインターフェイス ポインターを動的に取得するため、呼び出しの結果は任意に失われます。特定の COM オブジェクトの呼び出しラッパーがアプリケーション ドメインで共有されることもあるため、呼び出しが他のユーザーに影響する可能性もあります。この呼び出しを、適切な CoSetProxyBlanket 呼び出しを行う、インターフェイス ポインターのネイティブ ラッパー COM オブジェクトで置き換えてください。</target>
+        <source>'{0}' is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
+        <target state="needs-review-translation">{0} は、ランタイム呼び出しラッパー (COM オブジェクトをラップするマネージ オブジェクト) に対して正しく呼び出すことができない OLE32 API への P/Invoke 宣言です。ランタイム呼び出しラッパーはインターフェイス ポインターを動的に取得するため、呼び出しの結果は任意に失われます。特定の COM オブジェクトの呼び出しラッパーがアプリケーション ドメインで共有されることもあるため、呼び出しが他のユーザーに影響する可能性もあります。この呼び出しを、適切な CoSetProxyBlanket 呼び出しを行う、インターフェイス ポインターのネイティブ ラッパー COM オブジェクトで置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle">
-        <source>Remove the call to SafeHandle.DangerousGetHandle from {0}</source>
-        <target state="translated">SafeHandle.DangerousGetHandle への呼び出しを {0} から削除します</target>
+        <source>Remove the call to 'SafeHandle.DangerousGetHandle' from '{0}'</source>
+        <target state="needs-review-translation">SafeHandle.DangerousGetHandle への呼び出しを {0} から削除します</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFrom">
-        <source>Remove the call to Assembly.LoadFrom from {0}</source>
-        <target state="translated">Assembly.LoadFrom への呼び出しを {0} から削除します</target>
+        <source>Remove the call to 'Assembly.LoadFile' from '{0}'</source>
+        <target state="needs-review-translation">Assembly.LoadFrom への呼び出しを {0} から削除します</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFile">
-        <source>Remove the call to Assembly.LoadFile from {0}</source>
-        <target state="translated">Assembly.LoadFile への呼び出しを {0} から削除します</target>
+        <source>Remove the call to 'Assembly.LoadFile' from '{0}'</source>
+        <target state="needs-review-translation">Assembly.LoadFile への呼び出しを {0} から削除します</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadWithPartialName">
-        <source>Remove the call to Assembly.LoadWithPartialName from {0}</source>
-        <target state="translated">Assembly.LoadWithPartialName への呼び出しを {0} から削除します</target>
+        <source>Remove the call to 'Assembly.LoadWithPartialName' from '{0}'</source>
+        <target state="needs-review-translation">Assembly.LoadWithPartialName への呼び出しを {0} から削除します</target>
         <note />
       </trans-unit>
       <trans-unit id="CategoryReliability">
@@ -1868,13 +1868,13 @@
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesMessageLocal">
-        <source>{0}, a variable declared in {1}, has the same name as an instance field on the type. Change the name of one of these items.</source>
-        <target state="translated">{1} で宣言された変数 {0} には、型のインスタンス フィールドと同じ名前が指定されています。これらの項目のうちの 1 つの名前を変更してください。</target>
+        <source>'{0}', a variable declared in '{1}', has the same name as an instance field on the type. Change the name of one of these items.</source>
+        <target state="needs-review-translation">{1} で宣言された変数 {0} には、型のインスタンス フィールドと同じ名前が指定されています。これらの項目のうちの 1 つの名前を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesMessageParameter">
-        <source>{0}, a parameter declared in {1}, has the same name as an instance field on the type. Change the name of one of these items.</source>
-        <target state="translated">{1} で宣言されたパラメーター {0} には、型のインスタンス フィールドと同じ名前が指定されています。これらの項目のうちの 1 つの名前を変更してください。</target>
+        <source>'{0}', a parameter declared in '{1}', has the same name as an instance field on the type. Change the name of one of these items.</source>
+        <target state="needs-review-translation">{1} で宣言されたパラメーター {0} には、型のインスタンス フィールドと同じ名前が指定されています。これらの項目のうちの 1 つの名前を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersTitle">
@@ -1888,8 +1888,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
-        <source>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</source>
-        <target state="translated">{1} のパラメーター {0} は使用されていません。パラメーターを削除するか、メソッド本体で使用してください。</target>
+        <source>Parameter '{0}' of method '{1}' is never used. Remove the parameter or use it in the method body.</source>
+        <target state="needs-review-translation">{1} のパラメーター {0} は使用されていません。パラメーターを削除するか、メソッド本体で使用してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveUnusedParameterMessage">
@@ -1908,23 +1908,23 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageObjectCreation">
-        <source>{0} creates a new instance of {1} which is never used. Pass the instance as an argument to another method, assign the instance to a variable, or remove the object creation if it is unnecessary.</source>
-        <target state="translated">{0} では使用されない {1} の新しいインスタンスが作成されます。インスタンスを引数として他のメソッドに渡すか、インスタンスを変数に割り当てるか、不要な場合はオブジェクト作成を削除してください。</target>
+        <source>'{0}' creates a new instance of '{1}' which is never used. Pass the instance as an argument to another method, assign the instance to a variable, or remove the object creation if it is unnecessary.</source>
+        <target state="needs-review-translation">{0} では使用されない {1} の新しいインスタンスが作成されます。インスタンスを引数として他のメソッドに渡すか、インスタンスを変数に割り当てるか、不要な場合はオブジェクト作成を削除してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageStringCreation">
-        <source>{0} calls {1} but does not use the new string instance that the method returns. Pass the instance as an argument to another method, assign the instance to a variable, or remove the call if it is unnecessary.</source>
-        <target state="translated">{0} は {1} を呼び出しますが、メソッドから返される新しい文字列インスタンスは使用されません。インスタンスを引数として他のメソッドに渡すか、インスタンスを変数に割り当てるか、不要な場合は呼び出しを削除してください。</target>
+        <source>'{0}' calls '{1}' but does not use the new string instance that the method returns. Pass the instance as an argument to another method, assign the instance to a variable, or remove the call if it is unnecessary.</source>
+        <target state="needs-review-translation">{0} は {1} を呼び出しますが、メソッドから返される新しい文字列インスタンスは使用されません。インスタンスを引数として他のメソッドに渡すか、インスタンスを変数に割り当てるか、不要な場合は呼び出しを削除してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageHResultOrErrorCode">
-        <source>{0} calls {1} but does not use the HRESULT or error code that the method returns. This could lead to unexpected behavior in error conditions or low-resource situations. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
-        <target state="translated">{0} は {1} を呼び出しますが、メソッドから返される HRESULT またはエラー コードは使用されません。このため、エラー条件での予期しない動作やリソース不足が発生する可能性があります。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
+        <source>'{0}' calls '{1}' but does not use the HRESULT or error code that the method returns. This could lead to unexpected behavior in error conditions or low-resource situations. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
+        <target state="needs-review-translation">{0} は {1} を呼び出しますが、メソッドから返される HRESULT またはエラー コードは使用されません。このため、エラー条件での予期しない動作やリソース不足が発生する可能性があります。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessageTryParse">
-        <source>{0} calls {1} but does not explicitly check whether the conversion succeeded. Either use the return value in a conditional statement or verify that the call site expects that the out argument will be set to the default value when the conversion fails.</source>
-        <target state="translated">{0} は {1} を呼び出しますが、変換が成功したかどうかを明示的に確認しません。戻り値を条件ステートメントで使用するか、または、変換が失敗した場合に out 引数が既定値に設定されることを呼び出しサイトで想定するようにしてください。</target>
+        <source>'{0}' calls '{1}' but does not explicitly check whether the conversion succeeded. Either use the return value in a conditional statement or verify that the call site expects that the out argument will be set to the default value when the conversion fails.</source>
+        <target state="needs-review-translation">{0} は {1} を呼び出しますが、変換が成功したかどうかを明示的に確認しません。戻り値を条件ステートメントで使用するか、または、変換が失敗した場合に out 引数が既定値に設定されることを呼び出しサイトで想定するようにしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesTitle">
@@ -1938,8 +1938,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>{0} is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
-        <target state="translated">{0} は、インスタンス化されていない内部クラスです。その場合、コードをアセンブリから削除してください。このクラスが静的メンバーのみを含むことを意図している場合は、このクラスを static (Visual Basic の場合は Shared) にしてください。</target>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <target state="needs-review-translation">{0} は、インスタンス化されていない内部クラスです。その場合、コードをアセンブリから削除してください。このクラスが静的メンバーのみを含むことを意図している場合は、このクラスを static (Visual Basic の場合は Shared) にしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
@@ -1958,8 +1958,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotIgnoreMethodResultsMessagePureMethod">
-        <source>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
-        <target state="translated">{0} は {1} を呼び出しますが、メソッドから返される値は使用されません。{1} は Pure メソッドとしてマークされているため、副作用は発生しません。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
+        <source>'{0}' calls '{1}' but does not use the value the method returns. Because '{1}' is marked as a 'Pure' method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</source>
+        <target state="needs-review-translation">{0} は {1} を呼び出しますが、メソッドから返される値は使用されません。{1} は Pure メソッドとしてマークされているため、副作用は発生しません。条件ステートメントで結果を使用するか、結果を変数に割り当てるか、引数として他のメソッドに渡してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseNameOfInPlaceOfStringDescription">
@@ -1978,8 +1978,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
-        <source>The property {0} should not be assigned to itself</source>
-        <target state="translated">プロパティ {0} をそれ自体に割り当てることはできません</target>
+        <source>The property '{0}' should not be assigned to itself</source>
+        <target state="needs-review-translation">プロパティ {0} をそれ自体に割り当てることはできません</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">
@@ -2043,18 +2043,18 @@
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageDefault">
-        <source>{0} is a multidimensional array. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0} は多次元配列です。可能である場合、ジャグ配列で置き換えてください。</target>
+        <source>'{0}' is a multidimensional array. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0} は多次元配列です。可能である場合、ジャグ配列で置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageReturn">
-        <source>{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0} は {1} の多次元配列を返します。可能である場合、ジャグ配列で置き換えてください。</target>
+        <source>'{0}' returns a multidimensional array of '{1}'. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0} は {1} の多次元配列を返します。可能である場合、ジャグ配列で置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreferJaggedArraysOverMultidimensionalMessageBody">
-        <source>{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</source>
-        <target state="translated">{0} は {1} の多次元配列を使用します。可能である場合、ジャグ配列で置き換えてください。</target>
+        <source>'{0}' uses a multidimensional array of '{1}'. Replace it with a jagged array if possible.</source>
+        <target state="needs-review-translation">{0} は {1} の多次元配列を使用します。可能である場合、ジャグ配列で置き換えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticTitle">

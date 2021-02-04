@@ -4,7 +4,7 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers",
+        "name": "Microsoft.CodeAnalysis.CSharp.NetAnalyzers ",
         "version": "5.0.4",
         "language": "en-US"
       },

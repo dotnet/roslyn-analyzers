@@ -1089,6 +1089,16 @@ Rule ID | Missing Help Link | Title |
             if (actual != fileContents)
             {
                 fileNamesWithValidationFailures.Add(fileWithPath);
+                if (fileWithPath.Contains("Microsoft.CodeAnalysis.Analyzers.sarif"))
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine();
+                    builder.AppendLine("Actual:");
+                    builder.AppendLine(actual);
+                    builder.AppendLine("Expected:");
+                    builder.AppendLine(fileContents);
+                    throw new Exception("FOR TESTING PURPOSE ONLY:" + builder.ToString());
+                }
             }
         }
 

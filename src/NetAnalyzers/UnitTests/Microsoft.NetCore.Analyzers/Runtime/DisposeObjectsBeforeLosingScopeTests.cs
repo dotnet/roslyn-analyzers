@@ -26,13 +26,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public partial class DisposeObjectsBeforeLosingScopeTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string allocationText) =>
@@ -8098,10 +8102,17 @@ Class Test
 End Class");
         }
 
-        [Fact, WorkItem(1602, "https://github.com/dotnet/roslyn-analyzers/issues/1602")]
-        public async Task MemberReferenceInQueryFromClause_Disposed_NoDiagnostic()
+        [Theory, WorkItem(1602, "https://github.com/dotnet/roslyn-analyzers/issues/1602")]
+        [InlineData(null)]
+        [InlineData(PointsToAnalysisKind.None)]
+        [InlineData(PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties)]
+        [InlineData(PointsToAnalysisKind.Complete)]
+        public async Task MemberReferenceInQueryFromClause_Disposed_NoDiagnostic(PointsToAnalysisKind? analysisKind)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await new VerifyCS.Test()
+            {
+                AnalyzerConfigDocument = GetEditorConfigContent(analysisKind),
+                TestCode = @"
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -8139,7 +8150,8 @@ class Test
         y.Dispose();
     }
 }
-");
+",
+            }.RunAsync();
         }
 
         [Fact]

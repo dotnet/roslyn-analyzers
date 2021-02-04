@@ -39,12 +39,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
 
@@ -123,26 +123,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public static bool IsPrimitiveType(ITypeSymbol type)
         {
-            switch (type.SpecialType)
+            return type.SpecialType switch
             {
-                case SpecialType.System_Boolean:
-                case SpecialType.System_Byte:
-                case SpecialType.System_Char:
-                case SpecialType.System_Double:
-                case SpecialType.System_Int16:
-                case SpecialType.System_Int32:
-                case SpecialType.System_Int64:
-                case SpecialType.System_UInt16:
-                case SpecialType.System_UInt32:
-                case SpecialType.System_UInt64:
-                case SpecialType.System_IntPtr:
-                case SpecialType.System_UIntPtr:
-                case SpecialType.System_SByte:
-                case SpecialType.System_Single:
-                    return true;
-                default:
-                    return false;
-            }
+                SpecialType.System_Boolean
+                or SpecialType.System_Byte
+                or SpecialType.System_Char
+                or SpecialType.System_Double
+                or SpecialType.System_Int16
+                or SpecialType.System_Int32
+                or SpecialType.System_Int64
+                or SpecialType.System_UInt16
+                or SpecialType.System_UInt32
+                or SpecialType.System_UInt64
+                or SpecialType.System_IntPtr
+                or SpecialType.System_UIntPtr
+                or SpecialType.System_SByte
+                or SpecialType.System_Single => true,
+                _ => false,
+            };
         }
     }
 }

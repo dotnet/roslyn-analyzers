@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyRule);
 
         private static readonly List<ValueValidator> s_tokensToValueValidator =
-            new List<ValueValidator>(
+            new(
                 new[] { new ValueValidator(ImmutableArray.Create("guid"), "Guid", GuidValueValidator),
                         new ValueValidator(ImmutableArray.Create("url", "uri", "urn"), "Uri", UrlValueValidator, "UriTemplate", "UrlFormat")});
 
@@ -74,12 +74,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return Uri.IsWellFormedUriString(value, System.UriKind.RelativeOrAbsolute);
         }
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(saContext =>
+            context.RegisterSymbolAction(saContext =>
             {
                 var symbol = saContext.Symbol;
                 AnalyzeSymbol(saContext.ReportDiagnostic, symbol, saContext.CancellationToken);
@@ -122,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SymbolKind.NamedType,
             SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
-            analysisContext.RegisterCompilationAction(caContext =>
+            context.RegisterCompilationAction(caContext =>
             {
                 var compilation = caContext.Compilation;
                 AnalyzeSymbol(caContext.ReportDiagnostic, compilation.Assembly, caContext.CancellationToken);

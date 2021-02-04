@@ -68,12 +68,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                         ("System.Security.Policy.IMembershipCondition", "Condition", false)
                                                     };
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -171,13 +171,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         }
 
         private static bool TryGetTypeSuffix(IEnumerable<INamedTypeSymbol> typeSymbols, ImmutableDictionary<INamedTypeSymbol, SuffixInfo> hardcodedMap,
-            SymbolNamesWithValueOption<string> userMap, [NotNullWhen(true)] out SuffixInfo? suffixInfo)
+            SymbolNamesWithValueOption<string?> userMap, [NotNullWhen(true)] out SuffixInfo? suffixInfo)
         {
             foreach (var type in typeSymbols)
             {
                 // User specific mapping has higher priority than hardcoded one
                 if (userMap.TryGetValue(type.OriginalDefinition, out var suffix) &&
-                    !string.IsNullOrWhiteSpace(suffix))
+                    !RoslynString.IsNullOrWhiteSpace(suffix))
                 {
                     suffixInfo = SuffixInfo.Create(suffix, canSuffixBeCollection: false);
                     return true;

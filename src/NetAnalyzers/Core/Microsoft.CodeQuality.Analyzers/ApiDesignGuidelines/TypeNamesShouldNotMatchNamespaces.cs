@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
-        private static readonly object s_lock = new object();
+        private static readonly object s_lock = new();
         private static ImmutableDictionary<string, string>? s_wellKnownSystemNamespaceTable;
 
         private static ImmutableDictionary<string, string> WellKnownSystemNamespaceTable
@@ -59,12 +59,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     var externallyVisibleNamedTypes = new ConcurrentBag<INamedTypeSymbol>();

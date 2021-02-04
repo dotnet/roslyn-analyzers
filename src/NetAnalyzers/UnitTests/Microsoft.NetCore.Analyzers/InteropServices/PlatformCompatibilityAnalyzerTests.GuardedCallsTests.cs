@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
@@ -126,8 +127,12 @@ public class Test
 }
 ";
             await VerifyAnalyzerAsyncCs(csSource, s_msBuildPlatforms,
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(24, 13).WithArguments("BrowserOnlyType", "'browser'"),
+#pragma warning restore RS0030 // Do not used banned APIs
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(25, 13).WithArguments("WindowsOnlyType", "'windows'"));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
@@ -713,7 +718,6 @@ class Test
     [UnsupportedOSPlatform(""ios12.1"")]
     void NotForIos12OrLater() { }
 }";
-
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
@@ -1073,7 +1077,8 @@ static class Some
 
             await VerifyAnalyzerAsyncCs(source,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsReachable).WithLocation(0).
-                WithArguments("Some.WindowsSpecificApi()", "'windows' 10.0 and later", "'windows' all versions"));
+                WithArguments("Some.WindowsSpecificApi()", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"),
+                GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "windows")));
         }
 
         [Fact]
@@ -1564,7 +1569,7 @@ public class Test
             await VerifyAnalyzerAsyncCs(source);
         }
 
-        [Fact(Skip = "TODO: Failing because we cannot detect the correct local invocation being called")]
+        [Fact]
         public async Task LocalFunctionCallsPlatformDependentMember_InvokedFromDifferentContext()
         {
             var source = @"
@@ -1574,24 +1579,17 @@ public class Test
 {
     void M()
     {
+        LocalM();
         if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
         {
-            LocalM(true);
+            LocalM();
         }
-        LocalM(false);
         return;
 
-        void LocalM(bool suppressed)
+        void LocalM()
         {
-            if (suppressed)
-            {
-                WindowsOnlyMethod();
-            }
-            else
-            {
-                [|WindowsOnlyMethod()|];
-            }
-            
+            [|WindowsOnlyMethod()|];
+           
             if (OperatingSystem.IsOSPlatformVersionAtLeast(""Windows"", 10, 2))
             {
                 WindowsOnlyMethod();
@@ -1607,13 +1605,13 @@ public class Test
             }
         }
     }
+
     [SupportedOSPlatform(""Windows10.1.2.3"")]
     public void WindowsOnlyMethod() { }
     [UnsupportedOSPlatform(""Windows10.0"")]
     public void UnsupportedWindows10() { }
-}
-";
-            await VerifyAnalyzerAsyncCs(source);
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]

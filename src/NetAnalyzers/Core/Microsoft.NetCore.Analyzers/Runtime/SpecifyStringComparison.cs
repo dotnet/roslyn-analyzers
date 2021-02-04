@@ -51,12 +51,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule_CA1307, Rule_CA1310);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(csaContext =>
+            context.RegisterCompilationStartAction(csaContext =>
             {
                 var stringComparisonType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
@@ -69,6 +69,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var overloadMap = GetWellKnownStringOverloads(csaContext.Compilation, stringType, stringComparisonType);
 
+                var linqExpressionType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
+
                 csaContext.RegisterOperationAction(oaContext =>
                 {
                     var invocationExpression = (IInvocationOperation)oaContext.Operation;
@@ -77,6 +79,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (targetMethod.IsGenericMethod ||
                         targetMethod.ContainingType == null ||
                         targetMethod.ContainingType.IsErrorType())
+                    {
+                        return;
+                    }
+
+                    // Check if we are in a Expression<Func<T...>> context, in which case it is possible
+                    // that the underlying call doesn't have the comparison option so we want to bail-out.
+                    if (invocationExpression.IsWithinExpressionTree(linqExpressionType))
                     {
                         return;
                     }

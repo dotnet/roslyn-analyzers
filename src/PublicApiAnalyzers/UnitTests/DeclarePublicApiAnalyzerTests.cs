@@ -1492,6 +1492,7 @@ C.Property.set -> void";
             var source = @"
 public class C
 {
+    private C() { }
     public int Field1;
     public int Field2;
     public int {|RS0016:Field3|}; // Newly added field, not in current public API.
@@ -1511,6 +1512,7 @@ public class C
             var source = @"
 public class C
 {
+    private C() { }
     public int {|RS0016:Field1|}; // Newly added field, not in current public API.
 }
 ";

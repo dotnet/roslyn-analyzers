@@ -102,8 +102,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
             {
                 TestState =
                 {
-                    Sources = { source },
-                    AdditionalFiles = { },
+                    Sources = { source }
                 },
                 AnalyzerConfigDocument = editorConfigText,
             };
@@ -116,6 +115,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
             if (unshippedApiText != null)
             {
                 test.TestState.AdditionalFiles.Add((DeclarePublicApiAnalyzer.UnshippedFileName, unshippedApiText));
+            }
+
+            if (editorConfigText != null)
+            {
+                test.TestState.AdditionalFiles.Add((".editorconfig", editorConfigText));
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -1417,6 +1421,31 @@ C<T>.field2 -> C<T>.Nested";
             var unshippedText = @"";
 
             await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
+        [Fact, WorkItem(4736, "https://github.com/dotnet/roslyn-analyzers/issues/4736")]
+        public async Task ExcludeSymbolNames()
+        {
+            // Type C has no public member "Method", but the shipped API has an entry for it.
+            var source = @"
+namespace Internal
+{
+    public class IgnoreMe {
+        public int Field;
+        public int Property { get; set; }
+        private void Method() { }
+    }
+}
+";
+
+            string shippedText = @"";
+            string unshippedText = @"";
+
+            // TODO: excluded_symbol_names should be directly on dotnet_public_api_analyzer
+            // var editorconfigText = "dotnet_public_api_analyzer.excluded_symbol_names = T:Internal.*";
+            var editorconfigText = "dotnet_public_api_analyzer.RS0016.excluded_symbol_names = T:Internal.*";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, editorconfigText);
         }
 
         #endregion

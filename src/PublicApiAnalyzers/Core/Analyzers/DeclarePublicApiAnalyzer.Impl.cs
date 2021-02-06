@@ -121,7 +121,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             internal void OnSymbolAction(SymbolAnalysisContext symbolContext)
             {
                 var obsoleteAttribute = symbolContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
-                OnSymbolActionCore(symbolContext.Symbol, symbolContext.ReportDiagnostic, obsoleteAttribute);
+                OnSymbolActionCore(symbolContext.Symbol, symbolContext.Compilation, symbolContext.ReportDiagnostic, symbolContext.Options, obsoleteAttribute, cancellationToken: symbolContext.CancellationToken);
             }
 
             internal void OnPropertyAction(SymbolAnalysisContext symbolContext)
@@ -162,6 +162,11 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return;
                 }
 
+                if (symbolContext.Options.IsConfiguredToSkipAnalysis(DeclareNewApiRule, accessor, symbolContext.Compilation, symbolContext.CancellationToken))
+                {
+                    return;
+                }
+
                 var obsoleteAttribute = symbolContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 this.OnSymbolActionCore(accessor, symbolContext.ReportDiagnostic, isImplicitlyDeclaredConstructor: false, obsoleteAttribute);
             }
@@ -170,9 +175,21 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <param name="reportDiagnostic">Action called to actually report a diagnostic.</param>
             /// <param name="explicitLocation">A location to report the diagnostics for a symbol at. If null, then
             /// the location of the symbol will be used.</param>
-            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, INamedTypeSymbol? obsoleteAttribute, Location? explicitLocation = null)
+            private void OnSymbolActionCore(
+                ISymbol symbol,
+                Compilation compilation,
+                Action<Diagnostic> reportDiagnostic,
+                AnalyzerOptions options,
+                INamedTypeSymbol? obsoleteAttribute,
+                Location? explicitLocation = null,
+                CancellationToken cancellationToken = default)
             {
                 if (!IsPublicAPI(symbol))
+                {
+                    return;
+                }
+
+                if (options.IsConfiguredToSkipAnalysis(DeclareNewApiRule, symbol, compilation, cancellationToken))
                 {
                     return;
                 }
@@ -643,7 +660,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             internal void OnCompilationEnd(CompilationAnalysisContext context)
             {
-                ProcessTypeForwardedAttributes(context.Compilation, context.ReportDiagnostic, context.CancellationToken);
+                ProcessTypeForwardedAttributes(context);
                 List<ApiLine> deletedApiList = GetDeletedApiList();
                 foreach (ApiLine cur in deletedApiList)
                 {
@@ -654,8 +671,10 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            private void ProcessTypeForwardedAttributes(Compilation compilation, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
+            private void ProcessTypeForwardedAttributes(CompilationAnalysisContext context)
             {
+                var (compilation, cancellationToken) = (context.Compilation, context.CancellationToken);
+
                 var typeForwardedToAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesTypeForwardedToAttribute);
 
                 if (typeForwardedToAttribute != null)
@@ -670,7 +689,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                                 if (attribute.ConstructorArguments[0].Value is INamedTypeSymbol forwardedType)
                                 {
                                     var obsoleteAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
-                                    VisitForwardedTypeRecursively(forwardedType, reportDiagnostic, obsoleteAttribute, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
+                                    VisitForwardedTypeRecursively(forwardedType, compilation, context.ReportDiagnostic, context.Options, obsoleteAttribute, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
                                 }
                             }
                         }
@@ -678,23 +697,30 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            private void VisitForwardedTypeRecursively(ISymbol symbol, Action<Diagnostic> reportDiagnostic, INamedTypeSymbol? obsoleteAttribute, Location typeForwardedAttributeLocation, CancellationToken cancellationToken)
+            private void VisitForwardedTypeRecursively(
+                ISymbol symbol,
+                Compilation compilation,
+                Action<Diagnostic> reportDiagnostic,
+                AnalyzerOptions options,
+                INamedTypeSymbol? obsoleteAttribute,
+                Location typeForwardedAttributeLocation,
+                CancellationToken cancellationToken)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                OnSymbolActionCore(symbol, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation);
+                OnSymbolActionCore(symbol, compilation, reportDiagnostic, options, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
 
                 if (symbol is INamedTypeSymbol namedTypeSymbol)
                 {
                     foreach (var nestedType in namedTypeSymbol.GetTypeMembers())
                     {
-                        VisitForwardedTypeRecursively(nestedType, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
+                        VisitForwardedTypeRecursively(nestedType, compilation, reportDiagnostic, options, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
                     }
 
                     foreach (var member in namedTypeSymbol.GetMembers())
                     {
                         if (!(member.IsImplicitlyDeclared && member.IsDefaultConstructor()))
                         {
-                            VisitForwardedTypeRecursively(member, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
+                            VisitForwardedTypeRecursively(member, compilation, reportDiagnostic, options, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
                         }
                     }
                 }

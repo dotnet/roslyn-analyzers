@@ -642,6 +642,21 @@
         <target state="translated">Ne pas désactiver ServicePointManagerSecurityProtocols</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyDescription">
+        <source>Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key). Remove() will already check whether the key exists, and will not throw if it does not.</source>
+        <target state="new">Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key). Remove() will already check whether the key exists, and will not throw if it does not.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyMessage">
+        <source>Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key)</source>
+        <target state="new">Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyTitle">
+        <source>Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key)</source>
+        <target state="new">Do not guard Dictionary.Remove(key) with Dictionary.ContainsKey(key)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotHardCodeCertificate">
         <source>Do not hard-code certificate</source>
         <target state="translated">Ne pas coder en dur le certificat</target>

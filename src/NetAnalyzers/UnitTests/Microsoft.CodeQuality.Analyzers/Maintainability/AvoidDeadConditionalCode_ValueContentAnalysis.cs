@@ -3121,5 +3121,73 @@ internal class Class1
             }.RunAsync();
         }
 #endif
+
+        [Fact]
+        public async Task RecursivePattern_PropertySubpattern()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+class Foo
+{
+    int Prop { get; set; }
+
+    static void M()
+    {        
+        var x = new Foo();
+        var y = x is Foo { Prop: 0 };   // Test is-pattern as non-condition
+        
+        if (x is Foo { Prop: 0 })   // Test is-pattern as condition
+        {
+            x = null;
+        }
+    }
+}"
+                    }
+                },
+                LanguageVersion = CSharpLanguageVersion.CSharp9
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task RecursivePattern_PositionalPattern()
+        {
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System;
+internal static class Program
+{
+    public static void Deconstruct<T>(this T[] array, out T item1, out T item2)
+    {
+        item1 = array[0];
+        item2 = array[1];
+    }
+
+    static void Main()
+    {
+        var array = new[] { 1, 2, 3, 4, 5 };
+        var x = array is (1, _); // Test as non-condition
+        
+        if (array is (1, _))    // test as condition
+        {
+            array = null;
+        }
+    }
+}"
+                    }
+                },
+                LanguageVersion = CSharpLanguageVersion.CSharp9
+            }.RunAsync();
+        }
     }
 }

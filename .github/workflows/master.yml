@@ -1,0 +1,42 @@
+name: Run .NET Code Analysis
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  code-analysis:
+    name: .NET Code Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run NuGet Restore
+        run: dotnet restore RoslynAnalyzers.sln
+
+      - name: Run .NET Code Analysis - All analyzers
+        uses: dotnet/code-analysis@v1
+        id: code-analysis-all
+        with:
+          projects: RoslynAnalyzers.sln
+          analysis-level: latest-all
+
+      - name: Run .NET Code Analysis - All security analyzers + other minimum recommended analyzers
+        uses: dotnet/code-analysis@v1
+        id: code-analysis-security
+        with:
+          projects: RoslynAnalyzers.sln
+          security: all
+
+      - name: Run .NET Code Analysis - Recommended security + performance analyzers only
+        uses: dotnet/code-analysis@v1
+        id: code-analysis-security-and-performance
+        with:
+          projects: RoslynAnalyzers.sln
+          analysis-level: none 
+          security: recommended
+          performance: recommended

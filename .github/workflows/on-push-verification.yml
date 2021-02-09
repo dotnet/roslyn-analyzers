@@ -14,21 +14,21 @@ jobs:
         run: dotnet restore RoslynAnalyzers.sln
 
       - name: Run .NET Code Analysis - All analyzers
-        uses: dotnet/code-analysis@v1
+        uses: dotnet/code-analysis@master
         id: code-analysis-all
         with:
           projects: RoslynAnalyzers.sln
           analysis-level: latest-all
 
       - name: Run .NET Code Analysis - All security analyzers + other minimum recommended analyzers
-        uses: dotnet/code-analysis@v1
+        uses: dotnet/code-analysis@master
         id: code-analysis-security
         with:
           projects: RoslynAnalyzers.sln
           security: all
 
       - name: Run .NET Code Analysis - Recommended security + performance analyzers only
-        uses: dotnet/code-analysis@v1
+        uses: dotnet/code-analysis@master
         id: code-analysis-security-and-performance
         with:
           projects: RoslynAnalyzers.sln

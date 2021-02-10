@@ -12,6 +12,6 @@ If your Pull Request is doing one of the following:
 
 Then, make sure to run `msbuild /t:pack /v:m` in the repository root; otherwise, the CI build will fail.
 
-Note: Consider merging master into your branch before you run the pack command to reduce merge conflicts.
+Note: Consider merging the PR base branch (`2.9.x`, `master`, or `release/*`) into your branch before you run the pack command to reduce merge conflicts.
 
 -->

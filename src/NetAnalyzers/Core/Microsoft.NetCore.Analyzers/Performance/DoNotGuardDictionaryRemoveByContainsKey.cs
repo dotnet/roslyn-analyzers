@@ -47,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
 
             context.RegisterOperationAction(AnalyzeNamedType, OperationKind.Invocation);
-
+            
             static void AnalyzeNamedType(OperationAnalysisContext context)
             {
                 if (context.Operation is not CodeAnalysis.Operations.IInvocationOperation invocationOperation)
@@ -60,12 +60,31 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
 
                 if (parentConditionalOperation.WhenFalse == null &&
-                    parentConditionalOperation.WhenTrue.Children.HasExactly(1) &&
-                    parentConditionalOperation.WhenTrue.Children.First() is CodeAnalysis.Operations.IInvocationOperation childInvocationOperation &&
-                    childInvocationOperation.TargetMethod.Name == "Remove")
+                    parentConditionalOperation.WhenTrue.Children.HasExactly(1))
                 {
                     var diagnostic = Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation());
-                    context.ReportDiagnostic(diagnostic);
+
+                    switch (parentConditionalOperation.WhenTrue.Children.First())
+                    {
+                        case CodeAnalysis.Operations.IInvocationOperation childInvocationOperation:
+                            if (childInvocationOperation.TargetMethod.Name == "Remove")
+                            {
+                                context.ReportDiagnostic(diagnostic);
+                            }
+
+                            break;
+                        case CodeAnalysis.Operations.IExpressionStatementOperation childStatementOperation:
+                            if (childStatementOperation.Children.HasExactly(1) &&
+                                childStatementOperation.Children.First() is CodeAnalysis.Operations.IInvocationOperation nestedInvocationOperation &&
+                                nestedInvocationOperation.TargetMethod.Name == "Remove")
+                            {
+                                context.ReportDiagnostic(diagnostic);
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }

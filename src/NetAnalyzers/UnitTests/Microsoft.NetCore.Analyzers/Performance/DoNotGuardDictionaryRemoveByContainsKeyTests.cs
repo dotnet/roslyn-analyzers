@@ -46,6 +46,36 @@ namespace Testopolis
         }
 
         [Fact]
+        public async Task RemoveIsTheOnlyStatementInABlock_ReportsDiagnostic_CS()
+        {
+            string code = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if ({|#0:MyDictionary.ContainsKey(""Key"")|})
+            {
+                MyDictionary.Remove(""Key"");
+            }
+        }
+    }
+}";
+
+            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
+            await new VerifyCS.Test
+            {
+                TestCode = code,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ExpectedDiagnostics = { diagnostic }
+            }.RunAsync();
+        }
+
+        [Fact]
         public async Task AdditionalStatements_NoDiagnostic_CS()
         {
             string code = @"

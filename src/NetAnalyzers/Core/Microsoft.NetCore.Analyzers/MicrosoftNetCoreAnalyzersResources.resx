@@ -1519,4 +1519,16 @@
     <value>and all other platforms</value>
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
+  <data name="ConstructorParameterShouldMatchFieldName" xml:space="preserve">
+    <value>In the constructor of '{0}', change the name of parameter '{1}', to match the referenced field '{2}'</value>
+  </data>
+  <data name="ConstructorParameterShouldMatchPropertyName" xml:space="preserve">
+    <value>In the constructor of '{0}', change the name of parameter '{1}' to match the referenced property '{2}'</value>
+  </data>
+  <data name="ConstructorParametersShouldMatchPropertyNamesDescription" xml:space="preserve">
+    <value>Constructor parameters should match referenced property or field names.</value>
+  </data>
+  <data name="ConstructorParametersShouldMatchPropertyNamesTitle" xml:space="preserve">
+    <value>Constructor parameters should match referenced property and field names</value>
+  </data>
 </root>

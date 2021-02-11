@@ -15,9 +15,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // Implement serialization constructors
         internal const string RuleCA2229Id = "CA2229";
 
+        #region Diagnostic Descriptor Definitions
         private static readonly LocalizableString s_localizableTitleCA2229 =
-            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsTitle),
-                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+    new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsTitle),
+        MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2229 =
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsDescription),
@@ -101,6 +102,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229Default, RuleCA2229Sealed, RuleCA2229Unsealed, RuleCA2235, RuleCA2237);
 
+        #endregion
+
+        #region Public Methods
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
@@ -145,6 +149,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     context.RegisterSymbolAction(symbolAnalyzer.AnalyzeSymbol, SymbolKind.NamedType);
                 });
         }
+
+        #endregion
+
+        #region Private Classes
 
         private sealed class SymbolAnalyzer
         {
@@ -297,5 +305,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 };
             }
         }
+
+        #endregion
     }
 }

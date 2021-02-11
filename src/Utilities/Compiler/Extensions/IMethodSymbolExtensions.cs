@@ -384,6 +384,10 @@ namespace Analyzer.Utilities.Extensions
                 method.Parameters[0].Type.Equals(serializationInfoType) &&
                 method.Parameters[1].Type.Equals(streamingContextType);
 
+        public static bool IsJsonConstructor([NotNullWhen(returnValue: true)] this IMethodSymbol? method, INamedTypeSymbol? jsonAttributeInfoType)
+            => method.IsConstructor() &&
+                method.HasAttribute(jsonAttributeInfoType);
+
         public static bool IsGetObjectData([NotNullWhen(returnValue: true)] this IMethodSymbol? method, INamedTypeSymbol? serializationInfoType, INamedTypeSymbol? streamingContextType)
             => method?.Name == "GetObjectData" &&
                 method.ReturnsVoid &&

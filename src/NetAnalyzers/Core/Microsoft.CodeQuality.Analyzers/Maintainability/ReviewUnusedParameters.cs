@@ -196,6 +196,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Ignore primary constructor (body-less) of positional records.
+            // TODO: I have to handle a similar situation
             if (IsPositionalRecordPrimaryConstructor(method))
             {
                 return false;

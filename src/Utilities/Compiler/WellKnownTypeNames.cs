@@ -333,6 +333,7 @@ namespace Analyzer.Utilities
         public const string SystemTextEncoding = "System.Text.Encoding";
         public const string SystemTextRegularExpressionsRegex = "System.Text.RegularExpressions.Regex";
         public const string SystemTextStringBuilder = "System.Text.StringBuilder";
+        public const string SystemTextJsonSerializationJsonConstructorAttribute = "System.Text.Json.Serialization.JsonConstructorAttribute";
         public const string SystemThreadingCancellationToken = "System.Threading.CancellationToken";
         public const string SystemThreadingInterlocked = "System.Threading.Interlocked";
         public const string SystemThreadingMonitor = "System.Threading.Monitor";

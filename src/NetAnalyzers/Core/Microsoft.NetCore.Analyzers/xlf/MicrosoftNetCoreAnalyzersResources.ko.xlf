@@ -177,6 +177,26 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
+      <trans-unit id="ConstructorParameterShouldMatchFieldName">
+        <source>In the constructor of '{0}', change the name of parameter '{1}', to match the referenced field '{2}'</source>
+        <target state="new">In the constructor of '{0}', change the name of parameter '{1}', to match the referenced field '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstructorParameterShouldMatchPropertyName">
+        <source>In the constructor of '{0}', change the name of parameter '{1}' to match the referenced property '{2}'</source>
+        <target state="new">In the constructor of '{0}', change the name of parameter '{1}' to match the referenced property '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstructorParametersShouldMatchPropertyNamesDescription">
+        <source>Constructor parameters should match referenced property or field names.</source>
+        <target state="new">Constructor parameters should match referenced property or field names.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstructorParametersShouldMatchPropertyNamesTitle">
+        <source>Constructor parameters should match referenced property and field names</source>
+        <target state="new">Constructor parameters should match referenced property and field names</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">신뢰할 수 없는 입력을 역직렬화하는 경우 {0} 개체를 역직렬화하는 것은 안전하지 않습니다. '{1}'은(는) {0}이거나 이 항목에서 파생됩니다.</target>

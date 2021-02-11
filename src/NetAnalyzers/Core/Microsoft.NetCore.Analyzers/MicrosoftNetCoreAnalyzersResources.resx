@@ -1519,4 +1519,16 @@
     <value>and all other platforms</value>
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
+  <data name="UseValidPlatformStringDescription" xml:space="preserve">
+    <value>Platform compatibility analyzer would not work properly if invalid platform name or version used.</value>
+  </data>
+  <data name="UseValidPlatformStringTitle" xml:space="preserve">
+    <value>Use valid platform string</value>
+  </data>
+  <data name="UseValidPlatformStringUnknownPlatform" xml:space="preserve">
+    <value>The platform '{0}' is not a known platform name</value>
+  </data>
+  <data name="UseValidPlatformStringInvalidVersion" xml:space="preserve">
+    <value>The '{0}' is not a valid version. Please provide an input having two to four numbers separated with a dot.</value>
+  </data>
 </root>

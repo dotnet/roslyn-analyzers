@@ -7,10 +7,10 @@ using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.DoNotGuardDictionaryRemoveByContainsKey,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.NetCore.Analyzers.Performance.DoNotGuardDictionaryRemoveByContainsKeyFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.DoNotGuardDictionaryRemoveByContainsKey,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.NetCore.Analyzers.Performance.DoNotGuardDictionaryRemoveByContainsKeyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_CS()
         {
-            string code = @"
+            string testCode = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -36,10 +36,25 @@ namespace Testopolis
     }
 }";
 
+            string fixedCode = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            {|#0:MyDictionary.Remove(""Key"")|};
+        }
+    }
+}";
             var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
             await new VerifyCS.Test
             {
-                TestCode = code,
+                TestCode = testCode,
+                FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 ExpectedDiagnostics = { diagnostic }
             }.RunAsync();
@@ -48,7 +63,7 @@ namespace Testopolis
         [Fact]
         public async Task RemoveIsTheOnlyStatementInABlock_ReportsDiagnostic_CS()
         {
-            string code = @"
+            string testCode = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -66,10 +81,26 @@ namespace Testopolis
     }
 }";
 
+            string fixedCode = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            {|#0:MyDictionary.Remove(""Key"");|}
+        }
+    }
+}";
+
             var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
             await new VerifyCS.Test
             {
-                TestCode = code,
+                TestCode = testCode,
+                FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 ExpectedDiagnostics = { diagnostic }
             }.RunAsync();
@@ -108,7 +139,7 @@ namespace Testopolis
         [Fact]
         public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_VB()
         {
-            string code = @"
+            string testCode = @"
 " + VBUsings + @"
 Namespace Testopolis
     Public Class SomeClass
@@ -122,10 +153,23 @@ Namespace Testopolis
     End Class
 End Namespace";
 
+            string fixedCode = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            {|#0:MyDictionary.Remove(""Key"")|}
+        End Sub
+    End Class
+End Namespace";
+
             var diagnostic = VerifyVB.Diagnostic(Rule).WithLocation(0);
             await new VerifyVB.Test
             {
-                TestCode = code,
+                TestCode = testCode,
+                FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 ExpectedDiagnostics = { diagnostic }
             }.RunAsync();

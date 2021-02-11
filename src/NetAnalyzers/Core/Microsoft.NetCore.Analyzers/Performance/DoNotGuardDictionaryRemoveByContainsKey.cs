@@ -20,6 +20,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static readonly LocalizableString s_localizableMessage = CreateResource(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage));
         private static readonly LocalizableString s_localizableDescription = CreateResource(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription));
 
+        public const string AdditionalDocumentLocationInfoSeparator = ";;";
+
+        public const string ConditionalOperation = nameof(ConditionalOperation);
+        public const string ChildStatementOperation = nameof(ChildStatementOperation);
+
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
             s_localizableTitle,
@@ -64,23 +69,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (parentConditionalOperation.WhenFalse == null &&
                     parentConditionalOperation.WhenTrue.Children.HasExactly(1))
                 {
-                    var diagnostic = Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation());
+                    var properties = ImmutableDictionary.CreateBuilder<string, string>();
+                    properties[ConditionalOperation] = CreateLocationInfo(parentConditionalOperation.Syntax);
 
                     switch (parentConditionalOperation.WhenTrue.Children.First())
                     {
                         case CodeAnalysis.Operations.IInvocationOperation childInvocationOperation:
                             if (childInvocationOperation.TargetMethod.Name == "Remove")
                             {
-                                context.ReportDiagnostic(diagnostic);
+                                properties[ChildStatementOperation] = CreateLocationInfo(childInvocationOperation.Syntax.Parent);
+
+                                context.ReportDiagnostic(Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation(), properties.ToImmutable()));
                             }
 
                             break;
                         case CodeAnalysis.Operations.IExpressionStatementOperation childStatementOperation:
+                            // if the if statement contains a block, only proceed if that block contains a single statement
+
                             if (childStatementOperation.Children.HasExactly(1) &&
                                 childStatementOperation.Children.First() is CodeAnalysis.Operations.IInvocationOperation nestedInvocationOperation &&
                                 nestedInvocationOperation.TargetMethod.Name == "Remove")
                             {
-                                context.ReportDiagnostic(diagnostic);
+                                properties[ChildStatementOperation] = CreateLocationInfo(nestedInvocationOperation.Syntax.Parent);
+
+                                context.ReportDiagnostic(Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation(), properties.ToImmutable()));
                             }
 
                             break;
@@ -93,5 +105,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static LocalizableString CreateResource(string resourceName)
             => new LocalizableResourceString(resourceName, Resx.ResourceManager, typeof(Resx));
+
+        private static string CreateLocationInfo(SyntaxNode syntax)
+        {
+            // see DiagnosticDescriptorCreationAnalyzer
+
+            var location = syntax.GetLocation();
+            var span = location.SourceSpan;
+
+            return $"{span.Start}{AdditionalDocumentLocationInfoSeparator}{span.Length}";
+        }
     }
 }

@@ -81,8 +81,8 @@ namespace Testopolis
             string code = @"
 " + VBUsings + @"
 Namespace Testopolis
-    Public Class MyClass
-        Public Dictionary(Of String, String) MyDictionary = New Dictionary(Of String, String)();
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
             If {|#0:MyDictionary.ContainsKey(""Key"")|} Then
@@ -107,8 +107,8 @@ End Namespace";
             string code = @"
 " + VBUsings + @"
 Namespace Testopolis
-    Public Class MyClass
-        Public Dictionary(Of String, String) MyDictionary = New Dictionary(Of String, String)();
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
             If MyDictionary.ContainsKey(""Key"") Then

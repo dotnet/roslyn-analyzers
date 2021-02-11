@@ -55,12 +55,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
                 INamedTypeSymbol? exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
@@ -80,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // Find out if this given method is one of the interesting categories of methods.
-                    // For eg: certain Equals methods or certain accessors etc.
+                    // For example, certain Equals methods or certain accessors etc.
                     MethodCategory methodCategory = methodCategories.FirstOrDefault(l => l.IsMatch(methodSymbol, compilation));
                     if (methodCategory == null)
                     {
@@ -290,7 +290,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     return true;
                 }
-
 
                 INamedTypeSymbol? iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))

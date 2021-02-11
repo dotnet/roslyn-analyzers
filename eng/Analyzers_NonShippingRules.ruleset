@@ -30,6 +30,11 @@
   </Rules>
 
   <Rules AnalyzerId="xunit.analyzers" RuleNamespace="Xunit.Analyzers">
-    <Rule Id="xUnit1004" Action="None" /> <!-- allow skipped tests -->
+    <Rule Id="xUnit1004" Action="Hidden" /> <!-- allow skipped tests, but also enable the refactoring to enable them -->
   </Rules>
+
+  <Rules AnalyzerId="Roslyn.Diagnostics.Analyzers" RuleNamespace="Ignored">
+    <Rule Id="RS0043" Action="None" /> <!-- Do not call 'GetTestAccessor()': does not apply to test code -->
+  </Rules>
+
 </RuleSet>

@@ -58,14 +58,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         { 
             var propertyReference = (IPropertyReferenceOperation)context.Operation;
             
-            if (!IsDictionaryAccess(propertyReference, dictionaryType) 
+            if (propertyReference.Parent is IAssignmentOperation 
+                ||!IsDictionaryAccess(propertyReference, dictionaryType) 
                 || !TryGetParentConditionalOperation(propertyReference, out var conditionalOperation)
                 || !TryGetContainsKeyGuard(conditionalOperation, out var containsKeyInvocation))
             {
                 return;
             }
 
-            if (conditionalOperation!.WhenTrue is IBlockOperation blockOperation && DictionaryEntryIsModified(blockOperation))
+            if (conditionalOperation!.WhenTrue is IBlockOperation blockOperation && DictionaryEntryIsModified(propertyReference, blockOperation))
             {
                 return;
             }
@@ -74,23 +75,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.ReportDiagnostic(Diagnostic.Create(ContainsKeyRule, containsKeyInvocation.Syntax.GetLocation(), additionalLocations));
         }
 
-        private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, [NotNullWhen(true)] out IInvocationOperation? invocationOperation)
+        private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, [NotNullWhen(true)] out IInvocationOperation? containsKeyInvocation)
         {
-            invocationOperation = null;
-            
-            if (conditionalOperation.Condition is IInvocationOperation i)
+            containsKeyInvocation = conditionalOperation.Condition as IInvocationOperation ?? FindContainsKeyInvocation(conditionalOperation.Condition);
+            if (containsKeyInvocation is not null)
             {
-                invocationOperation = i;
-
                 return true;
             }
             
             return false;
         }
 
-        private static bool DictionaryEntryIsModified(IBlockOperation blockOperation)
+        private static IInvocationOperation? FindContainsKeyInvocation(IOperation baseOperation)
         {
-            return false;
+            return baseOperation switch
+            {
+                IInvocationOperation i when (i.TargetMethod.Name == ContainsKeyMethodName) => i,
+                IBinaryOperation b when (b.OperatorKind == BinaryOperatorKind.ConditionalAnd || b.OperatorKind == BinaryOperatorKind.ConditionalOr) => 
+                    FindContainsKeyInvocation(b.LeftOperand) ?? FindContainsKeyInvocation(b.RightOperand),
+                _ => null
+            };
+        }
+
+        private static bool DictionaryEntryIsModified(IPropertyReferenceOperation dictionaryAccess, IBlockOperation blockOperation)
+        {
+            return blockOperation.Operations.OfType<IExpressionStatementOperation>().Any(o =>
+                o.Operation is IAssignmentOperation {Target: IPropertyReferenceOperation reference} && reference.Property.Equals(dictionaryAccess.Property));
         }
 
         private bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
@@ -117,7 +127,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool IsDictionaryType(INamedTypeSymbol derived, INamedTypeSymbol dictionaryType)
+        private static bool IsDictionaryType(INamedTypeSymbol derived, ISymbol dictionaryType)
         {
             var constructedDictionaryType = derived.GetBaseTypesAndThis()
                 .WhereAsArray(x => x.OriginalDefinition.Equals(dictionaryType, SymbolEqualityComparer.Default))

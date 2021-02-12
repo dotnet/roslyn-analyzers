@@ -248,8 +248,8 @@ namespace Test
 
         [Theory]
         [InlineData(DictionaryContainsKeyModifyDictionary)]
-        [InlineData(DictionaryContainsKeyNonIDictionary)]
-        [InlineData(DictionaryContainsKeyNotGuardedByContainsKey)]
+        //[InlineData(DictionaryContainsKeyNonIDictionary)]
+        //[InlineData(DictionaryContainsKeyNotGuardedByContainsKey)]
         public Task ShouldNotReportDiagnostic(string codeSnippet)
         {
             string testCode = CreateCSharpCode(codeSnippet);

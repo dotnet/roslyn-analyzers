@@ -347,17 +347,14 @@ public class Test
             await test.RunAsync();
         }
 
-        private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
+        private static VerifyCS.Test PopulateTestCs(string sourceCode)
         {
-            var test = new VerifyCS.Test
+            return new VerifyCS.Test
             {
                 TestCode = sourceCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
-                TestState = { }
             };
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test;
         }
 
         private static async Task VerifyAnalyzerAsyncVb(string sourceCode)
@@ -373,17 +370,14 @@ public class Test
             await test.RunAsync();
         }
 
-        private static VerifyVB.Test PopulateTestVb(string sourceCode, params DiagnosticResult[] expected)
+        private static VerifyVB.Test PopulateTestVb(string sourceCode)
         {
-            var test = new VerifyVB.Test
+            return new VerifyVB.Test
             {
                 TestCode = sourceCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
-                TestState = { },
             };
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test;
         }
     }
 }

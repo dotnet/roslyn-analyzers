@@ -103,8 +103,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             foreach (var attribute in symbol.GetAttributes())
             {
-                if (supportedAttrbute.Equals(attribute.AttributeClass.OriginalDefinition) ||
-                    unsupportedAttribute.Equals(attribute.AttributeClass.OriginalDefinition))
+                if (supportedAttrbute.Equals(attribute.AttributeClass.OriginalDefinition, SymbolEqualityComparer.Default) ||
+                    unsupportedAttribute.Equals(attribute.AttributeClass.OriginalDefinition, SymbolEqualityComparer.Default))
                 {
                     AnalyzeAttribute(reportDiagnostic, attribute, knownPlatforms, token);
                 }

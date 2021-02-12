@@ -6,7 +6,7 @@ using Microsoft.NetCore.Analyzers.Runtime;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
-    Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpPreferDictionaryTryGetValueFixer>;
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
 {
@@ -41,9 +41,9 @@ namespace Test
         private const string DictionaryContainsKeyPrintValue = @"
             string key = ""key"";
             Dictionary<string, int> data = new Dictionary<string, int>();
-            if ([|data.ContainsKey(key)|])
+            if ({|#0:data.ContainsKey(key)|})
             {
-                Console.WriteLine(data[key]);
+                Console.WriteLine({|#1:data[key]|});
             }
 
             return 0;";
@@ -61,9 +61,9 @@ namespace Test
         private const string DictionaryContainsKeyReturnValue = @"
             string key = ""key"";
             ConcurrentDictionary<string, int> data = new ConcurrentDictionary<string, int>();
-            if ([|data.ContainsKey(key)|])
+            if ({|#0:data.ContainsKey(key)|})
             {
-                return data[key];
+                return {|#1:data[key]|};
             }
 
             return 0;";
@@ -81,11 +81,11 @@ namespace Test
         private const string DictionaryContainsKeyMultipleStatementsInIf = @"
             string key = ""key"";
             IDictionary<string, int> data = new Dictionary<string, int>();
-            if ([|data.ContainsKey(key)|])
+            if ({|#0:data.ContainsKey(key)|})
             {
                 Console.WriteLine(2);
                 var x = 2;
-                Console.WriteLine(data[key]);
+                Console.WriteLine({|#1:data[key]|});
                 
                 return x;
             }
@@ -109,11 +109,11 @@ namespace Test
         private const string DictionaryContainsKeyMultipleConditions = @"
             string key = ""key"";
             IDictionary<string, int> data = new Dictionary<string, int>();
-            if (key == ""key"" && [|data.ContainsKey(key)|])
+            if (key == ""key"" && {|#0:data.ContainsKey(key)|})
             {
                 Console.WriteLine(2);
                 var x = 2;
-                Console.WriteLine(data[key]);
+                Console.WriteLine({|#1:data[key]|});
                 
                 return x;
             }
@@ -137,11 +137,11 @@ namespace Test
         private const string DictionaryContainsKeyNestedDictionaryAccess = @"
             string key = ""key"";
             IDictionary<string, int> data = new Dictionary<string, int>();
-            if (key == ""key"" && [|data.ContainsKey(key)|])
+            if (key == ""key"" && {|#0:data.ContainsKey(key)|})
             {
                 Console.WriteLine(2);
                 var x = 2;
-                Console.WriteLine(Wrapper(data[key]));
+                Console.WriteLine(Wrapper({|#1:data[key]|}));
                 
                 return x;
             }
@@ -174,7 +174,7 @@ namespace Test
             string key = ""key"";
             IDictionary<string, int> data = new Dictionary<string, int>();
 
-            return [|data.ContainsKey(key)|] ? data[key] : 2;";
+            return {|#0:data.ContainsKey(key)|} ? {|#1:data[key]|} : 2;";
 
         private const string DictionaryContainsKeyTernaryFixed = @"
             string key = ""key"";
@@ -212,6 +212,16 @@ namespace Test
 
             return 0;";
 
+        private const string DictionaryContainsKeyNotGuardedByContainsKey = @"
+            string key = ""key"";
+            IDictionary<string, int> data = new Dictionary<string, int>();
+            if (data.ContainsValue(key))
+            {
+                Console.WriteLine(data[key]);
+            }
+
+            return 0;";
+
         #endregion
 
         [Theory]
@@ -225,7 +235,7 @@ namespace Test
         {
             string testCode = CreateCSharpCode(codeSnippet);
             string fixedCode = CreateCSharpCode(fixedCodeSnippet);
-            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryGetValueAnalyzer.ContainsKeyRule);
+            var diagnostic = VerifyCS.Diagnostic(PreferDictionaryTryGetValueAnalyzer.ContainsKeyRule).WithLocation(0).WithLocation(1);
 
             return new VerifyCS.Test
             {
@@ -239,6 +249,7 @@ namespace Test
         [Theory]
         [InlineData(DictionaryContainsKeyModifyDictionary)]
         [InlineData(DictionaryContainsKeyNonIDictionary)]
+        [InlineData(DictionaryContainsKeyNotGuardedByContainsKey)]
         public Task ShouldNotReportDiagnostic(string codeSnippet)
         {
             string testCode = CreateCSharpCode(codeSnippet);

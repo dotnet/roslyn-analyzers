@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class PreferDictionaryTryGetValueAnalyzer : DiagnosticAnalyzer
     {
-        public const string RuleId = "CA1838";
+        public const string RuleId = "CA1840";
 
         private const string ContainsKeyMethodName = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string IndexerName = "this[]";
@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var additionalLocations = ImmutableArray.Create(propertyReference.Syntax.GetLocation());
-            context.ReportDiagnostic(Diagnostic.Create(ContainsKeyRule, containsKeyInvocation.Syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(ContainsKeyRule, containsKeyInvocation.Syntax.GetLocation(), additionalLocations));
         }
 
         private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, [NotNullWhen(true)] out IInvocationOperation? invocationOperation)

@@ -4,3 +4,11 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1839 | Performance | Warning | PreferDictionaryTryGetValueAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839)
+
+### Removed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+CA1801 | Usage | Disabled | ReviewUnusedParametersAnalyzer, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca1801)
+IL3000 | Publish | Disabled | Moved analyzer to mono/linker
+IL3001 | Publish | Disabled | Moved analyzer to mono/linker

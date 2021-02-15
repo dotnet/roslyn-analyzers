@@ -2317,6 +2317,26 @@
         <target state="translated">'{0}.{1}' メソッドのこのオーバーロードは、安全でない可能性があります。これによって、サービス拒否攻撃に対して脆弱となり得るドキュメント型定義 (DTD) が有効になるおそれがあります。あるいは情報漏えいに対して脆弱となり得る XmlResolver が使用されるおそれがあります。その代わりに、XmlReader インスタンスを受け取るオーバーロードを使用して、DTD 処理を無効にし、XmlResolver を使用しないようにします。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="new">Use 'TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the Dictionary's TryGetValue method</source>
+        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

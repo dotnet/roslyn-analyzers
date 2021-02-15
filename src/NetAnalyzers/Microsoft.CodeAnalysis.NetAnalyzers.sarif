@@ -2443,6 +2443,25 @@
             ]
           }
         },
+        "CA1839": {
+          "id": "CA1839",
+          "shortDescription": "Prefer the Dictionary's TryGetValue method",
+          "fullDescription": "Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.",
+          "defaultLevel": "info",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferDictionaryTryGetValueAnalyzer",
+            "languages": [
+              "C#",
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

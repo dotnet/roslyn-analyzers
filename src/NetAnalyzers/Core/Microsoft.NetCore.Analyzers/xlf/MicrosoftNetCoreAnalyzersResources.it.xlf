@@ -2317,6 +2317,26 @@
         <target state="translated">Questo overload del metodo '{0}.{1}' è potenzialmente non sicuro. Può abilitare DTD (Document Type Definition), che può essere vulnerabile ad attacchi Denial of Service oppure usare un elemento XmlResolver che può essere vulnerabile alla diffusione di informazioni. Usare un overload che accetta un'istanza di XmlReader, con elaborazione DTD disabilitata e nessun elemento XmlResolver.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="new">Use 'TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the Dictionary's TryGetValue method</source>
+        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

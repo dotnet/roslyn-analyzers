@@ -2317,6 +2317,26 @@
         <target state="translated">To przeciążenie metody „{0}.{1}” jest potencjalnie niebezpieczne. Być może włącza definicję typu dokumentu podatną na ataki typu „odmowa usługi” lub używa elementu XmlResolver podatnego na ujawnienie informacji. Użyj zamiast tego przeciążenia, które przyjmuje wystąpienie elementu XmlReader, ma wyłączone przetwarzanie definicji typu dokumentu i nie używa elementu XmlResolver.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="new">Use 'TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the Dictionary's TryGetValue method</source>
+        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

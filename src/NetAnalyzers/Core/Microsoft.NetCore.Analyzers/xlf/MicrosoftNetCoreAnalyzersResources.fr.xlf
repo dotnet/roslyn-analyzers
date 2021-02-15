@@ -2317,6 +2317,26 @@
         <target state="translated">Cette surcharge de la méthode '{0}.{1}' est potentiellement non sécurisée. Elle peut activer le traitement DTD (définition de type de document), qui est vulnérable aux attaques par déni de service, ou utiliser une opération XmlResolver, qui est vulnérable à la divulgation d'informations. Employez une surcharge qui accepte plutôt une instance de XmlReader, avec désactivation du traitement DTD et de XmlResolver.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="new">Use 'TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the Dictionary's TryGetValue method</source>
+        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

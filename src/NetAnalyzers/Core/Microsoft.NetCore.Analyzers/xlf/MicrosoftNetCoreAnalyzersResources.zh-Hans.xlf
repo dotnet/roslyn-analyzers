@@ -2317,6 +2317,26 @@
         <target state="translated">重载“{0}.{1}”方法可能不安全。这样做可能会启用文档类型定义(DTD)，DTD 可能会遭到拒绝服务攻击，这样做也可能会使用 XmlResolver，这可能会导致信息泄露。请改用采用 XmlReader 实例的重载，禁用 DTD 处理且没有 XmlResolver。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueCodeFixTitle">
+        <source>Use 'TryGetValue(TKey, out TValue)'</source>
+        <target state="new">Use 'TryGetValue(TKey, out TValue)'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueTitle">
+        <source>Prefer the Dictionary's TryGetValue method</source>
+        <target state="new">Prefer the Dictionary's TryGetValue method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueMessage">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreferDictionaryTryGetValueDescription">
+        <source>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</source>
+        <target state="new">Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

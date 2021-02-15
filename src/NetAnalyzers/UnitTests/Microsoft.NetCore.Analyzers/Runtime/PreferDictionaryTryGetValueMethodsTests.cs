@@ -214,8 +214,9 @@ namespace Test
 
         private const string DictionaryContainsKeyNotGuardedByContainsKey = @"
             string key = ""key"";
-            IDictionary<string, int> data = new Dictionary<string, int>();
-            if (data.ContainsValue(key))
+            int value = 3;
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            if (data.ContainsValue(value))
             {
                 Console.WriteLine(data[key]);
             }
@@ -248,8 +249,8 @@ namespace Test
 
         [Theory]
         [InlineData(DictionaryContainsKeyModifyDictionary)]
-        //[InlineData(DictionaryContainsKeyNonIDictionary)]
-        //[InlineData(DictionaryContainsKeyNotGuardedByContainsKey)]
+        [InlineData(DictionaryContainsKeyNonIDictionary)]
+        [InlineData(DictionaryContainsKeyNotGuardedByContainsKey)]
         public Task ShouldNotReportDiagnostic(string codeSnippet)
         {
             string testCode = CreateCSharpCode(codeSnippet);
@@ -257,7 +258,7 @@ namespace Test
             return new VerifyCS.Test
             {
                 TestCode = testCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50
             }.RunAsync();
         }
 

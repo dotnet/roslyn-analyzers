@@ -11,7 +11,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferDictionaryTryGetValueAnalyzer.RuleId);
 
-        protected static string CodeFixTitle => "Fix me!";
+        protected static string PreferDictionaryTryGetValueCodeFixTitle => MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueCodeFixTitle;
+
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
     }
 }

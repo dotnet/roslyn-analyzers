@@ -1519,4 +1519,16 @@
     <value>and all other platforms</value>
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
+  <data name="PreferDictionaryTryGetValueCodeFixTitle" xml:space="preserve">
+    <value>Use 'TryGetValue(TKey, out TValue)'</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueTitle" xml:space="preserve">
+    <value>Prefer the Dictionary's TryGetValue method</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueMessage" xml:space="preserve">
+    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</value>
+  </data>
+  <data name="PreferDictionaryTryGetValueDescription" xml:space="preserve">
+    <value>Prefer a 'TryGetValue' call over a Dictionary indexer access guarded by a 'ContainsKey' check.</value>
+  </data>
 </root>

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -14,20 +13,24 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class PreferDictionaryTryGetValueAnalyzer : DiagnosticAnalyzer
+    public sealed class PreferDictionaryTryGetValueAnalyzer : DiagnosticAnalyzer
     {
-        public const string RuleId = "CA1840";
+        public const string RuleId = "CA1839";
 
         private const string ContainsKeyMethodName = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string IndexerName = "this[]";
 
+        private static readonly LocalizableString s_localizableTitle = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueTitle));
+        private static readonly LocalizableString s_localizableTryGetValueMessage = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueMessage));
+        private static readonly LocalizableString s_localizableTryGetValueDescription = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueDescription));
+
         internal static readonly DiagnosticDescriptor ContainsKeyRule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            "s_localizableTitle",
-            "s_localizableContainsKeyMessage",
+            s_localizableTitle,
+            s_localizableTryGetValueMessage,
             DiagnosticCategory.Performance,
             RuleLevel.BuildWarning,
-            "s_localizableContainsKeyDescription.",
+            s_localizableTryGetValueDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -55,11 +58,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private void OnOperationAction(OperationAnalysisContext context, INamedTypeSymbol dictionaryType)
-        { 
+        {
             var propertyReference = (IPropertyReferenceOperation)context.Operation;
-            
-            if (propertyReference.Parent is IAssignmentOperation 
-                ||!IsDictionaryAccess(propertyReference, dictionaryType) 
+
+            if (propertyReference.Parent is IAssignmentOperation
+                || !IsDictionaryAccess(propertyReference, dictionaryType)
                 || !TryGetParentConditionalOperation(propertyReference, out var conditionalOperation)
                 || !TryGetContainsKeyGuard(conditionalOperation, out var containsKeyInvocation))
             {
@@ -78,11 +81,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool TryGetContainsKeyGuard(IConditionalOperation conditionalOperation, [NotNullWhen(true)] out IInvocationOperation? containsKeyInvocation)
         {
             containsKeyInvocation = conditionalOperation.Condition as IInvocationOperation ?? FindContainsKeyInvocation(conditionalOperation.Condition);
-            if (containsKeyInvocation is not null)
+            if (containsKeyInvocation is not null && containsKeyInvocation.TargetMethod.Name == ContainsKeyMethodName)
             {
                 return true;
             }
-            
+
             return false;
         }
 
@@ -90,8 +93,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             return baseOperation switch
             {
-                IInvocationOperation i when (i.TargetMethod.Name == ContainsKeyMethodName) => i,
-                IBinaryOperation b when (b.OperatorKind == BinaryOperatorKind.ConditionalAnd || b.OperatorKind == BinaryOperatorKind.ConditionalOr) => 
+                IInvocationOperation i when i.TargetMethod.Name == ContainsKeyMethodName => i,
+                IBinaryOperation { OperatorKind: BinaryOperatorKind.ConditionalAnd or BinaryOperatorKind.ConditionalOr } b =>
                     FindContainsKeyInvocation(b.LeftOperand) ?? FindContainsKeyInvocation(b.RightOperand),
                 _ => null
             };
@@ -100,7 +103,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool DictionaryEntryIsModified(IPropertyReferenceOperation dictionaryAccess, IBlockOperation blockOperation)
         {
             return blockOperation.Operations.OfType<IExpressionStatementOperation>().Any(o =>
-                o.Operation is IAssignmentOperation {Target: IPropertyReferenceOperation reference} && reference.Property.Equals(dictionaryAccess.Property));
+                o.Operation is IAssignmentOperation { Target: IPropertyReferenceOperation reference } && reference.Property.Equals(dictionaryAccess.Property));
         }
 
         private bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
@@ -117,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (derivedOperation.Parent is IConditionalOperation c)
                 {
                     conditionalOperation = c;
-                    
+
                     return true;
                 }
 
@@ -136,6 +139,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 .SingleOrDefault();
 
             return constructedDictionaryType is not null;
+        }
+
+        private static LocalizableString CreateResource(string resourceName)
+        {
+            return new LocalizableResourceString(resourceName, MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         }
     }
 }

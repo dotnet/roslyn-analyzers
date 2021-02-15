@@ -243,7 +243,7 @@ namespace Test
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = {diagnostic}
+                ExpectedDiagnostics = { diagnostic }
             }.RunAsync();
         }
 

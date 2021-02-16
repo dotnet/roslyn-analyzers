@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
@@ -52,8 +51,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static Document ReplaceConditionWithChild(Document document, SyntaxNode root, SyntaxNode conditionalOperationNode, SyntaxNode childOperationNode)
         {
             var newNode = childOperationNode.WithAdditionalAnnotations(Formatter.Annotation);
-
             var newRoot = root.ReplaceNode(conditionalOperationNode, newNode);
+
             return document.WithSyntaxRoot(newRoot);
         }
 

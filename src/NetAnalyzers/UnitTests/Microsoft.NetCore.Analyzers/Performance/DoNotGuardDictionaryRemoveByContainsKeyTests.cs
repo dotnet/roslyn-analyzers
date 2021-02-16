@@ -176,8 +176,6 @@ using System.Collections.Generic;";
 
         private const string VBUsings = @"Imports System
 Imports System.Collections.Generic";
-
-        private static DiagnosticDescriptor Rule => DoNotGuardDictionaryRemoveByContainsKey.Rule;
         #endregion
     }
 }

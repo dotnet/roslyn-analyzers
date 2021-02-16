@@ -6,9 +6,11 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Performance
@@ -37,15 +39,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var diagnostic = context.Diagnostics.FirstOrDefault();
 
             if (TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ConditionalOperation, out var conditionalOperationSpan) &&
-                TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan))
+                TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan) &&
+                root.FindNode(conditionalOperationSpan) is SyntaxNode conditionalOperationNode &&
+                root.FindNode(childStatementOperationSpan) is SyntaxNode childStatementOperationNode)
             {
-                context.RegisterCodeFix(
-                    new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(
-                        context.Document,
-                        conditionalOperationSpan,
-                        childStatementOperationSpan),
+                context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
+                    Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalOperationNode, childStatementOperationNode))),
                     diagnostic);
             }
+        }
+
+        private static Document ReplaceConditionWithChild(Document document, SyntaxNode root, SyntaxNode conditionalOperationNode, SyntaxNode childOperationNode)
+        {
+            var newNode = childOperationNode.WithAdditionalAnnotations(Formatter.Annotation);
+
+            var newRoot = root.ReplaceNode(conditionalOperationNode, newNode);
+            return document.WithSyntaxRoot(newRoot);
         }
 
         private static bool TryParseLocationInfo(Diagnostic diagnostic, string propertyKey, out TextSpan span)
@@ -67,37 +76,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : CodeAction
+        private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : DocumentChangeAction
         {
-            private readonly Document _document;
-            private readonly TextSpan _conditionalOperationSpan;
-            private readonly TextSpan _childStatementOperationSpan;
-
-            public override string Title { get; }
-
-            public override string EquivalenceKey { get; }
-
-            public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(
-                Document document,
-                TextSpan conditionalOperationSpan,
-                TextSpan childStatementOperationSpan)
-            {
-                _document = document;
-                _conditionalOperationSpan = conditionalOperationSpan;
-                _childStatementOperationSpan = childStatementOperationSpan;
-                EquivalenceKey = DoNotGuardDictionaryRemoveByContainsKey.RuleId;
-                Title = MicrosoftNetCoreAnalyzersResources.DoNotGuardDictionaryRemoveByContainsKeyTitle;
-            }
-
-            protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
-            {
-                var documentText = await _document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-                var childStatementText = documentText.GetSubText(_childStatementOperationSpan);
-                documentText = documentText.Replace(_conditionalOperationSpan, childStatementText.ToString());
-
-                return _document.WithText(documentText);
-            }
+            public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> action)
+            : base(MicrosoftNetCoreAnalyzersResources.DoNotGuardDictionaryRemoveByContainsKeyTitle, action,
+                   DoNotGuardDictionaryRemoveByContainsKey.RuleId)
+            { }
         }
     }
 }

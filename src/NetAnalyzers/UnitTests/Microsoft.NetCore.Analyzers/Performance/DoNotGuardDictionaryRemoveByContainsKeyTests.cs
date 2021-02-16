@@ -45,7 +45,7 @@ namespace Testopolis
 
         public MyClass()
         {
-            [|MyDictionary.Remove(""Key"")|];
+            MyDictionary.Remove(""Key"");
         }
     }
 }";
@@ -83,7 +83,7 @@ namespace Testopolis
 
         public MyClass()
         {
-            [|MyDictionary.Remove(""Key"");|]
+            MyDictionary.Remove(""Key"");
         }
     }
 }";
@@ -140,7 +140,7 @@ Namespace Testopolis
         Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
-            [|MyDictionary.Remove(""Key"")|]
+            MyDictionary.Remove(""Key"")
         End Sub
     End Class
 End Namespace";

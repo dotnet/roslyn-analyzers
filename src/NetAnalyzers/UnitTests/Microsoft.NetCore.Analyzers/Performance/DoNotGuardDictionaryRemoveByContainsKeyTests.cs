@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -20,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_CS()
         {
-            string testCode = @"
+            string source = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -36,7 +35,7 @@ namespace Testopolis
     }
 }";
 
-            string fixedCode = @"
+            string fixedSource = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -51,19 +50,13 @@ namespace Testopolis
     }
 }";
             var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
-            await new VerifyCS.Test
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = { diagnostic }
-            }.RunAsync();
+            await VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
         }
 
         [Fact]
         public async Task RemoveIsTheOnlyStatementInABlock_ReportsDiagnostic_CS()
         {
-            string testCode = @"
+            string source = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -81,7 +74,7 @@ namespace Testopolis
     }
 }";
 
-            string fixedCode = @"
+            string fixedSource = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -97,19 +90,13 @@ namespace Testopolis
 }";
 
             var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
-            await new VerifyCS.Test
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = { diagnostic }
-            }.RunAsync();
+            await VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
         }
 
         [Fact]
         public async Task AdditionalStatements_NoDiagnostic_CS()
         {
-            string code = @"
+            string source = @"
 " + CSUsings + @"
 namespace Testopolis
 {
@@ -128,18 +115,13 @@ namespace Testopolis
     }
 }";
 
-            await new VerifyCS.Test
-            {
-                TestCode = code,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = { }
-            }.RunAsync();
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
         public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_VB()
         {
-            string testCode = @"
+            string source = @"
 " + VBUsings + @"
 Namespace Testopolis
     Public Class SomeClass
@@ -153,7 +135,7 @@ Namespace Testopolis
     End Class
 End Namespace";
 
-            string fixedCode = @"
+            string fixedSource = @"
 " + VBUsings + @"
 Namespace Testopolis
     Public Class SomeClass
@@ -166,19 +148,13 @@ Namespace Testopolis
 End Namespace";
 
             var diagnostic = VerifyVB.Diagnostic(Rule).WithLocation(0);
-            await new VerifyVB.Test
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = { diagnostic }
-            }.RunAsync();
+            await VerifyVB.VerifyCodeFixAsync(source, diagnostic, fixedSource);
         }
 
         [Fact]
         public async Task AdditionalStatements_NoDiagnostic_VB()
         {
-            string code = @"
+            string source = @"
 " + VBUsings + @"
 Namespace Testopolis
     Public Class SomeClass
@@ -193,12 +169,7 @@ Namespace Testopolis
     End Class
 End Namespace";
 
-            await new VerifyVB.Test
-            {
-                TestCode = code,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                ExpectedDiagnostics = { }
-            }.RunAsync();
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
         #endregion
 

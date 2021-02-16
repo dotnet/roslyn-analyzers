@@ -52,9 +52,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out var dictionaryType))
                 return;
 
-            context.RegisterOperationAction(AnalyzeNamedType, OperationKind.Invocation);
+            context.RegisterOperationAction(AnalyzeOperation, OperationKind.Invocation);
 
-            static void AnalyzeNamedType(OperationAnalysisContext context)
+            static void AnalyzeOperation(OperationAnalysisContext context)
             {
                 var invocationOperation = (IInvocationOperation)context.Operation;
 

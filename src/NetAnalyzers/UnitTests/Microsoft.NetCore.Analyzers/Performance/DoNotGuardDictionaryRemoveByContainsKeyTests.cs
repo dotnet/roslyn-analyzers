@@ -29,7 +29,7 @@ namespace Testopolis
 
         public MyClass()
         {
-            if ({|#0:MyDictionary.ContainsKey(""Key"")|})
+            if ([|MyDictionary.ContainsKey(""Key"")|])
                 MyDictionary.Remove(""Key"");
         }
     }
@@ -45,12 +45,11 @@ namespace Testopolis
 
         public MyClass()
         {
-            {|#0:MyDictionary.Remove(""Key"")|};
+            [|MyDictionary.Remove(""Key"")|];
         }
     }
 }";
-            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
-            await VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]
@@ -66,7 +65,7 @@ namespace Testopolis
 
         public MyClass()
         {
-            if ({|#0:MyDictionary.ContainsKey(""Key"")|})
+            if ([|MyDictionary.ContainsKey(""Key"")|])
             {
                 MyDictionary.Remove(""Key"");
             }
@@ -84,13 +83,12 @@ namespace Testopolis
 
         public MyClass()
         {
-            {|#0:MyDictionary.Remove(""Key"");|}
+            [|MyDictionary.Remove(""Key"");|]
         }
     }
 }";
 
-            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0);
-            await VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]
@@ -128,7 +126,7 @@ Namespace Testopolis
         Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
-            If {|#0:MyDictionary.ContainsKey(""Key"")|} Then
+            If [|MyDictionary.ContainsKey(""Key"")|] Then
                 MyDictionary.Remove(""Key"")
             End If
         End Sub
@@ -142,13 +140,12 @@ Namespace Testopolis
         Public MyDictionary As New Dictionary(Of String, String)()
 
         Public Sub New()
-            {|#0:MyDictionary.Remove(""Key"")|}
+            [|MyDictionary.Remove(""Key"")|]
         End Sub
     End Class
 End Namespace";
 
-            var diagnostic = VerifyVB.Diagnostic(Rule).WithLocation(0);
-            await VerifyVB.VerifyCodeFixAsync(source, diagnostic, fixedSource);
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]

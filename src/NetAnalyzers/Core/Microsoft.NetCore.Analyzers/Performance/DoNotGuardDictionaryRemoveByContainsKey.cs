@@ -6,13 +6,14 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
+    public sealed class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1839";
 
@@ -55,13 +56,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             static void AnalyzeNamedType(OperationAnalysisContext context)
             {
-                if (context.Operation is not CodeAnalysis.Operations.IInvocationOperation invocationOperation)
-                    return;
+                var invocationOperation = (IInvocationOperation)context.Operation;
 
                 if (invocationOperation.TargetMethod.Name != "ContainsKey")
                     return;
 
-                if (invocationOperation.Parent is not CodeAnalysis.Operations.IConditionalOperation parentConditionalOperation)
+                if (invocationOperation.Parent is not IConditionalOperation parentConditionalOperation)
                     return;
 
                 // we only want to report this diagnostic if the Contains/Remove pair is all there is
@@ -74,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     switch (parentConditionalOperation.WhenTrue.Children.First())
                     {
-                        case CodeAnalysis.Operations.IInvocationOperation childInvocationOperation:
+                        case IInvocationOperation childInvocationOperation:
                             if (childInvocationOperation.TargetMethod.Name == "Remove")
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(childInvocationOperation.Syntax.Parent);
@@ -83,7 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             }
 
                             break;
-                        case CodeAnalysis.Operations.IExpressionStatementOperation childStatementOperation:
+                        case IExpressionStatementOperation childStatementOperation:
                             // if the if statement contains a block, only proceed if that block contains a single statement
 
                             if (childStatementOperation.Children.HasExactly(1) &&

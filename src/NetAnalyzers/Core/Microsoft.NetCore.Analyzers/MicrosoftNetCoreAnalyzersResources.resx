@@ -1529,6 +1529,9 @@
     <value>The platform '{0}' is not a known platform name</value>
   </data>
   <data name="UseValidPlatformStringInvalidVersion" xml:space="preserve">
-    <value>The '{0}' is not a valid version. Please provide an input having two to four numbers separated with a dot.</value>
+    <value>The '{0}' is not a valid version. Please provide an input having 2 to {1} numbers separated with a dot.</value>
+  </data>
+  <data name="UseValidPlatformStringNoVersion" xml:space="preserve">
+    <value>The platform '{0}' is not versioned, please remove version part</value>
   </data>
 </root>

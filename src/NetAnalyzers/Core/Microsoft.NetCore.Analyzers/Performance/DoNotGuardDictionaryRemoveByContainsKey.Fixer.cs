@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private class DoNotGuardDictionaryRemoveByContainsKeyCodeAction : DocumentChangeAction
         {
             public DoNotGuardDictionaryRemoveByContainsKeyCodeAction(Func<CancellationToken, Task<Document>> action)
-            : base(MicrosoftNetCoreAnalyzersResources.DoNotGuardDictionaryRemoveByContainsKeyTitle, action,
+            : base(MicrosoftNetCoreAnalyzersResources.DoNotGuardDictionaryRemoveByContainsKeyFix, action,
                    DoNotGuardDictionaryRemoveByContainsKey.RuleId)
             { }
         }

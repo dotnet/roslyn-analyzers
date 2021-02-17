@@ -647,6 +647,11 @@
         <target state="new">Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. 'Remove()' already checks whether the key exists, and will not throw if it does not.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyFix">
+        <source>Replace 'Dictionary.ContainsKey' condition with just 'Dictionary.Remove'.</source>
+        <target state="new">Replace 'Dictionary.ContainsKey' condition with just 'Dictionary.Remove'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyMessage">
         <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</source>
         <target state="new">Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</target>

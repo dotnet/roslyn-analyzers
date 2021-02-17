@@ -32,4 +32,21 @@
     <!-- TODO: Remove this exclusion and fix related issues, tracked by https://github.com/dotnet/roslyn-analyzers/issues/3915 -->
     <Rule Id="RS0041" Action="None" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
+    <Rule Id="CA3001" Action="None" />
+    <Rule Id="CA3002" Action="None" />
+    <Rule Id="CA3003" Action="None" />
+    <Rule Id="CA3004" Action="None" />
+    <Rule Id="CA3005" Action="None" />
+    <Rule Id="CA3006" Action="None" />
+    <Rule Id="CA3007" Action="None" />
+    <Rule Id="CA3008" Action="None" />
+    <Rule Id="CA3009" Action="None" />
+    <Rule Id="CA3010" Action="None" />
+    <Rule Id="CA3011" Action="None" />
+    <Rule Id="CA3012" Action="None" />
+    <Rule Id="CA5389" Action="None" />
+    <Rule Id="CA5390" Action="None" />
+    <Rule Id="CA5403" Action="None" />
+  </Rules>
 </RuleSet>

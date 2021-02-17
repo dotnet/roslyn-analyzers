@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(childInvocationOperation.Syntax.Parent);
 
-                                context.ReportDiagnostic(Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation(), properties.ToImmutable()));
+                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, properties.ToImmutable()));
                             }
 
                             break;
@@ -92,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(nestedInvocationOperation.Syntax.Parent);
 
-                                context.ReportDiagnostic(Diagnostic.Create(Rule, invocationOperation.Syntax.GetLocation(), properties.ToImmutable()));
+                                context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule, properties.ToImmutable()));
                             }
 
                             break;

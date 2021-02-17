@@ -2082,6 +2082,21 @@
         <target state="translated">El indizador basado en intervalos en los valores de matriz genera una copia de la parte solicitada de la matriz. Esta copia suele ser innecesaria cuando se usa implícitamente como valor ReadOnlySpan o ReadOnlyMemory. Use el método AsSpan para evitar la copia innecesaria.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableDescription">
+        <source>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableMessage">
+        <source>Cannot convert type '{0}' to '{1}'</source>
+        <target state="new">Cannot convert type '{0}' to '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableTitle">
+        <source>Use valid foreach variable type</source>
+        <target state="new">Use valid foreach variable type</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
         <target state="translated">Usar tokens antifalsificación en los controladores de ASP.NET Core MVC</target>

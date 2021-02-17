@@ -2082,6 +2082,21 @@
         <target state="translated">Użycie indeksatora opartego na zakresie w przypadku wartości tablicy powoduje utworzenie kopii żądanej części tablicy. Ta kopia jest zwykle niepotrzebna, gdy jest niejawnie używana jako wartość ReadOnlySpan lub ReadOnlyMemory. Użyj metody AsSpan, aby uniknąć zbędnego kopiowania.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableDescription">
+        <source>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableMessage">
+        <source>Cannot convert type '{0}' to '{1}'</source>
+        <target state="new">Cannot convert type '{0}' to '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableTitle">
+        <source>Use valid foreach variable type</source>
+        <target state="new">Use valid foreach variable type</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
         <target state="translated">Użyj tokenów zabezpieczających przed fałszerstwem w kontrolerach MVC ASP.NET Core</target>

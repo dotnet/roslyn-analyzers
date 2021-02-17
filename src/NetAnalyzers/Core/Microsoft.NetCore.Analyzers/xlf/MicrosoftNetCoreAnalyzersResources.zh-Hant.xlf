@@ -2082,6 +2082,21 @@
         <target state="translated">陣列值中以 Range 為基礎的索引子會產生陣列中要求部分的複本。隱含使用此複本作為 ReadOnlySpan 或 ReadOnlyMemory 值時，通常不需此複本。請使用 AsSpan 方法來避免使用不必要的複本。</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableDescription">
+        <source>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableMessage">
+        <source>Cannot convert type '{0}' to '{1}'</source>
+        <target state="new">Cannot convert type '{0}' to '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableTitle">
+        <source>Use valid foreach variable type</source>
+        <target state="new">Use valid foreach variable type</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
         <target state="translated">使用 ASP.NET Core MVC 控制器中的 antiforgery 權杖</target>

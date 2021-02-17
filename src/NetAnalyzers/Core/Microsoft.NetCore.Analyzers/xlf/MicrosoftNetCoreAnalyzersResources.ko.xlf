@@ -2082,6 +2082,21 @@
         <target state="translated">배열 값에 대한 범위 기반 인덱서는 배열의 요청된 부분의 복사본을 생성합니다. 이 복사본은 암시적으로 ReadOnlySpan 또는 ReadOnlyMemory 값으로 사용될 경우 대개 필요하지 않습니다. 불필요한 복사본이 생성되지 않도록 하려면 AsSpan 메서드를 사용하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableDescription">
+        <source>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableMessage">
+        <source>Cannot convert type '{0}' to '{1}'</source>
+        <target state="new">Cannot convert type '{0}' to '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAssignableTypeForForeachVariableTitle">
+        <source>Use valid foreach variable type</source>
+        <target state="new">Use valid foreach variable type</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
         <target state="translated">ASP.NET Core MVC 컨트롤러에서 위조 방지 토큰 사용</target>

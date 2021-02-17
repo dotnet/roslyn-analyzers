@@ -96,7 +96,7 @@ namespace ReleaseNotesUtil
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
                 MethodBase? calledMethod = method.Module.ResolveMethod(metadataToken);
                 if (calledMethod != null
-                    && calledMethod?.DeclaringType?.FullName == "System.Threading.Tasks.Task"
+                    && calledMethod.DeclaringType?.FullName == "System.Threading.Tasks.Task"
                     && calledMethod.Name == "get_CompletedTask")
                 {
                     return false;

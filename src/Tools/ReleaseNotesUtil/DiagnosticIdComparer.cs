@@ -9,7 +9,7 @@ namespace ReleaseNotesUtil
 {
     internal class DiagnosticIdComparer : IEqualityComparer<DiagnosticDescriptor>
     {
-        public static readonly DiagnosticIdComparer Instance = new DiagnosticIdComparer();
+        public static readonly DiagnosticIdComparer Instance = new();
 
         public bool Equals([AllowNull] DiagnosticDescriptor x, [AllowNull] DiagnosticDescriptor y)
         {

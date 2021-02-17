@@ -246,6 +246,25 @@
             ]
           }
         },
+        "CA2250": {
+          "id": "CA2250",
+          "shortDescription": "Use valid foreach variable type",
+          "fullDescription": "There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseAssignableTypeForForeachVariable",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2352": {
           "id": "CA2352",
           "shortDescription": "Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks",

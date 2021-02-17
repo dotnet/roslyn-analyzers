@@ -69,7 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (parentConditionalOperation.WhenFalse == null &&
                     parentConditionalOperation.WhenTrue.Children.HasExactly(1))
                 {
-                    var properties = ImmutableDictionary.CreateBuilder<string, string>();
+                    var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties[ConditionalOperation] = CreateLocationInfo(parentConditionalOperation.Syntax);
 
                     switch (parentConditionalOperation.WhenTrue.Children.First())

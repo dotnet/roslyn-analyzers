@@ -1,4 +1,9 @@
-﻿Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData
+﻿Analyzer.Utilities.RoslynHashCode
+Analyzer.Utilities.RoslynHashCode.Add<T>(T value) -> void
+Analyzer.Utilities.RoslynHashCode.Add<T>(T value, System.Collections.Generic.IEqualityComparer<T> comparer) -> void
+Analyzer.Utilities.RoslynHashCode.RoslynHashCode() -> void
+Analyzer.Utilities.RoslynHashCode.ToHashCode() -> int
+Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData
 Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData.Children.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData>
 Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData.CoupledNamedTypes.get -> System.Collections.Immutable.ImmutableHashSet<Microsoft.CodeAnalysis.INamedTypeSymbol>
 Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData.CyclomaticComplexity.get -> int
@@ -441,6 +446,8 @@ abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<T
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.SetValueForParameterOnEntry(Microsoft.CodeAnalysis.IParameterSymbol parameter, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity analysisEntity, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ArgumentInfo<TAbstractAnalysisValue> assignedValueOpt) -> void
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.StopTrackingDataForParameter(Microsoft.CodeAnalysis.IParameterSymbol parameter, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity analysisEntity) -> void
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.UpdateValuesForAnalysisData(TAnalysisData targetAnalysisData) -> void
+override Analyzer.Utilities.RoslynHashCode.Equals(object obj) -> bool
+override Analyzer.Utilities.RoslynHashCode.GetHashCode() -> int
 override Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ComputeAnalysisValueForEscapedRefOrOutArgument(Microsoft.CodeAnalysis.Operations.IArgumentOperation operation, TAbstractAnalysisValue defaultValue) -> TAbstractAnalysisValue
 override Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.EscapeValueForParameterOnExit(Microsoft.CodeAnalysis.IParameterSymbol parameter, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity analysisEntity) -> void
 override Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ResetReferenceTypeInstanceAnalysisData(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis.PointsToAbstractValue pointsToAbstractValue) -> void
@@ -596,6 +603,14 @@ override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PredicateAnalysisEn
 override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PredicateAnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.StopTrackingPredicatedData(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity predicatedEntity) -> void
 override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PredicateAnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.SupportsPredicateAnalysis.get -> bool
 override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PredicateAnalysisEntityDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.TransferPredicatedData(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity fromEntity, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity toEntity) -> void
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3, T4, T5, T6, T7, T8>(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5, T6 value6, T7 value7, T8 value8) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3, T4, T5, T6, T7>(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5, T6 value6, T7 value7) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3, T4, T5, T6>(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5, T6 value6) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3, T4, T5>(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3, T4>(T1 value1, T2 value2, T3 value3, T4 value4) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2, T3>(T1 value1, T2 value2, T3 value3) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1, T2>(T1 value1, T2 value2) -> int
+static Analyzer.Utilities.RoslynHashCode.Combine<T1>(T1 value1) -> int
 static Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData.ComputeAsync(Microsoft.CodeAnalysis.Compilation compilation, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData>
 static Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData.ComputeAsync(Microsoft.CodeAnalysis.ISymbol symbol, Microsoft.CodeAnalysis.Compilation compilation, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.CodeMetrics.CodeAnalysisMetricData>
 static Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractDomain<T>.FireNonMonotonicAssertIfNeeded(bool assertMonotonicity) -> void

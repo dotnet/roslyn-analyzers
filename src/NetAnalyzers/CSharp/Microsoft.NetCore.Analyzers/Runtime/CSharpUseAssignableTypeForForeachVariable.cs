@@ -29,26 +29,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             ITypeSymbol collectionElementType = loopInfo.ElementType;
-            ITypeSymbol? variableType = loop.LoopControlVariable switch
-            {
-                IVariableDeclaratorOperation variable => variable.Symbol.Type,
-                ITupleOperation tuple => tuple.Type,
-                IDeclarationExpressionOperation declaration when declaration.Expression is ITupleOperation tuple => tuple.Type,
-                _ => null
-            };
-
-            if (collectionElementType.IsTupleType || variableType?.IsTupleType == true)
-            {
-                // Tuples are handled by CS0029
-                return;
-            }
+            ITypeSymbol? variableType = (loop.LoopControlVariable as IVariableDeclaratorOperation)?.Symbol?.Type;
 
             if (collectionElementType.IsAssignableTo(variableType, compilation))
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, syntax.ForEachKeyword.GetLocation(), collectionElementType.Name, variableType!.Name));
+            context.ReportDiagnostic(syntax.ForEachKeyword.CreateDiagnostic(Rule, collectionElementType.Name, variableType!.Name));
         }
     }
 }

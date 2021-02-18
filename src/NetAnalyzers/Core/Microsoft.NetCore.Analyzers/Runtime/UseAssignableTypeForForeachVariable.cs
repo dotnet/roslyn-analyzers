@@ -31,11 +31,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
-                compilationContext.RegisterOperationAction(context =>
-                {
-                    AnalyzeLoop(context, context.Compilation);
-                },
-                OperationKind.Loop)
+                compilationContext.RegisterOperationAction(
+                    context => AnalyzeLoop(context, context.Compilation),
+                    OperationKind.Loop)
             );
         }
 

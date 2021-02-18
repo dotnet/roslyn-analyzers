@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -89,6 +88,96 @@ namespace Testopolis
 }";
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task NegatedCondition_NoDiagnostic_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if (!MyDictionary.ContainsKey(""Key""))
+                MyDictionary.Remove(""Key"");
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task AdditionalCondition_NoDiagnostic_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if (MyDictionary.ContainsKey(""Key"") && MyDictionary.Count > 2)
+                MyDictionary.Remove(""Key"");
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task ConditionInVariable_NoDiagnostic_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            var result = MyDictionary.ContainsKey(""Key"");
+            if (result)
+	            MyDictionary.Remove(""Key"");
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task RemoveInSeparateLine_NoDiagnostic_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if (MyDictionary.ContainsKey(""Key""))
+	            _ = MyDictionary.Count;
+	        MyDictionary.Remove(""Key"");
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Fact]

@@ -2093,8 +2093,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableTitle">
-        <source>Use valid foreach variable type</source>
-        <target state="new">Use valid foreach variable type</target>
+        <source>Use implicitly assignable foreach variable type</source>
+        <target state="new">Use implicitly assignable foreach variable type</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">

@@ -1517,6 +1517,6 @@
     <value>Cannot implicitly convert type '{0}' to '{1}'</value>
   </data>
   <data name="UseAssignableTypeForForeachVariableTitle" xml:space="preserve">
-    <value>Use valid foreach variable type</value>
+    <value>Use implicitly assignable foreach variable type</value>
   </data>
 </root>

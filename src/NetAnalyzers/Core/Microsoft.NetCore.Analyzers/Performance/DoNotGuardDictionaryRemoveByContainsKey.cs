@@ -18,11 +18,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string RuleId = "CA1839";
 
         private static readonly LocalizableString s_localizableTitle =
-            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle, Resx.ResourceManager, typeof(Resx));
+            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle), Resx.ResourceManager, typeof(Resx));
         private static readonly LocalizableString s_localizableMessage =
-            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage, Resx.ResourceManager, typeof(Resx));
+            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage), Resx.ResourceManager, typeof(Resx));
         private static readonly LocalizableString s_localizableDescription =
-            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription, Resx.ResourceManager, typeof(Resx));
+            new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription), Resx.ResourceManager, typeof(Resx));
 
         public const string AdditionalDocumentLocationInfoSeparator = ";;";
 

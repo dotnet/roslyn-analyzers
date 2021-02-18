@@ -17,9 +17,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         internal const string RuleId = "CA1839";
 
-        private static readonly LocalizableString s_localizableTitle = CreateResource(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle));
-        private static readonly LocalizableString s_localizableMessage = CreateResource(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage));
-        private static readonly LocalizableString s_localizableDescription = CreateResource(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription));
+        private static readonly LocalizableString s_localizableTitle =
+            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle, Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_localizableMessage =
+            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyMessage, Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_localizableDescription =
+            new LocalizableResourceString(Resx.DoNotGuardDictionaryRemoveByContainsKeyDescription, Resx.ResourceManager, typeof(Resx));
 
         public const string AdditionalDocumentLocationInfoSeparator = ";;";
 
@@ -102,9 +105,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
         }
-
-        private static LocalizableString CreateResource(string resourceName)
-            => new LocalizableResourceString(resourceName, Resx.ResourceManager, typeof(Resx));
 
         private static string CreateLocationInfo(SyntaxNode syntax)
         {

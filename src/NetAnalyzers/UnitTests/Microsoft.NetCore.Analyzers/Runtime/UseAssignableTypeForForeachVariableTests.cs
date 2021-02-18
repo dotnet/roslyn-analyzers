@@ -258,9 +258,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test,
-                GetCSharpResultAt(0).WithArguments("A", "B"),
-                DiagnosticResult.CompilerError("CS0030").WithLocation(0).WithArguments("A", "B"));
+            await VerifyCS.VerifyAnalyzerAsync(test, DiagnosticResult.CompilerError("CS0030").WithLocation(0).WithArguments("A", "B"));
         }
 
         [Fact]

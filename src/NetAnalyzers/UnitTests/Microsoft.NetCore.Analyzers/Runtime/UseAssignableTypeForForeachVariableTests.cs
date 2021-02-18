@@ -61,6 +61,29 @@ namespace ConsoleApplication1
         }
 
         [Fact]
+        public async Task ImplicitConversion()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<int>();
+            foreach (long item in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
         public async Task UserDefinedImplicitConversion()
         {
             var test = @"
@@ -87,6 +110,29 @@ namespace ConsoleApplication1
 }";
 
             await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
+        public async Task ExplicitConversion()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<long>();
+            foreach (int item in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("Int64", "Int32"));
         }
 
         [Fact]
@@ -145,7 +191,7 @@ namespace ConsoleApplication1
         }
 
         [Fact]
-        public async Task CollectionInterface_Invalid()
+        public async Task InterfaceToClass()
         {
             var test = @"
 using System;
@@ -166,6 +212,30 @@ namespace ConsoleApplication1
 }";
 
             await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(12, 13).WithArguments("IComparable", "String"));
+        }
+
+        [Fact]
+        public async Task ClassToInterfase()
+        {
+            var test = @"
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<string>();
+            foreach (IComparable s in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
         [Fact]

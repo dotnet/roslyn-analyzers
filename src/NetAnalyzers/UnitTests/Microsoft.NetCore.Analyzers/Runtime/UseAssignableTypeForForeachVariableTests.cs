@@ -457,6 +457,78 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
+        [Fact]
+        public async Task TupleToVarTuple()
+        {
+            var test = @"
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<(int, IComparable)>();
+            foreach (var (i, j) in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
+        public async Task TupleToSameTuple()
+        {
+            var test = @"
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<(int, IComparable)>();
+            foreach ((int i,  IComparable j) in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
+        public async Task TupleToChildTuple()
+        {
+            var test = @"
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<(int, IComparable)>();
+            foreach ((int i,  {|#0:int j|}) in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test, DiagnosticResult.CompilerError("CS0266").WithLocation(0).WithArguments("System.IComparable", "int"));
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
 #pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()

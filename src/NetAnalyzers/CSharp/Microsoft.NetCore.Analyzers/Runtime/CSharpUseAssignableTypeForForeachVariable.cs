@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return;
             }
 
-            var loopInfo = loop.SemanticModel.GetForEachStatementInfo(syntax);
+            ForEachStatementInfo loopInfo = loop.SemanticModel.GetForEachStatementInfo(syntax);
             if (!loopInfo.CurrentConversion.Exists ||
                 !loopInfo.CurrentConversion.IsImplicit ||
                 !loopInfo.CurrentConversion.IsIdentity)
@@ -29,14 +29,26 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             ITypeSymbol collectionElementType = loopInfo.ElementType;
-            ITypeSymbol variableType = ((IVariableDeclaratorOperation)loop.LoopControlVariable).Symbol.Type;
+            ITypeSymbol? variableType = loop.LoopControlVariable switch
+            {
+                IVariableDeclaratorOperation variable => variable.Symbol.Type,
+                ITupleOperation tuple => tuple.Type,
+                IDeclarationExpressionOperation declaration when declaration.Expression is ITupleOperation tuple => tuple.Type,
+                _ => null
+            };
+
+            if (collectionElementType.IsTupleType || variableType?.IsTupleType == true)
+            {
+                // Tuples are handled by CS0029
+                return;
+            }
 
             if (collectionElementType.IsAssignableTo(variableType, compilation))
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Rule, syntax.ForEachKeyword.GetLocation(), collectionElementType.Name, variableType.Name));
+            context.ReportDiagnostic(Diagnostic.Create(Rule, syntax.ForEachKeyword.GetLocation(), collectionElementType.Name, variableType!.Name));
         }
     }
 }

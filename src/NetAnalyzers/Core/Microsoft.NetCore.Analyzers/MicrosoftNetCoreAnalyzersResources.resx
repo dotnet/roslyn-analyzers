@@ -1511,10 +1511,10 @@
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
   <data name="UseAssignableTypeForForeachVariableDescription" xml:space="preserve">
-    <value>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</value>
+    <value>There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.</value>
   </data>
   <data name="UseAssignableTypeForForeachVariableMessage" xml:space="preserve">
-    <value>Cannot convert type '{0}' to '{1}'</value>
+    <value>Cannot implicitly convert type '{0}' to '{1}'</value>
   </data>
   <data name="UseAssignableTypeForForeachVariableTitle" xml:space="preserve">
     <value>Use valid foreach variable type</value>

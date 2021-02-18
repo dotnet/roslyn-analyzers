@@ -2083,13 +2083,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableDescription">
-        <source>There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</source>
-        <target state="new">There is no implicit conversion between collection element and iteratoi variable, this will result in runtime exception.</target>
+        <source>There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableMessage">
-        <source>Cannot convert type '{0}' to '{1}'</source>
-        <target state="new">Cannot convert type '{0}' to '{1}'</target>
+        <source>Cannot implicitly convert type '{0}' to '{1}'</source>
+        <target state="new">Cannot implicitly convert type '{0}' to '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableTitle">

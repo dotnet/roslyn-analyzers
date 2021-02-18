@@ -365,6 +365,98 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
+        [Fact]
+        public async Task DynamicSameType()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<dynamic>();
+            foreach (dynamic s in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
+        public async Task DynamicToObject()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<dynamic>();
+            foreach (object s in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
+        [Fact]
+        public async Task DynamicToString()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<dynamic>();
+            foreach (string s in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("dynamic", "String"));
+        }
+
+        [Fact]
+        public async Task DynamicToVar()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<dynamic>();
+            foreach (var s in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(test);
+        }
+
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
 #pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()

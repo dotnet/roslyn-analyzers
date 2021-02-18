@@ -47,7 +47,7 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<A>();
-            foreach (B item in x)
+            {|#0:foreach|} (B item in x)
             {
             }
         }
@@ -57,7 +57,7 @@ namespace ConsoleApplication1
     class B : A { }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("A", "B"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
         }
 
         [Fact]
@@ -125,14 +125,14 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<long>();
-            foreach (int item in x)
+            {|#0:foreach|} (int item in x)
             {
             }
         }
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("Int64", "Int32"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("Int64", "Int32"));
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<A>();
-            foreach (B item in x)
+            {|#0:foreach|} (B item in x)
             {
             }
         }
@@ -161,7 +161,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("A", "B"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
         }
 
         [Fact]
@@ -204,14 +204,14 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<IComparable>();
-            foreach (string s in x)
+            {|#0:foreach|} (string s in x)
             {
             }
         }
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(12, 13).WithArguments("IComparable", "String"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"));
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace ConsoleApplication1
         void Main<A, B>()
         {
             var x = new List<A>();
-            foreach (B s in x)
+            {|#0:foreach|} (B s in x)
             {
             }
         }
@@ -259,8 +259,8 @@ namespace ConsoleApplication1
 }";
 
             await VerifyCS.VerifyAnalyzerAsync(test,
-                GetCSharpResultAt(11, 13).WithArguments("A", "B"),
-                DiagnosticResult.CompilerError("CS0030").WithSpan(11, 13, 11, 20).WithArguments("A", "B"));
+                GetCSharpResultAt(0).WithArguments("A", "B"),
+                DiagnosticResult.CompilerError("CS0030").WithLocation(0).WithArguments("A", "B"));
         }
 
         [Fact]
@@ -299,14 +299,14 @@ namespace ConsoleApplication1
         void Main<A, B>() where B : A
         {
             var x = new List<A>();
-            foreach (B s in x)
+            {|#0:foreach|} (B s in x)
             {
             }
         }
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("A", "B"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
         }
 
         [Fact]
@@ -322,7 +322,7 @@ namespace ConsoleApplication1
     {   
         void Main()
         {
-            foreach (string item in GenerateSequenceAsync())
+            {|#0:foreach|} (string item in GenerateSequenceAsync())
             {
             }
 
@@ -334,7 +334,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("IComparable", "String"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"));
         }
 
         [Fact]
@@ -424,14 +424,14 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<dynamic>();
-            foreach (string s in x)
+            {|#0:foreach|} (string s in x)
             {
             }
         }
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(11, 13).WithArguments("dynamic", "String"));
+            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("dynamic", "String"));
         }
 
         [Fact]
@@ -529,10 +529,7 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyAnalyzerAsync(test, DiagnosticResult.CompilerError("CS0266").WithLocation(0).WithArguments("System.IComparable", "int"));
         }
 
-        private static DiagnosticResult GetCSharpResultAt(int line, int column)
-#pragma warning disable RS0030 // Do not used banned APIs
-            => VerifyCS.Diagnostic()
-                .WithLocation(line, column);
-#pragma warning restore RS0030 // Do not used banned APIs
+        private static DiagnosticResult GetCSharpResultAt(int i) => 
+            VerifyCS.Diagnostic().WithLocation(i);
     }
 }

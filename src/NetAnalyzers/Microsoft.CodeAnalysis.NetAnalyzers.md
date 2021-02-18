@@ -1334,7 +1334,7 @@ Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in
 
 ## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'
 
-Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. 'Remove()' already checks whether the key exists, and will not throw if it does not.
+Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
 
 ## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Use 'Environment.ProcessPath'
 

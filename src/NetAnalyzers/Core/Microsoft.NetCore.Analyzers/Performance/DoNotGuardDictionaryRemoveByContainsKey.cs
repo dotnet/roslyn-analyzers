@@ -37,7 +37,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
-            isDataflowRule: false);
+            isDataflowRule: false,
+            additionalCustomTags: WellKnownDiagnosticTags.Unnecessary);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

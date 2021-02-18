@@ -1543,8 +1543,8 @@
   <data name="DoNotGuardDictionaryRemoveByContainsKeyTitle" xml:space="preserve">
     <value>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'</value>
   </data>
-  <data name="DoNotGuardDictionaryRemoveByContainsKeyFix" xml:space="preserve">
-    <value>Replace 'Dictionary.ContainsKey' condition with just 'Dictionary.Remove'.</value>
+  <data name="RemoveRedundantGuardCall" xml:space="preserve">
+    <value>Remove redundant guard call</value>
   </data>
   <data name="BufferBlockCopyLengthMessage" xml:space="preserve">
     <value>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using 'Array.Length' may not match the number of bytes that needs to be copied.</value>

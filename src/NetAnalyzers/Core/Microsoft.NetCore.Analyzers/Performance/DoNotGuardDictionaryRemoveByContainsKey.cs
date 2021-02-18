@@ -91,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             // if the if statement contains a block, only proceed if that block contains a single statement
 
                             if (childStatementOperation.Children.HasExactly(1) &&
-                                childStatementOperation.Children.First() is CodeAnalysis.Operations.IInvocationOperation nestedInvocationOperation &&
+                                childStatementOperation.Children.First() is IInvocationOperation nestedInvocationOperation &&
                                 nestedInvocationOperation.TargetMethod.Name == "Remove")
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(nestedInvocationOperation.Syntax.Parent);

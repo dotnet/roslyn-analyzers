@@ -31,7 +31,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace ConsoleApplication1
     class B : A { }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"), test);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("Int64", "Int32"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("Int64", "Int32"), test);
         }
 
         [Fact]
@@ -161,7 +161,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"), test);
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace ConsoleApplication1
     class B : A { }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"), test);
         }
 
         [Fact]
@@ -235,7 +235,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, DiagnosticResult.CompilerError("CS0030").WithLocation(0).WithArguments("A", "B"));
+            await VerifyCS.VerifyCodeFixAsync(test, DiagnosticResult.CompilerError("CS0030").WithLocation(0).WithArguments("A", "B"), test);
         }
 
         [Fact]
@@ -281,7 +281,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -304,7 +304,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("A", "B"), test);
         }
 
         [Fact]
@@ -332,7 +332,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"), test);
         }
 
         [Fact]
@@ -360,7 +360,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -383,7 +383,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -406,7 +406,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -429,7 +429,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, GetCSharpResultAt(0).WithArguments("dynamic", "String"));
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("dynamic", "String"), test);
         }
 
         [Fact]
@@ -452,7 +452,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -476,7 +476,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -500,7 +500,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]
@@ -524,10 +524,10 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, DiagnosticResult.CompilerError("CS0266").WithLocation(0).WithArguments("System.IComparable", "int"));
+            await VerifyCS.VerifyCodeFixAsync(test, DiagnosticResult.CompilerError("CS0266").WithLocation(0).WithArguments("System.IComparable", "int"), test);
         }
 
-        private static DiagnosticResult GetCSharpResultAt(int i) => 
+        private static DiagnosticResult GetCSharpResultAt(int i) =>
             VerifyCS.Diagnostic().WithLocation(i);
     }
 }

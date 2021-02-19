@@ -26,7 +26,7 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    /*[SupportedOSPlatform(""Browser"")]
+    [SupportedOSPlatform(""Browser"")]
     public void SupportedBrowser() { }
 
     [SupportedOSPlatform(""iOS"")]
@@ -48,7 +48,7 @@ public class Test
     public void SupportedFreeBsd() { }
 
     [SupportedOSPlatform(""watchOS3.2.1"")]
-    public void SupporteWatchOS() { }*/
+    public void SupporteWatchOS() { }
 
     [UnsupportedOSPlatform(""windows7.0"")]
     public static void SupportedWindows() { }

@@ -1530,6 +1530,7 @@
   </data>
   <data name="UseValidPlatformStringInvalidVersion" xml:space="preserve">
     <value>Version '{0}' is not valid for platform '{1}'. Use a version with 2{2} parts for this platform.</value>
+    <comment>Version '7' is not valid for platform 'windows'. Use a version with 2-4 parts for this platform.</comment>
   </data>
   <data name="UseValidPlatformStringNoVersion" xml:space="preserve">
     <value>Version '{0}' is not valid for platform '{1}'. Do not use versions for this platform.</value>

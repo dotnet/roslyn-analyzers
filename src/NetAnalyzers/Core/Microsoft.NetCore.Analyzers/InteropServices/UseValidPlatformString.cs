@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
         private static readonly ImmutableArray<string> methodNames = ImmutableArray.Create("IsOSPlatform", "IsOSPlatformVersionAtLeast");
         private const string IsPrefix = "Is";
-        private const string OptionalSuffix = "VersionAtLeast";
+        private const string VersionSuffix = "VersionAtLeast";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValidPlatformStringTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableUnknownPlatform = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValidPlatformStringUnknownPlatform), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -92,11 +92,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         m.ReturnType.SpecialType == SpecialType.System_Boolean &&
                         NameAndParametersValid(m))
                     {
-                        var versionCount = ExtractPlatformAndVersionCount(m, out var platform);
-                        if (!knownPlatforms.TryGetValue(platform, out var count) ||
-                            versionCount > count)
+                        var (platformName, versionPartsCount) = ExtractPlatformAndVersionCount(m);
+                        if (!knownPlatforms.TryGetValue(platformName, out var count) ||
+                            versionPartsCount > count)
                         {
-                            knownPlatforms[platform] = versionCount; // only keep highest count
+                            knownPlatforms[platformName] = versionPartsCount; // only keep highest count
                         }
                     }
                 }
@@ -113,22 +113,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            static int ExtractPlatformAndVersionCount(IMethodSymbol method, out string platformName)
+            static (string platformName, int versionPartsCount) ExtractPlatformAndVersionCount(IMethodSymbol method)
             {
                 var name = method.Name;
-                if (name.EndsWith(OptionalSuffix, StringComparison.Ordinal))
+                if (name.EndsWith(VersionSuffix, StringComparison.Ordinal))
                 {
-                    platformName = name.Substring(2, name.Length - 2 - OptionalSuffix.Length);
-                    return method.Parameters.Length;
+                    return (name[2..(name.Length - VersionSuffix.Length)], method.Parameters.Length);
                 }
 
-                platformName = name[2..];
-                return 0;
+                return (name[2..], 0);
             }
 
             static bool NameAndParametersValid(IMethodSymbol method) =>
                 method.Name.StartsWith(IsPrefix, StringComparison.Ordinal) &&
-                (method.Parameters.Length == 0 || method.Name.EndsWith(OptionalSuffix, StringComparison.Ordinal));
+                (method.Parameters.Length == 0 || method.Name.EndsWith(VersionSuffix, StringComparison.Ordinal));
         }
 
         private static void AnalyzeOperation(IOperation operation, OperationAnalysisContext context, PooledDictionary<string, int> knownPlatforms)
@@ -184,11 +182,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                     else if (count == 0 && versionCount != 0)
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, platformName));
+                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
                     }
                     else if (count < versionCount)
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, count));
+                        var maxCount = count == 2 ? string.Empty : $"-{count}";
+                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
                     }
                 }
                 else
@@ -200,11 +199,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                     else if (count == 0 && versionPart.Length != 0)
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, platformName));
+                        reportDiagnostic(syntax.CreateDiagnostic(NoVersion, versionPart, platformName));
                     }
                     else
                     {
-                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, count));
+                        var maxCount = count == 2 ? string.Empty : $"-{count}";
+                        reportDiagnostic(syntax.CreateDiagnostic(InvalidVersion, versionPart, platformName, maxCount));
                     }
                 }
             }

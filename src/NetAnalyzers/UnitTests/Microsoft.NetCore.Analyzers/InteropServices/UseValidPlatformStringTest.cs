@@ -26,7 +26,7 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    [SupportedOSPlatform(""Browser"")]
+    /*[SupportedOSPlatform(""Browser"")]
     public void SupportedBrowser() { }
 
     [SupportedOSPlatform(""iOS"")]
@@ -48,7 +48,7 @@ public class Test
     public void SupportedFreeBsd() { }
 
     [SupportedOSPlatform(""watchOS3.2.1"")]
-    public void SupporteWatchOS() { }
+    public void SupporteWatchOS() { }*/
 
     [UnsupportedOSPlatform(""windows7.0"")]
     public static void SupportedWindows() { }
@@ -116,21 +116,21 @@ public class Test
     [{|#1:SupportedOSPlatform(""watch7.0"")|}] // The platform 'watch' is not a known platform name
     public void InvlaidPlatform2() { }
 
-    [{|#2:UnsupportedOSPlatform(""windows7"")|}] // The '7' is not a valid version. Please provide an input having 2 to 4 numbers separated with a dot.
+    [{|#2:UnsupportedOSPlatform(""windows7"")|}] // Version '7' is not valid for platform 'windows'. Use a version with 2-4 parts for this platform.
     public static void InvalidVersion() { }
 
-    [{|#3:SupportedOSPlatform(""watchOs7.1.0.2"")|}] //  '7.1.0.2' is not a valid version. Please provide an input having 2 to 3 numbers separated with a dot.
+    [{|#3:SupportedOSPlatform(""watchOs7.1.0.2"")|}] // Version '7.1.0.2' is not valid for platform 'watchOs'. Use a version with 2-3 parts for this platform.
     public static void InvalidVersion2() { }
 
-    [{|#4:UnsupportedOSPlatform(""browser1.0."")|}] // The platform 'browser' is not versioned, please remove version part
+    [{|#4:UnsupportedOSPlatform(""browser1.0."")|}] // Version '1.0.' is not valid for platform 'browser'. Do not use versions for this platform.
     public static void InvalidVersion3() { }
 }";
             await VerifyAnalyzerAsyncCs(csSource,
                 VerifyCS.Diagnostic(UseValidPlatformString.UnknownPlatform).WithLocation(0).WithArguments("window"),
                 VerifyCS.Diagnostic(UseValidPlatformString.UnknownPlatform).WithLocation(1).WithArguments("watch"),
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(2).WithArguments("7", "4"),
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(3).WithArguments("7.1.0.2", "3"),
-                VerifyCS.Diagnostic(UseValidPlatformString.NoVersion).WithLocation(4).WithArguments("browser"));
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(2).WithArguments("7", "windows", "-4"),
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(3).WithArguments("7.1.0.2", "watchOs", "-3"),
+                VerifyCS.Diagnostic(UseValidPlatformString.NoVersion).WithLocation(4).WithArguments("1.0.", "browser"));
         }
 
         [Fact]
@@ -170,10 +170,10 @@ End Class";
 using System;
 using System.Runtime.Versioning;
 
-[assembly:[|UnsupportedOSPlatform(""blazor"")|]]
+[assembly:[|UnsupportedOSPlatform(""blazor"")|]] // The platform 'blazor' is not a known platform name
 namespace ns
 {
-    [[|UnsupportedOSPlatform(""razor"")|]]
+    [[|UnsupportedOSPlatform(""razor"")|]] // The platform 'razor' is not a known platform name
     public class Test
     {
         [[|UnsupportedOSPlatform(""window7.0"")|]] // The platform 'window' is not a known platform name
@@ -182,10 +182,10 @@ namespace ns
         [[|SupportedOSPlatform(""watch7.0"")|]] // The platform 'watch' is not a known platform name
         public Test() { }
 
-        [[|UnsupportedOSPlatform(""windows7"")|]] // The '7' is not a valid version. Please provide an input having two to four numbers separated with a dot.
+        [[|UnsupportedOSPlatform(""windows7"")|]] // Version '7' is not valid for platform 'windows'. Use a version with 2-4 parts for this platform.
         public event EventHandler Windows7Event;
 
-        [[|SupportedOSPlatform(""watchOs7.1.0.2.3"")|]] // The '7.1.0.2.3' is not a valid version. Please provide an input having two to four numbers separated with a dot.
+        [[|SupportedOSPlatform(""watchOs7.1.0.2.3"")|]] // Version '7.1.0.2.3' is not valid for platform 'watchOs'. Use a version with 2-3 parts for this platform.
         private static int s_field = 0;
     }
 }";
@@ -347,13 +347,13 @@ using System.Runtime.Versioning;
 
 public class Test
 {
-    [{|#0:SupportedOSPlatform(""Android4.8.1.2.3"")|}] // The '4.8.1.2.3' is not a valid version. Please provide an input having 2 to 4 numbers separated with a dot.
+    [{|#0:SupportedOSPlatform(""Android4.8.1.2.3"")|}] // Version '4.8.1.2.3' is not valid for platform 'Android'. Use a version with 2-4 parts for this platform.
     public void SupportedOSPlatformAndroid5Parts() { }
 
-    [{|#1:UnsupportedOSPlatform(""Ios14.1.2.3"")|}] // The '14.1.2.3' is not a valid version. Please provide an input having 2 to 3 numbers separated with a dot.
+    [{|#1:UnsupportedOSPlatform(""Ios14.1.2.3"")|}] // Version '14.1.2.3' is not valid for platform 'Ios'. Use a version with 2-3 parts for this platform.
     public void UnsupportedOSPlatformIos4PartsInvalid() { }
 
-    [{|#2:SupportedOSPlatform(""macos1.2.3.4.5"")|}] // The '1.2.3.4.5' is not a valid version. Please provide an input having 2 to 3 numbers separated with a dot.
+    [{|#2:SupportedOSPlatform(""macos1.2.3.4.5"")|}] // Version '1.2.3.4.5' is not valid for platform 'macos'. Use a version with 2-3 parts for this platform.
     public void SupportedOSPlatformMac5PartsInvalid() { }
 
     [SupportedOSPlatform(""macos1.2.3"")]
@@ -362,18 +362,18 @@ public class Test
     [SupportedOSPlatform(""tvos1.2.3"")]
     public void SupportedTvOs3PartValid() { }
 
-    [{|#3:UnsupportedOSPlatform(""watchos1.2.3.4"")|}] // The '1.2.3.4' is not a valid version. Please provide an input having 2 to 3 numbers separated with a dot.
+    [{|#3:UnsupportedOSPlatform(""watchos1.2.3.4"")|}] // Version '1.2.3.4' is not valid for platform 'watchos'. Use a version with 2-3 parts for this platform.
     public void UnsupportedWatchOs4PartsInvalid() { }
 
-    [{|#4:SupportedOSPlatform(""Linux4.1"")|}] // The platform 'Linux' is not versioned, please remove version part
+    [{|#4:SupportedOSPlatform(""Linux4.1"")|}] // Version '4.1' is not valid for platform 'Linux'. Do not use versions for this platform.
     public void SupportedLinux_41() { }
 }";
             await VerifyAnalyzerAsyncCs(source,
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(0).WithArguments("4.8.1.2.3", "4"),
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(1).WithArguments("14.1.2.3", "3"),
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(2).WithArguments("1.2.3.4.5", "3"),
-                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(3).WithArguments("1.2.3.4", "3"),
-                VerifyCS.Diagnostic(UseValidPlatformString.NoVersion).WithLocation(4).WithArguments("Linux"));
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(0).WithArguments("4.8.1.2.3", "Android", "-4"),
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(1).WithArguments("14.1.2.3", "Ios", "-3"),
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(2).WithArguments("1.2.3.4.5", "macos", "-3"),
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(3).WithArguments("1.2.3.4", "watchos", "-3"),
+                VerifyCS.Diagnostic(UseValidPlatformString.NoVersion).WithLocation(4).WithArguments("4.1", "Linux"));
         }
 
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)

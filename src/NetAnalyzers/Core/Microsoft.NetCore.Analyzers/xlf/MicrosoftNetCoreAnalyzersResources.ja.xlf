@@ -2258,13 +2258,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringInvalidVersion">
-        <source>The '{0}' is not a valid version. Please provide an input having 2 to {1} numbers separated with a dot.</source>
-        <target state="new">The '{0}' is not a valid version. Please provide an input having 2 to {1} numbers separated with a dot.</target>
+        <source>Version '{0}' is not valid for platform '{1}'. Use a version with 2{2} parts for this platform.</source>
+        <target state="new">Version '{0}' is not valid for platform '{1}'. Use a version with 2{2} parts for this platform.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringNoVersion">
-        <source>The platform '{0}' is not versioned, please remove version part</source>
-        <target state="new">The platform '{0}' is not versioned, please remove version part</target>
+        <source>Version '{0}' is not valid for platform '{1}'. Do not use versions for this platform.</source>
+        <target state="new">Version '{0}' is not valid for platform '{1}'. Do not use versions for this platform.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringTitle">

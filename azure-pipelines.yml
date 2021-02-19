@@ -1,11 +1,13 @@
 # Branches that trigger a build on commit
 trigger:
 - master
+- release/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
+- release/*
 - 2.9.x
 
 jobs:
@@ -15,17 +17,19 @@ jobs:
     matrix:
       Debug:
         _configuration: Debug
+        _codeCoverage: True
       Release:
         _configuration: Release
+        _codeCoverage: False
   pool:
     name: NetCorePublic-Pool
-    queue: buildpool.windows.10.amd64.vs2017.open
-  timeoutInMinutes: 30
+    queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self
       clean: true
-    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine /p:Coverage=$(_codeCoverage)
       displayName: Build and Test
 
     - task: PublishTestResults@2
@@ -35,21 +39,24 @@ jobs:
         mergeTestResults: true
         testRunTitle: 'Windows $(_configuration)'
       condition: always()
+    - script: dotnet msbuild -binaryLogger:artifacts\log\$(_configuration)\uploadCodeCov.binlog;ProjectImports=Embed -restore eng/CodeCoverage.proj
+      displayName: Upload coverage to codecov.io
+      condition: and(succeeded(), eq(variables['_codeCoverage'], True))
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
         ArtifactName: 'Windows $(_configuration)'
       continueOnError: true
-      condition: not(succeeded())
+      condition: always()
 
 - job: Windows_Desktop_Spanish_Unit_Tests
   strategy:
     maxParallel: 4
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Windows.10.Amd64.ES.VS2017.Open
-  timeoutInMinutes: 30
+    queue: BuildPool.Windows.Amd64.VS2019.Pre.ES.Open
+  timeoutInMinutes: 40
 
   steps:
     - checkout: self
@@ -71,3 +78,45 @@ jobs:
         ArtifactName: 'Windows Desktop Spanish'
       continueOnError: true
       condition: not(succeeded())
+
+- job: Ubuntu
+  strategy:
+    maxParallel: 4
+    matrix:
+      Debug:
+        _configuration: Debug
+      Release:
+        _configuration: Release
+  pool:
+    name: NetCorePublic-Pool
+    queue: BuildPool.Ubuntu.1604.amd64.Open
+  timeoutInMinutes: 40
+  steps:
+    - checkout: self
+      clean: true
+    - script: eng/common/cibuild.sh -configuration $(_configuration) -prepareMachine
+      displayName: Build and Test
+
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: XUnit
+        testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
+        mergeTestResults: true
+        testRunTitle: 'Ubuntu $(_configuration)'
+      condition: always()
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Logs
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_configuration)'
+        ArtifactName: 'Ubuntu $(_configuration)'
+      continueOnError: true
+      condition: always()
+
+- job: Markdownlint
+  pool:
+      vmImage: ubuntu-18.04
+  steps:
+    - script: sudo npm install -g markdownlint-cli
+      displayName: Install markdownlint-cli
+    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+      displayName: Run markdownlint

@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseAssignableTypeForForeachVariable : UseAssignableTypeForForeachVariable
     {
-        protected override void AnalyzeLoop(OperationAnalysisContext context, Compilation compilation)
+        protected override void AnalyzeLoop(OperationAnalysisContext context)
         {
             if (context.Operation is not IForEachLoopOperation loop || loop.Syntax is not CommonForEachStatementSyntax syntax)
             {
@@ -35,13 +35,13 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return;
             }
 
-            CommonConversion conversion = compilation.ClassifyCommonConversion(collectionElementType, variableType);
+            CommonConversion conversion = context.Compilation.ClassifyCommonConversion(collectionElementType, variableType);
             if (!conversion.Exists || conversion.IsImplicit)
             {
                 return;
             }
 
-            context.ReportDiagnostic(syntax.ForEachKeyword.CreateDiagnostic(Rule, collectionElementType.Name, variableType!.Name));
+            context.ReportDiagnostic(syntax.ForEachKeyword.CreateDiagnostic(Rule, collectionElementType.Name, variableType.Name));
         }
     }
 }

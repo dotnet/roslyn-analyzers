@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Usage,
-            RuleLevel.BuildWarning,
+            RuleLevel.IdeSuggestion,
             description: s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -30,13 +30,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(compilationContext =>
-                compilationContext.RegisterOperationAction(
-                    context => AnalyzeLoop(context, context.Compilation),
-                    OperationKind.Loop)
-            );
+            context.RegisterOperationAction(AnalyzeLoop, OperationKind.Loop);
         }
 
-        protected abstract void AnalyzeLoop(OperationAnalysisContext context, Compilation compilation);
+        protected abstract void AnalyzeLoop(OperationAnalysisContext context);
     }
 }

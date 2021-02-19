@@ -1856,7 +1856,7 @@ There is no implicit conversion between collection element and iterator variable
 |-|-|
 |Category|Usage|
 |Enabled|True|
-|Severity|Warning|
+|Severity|Info|
 |CodeFix|False|
 ---
 

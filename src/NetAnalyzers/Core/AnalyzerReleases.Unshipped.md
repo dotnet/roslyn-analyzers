@@ -3,7 +3,7 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-CA2250 | Usage | Warning | UseAssignableTypeForForeachVariable, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
+CA2250 | Usage | Info | UseAssignableTypeForForeachVariable, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
 
 ### Removed Rules
 

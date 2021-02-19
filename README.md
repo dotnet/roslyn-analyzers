@@ -1,8 +1,8 @@
 # Roslyn Analyzers
 
-|          |Windows Debug|Windows Release|
-|:--------:|:-----------:|:-------------:|
-|**master**| [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) |
+|          |Windows Debug|Windows Release|Ubuntu Debug|Ubuntu Release|
+|:--------:|:-----------:|:-------------:|:----------:|:------------:|
+|**master**| [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Ubuntu&configuration=Ubuntu%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Ubuntu&configuration=Ubuntu%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) |
 
 ## What is Roslyn?
 
@@ -94,7 +94,7 @@ This package contains rules for correct usage of APIs that are present only in _
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeAnalysis.Analyzers&protocolType=NuGet)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet6&package=Microsoft.CodeAnalysis.Analyzers&protocolType=NuGet)
 
 This package contains rules for correct usage of APIs from the [Microsoft.CodeAnalysis](https://www.nuget.org/packages/Microsoft.CodeAnalysis) NuGet package, i.e. .NET Compiler Platform ("Roslyn") APIs. These are primarily aimed towards helping authors of diagnostic analyzers and code fix providers to invoke the Microsoft.CodeAnalysis APIs in a recommended manner. [More info about rules in this package](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 

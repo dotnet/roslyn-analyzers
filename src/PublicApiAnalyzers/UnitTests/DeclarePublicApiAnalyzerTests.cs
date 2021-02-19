@@ -984,6 +984,56 @@ C.Method6(string p1) -> void
                 GetCSharpResultAt(32, 17, DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters, "Method6", DeclarePublicApiAnalyzer.OverloadWithOptionalParametersShouldHaveMostParameters.HelpLinkUri));
         }
 
+        [Fact, WorkItem(4766, "https://github.com/dotnet/roslyn-analyzers/issues/4766")]
+        public async Task TestObsoleteOverloadWithOptionalParameters_NoDiagnostic()
+        {
+            var source = @"
+using System;
+
+public class C
+{
+    public void M(int p1 = 0) { }
+
+    [Obsolete]
+    public void M(char p1, int p2) { }
+}
+";
+
+            string shippedText = string.Empty;
+            string unshippedText = @"
+C
+C.C() -> void
+
+C.M(char p1, int p2) -> void
+C.M(int p1 = 0) -> void
+";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
+        [Fact, WorkItem(4766, "https://github.com/dotnet/roslyn-analyzers/issues/4766")]
+        public async Task TestMultipleOverloadsWithOptionalParameter_OneIsObsolete()
+        {
+            var source = @"
+using System;
+
+public class C
+{
+    public void M(int p1 = 0) { }
+
+    [Obsolete]
+    public void M(char p1 = '0') { }
+}
+";
+
+            string shippedText = @"C
+C.C() -> void
+C.M(char p1 = '0') -> void";
+            string unshippedText = "C.M(int p1 = 0) -> void";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
         [Fact]
         public async Task ObliviousMember_Simple()
         {
@@ -1478,6 +1528,45 @@ C.NewField -> int
 C.Property.get -> int
 C.Property.set -> void";
 
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Theory]
+        [WorkItem(4749, "https://github.com/dotnet/roslyn-analyzers/issues/4749")]
+        [InlineData("\r\n")] // Windows line ending.
+        [InlineData("\n")] // Linux line ending.
+        public async Task TestUseExistingLineEndings(string lineEnding)
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+    public int Field1;
+    public int Field2;
+    public int {|RS0016:Field3|}; // Newly added field, not in current public API.
+}
+";
+
+            var shippedText = @"";
+            var unshippedText = $"C{lineEnding}C.Field1 -> int{lineEnding}C.Field2 -> int";
+            var fixedUnshippedText = $"C{lineEnding}C.Field1 -> int{lineEnding}C.Field2 -> int{lineEnding}C.Field3 -> int";
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact]
+        [WorkItem(4749, "https://github.com/dotnet/roslyn-analyzers/issues/4749")]
+        public async Task TestUseOSLineEnding()
+        {
+            var source = @"
+public class C
+{
+    private C() { }
+    public int {|RS0016:Field1|}; // Newly added field, not in current public API.
+}
+";
+            var shippedText = @"";
+            var unshippedText = $"C";
+            var fixedUnshippedText = $"C{Environment.NewLine}C.Field1 -> int";
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }
 
@@ -2167,7 +2256,7 @@ C2.C2() -> void";
             await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }
 
-        [WindowsOnlyTheory]
+        [Theory]
         [InlineData("", "")]
         [InlineData("\r\n", "\r\n")]
         [InlineData("\r\n\r\n", "\r\n")]

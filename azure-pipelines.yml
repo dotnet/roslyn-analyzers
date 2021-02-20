@@ -102,12 +102,21 @@ jobs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
         mergeTestResults: true
-        testRunTitle: 'Windows $(_configuration)'
+        testRunTitle: 'Ubuntu $(_configuration)'
       condition: always()
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Ubuntu $(_configuration)'
       continueOnError: true
       condition: always()
+
+- job: Markdownlint
+  pool:
+      vmImage: ubuntu-18.04
+  steps:
+    - script: sudo npm install -g markdownlint-cli
+      displayName: Install markdownlint-cli
+    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+      displayName: Run markdownlint

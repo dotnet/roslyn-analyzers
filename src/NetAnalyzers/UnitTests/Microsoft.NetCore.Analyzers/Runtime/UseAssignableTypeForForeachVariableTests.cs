@@ -12,6 +12,52 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class UseAssignableTypeForForeachVariableTests
     {
         [Fact]
+        public async Task ObjectCollectionList()
+        {
+            var test = @"
+using System.Collections.Generic;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new List<object>();
+            foreach (string item in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyCodeFixAsync(test, test);
+        }
+
+        [Fact]
+        public async Task ObjectCollectionArrayList()
+        {
+            var test = @"
+using System.Collections;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            var x = new ArrayList();
+            foreach (string item in x)
+            {
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyCodeFixAsync(test, test);
+        }
+
+        [Fact]
         public async Task SameType()
         {
             var test = @"

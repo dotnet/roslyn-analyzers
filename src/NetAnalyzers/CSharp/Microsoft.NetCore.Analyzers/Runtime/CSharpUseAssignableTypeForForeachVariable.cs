@@ -29,6 +29,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             ITypeSymbol collectionElementType = loopInfo.ElementType;
+            if (collectionElementType.SpecialType == SpecialType.System_Object)
+            {
+                return;
+            }
+
             ITypeSymbol? variableType = (loop.LoopControlVariable as IVariableDeclaratorOperation)?.Symbol?.Type;
             if (variableType == null)
             {

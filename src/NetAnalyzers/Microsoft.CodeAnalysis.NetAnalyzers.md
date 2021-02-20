@@ -1850,7 +1850,7 @@ Calls to 'string.IndexOf' where the result is used to check for the presence/abs
 
 ## [CA2250](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250): Use implicitly assignable foreach variable type
 
-There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.
+There is no implicit conversion between collection element and iterator variable, this can result in runtime exception.
 
 |Item|Value|
 |-|-|

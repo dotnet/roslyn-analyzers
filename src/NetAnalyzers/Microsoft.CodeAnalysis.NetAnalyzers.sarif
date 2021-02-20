@@ -249,7 +249,7 @@
         "CA2250": {
           "id": "CA2250",
           "shortDescription": "Use implicitly assignable foreach variable type",
-          "fullDescription": "There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.",
+          "fullDescription": "There is no implicit conversion between collection element and iterator variable, this can result in runtime exception.",
           "defaultLevel": "note",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250",
           "properties": {

@@ -2083,8 +2083,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableDescription">
-        <source>There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.</source>
-        <target state="new">There is no implicit conversion between collection element and iterator variable, this will likely result in runtime exception.</target>
+        <source>There is no implicit conversion between collection element and iterator variable, this can result in runtime exception.</source>
+        <target state="new">There is no implicit conversion between collection element and iterator variable, this can result in runtime exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAssignableTypeForForeachVariableMessage">

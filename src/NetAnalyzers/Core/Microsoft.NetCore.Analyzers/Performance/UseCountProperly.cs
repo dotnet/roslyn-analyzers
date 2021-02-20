@@ -595,10 +595,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return true;
         }
 
-        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type, string propertyName, SpecialType propertyType, [NotNullWhen(true)] out ISymbol? propertySymbol)
+        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type, 
+        	string propertyName, SpecialType propertyType, [NotNullWhen(true)] out ISymbol? propertySymbol)
             => TypeContainsVisiblePropertyWithoutCircularity(context, operation, type, propertyName, propertyType, propertyType, out propertySymbol);
 
-        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type, string propertyName, SpecialType lowerBound, SpecialType upperBound, [NotNullWhen(true)] out ISymbol? propertySymbol)
+        private static bool TypeContainsVisiblePropertyWithoutCircularity(OperationAnalysisContext context, IOperation operation, ITypeSymbol type,
+        	string propertyName, SpecialType lowerBound, SpecialType upperBound, [NotNullWhen(true)] out ISymbol? propertySymbol)
         {
             if (TypeContainsMember(context, type, propertyName, lowerBound, upperBound, out bool isPropertyValidAndVisible, out propertySymbol) &&
                 !IsPropertyGetterUsingThisInstance(context, operation, propertySymbol))

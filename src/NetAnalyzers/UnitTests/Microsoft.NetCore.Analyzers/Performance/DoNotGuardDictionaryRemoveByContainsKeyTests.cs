@@ -91,6 +91,34 @@ namespace Testopolis
         }
 
         [Fact]
+        public async Task HasElseBlock_NoDiagnostic_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if (MyDictionary.ContainsKey(""Key""))
+            {
+                MyDictionary.Remove(""Key"");
+            }
+            else
+            {
+                throw new Exception(""Key doesn't exist"");
+            }
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
         public async Task NegatedCondition_NoDiagnostic_CS()
         {
             string source = @"

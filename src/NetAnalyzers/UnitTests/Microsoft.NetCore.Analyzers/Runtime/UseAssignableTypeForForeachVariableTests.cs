@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class UseAssignableTypeForForeachVariableTests
     {
         [Fact]
-        public async Task NonGenericIntCollection()
+        public async Task NonGenericIComparableCollection()
         {
             var test = @"
 namespace ConsoleApplication1
@@ -21,7 +21,7 @@ namespace ConsoleApplication1
     {   
         void Main()
         {
-            foreach (string item in new A())
+            {|#0:foreach|} (string item in new A())
             {
             }
         }
@@ -40,11 +40,11 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(test, test);
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"), test);
         }
 
         [Fact]
-        public async Task ObjectCollectionList()
+        public async Task GenericObjectCollection()
         {
             var test = @"
 using System.Collections.Generic;
@@ -56,18 +56,18 @@ namespace ConsoleApplication1
         void Main()
         {
             var x = new List<object>();
-            foreach (string item in x)
+            {|#0:foreach|} (string item in x)
             {
             }
         }
     }
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(test, test);
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("Object", "String"), test);
         }
 
         [Fact]
-        public async Task ObjectCollectionArrayList()
+        public async Task NongenericObjectCollection()
         {
             var test = @"
 using System.Collections;
@@ -398,11 +398,11 @@ namespace ConsoleApplication1
     {   
         void Main()
         {
-            foreach (string item in GenerateSequenceAsync())
+            {|#0:foreach|} (string item in GenerateSequence())
             {
             }
 
-            IEnumerable<IComparable> GenerateSequenceAsync()
+            IEnumerable<IComparable> GenerateSequence()
             {
                 throw new NotImplementedException();
             }
@@ -410,7 +410,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(test, test);
+            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"), test);
         }
 
         [Fact]
@@ -426,11 +426,11 @@ namespace ConsoleApplication1
     {   
         void Main()
         {
-            foreach (IComparable item in GenerateSequenceAsync())
+            foreach (IComparable item in GenerateSequence())
             {
             }
 
-            IEnumerable<IComparable> GenerateSequenceAsync()
+            IEnumerable<IComparable> GenerateSequence()
             {
                 throw new NotImplementedException();
             }

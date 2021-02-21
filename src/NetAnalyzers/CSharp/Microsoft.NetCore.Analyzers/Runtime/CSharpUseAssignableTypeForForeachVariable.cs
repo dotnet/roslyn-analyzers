@@ -16,8 +16,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         protected override void AnalyzeLoop(OperationAnalysisContext context, INamedTypeSymbol genericIEnumerableType)
         {
             if (context.Operation is not IForEachLoopOperation loop ||
-                loop.Syntax is not CommonForEachStatementSyntax syntax ||
-                !loop.Collection.Type.DerivesFrom(genericIEnumerableType))
+                loop.Syntax is not CommonForEachStatementSyntax syntax)
             {
                 return;
             }
@@ -31,7 +30,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             ITypeSymbol collectionElementType = loopInfo.ElementType;
-            if (collectionElementType.SpecialType == SpecialType.System_Object)
+            if (collectionElementType.SpecialType == SpecialType.System_Object &&
+                !loop.Collection.Type.DerivesFrom(genericIEnumerableType))
             {
                 return;
             }

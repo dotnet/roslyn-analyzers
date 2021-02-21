@@ -30,9 +30,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterOperationAction(AnalyzeLoop, OperationKind.Loop);
+            context.RegisterCompilationStartAction(context =>
+            {
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
+
+                INamedTypeSymbol? genericIEnumerableType = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                if (genericIEnumerableType == null)
+                {
+                    return;
+                }
+
+                context.RegisterOperationAction(context => AnalyzeLoop(context, genericIEnumerableType), OperationKind.Loop);
+            });
         }
 
-        protected abstract void AnalyzeLoop(OperationAnalysisContext context);
+        protected abstract void AnalyzeLoop(OperationAnalysisContext context, INamedTypeSymbol genericIEnumerableType);
     }
 }

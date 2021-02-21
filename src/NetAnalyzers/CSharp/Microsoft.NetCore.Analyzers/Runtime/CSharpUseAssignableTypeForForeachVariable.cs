@@ -13,9 +13,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUseAssignableTypeForForeachVariable : UseAssignableTypeForForeachVariable
     {
-        protected override void AnalyzeLoop(OperationAnalysisContext context)
+        protected override void AnalyzeLoop(OperationAnalysisContext context, INamedTypeSymbol genericIEnumerableType)
         {
-            if (context.Operation is not IForEachLoopOperation loop || loop.Syntax is not CommonForEachStatementSyntax syntax)
+            if (context.Operation is not IForEachLoopOperation loop ||
+                loop.Syntax is not CommonForEachStatementSyntax syntax ||
+                !loop.Collection.Type.DerivesFrom(genericIEnumerableType))
             {
                 return;
             }

@@ -12,6 +12,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class UseAssignableTypeForForeachVariableTests
     {
         [Fact]
+        public async Task NonGenericIntCollection()
+        {
+            var test = @"
+namespace ConsoleApplication1
+{
+    class Program
+    {   
+        void Main()
+        {
+            foreach (string item in new A())
+            {
+            }
+        }
+    }
+
+    struct A
+    {
+        public Enumerator GetEnumerator() =>  new Enumerator();
+
+        public struct Enumerator
+        {
+            public System.IComparable Current => 42;
+
+            public bool MoveNext() => true;
+        }
+    }
+}";
+
+            await VerifyCS.VerifyCodeFixAsync(test, test);
+        }
+
+        [Fact]
         public async Task ObjectCollectionList()
         {
             var test = @"
@@ -366,7 +398,7 @@ namespace ConsoleApplication1
     {   
         void Main()
         {
-            {|#0:foreach|} (string item in GenerateSequenceAsync())
+            foreach (string item in GenerateSequenceAsync())
             {
             }
 
@@ -378,7 +410,7 @@ namespace ConsoleApplication1
     }
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(test, GetCSharpResultAt(0).WithArguments("IComparable", "String"), test);
+            await VerifyCS.VerifyCodeFixAsync(test, test);
         }
 
         [Fact]

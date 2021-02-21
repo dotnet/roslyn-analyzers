@@ -19,7 +19,7 @@ assignees: ''
 
 <!--
 Note: Updates to NuGet package are more frequent than SDK, which means the NuGet package has fixes that didn't yet made into the SDK.
-So it's preferred you check whether the bug you encountered has been fixed into the latest NuGet package or not.
+So it's preferred you check whether the bug you encountered has been fixed in the latest NuGet package or not.
 -->
 
 _OR_

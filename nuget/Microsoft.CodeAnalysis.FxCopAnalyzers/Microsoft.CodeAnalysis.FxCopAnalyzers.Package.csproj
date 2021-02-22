@@ -4,6 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
 
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.FxCopAnalyzers</NuspecPackageId>
     <Description>Microsoft recommended code quality rules and .NET API usage rules, including the most important "FxCop" rules, implemented as analyzers using the .NET Compiler Platform ("Roslyn"). These analyzers check your code for security, performance, and design issues, among others. The documentation for FxCop analyzers can be found at https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers</Description>

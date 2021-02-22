@@ -4,6 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
 
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.NetAnalyzers</NuspecPackageId>
     <Description>Microsoft recommended code quality rules and .NET API usage rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").</Description>

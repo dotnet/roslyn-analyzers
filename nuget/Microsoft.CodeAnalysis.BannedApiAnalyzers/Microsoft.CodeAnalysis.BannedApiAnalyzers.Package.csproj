@@ -4,6 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
 
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.BannedApiAnalyzers</NuspecPackageId>
     <Description>Banned API Analyzers</Description>

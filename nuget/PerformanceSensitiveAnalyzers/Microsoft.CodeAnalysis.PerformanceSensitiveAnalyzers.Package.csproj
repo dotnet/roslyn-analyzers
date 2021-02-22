@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers</NuspecPackageId>
     <Description>PerformanceSensitive Analyzers</Description>

@@ -4,6 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
 
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeQuality.Analyzers</NuspecPackageId>
     <Description>Microsoft recommended code quality rules implemented as analyzers using the .NET Compiler Platform ("Roslyn"). This package is included as a part of "Microsoft.CodeAnalysis.FxCopAnalyzers" NuGet package and does not need to be installed separately.</Description>

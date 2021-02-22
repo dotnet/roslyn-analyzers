@@ -4,6 +4,7 @@
     <TargetFramework>net46</TargetFramework>
 
     <IsPackable>true</IsPackable>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.Metrics</NuspecPackageId>
     <Description>Report source based Code Metrics</Description>

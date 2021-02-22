@@ -43,7 +43,9 @@ namespace Analyzer.Utilities
             {
                 if (name.Equals(".ctor", StringComparison.Ordinal) ||
                     name.Equals(".cctor", StringComparison.Ordinal) ||
+#pragma warning disable CA1307 // Specify StringComparison
                     !name.Contains(".") && !name.Contains(":"))
+#pragma warning restore CA1307 // Specify StringComparison
                 {
                     namesBuilder.Add(name);
                 }

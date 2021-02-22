@@ -240,7 +240,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // Do not raise warning for unused 'this' parameter of an extension method.
                 if (_method.IsExtensionMethod)
                 {
-                    var thisParamter = _unusedParameters.Where(p => p.Ordinal == 0).FirstOrDefault();
+                    var thisParamter = _unusedParameters.FirstOrDefault(p => p.Ordinal == 0);
                     _unusedParameters.Remove(thisParamter);
                 }
 

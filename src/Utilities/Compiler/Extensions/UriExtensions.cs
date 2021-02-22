@@ -33,7 +33,9 @@ namespace Analyzer.Utilities.Extensions
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
+#pragma warning disable CA2249 // Consider using 'string.Contains' instead of 'string.IndexOf'
                 if (symbol.Name.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
+#pragma warning restore CA2249 // This overload is not available in all framworks we target
                 {
                     return true;
                 }

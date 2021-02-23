@@ -19,6 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private const string ContainsKeyMethodName = nameof(IDictionary<dynamic, dynamic>.ContainsKey);
         private const string IndexerName = "this[]";
+        private const string IndexerNameVb = "Item";
 
         private static readonly LocalizableString s_localizableTitle = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueTitle));
         private static readonly LocalizableString s_localizableTryGetValueMessage = CreateResource(nameof(MicrosoftNetCoreAnalyzersResources.PreferDictionaryTryGetValueMessage));
@@ -69,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            if (conditionalOperation!.WhenTrue is IBlockOperation blockOperation && DictionaryEntryIsModified(propertyReference, blockOperation))
+            if (conditionalOperation.WhenTrue is IBlockOperation blockOperation && DictionaryEntryIsModified(propertyReference, blockOperation))
             {
                 return;
             }
@@ -103,13 +104,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static bool DictionaryEntryIsModified(IPropertyReferenceOperation dictionaryAccess, IBlockOperation blockOperation)
         {
             return blockOperation.Operations.OfType<IExpressionStatementOperation>().Any(o =>
-                o.Operation is IAssignmentOperation { Target: IPropertyReferenceOperation reference } && reference.Property.Equals(dictionaryAccess.Property));
+                o.Operation is IAssignmentOperation { Target: IPropertyReferenceOperation reference } && reference.Property.Equals(dictionaryAccess.Property, SymbolEqualityComparer.Default));
         }
 
-        private bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
+        private static bool IsDictionaryAccess(IPropertyReferenceOperation propertyReference, INamedTypeSymbol dictionaryType)
         {
             return propertyReference.Property.IsIndexer && IsDictionaryType(propertyReference.Property.ContainingType, dictionaryType) &&
-                   propertyReference.Property.OriginalDefinition.Name == IndexerName;
+                   (propertyReference.Property.OriginalDefinition.Name == IndexerName || propertyReference.Language == "Visual Basic" && propertyReference.Property.OriginalDefinition.Name == IndexerNameVb);
         }
 
         private static bool TryGetParentConditionalOperation(IOperation derivedOperation, [NotNullWhen(true)] out IConditionalOperation? conditionalOperation)

@@ -7,11 +7,16 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpPreferDictionaryTryGetValueFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.PreferDictionaryTryGetValueAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicPreferDictionaryTryGetValueFixer>;
 
 namespace Microsoft.CodeAnalysis.NetAnalyzers.UnitTests.Microsoft.NetCore.Analyzers.Runtime
 {
     public class PreferDictionaryTryGetValueMethodsTests
     {
+        #region C# Tests
+
         private const string CSharpTemplate = @"
 using System;
 using System.Collections;
@@ -204,7 +209,6 @@ namespace Test
             if (data.ContainsKey(key))
             {
                 Console.WriteLine(2);
-                data[key] = 2;
                 Console.WriteLine(data[key]);
                 
                 return 2;
@@ -222,6 +226,231 @@ namespace Test
             }
 
             return 0;";
+
+        #endregion
+
+        #endregion
+
+        #region VB Tests
+
+        private const string VbTemplate = @"
+Imports System
+Imports System.Collections
+Imports System.Collections.Concurrent
+Imports System.Collections.Generic
+Imports System.Linq
+
+Namespace Test
+    Public Class TestClass
+        Public Function TestMethod() As Integer
+            {0}
+        End Function
+
+        Private Class MyDictionary(Of TKey, TValue)
+            Public Function ContainsKey(ByVal key As TKey) As Boolean
+                Return True
+            End Function
+
+            Default Public Property Item(ByVal key As TKey) As TValue
+                Get
+                    Return Nothing
+                End Get
+                Set(ByVal value As TValue)
+                End Set
+            End Property
+        End Class
+    End Class
+End Namespace";
+
+        private const string VbDictionaryContainsKeyPrintValue = @"
+            Dim key As String = ""key""
+            Dim data As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If {|#0:data.ContainsKey(key)|} Then
+                Console.WriteLine({|#1:data(key)|})
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyPrintValueFixed = @"
+            Dim key As String = ""key""
+            Dim data As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            
+            Dim value = Nothing
+            If data.TryGetValue(key, value) Then
+                Console.WriteLine(value)
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyReturnValue = @"
+            Dim key As String = ""key""
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+
+            If data.ContainsKey(key) Then
+                Return data(key)
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyReturnValueFixed = @"
+            Dim key As String = ""key""
+            Dim data As ConcurrentDictionary(Of String, Integer) = New ConcurrentDictionary(Of String, Integer)()
+            
+            Dim value = Nothing
+            If data.TryGetValue(key, value) Then
+                Return value
+            End If  
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyMultipleStatementsInIf = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If data.ContainsKey(key) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Console.WriteLine(data(key))
+
+                Return x
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyMultipleStatementsInIfFixed = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            Dim value = Nothing
+            If data.TryGetValue(key, value) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Console.WriteLine(value)
+                Return x
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyMultipleConditions = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If key = ""key"" AndAlso data.ContainsKey(key) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Console.WriteLine(data(key))
+                
+                Return x
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyMultipleConditionsFixed = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            
+            Dim value = Nothing
+            If key = ""key"" AndAlso data.TryGetValue(key, value) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Console.WriteLine(value)
+                
+                Return x
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyNestedDictionaryAccess = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If key = ""key"" AndAlso data.ContainsKey(key) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Dim wrapper = Function(i As Integer) As Integer
+                    Return i
+                End Function
+                Console.WriteLine(wrapper(data(key)))
+        
+                Return x
+            End If
+
+            Return 0";
+        
+        private const string VbDictionaryContainsKeyNestedDictionaryAccessFixed = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            Dim value = Nothing
+            If key = ""key"" AndAlso data.TryGetValue(key, value) Then
+                Console.WriteLine(2)
+                Dim x = 2
+                Dim wrapper = Function(i As Integer) As Integer
+                    Return i
+                End Function
+                Console.WriteLine(Wrapper(value))
+        
+                Return x
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyTernary = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            
+            Return If(data.ContainsKey(key), data(key), 2)";
+
+        private const string VbDictionaryContainsKeyTernaryFixed = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+            Dim value = Nothing
+
+            Return If(data.TryGetValue(key, value), value, 2)";
+
+
+        #region NoDiagnostic
+
+        private const string VbDictionaryContainsKeyModifyDictionary = @"
+            Dim key As String = ""key""
+            Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If data.ContainsKey(key) Then
+                Console.WriteLine(2)
+                data(key) = 2
+                Console.WriteLine(data(key))
+
+                Return 2
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyNonIDictionary = @"
+            Dim key As String = ""key""
+            Dim data As MyDictionary(Of String, Integer) = New MyDictionary(Of String, Integer)()
+
+            If data.ContainsKey(key) Then
+                Console.WriteLine(2)
+                Console.WriteLine(data(key))
+
+                Return 2
+            End If
+
+            Return 0";
+
+        private const string VbDictionaryContainsKeyNotGuardedByContainsKey = @"
+            Dim key As String = ""key""
+            Dim value As Integer = 3
+            Dim data As Dictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
+
+            If data.ContainsValue(value) Then
+                Console.WriteLine(data(key))
+            End If
+
+            Return 0";
+
+        #endregion
 
         #endregion
 
@@ -262,9 +491,51 @@ namespace Test
             }.RunAsync();
         }
 
+        [Theory]
+        [InlineData(VbDictionaryContainsKeyPrintValue, VbDictionaryContainsKeyPrintValueFixed)]
+        [InlineData(VbDictionaryContainsKeyReturnValue, VbDictionaryContainsKeyReturnValueFixed)]
+        [InlineData(VbDictionaryContainsKeyMultipleStatementsInIf, VbDictionaryContainsKeyMultipleStatementsInIfFixed)]
+        [InlineData(VbDictionaryContainsKeyMultipleConditions, VbDictionaryContainsKeyMultipleConditionsFixed)]
+        [InlineData(VbDictionaryContainsKeyNestedDictionaryAccess, VbDictionaryContainsKeyNestedDictionaryAccessFixed)]
+        [InlineData(VbDictionaryContainsKeyTernary, VbDictionaryContainsKeyTernaryFixed)]
+        public Task VbShouldReportDiagnostic(string codeSnippet, string fixedCodeSnippet)
+        {
+            string testCode = CreateVbCode(codeSnippet);
+            string fixedCode = CreateVbCode(fixedCodeSnippet);
+            var diagnostic = VerifyVB.Diagnostic(PreferDictionaryTryGetValueAnalyzer.ContainsKeyRule).WithLocation(0).WithLocation(1);
+
+            return new VerifyVB.Test
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ExpectedDiagnostics = { diagnostic }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(VbDictionaryContainsKeyModifyDictionary)]
+        [InlineData(VbDictionaryContainsKeyNonIDictionary)]
+        [InlineData(VbDictionaryContainsKeyNotGuardedByContainsKey)]
+        public Task VbShouldNotReportDiagnostic(string codeSnippet)
+        {
+            string testCode = CreateVbCode(codeSnippet);
+
+            return new VerifyVB.Test
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync();
+        }
+
         private static string CreateCSharpCode(string content)
         {
             return string.Format(CSharpTemplate, content);
+        }
+
+        private static string CreateVbCode(string content)
+        {
+            return string.Format(VbTemplate, content);
         }
     }
 }

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -12,8 +13,8 @@ using Microsoft.NetCore.Analyzers.Runtime;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp)]
-    public class CSharpPreferDictionaryTryGetValueFixer : PreferDictionaryTryGetValueFixer
+    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
+    public sealed class CSharpPreferDictionaryTryGetValueFixer : PreferDictionaryTryGetValueFixer
     {
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -27,9 +28,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             Document document = context.Document;
             SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-            var dictionaryAccessNode = root.FindNode(dictionaryAccessLocation.SourceSpan);
-            var dictionaryAccess = dictionaryAccessNode as ElementAccessExpressionSyntax ?? (dictionaryAccessNode as ArgumentSyntax)?.Expression as ElementAccessExpressionSyntax;
-            if (dictionaryAccess is null
+            var dictionaryAccess = root.FindNode(dictionaryAccessLocation.SourceSpan, getInnermostNodeForTie: true);
+            if (dictionaryAccess is not ElementAccessExpressionSyntax
                 || root.FindNode(context.Span) is not InvocationExpressionSyntax containsKeyInvocation
                 || containsKeyInvocation.Expression is not MemberAccessExpressionSyntax containsKeyAccess)
             {

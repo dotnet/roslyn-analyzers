@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             compilationContext.RegisterOperationAction(context => OnOperationAction(context, dictionaryType), OperationKind.PropertyReference);
         }
 
-        private void OnOperationAction(OperationAnalysisContext context, INamedTypeSymbol dictionaryType)
+        private static void OnOperationAction(OperationAnalysisContext context, INamedTypeSymbol dictionaryType)
         {
             var propertyReference = (IPropertyReferenceOperation)context.Operation;
 

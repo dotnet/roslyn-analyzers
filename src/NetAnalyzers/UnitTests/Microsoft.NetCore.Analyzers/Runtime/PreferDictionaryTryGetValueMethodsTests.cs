@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.Analyzers.Runtime;
@@ -377,7 +378,7 @@ End Namespace";
             End If
 
             Return 0";
-        
+
         private const string VbDictionaryContainsKeyNestedDictionaryAccessFixed = @"
             Dim key As String = ""key""
             Dim data As IDictionary(Of String, Integer) = New Dictionary(Of String, Integer)()
@@ -408,7 +409,6 @@ End Namespace";
             Dim value = Nothing
 
             Return If(data.TryGetValue(key, value), value, 2)";
-
 
         #region NoDiagnostic
 
@@ -530,12 +530,12 @@ End Namespace";
 
         private static string CreateCSharpCode(string content)
         {
-            return string.Format(CSharpTemplate, content);
+            return string.Format(CultureInfo.InvariantCulture, CSharpTemplate, content);
         }
 
         private static string CreateVbCode(string content)
         {
-            return string.Format(VbTemplate, content);
+            return string.Format(CultureInfo.InvariantCulture, VbTemplate, content);
         }
     }
 }

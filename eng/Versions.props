@@ -2,8 +2,8 @@
   <PropertyGroup>
     <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>5.0.4</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersPreReleaseVersionLabel>preview2</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages

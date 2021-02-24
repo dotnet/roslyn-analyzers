@@ -102,13 +102,13 @@ jobs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
         mergeTestResults: true
-        testRunTitle: 'Windows $(_configuration)'
+        testRunTitle: 'Ubuntu $(_configuration)'
       condition: always()
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Ubuntu $(_configuration)'
       continueOnError: true
       condition: always()
 

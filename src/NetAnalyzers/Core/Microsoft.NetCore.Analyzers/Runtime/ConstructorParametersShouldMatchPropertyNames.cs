@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
                                                                              description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
+                                                                             isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
         internal static DiagnosticDescriptor FieldRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
                                                                              description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
+                                                                             isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyRule, FieldRule);

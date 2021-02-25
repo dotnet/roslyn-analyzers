@@ -121,7 +121,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     context.ReportDiagnostic(
                         param.CreateDiagnostic(
                             FieldRule,
-                            param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             param.Name,
                             field.Name));
                 }
@@ -131,7 +130,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     context.ReportDiagnostic(
                         param.CreateDiagnostic(
                             PropertyRule,
-                            param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             param.Name,
                             prop.Name));
                 }

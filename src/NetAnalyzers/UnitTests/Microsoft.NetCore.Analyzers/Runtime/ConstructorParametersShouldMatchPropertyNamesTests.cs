@@ -35,8 +35,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondDrop;
                     }
                 }",
-            CA1071CSharpPropertyResultAt(11, 35, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(11, 53, "C1", "secondDrop", "SecondProp"));
+            CA1071CSharpPropertyResultAt(11, 35, "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(11, 53, "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -58,8 +58,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondDrop;
                     }
                 }",
-            CA1071CSharpPropertyResultAt(11, 35, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(11, 53, "C1", "secondDrop", "SecondProp"));
+            CA1071CSharpPropertyResultAt(11, 35, "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(11, 53, "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -78,8 +78,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.SecondProp = secondDrop
                     End Sub
                 End Class",
-            CA2243BasicPropertyResultAt(9, 36, "C1", "firstDrop", "FirstProp"),
-            CA2243BasicPropertyResultAt(9, 58, "C1", "secondDrop", "SecondProp"));
+            CA2243BasicPropertyResultAt(9, 36, "firstDrop", "FirstProp"),
+            CA2243BasicPropertyResultAt(9, 58, "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -195,8 +195,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondIField;
                     }
                 }",
-            CA1071CSharpFieldResultAt(10, 35, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(10, 55, "C1", "secondIField", "secondField"));
+            CA1071CSharpFieldResultAt(10, 35, "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(10, 55, "secondIField", "secondField"));
         }
 
         [Fact]
@@ -215,8 +215,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondIField
                     End Sub
                 End Class",
-            CA2243BasicFieldResultAt(9, 36, "C1", "firstIField", "firstField"),
-            CA2243BasicFieldResultAt(9, 60, "C1", "secondIField", "secondField"));
+            CA2243BasicFieldResultAt(9, 36, "firstIField", "firstField"),
+            CA2243BasicFieldResultAt(9, 60, "secondIField", "secondField"));
         }
 
         [Fact]
@@ -238,8 +238,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondIField;
                     }
                 }",
-            CA1071CSharpFieldResultAt(11, 35, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(11, 55, "C1", "secondIField", "secondField"));
+            CA1071CSharpFieldResultAt(11, 35, "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(11, 55, "secondIField", "secondField"));
         }
 
         [Fact]

@@ -1511,7 +1511,7 @@
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
   <data name="UseValidPlatformStringDescription" xml:space="preserve">
-    <value>Platform compatibility analyzer would not work properly if invalid platform name or version used.</value>
+    <value>Platform compatibility analyzer requires a valid platform name and version.</value>
   </data>
   <data name="UseValidPlatformStringTitle" xml:space="preserve">
     <value>Use valid platform string</value>

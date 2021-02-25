@@ -159,16 +159,17 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static void AnalyzeAttribute(Action<Diagnostic> reportDiagnostic, AttributeData attributeData, PooledDictionary<string, int> knownPlatforms, CancellationToken token)
         {
             var constructorArguments = attributeData.ConstructorArguments;
+            var syntaxReference = attributeData.ApplicationSyntaxReference;
 
-            if (constructorArguments.Length == 1)
+            if (constructorArguments.Length == 1 && syntaxReference != null)
             {
                 if (constructorArguments[0].Value is string value)
                 {
-                    AnalyzeStringParameter(reportDiagnostic, attributeData.ApplicationSyntaxReference.GetSyntax(token), knownPlatforms, value);
+                    AnalyzeStringParameter(reportDiagnostic, syntaxReference.GetSyntax(token), knownPlatforms, value);
                 }
                 else
                 {
-                    reportDiagnostic(attributeData.ApplicationSyntaxReference.GetSyntax(token).CreateDiagnostic(UnknownPlatform, "null"));
+                    reportDiagnostic(syntaxReference.GetSyntax(token).CreateDiagnostic(UnknownPlatform, "null"));
                 }
             }
 

@@ -2238,8 +2238,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringDescription">
-        <source>Platform compatibility analyzer would not work properly if invalid platform name or version used.</source>
-        <target state="new">Platform compatibility analyzer would not work properly if invalid platform name or version used.</target>
+        <source>Platform compatibility analyzer requires a valid platform name and version.</source>
+        <target state="new">Platform compatibility analyzer requires a valid platform name and version.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseValidPlatformStringInvalidVersion">

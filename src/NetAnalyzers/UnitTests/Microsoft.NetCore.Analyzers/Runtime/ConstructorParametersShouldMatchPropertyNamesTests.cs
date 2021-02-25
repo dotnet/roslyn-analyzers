@@ -66,20 +66,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1071_ClassPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+                Imports System.Text.Json.Serialization
 
-Public Class C1
-    Property FirstProp() As Integer
-    Property SecondProp() as Object
+                Public Class C1
+                    Property FirstProp() As Integer
+                    Property SecondProp() as Object
 
-    <JsonConstructor>
-    Public Sub New(firstDrop as Integer, secondDrop as Object)
-        Me.FirstProp = firstDrop
-        Me.SecondProp = secondDrop
-    End Sub
-End Class",
-            CA2243BasicPropertyResultAt(9, 20, "C1", "firstDrop", "FirstProp"),
-            CA2243BasicPropertyResultAt(9, 42, "C1", "secondDrop", "SecondProp"));
+                    <JsonConstructor>
+                    Public Sub New(firstDrop as Integer, secondDrop as Object)
+                        Me.FirstProp = firstDrop
+                        Me.SecondProp = secondDrop
+                    End Sub
+                End Class",
+            CA2243BasicPropertyResultAt(9, 36, "C1", "firstDrop", "FirstProp"),
+            CA2243BasicPropertyResultAt(9, 58, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -106,17 +106,17 @@ End Class",
         public async Task CA1071_ClassPropsDoNotMatchNotJsonCtor_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+            Imports System.Text.Json.Serialization
 
-Public Class C1
-    Property firstProp() As Integer
-    Property secondProp() as Object
+            Public Class C1
+                Property firstProp() As Integer
+                Property secondProp() as Object
 
-    Public Sub New(firstDrop as Integer, secondDrop as Object)
-        Me.firstProp = firstDrop
-        Me.secondProp = secondDrop
-    End Sub
-End Class");
+                Public Sub New(firstDrop as Integer, secondDrop as Object)
+                    Me.firstProp = firstDrop
+                    Me.secondProp = secondDrop
+                End Sub
+            End Class");
         }
 
         [Fact]
@@ -164,17 +164,17 @@ End Class");
         public async Task CA1071_ClassPropsMatch_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+                Imports System.Text.Json.Serialization
 
-Public Class C1
-    Property firstProp() As Integer
-    Property secondProp() as Object
+                Public Class C1
+                    Property firstProp() As Integer
+                    Property secondProp() as Object
 
-    Public Sub New(firstDrop as Integer, secondDrop as Object)
-        Me.firstProp = firstDrop
-        Me.secondProp = secondDrop
-    End Sub
-End Class");
+                    Public Sub New(firstDrop as Integer, secondDrop as Object)
+                        Me.firstProp = firstDrop
+                        Me.secondProp = secondDrop
+                    End Sub
+                End Class");
         }
 
         [Fact]
@@ -203,20 +203,20 @@ End Class");
         public async Task CA1071_ClassFieldsDoNotMatch_ConstructorParametersShouldMatchFieldNames_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+                Imports System.Text.Json.Serialization
 
-Public Class C1
-    Public firstField as Integer
-    Public secondField as Object
+                Public Class C1
+                    Public firstField as Integer
+                    Public secondField as Object
 
-    <JsonConstructor>
-    Public Sub New(firstIField as Integer, secondIField as Object)
-        Me.firstField = firstIField
-        Me.secondField = secondIField
-    End Sub
-End Class",
-            CA2243BasicFieldResultAt(9, 20, "C1", "firstIField", "firstField"),
-            CA2243BasicFieldResultAt(9, 44, "C1", "secondIField", "secondField"));
+                    <JsonConstructor>
+                    Public Sub New(firstIField as Integer, secondIField as Object)
+                        Me.firstField = firstIField
+                        Me.secondField = secondIField
+                    End Sub
+                End Class",
+            CA2243BasicFieldResultAt(9, 36, "C1", "firstIField", "firstField"),
+            CA2243BasicFieldResultAt(9, 60, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -265,17 +265,17 @@ End Class",
         public async Task CA1071_ClassFieldsDoNotMatchNotJsonCtor_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+                Imports System.Text.Json.Serialization
 
-Public Class C1
-    Public firstField as Integer
-    Public secondField as Object
+                Public Class C1
+                    Public firstField as Integer
+                    Public secondField as Object
 
-    Public Sub New(firstIField as Integer, secondIField as Object)
-        Me.firstField = firstIField
-        Me.secondField = secondIField
-    End Sub
-End Class");
+                    Public Sub New(firstIField as Integer, secondIField as Object)
+                        Me.firstField = firstIField
+                        Me.secondField = secondIField
+                    End Sub
+                End Class");
         }
 
         [Fact]
@@ -303,18 +303,18 @@ End Class");
         public async Task CA1071_ClassFieldsMatch_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-Imports System.Text.Json.Serialization
+                Imports System.Text.Json.Serialization
 
-Public Class C1
-    Public firstField as Integer
-    Public secondField as Object
+                Public Class C1
+                    Public firstField as Integer
+                    Public secondField as Object
 
-    <JsonConstructor>
-    Public Sub New(firstField as Integer, secondField as Object)
-        Me.firstField = firstField
-        Me.secondField = secondField
-    End Sub
-End Class");
+                    <JsonConstructor>
+                    Public Sub New(firstField as Integer, secondField as Object)
+                        Me.firstField = firstField
+                        Me.secondField = secondField
+                    End Sub
+                End Class");
         }
 
         private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)

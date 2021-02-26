@@ -1355,7 +1355,7 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "typeName": "ConstructorParametersShouldMatchPropertyNamesAnalyzer",
+            "typeName": "ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer",
             "languages": [
               "C#",
               "Visual Basic"

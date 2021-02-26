@@ -6,15 +6,15 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.ConstructorParametersShouldMatchPropertyNamesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.ConstructorParametersShouldMatchPropertyNamesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class ConstructorParametersShouldMatchPropertyNamesTests
+    public class ConstructorParametersShouldMatchPropertyAndFieldNamesTests
     {
         [Fact]
         public async Task CA1071_ClassPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
@@ -359,27 +359,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private DiagnosticResult CA1071CSharpPropertyResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.PropertyRule)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
                .WithLocation(line, column)
 #pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult CA1071BasicPropertyResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.PropertyRule)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
                 .WithLocation(line, column)
 #pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
         private DiagnosticResult CA1071CSharpFieldResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.FieldRule)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
                .WithLocation(line, column)
 #pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private DiagnosticResult CA1071BasicFieldResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.FieldRule)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
                 .WithLocation(line, column)
 #pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);

@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA1071: Constructor parameters should match property and field names
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class ConstructorParametersShouldMatchPropertyNamesAnalyzer : DiagnosticAnalyzer
+    public sealed class ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1071";
 

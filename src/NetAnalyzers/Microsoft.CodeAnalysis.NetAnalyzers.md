@@ -710,7 +710,7 @@ String parameters passed by value with the 'OutAttribute' can destabilize the ru
 
 ## [CA1418](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418): Use valid platform string
 
-Platform compatibility analyzer would not work properly if invalid platform name or version used.
+Platform compatibility analyzer requires a valid platform name and version.
 
 |Item|Value|
 |-|-|

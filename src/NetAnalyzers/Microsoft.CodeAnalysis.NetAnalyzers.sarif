@@ -1518,7 +1518,7 @@
         "CA1418": {
           "id": "CA1418",
           "shortDescription": "Use valid platform string",
-          "fullDescription": "Platform compatibility analyzer would not work properly if invalid platform name or version used.",
+          "fullDescription": "Platform compatibility analyzer requires a valid platform name and version.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418",
           "properties": {

@@ -178,13 +178,13 @@
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
       <trans-unit id="ConstructorParameterShouldMatchFieldName">
-        <source>For proper deserialization change the name of parameter '{1}', to match the bound field '{2}'</source>
-        <target state="new">For proper deserialization change the name of parameter '{1}', to match the bound field '{2}'</target>
+        <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</source>
+        <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstructorParameterShouldMatchPropertyName">
-        <source>For proper deserialization change the name of parameter '{1}', to match the bound property '{2}'</source>
-        <target state="new">For proper deserialization change the name of parameter '{1}', to match the bound property '{2}'</target>
+        <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property '{2}'</source>
+        <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property '{2}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesDescription">

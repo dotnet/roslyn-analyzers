@@ -188,8 +188,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesDescription">
-        <source>Constructor parameters should match referenced property or field names.</source>
-        <target state="new">Constructor parameters should match referenced property or field names.</target>
+        <source>For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</source>
+        <target state="new">For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesTitle">

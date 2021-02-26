@@ -578,7 +578,7 @@ Do not declare virtual events in a base class. Overridden events in a derived cl
 
 ## [CA1071](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1071): Constructor parameters should match referenced property and field names
 
-Constructor parameters should match referenced property or field names.
+For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.
 
 |Item|Value|
 |-|-|

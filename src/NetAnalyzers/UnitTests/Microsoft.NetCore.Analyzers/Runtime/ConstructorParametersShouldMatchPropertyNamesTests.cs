@@ -321,7 +321,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             var csharpTest = new VerifyCS.Test
             {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemTextJson50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = source,
             };
 
@@ -335,7 +335,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             var csharpTest = new VerifyCS.Test
             {
                 LanguageVersion = LanguageVersion.CSharp9,
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemTextJson50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = source,
             };
 
@@ -348,7 +348,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             var basicTest = new VerifyVB.Test
             {
-                ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithSystemTextJson50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = source,
             };
 

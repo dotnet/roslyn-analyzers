@@ -173,6 +173,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return paramWords.All(x => WordParser.ContainsWord(x, WordParserOptions.SplitCompoundWords, propWords));
             }
 
+            private bool IsJsonConstructor([NotNullWhen(returnValue: true)] IMethodSymbol? method)
+            => method.IsConstructor() &&
+                method.HasAttribute(this._jsonConstructorAttributeInfoType);
+
             public bool ShouldAnalyzeMethod(IMethodSymbol method)
             {
                 // We only care about constructors with parameters.
@@ -182,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // We only care about constructors that are marked with JsonConstructor attribute.
-                if (!method.IsJsonConstructor(_jsonConstructorAttributeInfoType))
+                if (!this.IsJsonConstructor(method))
                 {
                     return false;
                 }

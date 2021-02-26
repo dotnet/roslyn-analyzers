@@ -1529,6 +1529,6 @@
     <value>For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</value>
   </data>
   <data name="ConstructorParametersShouldMatchPropertyNamesTitle" xml:space="preserve">
-    <value>Constructor parameters should match referenced property and field names</value>
+    <value>Constructor parameter names should match the bound property or field names</value>
   </data>
 </root>

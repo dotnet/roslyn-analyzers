@@ -193,8 +193,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesTitle">
-        <source>Constructor parameters should match referenced property and field names</source>
-        <target state="new">Constructor parameters should match referenced property and field names</target>
+        <source>Constructor parameter names should match the bound property or field names</source>
+        <target state="new">Constructor parameter names should match the bound property or field names</target>
         <note />
       </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">

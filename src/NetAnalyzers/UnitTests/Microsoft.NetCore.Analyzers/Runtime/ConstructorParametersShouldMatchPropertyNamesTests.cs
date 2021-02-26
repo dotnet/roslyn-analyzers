@@ -78,8 +78,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.SecondProp = secondDrop
                     End Sub
                 End Class",
-            CA2243BasicPropertyResultAt(9, 36, "C1", "firstDrop", "FirstProp"),
-            CA2243BasicPropertyResultAt(9, 58, "C1", "secondDrop", "SecondProp"));
+            CA1071BasicPropertyResultAt(9, 36, "C1", "firstDrop", "FirstProp"),
+            CA1071BasicPropertyResultAt(9, 58, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -215,8 +215,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondIField
                     End Sub
                 End Class",
-            CA2243BasicFieldResultAt(9, 36, "C1", "firstIField", "firstField"),
-            CA2243BasicFieldResultAt(9, 60, "C1", "secondIField", "secondField"));
+            CA1071BasicFieldResultAt(9, 36, "C1", "firstIField", "firstField"),
+            CA1071BasicFieldResultAt(9, 60, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -364,7 +364,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 #pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
-        private DiagnosticResult CA2243BasicPropertyResultAt(int line, int column, params string[] arguments)
+        private DiagnosticResult CA1071BasicPropertyResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.PropertyRule)
                 .WithLocation(line, column)
@@ -377,7 +377,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 #pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
-        private DiagnosticResult CA2243BasicFieldResultAt(int line, int column, params string[] arguments)
+        private DiagnosticResult CA1071BasicFieldResultAt(int line, int column, params string[] arguments)
 #pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyNamesAnalyzer.FieldRule)
                 .WithLocation(line, column)

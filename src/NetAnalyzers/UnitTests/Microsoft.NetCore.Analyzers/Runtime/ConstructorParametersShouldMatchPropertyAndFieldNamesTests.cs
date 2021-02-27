@@ -28,14 +28,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public object SecondProp { get; }
 
                     [JsonConstructor]
-                    public C1(int firstDrop, object secondDrop)
+                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
                     {
                         this.FirstProp = firstDrop;
                         this.SecondProp = secondDrop;
                     }
                 }",
-            CA1071CSharpPropertyResultAt(11, 35, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(11, 53, "C1", "secondDrop", "SecondProp"));
+            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -51,14 +51,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public object SecondProp { get; }
 
                     [JsonConstructor]
-                    public C1(int firstDrop, object secondDrop)
+                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
                     {
                         this.FirstProp = firstDrop;
                         this.SecondProp = secondDrop;
                     }
                 }",
-            CA1071CSharpPropertyResultAt(11, 35, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(11, 53, "C1", "secondDrop", "SecondProp"));
+            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -72,21 +72,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Property SecondProp() as Object
 
                     <JsonConstructor>
-                    Public Sub New(firstDrop as Integer, secondDrop as Object)
+                    Public Sub New({|#0:firstDrop|} as Integer, {|#1:secondDrop|} as Object)
                         Me.FirstProp = firstDrop
                         Me.SecondProp = secondDrop
                     End Sub
                 End Class",
-            CA1071BasicPropertyResultAt(9, 36, "C1", "firstDrop", "FirstProp"),
-            CA1071BasicPropertyResultAt(9, 58, "C1", "secondDrop", "SecondProp"));
+            CA1071BasicPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
+            CA1071BasicPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
         public async Task CA1071_ClassPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharpAnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
                 public class C1
                 {
                     public int FirstProp { get; }
@@ -105,8 +103,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1071_ClassPropsDoNotMatchNotJsonCtor_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-            Imports System.Text.Json.Serialization
-
             Public Class C1
                 Property firstProp() As Integer
                 Property secondProp() as Object
@@ -122,8 +118,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
                 public record C1
                 {
                     public int FirstProp { get; }
@@ -169,9 +163,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Property firstProp() As Integer
                     Property secondProp() as Object
 
-                    Public Sub New(firstDrop as Integer, secondDrop as Object)
-                        Me.firstProp = firstDrop
-                        Me.secondProp = secondDrop
+                    <JsonConstructor>
+                    Public Sub New(firstProp as Integer, secondProp as Object)
+                        Me.firstProp = firstProp
+                        Me.secondProp = secondProp
                     End Sub
                 End Class");
         }
@@ -188,14 +183,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public object secondField;
 
                     [JsonConstructor]
-                    public C1(int firstIField, object secondIField)
+                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
                     {
                         this.firstField = firstIField;
                         this.secondField = secondIField;
                     }
                 }",
-            CA1071CSharpFieldResultAt(10, 35, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(10, 55, "C1", "secondIField", "secondField"));
+            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -209,13 +204,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Public secondField as Object
 
                     <JsonConstructor>
-                    Public Sub New(firstIField as Integer, secondIField as Object)
+                    Public Sub New({|#0:firstIField|} as Integer, {|#1:secondIField|} as Object)
                         Me.firstField = firstIField
                         Me.secondField = secondIField
                     End Sub
                 End Class",
-            CA1071BasicFieldResultAt(9, 36, "C1", "firstIField", "firstField"),
-            CA1071BasicFieldResultAt(9, 60, "C1", "secondIField", "secondField"));
+            CA1071BasicFieldResultAt(0, "C1", "firstIField", "firstField"),
+            CA1071BasicFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -231,22 +226,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     public object secondField;
 
                     [JsonConstructor]
-                    public C1(int firstIField, object secondIField)
+                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
                     {
                         this.firstField = firstIField;
                         this.secondField = secondIField;
                     }
                 }",
-            CA1071CSharpFieldResultAt(11, 35, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(11, 55, "C1", "secondIField", "secondField"));
+            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
         public async Task CA1071_ClassFieldsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharpAnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
                 public class C1
                 {
                     public int firstField;
@@ -264,8 +257,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1071_ClassFieldsDoNotMatchNotJsonCtor_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-                Imports System.Text.Json.Serialization
-
                 Public Class C1
                     Public firstField as Integer
                     Public secondField as Object
@@ -356,31 +347,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             await basicTest.RunAsync();
         }
 
-        private DiagnosticResult CA1071CSharpPropertyResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+        private DiagnosticResult CA1071CSharpPropertyResultAt(int markupKey, params string[] arguments)
            => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
-               .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+               .WithLocation(markupKey)
                .WithArguments(arguments);
 
-        private DiagnosticResult CA1071BasicPropertyResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+        private DiagnosticResult CA1071BasicPropertyResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
-                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+               .WithLocation(markupKey)
                 .WithArguments(arguments);
-        private DiagnosticResult CA1071CSharpFieldResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+
+        private DiagnosticResult CA1071CSharpFieldResultAt(int markupKey, params string[] arguments)
            => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
-               .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
+               .WithLocation(markupKey)
                .WithArguments(arguments);
 
-        private DiagnosticResult CA1071BasicFieldResultAt(int line, int column, params string[] arguments)
-#pragma warning disable RS0030 // Do not used banned APIs
+        private DiagnosticResult CA1071BasicFieldResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
-                .WithLocation(line, column)
-#pragma warning restore RS0030 // Do not used banned APIs
-                .WithArguments(arguments);
+               .WithLocation(markupKey)
+               .WithArguments(arguments);
     }
 }

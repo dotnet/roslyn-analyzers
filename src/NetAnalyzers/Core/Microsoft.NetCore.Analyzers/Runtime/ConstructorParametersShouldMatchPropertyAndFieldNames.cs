@@ -18,6 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1071";
+        internal const string ReferencedFieldOrPropertyName = "ReferencedMemberName";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
@@ -118,19 +119,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (IsSupportedField(field) && !IsParamMatchFieldName(param, field))
                 {
+                    var properties = ImmutableDictionary<string, string?>.Empty.SetItem(ReferencedFieldOrPropertyName, field.Name);
+
                     context.ReportDiagnostic(
                         param.CreateDiagnostic(
                             FieldRule,
+                            properties,
                             param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             param.Name,
                             field.Name));
+
+                    return;
                 }
 
                 if (IsSupportedProp(prop) && !IsParamMatchPropName(param, prop))
                 {
+                    var properties = ImmutableDictionary<string, string?>.Empty.SetItem(ReferencedFieldOrPropertyName, prop.Name);
+
                     context.ReportDiagnostic(
                         param.CreateDiagnostic(
                             PropertyRule,
+                            properties,
                             param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                             param.Name,
                             prop.Name));

@@ -585,7 +585,7 @@ For a constructor having [JsonConstructor] attribute each parameter name must ma
 |Category|Design|
 |Enabled|True|
 |Severity|Warning|
-|CodeFix|False|
+|CodeFix|True|
 ---
 
 ## [CA1200](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1200): Avoid using cref tags with a prefix

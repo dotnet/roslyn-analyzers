@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -16,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class ConstructorParametersShouldMatchPropertyAndFieldNamesFixerTests
     {
         [Fact]
-        public async Task CA1071_ClassSinglePropDoesNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
+        public async Task CA1071_ClassSinglePropDoesNotMatch_CSharp()
         {
             await VerifyCSharpCodeFixAsync(@"
                 using System.Text.Json.Serialization;
@@ -53,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_ClassPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
+        public async Task CA1071_ClassPropsDoNotMatch_CSharp()
         {
             await VerifyCSharpCodeFixAsync(@"
                 using System.Text.Json.Serialization;
@@ -85,6 +84,80 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         this.FirstProp = firstProp;
                         this.SecondProp = secondProp;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassSingleFieldDoesNotMatch_CSharp()
+        {
+            await VerifyCSharpCodeFixAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int [|firstIField|], object secondField)
+                    {
+                        this.firstField = firstIField;
+                        this.secondField = secondField;
+                    }
+                }",
+                @"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int firstField, object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatch_CSharp()
+        {
+            await VerifyCSharpCodeFixAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int [|firstIField|], object [|secondIField|])
+                    {
+                        this.firstField = firstIField;
+                        this.secondField = secondIField;
+                    }
+                }",
+                @"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int firstField, object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
                     }
                 }");
         }

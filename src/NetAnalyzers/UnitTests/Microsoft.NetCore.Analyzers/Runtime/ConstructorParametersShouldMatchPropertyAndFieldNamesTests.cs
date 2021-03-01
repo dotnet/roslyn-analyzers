@@ -154,6 +154,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_ClassPropsMatchAndTupleAssignment_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    {
+                        (this.FirstProp, this.SecondProp) = (firstProp, secondProp);
+                    }
+                }");
+        }
+
+        [Fact]
         public async Task CA1071_ClassPropsMatch_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
@@ -164,9 +184,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Property secondProp() as Object
 
                     <JsonConstructor>
-                    Public Sub New(firstProp as Integer, secondProp as Object)
+                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
                         Me.firstProp = firstProp
                         Me.secondProp = secondProp
+                    End Sub
+                End Class");
+        }
+
+        [Fact(Skip = "Not sure if this syntax is possible in VB.")]
+        public async Task CA1071_ClassPropsMatchAndTupleAssignment_NoDiagnostics_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Property firstProp() As Integer
+                    Property secondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
+                        new Tuple(As String, Object)(Me.firstProp, Me.secondProp) = new Tuple(As String, Object)(firstDrop, secondDrop)
                     End Sub
                 End Class");
         }
@@ -284,6 +321,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         this.firstField = firstField;
                         this.secondField = secondField;
+                    }
+                }"
+            );
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsMatchAndTupleAssignment_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField;
+                    public object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        (firstField, secondField) = (firstField, secondField);
                     }
                 }"
             );

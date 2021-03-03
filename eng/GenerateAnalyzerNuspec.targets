@@ -28,11 +28,6 @@
     <EscapeDirectorySuffix Condition="'$(OS)' == 'Windows_NT'">\</EscapeDirectorySuffix>
   </PropertyGroup>
 
-  <!-- Config validation tooling does not work on linux -->
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' And '$(ContinuousIntegrationBuild)' == 'true'">
-    <ValidateConfigFiles>true</ValidateConfigFiles>
-  </PropertyGroup>
-
   <Target Name="GenerateAnalyzerConfigAndDocumentationFiles"
           DependsOnTargets="InitializeSourceControlInformation" 
           Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerRulesetAssembly)' != ''">
@@ -102,7 +97,7 @@
     </ItemGroup>
 
     <!-- Only run validate only in CI builds. Running them in local builds will prevent refreshing auto-generated files. -->
-    <Exec Condition="'$(ValidateConfigFiles)' == 'true'"
+    <Exec Condition="'$(ContinuousIntegrationBuild)' == 'true'"
           Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />
 
     <Exec Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />

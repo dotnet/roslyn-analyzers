@@ -172,6 +172,49 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_ClassPropsMatchButPrivate_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    private int FirstProp { get; }
+
+                    private object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    {
+                        this.FirstProp = firstProp;
+                        this.SecondProp = secondProp;
+                    }
+                }",
+                CA1071CSharpPublicPropertyResultAt(0, "C1", "firstProp", "FirstProp"),
+                CA1071CSharpPublicPropertyResultAt(1, "C1", "secondProp", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassPropsMatchButPrivate_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Private Property FirstProp() As Integer
+                    Private Property SecondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
+                        Me.FirstProp = firstProp
+                        Me.SecondProp = secondProp
+                    End Sub
+                End Class",
+                CA1071BasicPublicPropertyResultAt(0, "C1", "firstProp", "FirstProp"),
+                CA1071BasicPublicPropertyResultAt(1, "C1", "secondProp", "SecondProp"));
+        }
+
+        [Fact]
         public async Task CA1071_ClassFieldsDoNotMatch_ConstructorParametersShouldMatchFieldNames_CSharp()
         {
             await VerifyCSharpAnalyzerAsync(@"
@@ -348,12 +391,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         private DiagnosticResult CA1071CSharpPropertyResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyNameRule)
                .WithLocation(markupKey)
                .WithArguments(arguments);
 
         private DiagnosticResult CA1071BasicPropertyResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyRule)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyNameRule)
+               .WithLocation(markupKey)
+                .WithArguments(arguments);
+
+        private DiagnosticResult CA1071CSharpPublicPropertyResultAt(int markupKey, params string[] arguments)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
+               .WithLocation(markupKey)
+               .WithArguments(arguments);
+
+        private DiagnosticResult CA1071BasicPublicPropertyResultAt(int markupKey, params string[] arguments)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
                .WithLocation(markupKey)
                 .WithArguments(arguments);
 

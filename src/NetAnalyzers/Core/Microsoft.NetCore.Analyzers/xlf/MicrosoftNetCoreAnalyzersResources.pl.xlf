@@ -187,6 +187,11 @@
         <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property '{2}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConstructorParameterShouldMatchPropertyWithPublicVisibility">
+        <source>For proper deserialization, change the visibility of the bound property '{2}' to public</source>
+        <target state="new">For proper deserialization, change the visibility of the bound property '{2}' to public</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesDescription">
         <source>For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</source>
         <target state="new">For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</target>
@@ -195,6 +200,11 @@
       <trans-unit id="ConstructorParametersShouldMatchPropertyNamesTitle">
         <source>Constructor parameter names should match the bound property or field names</source>
         <target state="new">Constructor parameter names should match the bound property or field names</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstructorParametersShouldMatchPropertyWithPublicVisibilityDescription">
+        <source>For a constructor having [JsonConstructor] attribute each parameter must be bound to a public property for proper deserialization.</source>
+        <target state="new">For a constructor having [JsonConstructor] attribute each parameter must be bound to a public property for proper deserialization.</target>
         <note />
       </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">

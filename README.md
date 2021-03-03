@@ -94,7 +94,7 @@ This package contains rules for correct usage of APIs that are present only in _
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
 
-*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeAnalysis.Analyzers&protocolType=NuGet)
+*Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet6&package=Microsoft.CodeAnalysis.Analyzers&protocolType=NuGet)
 
 This package contains rules for correct usage of APIs from the [Microsoft.CodeAnalysis](https://www.nuget.org/packages/Microsoft.CodeAnalysis) NuGet package, i.e. .NET Compiler Platform ("Roslyn") APIs. These are primarily aimed towards helping authors of diagnostic analyzers and code fix providers to invoke the Microsoft.CodeAnalysis APIs in a recommended manner. [More info about rules in this package](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
 

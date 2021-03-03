@@ -398,7 +398,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         private DiagnosticResult CA1071BasicPropertyResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyNameRule)
                .WithLocation(markupKey)
-                .WithArguments(arguments);
+               .WithArguments(arguments);
 
         private DiagnosticResult CA1071CSharpPublicPropertyResultAt(int markupKey, params string[] arguments)
            => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
@@ -408,7 +408,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         private DiagnosticResult CA1071BasicPublicPropertyResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
                .WithLocation(markupKey)
-                .WithArguments(arguments);
+               .WithArguments(arguments);
 
         private DiagnosticResult CA1071CSharpFieldResultAt(int markupKey, params string[] arguments)
            => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)

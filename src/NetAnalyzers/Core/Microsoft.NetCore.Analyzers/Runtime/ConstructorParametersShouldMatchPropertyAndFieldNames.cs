@@ -108,32 +108,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var operation = (IParameterReferenceOperation)context.Operation;
 
-                IOperation memberReferenceOperation;
-
-                if (operation.Parent is not IAssignmentOperation assignment)
-                {
-                    var memberReference = TryGetMemberReferenceOperation(operation);
-
-                    if (memberReference == null)
-                    {
-                        return;
-                    }
-
-                    memberReferenceOperation = memberReference;
-                }
-                else
-                {
-                    memberReferenceOperation = assignment.Target;
-                }
-
-                IParameterSymbol param = operation.Parameter;
-                ISymbol? referencedSymbol = memberReferenceOperation.GetReferencedMemberOrLocalOrParameter();
+                IMemberReferenceOperation? memberReferenceOperation = TryGetMemberReferenceOperation(operation);
+                ISymbol? referencedSymbol = memberReferenceOperation?.GetReferencedMemberOrLocalOrParameter();
 
                 if (referencedSymbol == null)
                 {
                     return;
                 }
 
+                IParameterSymbol param = operation.Parameter;
                 var field = referencedSymbol as IFieldSymbol;
                 var prop = referencedSymbol as IPropertySymbol;
 
@@ -261,6 +244,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private static IMemberReferenceOperation? TryGetMemberReferenceOperation(IParameterReferenceOperation paramOperation)
             {
+                if (paramOperation.Parent is IAssignmentOperation assignmentOperation
+                    && assignmentOperation.Target is IMemberReferenceOperation assignmentTarget)
+                {
+                    return assignmentTarget;
+                }
+
                 if (paramOperation.Parent is ITupleOperation tupleOperation
                     && tupleOperation.Parent is IConversionOperation conversion
                     && conversion.Parent is IDeconstructionAssignmentOperation deconstruction
@@ -268,10 +257,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var paramIndexInTuple = tupleOperation.Elements.IndexOf(paramOperation);
 
-                    var propertyReference = targetTuple.Elements[paramIndexInTuple] as IPropertyReferenceOperation;
-                    var fieldReference = targetTuple.Elements[paramIndexInTuple] as IFieldReferenceOperation;
-
-                    return propertyReference ?? (IMemberReferenceOperation?)fieldReference;
+                    return targetTuple.Elements[paramIndexInTuple] as IMemberReferenceOperation;
                 }
 
                 return null;

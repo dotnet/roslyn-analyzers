@@ -244,12 +244,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return assignmentTarget;
                 }
 
-                if (paramOperation.Parent is ITupleOperation tupleOperation
-                    && tupleOperation.Parent is IConversionOperation conversion
+                if (paramOperation.Parent is ITupleOperation sourceTuple
+                    && sourceTuple.Parent is IConversionOperation conversion
                     && conversion.Parent is IDeconstructionAssignmentOperation deconstruction
                     && deconstruction.Target is ITupleOperation targetTuple)
                 {
-                    var paramIndexInTuple = tupleOperation.Elements.IndexOf(paramOperation);
+                    var paramIndexInTuple = sourceTuple.Elements.IndexOf(paramOperation);
 
                     return targetTuple.Elements[paramIndexInTuple] as IMemberReferenceOperation;
                 }

@@ -31,7 +31,7 @@
     <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
     <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
     <MicrosoftCodeAnalysisVersionForTests>3.8.0</MicrosoftCodeAnalysisVersionForTests>
-    <DogfoodAnalyzersVersion>3.3.1</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>3.3.2</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>

@@ -108,13 +108,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var operation = (IParameterReferenceOperation)context.Operation;
 
+                IOperation memberReferenceOperation;
+
                 if (operation.Parent is not IAssignmentOperation assignment)
                 {
-                    return;
+                    var memberReference = TryGetMemberReferenceOperation(operation);
+
+                    if (memberReference == null)
+                    {
+                        return;
+                    }
+
+                    memberReferenceOperation = memberReference;
+                }
+                else
+                {
+                    memberReferenceOperation = assignment.Target;
                 }
 
                 IParameterSymbol param = operation.Parameter;
-                ISymbol? referencedSymbol = assignment.Target.GetReferencedMemberOrLocalOrParameter();
+                ISymbol? referencedSymbol = memberReferenceOperation.GetReferencedMemberOrLocalOrParameter();
 
                 if (referencedSymbol == null)
                 {
@@ -186,6 +199,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private static bool IsParamMatchFieldName(IParameterSymbol param, IFieldSymbol field)
             {
+                if (param.Name.Length != field.Name.Length)
+                {
+                    return false;
+                }
+
                 var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
                 var fieldWords = WordParser.Parse(field.Name, WordParserOptions.SplitCompoundWords).ToImmutableArray();
 
@@ -194,6 +212,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private static bool IsParamMatchPropName(IParameterSymbol param, IPropertySymbol prop)
             {
+                if (param.Name.Length != prop.Name.Length)
+                {
+                    return false;
+                }
+
                 var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
                 var propWords = WordParser.Parse(prop.Name, WordParserOptions.SplitCompoundWords).ToImmutableArray();
 
@@ -234,6 +257,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                         param.Name,
                         prop.Name));
+            }
+
+            private static IMemberReferenceOperation? TryGetMemberReferenceOperation(IParameterReferenceOperation paramOperation)
+            {
+                if (paramOperation.Parent is ITupleOperation tupleOperation
+                    && tupleOperation.Parent is IConversionOperation conversion
+                    && conversion.Parent is IDeconstructionAssignmentOperation deconstruction
+                    && deconstruction.Target is ITupleOperation targetTuple)
+                {
+                    var paramIndexInTuple = tupleOperation.Elements.IndexOf(paramOperation);
+
+                    var propertyReference = targetTuple.Elements[paramIndexInTuple] as IPropertyReferenceOperation;
+                    var fieldReference = targetTuple.Elements[paramIndexInTuple] as IFieldReferenceOperation;
+
+                    return propertyReference ?? (IMemberReferenceOperation?)fieldReference;
+                }
+
+                return null;
             }
         }
     }

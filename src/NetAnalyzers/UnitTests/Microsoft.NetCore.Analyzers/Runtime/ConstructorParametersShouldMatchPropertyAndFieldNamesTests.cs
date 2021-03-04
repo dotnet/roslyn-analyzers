@@ -154,6 +154,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_ClassPropsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int _FirstProp { get; }
+
+                    public object _SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    {
+                        (this._FirstProp, this._SecondProp) = (firstProp, secondProp);
+                    }
+                }",
+                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+        }
+
+        [Fact]
         public async Task CA1071_ClassPropsMatch_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
@@ -330,6 +352,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }"
             );
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int _firstField;
+                    public object _secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        (_firstField, _secondField) = (firstField, secondField);
+                    }
+                }",
+                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         [Fact]

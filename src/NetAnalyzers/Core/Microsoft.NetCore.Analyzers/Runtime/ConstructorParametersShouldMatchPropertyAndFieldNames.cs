@@ -111,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 IMemberReferenceOperation? memberReferenceOperation = TryGetMemberReferenceOperation(operation);
                 ISymbol? referencedSymbol = memberReferenceOperation?.GetReferencedMemberOrLocalOrParameter();
 
-                if (referencedSymbol == null)
+                if (referencedSymbol == null || referencedSymbol.IsStatic)
                 {
                     return;
                 }
@@ -121,12 +121,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var prop = referencedSymbol as IPropertySymbol;
 
                 if (field == null && prop == null)
-                {
-                    return;
-                }
-
-                // Only process instance fields and properties
-                if (referencedSymbol.IsStatic)
                 {
                     return;
                 }

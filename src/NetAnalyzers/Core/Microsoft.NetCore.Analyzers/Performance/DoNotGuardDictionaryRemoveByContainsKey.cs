@@ -56,27 +56,27 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericDictionary2, out var dictionaryType))
                 return;
 
-            context.RegisterOperationAction(AnalyzeOperation, OperationKind.Invocation);
+            context.RegisterOperationAction(AnalyzeOperation, OperationKind.Conditional);
 
             static void AnalyzeOperation(OperationAnalysisContext context)
             {
-                var invocationOperation = (IInvocationOperation)context.Operation;
+                var conditionalOperation = (IConditionalOperation)context.Operation;
 
-                if (invocationOperation.TargetMethod.Name != "ContainsKey")
+                if (conditionalOperation.Condition is not IInvocationOperation invocationOperation ||
+                    invocationOperation.TargetMethod.Name != "ContainsKey")
+                {
                     return;
-
-                if (invocationOperation.Parent is not IConditionalOperation parentConditionalOperation)
-                    return;
+                }
 
                 // we only want to report this diagnostic if the Contains/Remove pair is all there is
 
-                if (parentConditionalOperation.WhenFalse == null &&
-                    parentConditionalOperation.WhenTrue.Children.HasExactly(1))
+                if (conditionalOperation.WhenFalse == null &&
+                    conditionalOperation.WhenTrue.Children.HasExactly(1))
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
-                    properties[ConditionalOperation] = CreateLocationInfo(parentConditionalOperation.Syntax);
+                    properties[ConditionalOperation] = CreateLocationInfo(conditionalOperation.Syntax);
 
-                    switch (parentConditionalOperation.WhenTrue.Children.First())
+                    switch (conditionalOperation.WhenTrue.Children.First())
                     {
                         case IInvocationOperation childInvocationOperation:
                             if (childInvocationOperation.TargetMethod.Name == "Remove")

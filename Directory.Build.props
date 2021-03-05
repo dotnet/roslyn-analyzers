@@ -32,6 +32,7 @@
       CS1712: Type parameter 'parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
     -->
     <NoWarn Condition="'$(Language)' == 'C#'">$(NoWarn),1573,1591,1712</NoWarn>
+    <NoWarn Condition=" '$(DotnetBuildFromSource)' == 'true' ">$(NoWarn);AD0001;CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8609;CS8619;CS8620;CS8625;CS8621;CS8631;CS8714;CS8762;CS8765;IDE0005</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

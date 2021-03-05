@@ -1,0 +1,30 @@
+From f3f0b2eec1f707260718dbd6e44dfb785b7b5d82 Mon Sep 17 00:00:00 2001
+From: Omair Majid <omajid@redhat.com>
+Date: Fri, 6 Nov 2020 18:18:48 -0500
+Subject: [PATCH 3/4] Update Microsoft.CodeAnalysis packages
+
+The version used in 5.0 SDK is Microsoft.CodeAnalysis 3.8.0
+---
+ eng/Versions.props | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/eng/Versions.props b/eng/Versions.props
+index 605321faf..1360b589a 100644
+--- a/eng/Versions.props
++++ b/eng/Versions.props
+@@ -28,9 +28,9 @@
+     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
+     <CodeStyleAnalyersVersion>$(MicrosoftNETCoreCompilersPackageVersion)</CodeStyleAnalyersVersion>
+     <!-- Roslyn -->
+-    <MicrosoftCodeAnalysisVersion>3.3.1</MicrosoftCodeAnalysisVersion>
+-    <MicrosoftCodeAnalysisCommonVersion>3.3.1</MicrosoftCodeAnalysisCommonVersion>
+-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>3.7.0</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
++    <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
++    <MicrosoftCodeAnalysisCommonVersion>3.8.0</MicrosoftCodeAnalysisCommonVersion>
++    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
+     <MicrosoftCodeAnalysisVersionForTests>3.8.0</MicrosoftCodeAnalysisVersionForTests>
+     <DogfoodAnalyzersVersion>3.3.2</DogfoodAnalyzersVersion>
+     <DogfoodNetAnalyzersVersion>5.0.4-preview1.21126.5</DogfoodNetAnalyzersVersion>
+-- 
+2.26.2
+

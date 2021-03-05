@@ -1,0 +1,13 @@
+diff --git a/src/Utilities/Compiler/WellKnownTypeProvider.cs b/src/Utilities/Compiler/WellKnownTypeProvider.cs
+index b2e1b5876..7169c1500 100644
+--- a/src/Utilities/Compiler/WellKnownTypeProvider.cs
++++ b/src/Utilities/Compiler/WellKnownTypeProvider.cs
+@@ -84,7 +84,7 @@ public static WellKnownTypeProvider GetOrCreate(Compilation compilation)
+         /// <param name="fullTypeName">Namespace + type name, e.g. "System.Exception".</param>
+         /// <param name="namedTypeSymbol">Named type symbol, if any.</param>
+         /// <returns>True if found in the compilation, false otherwise.</returns>
+-        [PerformanceSensitive("https://github.com/dotnet/roslyn-analyzers/issues/4893", AllowCaptures = false)]
++        // [PerformanceSensitive("https://github.com/dotnet/roslyn-analyzers/issues/4893", AllowCaptures = false)]
+         public bool TryGetOrCreateTypeByMetadataName(
+             string fullTypeName,
+             [NotNullWhen(returnValue: true)] out INamedTypeSymbol? namedTypeSymbol)

@@ -1,0 +1,30 @@
+From 6511158d415c1a7d87b825d8975b231a96f97c65 Mon Sep 17 00:00:00 2001
+From: Davis Goodin <dagood@microsoft.com>
+Date: Wed, 18 Nov 2020 14:30:39 -0600
+Subject: [PATCH] Disable code analyzers when building from source
+
+Some analyzers are not buildable from source due to VS dependencies. We
+might as well disable all analyzers, because the analyzers seem most
+important to run against PRs in upstream. In source-build, we don't
+expect to make impactful changes to the C# code so they're unlikely to
+catch anything.
+---
+ src/Directory.Build.props | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Directory.Build.props b/src/Directory.Build.props
+index 6c95f9d7b..63c1ce376 100644
+--- a/src/Directory.Build.props
++++ b/src/Directory.Build.props
+@@ -16,7 +16,7 @@
+     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
++  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
+     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(DogfoodNetAnalyzersVersion)" />
+     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
+     <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="$(MicrosoftCodeAnalysisPerformanceSensitiveAnalyzersVersion)" />
+-- 
+2.25.2
+

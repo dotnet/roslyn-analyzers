@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -14,9 +15,9 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class DoNotGuardDictionaryRemoveByContainsKeyTests
     {
-        #region Reports Diagnostic
+        #region Tests
         [Fact]
-        public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_CS()
+        public async Task RemoveIsTheOnlyStatement_OffersFixer_CS()
         {
             string source = @"
 " + CSUsings + @"
@@ -52,7 +53,49 @@ namespace Testopolis
         }
 
         [Fact]
-        public async Task RemoveIsTheOnlyStatementInABlock_ReportsDiagnostic_CS()
+        public async Task RemoveWithOutValueIsTheOnlyStatement_OffersFixer_CS()
+        {
+            string source = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            if ([|MyDictionary.ContainsKey(""Key"")|])
+                MyDictionary.Remove(""Key"", out var value);
+        }
+    }
+}";
+
+            string fixedSource = @"
+" + CSUsings + @"
+namespace Testopolis
+{
+    public class MyClass
+    {
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            MyDictionary.Remove(""Key"", out var value);
+        }
+    }
+}";
+
+            await new VerifyCS.Test
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task RemoveIsTheOnlyStatementInABlock_OffersFixer_CS()
         {
             string source = @"
 " + CSUsings + @"
@@ -234,7 +277,7 @@ namespace Testopolis
         }
 
         [Fact]
-        public async Task RemoveIsTheOnlyStatement_ReportsDiagnostic_VB()
+        public async Task RemoveIsTheOnlyStatement_OffersFixer_VB()
         {
             string source = @"
 " + VBUsings + @"

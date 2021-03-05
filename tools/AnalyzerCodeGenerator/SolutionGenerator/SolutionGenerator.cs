@@ -9,7 +9,7 @@ namespace AnalyzerCodeGenerator
 {
     public static class SolutionGenerator
     {
-        private static string _masterCsvFile;
+        private static string _mainCsvFile;
         private static string _messageCsvFile;
         private static string _sourceDirectory;
         private static string _outputDirectory;
@@ -19,7 +19,7 @@ namespace AnalyzerCodeGenerator
 
         static void Main(string[] args)
         {                        
-            _masterCsvFile = args[0];
+            _mainCsvFile = args[0];
             _messageCsvFile = args[1];
             _sourceDirectory = args[2];
             _outputDirectory = args[3];
@@ -47,7 +47,7 @@ namespace AnalyzerCodeGenerator
 
             // Build a global list of checks. This operation ensures
             // no check id is reused between any entries
-            Dictionary<string, CheckData> checks = Utilities.BuildIdToChecksMap(_masterCsvFile, c => c.Port == PortStatus.Yes || c.Port == PortStatus.Ported);
+            Dictionary<string, CheckData> checks = Utilities.BuildIdToChecksMap(_mainCsvFile, c => c.Port == PortStatus.Yes || c.Port == PortStatus.Ported);
 
             // Add FxCop resolutions as messages for checks ported from FxCop
             CsvOperations.ParseCheckMessages(_messageCsvFile, checks);

@@ -11,7 +11,7 @@ namespace AnalyzerCodeGenerator
 {
     public class IncrementalGenerator
     {
-        private static string _masterCsvFile;
+        private static string _mainCsvFile;
         private static string _messageCsvFile;
         private static string _targetDirectory;
         private static string _templateDirectory;
@@ -19,7 +19,7 @@ namespace AnalyzerCodeGenerator
 
         public static void Main(string[] args)
         {
-            _masterCsvFile = args[0];
+            _mainCsvFile = args[0];
             _messageCsvFile = args[1];
             _templateDirectory = args[2];
             _targetDirectory = args[3];
@@ -43,7 +43,7 @@ namespace AnalyzerCodeGenerator
             }
 
             // Build the list of checks from the rule inventory spreadsheet
-            var allChecks = Utilities.BuildIdToChecksMap(_masterCsvFile, 
+            var allChecks = Utilities.BuildIdToChecksMap(_mainCsvFile, 
                 c => c.Port == PortStatus.Yes && (c.RevisedPriority == Priority.High || c.OriginalPriority == Priority.High ));
 
             // reorg the dictionary by check name

@@ -1,6 +1,5 @@
 # Branches that trigger a build on commit
 trigger:
-  - master
   - main
   - release/*
   - 2.9.x

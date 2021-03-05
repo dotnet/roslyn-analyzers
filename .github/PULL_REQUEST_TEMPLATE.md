@@ -2,7 +2,7 @@
 
 Make sure you have read the contribution guidelines: 
 - https://docs.microsoft.com/contribute/dotnet/dotnet-contribute-code-analysis#contribute-docs-for-caxxxx-rules
-- https://github.com/dotnet/roslyn-analyzers/blob/master/GuidelinesForNewRules.md
+- https://github.com/dotnet/roslyn-analyzers/blob/main/GuidelinesForNewRules.md
 
 If your Pull Request is doing one of the following:
 
@@ -12,6 +12,6 @@ If your Pull Request is doing one of the following:
 
 Then, make sure to run `msbuild /t:pack /v:m` in the repository root; otherwise, the CI build will fail.
 
-Note: Consider merging the PR base branch (`2.9.x`, `master`, or `release/*`) into your branch before you run the pack command to reduce merge conflicts.
+Note: Consider merging the PR base branch (`2.9.x`, `main`, or `release/*`) into your branch before you run the pack command to reduce merge conflicts.
 
 -->

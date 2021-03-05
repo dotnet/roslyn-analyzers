@@ -2,7 +2,7 @@
 
 |          |Windows Debug|Windows Release|Ubuntu Debug|Ubuntu Release|
 |:--------:|:-----------:|:-------------:|:----------:|:------------:|
-|**master**| [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/master/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Windows&configuration=Windows%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Ubuntu&configuration=Ubuntu%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=master&jobName=Ubuntu&configuration=Ubuntu%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=master) |
+|**main**| [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=main&jobName=Windows&configuration=Windows%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=main) [![codecov](https://codecov.io/gh/dotnet/roslyn-analyzers/branch/main/graph/badge.svg)](https://codecov.io/gh/dotnet/roslyn-analyzers) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=main&jobName=Windows&configuration=Windows%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=main) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=main&jobName=Ubuntu&configuration=Ubuntu%20Debug&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=main) | [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/dotnet/roslyn-analyzers/roslyn-analyzers-CI?branchName=main&jobName=Ubuntu&configuration=Ubuntu%20Release&label=build)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=457&branchName=main) |
 
 ## What is Roslyn?
 
@@ -130,7 +130,7 @@ Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jes
 
 The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for novice analyzer developers who have some previous programming experience.
 
-For instructions on using this tutorial, see [Instructions](https://github.com/dotnet/roslyn-analyzers/blob/master/src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
+For instructions on using this tutorial, see [Instructions](https://github.com/dotnet/roslyn-analyzers/blob/main/src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
 
 ## Getting Started
 

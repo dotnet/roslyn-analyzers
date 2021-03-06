@@ -62,8 +62,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var conditionalOperation = (IConditionalOperation)context.Operation;
 
-                if (conditionalOperation.Condition is not IInvocationOperation invocationOperation ||
-                    invocationOperation.TargetMethod.Name != "ContainsKey")
+                IInvocationOperation? invocationOperation = null;
+
+                switch (conditionalOperation.Condition)
+                {
+                    case IInvocationOperation:
+                        invocationOperation = (IInvocationOperation)conditionalOperation.Condition;
+                        break;
+                    case IUnaryOperation unaryOperation when unaryOperation.OperatorKind == UnaryOperatorKind.Not:
+                        if (unaryOperation.Operand is IInvocationOperation operand)
+                            invocationOperation = operand;
+                        break;
+                    default:
+                        return;
+                }
+
+                if (invocationOperation!.TargetMethod.Name != "ContainsKey")
                 {
                     return;
                 }

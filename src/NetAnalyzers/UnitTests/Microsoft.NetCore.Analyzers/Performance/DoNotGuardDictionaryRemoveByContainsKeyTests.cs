@@ -162,7 +162,7 @@ namespace Testopolis
         }
 
         [Fact]
-        public async Task NegatedCondition_NoDiagnostic_CS()
+        public async Task NegatedCondition_ReportsDiagnostic_CS()
         {
             string source = @"
 " + CSUsings + @"
@@ -174,7 +174,7 @@ namespace Testopolis
 
         public MyClass()
         {
-            if (!MyDictionary.ContainsKey(""Key""))
+            if (![|MyDictionary.ContainsKey(""Key"")|])
                 MyDictionary.Remove(""Key"");
         }
     }
@@ -306,6 +306,24 @@ Namespace Testopolis
 End Namespace";
 
             await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
+        }
+
+        [Fact]
+        public async Task NegatedCondition_ReportsDiagnostic_VB()
+        {
+            string source = @"
+" + VBUsings + @"
+Namespace Testopolis
+    Public Class SomeClass
+        Public MyDictionary As New Dictionary(Of String, String)()
+
+        Public Sub New()
+            If Not [|MyDictionary.ContainsKey(""Key"")|] Then MyDictionary.Remove(""Key"")
+        End Sub
+    End Class
+End Namespace";
+
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
 
         [Fact]

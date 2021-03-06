@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,8 +13,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
-    public sealed class DoNotGuardDictionaryRemoveByContainsKeyFixer : CodeFixProvider
+    public abstract class DoNotGuardDictionaryRemoveByContainsKeyFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(DoNotGuardDictionaryRemoveByContainsKey.RuleId);
@@ -37,16 +35,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             var diagnostic = context.Diagnostics.FirstOrDefault();
 
-            if (TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ConditionalOperation, out var conditionalOperationSpan) &&
-                TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan) &&
-                root.FindNode(conditionalOperationSpan) is SyntaxNode conditionalOperationNode &&
-                root.FindNode(childStatementOperationSpan) is SyntaxNode childStatementOperationNode)
+            if (!TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ConditionalOperation, out var conditionalOperationSpan) ||
+                !TryParseLocationInfo(diagnostic, DoNotGuardDictionaryRemoveByContainsKey.ChildStatementOperation, out var childStatementOperationSpan) ||
+                root.FindNode(conditionalOperationSpan) is not SyntaxNode conditionalOperation ||
+                root.FindNode(childStatementOperationSpan) is not SyntaxNode childStatementOperation)
             {
-                context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
-                    Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalOperationNode, childStatementOperationNode))),
-                    diagnostic);
+                return;
             }
+
+            // we only offer a fixer if 'Remove' is the _only_ statement
+            if (!OperationSupportedByFixer(conditionalOperation))
+                return;
+
+            context.RegisterCodeFix(new DoNotGuardDictionaryRemoveByContainsKeyCodeAction(_ =>
+                Task.FromResult(ReplaceConditionWithChild(context.Document, root, conditionalOperation, childStatementOperation))),
+                diagnostic);
         }
+
+        protected abstract bool OperationSupportedByFixer(SyntaxNode conditionalOperation);
 
         private static Document ReplaceConditionWithChild(Document document, SyntaxNode root, SyntaxNode conditionalOperationNode, SyntaxNode childOperationNode)
         {

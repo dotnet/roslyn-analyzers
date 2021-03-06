@@ -68,10 +68,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
 
-                // we only want to report this diagnostic if the Contains/Remove pair is all there is
-
                 if (conditionalOperation.WhenFalse == null &&
-                    conditionalOperation.WhenTrue.Children.HasExactly(1))
+                    conditionalOperation.WhenTrue.Children.Any())
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties[ConditionalOperation] = CreateLocationInfo(conditionalOperation.Syntax);
@@ -88,11 +86,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                             break;
                         case IExpressionStatementOperation childStatementOperation:
-                            // if the if statement contains a block, only proceed if that block contains a single statement
+                            /*
+                             * If the if statement contains a block, only proceed if one of the methods calls Remove.
+                             * However, a fixer is only offered if there is a single method in the block.
+                             */
 
-                            if (childStatementOperation.Children.HasExactly(1) &&
-                                childStatementOperation.Children.First() is IInvocationOperation nestedInvocationOperation &&
-                                nestedInvocationOperation.TargetMethod.Name == "Remove")
+                            var nestedInvocationOperation = childStatementOperation.Children.OfType<IInvocationOperation>()
+                                                                                   .FirstOrDefault(op => op.TargetMethod.Name == "Remove");
+
+                            if (nestedInvocationOperation != null)
                             {
                                 properties[ChildStatementOperation] = CreateLocationInfo(nestedInvocationOperation.Syntax.Parent);
 

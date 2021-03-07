@@ -330,6 +330,80 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_ClassFieldsMatchButPrivateHasJsonCtor_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    private int firstField;
+                    private object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }",
+                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsMatchButPrivateHasJsonCtor_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Private firstField as Integer
+                    Private secondField as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:firstField|} as Integer, {|#1:secondField|} as Object)
+                        Me.firstField = firstField
+                        Me.secondField = secondField
+                    End Sub
+                End Class",
+                CA1071BasicPublicFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071BasicPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                public class C1
+                {
+                    private int firstField;
+                    private object secondField;
+
+                    public C1(int firstField, object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Public Class C1
+                    Private firstField as Integer
+                    Private secondField as Object
+
+                    Public Sub New(firstField as Integer, secondField as Object)
+                        Me.firstField = firstField
+                        Me.secondField = secondField
+                    End Sub
+                End Class");
+        }
+
+        [Fact]
         public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
@@ -437,6 +511,47 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
+        [Fact]
+        public async Task CA1071_RecordFieldsMatchButPrivateHasJsonCtor_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    private int firstField;
+
+                    private object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }",
+                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                public record C1
+                {
+                    private int firstField;
+
+                    private object secondField;
+
+                    public C1(int firstField, object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }");
+        }
+
         private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)
         {
             var csharpTest = new VerifyCS.Test
@@ -494,6 +609,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private DiagnosticResult CA1071BasicPublicPropertyResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
+               .WithLocation(markupKey)
+               .WithArguments(arguments);
+
+        private DiagnosticResult CA1071CSharpPublicFieldResultAt(int markupKey, params string[] arguments)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldPublicRule)
+               .WithLocation(markupKey)
+               .WithArguments(arguments);
+
+        private DiagnosticResult CA1071BasicPublicFieldResultAt(int markupKey, params string[] arguments)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldPublicRule)
                .WithLocation(markupKey)
                .WithArguments(arguments);
 

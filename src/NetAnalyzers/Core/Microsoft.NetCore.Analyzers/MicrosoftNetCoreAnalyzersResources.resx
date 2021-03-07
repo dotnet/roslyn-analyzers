@@ -1537,4 +1537,10 @@
   <data name="ConstructorParametersShouldMatchPropertyNamesTitle" xml:space="preserve">
     <value>Constructor parameter names should match the bound property or field names</value>
   </data>
+  <data name="ConstructorParameterShouldMatchFieldWithPublicVisibility" xml:space="preserve">
+    <value>For proper deserialization, change the visibility of the bound field '{2}' to public</value>
+  </data>
+  <data name="ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription" xml:space="preserve">
+    <value>For a constructor having [JsonConstructor] attribute each parameter must be bound to a public field for proper deserialization.</value>
+  </data>
 </root>

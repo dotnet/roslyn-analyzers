@@ -29,10 +29,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static readonly LocalizableString s_localizableMessagePropertyPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchPropertyWithPublicVisibility), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionPropertyPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyWithPublicVisibilityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchFieldWithPublicVisibility), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor PropertyNameRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageProperty,
+                                                                             DiagnosticCategory.Design,
+                                                                             RuleLevel.BuildWarning,
+                                                                             description: s_localizableDescription,
+                                                                             isPortedFxCopRule: false,
+                                                                             isDataflowRule: false);
+        internal static DiagnosticDescriptor FieldRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageField,
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
                                                                              description: s_localizableDescription,
@@ -46,12 +56,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              description: s_localizableDescriptionPropertyPublic,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
-        internal static DiagnosticDescriptor FieldRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor FieldPublicRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageField,
+                                                                             s_localizableMessageFieldPublic,
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescription,
+                                                                             description: s_localizableDescriptionFieldPublic,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 
@@ -92,7 +102,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal enum ParameterDiagnosticReason
         {
             NameMismatch,
-            PropertyInappropriateVisibility
+            PropertyInappropriateVisibility,
+            FieldInappropriateVisibility
         }
 
         private sealed class ParameterAnalyzer
@@ -125,17 +136,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (IsSupportedField(field) && !IsParamMatchFieldName(param, field))
+                if (IsSupportedField(field))
                 {
-                    var properties = ImmutableDictionary<string, string?>.Empty.SetItem(ReferencedFieldOrPropertyName, field.Name);
+                    if (!IsParamMatchFieldName(param, field))
+                    {
+                        ReportFieldDiagnostic(context, FieldRule, ParameterDiagnosticReason.NameMismatch, param, field);
+                    }
 
-                    context.ReportDiagnostic(
-                        param.CreateDiagnostic(
-                            FieldRule,
-                            properties,
-                            param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
-                            param.Name,
-                            field.Name));
+                    if (!field.IsPublic())
+                    {
+                        ReportFieldDiagnostic(context, FieldPublicRule, ParameterDiagnosticReason.FieldInappropriateVisibility, param, field);
+                    }
 
                     return;
                 }
@@ -219,6 +230,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 return true;
+            }
+
+            private static void ReportFieldDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IFieldSymbol field)
+            {
+                var properties = ImmutableDictionary<string, string?>.Empty
+                    .SetItem(ReferencedFieldOrPropertyName, field.Name)
+                    .SetItem(DiagnosticReason, reason.ToString());
+
+                context.ReportDiagnostic(
+                    param.CreateDiagnostic(
+                        diagnosticDescriptor,
+                        properties,
+                        param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        param.Name,
+                        field.Name));
             }
 
             private static void ReportPropertyDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IPropertySymbol prop)

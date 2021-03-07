@@ -39,51 +39,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_RecordPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    public int FirstProp { get; }
-
-                    public object SecondProp { get; }
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
-                    {
-                        this.FirstProp = firstDrop;
-                        this.SecondProp = secondDrop;
-                    }
-                }",
-            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
-        }
-
-        [Fact]
-        public async Task CA1071_RecordPropsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchPropertyNames_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    public int FirstProp { get; }
-
-                    public object SecondProp { get; }
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
-                    {
-                        (this.FirstProp, this.SecondProp) = (firstDrop, secondDrop);
-                    }
-                }",
-            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
-        }
-
-        [Fact]
         public async Task CA1071_ClassPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
@@ -134,24 +89,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Me.secondProp = secondDrop
                 End Sub
             End Class");
-        }
-
-        [Fact]
-        public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                public record C1
-                {
-                    public int FirstProp { get; }
-
-                    public object SecondProp { get; }
-
-                    public C1(int firstDrop, object secondDrop)
-                    {
-                        this.FirstProp = firstDrop;
-                        this.SecondProp = secondDrop;
-                    }
-                }");
         }
 
         [Fact]
@@ -301,51 +238,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_RecordFieldsDoNotMatch_ConstructorParametersShouldMatchFieldNames_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    public int firstField;
-
-                    public object secondField;
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
-                    {
-                        this.firstField = firstIField;
-                        this.secondField = secondIField;
-                    }
-                }",
-            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
-        }
-
-        [Fact]
-        public async Task CA1071_RecordFieldsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchFieldNames_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    public int firstField;
-
-                    public object secondField;
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
-                    {
-                        (this.firstField, this.secondField) = (firstIField, secondIField);
-                    }
-                }",
-            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
-            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
-        }
-
-        [Fact]
         public async Task CA1071_ClassFieldsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharpAnalyzerAsync(@"
@@ -435,6 +327,114 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondField
                     End Sub
                 End Class");
+        }
+
+        [Fact]
+        public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                public record C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    public C1(int firstDrop, object secondDrop)
+                    {
+                        this.FirstProp = firstDrop;
+                        this.SecondProp = secondDrop;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_RecordPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
+                    {
+                        this.FirstProp = firstDrop;
+                        this.SecondProp = secondDrop;
+                    }
+                }",
+            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordPropsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchPropertyNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstDrop|}, object {|#1:secondDrop|})
+                    {
+                        (this.FirstProp, this.SecondProp) = (firstDrop, secondDrop);
+                    }
+                }",
+            CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
+            CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordFieldsDoNotMatch_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int firstField;
+
+                    public object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
+                    {
+                        this.firstField = firstIField;
+                        this.secondField = secondIField;
+                    }
+                }",
+            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordFieldsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int firstField;
+
+                    public object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstIField|}, object {|#1:secondIField|})
+                    {
+                        (this.firstField, this.secondField) = (firstIField, secondIField);
+                    }
+                }",
+            CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
+            CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)

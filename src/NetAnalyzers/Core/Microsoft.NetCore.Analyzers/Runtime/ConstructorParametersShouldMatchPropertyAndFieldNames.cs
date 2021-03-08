@@ -187,6 +187,38 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
+            public bool ShouldAnalyzeMethod(IMethodSymbol method)
+            {
+                // We only care about constructors with parameters.
+                if (method.Parameters.IsEmpty)
+                {
+                    return false;
+                }
+
+                // We only care about constructors that are marked with JsonConstructor attribute.
+                if (!this.IsJsonConstructor(method))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public static void ReportUnusedParameters(SymbolAnalysisContext context, IMethodSymbol ctor, PooledConcurrentSet<IParameterSymbol> referencedParameters)
+            {
+                foreach (var param in ctor.Parameters)
+                {
+                    if (referencedParameters.Contains(param))
+                    {
+                        continue;
+                    }
+
+                    ReportUnreferencedParameterDiagnostic(context, param);
+                }
+
+                referencedParameters.Free(context.CancellationToken);
+            }
+
             private static bool IsSupportedProp([NotNullWhen(true)] IPropertySymbol? prop)
             {
                 if (prop == null)
@@ -234,24 +266,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             private bool IsJsonConstructor([NotNullWhen(returnValue: true)] IMethodSymbol? method)
-            => method.IsConstructor() &&
-                method.HasAttribute(this._jsonConstructorAttributeInfoType);
+                => method.IsConstructor() &&
+                    method.HasAttribute(this._jsonConstructorAttributeInfoType);
 
-            public bool ShouldAnalyzeMethod(IMethodSymbol method)
+            private static IMemberReferenceOperation? TryGetMemberReferenceOperation(IParameterReferenceOperation paramOperation)
             {
-                // We only care about constructors with parameters.
-                if (method.Parameters.IsEmpty)
+                if (paramOperation.Parent is IAssignmentOperation assignmentOperation
+                    && assignmentOperation.Target is IMemberReferenceOperation assignmentTarget)
                 {
-                    return false;
+                    return assignmentTarget;
                 }
 
-                // We only care about constructors that are marked with JsonConstructor attribute.
-                if (!this.IsJsonConstructor(method))
+                if (paramOperation.Parent is ITupleOperation sourceTuple
+                    && sourceTuple.Parent is IConversionOperation conversion
+                    && conversion.Parent is IDeconstructionAssignmentOperation deconstruction
+                    && deconstruction.Target is ITupleOperation targetTuple)
                 {
-                    return false;
+                    var paramIndexInTuple = sourceTuple.Elements.IndexOf(paramOperation);
+
+                    return targetTuple.Elements[paramIndexInTuple] as IMemberReferenceOperation;
                 }
 
-                return true;
+                return null;
             }
 
             private static void ReportFieldDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IFieldSymbol field)
@@ -296,42 +332,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         properties,
                         param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                         param.Name));
-            }
-
-            private static IMemberReferenceOperation? TryGetMemberReferenceOperation(IParameterReferenceOperation paramOperation)
-            {
-                if (paramOperation.Parent is IAssignmentOperation assignmentOperation
-                    && assignmentOperation.Target is IMemberReferenceOperation assignmentTarget)
-                {
-                    return assignmentTarget;
-                }
-
-                if (paramOperation.Parent is ITupleOperation sourceTuple
-                    && sourceTuple.Parent is IConversionOperation conversion
-                    && conversion.Parent is IDeconstructionAssignmentOperation deconstruction
-                    && deconstruction.Target is ITupleOperation targetTuple)
-                {
-                    var paramIndexInTuple = sourceTuple.Elements.IndexOf(paramOperation);
-
-                    return targetTuple.Elements[paramIndexInTuple] as IMemberReferenceOperation;
-                }
-
-                return null;
-            }
-
-            public static void ReportUnusedParameters(SymbolAnalysisContext context, IMethodSymbol ctor, PooledConcurrentSet<IParameterSymbol> referencedParameters)
-            {
-                foreach (var param in ctor.Parameters)
-                {
-                    if (referencedParameters.Contains(param))
-                    {
-                        continue;
-                    }
-
-                    ReportUnreferencedParameterDiagnostic(context, param);
-                }
-
-                referencedParameters.Free(context.CancellationToken);
             }
         }
     }

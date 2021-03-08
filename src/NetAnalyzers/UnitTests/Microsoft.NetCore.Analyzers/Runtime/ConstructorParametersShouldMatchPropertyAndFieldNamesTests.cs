@@ -92,6 +92,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_ClassPropsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            // This is the current behavior on deserialization - JsonPropertyName is ignored by the JsonConstructor's logic.
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    [JsonPropertyName(""FirstProp"")]
+                    public int _FirstProp { get; }
+
+                    [JsonPropertyName(""SecondProp"")]
+                    public object _SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    {
+                        this._FirstProp = firstProp;
+                        this._SecondProp = secondProp;
+                    }
+                }",
+                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassPropsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            // This is the current behavior on deserialization - JsonPropertyName is ignored by the JsonConstructor's logic.
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    <JsonPropertyName(""FirstProp"")>
+                    Public Property _FirstProp() As Integer
+                    
+                    <JsonPropertyName(""SecondProp"")>
+                    Public Property _SecondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
+                        Me._FirstProp = firstProp
+                        Me._SecondProp = secondProp
+                    End Sub
+                End Class",
+                CA1071BasicPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071BasicPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+        }
+
+        [Fact]
         public async Task CA1071_ClassPropsDoNotMatchAndTupleAssignment_ConstructorParametersShouldMatchFieldNames_CSharp()
         {
             await VerifyCSharpAnalyzerAsync(@"
@@ -252,6 +302,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondIField;
                     }
                 }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            // This is the current behavior on deserialization - JsonPropertyName is ignored by the JsonConstructor's logic.
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    [JsonPropertyName(""firstField"")]
+                    public int _firstField;
+
+                    [JsonPropertyName(""secondField"")]
+                    public object _secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        this._firstField = firstField;
+                        this._secondField = secondField;
+                    }
+                }",
+                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            // This is the current behavior on deserialization - JsonFieldertyName is ignored by the JsonConstructor's logic.
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    <JsonPropertyName(""firstField"")>
+                    Public _firstField As Integer
+                    
+                    <JsonPropertyName(""secondField"")>
+                    Public _secondField as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:firstField|} as Integer, {|#1:secondField|} as Object)
+                        Me._firstField = firstField
+                        Me._secondField = secondField
+                    End Sub
+                End Class",
+                CA1071BasicFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071BasicFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         [Fact]
@@ -562,6 +662,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
+        public async Task CA1071_RecordPropsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            // This is the current behavior on deserialization - JsonPropertyName is ignored by the JsonConstructor's logic.
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    [JsonPropertyName(""FirstProp"")]
+                    public int _FirstProp { get; }
+
+                    [JsonPropertyName(""SecondProp"")]
+                    public object _SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    {
+                        this._FirstProp = firstProp;
+                        this._SecondProp = secondProp;
+                    }
+                }",
+                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+        }
+
+        [Fact]
         public async Task CA1071_RecordFieldsMatch_NoDiagnostics_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
@@ -646,6 +772,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondField;
                     }
                 }");
+        }
+
+        [Fact]
+        public async Task CA1071_RecordFieldsDoNotMatchButMatchWithJsonPropertyName_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            // This is the current behavior on deserialization - JsonPropertyName is ignored by the JsonConstructor's logic.
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    [JsonPropertyName(""firstField"")]
+                    public int _firstField;
+
+                    [JsonPropertyName(""secondField"")]
+                    public object _secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    {
+                        this._firstField = firstField;
+                        this._secondField = secondField;
+                    }
+                }",
+                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         private static async Task VerifyCSharpAnalyzerAsync(string source, params DiagnosticResult[] expected)

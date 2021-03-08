@@ -1543,4 +1543,10 @@
   <data name="ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription" xml:space="preserve">
     <value>For a constructor having [JsonConstructor] attribute each parameter must be bound to a public field for proper deserialization.</value>
   </data>
+  <data name="ConstructorParameterShouldBeReferenced" xml:space="preserve">
+    <value>For proper deserialization, remove the unreferenced parameter '{1}' in the constructor of '{0}'</value>
+  </data>
+  <data name="ConstructorParameterShouldBeReferencedDescription" xml:space="preserve">
+    <value>For a constructor having [JsonConstructor] attribute each parameter must be bound to a field or property for proper deserialization.</value>
+  </data>
 </root>

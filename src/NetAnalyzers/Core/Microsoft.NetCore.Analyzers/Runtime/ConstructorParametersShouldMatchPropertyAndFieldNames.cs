@@ -34,6 +34,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableMessageFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchFieldWithPublicVisibility), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
+        private static readonly LocalizableString s_localizableMessageUnreferencedParameter = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldBeReferenced), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionUnreferencedParameter = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldBeReferencedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+
         internal static DiagnosticDescriptor PropertyNameRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageProperty,
@@ -68,10 +71,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isDataflowRule: false);
         internal static DiagnosticDescriptor UnreferencedParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageFieldPublic,
+                                                                             s_localizableMessageUnreferencedParameter,
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescriptionFieldPublic,
+                                                                             description: s_localizableDescriptionUnreferencedParameter,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
 

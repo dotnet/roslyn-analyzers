@@ -177,6 +177,16 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
+      <trans-unit id="ConstructorParameterShouldBeReferenced">
+        <source>For proper deserialization, remove the unreferenced parameter '{1}' in the constructor of '{0}'</source>
+        <target state="new">For proper deserialization, remove the unreferenced parameter '{1}' in the constructor of '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConstructorParameterShouldBeReferencedDescription">
+        <source>For a constructor having [JsonConstructor] attribute each parameter must be bound to a field or property for proper deserialization.</source>
+        <target state="new">For a constructor having [JsonConstructor] attribute each parameter must be bound to a field or property for proper deserialization.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConstructorParameterShouldMatchFieldName">
         <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</source>
         <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</target>

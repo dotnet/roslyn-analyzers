@@ -54,13 +54,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(context =>
             {
                 // Require that Environment / Process / ProcessModule / Thread exist.
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEnvironment, out var environmentType) ||
-                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsProcess, out var processType) ||
-                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsProcessModule, out var processModuleType) ||
-                    !compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread, out var threadType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEnvironment, out var environmentType) ||
+                    !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsProcess, out var processType) ||
+                    !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsProcessModule, out var processModuleType) ||
+                    !context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread, out var threadType))
                 {
                     return;
                 }
@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Everything we're looking for is a property, so find all property references.
-                compilationContext.RegisterOperationAction(context =>
+                context.RegisterOperationAction(context =>
                 {
                     var initialPropRef = (IPropertyReferenceOperation)context.Operation;
 

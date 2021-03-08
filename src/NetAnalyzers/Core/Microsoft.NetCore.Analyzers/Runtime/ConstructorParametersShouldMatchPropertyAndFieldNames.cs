@@ -330,6 +330,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     ReportUnreferencedParameterDiagnostic(context, param);
                 }
+
+                referencedParameters.Free(context.CancellationToken);
             }
         }
     }

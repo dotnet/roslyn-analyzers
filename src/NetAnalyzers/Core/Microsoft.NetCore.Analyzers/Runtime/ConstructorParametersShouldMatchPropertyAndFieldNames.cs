@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -20,6 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleId = "CA1071";
         internal const string ReferencedFieldOrPropertyName = "ReferencedFieldOrPropertyName";
         internal const string DiagnosticReason = "DiagnosticReason";
+        internal const string UnreferencedParameterName = "UnreferencedParameterName";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
@@ -64,6 +66,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              description: s_localizableDescriptionFieldPublic,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
+        internal static DiagnosticDescriptor UnreferencedParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessageFieldPublic,
+                                                                             DiagnosticCategory.Design,
+                                                                             RuleLevel.BuildWarning,
+                                                                             description: s_localizableDescriptionFieldPublic,
+                                                                             isPortedFxCopRule: false,
+                                                                             isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyNameRule, FieldRule);
 
@@ -83,19 +93,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     var paramAnalyzer = new ParameterAnalyzer(jsonConstructorAttributeNamedSymbol);
 
-                    compilationStartContext.RegisterOperationBlockStartAction(
-                        (startOperationBlockContext) =>
-                        {
-                            if (startOperationBlockContext.OwningSymbol is IMethodSymbol method
-                                && !paramAnalyzer.ShouldAnalyzeMethod(method))
-                            {
-                                return;
-                            }
+                    compilationStartContext.RegisterSymbolStartAction((symbolStartContext) =>
+                    {
+                        var constructors = ((INamedTypeSymbol)symbolStartContext.Symbol).InstanceConstructors;
 
-                            startOperationBlockContext.RegisterOperationAction(
-                                context => ParameterAnalyzer.AnalyzeOperationAndReport(context),
-                                OperationKind.ParameterReference);
-                        });
+                        foreach (var ctor in constructors)
+                        {
+                            if (paramAnalyzer.ShouldAnalyzeMethod(ctor))
+                            {
+                                var referencedParameters = PooledConcurrentSet<IParameterSymbol>.GetInstance();
+
+                                symbolStartContext.RegisterOperationAction(
+                                    context => ParameterAnalyzer.AnalyzeOperationAndReport(context, referencedParameters),
+                                    OperationKind.ParameterReference);
+
+                                symbolStartContext.RegisterSymbolEndAction(
+                                    context => ParameterAnalyzer.ReportUnusedParameters(context, ctor, referencedParameters));
+                            }
+                        }
+                    }, SymbolKind.NamedType);
                 });
         }
 
@@ -103,7 +119,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             NameMismatch,
             PropertyInappropriateVisibility,
-            FieldInappropriateVisibility
+            FieldInappropriateVisibility,
+            UnreferencedParameter,
         }
 
         private sealed class ParameterAnalyzer
@@ -115,9 +132,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 _jsonConstructorAttributeInfoType = jsonConstructorAttributeInfoType;
             }
 
-            public static void AnalyzeOperationAndReport(OperationAnalysisContext context)
+            public static void AnalyzeOperationAndReport(OperationAnalysisContext context, PooledConcurrentSet<IParameterSymbol> referencedParameters)
             {
                 var operation = (IParameterReferenceOperation)context.Operation;
+
+                referencedParameters.Add(operation.Parameter);
 
                 IMemberReferenceOperation? memberReferenceOperation = TryGetMemberReferenceOperation(operation);
                 ISymbol? referencedSymbol = memberReferenceOperation?.GetReferencedMemberOrLocalOrParameter();
@@ -262,6 +281,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         prop.Name));
             }
 
+            private static void ReportUnreferencedParameterDiagnostic(SymbolAnalysisContext context, IParameterSymbol param)
+            {
+                var properties = ImmutableDictionary<string, string?>.Empty
+                    .SetItem(UnreferencedParameterName, param.Name)
+                    .SetItem(DiagnosticReason, ParameterDiagnosticReason.UnreferencedParameter.ToString());
+
+                context.ReportDiagnostic(
+                    param.CreateDiagnostic(
+                        UnreferencedParameterRule,
+                        properties,
+                        param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        param.Name));
+            }
+
             private static IMemberReferenceOperation? TryGetMemberReferenceOperation(IParameterReferenceOperation paramOperation)
             {
                 if (paramOperation.Parent is IAssignmentOperation assignmentOperation
@@ -281,6 +314,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 return null;
+            }
+
+            public static void ReportUnusedParameters(SymbolAnalysisContext context, IMethodSymbol ctor, PooledConcurrentSet<IParameterSymbol> referencedParameters)
+            {
+                foreach (var param in ctor.Parameters)
+                {
+                    if (referencedParameters.Contains(param))
+                    {
+                        continue;
+                    }
+
+                    ReportUnreferencedParameterDiagnostic(context, param);
+                }
             }
         }
     }

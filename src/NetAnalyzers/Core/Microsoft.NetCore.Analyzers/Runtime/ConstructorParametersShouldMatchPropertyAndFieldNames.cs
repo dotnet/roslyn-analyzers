@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -247,9 +248,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
-                var fieldWords = WordParser.Parse(field.Name, WordParserOptions.SplitCompoundWords).ToImmutableArray();
+                var fieldWords = WordParser.Parse(field.Name, WordParserOptions.SplitCompoundWords);
 
-                return paramWords.All(x => WordParser.ContainsWord(x, WordParserOptions.SplitCompoundWords, fieldWords));
+                return paramWords.SequenceEqual(fieldWords, StringComparer.OrdinalIgnoreCase);
             }
 
             private static bool IsParamMatchPropName(IParameterSymbol param, IPropertySymbol prop)
@@ -260,9 +261,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
-                var propWords = WordParser.Parse(prop.Name, WordParserOptions.SplitCompoundWords).ToImmutableArray();
+                var propWords = WordParser.Parse(prop.Name, WordParserOptions.SplitCompoundWords);
 
-                return paramWords.All(x => WordParser.ContainsWord(x, WordParserOptions.SplitCompoundWords, propWords));
+                return paramWords.SequenceEqual(propWords, StringComparer.OrdinalIgnoreCase);
             }
 
             private bool IsJsonConstructor([NotNullWhen(returnValue: true)] IMethodSymbol? method)

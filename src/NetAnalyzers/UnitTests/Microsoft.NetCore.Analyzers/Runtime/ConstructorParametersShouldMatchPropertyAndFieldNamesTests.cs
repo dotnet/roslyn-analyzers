@@ -80,15 +80,58 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1071_ClassPropsDoNotMatchNotJsonCtor_NoDiagnostics_Basic()
         {
             await VerifyBasicAnalyzerAsync(@"
-            Public Class C1
-                Property firstProp() As Integer
-                Property secondProp() as Object
+                Public Class C1
+                    Property firstProp() As Integer
+                    Property secondProp() as Object
 
-                Public Sub New(firstDrop as Integer, secondDrop as Object)
-                    Me.firstProp = firstDrop
-                    Me.secondProp = secondDrop
-                End Sub
-            End Class");
+                    Public Sub New(firstDrop as Integer, secondDrop as Object)
+                        Me.firstProp = firstDrop
+                        Me.secondProp = secondDrop
+                    End Sub
+                End Class");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassPropsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:dropFirst|}, object {|#1:dropSecond|})
+                    {
+                        this.FirstProp = dropFirst;
+                        this.SecondProp = dropSecond;
+                    }
+                }",
+                CA1071CSharpPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071CSharpPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassPropsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Property FirstProp() As Integer
+                    Property SecondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:dropFirst|} as Integer, {|#1:dropSecond|} as Object)
+                        Me.FirstProp = dropFirst
+                        Me.SecondProp = dropSecond
+                    End Sub
+                End Class",
+                CA1071BasicPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071BasicPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
         }
 
         [Fact]
@@ -324,6 +367,48 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class",
                 CA1071BasicFieldResultAt(0, "C1", "firstIField", "firstField"),
                 CA1071BasicFieldResultAt(1, "C1", "secondIField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharpAnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    public int firstField;
+                    public object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:fieldFirst|}, object {|#1:fieldSecond|})
+                    {
+                        this.firstField = fieldFirst;
+                        this.secondField = fieldSecond;
+                    }
+                }",
+                CA1071CSharpFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071CSharpFieldResultAt(1, "C1", "fieldSecond", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_ClassFieldsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_Basic()
+        {
+            await VerifyBasicAnalyzerAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Public firstField as Integer
+                    Public secondField as Object
+
+                    <JsonConstructor>
+                    Public Sub New({|#0:fieldFirst|} as Integer, {|#1:fieldSecond|} as Object)
+                        Me.firstField = fieldFirst
+                        Me.secondField = fieldSecond
+                    End Sub
+                End Class",
+                CA1071BasicFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071BasicFieldResultAt(1, "C1", "fieldSecond", "secondField"));
         }
 
         [Fact]
@@ -673,24 +758,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                public record C1
-                {
-                    public int FirstProp { get; }
-
-                    public object SecondProp { get; }
-
-                    public C1(int firstDrop, object secondDrop)
-                    {
-                        this.FirstProp = firstDrop;
-                        this.SecondProp = secondDrop;
-                    }
-                }");
-        }
-
-        [Fact]
         public async Task CA1071_RecordPropsDoNotMatch_ConstructorParametersShouldMatchPropertyNames_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
@@ -711,6 +778,47 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
                 CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordPropsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int {|#0:dropFirst|}, object {|#1:dropSecond|})
+                    {
+                        this.FirstProp = dropFirst;
+                        this.SecondProp = dropSecond;
+                    }
+                }",
+                CA1071CSharpPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071CSharpPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordPropsDoNotMatchNotJsonCtor_NoDiagnostics_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                public record C1
+                {
+                    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    public C1(int firstDrop, object secondDrop)
+                    {
+                        this.FirstProp = firstDrop;
+                        this.SecondProp = secondDrop;
+                    }
+                }");
         }
 
         [Fact]
@@ -756,6 +864,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
                 CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
+        }
+
+        [Fact]
+        public async Task CA1071_RecordFieldsDoNotMatchReversedWords_ConstructorParametersShouldMatchFieldNames_CSharp()
+        {
+            await VerifyCSharp9AnalyzerAsync(@"
+                using System.Text.Json.Serialization;
+
+                public record C1
+                {
+                    public int firstField;
+                    public object secondField;
+
+                    [JsonConstructor]
+                    public C1(int {|#0:fieldFirst|}, object {|#1:fieldSecond|})
+                    {
+                        this.firstField = fieldFirst;
+                        this.secondField = fieldSecond;
+                    }
+                }",
+                CA1071CSharpFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071CSharpFieldResultAt(1, "C1", "fieldSecond", "secondField"));
         }
 
         [Fact]

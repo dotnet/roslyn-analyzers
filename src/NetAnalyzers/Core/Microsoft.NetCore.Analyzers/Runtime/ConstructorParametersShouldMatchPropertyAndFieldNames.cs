@@ -154,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (referencedSymbol is IFieldSymbol field)
                 {
-                    if (!IsParamMatchFieldName(param, field))
+                    if (!IsParamMatchesReferencedMemberName(param, field))
                     {
                         ReportFieldDiagnostic(context, FieldRule, ParameterDiagnosticReason.NameMismatch, param, field);
                     }
@@ -166,7 +166,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
                 else if (referencedSymbol is IPropertySymbol prop)
                 {
-                    if (!IsParamMatchPropName(param, prop))
+                    if (!IsParamMatchesReferencedMemberName(param, prop))
                     {
                         ReportPropertyDiagnostic(context, PropertyNameRule, ParameterDiagnosticReason.NameMismatch, param, prop);
                     }
@@ -205,30 +205,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 referencedParameters.Free(context.CancellationToken);
             }
 
-            private static bool IsParamMatchFieldName(IParameterSymbol param, IFieldSymbol field)
+            private static bool IsParamMatchesReferencedMemberName(IParameterSymbol param, ISymbol referencedMember)
             {
-                if (param.Name.Length != field.Name.Length)
+                if (param.Name.Length != referencedMember.Name.Length)
                 {
                     return false;
                 }
 
                 var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
-                var fieldWords = WordParser.Parse(field.Name, WordParserOptions.SplitCompoundWords);
+                var memberWords = WordParser.Parse(referencedMember.Name, WordParserOptions.SplitCompoundWords);
 
-                return paramWords.SequenceEqual(fieldWords, StringComparer.OrdinalIgnoreCase);
-            }
-
-            private static bool IsParamMatchPropName(IParameterSymbol param, IPropertySymbol prop)
-            {
-                if (param.Name.Length != prop.Name.Length)
-                {
-                    return false;
-                }
-
-                var paramWords = WordParser.Parse(param.Name, WordParserOptions.SplitCompoundWords);
-                var propWords = WordParser.Parse(prop.Name, WordParserOptions.SplitCompoundWords);
-
-                return paramWords.SequenceEqual(propWords, StringComparer.OrdinalIgnoreCase);
+                return paramWords.SequenceEqual(memberWords, StringComparer.OrdinalIgnoreCase);
             }
 
             private bool IsJsonConstructor([NotNullWhen(returnValue: true)] IMethodSymbol? method)

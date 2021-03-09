@@ -86,37 +86,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(
-                (compilationStartContext) =>
+            context.RegisterCompilationStartAction((compilationStartContext) =>
+            {
+                INamedTypeSymbol? jsonConstructorAttributeNamedSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute);
+                if (jsonConstructorAttributeNamedSymbol == null)
                 {
-                    INamedTypeSymbol? jsonConstructorAttributeNamedSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute);
-                    if (jsonConstructorAttributeNamedSymbol == null)
+                    return;
+                }
+
+                var paramAnalyzer = new ParameterAnalyzer(jsonConstructorAttributeNamedSymbol);
+
+                compilationStartContext.RegisterSymbolStartAction((symbolStartContext) =>
+                {
+                    var constructors = ((INamedTypeSymbol)symbolStartContext.Symbol).InstanceConstructors;
+
+                    foreach (var ctor in constructors)
                     {
-                        return;
-                    }
-
-                    var paramAnalyzer = new ParameterAnalyzer(jsonConstructorAttributeNamedSymbol);
-
-                    compilationStartContext.RegisterSymbolStartAction((symbolStartContext) =>
-                    {
-                        var constructors = ((INamedTypeSymbol)symbolStartContext.Symbol).InstanceConstructors;
-
-                        foreach (var ctor in constructors)
+                        if (paramAnalyzer.ShouldAnalyzeMethod(ctor))
                         {
-                            if (paramAnalyzer.ShouldAnalyzeMethod(ctor))
-                            {
-                                var referencedParameters = PooledConcurrentSet<IParameterSymbol>.GetInstance();
+                            var referencedParameters = PooledConcurrentSet<IParameterSymbol>.GetInstance();
 
-                                symbolStartContext.RegisterOperationAction(
-                                    context => ParameterAnalyzer.AnalyzeOperationAndReport(context, referencedParameters),
-                                    OperationKind.ParameterReference);
+                            symbolStartContext.RegisterOperationAction(
+                                context => ParameterAnalyzer.AnalyzeOperationAndReport(context, referencedParameters),
+                                OperationKind.ParameterReference);
 
-                                symbolStartContext.RegisterSymbolEndAction(
-                                    context => ParameterAnalyzer.ReportUnusedParameters(context, ctor, referencedParameters));
-                            }
+                            symbolStartContext.RegisterSymbolEndAction(
+                                context => ParameterAnalyzer.ReportUnusedParameters(context, ctor, referencedParameters));
                         }
-                    }, SymbolKind.NamedType);
-                });
+                    }
+                }, SymbolKind.NamedType);
+            });
         }
 
         internal enum ParameterDiagnosticReason

@@ -145,6 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 IMemberReferenceOperation? memberReferenceOperation = TryGetMemberReferenceOperation(operation);
                 ISymbol? referencedSymbol = memberReferenceOperation?.GetReferencedMemberOrLocalOrParameter();
 
+                // TODO: convert "IsStatic" to a separate diagnostic
                 if (referencedSymbol == null || referencedSymbol.IsStatic)
                 {
                     return;

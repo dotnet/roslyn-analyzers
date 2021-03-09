@@ -20,9 +20,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public sealed class ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1071";
-        internal const string ReferencedFieldOrPropertyName = "ReferencedFieldOrPropertyName";
-        internal const string DiagnosticReason = "DiagnosticReason";
-        internal const string UnreferencedParameterName = "UnreferencedParameterName";
+
+        internal const string ReferencedFieldOrPropertyNameKey = "ReferencedFieldOrPropertyName";
+        internal const string DiagnosticReasonKey = "DiagnosticReason";
+        internal const string UnreferencedParameterNameKey = "UnreferencedParameterName";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
@@ -246,8 +247,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private static void ReportFieldDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IFieldSymbol field)
             {
                 var properties = ImmutableDictionary<string, string?>.Empty
-                    .SetItem(ReferencedFieldOrPropertyName, field.Name)
-                    .SetItem(DiagnosticReason, reason.ToString());
+                    .SetItem(ReferencedFieldOrPropertyNameKey, field.Name)
+                    .SetItem(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
                     param.CreateDiagnostic(
@@ -261,8 +262,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private static void ReportPropertyDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IPropertySymbol prop)
             {
                 var properties = ImmutableDictionary<string, string?>.Empty
-                    .SetItem(ReferencedFieldOrPropertyName, prop.Name)
-                    .SetItem(DiagnosticReason, reason.ToString());
+                    .SetItem(ReferencedFieldOrPropertyNameKey, prop.Name)
+                    .SetItem(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
                     param.CreateDiagnostic(
@@ -276,8 +277,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private static void ReportUnreferencedParameterDiagnostic(SymbolAnalysisContext context, IParameterSymbol param)
             {
                 var properties = ImmutableDictionary<string, string?>.Empty
-                    .SetItem(UnreferencedParameterName, param.Name)
-                    .SetItem(DiagnosticReason, ParameterDiagnosticReason.UnreferencedParameter.ToString());
+                    .SetItem(UnreferencedParameterNameKey, param.Name)
+                    .SetItem(DiagnosticReasonKey, ParameterDiagnosticReason.UnreferencedParameter.ToString());
 
                 context.ReportDiagnostic(
                     param.CreateDiagnostic(

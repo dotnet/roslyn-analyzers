@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // This approach is very naive. Most likely we want to support NamingStyleOptions, available in Roslyn.
-                string newName = LowerFirstLetter(diagnostic.Properties[ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.ReferencedFieldOrPropertyName]);
+                string newName = LowerFirstLetter(diagnostic.Properties[ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.ReferencedFieldOrPropertyNameKey]);
 
                 context.RegisterCodeFix(
                     CodeAction.Create(

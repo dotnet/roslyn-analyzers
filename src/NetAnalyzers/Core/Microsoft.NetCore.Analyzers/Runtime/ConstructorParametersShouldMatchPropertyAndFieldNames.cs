@@ -151,15 +151,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 IParameterSymbol param = operation.Parameter;
-                var field = referencedSymbol as IFieldSymbol;
-                var prop = referencedSymbol as IPropertySymbol;
 
-                if (field == null && prop == null)
-                {
-                    return;
-                }
-
-                if (IsSupportedField(field))
+                if (referencedSymbol is IFieldSymbol field)
                 {
                     if (!IsParamMatchFieldName(param, field))
                     {
@@ -170,11 +163,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         ReportFieldDiagnostic(context, FieldPublicRule, ParameterDiagnosticReason.FieldInappropriateVisibility, param, field);
                     }
-
-                    return;
                 }
-
-                if (IsSupportedProp(prop))
+                else if (referencedSymbol is IPropertySymbol prop)
                 {
                     if (!IsParamMatchPropName(param, prop))
                     {
@@ -213,26 +203,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 referencedParameters.Free(context.CancellationToken);
-            }
-
-            private static bool IsSupportedProp([NotNullWhen(true)] IPropertySymbol? prop)
-            {
-                if (prop == null)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            private static bool IsSupportedField([NotNullWhen(true)] IFieldSymbol? field)
-            {
-                if (field == null)
-                {
-                    return false;
-                }
-
-                return true;
             }
 
             private static bool IsParamMatchFieldName(IParameterSymbol param, IFieldSymbol field)

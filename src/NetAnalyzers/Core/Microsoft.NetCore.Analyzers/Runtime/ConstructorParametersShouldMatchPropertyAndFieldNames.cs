@@ -197,12 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // We only care about constructors that are marked with JsonConstructor attribute.
-                if (!this.IsJsonConstructor(method))
-                {
-                    return false;
-                }
-
-                return true;
+                return this.IsJsonConstructor(method);
             }
 
             public static void ReportUnusedParameters(SymbolAnalysisContext context, IMethodSymbol ctor, PooledConcurrentSet<IParameterSymbol> referencedParameters)

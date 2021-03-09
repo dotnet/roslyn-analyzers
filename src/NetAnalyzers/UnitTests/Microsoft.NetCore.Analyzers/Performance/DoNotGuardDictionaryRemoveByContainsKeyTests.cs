@@ -19,72 +19,45 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Fact]
         public async Task RemoveIsTheOnlyStatement_OffersFixer_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             if ([|MyDictionary.ContainsKey(""Key"")|])
                 MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
-            string fixedSource = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
+
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]
         public async Task RemoveWithOutValueIsTheOnlyStatement_OffersFixer_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             if ([|MyDictionary.ContainsKey(""Key"")|])
                 MyDictionary.Remove(""Key"", out var value);
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
-            string fixedSource = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             MyDictionary.Remove(""Key"", out var value);
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await new VerifyCS.Test
             {
@@ -97,12 +70,7 @@ namespace Testopolis
         [Fact]
         public async Task RemoveIsTheOnlyStatementInABlock_OffersFixer_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
@@ -111,24 +79,15 @@ namespace Testopolis
             {
                 MyDictionary.Remove(""Key"");
             }
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
-            string fixedSource = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
-            MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+                    MyDictionary.Remove(""Key"");
+                }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
@@ -136,12 +95,7 @@ namespace Testopolis
         [Fact]
         public async Task HasElseBlock_NoDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
@@ -154,9 +108,7 @@ namespace Testopolis
             {
                 throw new Exception(""Key doesn't exist"");
             }
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -164,21 +116,14 @@ namespace Testopolis
         [Fact]
         public async Task NegatedCondition_ReportsDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             if (![|MyDictionary.ContainsKey(""Key"")|])
                 MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -186,21 +131,14 @@ namespace Testopolis
         [Fact]
         public async Task AdditionalCondition_NoDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
         {
             if (MyDictionary.ContainsKey(""Key"") && MyDictionary.Count > 2)
                 MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -208,12 +146,7 @@ namespace Testopolis
         [Fact]
         public async Task ConditionInVariable_NoDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
@@ -221,9 +154,7 @@ namespace Testopolis
             var result = MyDictionary.ContainsKey(""Key"");
             if (result)
 	            MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -231,12 +162,7 @@ namespace Testopolis
         [Fact]
         public async Task RemoveInSeparateLine_NoDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
@@ -244,9 +170,7 @@ namespace Testopolis
             if (MyDictionary.ContainsKey(""Key""))
 	            _ = MyDictionary.Count;
 	        MyDictionary.Remove(""Key"");
-        }
-    }
-}";
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
         }
@@ -254,12 +178,7 @@ namespace Testopolis
         [Fact]
         public async Task AdditionalStatements_ReportsDiagnostic_CS()
         {
-            string source = @"
-" + CSUsings + @"
-namespace Testopolis
-{
-    public class MyClass
-    {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
         private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
 
         public MyClass()
@@ -270,10 +189,36 @@ namespace Testopolis
                 Console.WriteLine();
             }
         }
-    }
-}";
+        " + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public async Task TriviaIsPreserved_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            // reticulates the splines
+            if ([|MyDictionary.ContainsKey(""Key"")|])
+            {
+                MyDictionary.Remove(""Key"");
+            }
+        }" + CSNamespaceAndClassEnd;
+
+            string fixedSource = CSUsings + CSNamespaceAndClassStart + @"
+        private readonly Dictionary<string, string> MyDictionary = new Dictionary<string, string>();
+
+        public MyClass()
+        {
+            // reticulates the splines
+            MyDictionary.Remove(""Key"");
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }
 
         [Fact]
@@ -351,6 +296,16 @@ End Namespace";
         #region Helpers
         private const string CSUsings = @"using System;
 using System.Collections.Generic;";
+
+        private const string CSNamespaceAndClassStart = @"namespace Testopolis
+{
+    public class MyClass
+    {
+";
+
+        private const string CSNamespaceAndClassEnd = @"
+    }
+}";
 
         private const string VBUsings = @"Imports System
 Imports System.Collections.Generic";

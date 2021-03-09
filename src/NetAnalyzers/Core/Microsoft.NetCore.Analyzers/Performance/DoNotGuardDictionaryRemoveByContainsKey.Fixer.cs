@@ -56,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static Document ReplaceConditionWithChild(Document document, SyntaxNode root, SyntaxNode conditionalOperationNode, SyntaxNode childOperationNode)
         {
-            var newNode = childOperationNode.WithAdditionalAnnotations(Formatter.Annotation);
+            var newNode = childOperationNode.WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode);
             var newRoot = root.ReplaceNode(conditionalOperationNode, newNode);
 
             return document.WithSyntaxRoot(newRoot);

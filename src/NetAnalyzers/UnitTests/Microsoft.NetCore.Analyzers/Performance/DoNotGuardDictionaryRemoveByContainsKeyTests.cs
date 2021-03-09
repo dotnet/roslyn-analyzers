@@ -86,8 +86,8 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         public MyClass()
         {
-                    MyDictionary.Remove(""Key"");
-                }" + CSNamespaceAndClassEnd;
+            MyDictionary.Remove(""Key"");
+        }" + CSNamespaceAndClassEnd;
 
             await VerifyCS.VerifyCodeFixAsync(source, fixedSource);
         }

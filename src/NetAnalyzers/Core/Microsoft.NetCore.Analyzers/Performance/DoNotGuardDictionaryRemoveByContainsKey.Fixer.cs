@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.Performance
@@ -54,13 +53,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract bool OperationSupportedByFixer(SyntaxNode conditionalOperation);
 
-        private static Document ReplaceConditionWithChild(Document document, SyntaxNode root, SyntaxNode conditionalOperationNode, SyntaxNode childOperationNode)
-        {
-            var newNode = childOperationNode.WithAdditionalAnnotations(Formatter.Annotation).WithTriviaFrom(conditionalOperationNode);
-            var newRoot = root.ReplaceNode(conditionalOperationNode, newNode);
-
-            return document.WithSyntaxRoot(newRoot);
-        }
+        protected abstract Document ReplaceConditionWithChild(Document document, SyntaxNode root,
+                                                              SyntaxNode conditionalOperationNode,
+                                                              SyntaxNode childOperationNode);
 
         private static bool TryParseLocationInfo(Diagnostic diagnostic, string propertyKey, out TextSpan span)
         {

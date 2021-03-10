@@ -82,8 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return;
                 }
 
-                if (conditionalOperation.WhenFalse == null &&
-                    conditionalOperation.WhenTrue.Children.Any())
+                if (conditionalOperation.WhenTrue.Children.Any())
                 {
                     var properties = ImmutableDictionary.CreateBuilder<string, string?>();
                     properties[ConditionalOperation] = CreateLocationInfo(conditionalOperation.Syntax);

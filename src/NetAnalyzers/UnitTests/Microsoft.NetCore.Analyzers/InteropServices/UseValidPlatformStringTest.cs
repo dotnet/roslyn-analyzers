@@ -376,6 +376,31 @@ public class Test
                 VerifyCS.Diagnostic(UseValidPlatformString.NoVersion).WithLocation(4).WithArguments("4.1", "Linux"));
         }
 
+        [Fact]
+        public async Task PlatformOSXIsAliasForMacOS()
+        {
+            var csSource = @"
+using System.Runtime.Versioning;
+
+public class Test
+{
+    [{|#0:SupportedOSPlatform(""MacOS1.2.3.4"")|}] // Version '1.2.3.4' is not valid for platform 'MacOS'. Use a version with 2-3 parts for this platform.
+    public void SupportedOSPlatformMac4PartsInvalid() { }
+
+    [SupportedOSPlatform(""MacOS1.2"")]
+    public void SupportedMacOs2PartValid() { }
+
+    [{|#1:SupportedOSPlatform(""OSX1.2.3.4"")|}] // Version '1.2.3.4' is not valid for platform 'OSX'. Use a version with 2-3 parts for this platform.
+    public void SupportedOSPlatformOSX4PartsInvalid() { }
+
+    [SupportedOSPlatform(""Osx1.2"")]
+    public void SupportedOsx2PartValid() { }
+}";
+            await VerifyAnalyzerAsyncCs(csSource,
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(0).WithArguments("1.2.3.4", "MacOS", "-3"),
+                VerifyCS.Diagnostic(UseValidPlatformString.InvalidVersion).WithLocation(1).WithArguments("1.2.3.4", "OSX", "-3"));
+        }
+
         private static async Task VerifyAnalyzerAsyncCs(string sourceCode, params DiagnosticResult[] expectedDiagnostics)
         {
             var test = PopulateTestCs(sourceCode);

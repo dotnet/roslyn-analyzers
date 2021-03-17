@@ -11,12 +11,12 @@ pr:
 - 2.9.x
 
 jobs:
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/job/onelocbuild.yml
-    parameters:
-      CreatePr: false
-      LclSource: lclFilesfromPackage
-      LclPackageId: 'LCL-JUNO-PROD-DOTNETSDK'
+# - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+- template: /eng/common/templates/job/onelocbuild.yml
+  parameters:
+    CreatePr: false
+    LclSource: lclFilesfromPackage
+    LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
 - job: Windows
   strategy:
     maxParallel: 4

@@ -14,6 +14,7 @@ namespace Analyzer.Utilities
     {
         private const string DotnetCodeQualityKeyPrefix = "dotnet_code_quality.";
         private const string BuildPropertyKeyPrefix = "build_property.";
+        private const string DotnetPublicApiAnalyzerPrefix = "dotnet_public_api_analyzer.";
 
         private readonly ConcurrentDictionary<string, (bool found, object? value)> _computedOptionValuesMap;
 
@@ -54,6 +55,12 @@ namespace Analyzer.Utilities
             if (key.StartsWith(BuildPropertyKeyPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 keyPrefix = BuildPropertyKeyPrefix;
+                return true;
+            }
+
+            if (key.StartsWith(DotnetPublicApiAnalyzerPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                keyPrefix = DotnetPublicApiAnalyzerPrefix;
                 return true;
             }
 

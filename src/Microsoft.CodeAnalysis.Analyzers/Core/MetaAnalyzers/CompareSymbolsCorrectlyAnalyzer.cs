@@ -149,14 +149,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             switch (method.Name)
             {
                 case WellKnownMemberNames.ObjectGetHashCode:
-                    if (IsNotInstanceInvocationOrNotOnSymbol(invocationOperation, symbolType))
+                    if (IsSymbolInstance(invocationOperation, symbolType))
                     {
                         context.ReportDiagnostic(invocationOperation.CreateDiagnostic(GetHashCodeRule));
                     }
                     break;
 
                 case s_symbolEqualsName:
-                    if (symbolEqualityComparerType != null && IsNotInstanceInvocationOrNotOnSymbol(invocationOperation, symbolType))
+                    if (symbolEqualityComparerType != null && IsSymbolInstance(invocationOperation, symbolType))
                     {
                         var parameters = invocationOperation.Arguments;
                         if (parameters.All(p => IsSymbolType(p.Value, symbolType)))
@@ -180,8 +180,8 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     break;
             }
 
-            static bool IsNotInstanceInvocationOrNotOnSymbol(IInvocationOperation invocationOperation, INamedTypeSymbol symbolType)
-                => invocationOperation.Instance is null || IsSymbolType(invocationOperation.Instance, symbolType);
+            static bool IsSymbolInstance(IInvocationOperation invocationOperation, INamedTypeSymbol symbolType)
+                => IsSymbolType(invocationOperation.Instance, symbolType);
 
             static bool IsBehavingOnSymbolType(IMethodSymbol? method, INamedTypeSymbol symbolType)
             {

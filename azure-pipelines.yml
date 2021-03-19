@@ -2,12 +2,14 @@
 trigger:
 - main
 - release/*
+- features/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
 - main
 - release/*
+- features/*
 - 2.9.x
 
 jobs:

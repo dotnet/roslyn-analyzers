@@ -2,6 +2,7 @@
 trigger:
   - main
   - release/*
+  - features/*
   - 2.9.x
 
 variables:

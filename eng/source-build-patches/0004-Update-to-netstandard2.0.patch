@@ -1,0 +1,335 @@
+From 6babb13699adca5e18525cc600858a8ffb568ad4 Mon Sep 17 00:00:00 2001
+From: Omair Majid <omajid@redhat.com>
+Date: Thu, 5 Nov 2020 17:31:41 -0500
+Subject: [PATCH 2/4] Update to netstandard2.0
+
+---
+ ...soft.CodeAnalysis.BannedApiAnalyzers.Package.csproj |  4 ++--
+ ...alysis.PerformanceSensitiveAnalyzers.Package.csproj |  4 ++--
+ ...soft.CodeAnalysis.PublicApiAnalyzers.Package.csproj |  4 ++--
+ .../Roslyn.Diagnostics.Analyzers.Package.csproj        | 10 +++++-----
+ ...osoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj |  4 +++-
+ .../Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj   |  4 +++-
+ ...rosoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj |  4 ++--
+ ....CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj |  4 +++-
+ ...nalysis.CSharp.PerformanceSensitiveAnalyzers.csproj |  4 +++-
+ ...t.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj |  4 +++-
+ .../Core/Analyzers/DeclarePublicApiAnalyzer.Impl.cs    |  8 ++++----
+ .../Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj   |  4 +++-
+ .../Core/CodeFixes/AnnotatePublicApiFix.cs             |  4 ++--
+ .../Core/CodeFixes/DeclarePublicApiFix.cs              |  4 ++--
+ ...ft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj |  4 +++-
+ ...rosoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj |  4 ++--
+ 16 files changed, 44 insertions(+), 30 deletions(-)
+
+diff --git a/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj b/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj
+index 140116f9d..6247917a1 100644
+--- a/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj
++++ b/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj
+@@ -1,7 +1,7 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+ 
+     <IsPackable>true</IsPackable>
+     <IncludeBuildOutput>false</IncludeBuildOutput>
+@@ -23,4 +23,4 @@
+     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.BannedApiAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj" />
+     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.BannedApiAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj" />
+   </ItemGroup>
+-</Project>
+\ No newline at end of file
++</Project>
+diff --git a/nuget/PerformanceSensitiveAnalyzers/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Package.csproj b/nuget/PerformanceSensitiveAnalyzers/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Package.csproj
+index 255d61018..fd6372eab 100644
+--- a/nuget/PerformanceSensitiveAnalyzers/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Package.csproj
++++ b/nuget/PerformanceSensitiveAnalyzers/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.Package.csproj
+@@ -1,7 +1,7 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <IsPackable>true</IsPackable>
+     <IncludeBuildOutput>false</IncludeBuildOutput>
+     <NuspecPackageId>Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers</NuspecPackageId>
+diff --git a/nuget/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.Package.csproj b/nuget/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.Package.csproj
+index 8e6b5fbe9..ab00c8532 100644
+--- a/nuget/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.Package.csproj
++++ b/nuget/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.Package.csproj
+@@ -1,7 +1,7 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+ 
+     <IsPackable>true</IsPackable>
+     <IncludeBuildOutput>false</IncludeBuildOutput>
+@@ -31,4 +31,4 @@
+     <ProjectReference Include="..\..\src\PublicApiAnalyzers\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
+     <ProjectReference Include="..\..\src\PublicApiAnalyzers\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
+   </ItemGroup>
+-</Project>
+\ No newline at end of file
++</Project>
+diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/CSharp/Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/CSharp/Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj
+index c0cde9db9..f98e304ca 100644
+--- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/CSharp/Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj
++++ b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/CSharp/Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj
+@@ -1,8 +1,10 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
++    <!--
+     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+   <ItemGroup>
+     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisVersion)" />
+diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Core/Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Core/Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj
+index f3a0b0e5f..b8c947767 100644
+--- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Core/Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj
++++ b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Core/Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj
+@@ -1,13 +1,15 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <!--
+       PackageId is used by Restore. If we set it to Microsoft.CodeAnalysis.BannedApiAnalyzer,
+       Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.BannedApiAnalyzer package.
+     -->
+     <PackageId>*$(MSBuildProjectFile)*</PackageId>
++    <!--
+     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+   <ItemGroup>
+     <Compile Include="..\..\Roslyn.Diagnostics.Analyzers\Core\RoslynDiagnosticIds.cs" Link="RoslynDiagnosticIds.cs" />
+diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
+index 849675f30..220d325c7 100644
+--- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
++++ b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
+@@ -1,7 +1,7 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>net46</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <GeneratePkgDefFile>false</GeneratePkgDefFile>
+     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+@@ -15,4 +15,4 @@
+     <ProjectReference Include="..\CSharp\Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj" />
+     <ProjectReference Include="..\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj" />
+   </ItemGroup>
+-</Project>
+\ No newline at end of file
++</Project>
+diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj
+index 645153bbd..4a0aec475 100644
+--- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj
++++ b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj
+@@ -1,8 +1,10 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
++    <!--
+     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+   <ItemGroup>
+     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="$(MicrosoftCodeAnalysisVersion)" />
+diff --git a/src/PerformanceSensitiveAnalyzers/CSharp/Analyzers/Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj b/src/PerformanceSensitiveAnalyzers/CSharp/Analyzers/Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj
+index 29a9d9494..d2e2317cd 100644
+--- a/src/PerformanceSensitiveAnalyzers/CSharp/Analyzers/Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj
++++ b/src/PerformanceSensitiveAnalyzers/CSharp/Analyzers/Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj
+@@ -1,8 +1,10 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
++    <!--
+     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+   <ItemGroup>
+     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.CodeFixes" />
+diff --git a/src/PerformanceSensitiveAnalyzers/Core/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj b/src/PerformanceSensitiveAnalyzers/Core/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj
+index ac9455cac..366db8ae4 100644
+--- a/src/PerformanceSensitiveAnalyzers/Core/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj
++++ b/src/PerformanceSensitiveAnalyzers/Core/Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj
+@@ -1,13 +1,15 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <!--
+       PackageId is used by Restore. If we set it to Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers,
+       Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers nuget package.
+     -->
+     <PackageId>*$(MSBuildProjectFile)*</PackageId>
++    <!--
+     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+   <ItemGroup>
+     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers" />
+diff --git a/src/PublicApiAnalyzers/Core/Analyzers/DeclarePublicApiAnalyzer.Impl.cs b/src/PublicApiAnalyzers/Core/Analyzers/DeclarePublicApiAnalyzer.Impl.cs
+index 9b9a767f3..e389df42b 100644
+--- a/src/PublicApiAnalyzers/Core/Analyzers/DeclarePublicApiAnalyzer.Impl.cs
++++ b/src/PublicApiAnalyzers/Core/Analyzers/DeclarePublicApiAnalyzer.Impl.cs
+@@ -825,7 +825,7 @@ public override bool VisitNamedType(INamedTypeSymbol symbol)
+                     if (!_ignoreTopLevelNullability)
+                     {
+                         if (symbol.IsReferenceType &&
+-                            symbol.NullableAnnotation() == NullableAnnotation.None)
++                            symbol.NullableAnnotation().Equals(NullableAnnotation.None))
+                         {
+                             return true;
+                         }
+@@ -852,7 +852,7 @@ public override bool VisitNamedType(INamedTypeSymbol symbol)
+ 
+                 public override bool VisitArrayType(IArrayTypeSymbol symbol)
+                 {
+-                    if (symbol.NullableAnnotation() == NullableAnnotation.None)
++                    if (symbol.NullableAnnotation().Equals(NullableAnnotation.None))
+                     {
+                         return true;
+                     }
+@@ -869,7 +869,7 @@ public override bool VisitPointerType(IPointerTypeSymbol symbol)
+                 public override bool VisitTypeParameter(ITypeParameterSymbol symbol)
+                 {
+                     if (symbol.IsReferenceType &&
+-                        symbol.NullableAnnotation() == NullableAnnotation.None)
++                        symbol.NullableAnnotation().Equals(NullableAnnotation.None))
+                     {
+                         // Example:
+                         // I<TReferenceType~>
+@@ -896,7 +896,7 @@ public static bool VisitNamedTypeDeclaration(INamedTypeSymbol symbol)
+                 private static bool CheckTypeParameterConstraints(ITypeParameterSymbol symbol)
+                 {
+                     if (symbol.HasReferenceTypeConstraint() &&
+-                        symbol.ReferenceTypeConstraintNullableAnnotation() == NullableAnnotation.None)
++                        symbol.ReferenceTypeConstraintNullableAnnotation().Equals(NullableAnnotation.None))
+                     {
+                         // where T : class~
+                         return true;
+diff --git a/src/PublicApiAnalyzers/Core/Analyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj b/src/PublicApiAnalyzers/Core/Analyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj
+index 8ac0061a4..ba8bac56e 100644
+--- a/src/PublicApiAnalyzers/Core/Analyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj
++++ b/src/PublicApiAnalyzers/Core/Analyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj
+@@ -1,13 +1,15 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <!--
+       PackageId is used by Restore. If we set it to Microsoft.CodeAnalysis.PublicApiAnalyzer,
+       Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.PublicApiAnalyzer package.
+     -->
+     <PackageId>*$(MSBuildProjectFile)*</PackageId>
++    <!--
+     <MicrosoftCodeAnalysisVersion>1.2.1</MicrosoftCodeAnalysisVersion>
++    -->
+   </PropertyGroup>
+ 
+   <Choose>
+diff --git a/src/PublicApiAnalyzers/Core/CodeFixes/AnnotatePublicApiFix.cs b/src/PublicApiAnalyzers/Core/CodeFixes/AnnotatePublicApiFix.cs
+index 1a13e6259..7b662212e 100644
+--- a/src/PublicApiAnalyzers/Core/CodeFixes/AnnotatePublicApiFix.cs
++++ b/src/PublicApiAnalyzers/Core/CodeFixes/AnnotatePublicApiFix.cs
+@@ -146,7 +146,7 @@ protected override async Task<Solution> GetChangedSolutionAsync(CancellationToke
+ 
+                     foreach (IGrouping<SyntaxTree, Diagnostic> grouping in groupedDiagnostics)
+                     {
+-                        Document document = project.GetDocument(grouping.Key);
++                        Document? document = project.GetDocument(grouping.Key);
+ 
+                         if (document == null)
+                         {
+@@ -236,7 +236,7 @@ private class PublicSurfaceAreaFixAllProvider : FixAllProvider
+                         return null;
+ 
+                     default:
+-                        Debug.Fail($"Unknown FixAllScope '{fixAllContext.Scope}'");
++                        Debug.Fail($"Unknown FixAllScope '{fixAllContext.Scope!}'");
+                         return null;
+                 }
+ 
+diff --git a/src/PublicApiAnalyzers/Core/CodeFixes/DeclarePublicApiFix.cs b/src/PublicApiAnalyzers/Core/CodeFixes/DeclarePublicApiFix.cs
+index 0aa0149c4..41c01cd9b 100644
+--- a/src/PublicApiAnalyzers/Core/CodeFixes/DeclarePublicApiFix.cs
++++ b/src/PublicApiAnalyzers/Core/CodeFixes/DeclarePublicApiFix.cs
+@@ -236,7 +236,7 @@ protected override async Task<Solution> GetChangedSolutionAsync(CancellationToke
+ 
+                     foreach (IGrouping<SyntaxTree, Diagnostic> grouping in groupedDiagnostics)
+                     {
+-                        Document document = project.GetDocument(grouping.Key);
++                        Document? document = project.GetDocument(grouping.Key);
+ 
+                         if (document == null)
+                         {
+@@ -300,7 +300,7 @@ protected override async Task<Solution> GetChangedSolutionAsync(CancellationToke
+                 foreach (KeyValuePair<ProjectId, SourceText> pair in addedPublicSurfaceAreaText)
+                 {
+                     var project = newSolution.GetProject(pair.Key);
+-                    if (uniqueProjectPaths.Add(project.FilePath ?? project.Name))
++                    if (uniqueProjectPaths.Add(project!.FilePath ?? project.Name))
+                     {
+                         newSolution = AddPublicApiFiles(project, pair.Value);
+                     }
+diff --git a/src/PublicApiAnalyzers/Core/CodeFixes/Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj b/src/PublicApiAnalyzers/Core/CodeFixes/Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj
+index bdb00b382..3178f5d2b 100644
+--- a/src/PublicApiAnalyzers/Core/CodeFixes/Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj
++++ b/src/PublicApiAnalyzers/Core/CodeFixes/Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj
+@@ -1,13 +1,15 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>netstandard1.3</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <!--
+       PackageId is used by Restore. If we set it to DotNetAnalyzers.PublicApiAnalyzer.CodeFixes,
+       Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.PublicApiAnalyzer.CodeFixes package.
+     -->
+     <PackageId>*$(MSBuildProjectFile)*</PackageId>
++    <!--
+     <MicrosoftCodeAnalysisVersion>1.2.1</MicrosoftCodeAnalysisVersion>
++    -->
+     <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
+   </PropertyGroup>
+ 
+diff --git a/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj b/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
+index dbeee618f..dcdfeb162 100644
+--- a/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
++++ b/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
+@@ -1,7 +1,7 @@
+ ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>net46</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+     <GeneratePkgDefFile>false</GeneratePkgDefFile>
+     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+@@ -14,4 +14,4 @@
+     <ProjectReference Include="..\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
+     <ProjectReference Include="..\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
+   </ItemGroup>
+-</Project>
+\ No newline at end of file
++</Project>
+-- 
+2.26.2

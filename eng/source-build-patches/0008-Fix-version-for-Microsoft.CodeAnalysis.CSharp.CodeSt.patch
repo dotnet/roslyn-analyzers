@@ -1,0 +1,39 @@
+From 1839e0370d5416b45f0a8fbcc370f4984237f1ba Mon Sep 17 00:00:00 2001
+From: Omair Majid <omajid@redhat.com>
+Date: Mon, 9 Nov 2020 11:52:28 -0500
+Subject: [PATCH 4/4] Fix version for Microsoft.CodeAnalysis.CSharp.CodeStyle
+
+---
+ eng/Versions.props        | 2 +-
+ src/Directory.Build.props | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/eng/Versions.props b/eng/Versions.props
+index 677b44310..f9e213be1 100644
+--- a/eng/Versions.props
++++ b/eng/Versions.props
+@@ -34,7 +34,7 @@
+     <!-- Dependencies from https://github.com/dotnet/roslyn -->
+     <MicrosoftNETCoreCompilersPackageVersion>3.8.0</MicrosoftNETCoreCompilersPackageVersion>
+     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftNetCompilersToolsetVersion>
+-    <CodeStyleAnalyersVersion>$(MicrosoftNETCoreCompilersPackageVersion)</CodeStyleAnalyersVersion>
++    <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftNETCoreCompilersPackageVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
+     <!-- Roslyn -->
+     <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
+     <MicrosoftCodeAnalysisCommonVersion>3.8.0</MicrosoftCodeAnalysisCommonVersion>
+diff --git a/src/Directory.Build.props b/src/Directory.Build.props
+index 24e9fe3eb..6c95f9d7b 100644
+--- a/src/Directory.Build.props
++++ b/src/Directory.Build.props
+@@ -31,7 +31,7 @@
+ 
+   <!-- Code Style analyzers -->
+   <ItemGroup Condition="'$(Language)' == 'C#'">
+-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
++    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(MicrosoftCodeAnalysisCSharpCodeStyleVersion)" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(Language)' == 'VB'">
+     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+-- 
+2.26.2
+

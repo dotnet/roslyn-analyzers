@@ -1,0 +1,73 @@
+From 20eff0e62e16c49d0b02e861f2cc553d7de66061 Mon Sep 17 00:00:00 2001
+From: Davis Goodin <dagood@microsoft.com>
+Date: Mon, 28 Dec 2020 11:20:26 -0600
+Subject: [PATCH] Reference latest when running in build
+
+---
+ Directory.Build.targets                       | 35 +++++++++++++++++++
+ ...GenerateDocumentationAndConfigFiles.csproj |  3 ++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/Directory.Build.targets b/Directory.Build.targets
+index 34e0b7966..6633a023a 100644
+--- a/Directory.Build.targets
++++ b/Directory.Build.targets
+@@ -14,6 +14,41 @@
+     </Content>
+   </ItemGroup>
+ 
++  <!--
++    If this project executes during the build (a tool project, rather than a project that compiles
++    against reference assemblies for maximum compatibility), use the latest version of every package
++    rather than whatever the transitive closure happens to include. In source-build, if we use an
++    old reference-only package, it will fail to execute becuase methods are missing implementations.
++  -->
++  <ItemGroup Condition="'$(ExecutesDuringBuild)' == 'true'">
++    <ExecuteDuringBuildLatestPackageId Include="Microsoft.Bcl.AsyncInterfaces" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Collections.Immutable" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition.AttributedModel" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Convention" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Hosting" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Runtime" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Composition.TypedParts" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Reflection.Metadata" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Runtime.CompilerServices.Unsafe" />
++    <ExecuteDuringBuildLatestPackageId Include="System.Text.Encoding.CodePages" />
++
++    <!-- Find the name used by the PackageVersions.props infrastructure. -->
++    <ExecuteDuringBuildLatestPackageId
++      Update="@(ExecuteDuringBuildLatestPackageId)"
++      VersionPropertyName="$([System.String]::new('%(Identity)').Replace('.',''))Version" />
++
++    <!--
++      If the package version property is set (we are running in source-build or have the version in
++      eng/Versions.props), use it.
++    -->
++    <ExecuteDuringBuildLatestPackageId
++      Update="@(ExecuteDuringBuildLatestPackageId)"
++      Version="$(%(VersionPropertyName))" />
++
++    <PackageReference Include="@(ExecuteDuringBuildLatestPackageId->HasMetadata('Version'))" />
++  </ItemGroup>
++
+   <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
+     <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
+   </ItemGroup>
+diff --git a/src/Tools/GenerateDocumentationAndConfigFiles/GenerateDocumentationAndConfigFiles.csproj b/src/Tools/GenerateDocumentationAndConfigFiles/GenerateDocumentationAndConfigFiles.csproj
+index 181473c7f..51da76e35 100644
+--- a/src/Tools/GenerateDocumentationAndConfigFiles/GenerateDocumentationAndConfigFiles.csproj
++++ b/src/Tools/GenerateDocumentationAndConfigFiles/GenerateDocumentationAndConfigFiles.csproj
+@@ -8,6 +8,9 @@
+     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+     <MicrosoftCodeAnalysisVersion>$(MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion)</MicrosoftCodeAnalysisVersion>
+   </PropertyGroup>
++  <PropertyGroup>
++    <ExecutesDuringBuild>true</ExecutesDuringBuild>
++  </PropertyGroup>
+   <ItemGroup>
+     <Compile Include="..\..\Microsoft.CodeAnalysis.Analyzers\Core\MetaAnalyzers\ReleaseTrackingHelper.cs" Link="ReleaseTrackingHelper.cs" />
+     <Compile Include="..\..\Utilities\Compiler\Debug.cs" Link="Debug.cs" />
+-- 
+2.25.4
+

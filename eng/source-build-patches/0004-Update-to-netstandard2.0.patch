@@ -10,7 +10,6 @@ Subject: [PATCH 2/4] Update to netstandard2.0
  .../Roslyn.Diagnostics.Analyzers.Package.csproj        | 10 +++++-----
  ...osoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj |  4 +++-
  .../Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj   |  4 +++-
- ...rosoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj |  4 ++--
  ....CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj |  4 +++-
  ...nalysis.CSharp.PerformanceSensitiveAnalyzers.csproj |  4 +++-
  ...t.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj |  4 +++-
@@ -19,7 +18,6 @@ Subject: [PATCH 2/4] Update to netstandard2.0
  .../Core/CodeFixes/AnnotatePublicApiFix.cs             |  4 ++--
  .../Core/CodeFixes/DeclarePublicApiFix.cs              |  4 ++--
  ...ft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj |  4 +++-
- ...rosoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj |  4 ++--
  16 files changed, 44 insertions(+), 30 deletions(-)
 
 diff --git a/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj b/nuget/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.Package.csproj
@@ -112,26 +110,6 @@ index f3a0b0e5f..b8c947767 100644
    </PropertyGroup>
    <ItemGroup>
      <Compile Include="..\..\Roslyn.Diagnostics.Analyzers\Core\RoslynDiagnosticIds.cs" Link="RoslynDiagnosticIds.cs" />
-diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
-index 849675f30..220d325c7 100644
---- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
-+++ b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Setup/Microsoft.CodeAnalysis.BannedApiAnalyzers.Setup.csproj
-@@ -1,7 +1,7 @@
- ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
--    <TargetFramework>net46</TargetFramework>
-+    <TargetFramework>netstandard2.0</TargetFramework>
-     <GeneratePkgDefFile>false</GeneratePkgDefFile>
-     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
-@@ -15,4 +15,4 @@
-     <ProjectReference Include="..\CSharp\Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers.csproj" />
-     <ProjectReference Include="..\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj" />
-   </ItemGroup>
--</Project>
-\ No newline at end of file
-+</Project>
 diff --git a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj b/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj
 index 645153bbd..4a0aec475 100644
 --- a/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/VisualBasic/Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers.vbproj
@@ -311,25 +289,5 @@ index bdb00b382..3178f5d2b 100644
      <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
    </PropertyGroup>
  
-diff --git a/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj b/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
-index dbeee618f..dcdfeb162 100644
---- a/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
-+++ b/src/PublicApiAnalyzers/Setup/Microsoft.CodeAnalysis.PublicApiAnalyzers.Setup.csproj
-@@ -1,7 +1,7 @@
- ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
--    <TargetFramework>net46</TargetFramework>
-+    <TargetFramework>netstandard2.0</TargetFramework>
-     <GeneratePkgDefFile>false</GeneratePkgDefFile>
-     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
-     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
-@@ -14,4 +14,4 @@
-     <ProjectReference Include="..\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
-     <ProjectReference Include="..\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
-   </ItemGroup>
--</Project>
-\ No newline at end of file
-+</Project>
 -- 
 2.26.2

@@ -2645,6 +2645,36 @@ public class Test
             return string.Format(CultureInfo.InvariantCulture, resource, args);
         }
 
+        [Fact, WorkItem(51652, "https://github.com/dotnet/roslyn/issues/51652")]
+        public async Task TestGuardedCheckInsideLoopWithTryCatch()
+        {
+            var source = @"
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
+
+class TestType
+{
+    static async Task Main(string[] args) {
+	while (true)
+		try {
+			await Task.Delay(1000);
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				Test();
+		} catch {
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				Test();
+			throw;
+		}
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    static void Test() { }
+}" + MockAttributesCsSource;
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {
             var test = new VerifyCS.Test

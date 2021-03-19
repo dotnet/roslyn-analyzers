@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             }
 
             static bool IsSymbolInstance(IInvocationOperation invocationOperation, INamedTypeSymbol symbolType)
-                => IsSymbolType(invocationOperation.Instance, symbolType);
+                => invocationOperation.Instance is not null && IsSymbolType(invocationOperation.Instance, symbolType);
 
             static bool IsBehavingOnSymbolType(IMethodSymbol? method, INamedTypeSymbol symbolType)
             {

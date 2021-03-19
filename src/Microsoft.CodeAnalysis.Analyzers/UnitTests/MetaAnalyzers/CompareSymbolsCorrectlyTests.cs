@@ -849,6 +849,26 @@ Public Class C
 End Class");
         }
 
+        [Fact, WorkItem(4956, "https://github.com/dotnet/roslyn-analyzers/issues/4956")]
+        public async Task GetHashCode_NotISymbol_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C
+{
+    public void M()
+    {
+        _ = string.GetHashCode(string.Empty);
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class C
+    Public Sub M()
+        Dim unused = String.GetHashCode(String.Empty)
+    End Sub
+End Class");
+        }
+
         [Fact, WorkItem(2493, "https://github.com/dotnet/roslyn-analyzers/issues/2493")]
         public async Task CollectionConstructorsKnownToRequireComparer_Diagnostic()
         {

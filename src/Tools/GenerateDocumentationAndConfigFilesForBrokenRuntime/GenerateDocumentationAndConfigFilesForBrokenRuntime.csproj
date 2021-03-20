@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <NonShipping>true</NonShipping>
+    <UseAppHost>false</UseAppHost>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ExecutesDuringBuild>true</ExecutesDuringBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj" />
+  </ItemGroup>
+</Project>

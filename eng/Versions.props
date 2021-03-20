@@ -53,10 +53,19 @@
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--
+      Binaries that need to be executable during source build are restricted to versions available within source build.
+      This section defines executable versions of packages which are referenced via lower-version reference assemblies
+      during the build.
+    -->
+    <SystemCollectionsImmutableExecutableVersion>5.0.0</SystemCollectionsImmutableExecutableVersion>
+    <SystemReflectionMetadataExecutableVersion>5.0.0</SystemReflectionMetadataExecutableVersion>
+    <MicrosoftCodeAnalysisExecutableVersion>3.8.0</MicrosoftCodeAnalysisExecutableVersion>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftCodeAnalysisCommonVersion>3.8.0</MicrosoftCodeAnalysisCommonVersion>
-    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
   </PropertyGroup>
 
   <!-- Override isolated build dependency versions with versions from Repo API. -->

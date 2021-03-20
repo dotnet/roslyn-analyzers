@@ -18,6 +18,42 @@
     </Content>
   </ItemGroup>
 
+  <!--
+    If this project executes during the build (a tool project, rather than a project that compiles
+    against reference assemblies for maximum compatibility), use the latest version of every package
+    rather than whatever the transitive closure happens to include. In source-build, if we use an
+    old reference-only package, it will fail to execute becuase methods are missing implementations.
+  -->
+  <ItemGroup Condition="'$(ExecutesDuringBuild)' == 'true'">
+    <ExecuteDuringBuildLatestPackageId Include="Microsoft.Bcl.AsyncInterfaces" />
+    <ExecuteDuringBuildLatestPackageId Include="Microsoft.CodeAnalysis" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Collections.Immutable" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition.AttributedModel" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Convention" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Hosting" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Runtime" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Composition.TypedParts" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Reflection.Metadata" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Runtime.CompilerServices.Unsafe" />
+    <ExecuteDuringBuildLatestPackageId Include="System.Text.Encoding.CodePages" />
+
+    <!-- Find the name used by the PackageVersions.props infrastructure. -->
+    <ExecuteDuringBuildLatestPackageId
+      Update="@(ExecuteDuringBuildLatestPackageId)"
+      VersionPropertyName="$([System.String]::new('%(Identity)').Replace('.',''))ExecutableVersion" />
+
+    <!--
+      If the package version property is set (we are running in source-build or have the version in
+      eng/Versions.props), use it.
+    -->
+    <ExecuteDuringBuildLatestPackageId
+      Update="@(ExecuteDuringBuildLatestPackageId)"
+      Version="$(%(VersionPropertyName))" />
+
+    <PackageReference Include="@(ExecuteDuringBuildLatestPackageId->HasMetadata('Version'))" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
     <PackageReference Include="coverlet.msbuild" Version="$(CoverletVersion)" PrivateAssets="all" />
   </ItemGroup>

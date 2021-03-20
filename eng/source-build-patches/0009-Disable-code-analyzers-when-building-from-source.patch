@@ -17,7 +17,7 @@ index 6c95f9d7b..63c1ce376 100644
 --- a/src/Directory.Build.props
 +++ b/src/Directory.Build.props
 @@ -16,7 +16,7 @@
-     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+     <GeneratePerformanceSensitiveAttribute>false</GeneratePerformanceSensitiveAttribute>
    </PropertyGroup>
  
 -  <ItemGroup>

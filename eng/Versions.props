@@ -52,4 +52,13 @@
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisCommonVersion>3.8.0</MicrosoftCodeAnalysisCommonVersion>
+    <MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisForRoslynDiagnosticsAnalyzersVersion>
+  </PropertyGroup>
+
+  <!-- Override isolated build dependency versions with versions from Repo API. -->
+  <Import Project="$(DotNetPackageVersionPropsPath)" Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetPackageVersionPropsPath)' != ''" />
 </Project>

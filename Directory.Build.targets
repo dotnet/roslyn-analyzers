@@ -25,18 +25,9 @@
     old reference-only package, it will fail to execute becuase methods are missing implementations.
   -->
   <ItemGroup Condition="'$(ExecutesDuringBuild)' == 'true'">
-    <ExecuteDuringBuildLatestPackageId Include="Microsoft.Bcl.AsyncInterfaces" />
     <ExecuteDuringBuildLatestPackageId Include="Microsoft.CodeAnalysis" />
     <ExecuteDuringBuildLatestPackageId Include="System.Collections.Immutable" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition.AttributedModel" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Convention" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Hosting" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition.Runtime" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Composition.TypedParts" />
     <ExecuteDuringBuildLatestPackageId Include="System.Reflection.Metadata" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Runtime.CompilerServices.Unsafe" />
-    <ExecuteDuringBuildLatestPackageId Include="System.Text.Encoding.CodePages" />
 
     <!-- Find the name used by the PackageVersions.props infrastructure. -->
     <ExecuteDuringBuildLatestPackageId

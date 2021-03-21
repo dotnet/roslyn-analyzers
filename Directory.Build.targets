@@ -1,9 +1,5 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <PropertyGroup>
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' AND '$(IsShipping)' == 'false'">true</ExcludeFromSourceBuild>
-  </PropertyGroup>
-
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <!-- Add License and Third Party Notices files into each VSIX. -->

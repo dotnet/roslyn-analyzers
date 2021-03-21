@@ -67,7 +67,4 @@
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
-
-  <!-- Override isolated build dependency versions with versions from Repo API. -->
-  <Import Project="$(DotNetPackageVersionPropsPath)" Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetPackageVersionPropsPath)' != ''" />
 </Project>

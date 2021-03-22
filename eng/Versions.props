@@ -52,4 +52,15 @@
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Binaries that need to be executable during source build are restricted to versions available within source build.
+      This section defines executable versions of packages which are referenced via lower-version reference assemblies
+      during the build.
+    -->
+    <SystemCollectionsImmutableExecutableVersion>5.0.0</SystemCollectionsImmutableExecutableVersion>
+    <SystemReflectionMetadataExecutableVersion>5.0.0</SystemReflectionMetadataExecutableVersion>
+    <MicrosoftCodeAnalysisExecutableVersion>3.8.0</MicrosoftCodeAnalysisExecutableVersion>
+  </PropertyGroup>
 </Project>

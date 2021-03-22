@@ -18,7 +18,6 @@
     <When Condition="'$(DotNetBuildFromSource)' == 'true'">
       <!-- Disable code analysis for source build -->
       <PropertyGroup>
-        <NoWarn Condition=" '$(DotnetBuildFromSource)' == 'true' ">$(NoWarn);nullable</NoWarn>
         <EnableNETAnalyzers>false</EnableNETAnalyzers>
       </PropertyGroup>
     </When>

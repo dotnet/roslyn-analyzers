@@ -63,8 +63,4 @@
     <SystemReflectionMetadataExecutableVersion>5.0.0</SystemReflectionMetadataExecutableVersion>
     <MicrosoftCodeAnalysisExecutableVersion>3.8.0</MicrosoftCodeAnalysisExecutableVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <MicrosoftCodeAnalysisVersion>3.8.0</MicrosoftCodeAnalysisVersion>
-  </PropertyGroup>
 </Project>

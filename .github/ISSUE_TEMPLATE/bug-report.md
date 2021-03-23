@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug, false-positive or false-negative
+about: Report a bug, false-positive or false-negative for a CAxxxx rule. For IDExxxx, please open an issue in dotnet/roslyn repository.
 title: ''
 labels: ''
 assignees: ''

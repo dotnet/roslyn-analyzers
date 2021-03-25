@@ -168,7 +168,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.Resx
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.ResxSourceGenerator", "src\Microsoft.CodeAnalysis.ResxSourceGenerator\Microsoft.CodeAnalysis.ResxSourceGenerator\Microsoft.CodeAnalysis.ResxSourceGenerator.csproj", "{87973C87-3B2F-469F-BDC9-98516BC280F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.ResxSourceGenerator.Package", "src\Microsoft.CodeAnalysis.ResxSourceGenerator\Microsoft.CodeAnalysis.ResxSourceGenerator.Package\Microsoft.CodeAnalysis.ResxSourceGenerator.Package.csproj", "{C1FF81BC-ABBA-4ECB-9BA3-C473EAD6142F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.ResxSourceGenerator.Package", "nuget\Microsoft.CodeAnalysis.ResxSourceGenerator\Microsoft.CodeAnalysis.ResxSourceGenerator.Package.csproj", "{C1FF81BC-ABBA-4ECB-9BA3-C473EAD6142F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.ResxSourceGenerator.CSharp", "src\Microsoft.CodeAnalysis.ResxSourceGenerator\Microsoft.CodeAnalysis.ResxSourceGenerator.CSharp\Microsoft.CodeAnalysis.ResxSourceGenerator.CSharp.csproj", "{8701846B-5C49-4E45-9CB8-C3055BCCB025}"
 EndProject

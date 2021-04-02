@@ -820,7 +820,7 @@ System.StringComparer.GetHashCode(object{NonNullSuffix} obj) -> int (forwarded, 
 abstract System.StringComparer.Compare(string{NullableSuffix} x, string{NullableSuffix} y) -> int (forwarded, contained in {containingAssembly})
 abstract System.StringComparer.Equals(string{NullableSuffix} x, string{NullableSuffix} y) -> bool (forwarded, contained in {containingAssembly})
 abstract System.StringComparer.GetHashCode(string{NonNullSuffix} obj) -> int (forwarded, contained in {containingAssembly})
-System.StringComparer.StringComparer() -> void (forwarded, contained in {containingAssembly})
+protected System.StringComparer.StringComparer() -> void (forwarded, contained in {containingAssembly})
 ";
 
 #if NETCOREAPP

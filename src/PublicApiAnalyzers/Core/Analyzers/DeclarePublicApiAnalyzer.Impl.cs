@@ -600,7 +600,14 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
                     if (memberType != null)
                     {
-                        publicApiName = publicApiName + " -> " + memberType.ToDisplayString(format);
+                        var accessibilityPrefix = symbol.DeclaredAccessibility switch
+                        {
+                            Accessibility.Public => string.Empty,
+                            Accessibility.Protected or Accessibility.ProtectedOrInternal => "protected ",
+                            _ => throw new ArgumentException($"Argument '{nameof(symbol)}' is expected to be public or protected. Actual '{symbol.DeclaredAccessibility}'.")
+                        };
+
+                        publicApiName = $"{accessibilityPrefix}{publicApiName} -> {memberType.ToDisplayString(format)}";
                     }
 
                     if (((symbol as INamespaceSymbol)?.IsGlobalNamespace).GetValueOrDefault())

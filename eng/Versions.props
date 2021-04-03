@@ -52,7 +52,6 @@
     <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
-
   <PropertyGroup>
     <!--
       Binaries that need to be executable during source build are restricted to versions available within source build.

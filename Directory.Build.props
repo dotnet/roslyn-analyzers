@@ -20,6 +20,8 @@
     <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
     <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
+
+    <Features>strict</Features>
   </PropertyGroup>
 
   <PropertyGroup>

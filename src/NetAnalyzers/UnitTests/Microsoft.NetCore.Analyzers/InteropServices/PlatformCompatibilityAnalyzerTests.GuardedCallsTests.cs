@@ -206,6 +206,103 @@ namespace PlatformCompatDemo.Bugs.GuardsAroundSupported
         }
 
         [Fact]
+        public async Task SupportedOnOsx_GuardedWithIsMacOS()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsWindows() ||
+            OperatingSystem.IsLinux() ||
+            OperatingSystem.IsMacOS())
+        {
+            Api();
+            Api2();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+        [|Api2()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+    }
+
+    [SupportedOSPlatform(""macos"")]
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""Linux"")]
+    void Api() { }
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""Osx"")]
+    [SupportedOSPlatform(""Linux"")]
+    void Api2() { }
+}";
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task UnsupportedOnOsx_GuardedWithIsMacOS()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (!OperatingSystem.IsWindows() &&
+            !OperatingSystem.IsLinux() &&
+            !OperatingSystem.IsMacOS())
+        {
+            Api();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is unsupported on: 'MacOS/OSX', 'windows'.
+    }
+
+    [UnsupportedOSPlatform(""windows"")]
+    [UnsupportedOSPlatform(""Linux"")]
+    [UnsupportedOSPlatform(""Osx"")]
+    void Api() { }
+}";
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
+        public async Task SupportedOnOsxVersioned_GuardedWithIsMacOSVersioned()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsWindowsVersionAtLeast(10) ||
+            OperatingSystem.IsLinux() ||
+            OperatingSystem.IsMacOSVersionAtLeast(11))
+        {
+            Api();
+        }
+
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX' 10.1 and later, 'windows' 10.0 and later, 'Linux'.
+    }
+
+    [SupportedOSPlatform(""windows10.0"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""Osx10.1"")]
+    void Api() { }
+}";
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
         public async Task GuardsAroundSupported()
         {
             var source = @"

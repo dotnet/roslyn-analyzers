@@ -303,6 +303,50 @@ class Test
         }
 
         [Fact]
+        public async Task SupportedUnsupportedOnOsx_GuardedWithIsMacOS_MessageParameterTest()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+using System;
+
+class Test
+{
+    public void Api_Usage()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            MacOsApi();
+            OsxApi();
+            {|#0:UnsupportedOsxApi()|};
+        }
+        else
+        {
+            {|#1:MacOsApi()|}; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+            {|#2:OsxApi()|}; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+            UnsupportedOsxApi();
+        }
+    }
+
+    [SupportedOSPlatform(""macos"")]
+    void MacOsApi() { }
+
+    [SupportedOSPlatform(""Osx"")]
+    void OsxApi() { }
+
+    [UnsupportedOSPlatform(""Osx"")]
+    void UnsupportedOsxApi() { }
+}";
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable)
+                    .WithLocation(0).WithArguments("Test.UnsupportedOsxApi()", "'MacOS/OSX'", "'MacOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
+                    .WithLocation(1).WithArguments("Test.MacOsApi()", "'MacOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
+                    .WithLocation(2).WithArguments("Test.OsxApi()", "'MacOS/OSX'"));
+        }
+
+        [Fact]
         public async Task GuardsAroundSupported()
         {
             var source = @"

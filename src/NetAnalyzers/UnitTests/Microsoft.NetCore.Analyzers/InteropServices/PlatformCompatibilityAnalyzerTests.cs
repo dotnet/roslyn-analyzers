@@ -1581,7 +1581,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void TestWithMacOsSupported()
         {
             Target.SupportedOnOSXAndLinux();
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'MacOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            {|#0:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'MacOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
             Target.SupportedOnMacOs();
         }
 
@@ -1605,21 +1605,21 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void TestWithLinuxSupported()
         {
             Target.SupportedOnOSXAndLinux();
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Linux'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            {|#1:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'Linux'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
         }
 
         public void CrossPlatform()
         {
-            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
-            [|Target.SupportedOnMacOs()|]; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'MacOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'MacOS/OSX' 14.0 and later.
+            {|#2:Target.SupportedOnMacOs()|}; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'Macos/OSX'.
         }
         
         [SupportedOSPlatform(""Browser"")]
         public void TestWithSupportedOnBrowserWarns()
         {
-            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'MacOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSX14()' is only supported on: 'MacOS/OSX' 14.0 and later.
         }
 
         [SupportedOSPlatform(""macos15.1"")]
@@ -1640,7 +1640,13 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void SupportedOnMacOs() { }
     }
 }";
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Target.SupportedOnOSX14()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "MacOS/OSX", "14.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "MacOS/OSX")),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(1).WithArguments("Target.SupportedOnOSX14()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "MacOS/OSX", "14.0"), "'Linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Target.SupportedOnMacOs()", "'MacOS/OSX'"));
         }
 
         [Fact]
@@ -1656,7 +1662,7 @@ namespace ns
         [SupportedOSPlatform(""MacOS"")]
         public static void TestWithMacOsSupported()
         {
-            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on: 'MacOS/OSX'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
+            {|#0:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'MacOS/OSX'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
             [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on: 'MacOS/OSX' all versions. 'Target.UnsupportedOnOSX14()' is unsupported on: 'MacOS/OSX' 14.0 and later.
         }
 
@@ -1683,14 +1689,14 @@ namespace ns
 
         public void CrossPlatform()
         {
-            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
+            {|#1:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
             [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSX14()' is unsupported on: 'MacOS/OSX' 14.0 and later.
         }
         
         [UnsupportedOSPlatform(""macOs13.0"")]
         public void TestWithSupportedOnBrowserWarns()
         {
-            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on: 'MacOS/OSX' 13.0 and before. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX' all versions. all versions.
+            {|#2:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'MacOS/OSX' 13.0 and before. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX' all versions.
             Target.UnsupportedOnOSX14();
         }
     }
@@ -1702,7 +1708,12 @@ namespace ns
         public static void UnsupportedOnOSX14() { }
     }
 }";
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'MacOS/OSX'", "'MacOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(1).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'MacOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(2).WithArguments("Target.UnsupportedOnOSXAndLinux()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "MacOS/OSX"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, "MacOS/OSX", "13.0")));
         }
 
         [Fact]

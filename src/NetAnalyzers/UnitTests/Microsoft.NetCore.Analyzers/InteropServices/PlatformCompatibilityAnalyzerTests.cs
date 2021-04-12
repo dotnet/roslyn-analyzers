@@ -1581,7 +1581,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void TestWithMacOsSupported()
         {
             Target.SupportedOnOSXAndLinux();
-            {|#0:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'MacOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            {|#0:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'macOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
             Target.SupportedOnMacOs();
         }
 
@@ -1590,7 +1590,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void TestWithMacOsLinuxSupported()
         {
             Target.SupportedOnOSXAndLinux();
-            [|Target.SupportedOnMacOs()|]; //  This call site is reachable on: 'Linux', 'MacOS/OSX'. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
+            [|Target.SupportedOnMacOs()|]; //  This call site is reachable on: 'Linux', 'macOS/OSX'. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
         }
 
         [SupportedOSPlatform(""OSX"")]
@@ -1610,16 +1610,16 @@ namespace CallerUnsupportsNonSubsetOfTarget
 
         public void CrossPlatform()
         {
-            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'MacOS/OSX', 'linux'.
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'MacOS/OSX' 14.0 and later.
-            {|#2:Target.SupportedOnMacOs()|}; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'Macos/OSX'.
-        }
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            {|#2:Target.SupportedOnMacOs()|}; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'macOS/OSX'.
+        }0
         
         [SupportedOSPlatform(""Browser"")]
         public void TestWithSupportedOnBrowserWarns()
         {
-            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'MacOS/OSX', 'linux'.
-            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSX14()' is only supported on: 'MacOS/OSX' 14.0 and later.
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
         }
 
         [SupportedOSPlatform(""macos15.1"")]
@@ -1642,11 +1642,11 @@ namespace CallerUnsupportsNonSubsetOfTarget
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Target.SupportedOnOSX14()",
-                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "MacOS/OSX", "14.0"),
-                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "MacOS/OSX")),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "macOS/OSX")),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(1).WithArguments("Target.SupportedOnOSX14()",
-                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "MacOS/OSX", "14.0"), "'Linux'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Target.SupportedOnMacOs()", "'MacOS/OSX'"));
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"), "'Linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Target.SupportedOnMacOs()", "'macOS/OSX'"));
         }
 
         [Fact]
@@ -1662,8 +1662,8 @@ namespace ns
         [SupportedOSPlatform(""MacOS"")]
         public static void TestWithMacOsSupported()
         {
-            {|#0:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'MacOS/OSX'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
-            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on: 'MacOS/OSX' all versions. 'Target.UnsupportedOnOSX14()' is unsupported on: 'MacOS/OSX' 14.0 and later.
+            {|#0:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'macOS/OSX'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX'.
+            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on: 'macOS/OSX' all versions. 'Target.UnsupportedOnOSX14()' is unsupported on: 'macOS/OSX' 14.0 and later.
         }
 
         [UnsupportedOSPlatform(""MacOS"")]
@@ -1689,14 +1689,14 @@ namespace ns
 
         public void CrossPlatform()
         {
-            {|#1:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX'.
-            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSX14()' is unsupported on: 'MacOS/OSX' 14.0 and later.
+            {|#1:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX'.
+            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSX14()' is unsupported on: 'macOS/OSX' 14.0 and later.
         }
         
         [UnsupportedOSPlatform(""macOs13.0"")]
         public void TestWithSupportedOnBrowserWarns()
         {
-            {|#2:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'MacOS/OSX' 13.0 and before. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'MacOS/OSX' all versions.
+            {|#2:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'macOS/OSX' 13.0 and before. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX' all versions.
             Target.UnsupportedOnOSX14();
         }
     }
@@ -1709,11 +1709,11 @@ namespace ns
     }
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'MacOS/OSX'", "'MacOS/OSX'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(1).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'MacOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'macOS/OSX'", "'macOS/OSX'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(1).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'macOS/OSX'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(2).WithArguments("Target.UnsupportedOnOSXAndLinux()",
-                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "MacOS/OSX"),
-                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, "MacOS/OSX", "13.0")));
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "macOS/OSX"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndBefore, "macOS/OSX", "13.0")));
         }
 
         [Fact]
@@ -2219,7 +2219,7 @@ namespace ns
             yield return new object[] { "MACOS", "10.1.2.3", "macos", "10.2.2.0", false };
             yield return new object[] { "OSX", "10.1.2.3", "Osx", "11.1.1.0", false };
             yield return new object[] { "Osx", "10.1.2.3", "osx", "10.2", false };
-            yield return new object[] { "Windows", "10.1.2.3", "MacOS/OSX", "11.1.1.4", true };
+            yield return new object[] { "Windows", "10.1.2.3", "macOS/OSX", "11.1.1.4", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.0.1.9", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.4", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "8.2.3.3", true };

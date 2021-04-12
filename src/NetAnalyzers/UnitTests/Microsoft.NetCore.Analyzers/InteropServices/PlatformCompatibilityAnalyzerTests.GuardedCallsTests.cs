@@ -224,8 +224,8 @@ class Test
             Api2();
         }
 
-        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
-        [|Api2()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+        [|Api2()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
     }
 
     [SupportedOSPlatform(""macos"")]
@@ -260,7 +260,7 @@ class Test
             Api();
         }
 
-        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is unsupported on: 'MacOS/OSX', 'windows'.
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api()' is unsupported on: 'macOS/OSX', 'windows'.
     }
 
     [UnsupportedOSPlatform(""windows"")]
@@ -290,7 +290,7 @@ class Test
             Api();
         }
 
-        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX' 10.1 and later, 'windows' 10.0 and later, 'Linux'.
+        [|Api()|]; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX' 10.1 and later, 'windows' 10.0 and later, 'Linux'.
     }
 
     [SupportedOSPlatform(""windows10.0"")]
@@ -321,8 +321,8 @@ class Test
         }
         else
         {
-            {|#1:MacOsApi()|}; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
-            {|#2:OsxApi()|}; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'MacOS/OSX', 'Linux', 'windows'.
+            {|#1:MacOsApi()|}; // This call site is reachable on all platforms. 'Test.Api()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
+            {|#2:OsxApi()|}; // This call site is reachable on all platforms. 'Test.Api2()' is only supported on: 'macOS/OSX', 'Linux', 'windows'.
             UnsupportedOsxApi();
         }
     }
@@ -339,11 +339,11 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable)
-                    .WithLocation(0).WithArguments("Test.UnsupportedOsxApi()", "'MacOS/OSX'", "'MacOS/OSX'"),
+                    .WithLocation(0).WithArguments("Test.UnsupportedOsxApi()", "'macOS/OSX'", "'macOS/OSX'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
-                    .WithLocation(1).WithArguments("Test.MacOsApi()", "'MacOS/OSX'"),
+                    .WithLocation(1).WithArguments("Test.MacOsApi()", "'macOS/OSX'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms)
-                    .WithLocation(2).WithArguments("Test.OsxApi()", "'MacOS/OSX'"));
+                    .WithLocation(2).WithArguments("Test.OsxApi()", "'macOS/OSX'"));
         }
 
         [Fact]

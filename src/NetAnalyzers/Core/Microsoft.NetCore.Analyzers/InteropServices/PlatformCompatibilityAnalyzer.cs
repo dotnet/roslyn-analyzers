@@ -56,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string OptionalSuffix = "VersionAtLeast";
         private const string Net = "net";
         private const string macOS = nameof(macOS);
-        private const string MacSlashOSX = "MacOS/OSX";
+        private const string MacSlashOSX = "macOS/OSX";
 
         internal static DiagnosticDescriptor OnlySupportedCsReachable = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -650,7 +650,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     platformNames.Add(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                     continue;
                                 }
-                                platformNames.Add(EncloseWithQuota(pName));
+                                platformNames.Add(EncloseWithQuotes(pName));
                             }
                             else
                             {
@@ -666,7 +666,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     platformNames.Add(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                     continue;
                                 }
-                                platformNames.Add(EncloseWithQuota(pName));
+                                platformNames.Add(EncloseWithQuotes(pName));
                             }
                             else
                             {
@@ -757,7 +757,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         platformNames.Add(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                         continue;
                                     }
-                                    platformNames.Add(EncloseWithQuota(pName));
+                                    platformNames.Add(EncloseWithQuotes(pName));
                                 }
                                 else
                                 {
@@ -770,7 +770,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             unsupportedRule = false;
                             if (IsEmptyVersion(supportedVersion))
                             {
-                                platformNames.Add(EncloseWithQuota(pName));
+                                platformNames.Add(EncloseWithQuotes(pName));
                             }
                             else
                             {
@@ -818,7 +818,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                     platformNames.Add(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                     continue;
                                 }
-                                platformNames.Add(EncloseWithQuota(pName));
+                                platformNames.Add(EncloseWithQuotes(pName));
                             }
                             else
                             {
@@ -848,7 +848,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                         platformNames.Add(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, pName));
                                         continue;
                                     }
-                                    platformNames.Add(EncloseWithQuota(pName));
+                                    platformNames.Add(EncloseWithQuotes(pName));
                                 }
                                 else
                                 {
@@ -873,12 +873,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             static string GetFormattedString(string resource, string platformName, object? arg1 = null, object? arg2 = null) =>
-                string.Format(CultureInfo.InvariantCulture, resource, AddOsxIfNeeded(platformName), arg1, arg2);
+                string.Format(CultureInfo.InvariantCulture, resource, AddOsxIfMacOS(platformName), arg1, arg2);
 
-            static string AddOsxIfNeeded(string platformName) =>
+            static string AddOsxIfMacOS(string platformName) =>
                 platformName.Equals(macOS, StringComparison.OrdinalIgnoreCase) ? MacSlashOSX : platformName;
 
-            static string EncloseWithQuota(string pName) => $"'{AddOsxIfNeeded(pName)}'";
+            static string EncloseWithQuotes(string pName) => $"'{AddOsxIfMacOS(pName)}'";
 
             static string JoinNames(List<string> platformNames) => string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
 

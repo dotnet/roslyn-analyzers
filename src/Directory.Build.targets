@@ -30,9 +30,9 @@
     <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" />
     <!-- Copy the shipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
     <!-- Include shipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
-    <None Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md">
+    <None Update="AnalyzerReleases.Shipped.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>$(OutputDirectory)\AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
+      <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
     </None>
   </ItemGroup>
   
@@ -64,7 +64,7 @@
       <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
       <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
       <_RunOnCore>false</_RunOnCore>
-      <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
+      <_RunOnCore Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">true</_RunOnCore>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"
@@ -75,8 +75,7 @@
       <_CoreRuntimeConfigPath>$(TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
       <_CoreDepsPath>$(TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
 
-      <!-- TODO: xUnit doesn't support -html on CoreCLR currently (see https://github.com/xunit/xunit/issues/977) -->
-      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
+      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
       <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
     </PropertyGroup>
 

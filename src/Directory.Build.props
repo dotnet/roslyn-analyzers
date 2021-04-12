@@ -6,7 +6,6 @@
     <!-- Enable flow-analysis feature flag (can be removed when we move to Microsoft.CodeAnalysis 3.0 or larger) -->
     <Features>$(Features);flow-analysis</Features>
 
-    <DefineConstants Condition="'$(BUILDING_VSIX)' == 'true'">$(DefineConstants),BUILDING_VSIX</DefineConstants>
     <DefineConstants Condition="'$(LEGACY_CODE_METRICS_MODE)' == 'true'">$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
   </PropertyGroup>
 
@@ -16,8 +15,14 @@
   </ItemGroup>
 
   <!-- Code analyzers -->
+  <PropertyGroup>
+    <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default. Specific rules are disabled or downgraded in repo's editorconfig. -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="$(MicrosoftCodeAnalysisFXCopAnalyzersVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(DogfoodNetAnalyzersVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)" />
     <PackageReference Include="Roslyn.Diagnostics.Analyzers" Version="$(RoslynDiagnosticsAnalyzersVersion)" />
@@ -28,8 +33,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Language)' == 'VB'">
-    <!-- https://github.com/dotnet/roslyn-analyzers/issues/2095 tracks uncommenting the below -->
-    <!-- <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" /> -->
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
   </ItemGroup>
 
   <!-- Setup the correct code analysis rulesets -->

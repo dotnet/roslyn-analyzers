@@ -1590,7 +1590,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
         public static void TestWithMacOsLinuxSupported()
         {
             Target.SupportedOnOSXAndLinux();
-            [|Target.SupportedOnMacOs()|]; //  This call site is reachable on: 'Linux', 'macOS/OSX'. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
+            [|Target.SupportedOnMacOs()|]; // This call site is reachable on: 'Linux', 'macOS/OSX'. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
         }
 
         [SupportedOSPlatform(""OSX"")]
@@ -1613,7 +1613,7 @@ namespace CallerUnsupportsNonSubsetOfTarget
             [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
             [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
             {|#2:Target.SupportedOnMacOs()|}; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'macOS/OSX'.
-        }0
+        }
         
         [SupportedOSPlatform(""Browser"")]
         public void TestWithSupportedOnBrowserWarns()

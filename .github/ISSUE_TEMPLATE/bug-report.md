@@ -17,6 +17,11 @@ assignees: ''
 
 **Version**: [SDK 5.0.100](https://dotnet.microsoft.com/download/dotnet/5.0)
 
+<!--
+Note: Updates to NuGet package are more frequent than SDK, which means the NuGet package has fixes that haven't yet made it into the SDK.
+      Please check whether you can reproduce the bug you encountered in the latest NuGet package.
+-->
+
 _OR_
 
 **NuGet Package**: [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)

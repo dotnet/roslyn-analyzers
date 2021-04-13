@@ -1,13 +1,15 @@
 # Branches that trigger a build on commit
 trigger:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 jobs:
@@ -102,15 +104,17 @@ jobs:
         testRunner: XUnit
         testResultsFiles: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_configuration)/*.xml'
         mergeTestResults: true
-        testRunTitle: 'Windows $(_configuration)'
+        testRunTitle: 'Ubuntu $(_configuration)'
       condition: always()
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_configuration)'
-        ArtifactName: 'Windows $(_configuration)'
+        ArtifactName: 'Ubuntu $(_configuration)'
       continueOnError: true
       condition: always()
+
+- template: eng/common/templates/job/source-build.yml
 
 - job: Markdownlint
   pool:

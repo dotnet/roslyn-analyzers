@@ -160,7 +160,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 Recommended Analyzer Package Version: [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-Required Visual Studio Version: **Visual Studio 2019 16.8 RTW or later**
+Required Visual Studio Version: **Visual Studio 2019 16.9 RTW or later**
 
 Required .NET SDK Version: **.NET 5.0 SDK or later**
 

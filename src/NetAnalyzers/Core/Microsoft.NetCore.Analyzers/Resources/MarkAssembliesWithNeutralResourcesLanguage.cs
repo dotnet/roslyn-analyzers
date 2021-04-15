@@ -35,22 +35,23 @@ namespace Microsoft.NetCore.Analyzers.Resources
                                                                              RuleLevel.IdeSuggestion,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
 
         protected abstract void RegisterAttributeAnalyzer(CompilationStartAnalysisContext context, Action onResourceFound);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
             // this analyzer is safe from running concurrently.
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // set generated file mode to analyze since I only analyze generated files and doesn't report
             // any diagnostics from it.
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            analysisContext.RegisterCompilationStartAction(cc =>
+            context.RegisterCompilationStartAction(cc =>
             {
                 var hasResource = false;
 

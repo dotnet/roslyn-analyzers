@@ -1393,6 +1393,41 @@ namespace VulnerableWebApp
         }
 
         [Fact]
+        public async Task SimpleLambda()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            Func<string, SqlCommand> injectSql = (sqlInjection) =>
+            {
+                return new SqlCommand()
+                {
+                    CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                    CommandType = CommandType.Text,
+                };
+            };
+
+            injectSql(taintedInput);
+        }
+    }
+}",
+                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "lambda expression", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
         public async Task IntermediateMethodReturnsTainted()
         {
             await VerifyCSharpWithDependenciesAsync(@"
@@ -3666,6 +3701,25 @@ public class MyController
         }
 
         [Fact]
+        public async Task AspNetMvcController_HasPropertySetter()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+
+public class MyController
+{
+    public void DoSomething(string input)
+    {
+    }
+
+    public string AString 
+    {
+        set { _ = value; }
+    }
+}");
+        }
+
+        [Fact]
         public async Task TaintFunctionArguments()
         {
             await VerifyCSharpWithDependenciesAsync(@"
@@ -3791,6 +3845,12 @@ public class MyController
                     },
                 },
             }.RunAsync();
+        }
+
+        [Fact, WorkItem(4491, "https://github.com/dotnet/roslyn-analyzers/issues/4491")]
+        public async Task AssemblyAttributeRegressionTest()
+        {
+            await VerifyVisualBasicWithDependenciesAsync(@"<Assembly: System.Reflection.AssemblyTitle(""Title"")>");
         }
     }
 }

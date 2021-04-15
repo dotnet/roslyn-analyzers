@@ -30,19 +30,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              RuleLevel.IdeHidden_BulkConfigurable,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+                                                                             isDataflowRule: false);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
+            context.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
         }
 
         private static void AnalyzeMethodSymbol(SymbolAnalysisContext analysisContext)

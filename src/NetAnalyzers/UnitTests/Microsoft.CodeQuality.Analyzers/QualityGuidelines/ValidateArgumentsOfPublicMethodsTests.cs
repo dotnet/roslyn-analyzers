@@ -23,13 +23,17 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
     public class ValidateArgumentsOfPublicMethodsTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(methodSignature, parameterName);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string methodSignature, string parameterName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(methodSignature, parameterName);
 
         [Fact]
@@ -930,7 +934,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
 
@@ -993,7 +1000,10 @@ Public Class Test
 
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
         }
@@ -1396,7 +1406,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
 
@@ -1446,7 +1459,10 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") }
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") }
                 }
             }.RunAsync();
         }
@@ -2000,7 +2016,11 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
 
@@ -2030,7 +2050,11 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
@@ -2074,7 +2098,11 @@ public class C
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -2246,7 +2274,11 @@ internal static class Helper<T>
 }
 "
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
                 ExpectedDiagnostics =
                 {
@@ -5970,22 +6002,24 @@ public class C
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-        [Fact, WorkItem(2528, "https://github.com/dotnet/roslyn-analyzers/issues/2528")]
-        public async Task ParamArrayIsNotFlagged()
+        [Fact]
+        [WorkItem(2528, "https://github.com/dotnet/roslyn-analyzers/issues/2528")]
+        [WorkItem(3845, "https://github.com/dotnet/roslyn-analyzers/issues/3845")]
+        public async Task ParamArrayIsFlagged()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public void M(params int[] p)
     {
-        var x = p.Length;
+        var x = [|p|].Length;
     }
 }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Sub M(ParamArray p As Integer())
-        Dim x = p.Length
+        Dim x = [|p|].Length
     End Sub
 End Class
 ");
@@ -6453,7 +6487,11 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
             csTest.ExpectedDiagnostics.AddRange(expected);
@@ -6483,7 +6521,11 @@ Public Class Test
 End Class
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
             vbTest.ExpectedDiagnostics.AddRange(expected);
@@ -6524,7 +6566,11 @@ public static class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
             csTest.ExpectedDiagnostics.AddRange(expected);
@@ -6556,7 +6602,11 @@ Public Module Test
     End Sub
 End Module"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
             vbTest.ExpectedDiagnostics.AddRange(expected);

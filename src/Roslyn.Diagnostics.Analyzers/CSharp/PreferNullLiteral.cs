@@ -16,7 +16,7 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PreferNullLiteralMessage), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(RoslynDiagnosticsAnalyzersResources.PreferNullLiteralDescription), RoslynDiagnosticsAnalyzersResources.ResourceManager, typeof(RoslynDiagnosticsAnalyzersResources));
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        internal static DiagnosticDescriptor Rule = new(
             RoslynDiagnosticIds.PreferNullLiteralRuleId,
             s_localizableTitle,
             s_localizableMessage,
@@ -54,6 +54,10 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
             if (type.TypeKind == TypeKind.Pointer)
             {
                 // Pointers can use 'null'
+            }
+            else if (type.TypeKind == TypeKind.Error)
+            {
+                return;
             }
             else if (type.IsValueType)
             {

@@ -32,7 +32,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              RuleLevel.Disabled,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
         internal static DiagnosticDescriptor SystemRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystem,
@@ -40,11 +41,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              RuleLevel.Disabled,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
-        private static readonly object s_lock = new object();
+        private static readonly object s_lock = new();
         private static ImmutableDictionary<string, string>? s_wellKnownSystemNamespaceTable;
 
         private static ImmutableDictionary<string, string> WellKnownSystemNamespaceTable
@@ -57,12 +59,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
         }
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     var externallyVisibleNamedTypes = new ConcurrentBag<INamedTypeSymbol>();
@@ -154,7 +156,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 lock (s_lock)
                 {
+#pragma warning disable CA1508 // Avoid dead conditional code - https://github.com/dotnet/roslyn-analyzers/issues/3861
                     if (s_wellKnownSystemNamespaceTable == null)
+#pragma warning restore CA1508 // Avoid dead conditional code
                     {
                         #region List of Well known System Namespaces
                         var wellKnownSystemNamespaces = new List<string>

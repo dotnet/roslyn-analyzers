@@ -34,7 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
         internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2330",
@@ -42,7 +43,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
@@ -59,7 +61,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         private const int SerializationBinderIndex = 1;
 
-        private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(
+        private static readonly ConstructorMapper ConstructorMapper = new(
             (IMethodSymbol constructorMethod, IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
             {
                 if (constructorMethod.Parameters.IsEmpty)
@@ -77,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 }
             });
 
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "TypeNameHandling",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
@@ -94,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 PropertySetCallbacks.FlagIfNull,
                 SerializationBinderIndex));     // Binder & SerializationBinder have the same underlying value.
 
-        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
+        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new(
             SecurityHelpers.JsonSerializerDeserializationMethods.Select(
                 (string methodName) => new HazardousUsageEvaluator(
                     methodName,
@@ -202,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

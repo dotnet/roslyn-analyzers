@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -40,8 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             RuleLevel.Disabled,
             description: s_localizableDescriptionForDelegate,
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
         internal static DiagnosticDescriptor RuleForEvents = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -51,8 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             RuleLevel.Disabled,
             description: s_localizableDescriptionForEvent,
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
         internal static DiagnosticDescriptor RuleForEvents2 = DiagnosticDescriptorHelper.Create(
             RuleId,
@@ -62,17 +59,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             RuleLevel.Disabled,
             description: s_localizableDescriptionForEvent2,
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 (context) =>
                 {
                     INamedTypeSymbol? eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
@@ -107,7 +103,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     INamedTypeSymbol? comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
-                        eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));
+                        eventSymbol.ContainingType.HasAttribute(comSourceInterfacesAttribute);
 
                     context.RegisterSymbolAction(symbolContext =>
                     {

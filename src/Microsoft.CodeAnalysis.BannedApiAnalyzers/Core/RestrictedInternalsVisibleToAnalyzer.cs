@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
         where TNameSyntax : SyntaxNode
         where TSyntaxKind : struct
     {
-        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        public static readonly DiagnosticDescriptor Rule = new(
             id: DiagnosticIds.RestrictedInternalsVisibleToRuleId,
             title: new LocalizableResourceString(nameof(BannedApiAnalyzerResources.RestrictedInternalsVisibleToTitle), BannedApiAnalyzerResources.ResourceManager, typeof(BannedApiAnalyzerResources)),
             messageFormat: new LocalizableResourceString(nameof(BannedApiAnalyzerResources.RestrictedInternalsVisibleToMessage), BannedApiAnalyzerResources.ResourceManager, typeof(BannedApiAnalyzerResources)),
@@ -129,6 +129,7 @@ namespace Microsoft.CodeAnalysis.BannedApiAnalyzers
                 {
                     // Look for ctor: "RestrictedInternalsVisibleToAttribute(string assemblyName, params string[] namespaces)"
                     if (!Equals(assemblyAttribute.AttributeClass, restrictedInternalsVisibleToAttribute) ||
+                        assemblyAttribute.AttributeConstructor is null ||
                         assemblyAttribute.AttributeConstructor.Parameters.Length != 2 ||
                         assemblyAttribute.AttributeConstructor.Parameters[0].Type.SpecialType != SpecialType.System_String ||
                         assemblyAttribute.AttributeConstructor.Parameters[1].Type is not IArrayTypeSymbol arrayType ||

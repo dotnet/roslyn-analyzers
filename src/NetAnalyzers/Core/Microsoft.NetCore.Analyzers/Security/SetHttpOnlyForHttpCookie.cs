@@ -27,13 +27,14 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieDescription));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
                 Rule);
 
-        private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(
+        private static readonly ConstructorMapper ConstructorMapper = new(
             (IMethodSymbol constructorMethod,
             IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
             {
@@ -42,13 +43,13 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         // If HttpOnly is set explicitly, the callbacks of OperationKind.SimpleAssignment can cover that case.
         // Otherwise, using PropertySetAnalysis to cover the case where HttpCookie object is returned without initializing or assgining HttpOnly property.
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "HttpOnly",
                 (PointsToAbstractValue pointsToAbstractValue) =>
                    PropertySetAbstractValueKind.Unflagged));
 
-        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
+        private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new(
                     new HazardousUsageEvaluator(
                         HazardousUsageEvaluatorKind.Return,
                         PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown),
@@ -161,7 +162,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

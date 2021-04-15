@@ -28,17 +28,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false,
                                                                              isEnabledByDefaultInAggressiveMode: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(csac =>
+            context.RegisterCompilationStartAction(csac =>
             {
                 var outAttributeType = csac.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOutAttribute);
                 var analyzer = new MethodAnalyzer(outAttributeType);

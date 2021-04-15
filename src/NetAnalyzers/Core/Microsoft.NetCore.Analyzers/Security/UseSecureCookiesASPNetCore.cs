@@ -28,6 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseSecureCookiesASPNetCoreDescription));
         internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5383",
@@ -37,17 +38,18 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: true,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseSecureCookiesASPNetCoreDescription));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
                                                                                         DefinitelyUseSecureCookiesASPNetCoreRule,
                                                                                         MaybeUseSecureCookiesASPNetCoreRule);
 
-        private static readonly ConstructorMapper constructorMapper = new ConstructorMapper(
+        private static readonly ConstructorMapper constructorMapper = new(
                                                                         ImmutableArray.Create<PropertySetAbstractValueKind>(
                                                                             PropertySetAbstractValueKind.Flagged));
 
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "Secure",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
@@ -57,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            return (propertySetAbstractValue[0]) switch
+            return propertySetAbstractValue[0] switch
             {
                 PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
 
@@ -179,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Item1.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Item1,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

@@ -27,17 +27,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             s_localizableDescription,
             isPortedFxCopRule: true,
             isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false,
             isEnabledByDefaultInAggressiveMode: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(context =>
+            context.RegisterSymbolAction(context =>
             {
                 var namedType = (INamedTypeSymbol)context.Symbol;
 

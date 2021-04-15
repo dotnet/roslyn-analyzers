@@ -524,14 +524,78 @@ End Class
             VerifyVB.Diagnostic().WithLocation(0).WithArguments("NoDisposeClass", "_fs1', '_fs2', '_fs3', '_fs4"));
         }
 
+        [Theory, WorkItem(3905, "https://github.com/dotnet/roslyn-analyzers/issues/3905")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = FileStream")]
+        [InlineData("dotnet_code_quality.CA1001.excluded_symbol_names = FileStream")]
+        [InlineData("dotnet_code_quality.CA1001.excluded_symbol_names = T:System.IO.FileStream")]
+        [InlineData("dotnet_code_quality.CA1001.excluded_symbol_names = FileStr*")]
+        public async Task CA1001_ExcludedSymbolNames(string editorConfigText)
+        {
+            var args = editorConfigText.Length == 0 ? "_fs', '_ms" : "_ms";
+
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.IO;
+
+public class {|#0:SomeClass|}
+{
+    private FileStream _fs = new FileStream(""data.txt"", FileMode.Append);
+    private MemoryStream _ms = new MemoryStream();
+}
+",
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                    ExpectedDiagnostics = { VerifyCS.Diagnostic().WithLocation(0).WithArguments("SomeClass", args), },
+                },
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+Imports System.IO
+
+Public Class {|#0:SomeClass|}
+    Private _fs As FileStream = new FileStream(""data.txt"", FileMode.Append)
+    Private _ms As MemoryStream = new MemoryStream()
+End Class
+",
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
+                    ExpectedDiagnostics = { VerifyVB.Diagnostic().WithLocation(0).WithArguments("SomeClass", args), },
+                },
+            }.RunAsync();
+        }
+
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName, disposableFields);
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName, disposableFields);
     }
 }

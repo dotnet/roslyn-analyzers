@@ -69,7 +69,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         private readonly struct ApiData
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
-            public static readonly ApiData Empty = new ApiData(ImmutableArray<ApiLine>.Empty, ImmutableArray<RemovedApiLine>.Empty, nullableRank: -1);
+            public static readonly ApiData Empty = new(ImmutableArray<ApiLine>.Empty, ImmutableArray<RemovedApiLine>.Empty, nullableRank: -1);
 
             public ImmutableArray<ApiLine> ApiList { get; }
             public ImmutableArray<RemovedApiLine> RemovedApiList { get; }
@@ -94,8 +94,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             private readonly Compilation _compilation;
             private readonly ApiData _unshippedData;
             private readonly bool _useNullability;
-            private readonly ConcurrentDictionary<ITypeSymbol, bool> _typeCanBeExtendedCache = new ConcurrentDictionary<ITypeSymbol, bool>();
-            private readonly ConcurrentDictionary<string, UnusedValue> _visitedApiList = new ConcurrentDictionary<string, UnusedValue>(StringComparer.Ordinal);
+            private readonly ConcurrentDictionary<ITypeSymbol, bool> _typeCanBeExtendedCache = new();
+            private readonly ConcurrentDictionary<string, UnusedValue> _visitedApiList = new(StringComparer.Ordinal);
             private readonly IReadOnlyDictionary<string, ApiLine> _publicApiMap;
 
             internal Impl(Compilation compilation, ApiData shippedData, ApiData unshippedData)
@@ -120,7 +120,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             internal void OnSymbolAction(SymbolAnalysisContext symbolContext)
             {
-                OnSymbolActionCore(symbolContext.Symbol, symbolContext.ReportDiagnostic);
+                var obsoleteAttribute = symbolContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                OnSymbolActionCore(symbolContext.Symbol, symbolContext.ReportDiagnostic, obsoleteAttribute);
             }
 
             internal void OnPropertyAction(SymbolAnalysisContext symbolContext)
@@ -161,14 +162,15 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                     return;
                 }
 
-                this.OnSymbolActionCore(accessor, symbolContext.ReportDiagnostic, isImplicitlyDeclaredConstructor: false);
+                var obsoleteAttribute = symbolContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                this.OnSymbolActionCore(accessor, symbolContext.ReportDiagnostic, isImplicitlyDeclaredConstructor: false, obsoleteAttribute);
             }
 
             /// <param name="symbol">The symbol to analyze. Will also analyze implicit constructors too.</param>
             /// <param name="reportDiagnostic">Action called to actually report a diagnostic.</param>
             /// <param name="explicitLocation">A location to report the diagnostics for a symbol at. If null, then
             /// the location of the symbol will be used.</param>
-            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, Location? explicitLocation = null)
+            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, INamedTypeSymbol? obsoleteAttribute, Location? explicitLocation = null)
             {
                 if (!IsPublicAPI(symbol))
                 {
@@ -176,7 +178,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
 
                 Debug.Assert(!symbol.IsImplicitlyDeclared);
-                OnSymbolActionCore(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor: false, explicitLocation: explicitLocation);
+                OnSymbolActionCore(symbol, reportDiagnostic, isImplicitlyDeclaredConstructor: false, obsoleteAttribute, explicitLocation: explicitLocation);
 
                 // Handle implicitly declared public constructors.
                 if (symbol.Kind == SymbolKind.NamedType)
@@ -188,7 +190,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         var implicitConstructor = namedType.InstanceConstructors.FirstOrDefault(x => x.IsImplicitlyDeclared);
                         if (implicitConstructor != null)
                         {
-                            OnSymbolActionCore(implicitConstructor, reportDiagnostic, isImplicitlyDeclaredConstructor: true, explicitLocation: explicitLocation);
+                            OnSymbolActionCore(implicitConstructor, reportDiagnostic, isImplicitlyDeclaredConstructor: true, obsoleteAttribute, explicitLocation: explicitLocation);
                         }
                     }
                 }
@@ -204,7 +206,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             /// <param name="isImplicitlyDeclaredConstructor">If the symbol is an implicitly declared constructor.</param>
             /// <param name="explicitLocation">A location to report the diagnostics for a symbol at. If null, then
             /// the location of the symbol will be used.</param>
-            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, Location? explicitLocation = null)
+            private void OnSymbolActionCore(ISymbol symbol, Action<Diagnostic> reportDiagnostic, bool isImplicitlyDeclaredConstructor, INamedTypeSymbol? obsoleteAttribute, Location? explicitLocation = null)
             {
                 Debug.Assert(IsPublicAPI(symbol));
 
@@ -302,7 +304,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                         reportDiagnostic(Diagnostic.Create(ExposedNoninstantiableType, locations[0], propertyBag, errorMessageName));
                     }
 
-                    // Flag public API with optional parameters that violate backcompat requirements: https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md.
+                    // Flag public API with optional parameters that violate backcompat requirements: https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md.
                     if (method.HasOptionalParameters())
                     {
                         foreach (var overload in method.GetOverloads())
@@ -315,6 +317,12 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             // Don't flag overloads which have identical params (e.g. overloading a generic and non-generic method with same parameter types).
                             if (overload.Parameters.Length == method.Parameters.Length &&
                                 overload.Parameters.Select(p => p.Type).SequenceEqual(method.Parameters.Select(p => p.Type)))
+                            {
+                                continue;
+                            }
+
+                            // Don't flag obsolete overloads
+                            if (overload.HasAttribute(obsoleteAttribute))
                             {
                                 continue;
                             }
@@ -661,7 +669,13 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                             {
                                 if (attribute.ConstructorArguments[0].Value is INamedTypeSymbol forwardedType)
                                 {
-                                    VisitForwardedTypeRecursively(forwardedType, reportDiagnostic, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
+                                    var obsoleteAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                                    if (forwardedType.IsUnboundGenericType)
+                                    {
+                                        forwardedType = forwardedType.ConstructedFrom;
+                                    }
+
+                                    VisitForwardedTypeRecursively(forwardedType, reportDiagnostic, obsoleteAttribute, attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation(), cancellationToken);
                                 }
                             }
                         }
@@ -669,23 +683,23 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 }
             }
 
-            private void VisitForwardedTypeRecursively(ISymbol symbol, Action<Diagnostic> reportDiagnostic, Location typeForwardedAttributeLocation, CancellationToken cancellationToken)
+            private void VisitForwardedTypeRecursively(ISymbol symbol, Action<Diagnostic> reportDiagnostic, INamedTypeSymbol? obsoleteAttribute, Location typeForwardedAttributeLocation, CancellationToken cancellationToken)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                OnSymbolActionCore(symbol, reportDiagnostic, typeForwardedAttributeLocation);
+                OnSymbolActionCore(symbol, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation);
 
                 if (symbol is INamedTypeSymbol namedTypeSymbol)
                 {
                     foreach (var nestedType in namedTypeSymbol.GetTypeMembers())
                     {
-                        VisitForwardedTypeRecursively(nestedType, reportDiagnostic, typeForwardedAttributeLocation, cancellationToken);
+                        VisitForwardedTypeRecursively(nestedType, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
                     }
 
                     foreach (var member in namedTypeSymbol.GetMembers())
                     {
                         if (!(member.IsImplicitlyDeclared && member.IsDefaultConstructor()))
                         {
-                            VisitForwardedTypeRecursively(member, reportDiagnostic, typeForwardedAttributeLocation, cancellationToken);
+                            VisitForwardedTypeRecursively(member, reportDiagnostic, obsoleteAttribute, typeForwardedAttributeLocation, cancellationToken);
                         }
                     }
                 }
@@ -735,21 +749,16 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 
             private bool IsPublicApiCore(ISymbol symbol)
             {
-                switch (symbol.DeclaredAccessibility)
+                return symbol.DeclaredAccessibility switch
                 {
-                    case Accessibility.Public:
-                        return symbol.ContainingType == null || IsPublicApiCore(symbol.ContainingType);
-                    case Accessibility.Protected:
-                    case Accessibility.ProtectedOrInternal:
-                        // Protected symbols must have parent types (that is, top-level protected
-                        // symbols are not allowed.
-                        return
-                            symbol.ContainingType != null &&
-                            IsPublicApiCore(symbol.ContainingType) &&
-                            CanTypeBeExtendedPublicly(symbol.ContainingType);
-                    default:
-                        return false;
-                }
+                    Accessibility.Public => symbol.ContainingType == null || IsPublicApiCore(symbol.ContainingType),
+                    Accessibility.Protected
+                    or Accessibility.ProtectedOrInternal => symbol.ContainingType != null
+                        && IsPublicApiCore(symbol.ContainingType)
+                        && CanTypeBeExtendedPublicly(symbol.ContainingType),// Protected symbols must have parent types (that is, top-level protected
+                                                                            // symbols are not allowed.
+                    _ => false,
+                };
             }
 
             private bool CanTypeBeExtendedPublicly(ITypeSymbol type)
@@ -773,9 +782,9 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             private sealed class ObliviousDetector : SymbolVisitor<bool>
             {
                 // We need to ignore top-level nullability for outer types: `Outer<...>.Inner`
-                private static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new ObliviousDetector(ignoreTopLevelNullability: true);
+                private static readonly ObliviousDetector IgnoreTopLevelNullabilityInstance = new(ignoreTopLevelNullability: true);
 
-                public static readonly ObliviousDetector Instance = new ObliviousDetector(ignoreTopLevelNullability: false);
+                public static readonly ObliviousDetector Instance = new(ignoreTopLevelNullability: false);
 
                 private readonly bool _ignoreTopLevelNullability;
 

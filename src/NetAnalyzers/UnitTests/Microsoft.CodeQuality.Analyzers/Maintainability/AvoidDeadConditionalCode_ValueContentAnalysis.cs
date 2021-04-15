@@ -2103,7 +2103,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(30,13): warning CA1508: 'a2 == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
@@ -2188,7 +2191,10 @@ public class Test
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", "dotnet_code_quality.copy_analysis = true") },
+                    AnalyzerConfigFiles = { ("/.editorconfig", @"root = true
+
+[*]
+dotnet_code_quality.copy_analysis = true") },
                     ExpectedDiagnostics =
                     {
                         // Test0.cs(16,13): warning CA1508: 'x.Item1.Item1 == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
@@ -2559,7 +2565,11 @@ public static class C
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorconfig) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorconfig}
+") }
                 }
             }.RunAsync();
         }
@@ -2707,7 +2717,11 @@ public class C
 }
 "
                     },
-                    AdditionalFiles = { (".editorconfig", editorconfig) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorconfig}
+") }
                 }
             }.RunAsync();
         }
@@ -3092,5 +3106,34 @@ public class Test
                 LanguageVersion = CSharpLanguageVersion.CSharp9
             }.RunAsync();
         }
+
+#if NETCOREAPP
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(4387, "https://github.com/dotnet/roslyn-analyzers/issues/4387")]
+        public async Task RangeAndIndexOperation_NoDiagnostic()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+internal class Class1
+{
+    private static bool TryParseUnit(string unit)
+    {
+        char last = unit[^1];
+        if (last != 'b')
+            return false;
+
+        string subUnit = unit[1..];
+        if (subUnit != ""b"")
+            return false;
+
+        return true;
+    }
+}
+",
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+#endif
     }
 }

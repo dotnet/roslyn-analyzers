@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
     /// </summary>
     internal partial class GlobalFlowStateAnalysis : ForwardDataFlowAnalysis<GlobalFlowStateAnalysisData, GlobalFlowStateAnalysisContext, GlobalFlowStateAnalysisResult, GlobalFlowStateBlockAnalysisResult, GlobalFlowStateAnalysisValueSet>
     {
-        internal static readonly GlobalFlowStateAnalysisDomain GlobalFlowStateAnalysisDomainInstance = new GlobalFlowStateAnalysisDomain(GlobalFlowStateAnalysisValueSetDomain.Instance);
+        internal static readonly GlobalFlowStateAnalysisDomain GlobalFlowStateAnalysisDomainInstance = new(GlobalFlowStateAnalysisValueSetDomain.Instance);
 
         private GlobalFlowStateAnalysis(GlobalFlowStateAnalysisDomain analysisDomain, GlobalFlowStateDataFlowOperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
@@ -69,8 +69,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             ImmutableArray<INamedTypeSymbol> additionalSupportedValueTypes = default,
             Func<IOperation, ValueContentAbstractValue>? getValueContentValueForAdditionalSupportedValueTypeOperation = null)
         {
+            if (cfg == null)
+            {
+                throw new ArgumentNullException(nameof(cfg));
+            }
+
             var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                analyzerOptions, rule, owningSymbol, wellKnownTypeProvider.Compilation, interproceduralAnalysisKind, cancellationToken);
+                analyzerOptions, rule, cfg, wellKnownTypeProvider.Compilation, interproceduralAnalysisKind, cancellationToken);
             var pointsToAnalysisKind = analyzerOptions.GetPointsToAnalysisKindOption(rule, owningSymbol, wellKnownTypeProvider.Compilation,
                 defaultValue: PointsToAnalysisKind.PartialWithoutTrackingFieldsAndProperties, cancellationToken);
             return TryGetOrComputeResult(cfg, owningSymbol, createOperationVisitor, wellKnownTypeProvider, analyzerOptions,
@@ -94,7 +99,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             ImmutableArray<INamedTypeSymbol> additionalSupportedValueTypes = default,
             Func<IOperation, ValueContentAbstractValue>? getValueContentValueForAdditionalSupportedValueTypeOperation = null)
         {
-            RoslynDebug.Assert(cfg != null);
             RoslynDebug.Assert(owningSymbol != null);
 
             PointsToAnalysisResult? pointsToAnalysisResult = null;
@@ -135,7 +139,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis
             return dataFlowAnalysisResult.With(operationVisitor.GetGlobalValuesMap());
         }
 
-        protected override GlobalFlowStateBlockAnalysisResult ToBlockResult(BasicBlock basicBlock, GlobalFlowStateAnalysisData data)
-            => new GlobalFlowStateBlockAnalysisResult(basicBlock, data);
+        protected override GlobalFlowStateBlockAnalysisResult ToBlockResult(BasicBlock basicBlock, GlobalFlowStateAnalysisData blockAnalysisData)
+            => new(basicBlock, blockAnalysisData);
     }
 }

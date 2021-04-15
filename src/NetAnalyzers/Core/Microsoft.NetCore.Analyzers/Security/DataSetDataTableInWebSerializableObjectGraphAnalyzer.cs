@@ -16,8 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// web API / WCF API serializable object graph.
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DataSetDataTableInWebSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
+    public abstract class DataSetDataTableInWebSerializableObjectGraphAnalyzer : DiagnosticAnalyzer
     {
         internal static readonly DiagnosticDescriptor ObjectGraphContainsDangerousTypeDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
@@ -26,12 +25,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.DataSetDataTableInWebDeserializableObjectGraphMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: false);
+                isDataflowRule: false,
+                isReportedAtCompilationEnd: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(ObjectGraphContainsDangerousTypeDescriptor);
 
-        public override void Initialize(AnalysisContext context)
+        protected abstract string ToString(TypedConstant typedConstant);
+
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
@@ -114,7 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     ObjectGraphContainsDangerousTypeDescriptor,
                                                     parameterSymbol.DeclaringSyntaxReferences.First().GetSyntax().GetLocation(),
                                                     result.InsecureType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                    result.GetDisplayString()));
+                                                    result.GetDisplayString(typedConstant => ToString(typedConstant))));
                                         }
                                     }
                                 }

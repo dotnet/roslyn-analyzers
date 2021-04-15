@@ -32,18 +32,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              RuleLevel.Disabled,    // Code coverage tools provide superior results when done correctly.
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
+                                                                             isDataflowRule: false,
+                                                                             isReportedAtCompilationEnd: true);
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public abstract void RegisterLanguageSpecificChecks(CompilationStartAnalysisContext context, ConcurrentDictionary<INamedTypeSymbol, object?> instantiatedTypes);
 
-        public sealed override void Initialize(AnalysisContext analysisContext)
+        public sealed override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
-            analysisContext.RegisterCompilationStartAction(startContext =>
+            context.RegisterCompilationStartAction(startContext =>
             {
                 ConcurrentDictionary<INamedTypeSymbol, object?> instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
                 var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object?>();
@@ -99,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 {
                     var type = (INamedTypeSymbol)context.Symbol;
                     if (!type.IsExternallyVisible() &&
-                        !IsOkToBeUnused(type, compilation,
+                        !IsOkToBeUninstantiated(type, compilation,
                             systemAttributeSymbol,
                             iConfigurationSectionHandlerSymbol,
                             configurationSectionSymbol,
@@ -281,7 +282,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return false;
         }
 
-        public static bool IsOkToBeUnused(
+        private static bool IsOkToBeUninstantiated(
             INamedTypeSymbol type,
             Compilation compilation,
             INamedTypeSymbol? systemAttributeSymbol,
@@ -292,7 +293,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             INamedTypeSymbol? mef1ExportAttributeSymbol,
             INamedTypeSymbol? mef2ExportAttributeSymbol)
         {
-            if (type.TypeKind != TypeKind.Class || type.IsAbstract)
+            if (type.TypeKind != TypeKind.Class || type.IsAbstract || type.IsStatic)
             {
                 return true;
             }

@@ -32,7 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
         internal static readonly DiagnosticDescriptor MaybeWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2322",
@@ -40,21 +41,22 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
                 RuleLevel.Disabled,
                 isPortedFxCopRule: false,
-                isDataflowRule: true);
+                isDataflowRule: true,
+                isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
                 DefinitelyWithSimpleTypeResolver,
                 MaybeWithSimpleTypeResolver);
 
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "...dummy name",    // There isn't *really* a property for what we're tracking; just the constructor argument.
                 (PointsToAbstractValue v) => PropertySetAbstractValueKind.Unknown));
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            return (propertySetAbstractValue[0]) switch
+            return propertySetAbstractValue[0] switch
             {
                 PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
                 PropertySetAbstractValueKind.Unflagged => HazardousUsageEvaluationResult.Unflagged,
@@ -220,7 +222,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
-                                            rootOperationsNeedingAnalysis.First().Operation.Syntax.SyntaxTree,
+                                            rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                             cancellationToken: compilationAnalysisContext.CancellationToken));

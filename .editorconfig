@@ -12,6 +12,11 @@ indent_style = space
 # https://github.com/dotnet/roslyn-analyzers/issues/3389
 dotnet_diagnostic.RS1024.severity = none
 
+# IDE0078: Use pattern matching
+# https://github.com/dotnet/roslyn/issues/51691
+# https://github.com/dotnet/roslyn/issues/51693
+dotnet_diagnostic.IDE0078.severity = silent
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4

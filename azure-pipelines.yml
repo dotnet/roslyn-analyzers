@@ -122,5 +122,5 @@ jobs:
   steps:
     - script: sudo npm install -g markdownlint-cli
       displayName: Install markdownlint-cli
-    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+    - script: markdownlint '**/*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
       displayName: Run markdownlint

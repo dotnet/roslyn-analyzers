@@ -1,13 +1,20 @@
 {
-  "tools": {
-    "dotnet": "6.0.100-preview.2.21155.3",
-    "runtimes": {
-      "dotnet": [
-        "3.1.7"
-      ]
+    "tools": {
+        "dotnet": "6.0.100-preview.2.21155.3",
+        "runtimes": {
+            "dotnet": [
+                "3.1.7"
+            ]
+        },
+        "vs": {
+            "version": "16.8"
+        },
+        "xcopy-msbuild": "16.8.0-preview2.1"
     },
-    "vs": {
-      "version": "16.8"
+    "sdk": {
+        "version": "6.0.100-preview.2.21155.3",
+        "allowPrerelease": true,
+        "rollForward": "patch"
     },
     "xcopy-msbuild": "16.8.0-preview2.1"
   },

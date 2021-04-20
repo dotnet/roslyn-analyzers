@@ -43,13 +43,13 @@ namespace ReleaseNotesUtil
         private static void PrintUsage()
         {
             Console.WriteLine("Usage: ReleaseNoteUtil command commandArgs ...");
-            Console.WriteLine("  getrulesjson pathToNugetInstalledPackages fxCopAnalyzersVersion out.json");
+            Console.WriteLine("  getrulesjson pathToNugetInstalledPackages netAnalyzersVersion out.json");
             Console.WriteLine("  diffrules old.json new.json out.md");
         }
 
         private static void GetRulesJson(string nugetInstalledPackagesPath, string version, string outputPath)
         {
-            IEnumerable<string> dllPaths = GetFxCopAnalyzerBinaries(nugetInstalledPackagesPath, version);
+            IEnumerable<string> dllPaths = GetNetAnalyzerBinaries(nugetInstalledPackagesPath, version);
             RuleFileContent ruleFileContent = new RuleFileContent
             {
                 Rules = GetRules(dllPaths)
@@ -163,7 +163,7 @@ namespace ReleaseNotesUtil
             }
         }
 
-        private static IEnumerable<string> GetFxCopAnalyzerBinaries(string nugetInstalledPackagesPath, string version)
+        private static IEnumerable<string> GetNetAnalyzerBinaries(string nugetInstalledPackagesPath, string version)
         {
             if (!Directory.Exists(nugetInstalledPackagesPath))
             {

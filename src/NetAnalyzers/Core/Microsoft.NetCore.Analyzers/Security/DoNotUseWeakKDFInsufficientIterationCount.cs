@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            return (propertySetAbstractValue[0]) switch
+            return propertySetAbstractValue[0] switch
             {
                 PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
 
@@ -120,10 +120,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeUseWeakKDFInsufficientIterationCountRule,
+                                    operationBlockStartAnalysisContext.OwningSymbol, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }

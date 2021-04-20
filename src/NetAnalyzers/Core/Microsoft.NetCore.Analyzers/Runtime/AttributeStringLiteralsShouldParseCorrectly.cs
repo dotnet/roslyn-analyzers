@@ -48,9 +48,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyRule);
 
         private static readonly List<ValueValidator> s_tokensToValueValidator =
-            new List<ValueValidator>(
+            new(
                 new[] { new ValueValidator(ImmutableArray.Create("guid"), "Guid", GuidValueValidator),
-                        new ValueValidator(ImmutableArray.Create("url", "uri", "urn"), "Uri", UrlValueValidator, "UriTemplate")});
+                        new ValueValidator(ImmutableArray.Create("url", "uri", "urn"), "Uri", UrlValueValidator, "UriTemplate", "UrlFormat")});
 
         private static bool GuidValueValidator(string value)
         {
@@ -74,12 +74,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return Uri.IsWellFormedUriString(value, System.UriKind.RelativeOrAbsolute);
         }
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(saContext =>
+            context.RegisterSymbolAction(saContext =>
             {
                 var symbol = saContext.Symbol;
                 AnalyzeSymbol(saContext.ReportDiagnostic, symbol, saContext.CancellationToken);
@@ -122,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SymbolKind.NamedType,
             SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
-            analysisContext.RegisterCompilationAction(caContext =>
+            context.RegisterCompilationAction(caContext =>
             {
                 var compilation = caContext.Compilation;
                 AnalyzeSymbol(caContext.ReportDiagnostic, compilation.Assembly, caContext.CancellationToken);
@@ -243,20 +243,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
     internal class ValueValidator
     {
-        private readonly string? _ignoredName;
+        private readonly string[] _ignoredNames;
 
         public ImmutableArray<string> AcceptedTokens { get; }
         public string TypeName { get; }
         public Func<string, bool> IsValidValue { get; }
 
         public bool IsIgnoredName(string name)
-        {
-            return _ignoredName != null && string.Equals(_ignoredName, name, StringComparison.OrdinalIgnoreCase);
-        }
+            => _ignoredNames.Contains(name, StringComparer.OrdinalIgnoreCase);
 
-        public ValueValidator(ImmutableArray<string> acceptedTokens, string typeName, Func<string, bool> isValidValue, string? ignoredName = null)
+        public ValueValidator(ImmutableArray<string> acceptedTokens, string typeName, Func<string, bool> isValidValue, params string[] ignoredNames)
         {
-            _ignoredName = ignoredName;
+            _ignoredNames = ignoredNames;
 
             AcceptedTokens = acceptedTokens;
             TypeName = typeName;

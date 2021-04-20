@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
                             AnalyzerOptions options = operationBlockStartContext.Options;
                             CancellationToken cancellationToken = operationBlockStartContext.CancellationToken;
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(options, TaintedDataEnteringSinkDescriptor, compilation, cancellationToken))
+                            if (options.IsConfiguredToSkipAnalysis(TaintedDataEnteringSinkDescriptor, owningSymbol, compilation, cancellationToken))
                             {
                                 return;
                             }
@@ -190,7 +190,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
                                         if (arrayInitializerOperation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation)?.Type is IArrayTypeSymbol arrayTypeSymbol
-                                            && sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayTypeSymbol))
+                                            && sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayTypeSymbol, arrayInitializerOperation))
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {

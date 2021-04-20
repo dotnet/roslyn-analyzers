@@ -40,22 +40,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InterfaceRule, TypeParameterRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(
+            context.RegisterSymbolAction(
                 (context) =>
             {
                 // FxCop compat: only analyze externally visible symbols by default.
-                if (!context.Symbol.MatchesConfiguredVisibility(context.Options, InterfaceRule, context.Compilation, context.CancellationToken))
+                if (!context.Options.MatchesConfiguredVisibility(InterfaceRule, context.Symbol, context.Compilation, context.CancellationToken))
                 {
-                    Debug.Assert(!context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.Compilation, context.CancellationToken));
+                    Debug.Assert(!context.Options.MatchesConfiguredVisibility(TypeParameterRule, context.Symbol, context.Compilation, context.CancellationToken));
                     return;
                 }
 
-                Debug.Assert(context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.Compilation, context.CancellationToken));
+                Debug.Assert(context.Options.MatchesConfiguredVisibility(TypeParameterRule, context.Symbol, context.Compilation, context.CancellationToken));
 
                 bool allowSingleLetterTypeParameters = context.Options.GetBoolOptionValue(
                     optionName: EditorConfigOptionNames.ExcludeSingleLetterTypeParameters,

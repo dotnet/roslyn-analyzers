@@ -36,12 +36,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
 
@@ -261,7 +261,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     pos++;
                 }
 
-                // searching for embeded format string
+                // searching for embedded format string
                 if (ch == ':')
                 {
                     pos++;

@@ -15,9 +15,6 @@
   <PropertyGroup>
     <!-- Do not ship packages by default -->
     <IsShippingPackage>false</IsShippingPackage>
-
-    <!-- Clear the default value from arcade -->
-    <PackageIcon></PackageIcon>
   </PropertyGroup>
   
   <PropertyGroup>

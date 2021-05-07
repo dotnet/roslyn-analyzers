@@ -4315,6 +4315,58 @@ class Test
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
+        [Fact]
+        public async Task GuardMemberWithinPlatformSpecificTypeShouldNowWarn()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    void M1()
+    {
+        [|UnsupportedBrowserType.M1()|];
+        [|UnsupportedBrowserType.M2()|];
+        if (UnsupportedBrowserType.IsSupported)
+        {
+            UnsupportedBrowserType.M1();
+            UnsupportedBrowserType.M2();
+        }
+        var t = [|new UnsupportedBrowserType()|];
+
+        [|WindowsOnlyType.M1()|];
+        [|WindowsOnlyType.M2()|];
+        if (WindowsOnlyType.IsSupported)
+        {
+            WindowsOnlyType.M1();
+            WindowsOnlyType.M2();
+        }
+        var w = [|new WindowsOnlyType()|];
+    }
+}
+
+[UnsupportedOSPlatform(""browser"")]
+class UnsupportedBrowserType
+{
+    public static void M1() { }
+    [UnsupportedOSPlatformGuard(""browser"")]
+    public static bool IsSupported { get; }
+    public static void M2() { }
+}
+[SupportedOSPlatform(""windows"")]
+class WindowsOnlyType
+{
+    public static void M1() { }
+    [SupportedOSPlatformGuard(""windows"")]
+    public static bool IsSupported { get; }
+    public static void M2() { }
+}
+" + MockAttributesCsSource;
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
         private readonly string MockAttributesCsSource = @"
 namespace System.Runtime.Versioning
 {

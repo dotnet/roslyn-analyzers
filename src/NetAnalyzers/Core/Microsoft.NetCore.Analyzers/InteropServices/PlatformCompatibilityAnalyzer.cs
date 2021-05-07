@@ -1437,6 +1437,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 SmallDictionary<string, Versions>? childAttributes = null;
                 foreach (AttributeData attribute in immediateAttributes)
                 {
+                    if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute)
+                    {
+                        parentAttributes = new PlatformAttributes();
+                        return;
+                    }
                     if (s_osPlatformAttributes.Contains(attribute.AttributeClass.Name))
                     {
                         TryAddValidAttribute(ref childAttributes, attribute);

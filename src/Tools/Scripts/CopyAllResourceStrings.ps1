@@ -1,7 +1,7 @@
 # This works in PowerShell Core.
 
-# To copy localization from the master branch to the 2.9.x branch, run this script from a 2.9.x-derived branch, providing a 
-# $SourceRepo path to another clone of the repository checked out to master.
+# To copy localization from the main branch to the 2.9.x branch, run this script from a 2.9.x-derived branch, providing a 
+# $SourceRepo path to another clone of the repository checked out to main.
 
 [CmdletBinding()]
 param (

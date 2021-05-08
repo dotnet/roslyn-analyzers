@@ -3989,8 +3989,8 @@ class Test
 
         if (_http3Enabled)
         {
-            //SupportedOnWindowsLinuxOsx();  
-            [|SupportedOnLinux()|]; // only supported on linux but call site is reachable on 3, linus, windows, macos
+            SupportedOnWindowsLinuxOsx();  
+            [|SupportedOnLinux()|]; // only supported on linux but call site is reachable on 3, linux, windows, macos
         }
         else
         {

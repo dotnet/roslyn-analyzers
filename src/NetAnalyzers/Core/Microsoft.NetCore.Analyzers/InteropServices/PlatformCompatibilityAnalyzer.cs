@@ -1627,10 +1627,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 TryParsePlatformNameAndVersion(argument, out var platformName, out var version))
             {
                 attributes ??= new SmallDictionary<string, Versions>(StringComparer.OrdinalIgnoreCase);
-                if (platformName.Equals(OSX, StringComparison.OrdinalIgnoreCase))
-                {
-                    platformName = macOS;
-                }
 
                 if (!attributes.TryGetValue(platformName, out var _))
                 {
@@ -1670,7 +1666,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (i > 0 && Version.TryParse(osString[i..], out Version? parsedVersion))
                     {
-                        osPlatformName = osString.Substring(0, i);
+                        osPlatformName = ConsolidatePlatformName(osString.Substring(0, i));
                         version = parsedVersion;
                         return true;
                     }
@@ -1679,10 +1675,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            osPlatformName = osString;
+            osPlatformName = ConsolidatePlatformName(osString);
             version = EmptyVersion;
             return true;
         }
+
+        private static string ConsolidatePlatformName(string platformName) =>
+            platformName.Equals(OSX, StringComparison.OrdinalIgnoreCase) ? macOS : platformName;
 
         private static void AddAttribute(string name, Version version, Versions attributes)
         {

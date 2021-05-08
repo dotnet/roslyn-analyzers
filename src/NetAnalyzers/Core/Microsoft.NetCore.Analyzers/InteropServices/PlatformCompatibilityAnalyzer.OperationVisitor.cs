@@ -26,12 +26,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 _osPlatformType = osPlatformType;
             }
 
-            internal static bool TryParseGuardAttrbiutes(ISymbol symbol, ref GlobalFlowStateAnalysisValueSet value)
+            internal static bool TryParseGuardAttributes(ImmutableArray<AttributeData> attributes, ref GlobalFlowStateAnalysisValueSet value)
             {
-                if (HasAnyGuardAttribute(symbol))
+                if (HasAnyGuardAttribute(attributes))
                 {
                     using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
-                    if (PlatformMethodValue.TryDecode(symbol.GetAttributes(), infosBuilder))
+                    if (PlatformMethodValue.TryDecode(attributes, infosBuilder))
                     {
                         for (var i = 0; i < infosBuilder.Count; i++)
                         {
@@ -48,8 +48,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 return false;
 
-                static bool HasAnyGuardAttribute(ISymbol symbol) =>
-                    symbol.GetAttributes().Any(a => a.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute);
+                static bool HasAnyGuardAttribute(ImmutableArray<AttributeData> attributes) =>
+                    attributes.Any(a => a.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute);
             }
 
             public override GlobalFlowStateAnalysisValueSet VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                         return GlobalFlowStateAnalysisValueSet.Unknown;
                     }
-                    else if (TryParseGuardAttrbiutes(method, ref value))
+                    else if (TryParseGuardAttributes(method.GetAttributes(), ref value))
                     {
                         return value;
                     }
@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var value = base.VisitFieldReference(operation, argument);
 
                 if (operation.Type.SpecialType == SpecialType.System_Boolean &&
-                    TryParseGuardAttrbiutes(operation.Field, ref value))
+                    TryParseGuardAttributes(operation.Field.GetAttributes(), ref value))
                 {
                     return value;
                 }
@@ -106,7 +106,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var value = base.VisitPropertyReference(operation, argument);
                 if (operation.Type.SpecialType == SpecialType.System_Boolean &&
-                    TryParseGuardAttrbiutes(operation.Property, ref value))
+                    TryParseGuardAttributes(operation.Property.GetAttributes(), ref value))
                 {
                     return value;
                 }

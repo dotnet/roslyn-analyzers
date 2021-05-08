@@ -115,11 +115,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         HasNonEmptyStringArgument(attribute, out var argument) &&
                         TryParsePlatformNameAndVersion(argument, out string platformName, out Version? version))
                     {
-                        if (platformName.Equals(OSX, StringComparison.OrdinalIgnoreCase))
-                        {
-                            platformName = macOS;
-                        }
-
                         var info = new PlatformMethodValue(platformName, version, negated: attribute.AttributeClass.Name == UnsupportedOSPlatformGuardAttribute);
                         infosBuilder.Add(info);
                     }

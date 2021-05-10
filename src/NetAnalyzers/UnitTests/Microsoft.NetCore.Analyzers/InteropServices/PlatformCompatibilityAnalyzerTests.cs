@@ -3476,6 +3476,57 @@ public class Test
         }
 
         [Fact]
+        public async Task AssemblyAttributeCanBeOverWrittenWhenCrossPlatform()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+[assembly:SupportedOSPlatform(""Browser"")] 
+[assembly:SupportedOSPlatform(""CrossPlatform"")] 
+public class Test
+{
+    private string program;
+
+    [SupportedOSPlatform(""windows"")] // Can overwrite parent browser support as cross platform
+    public string WindowsOnlyProgram => program;
+
+    [SupportedOSPlatform(""windows"")] // Can overwrite parent browser support as cross platform
+    [SupportedOSPlatform(""browser"")]
+    [SupportedOSPlatform(""linux"")]
+    public string WindowsBrowserLinuxOnlyProgram => program; // referencing internal field, should not warn
+
+    [UnsupportedOSPlatform(""browser"")]
+    public string UnsupportedBrowserProgram => program;
+
+    void M1()
+    {   
+        // should warn as WindowsOnlyProgram is windows only
+        var a = [|WindowsOnlyProgram|];    // This call site is reachable on: 'Browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = [|UnsupportedBrowserProgram|]; // This call site is reachable on: 'Browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'Browser'.
+        a = WindowsBrowserLinuxOnlyProgram; // should not warn
+    }
+
+    [SupportedOSPlatform(""browser"")]
+    void M2()
+    {   
+        var a = [|WindowsOnlyProgram|];    // This call site is reachable on: 'browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = [|UnsupportedBrowserProgram|]; // This call site is reachable on: 'browser'. 'Test.UnsupportedBrowserProgram' is supported on: 'Browser', 'CrossPlatform'.
+        a = WindowsBrowserLinuxOnlyProgram; // should not warn
+        [|M3()|];  // This call site is reachable on: 'browser'. 'Test.M3()' is only supported on: 'ios'.
+    }
+
+    [SupportedOSPlatform(""ios"")] // causes emtpy set, not warn inside for any reference
+    void M3()
+    {   
+        var a = WindowsOnlyProgram; 
+        a = UnsupportedBrowserProgram; 
+        a = WindowsBrowserLinuxOnlyProgram; 
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
+        [Fact]
         public async Task EmptyCallsiteReferencesApiWithImmediateAttributeNotWarn()
         {
             var source = @"

@@ -57,6 +57,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private const string Net = "net";
         private const string macOS = nameof(macOS);
         private const string MacSlashOSX = "macOS/OSX";
+        private const string CrossPlatform = nameof(CrossPlatform);
 
         internal static DiagnosticDescriptor OnlySupportedCsReachable = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
@@ -1070,6 +1071,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         if (callSiteAttributes.Callsite != Callsite.Empty &&
                             IsNotSuppressedByCallSite(operationAttributes.Platforms!, callSiteAttributes.Platforms!, msBuildPlatforms, out var notSuppressedAttributes))
                         {
+                            callSiteAttributes.Platforms!.Remove(CrossPlatform);
+                            notSuppressedAttributes.Remove(CrossPlatform);
                             platformSpecificOperations.TryAdd(new KeyValuePair<IOperation, ISymbol>(operation, symbol), (notSuppressedAttributes, callSiteAttributes.Platforms));
                         }
                     }
@@ -1294,17 +1297,20 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
                 }
-
-                // if supportedOnlyList then call site should not have any platform not listed in the support list
-                foreach (var (platform, csAttributes) in callSiteAttributes)
+                else if (!operationAttributes.ContainsKey(CrossPlatform))
                 {
-                    if (csAttributes.SupportedFirst != null &&
-                        !supportedOnlyPlatforms.Contains(platform) &&
-                        !notSuppressedAttributes.ContainsKey(platform))
+                    // if supportedOnlyList then call site should not have any platform not listed in the support list
+                    foreach (var (platform, csAttributes) in callSiteAttributes)
                     {
-                        foreach (var (name, version) in operationAttributes)
+                        if (csAttributes.SupportedFirst != null &&
+                            !CrossPlatform.Equals(platform) &&
+                            !supportedOnlyPlatforms.Contains(platform) &&
+                            !notSuppressedAttributes.ContainsKey(platform))
                         {
-                            AddOrUpdatedDiagnostic(operationAttributes[name], notSuppressedAttributes, name);
+                            foreach (var (name, version) in operationAttributes)
+                            {
+                                AddOrUpdatedDiagnostic(operationAttributes[name], notSuppressedAttributes, name);
+                            }
                         }
                     }
                 }
@@ -1426,6 +1432,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     var notFoundPlatforms = PooledHashSet<string>.GetInstance();
                     bool supportFound = false;
+                    bool allowList = false;
                     foreach (var (platform, attributes) in pAttributes)
                     {
                         if (DenyList(attributes) &&
@@ -1471,6 +1478,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                         else if (AllowList(attributes))
                         {
+                            allowList = true;
                             // only attributes with same platform matter, could narrow the list
                             if (childAttributes.TryGetValue(platform, out var childAttribute))
                             {
@@ -1509,6 +1517,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                             {
                                 // not existing parent platforms might need to be removed
                                 notFoundPlatforms.Add(platform);
+                            }
+                        }
+                    }
+
+                    if (allowList && pAttributes.ContainsKey(CrossPlatform))
+                    {
+                        foreach (var childAttribute in childAttributes)
+                        {
+                            if (AllowList(childAttribute.Value))
+                            {
+                                parentAttributes.Platforms = childAttributes;
+                                break;
                             }
                         }
                     }

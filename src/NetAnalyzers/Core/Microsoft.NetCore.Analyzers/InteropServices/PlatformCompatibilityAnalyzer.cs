@@ -1623,8 +1623,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
         private static bool TryAddValidAttribute([NotNullWhen(true)] ref SmallDictionary<string, Versions>? attributes, AttributeData attribute)
         {
-            if (HasNonEmptyStringArgument(attribute, out var argument) &&
-                TryParsePlatformNameAndVersion(argument, out var platformName, out var version))
+            if (TryParsePlatformNameAndVersion(attribute, out var platformName, out var version))
             {
                 attributes ??= new SmallDictionary<string, Versions>(StringComparer.OrdinalIgnoreCase);
 
@@ -1637,6 +1636,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return true;
             }
 
+            return false;
+        }
+
+        private static bool TryParsePlatformNameAndVersion(AttributeData attribute, out string platformName, [NotNullWhen(true)] out Version? version)
+        {
+            if (HasNonEmptyStringArgument(attribute, out var argument))
+            {
+                return TryParsePlatformNameAndVersion(argument, out platformName, out version);
+            }
+
+            version = null;
+            platformName = string.Empty;
             return false;
         }
 

@@ -112,8 +112,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 foreach (var attribute in attributes)
                 {
                     if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute &&
-                        HasNonEmptyStringArgument(attribute, out var argument) &&
-                        TryParsePlatformNameAndVersion(argument, out string platformName, out Version? version))
+                        TryParsePlatformNameAndVersion(attribute, out var platformName, out var version))
                     {
                         var info = new PlatformMethodValue(platformName, version, negated: attribute.AttributeClass.Name == UnsupportedOSPlatformGuardAttribute);
                         infosBuilder.Add(info);

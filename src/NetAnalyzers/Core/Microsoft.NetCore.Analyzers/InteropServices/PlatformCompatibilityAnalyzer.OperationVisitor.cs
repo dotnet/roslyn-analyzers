@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.GlobalFlowStateAnalysis;
@@ -26,25 +27,31 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 _osPlatformType = osPlatformType;
             }
 
-            internal static bool TryParseGuardAttributes(ImmutableArray<AttributeData> attributes, ref GlobalFlowStateAnalysisValueSet value)
+            internal static bool TryParseGuardAttributes(ISymbol symbol, ref GlobalFlowStateAnalysisValueSet value)
             {
-                if (HasAnyGuardAttribute(attributes))
-                {
-                    using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
-                    if (PlatformMethodValue.TryDecode(attributes, infosBuilder))
-                    {
-                        for (var i = 0; i < infosBuilder.Count; i++)
-                        {
-                            var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
-                            value = i == 0 ? newValue : infosBuilder[i].Negated ? value.WithAdditionalAnalysisValues(newValue, false) :
-                                GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
-                        }
+                var attributes = symbol.GetAttributes();
 
-                        return true;
+                if (symbol.GetMemberType()!.SpecialType != SpecialType.System_Boolean ||
+                    !HasAnyGuardAttribute(attributes))
+                {
+                    return false;
+                }
+
+                using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
+                if (PlatformMethodValue.TryDecode(attributes, infosBuilder))
+                {
+                    for (var i = 0; i < infosBuilder.Count; i++)
+                    {
+                        var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
+                        // if the incoming value is negated it should be merged with AND logic, else with OR. 
+                        value = i == 0 ? newValue : infosBuilder[i].Negated ? value.WithAdditionalAnalysisValues(newValue, false) :
+                            GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
                     }
 
-                    value = GlobalFlowStateAnalysisValueSet.Unknown;
+                    return true;
                 }
+
+                value = GlobalFlowStateAnalysisValueSet.Unknown;
 
                 return false;
 
@@ -62,28 +69,25 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(method, visitedInstance, visitedArguments, invokedAsDelegate, originalOperation, defaultValue);
 
-                if (method.ReturnType.SpecialType == SpecialType.System_Boolean)
+                if (_platformCheckMethods.Contains(method.OriginalDefinition))
                 {
-                    if (_platformCheckMethods.Contains(method.OriginalDefinition))
+                    using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
+                    if (PlatformMethodValue.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResult, _osPlatformType, infosBuilder))
                     {
-                        using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
-                        if (PlatformMethodValue.TryDecode(method, visitedArguments, DataFlowAnalysisContext.ValueContentAnalysisResult, _osPlatformType, infosBuilder))
+                        for (var i = 0; i < infosBuilder.Count; i++)
                         {
-                            for (var i = 0; i < infosBuilder.Count; i++)
-                            {
-                                var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
-                                value = i == 0 ? newValue : GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
-                            }
-
-                            return value;
+                            var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
+                            value = i == 0 ? newValue : GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
                         }
 
-                        return GlobalFlowStateAnalysisValueSet.Unknown;
-                    }
-                    else if (TryParseGuardAttributes(method.GetAttributes(), ref value))
-                    {
                         return value;
                     }
+
+                    return GlobalFlowStateAnalysisValueSet.Unknown;
+                }
+                else if (TryParseGuardAttributes(method, ref value))
+                {
+                    return value;
                 }
 
                 return value;
@@ -93,8 +97,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var value = base.VisitFieldReference(operation, argument);
 
-                if (operation.Type.SpecialType == SpecialType.System_Boolean &&
-                    TryParseGuardAttributes(operation.Field.GetAttributes(), ref value))
+                if (TryParseGuardAttributes(operation.Field, ref value))
                 {
                     return value;
                 }
@@ -105,8 +108,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             public override GlobalFlowStateAnalysisValueSet VisitPropertyReference(IPropertyReferenceOperation operation, object? argument)
             {
                 var value = base.VisitPropertyReference(operation, argument);
-                if (operation.Type.SpecialType == SpecialType.System_Boolean &&
-                    TryParseGuardAttributes(operation.Property.GetAttributes(), ref value))
+
+                if (TryParseGuardAttributes(operation.Property, ref value))
                 {
                     return value;
                 }

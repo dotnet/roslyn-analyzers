@@ -3491,39 +3491,130 @@ public class Test
     public string WindowsOnlyProgram => program;
 
     [SupportedOSPlatform(""windows"")] // Can overwrite parent browser support as cross platform
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""linux"")]
+    public string WindowsIosLinuxOnlyProgram => program; // referencing internal field, should not warn
+
+    [UnsupportedOSPlatform(""browser"")]
+    public string UnsupportedBrowserProgram => program;
+
+    void CrossPlatformCallSite()
+    {   
+        // should warn as WindowsOnlyProgram is windows only
+        var a = {|#0:WindowsOnlyProgram|};    // This call site is reachable on: 'Browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#1:UnsupportedBrowserProgram|}; // This call site is reachable on: 'Browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'Browser'.
+        a = [|WindowsIosLinuxOnlyProgram|]; // This call site is reachable on: 'Browser'. 'Test.WindowsIosLinuxOnlyProgram' is only supported on: 'windows', 'ios', 'linux'.
+    }
+
+    [SupportedOSPlatform(""browser"")]
+    void BrowserOnlyCallsite()
+    {   
+        var a = {|#2:WindowsOnlyProgram|};  // This call site is reachable on: 'browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#3:UnsupportedBrowserProgram|}; // This call site is reachable on: 'browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'.
+        a = [|WindowsIosLinuxOnlyProgram|]; // sThis call site is reachable on: 'browser'. 'Test.WindowsIosLinuxOnlyProgram' is only supported on: 'windows', 'ios', 'linux'.
+        {|#4:IosOnlyCallsite()|};  // This call site is reachable on: 'browser'. 'Test.M3()' is only supported on: 'ios'.
+    }
+
+    [SupportedOSPlatform(""ios"")] // causes emtpy set, not warn inside for any reference
+    void IosOnlyCallsite()
+    {   
+        var a = WindowsOnlyProgram; 
+        a = UnsupportedBrowserProgram; 
+        a = WindowsIosLinuxOnlyProgram; 
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'Browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedBrowserProgram", "'Browser'", "'Browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(3).WithArguments("Test.UnsupportedBrowserProgram", "'Browser'", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(4).WithArguments("Test.IosOnlyCallsite()", "'ios'", "'browser'"));
+        }
+
+        [Fact]
+        public async Task CrossPlatformAttributeShouldNotCauseWarning()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+public class Test
+{
+    [SupportedOSPlatform(""CrossPlatform"")] 
+    private string program;
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""browser"")]
+    public string SupportsWindowsBrowser => program;
+
+    [UnsupportedOSPlatform(""browser"")]
+    public string UnsupportedBrowserProgram => program;
+
+    void EmpyCallsite()
+    {   
+        program = ""Something"";
+        var a = [|SupportsWindowsBrowser|]; // This call site is reachable on all platforms. 'Test.SupportsWindowsBrowser' is only supported on: 'windows', 'browser'.
+        a = {|#0:UnsupportedBrowserProgram|}; // This call site is reachable on all platforms. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'.
+        CrossPlatformCallSite();  // CrossPlatform attribute should not cause a warning.
+    }
+
+    [SupportedOSPlatform(""CrossPlatform"")] 
+    [SupportedOSPlatform(""browser"")]
+    void BrowserOnlyCallSite()
+    {   
+        var a = SupportsWindowsBrowser;
+        a = {|#1:UnsupportedBrowserProgram|}; // This call site is reachable on: 'browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'.
+        CrossPlatformCallSite();  // CrossPlatform attribute should not cause a warning.
+    }
+
+    [SupportedOSPlatform(""CrossPlatform"")] 
+    void CrossPlatformCallSite()
+    {   
+        program = ""Everything"";
+        var a = [|SupportsWindowsBrowser|]; // This call site is reachable on all platforms. 'Test.SupportsWindowsBrowser' is only supported on: 'windows', 'browser'.
+        a = {|#2:UnsupportedBrowserProgram|}; // This call site is reachable on all platforms. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(0).WithArguments("Test.UnsupportedBrowserProgram", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedBrowserProgram", "'browser'", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(2).WithArguments("Test.UnsupportedBrowserProgram", "'browser'"));
+        }
+
+        [Fact]
+        public async Task AssemblyCrossPlatformAttributeShouldNotCauseWarning()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+[assembly:SupportedOSPlatform(""CrossPlatform"")] 
+public class Test
+{
+    private string program;
+
+    [SupportedOSPlatform(""windows"")]
     [SupportedOSPlatform(""browser"")]
     [SupportedOSPlatform(""linux"")]
-    public string WindowsBrowserLinuxOnlyProgram => program; // referencing internal field, should not warn
+    public string WindowsBrowserLinuxOnlyProgram => program;
 
     [UnsupportedOSPlatform(""browser"")]
     public string UnsupportedBrowserProgram => program;
 
     void M1()
     {   
-        // should warn as WindowsOnlyProgram is windows only
-        var a = [|WindowsOnlyProgram|];    // This call site is reachable on: 'Browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
-        a = [|UnsupportedBrowserProgram|]; // This call site is reachable on: 'Browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'Browser'.
-        a = WindowsBrowserLinuxOnlyProgram; // should not warn
+        var a = {|#0:UnsupportedBrowserProgram|}; // This call site is reachable on all platforms. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'.
+        a = [|WindowsBrowserLinuxOnlyProgram|];   // This call site is reachable on all platforms. 'Test.WindowsBrowserLinuxOnlyProgram' is only supported on: 'browser', 'windows', 'linux'.
     }
 
     [SupportedOSPlatform(""browser"")]
     void M2()
     {   
-        var a = [|WindowsOnlyProgram|];    // This call site is reachable on: 'browser'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
-        a = [|UnsupportedBrowserProgram|]; // This call site is reachable on: 'browser'. 'Test.UnsupportedBrowserProgram' is supported on: 'Browser', 'CrossPlatform'.
-        a = WindowsBrowserLinuxOnlyProgram; // should not warn
-        [|M3()|];  // This call site is reachable on: 'browser'. 'Test.M3()' is only supported on: 'ios'.
-    }
-
-    [SupportedOSPlatform(""ios"")] // causes emtpy set, not warn inside for any reference
-    void M3()
-    {   
-        var a = WindowsOnlyProgram; 
-        a = UnsupportedBrowserProgram; 
-        a = WindowsBrowserLinuxOnlyProgram; 
+        var a = {|#1:UnsupportedBrowserProgram|}; // This call site is reachable on: 'browser'. 'Test.UnsupportedBrowserProgram' is unsupported on: 'browser'.
+        a = WindowsBrowserLinuxOnlyProgram;
     }
 }";
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(0).WithArguments("Test.UnsupportedBrowserProgram", "'browser'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedBrowserProgram", "'browser'", "'browser'"));
         }
 
         [Fact]

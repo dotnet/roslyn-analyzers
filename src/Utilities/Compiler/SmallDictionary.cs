@@ -69,6 +69,8 @@ namespace Analyzer.Utilities
 
         public bool IsEmpty => _root == null;
 
+        public bool SingleElement => _root != null && _root.Left == null && _root.Right == null;
+
         public void Remove(K key)
         {
             _root = Remove(_root, GetHashCode(key));

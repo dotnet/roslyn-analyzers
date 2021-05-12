@@ -45,6 +45,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             public SmallDictionary<string, Versions>? Platforms { get; set; }
             public Callsite Callsite { get; set; }
+
+            public bool HasAnyValidPlatform()
+            {
+                if (Platforms == null || HasOnlyCrossPlatform(Platforms))
+                {
+                    Platforms = null;
+                    return false;
+                }
+                return true;
+
+                static bool HasOnlyCrossPlatform(SmallDictionary<string, Versions> platforms) =>
+                    platforms.SingleElement && platforms.ContainsKey(CrossPlatform);
+            }
         }
     }
 }

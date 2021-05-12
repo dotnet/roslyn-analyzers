@@ -1407,7 +1407,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 attributes = platformSpecificMembers.GetOrAdd(symbol, attributes);
             }
 
-            return attributes.Platforms != null;
+            return attributes.HasAnyValidPlatform();
 
             static void MergePlatformAttributes(ImmutableArray<AttributeData> immediateAttributes,
                 ref PlatformAttributes parentAttributes)

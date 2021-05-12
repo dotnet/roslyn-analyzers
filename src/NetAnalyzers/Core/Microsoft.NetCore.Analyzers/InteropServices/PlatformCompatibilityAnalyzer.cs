@@ -1677,7 +1677,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (i > 0 && Version.TryParse(osString[i..], out Version? parsedVersion))
                     {
-                        osPlatformName = ConsolidatePlatformName(osString.Substring(0, i));
+                        osPlatformName = GetNameAsMacOsWhenOSX(osString.Substring(0, i));
                         version = parsedVersion;
                         return true;
                     }
@@ -1686,12 +1686,12 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
             }
 
-            osPlatformName = ConsolidatePlatformName(osString);
+            osPlatformName = GetNameAsMacOsWhenOSX(osString);
             version = EmptyVersion;
             return true;
         }
 
-        private static string ConsolidatePlatformName(string platformName) =>
+        private static string GetNameAsMacOsWhenOSX(string platformName) =>
             platformName.Equals(OSX, StringComparison.OrdinalIgnoreCase) ? macOS : platformName;
 
         private static void AddAttribute(string name, Version version, Versions attributes)

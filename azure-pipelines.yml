@@ -1,13 +1,15 @@
 # Branches that trigger a build on commit
 trigger:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 jobs:
@@ -111,6 +113,8 @@ jobs:
         ArtifactName: 'Ubuntu $(_configuration)'
       continueOnError: true
       condition: always()
+
+- template: eng/common/templates/job/source-build.yml
 
 - job: Markdownlint
   pool:

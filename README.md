@@ -16,6 +16,20 @@ Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.FxCopAnalyze
 
 ## Main analyzers
 
+Recently the set of analyzer packages produced by this repository have been consolidated. The following table summarizes this information:
+
+| NuGet Package Name | Version | Summary |
+|----------|:-------:|---------|
+| Microsoft.CodeAnalysis.NetAnalyzers       | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) | ✔️ Primary analyzer package for this repo. Included default for .NET 5+. For earlier targets [read more](#microsoftcodeanalysisnetanalyzers). |
+| Microsoft.CodeAnalysis.BannedApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers) | ✔️ Allows banning use of arbitrary code. [Read more](#microsoftcodeanalysisbannedapianalyzers). |
+| Microsoft.CodeAnalysis.PublicApiAnalyzers | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers) | ✔️ Helps library authors monitor changes to their public APIs. [Read more](#microsoftcodeanalysispublicapianalyzers). |
+| Microsoft.CodeAnalysis.Analyzers          | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers) | ⚠️ Intended projects providing analyzers and code fixes. [Read more](#microsoftcodeanalysisanalyzers). |
+| Roslyn.Diagnostics.Analyzers              | [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers) | ⚠️ Rules specific to the Roslyn project, not intended for general consumption. [Read more](#roslyndiagnosticsanalyzers). |
+| Microsoft.CodeAnalysis.FxCopAnalyzers     | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodeanalysisfxcopanalyzers). |
+| Microsoft.CodeQuality.Analyzers           | [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftcodequalityanalyzers). |
+| Microsoft.NetCore.Analyzers               | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
+| Microsoft.NetFramework.Analyzers          | [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers) | ⛔ Use `Microsoft.CodeAnalysis.NetAnalyzers` instead. [Read more](#microsoftnetcoreanalyzers). |
+
 ### Microsoft.CodeAnalysis.NetAnalyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
@@ -160,7 +174,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 Recommended Analyzer Package Version: [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-Required Visual Studio Version: **Visual Studio 2019 16.8 RTW or later**
+Required Visual Studio Version: **Visual Studio 2019 16.9 RTW or later**
 
 Required .NET SDK Version: **.NET 5.0 SDK or later**
 

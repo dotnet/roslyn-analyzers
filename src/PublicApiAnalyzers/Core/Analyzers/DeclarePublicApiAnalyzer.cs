@@ -81,6 +81,16 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
             helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
             customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
 
+        internal static readonly DiagnosticDescriptor RemovedApiIsNotActuallyRemovedRule = new(
+           id: DiagnosticIds.RemovedApiIsNotActuallyRemovedRuleId,
+           title: new LocalizableResourceString(nameof(PublicApiAnalyzerResources.RemovedApiIsNotActuallyRemovedTitle), PublicApiAnalyzerResources.ResourceManager, typeof(PublicApiAnalyzerResources)),
+           messageFormat: new LocalizableResourceString(nameof(PublicApiAnalyzerResources.RemovedApiIsNotActuallyRemovedMessage), PublicApiAnalyzerResources.ResourceManager, typeof(PublicApiAnalyzerResources)),
+           category: "ApiDesign",
+           defaultSeverity: DiagnosticSeverity.Warning,
+           isEnabledByDefault: true,
+           helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
+           customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
+
         internal static readonly DiagnosticDescriptor ExposedNoninstantiableType = new(
             id: DiagnosticIds.ExposedNoninstantiableTypeRuleId,
             title: new LocalizableResourceString(nameof(PublicApiAnalyzerResources.ExposedNoninstantiableTypeTitle), PublicApiAnalyzerResources.ResourceManager, typeof(PublicApiAnalyzerResources)),
@@ -198,7 +208,7 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(DeclareNewApiRule, AnnotateApiRule, ObliviousApiRule, RemoveDeletedApiRule, ExposedNoninstantiableType,
                 PublicApiFilesInvalid, PublicApiFileMissing, DuplicateSymbolInApiFiles, AvoidMultipleOverloadsWithOptionalParameters,
-                OverloadWithOptionalParametersShouldHaveMostParameters, ShouldAnnotateApiFilesRule);
+                OverloadWithOptionalParametersShouldHaveMostParameters, ShouldAnnotateApiFilesRule, RemovedApiIsNotActuallyRemovedRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -308,8 +318,8 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
                 return false;
             }
 
-            shippedData = ReadApiData(shippedText.Path, shippedText.GetText(cancellationToken), isShippedApi: true);
-            unshippedData = ReadApiData(unshippedText.Path, unshippedText.GetText(cancellationToken), isShippedApi: false);
+            shippedData = ReadApiData(shippedText.Value.path, shippedText.Value.text, isShippedApi: true);
+            unshippedData = ReadApiData(unshippedText.Value.path, unshippedText.Value.text, isShippedApi: false);
             return true;
         }
 
@@ -366,27 +376,41 @@ namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
         private static bool TryGetApiText(
             ImmutableArray<AdditionalText> additionalTexts,
             CancellationToken cancellationToken,
-            [NotNullWhen(returnValue: true)] out AdditionalText? shippedText,
-            [NotNullWhen(returnValue: true)] out AdditionalText? unshippedText)
+            [NotNullWhen(returnValue: true)] out (string path, SourceText text)? shippedText,
+            [NotNullWhen(returnValue: true)] out (string path, SourceText text)? unshippedText)
         {
             shippedText = null;
             unshippedText = null;
 
             StringComparer comparer = StringComparer.Ordinal;
-            foreach (AdditionalText text in additionalTexts)
+            foreach (AdditionalText additionalText in additionalTexts)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                string fileName = Path.GetFileName(text.Path);
-                if (comparer.Equals(fileName, ShippedFileName))
-                {
-                    shippedText = text;
-                    continue;
-                }
+                string fileName = Path.GetFileName(additionalText.Path);
 
-                if (comparer.Equals(fileName, UnshippedFileName))
+                bool isShippedFile = comparer.Equals(fileName, ShippedFileName);
+                bool isUnshippedFile = comparer.Equals(fileName, UnshippedFileName);
+
+                if (isShippedFile || isUnshippedFile)
                 {
-                    unshippedText = text;
+                    SourceText text = additionalText.GetText(cancellationToken);
+
+                    if (text == null)
+                    {
+                        continue;
+                    }
+
+                    var data = (additionalText.Path, text);
+                    if (isShippedFile)
+                    {
+                        shippedText = data;
+                    }
+
+                    if (isUnshippedFile)
+                    {
+                        unshippedText = data;
+                    }
                     continue;
                 }
             }

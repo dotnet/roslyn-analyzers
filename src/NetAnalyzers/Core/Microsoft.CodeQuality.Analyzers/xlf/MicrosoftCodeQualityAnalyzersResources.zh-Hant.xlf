@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../MicrosoftCodeQualityAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
@@ -244,7 +244,7 @@
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
-        <target state="new">Add operator overload named alternate</target>
+        <target state="translated">新增名稱為 alternate 的運算子多載</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveRedundantElementInitializationCodeFixTitle">
@@ -266,6 +266,11 @@
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
         <target state="translated">類型 '{0}' 擁有可處置的欄位 '{1}' 但其本身並非可處置項目</target>
         <note />
+      </trans-unit>
+      <trans-unit id="UriParametersShouldNotBeStringsCodeFixTitle">
+        <source>Add 'System.Uri' overloads</source>
+        <target state="translated">新增 'System.Uri' 多載</target>
+        <note>{Locked="System.Uri"}</note>
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
         <source>Use generic event handler instances</source>
@@ -1514,7 +1519,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingMessage">
         <source>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</source>
-        <target state="translated">‘{0}’ 與 ‘{2}’ 個不同命名空間中 '{1}’ 個不同的類型結合。請重寫或重構程式碼，以將其類別結合程度降低至 ‘{3}’ 以下。</target>
+        <target state="translated">'{0}' 已與來自 '{2}' 個不同命名空間中的 '{1}' 個不同類型結合。請重寫或重構程式碼，以將其類別結合程度降低至 '{3}' 以下。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingTitle">
@@ -1559,7 +1564,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">
         <source>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</source>
-        <target state="translated">‘{0}’ 的可維護性指數為 '{1}’。請重寫或重構程式碼，以將其可維護性指數 (MI) 提高到 ‘{2}’ 以上。</target>
+        <target state="translated">'{0}' 的可維護性指數為 '{1}'。請重寫或重構程式碼，以將其可維護性指數 (MI) 提高到 '{2}' 以上。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">

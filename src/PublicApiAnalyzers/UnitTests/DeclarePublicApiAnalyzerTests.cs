@@ -2569,6 +2569,57 @@ R.P.get -> int
             await VerifyNet50CSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
         }
 
+        [Fact, WorkItem(4991, "https://github.com/dotnet/roslyn-analyzers/issues/4991")]
+        public async Task TestChangeFromPublicToProtected()
+        {
+            var source = @"
+public abstract class C
+{
+    protected int {|RS0016:M|}() => 0;
+}
+";
+
+            var shippedText = "C";
+            var unshippedText = "protected C.C() -> void";
+            var fixedUnshippedText = @"protected C.C() -> void
+protected C.M() -> int";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact, WorkItem(4991, "https://github.com/dotnet/roslyn-analyzers/issues/4991")]
+        public async Task TestChangeFromPublicToProtectedInternal()
+        {
+            var source = @"
+public abstract class C
+{
+    protected internal int {|RS0016:M|}() => 0;
+}
+";
+
+            var shippedText = "C";
+            var unshippedText = "protected C.C() -> void";
+            var fixedUnshippedText = @"protected C.C() -> void
+protected C.M() -> int";
+
+            await VerifyCSharpAdditionalFileFixAsync(source, shippedText, unshippedText, fixedUnshippedText);
+        }
+
+        [Fact, WorkItem(4991, "https://github.com/dotnet/roslyn-analyzers/issues/4991")]
+        public async Task TestChangeFromPublicToPrivateProtected()
+        {
+            var source = @"
+public abstract class C
+{
+    private protected int M() => 0;
+}
+";
+
+            var shippedText = "C";
+            var unshippedText = "protected C.C() -> void";
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
         #endregion
     }
 }

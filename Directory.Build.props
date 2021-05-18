@@ -13,6 +13,11 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
+    <!-- Do not ship packages by default -->
+    <IsShippingPackage>false</IsShippingPackage>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
     

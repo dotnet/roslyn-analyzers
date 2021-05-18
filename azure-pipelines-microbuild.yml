@@ -1,6 +1,8 @@
 # Branches that trigger a build on commit
 trigger:
-  - master
+  - main
+  - release/*
+  - features/*
   - 2.9.x
 
 variables:
@@ -13,6 +15,11 @@ stages:
 - stage: build
   displayName: Build
   jobs:
+  - template: /eng/common/templates/job/onelocbuild.yml
+    parameters:
+      CreatePr: false
+      LclSource: lclFilesfromPackage
+      LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
       enableMicrobuild: true
@@ -25,7 +32,7 @@ stages:
       - job: Signed_Build
         pool:
           name: NetCoreInternal-Pool
-          queue: BuildPool.Windows.10.Amd64.VS2019
+          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
         variables:
           - group: DotNet-Blob-Feed
           - group: Publish-Build-Assets
@@ -68,6 +75,7 @@ stages:
 
 - template: eng\common\templates\post-build\post-build.yml
   parameters:
+    publishingInfraVersion: 3
     enableSymbolValidation: false
     enableSigningValidation: false
     enableSourceLinkValidation: false

@@ -20,20 +20,25 @@
     <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset" Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\build\Analyzers_NonShippingRules.ruleset'" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true' or '$(IsVsixProject)' == 'true' or '$(FxCopAnalyzersProject)' == 'true'">
-    <ReleaseTrackingOptOut>true</ReleaseTrackingOptOut>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(ReleaseTrackingOptOut)' == 'true'">
-    <!-- RS2008: Enable analyzer release tracking -->
-    <NoWarn>$(NoWarn);RS2008</NoWarn>
-  </PropertyGroup>
+  <!-- Add analyzer release tracking additional files -->
+  <!-- Unshipped release -->
+  <ItemGroup Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+  <!-- Shipped releases -->
+  <ItemGroup  Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')">
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" />
+    <!-- Copy the shipped releases file to output directory so it can be used in 'GenerateGlobalAnalyzerConfigs' post-build target -->
+    <!-- Include shipped file also as 'None' - Workaround for 'CopyToOutputDirectory' not being respected for additional files -->
+    <None Update="AnalyzerReleases.Shipped.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>AnalyzerReleases\$(AssemblyName)\AnalyzerReleases.Shipped.md</Link>
+    </None>
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(MicrosoftCodeAnalysisBannedApiAnalyzersVersion)" />
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" Condition="'$(BannedSymbolsOptOut)' != 'true'" />
-	  <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md" Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Shipped.md')" />
-    <AdditionalFiles Include="$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md" Condition="'$(ReleaseTrackingOptOut)' != 'true' AND Exists('$(MSBuildProjectDirectory)\AnalyzerReleases.Unshipped.md')" />
   </ItemGroup>
 
   <Target Name="BeforeBuild" Condition="'$(ReleaseTrackingOptOut)' != 'true'" >
@@ -58,12 +63,8 @@
       <_TestStdOutPath>$(_TestOutPathNoExt).log</_TestStdOutPath>
       <_TestResultsXmlPath>$(_TestOutPathNoExt).xml</_TestResultsXmlPath>
       <_TestResultsHtmlPath>$(_TestOutPathNoExt).html</_TestResultsHtmlPath>
-      <_TestResultsOpenCoverPath>$(_TestOutPathNoExt).coverage</_TestResultsOpenCoverPath>
       <_RunOnCore>false</_RunOnCore>
-      <_RunOnCore Condition="$(TargetFramework.StartsWith('netcoreapp'))">true</_RunOnCore>
-      
-      <_UseOpenCover>false</_UseOpenCover>
-      <_UseOpenCover Condition="'$(CODECOV_TOKEN)' != '' and '$(Configuration)' == 'Debug' and '$(_RunOnCore)' != 'true'">true</_UseOpenCover>
+      <_RunOnCore Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">true</_RunOnCore>
     </PropertyGroup>
 
     <Error Text="Architecture specified in TestArchitectures is not supported: '$(_TestArchitecture)'" File="XUnit"
@@ -74,33 +75,9 @@
       <_CoreRuntimeConfigPath>$(TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
       <_CoreDepsPath>$(TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
 
-      <!-- TODO: xUnit doesn't support -html on CoreCLR currently (see https://github.com/xunit/xunit/issues/977) -->
-      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
+      <_TestRunnerCommand>"$(DotNetTool)" exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/netcoreapp1.0/xunit.console.dll" "$(TargetPath)" -noautoreporters -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_TestRunnerCommand>
       <_TestResultsDisplayPath>$(_TestStdOutPath)</_TestResultsDisplayPath>
     </PropertyGroup>
-
-    <!-- Extract PDBs from binaries -->
-    <ItemGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_BinariesInTestDirectory Include="$(TargetDir)*.dll" />
-      <_BinariesInTestDirectory Update="@(_BinariesInTestDirectory)" IntermediatePdb="%(RootDir)%(Directory)%(Filename).ppdb" />
-    </ItemGroup>
-
-    <PropertyGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_PdbConverterPath>$(NuGetPackageRoot)microsoft.diasymreader.pdb2pdb\$(MicrosoftDiaSymReaderPdb2PdbVersion)\tools\Pdb2Pdb.exe</_PdbConverterPath>
-    </PropertyGroup>
-
-    <Exec Command="&quot;$(_PdbConverterPath)&quot; &quot;%(_BinariesInTestDirectory.Identity)&quot; /out &quot;%(_BinariesInTestDirectory.IntermediatePdb)&quot; /extract"
-          Condition="'$(_UseOpenCover)' == 'true'"
-          IgnoreExitCode="true" />
-
-    <!-- Convert portable PDBs to Windows PDBs for OpenCover -->
-    <ItemGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_PortablePdb Include="$(TargetDir)*.ppdb" />
-      <_PortablePdb Update="@(_PortablePdb)" Binary="%(RootDir)%(Directory)%(Filename).dll" OutputPdb="%(RootDir)%(Directory)%(Filename).pdb" />
-    </ItemGroup>
-
-    <Exec Command="&quot;$(_PdbConverterPath)&quot; &quot;%(_PortablePdb.Binary)&quot; /pdb &quot;%(_PortablePdb.Identity)&quot; /out &quot;%(_PortablePdb.OutputPdb)&quot;"
-          Condition="'$(_UseOpenCover)' == 'true'" />
 
     <PropertyGroup Condition="'$(_RunOnCore)' != 'true'">
       <_XUnitConsoleExe>xunit.console.exe</_XUnitConsoleExe>
@@ -109,13 +86,6 @@
       <_XUnitRunnerCommandArgs>"$(TargetPath)" -noshadow -xml "$(_TestResultsXmlPath)" -html "$(_TestResultsHtmlPath)" $(XUnitRunnerAdditionalArguments)</_XUnitRunnerCommandArgs>
       <_TestRunnerCommand>"$(_XUnitRunnerCommand)" $(_XUnitRunnerCommandArgs)</_TestRunnerCommand>
       <_TestResultsDisplayPath>$(_TestResultsHtmlPath)</_TestResultsDisplayPath>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(_UseOpenCover)' == 'true'">
-      <_OpenCoverConsoleExe>OpenCover.Console.exe</_OpenCoverConsoleExe>
-      <_OpenCoverCommand>$(NuGetPackageRoot)opencover\$(OpenCoverVersion)\tools\$(_OpenCoverConsoleExe)</_OpenCoverCommand>
-      <_OpenCoverCommandArgs>-register:user -returntargetcode -hideskipped:All -filter:"+[*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -output:"$(_TestResultsOpenCoverPath)"</_OpenCoverCommandArgs>
-      <_TestRunnerCommand>"$(_OpenCoverCommand)" $(_OpenCoverCommandArgs) -target:"$(_XUnitRunnerCommand)" -targetargs:"$(_XUnitRunnerCommandArgs.Replace(`"`, `\"`))"</_TestRunnerCommand>
     </PropertyGroup>
 
     <MakeDir Directories="$(ArtifactsTestResultsDir)"/>

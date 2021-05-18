@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -38,11 +39,11 @@ namespace ReleaseNotesUtil
                     {
                         try
                         {
-                            ExportCodeFixProviderAttribute attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
+                            ExportCodeFixProviderAttribute? attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
                             if (attribute != null)
                             {
                                 builder ??= ImmutableArray.CreateBuilder<CodeFixProvider>();
-                                var fixer = (CodeFixProvider)Activator.CreateInstance(typeInfo.AsType());
+                                var fixer = (CodeFixProvider?)Activator.CreateInstance(typeInfo.AsType());
                                 if (HasImplementation(fixer))
                                 {
                                     builder.Add(fixer);
@@ -66,14 +67,14 @@ namespace ReleaseNotesUtil
         /// Check the method body of the Initialize method of an analyzer and if that's empty,
         /// then the analyzer hasn't been implemented yet.
         /// </summary>
-        private static bool HasImplementation(CodeFixProvider fixer)
+        private static bool HasImplementation([NotNullWhen(true)] CodeFixProvider? fixer)
         {
-            MethodInfo method = fixer.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
+            MethodInfo? method = fixer?.GetType().GetTypeInfo().GetMethod("RegisterCodeFixesAsync");
             AsyncStateMachineAttribute? stateMachineAttr = method?.GetCustomAttribute<AsyncStateMachineAttribute>();
             MethodInfo? moveNextMethod = stateMachineAttr?.StateMachineType.GetTypeInfo().GetDeclaredMethod("MoveNext");
             if (moveNextMethod != null)
             {
-                MethodBody body = moveNextMethod.GetMethodBody();
+                MethodBody? body = moveNextMethod.GetMethodBody();
                 int? ilInstructionCount = body?.GetILAsByteArray()?.Length;
                 return ilInstructionCount != 177;
             }
@@ -93,9 +94,9 @@ namespace ReleaseNotesUtil
                 }
 
                 int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
-                MethodBase calledMethod = method.Module.ResolveMethod(metadataToken);
+                MethodBase? calledMethod = method.Module.ResolveMethod(metadataToken);
                 if (calledMethod != null
-                    && calledMethod.DeclaringType.FullName == "System.Threading.Tasks.Task"
+                    && calledMethod.DeclaringType?.FullName == "System.Threading.Tasks.Task"
                     && calledMethod.Name == "get_CompletedTask")
                 {
                     return false;

@@ -91,7 +91,7 @@ jobs:
         _configuration: Release
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Ubuntu.1604.amd64.Open
+    queue: BuildPool.Ubuntu.1804.amd64.Open
   timeoutInMinutes: 40
   steps:
     - checkout: self
@@ -122,5 +122,5 @@ jobs:
   steps:
     - script: sudo npm install -g markdownlint-cli
       displayName: Install markdownlint-cli
-    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+    - script: markdownlint '**/*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
       displayName: Run markdownlint

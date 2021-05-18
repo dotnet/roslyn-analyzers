@@ -129,6 +129,86 @@ namespace CallerTargetsBelow5_0
         }
 
         [Fact]
+        public async Task ProjectWithCrossPlatformPropertyTest()
+        {
+            var source = @"
+using System.Collections.Generic;
+using System.Runtime.Versioning;
+
+[assembly:SupportedOSPlatform(""linux"")] 
+public class Test
+{
+    private string program;
+
+    [SupportedOSPlatform(""windows"")] // Can overwrite parent browser support as cross platform
+    public string WindowsOnlyProgram => program;
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""linux"")]
+    public string WindowsIosLinuxOnlyProgram => program; // referencing internal field, should not warn
+
+    [SupportedOSPlatform(""android"")] // Can overwrite parent browser support as cross platform
+    [SupportedOSPlatform(""browser"")]
+    public string AndroidBrowserOnlyProgram => program; // referencing internal field, should not warn
+
+    [UnsupportedOSPlatform(""linux"")]
+    public string UnsupportedLinuxProgram => program;
+
+    void CrossPlatformCallSite()
+    {   
+        // should warn as WindowsOnlyProgram is windows only
+        var a = {|#0:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#1:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram;
+        a = [|AndroidBrowserOnlyProgram|]; // This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        List<Test> tests = new List<Test>();
+    }
+
+    [SupportedOSPlatform(""linux"")]
+    void LinuxOnlyCallsite()
+    {   
+        var a = {|#2:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#3:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram;
+        a = [|AndroidBrowserOnlyProgram|]; //This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        {|#4:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'. 42
+
+        List<Test> tests = new List<Test>();
+        WindowsIosLinuxOnlyCallsite();
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""linux"")]
+    void WindowsIosLinuxOnlyCallsite()
+    {   
+        var a = [|WindowsOnlyProgram|]; 
+        a = [|UnsupportedLinuxProgram|]; // This call site is reachable on: 'linux', 'ios', 'windows'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram; 
+        a = [|AndroidBrowserOnlyProgram|]; // This call site is reachable on: 'linux', 'ios', 'windows'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+
+        List<Test> tests = new List<Test>();
+    }
+
+    [SupportedOSPlatform(""browser"")] // causes emtpy set, not warn inside for any reference
+    void BrowserOnlyCallsite()
+    {   
+        var a = WindowsOnlyProgram; 
+        a = UnsupportedLinuxProgram; 
+        a = WindowsIosLinuxOnlyProgram; 
+        a = AndroidBrowserOnlyProgram;
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, "build_property.CrossPlatform = true\nbuild_property.TargetFramework=net5.0",
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(3).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(4).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
+        }
+
+        [Fact]
         public async Task OnlyThrowsNotSupportedWithOsDependentStringNotWarns()
         {
             var csSource = @"

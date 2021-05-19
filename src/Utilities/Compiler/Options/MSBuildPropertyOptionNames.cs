@@ -18,6 +18,7 @@ namespace Analyzer.Utilities
         public const string UsingMicrosoftNETSdkWeb = nameof(UsingMicrosoftNETSdkWeb);
         public const string ProjectTypeGuids = nameof(ProjectTypeGuids);
         public const string InvariantGlobalization = nameof(InvariantGlobalization);
+        public const string EnablePreviewFeatures = nameof(EnablePreviewFeatures);
     }
 
     internal static class MSBuildPropertyOptionNamesHelpers

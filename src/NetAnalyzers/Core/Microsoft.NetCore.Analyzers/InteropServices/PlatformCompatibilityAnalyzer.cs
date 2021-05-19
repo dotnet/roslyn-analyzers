@@ -203,7 +203,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static bool HasCrossPlatformProperty(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken)
             {
-                return null != options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.CrossPlatform, compilation, cancellationToken);
+                return null != options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.PlatformNeutralAssembly, compilation, cancellationToken);
             }
         }
 

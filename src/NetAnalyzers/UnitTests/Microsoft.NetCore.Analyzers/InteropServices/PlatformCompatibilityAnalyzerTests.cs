@@ -129,7 +129,7 @@ namespace CallerTargetsBelow5_0
         }
 
         [Fact]
-        public async Task ProjectWithCrossPlatformPropertyTest()
+        public async Task ProjectWithPlatformNeutralAssemblyPropertyTest()
         {
             var source = @"
 using System.Collections.Generic;
@@ -200,7 +200,7 @@ public class Test
         a = AndroidBrowserOnlyProgram;
     }
 }";
-            await VerifyAnalyzerAsyncCs(source, "build_property.CrossPlatform = true\nbuild_property.TargetFramework=net5.0",
+            await VerifyAnalyzerAsyncCs(source, "build_property.PlatformNeutralAssembly = true\nbuild_property.TargetFramework=net5.0",
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),

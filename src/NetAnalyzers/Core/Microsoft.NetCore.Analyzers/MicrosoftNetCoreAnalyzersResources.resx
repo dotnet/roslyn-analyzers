@@ -1611,4 +1611,13 @@
   <data name="DoNotUseWhenAllWithSingleTaskFix" xml:space="preserve">
     <value>Replace 'WhenAll' call with argument</value>
   </data>
+  <data name="DetectPreviewFeaturesDescription" xml:space="preserve">
+    <value>An assembly has to opt into preview features before using them.</value>
+  </data>
+  <data name="DetectPreviewFeaturesMessage" xml:space="preserve">
+    <value>Enable preview features for this assembly</value>
+  </data>
+  <data name="DetectPreviewFeaturesTitle" xml:space="preserve">
+    <value>Enable preview features for this assembly</value>
+  </data>
 </root>

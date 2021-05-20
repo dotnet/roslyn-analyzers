@@ -35,7 +35,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private bool thisAssemblyUsesPreviewFeatures;
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
@@ -59,46 +58,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols = new ConcurrentDictionary<ISymbol, IOperation?>();
-                context.RegisterOperationBlockStartAction(context => BuildSymbolInformation(context, requiresPreviewFeaturesSymbols));
+                context.RegisterOperationAction(context => BuildSymbolInformation(context, requiresPreviewFeaturesSymbols),
+                    OperationKind.Invocation,
+                    OperationKind.ObjectCreation,
+                    OperationKind.PropertyReference,
+                    OperationKind.FieldReference,
+                    OperationKind.DelegateCreation,
+                    OperationKind.EventReference
+                    );
             });
         }
 
-        private void BuildSymbolInformation(OperationBlockStartAnalysisContext context, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
+        private void BuildSymbolInformation(OperationAnalysisContext context, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
         {
-            context.RegisterOperationAction(context => AnalyzeOperation(context.Operation, requiresPreviewFeaturesSymbols),
-                OperationKind.Invocation,
-                OperationKind.ObjectCreation,
-                OperationKind.PropertyReference,
-                OperationKind.FieldReference,
-                OperationKind.DelegateCreation,
-                OperationKind.EventReference
-                );
-
-            context.RegisterOperationBlockEndAction(context =>
+            if (OperationUsesPreviewFeatures(context.Operation, requiresPreviewFeaturesSymbols))
             {
-                if (thisAssemblyUsesPreviewFeatures)
-                {
-                    foreach (var symbolAndOperation in requiresPreviewFeaturesSymbols)
-                    {
-                        IOperation? value = symbolAndOperation.Value;
-                        if (value != null)
-                        {
-                            context.ReportDiagnostic(value.CreateDiagnostic(Rule));
-                        }
-                    }
-                }
-            });
+                context.ReportDiagnostic(context.Operation.CreateDiagnostic(Rule));
+            }
         }
 
-        private void AnalyzeOperation(IOperation operation, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
+        private bool OperationUsesPreviewFeatures(IOperation operation, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
         {
             ISymbol? symbol = GetOperationSymbol(operation);
             if (symbol == null)
             {
-                return;
+                return false;
             }
 
-            CheckOperationAttributes(operation, symbol, requiresPreviewFeaturesSymbols, true);
+            return OperationUsesPreviewFeatures(operation, symbol, requiresPreviewFeaturesSymbols, true);
         }
 
         private static ISymbol? GetOperationSymbol(IOperation operation)
@@ -113,9 +100,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 _ => null,
             };
 
-        private void TryGetOrCachePreviewFeaturesAttributesOnSymbol(IOperation operation, ISymbol symbol, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols, bool checkParents)
+        private bool TryGetOrCachePreviewFeaturesAttributesOnSymbol(IOperation operation, ISymbol symbol, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols, bool checkParents)
         {
-            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out IOperation? _))
+            if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out IOperation? existing))
             {
                 if (checkParents)
                 {
@@ -128,7 +115,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (containingSymbol != null)
                     {
-                        TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, containingSymbol, requiresPreviewFeaturesSymbols, checkParents);
+                        if (TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, containingSymbol, requiresPreviewFeaturesSymbols, checkParents))
+                        {
+                            return true;
+                        }
                     }
                 }
                 if (symbol is ITypeSymbol typeSymbol)
@@ -136,13 +126,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ImmutableArray<INamedTypeSymbol> interfaces = typeSymbol.AllInterfaces;
                     foreach (INamedTypeSymbol? anInterface in interfaces)
                     {
-                        TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, anInterface, requiresPreviewFeaturesSymbols, checkParents);
+                        if (TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, anInterface, requiresPreviewFeaturesSymbols, checkParents))
+                        {
+                            return true;
+                        }
                     }
 
                     INamedTypeSymbol? baseType = typeSymbol.BaseType;
                     if (baseType != null)
                     {
-                        TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, baseType, requiresPreviewFeaturesSymbols, checkParents);
+                        if (TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, baseType, requiresPreviewFeaturesSymbols, checkParents))
+                        {
+                            return true;
+                        }
                     }
                 }
                 if (symbol.IsOverride)
@@ -150,33 +146,40 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ISymbol? overriddenMember = symbol.GetOverriddenMember();
                     if (overriddenMember != null)
                     {
-                        TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, overriddenMember, requiresPreviewFeaturesSymbols, checkParents);
+                        if (TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, overriddenMember, requiresPreviewFeaturesSymbols, checkParents))
+                        {
+                            return true;
+                        }
                     }
                 }
-                GetOrAddAttributes(symbol, operation, requiresPreviewFeaturesSymbols);
+                return GetOrAddAttributes(symbol, operation, requiresPreviewFeaturesSymbols);
             }
+
+            return existing != null;
         }
 
-        private void GetOrAddAttributes(ISymbol symbol, IOperation operation, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
+        private static bool GetOrAddAttributes(ISymbol symbol, IOperation operation, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols)
         {
             IOperation? value = null;
+            bool ret = false;
             ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
             foreach (AttributeData attribute in attributes)
             {
                 string attributeName = attribute.AttributeClass.Name;
                 if (attributeName == RequiresPreviewFeaturesAttribute)
                 {
+                    ret = true;
                     value = operation;
-                    thisAssemblyUsesPreviewFeatures = true;
                     break;
                 }
             }
             requiresPreviewFeaturesSymbols.GetOrAdd(symbol, value);
+            return ret;
         }
 
-        private void CheckOperationAttributes(IOperation operation, ISymbol symbol, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols, bool checkParents)
+        private bool OperationUsesPreviewFeatures(IOperation operation, ISymbol symbol, ConcurrentDictionary<ISymbol, IOperation?> requiresPreviewFeaturesSymbols, bool checkParents)
         {
-            TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, symbol, requiresPreviewFeaturesSymbols, checkParents);
+            return TryGetOrCachePreviewFeaturesAttributesOnSymbol(operation, symbol, requiresPreviewFeaturesSymbols, checkParents);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public async Task TestMethodInvocation_Simple()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -64,7 +64,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestMethodInvocation_DeclareDerivedMethod()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -102,7 +102,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestMethodInvocation_DerivedNotMarked()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -119,7 +119,7 @@ namespace Preview_Feature_Scratch
         static void Main(string[] args)
         {
             var derived = new Derived();
-            derived.BaseMarked();
+            [|derived.BaseMarked()|];
         }
     }
 
@@ -131,7 +131,7 @@ namespace Preview_Feature_Scratch
 
         public override void BaseMarked()
         {
-            [|[|base.BaseMarked()|]|];
+            [|base.BaseMarked()|];
         }
     }
 }";
@@ -142,7 +142,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestConstructor()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -171,7 +171,7 @@ namespace Preview_Feature_Scratch
         [InlineData("struct")]
         public async Task TestClassOrStruct(string classOrStruct)
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -193,7 +193,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestAbstractClass()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -205,7 +205,7 @@ namespace Preview_Feature_Scratch
         {
             Program prog = [|new Program()|];
             [|prog.Bar()|];
-            [|[|prog.FooBar()|]|];
+            [|prog.FooBar()|];
             [|prog.BarImplemented()|];
         }
 
@@ -241,7 +241,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestInterface()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -269,7 +269,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestInterfaceMethodInvocation()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -335,7 +335,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestField()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -363,7 +363,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestProperty()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -399,7 +399,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestDelegate()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -433,7 +433,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestEnumValue()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -464,7 +464,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestEnumValue_NoDiagnostic()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -496,7 +496,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestEnum()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +
@@ -528,7 +528,7 @@ namespace Preview_Feature_Scratch
         [Fact]
         public async Task TestEvent()
         {
-            string csInput = @" 
+            var csInput = @" 
 using System;
 namespace Preview_Feature_Scratch
 {" + setupPreviewAttribute +

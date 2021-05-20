@@ -421,7 +421,6 @@ End Class",
                 GetBasicResultAt(45, 26, BinderMaybeNotSetRule, "Function BinaryFormatter.Deserialize(serializationStream As Stream) As Object"));
         }
 
-
         [Fact]
         public async Task DocSample3_CSharp_Solution_NoDiagnostic()
         {
@@ -1388,6 +1387,8 @@ namespace Blah
         [InlineData(@"dotnet_code_quality.CA2301.excluded_symbol_names = DeserializeBookRecord
                       dotnet_code_quality.CA2302.excluded_symbol_names = DeserializeBookRecord")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = DeserializeBookRecord")]
+        [InlineData(@"dotnet_code_quality.CA2301.excluded_symbol_names = DeserializeBook*
+                      dotnet_code_quality.CA2302.excluded_symbol_names = DeserializeBook*")]
         public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
@@ -1429,7 +1430,11 @@ public class ExampleClass
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
 
@@ -1493,13 +1498,17 @@ namespace Blah
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyVB.Diagnostic(rule)
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
     }
 }

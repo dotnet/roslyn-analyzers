@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -28,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         protected abstract bool TryGetExpressionAndArguments(
             SyntaxNode invocationNode,
             [NotNullWhen(returnValue: true)] out SyntaxNode? expression,
-            [NotNullWhen(returnValue: true)] out List<SyntaxNode>? arguments);
+            out ImmutableArray<SyntaxNode> arguments);
 
         // Verifies if the specified argument was passed with an explicit name.
         protected abstract bool IsArgumentNamed(IArgumentOperation argumentOperation);
@@ -48,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             CancellationToken ct = context.CancellationToken;
             SyntaxNode root = await doc.GetSyntaxRootAsync(ct).ConfigureAwait(false);
 
-            if (!(root.FindNode(context.Span, getInnermostNodeForTie: true) is SyntaxNode node))
+            if (root.FindNode(context.Span, getInnermostNodeForTie: true) is not SyntaxNode node)
             {
                 return;
             }
@@ -63,8 +62,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             ImmutableDictionary<string, string>? properties = context.Diagnostics[0].Properties;
 
+            if (!properties.TryGetValue(ForwardCancellationTokenToInvocationsAnalyzer.ShouldFix, out string shouldFix) ||
+                string.IsNullOrEmpty(shouldFix) ||
+                shouldFix.Equals("0", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return;
+            }
+
             // The name that identifies the object that is to be passed
-            if (!properties.TryGetValue(ForwardCancellationTokenToInvocationsAnalyzer.ArgumentName, out string argumentName) || string.IsNullOrEmpty(argumentName))
+            if (!properties.TryGetValue(ForwardCancellationTokenToInvocationsAnalyzer.ArgumentName, out string argumentName) ||
+                string.IsNullOrEmpty(argumentName))
             {
                 return;
             }
@@ -77,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             string title = MicrosoftNetCoreAnalyzersResources.ForwardCancellationTokenToInvocationsTitle;
 
-            if (!TryGetExpressionAndArguments(invocation.Syntax, out SyntaxNode? expression, out List<SyntaxNode>? newArguments))
+            if (!TryGetExpressionAndArguments(invocation.Syntax, out SyntaxNode? expression, out ImmutableArray<SyntaxNode> newArguments))
             {
                 return;
             }
@@ -104,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             string invocationTokenArgumentName,
             string ancestorTokenParameterName,
             SyntaxNode expression,
-            List<SyntaxNode> newArguments)
+            ImmutableArray<SyntaxNode> newArguments)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(doc);
 
@@ -119,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 cancellationTokenArgument = generator.Argument(identifier);
             }
 
-            newArguments.Add(cancellationTokenArgument);
+            newArguments = newArguments.Add(cancellationTokenArgument);
 
             SyntaxNode newInstance;
             // The instance is null when calling a static method from another type
@@ -128,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 case null:
                     newInstance = expression;
                     break;
-                case IConditionalAccessInstanceOperation _:
+                case IConditionalAccessInstanceOperation:
                     newInstance = GetConditionalOperationInvocationExpression(invocation.Syntax);
                     break;
                 default:
@@ -149,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return generator.ReplaceNode(root, invocation.Syntax, newInvocationWithArguments);
         }
 
-        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192) 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)

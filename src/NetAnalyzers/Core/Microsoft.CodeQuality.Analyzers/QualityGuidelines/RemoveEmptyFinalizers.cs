@@ -28,12 +28,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartAction(context =>
             {
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute, out var conditionalAttributeType))
                 {
@@ -43,8 +43,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 context.RegisterOperationBlockAction(context =>
                 {
                     if (context.OperationBlocks.Length != 1 ||
-                        !(context.OperationBlocks[0] is IBlockOperation blockOperation) ||
-                        !(context.OwningSymbol is IMethodSymbol methodSymbol) ||
+                        context.OperationBlocks[0] is not IBlockOperation blockOperation ||
+                        context.OwningSymbol is not IMethodSymbol methodSymbol ||
                         !methodSymbol.IsDestructor())
                     {
                         return;

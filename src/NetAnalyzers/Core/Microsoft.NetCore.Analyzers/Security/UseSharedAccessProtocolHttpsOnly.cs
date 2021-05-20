@@ -38,8 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 RuleLevel.Disabled,
                 description: s_Description,
                 isPortedFxCopRule: false,
-                isDataflowRule: true,
-                isEnabledByDefaultInFxCopAnalyzers: false);
+                isDataflowRule: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -89,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule,
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol,
                             operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
@@ -135,13 +134,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (protocolsArgumentOperation != null)
                             {
-                                var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
-                                if (cfg != null)
+                                if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                                 {
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                                         operationAnalysisContext.Options,
                                                                         SupportedDiagnostics,
-                                                                        protocolsArgumentOperation.Syntax.SyntaxTree,
+                                                                        protocolsArgumentOperation,
                                                                         operationAnalysisContext.Compilation,
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                                         cancellationToken: operationAnalysisContext.CancellationToken,

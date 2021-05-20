@@ -43,15 +43,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MissingConstructorRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationSymbol);
+            context.RegisterCompilationStartAction(AnalyzeCompilationSymbol);
         }
 
         //abstract methods, which the language specific analyzers implements - these will return the required constructor method signatures for CSharp/Basic
@@ -85,7 +84,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         var parameters = ctor.GetParameters();
 
                         //case 1: Default constructor - no parameters
-                        if (parameters.Length == 0)
+                        if (parameters.IsEmpty)
                         {
                             defaultConstructorFound = true;
                         }

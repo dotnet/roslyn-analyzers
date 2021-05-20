@@ -219,7 +219,7 @@ End Class
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
             // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
+            // we might skip it only in C# since VB doesn't support __arglist
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
@@ -249,7 +249,7 @@ End Class
             // Dim s = Console.WriteLine(""{0} {1} {2}"", 1, 2, 3, 4)
             // since VB bind it to __arglist version where we skip analysis
             // due to a bug - https://github.com/dotnet/roslyn/issues/7346
-            // we might skip it only in C# since VB doesnt support __arglist
+            // we might skip it only in C# since VB doesn't support __arglist
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
@@ -375,10 +375,13 @@ class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfig == true)
             {
@@ -406,10 +409,13 @@ Class Test
     End Sub
 End Class"
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfig == true)
             {
@@ -452,10 +458,13 @@ class Test
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfigText.Length > 0)
             {
@@ -483,10 +492,13 @@ Class Test
     End Sub
 End Class"
 },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
-
 
             if (editorConfigText.Length > 0)
             {
@@ -501,11 +513,15 @@ End Class"
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -48,12 +49,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 (context) =>
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
@@ -91,6 +92,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            // make sure this property is NOT an init
+            if (setter.IsInitOnly())
+            {
+                return;
+            }
+
             // make sure return type is NOT array
             if (Inherits(property.Type, knownTypes.ArrayType))
             {
@@ -119,14 +126,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            if (knownTypes.DataMemberAttribute != null)
+            // Special case: the DataContractSerializer requires that a public setter exists.
+            if (property.HasAttribute(knownTypes.DataMemberAttribute))
             {
-                // Special case: the DataContractSerializer requires that a public setter exists.
-                bool hasDataMemberAttribute = property.GetAttributes().Any(a => a.AttributeClass.Equals(knownTypes.DataMemberAttribute));
-                if (hasDataMemberAttribute)
-                {
-                    return;
-                }
+                return;
             }
 
             context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));
@@ -164,21 +167,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             private static ImmutableHashSet<INamedTypeSymbol> GetIImmutableInterfaces(WellKnownTypeProvider wellKnownTypeProvider)
             {
                 var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
-                AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary));
-                AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableList));
-                AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableQueue));
-                AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet));
-                AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableStack));
+                builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary2));
+                builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableList1));
+                builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableQueue1));
+                builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet1));
+                builder.AddIfNotNull(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableStack1));
                 return builder.ToImmutable();
-
-                // Local functions.
-                void AddIfNotNull(INamedTypeSymbol? type)
-                {
-                    if (type != null)
-                    {
-                        builder.Add(type);
-                    }
-                }
             }
         }
     }

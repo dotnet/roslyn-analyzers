@@ -46,12 +46,12 @@ namespace Microsoft.NetFramework.Analyzers
                                                         {"System.Collections.Stack", MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack},
                                                     }.ToImmutableDictionary();
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(AnalyzeCompilationStart);
+            context.RegisterCompilationStartAction(AnalyzeCompilationStart);
         }
 
         private static void AnalyzeCompilationStart(CompilationStartAnalysisContext context)
@@ -61,7 +61,7 @@ namespace Microsoft.NetFramework.Analyzers
                                 .WhereNotNull()
                                 .ToImmutableHashSet();
 
-            if (badBaseTypes.Count > 0)
+            if (!badBaseTypes.IsEmpty)
             {
                 context.RegisterSymbolAction((saContext) =>
                     {
@@ -69,12 +69,12 @@ namespace Microsoft.NetFramework.Analyzers
 
                         if (namedTypeSymbol.BaseType != null &&
                             badBaseTypes.Contains(namedTypeSymbol.BaseType) &&
-                            namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, Rule, saContext.Compilation, saContext.CancellationToken))
+                            saContext.Options.MatchesConfiguredVisibility(Rule, namedTypeSymbol, saContext.Compilation, saContext.CancellationToken))
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));
                             string message = string.Format(CultureInfo.CurrentCulture, s_badBaseTypesToMessage[baseTypeName], namedTypeSymbol.ToDisplayString(), baseTypeName);
-                            Diagnostic diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Locations.Skip(1), message);
+                            Diagnostic diagnostic = namedTypeSymbol.CreateDiagnostic(Rule, message);
                             saContext.ReportDiagnostic(diagnostic);
                         }
                     }

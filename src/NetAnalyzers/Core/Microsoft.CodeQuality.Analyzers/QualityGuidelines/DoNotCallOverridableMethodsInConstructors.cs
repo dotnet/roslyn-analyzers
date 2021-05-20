@@ -36,12 +36,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol? webUiControlType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
                 INamedTypeSymbol? componentModelComponentType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
                 Equals(method.ContainingType, containingType) &&
-                !operation.IsInsideAnonymousFunction())
+                !operation.IsWithinLambdaOrLocalFunction(out _))
             {
                 context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule));
             }
@@ -75,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             // This diagnostic is only relevant in constructors.
             // TODO: should this apply to instance field initializers for VB?
-            if (!(symbol is IMethodSymbol m) || m.MethodKind != MethodKind.Constructor)
+            if (symbol is not IMethodSymbol m || m.MethodKind != MethodKind.Constructor)
             {
                 return true;
             }

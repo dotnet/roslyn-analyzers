@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             }
 
             var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            if (!(semanticModel.GetOperation(invocationNode) is IInvocationOperation invocationOperation) ||
+            if (semanticModel.GetOperation(invocationNode, context.CancellationToken) is not IInvocationOperation invocationOperation ||
                 !DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.ToImmutableMethodNames.Contains(invocationOperation.TargetMethod.Name))
             {
                 return;

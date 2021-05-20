@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             s_localizableTitle,
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_General), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             s_localizableTitle,
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_Unconsumed), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             s_localizableTitle,
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_DoubleConsumption), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -55,7 +55,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             s_localizableTitle,
             new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseValueTasksCorrectlyMessage_AccessingIncompleteResult), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources)),
             DiagnosticCategory.Reliability,
-            RuleLevel.IdeHidden_BulkConfigurable,
+            RuleLevel.IdeSuggestion,
             s_localizableDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
@@ -72,7 +72,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 
                 // Get the target ValueTask / ValueTask<T> types. If they don't exist, nothing more to do.
                 if (!typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask, out var valueTaskType) ||
-                    !typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericValueTask, out var valueTaskOfTType))
+                    !typeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out var valueTaskOfTType))
                 {
                     return;
                 }
@@ -169,6 +169,16 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                                 // Warn! This is a statement or discard. The result should have been used.
                                 operationContext.ReportDiagnostic(invocation.CreateDiagnostic(UnconsumedRule));
                                 return;
+
+                            case OperationKind.Conversion:
+                                var conversion = (IConversionOperation)operation.Parent;
+                                if (conversion.Conversion.IsIdentity)
+                                {
+                                    // Ignore identity conversions, which can pop in from time to time.
+                                    operation = operation.Parent;
+                                    continue;
+                                }
+                                goto default;
 
                             // At this point, we're "in the weeds", but there are still some rare-but-used valid patterns to check for.
 
@@ -447,7 +457,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks
                         stmt.Operation is IInvocationOperation assert &&
                         assert.TargetMethod?.Name == nameof(Debug.Assert) &&
                         assert.TargetMethod.ContainingType.Equals(debugType) &&
-                        assert.Arguments.Length >= 1 &&
+                        !assert.Arguments.IsEmpty &&
                         OperationImpliesCompletion(valueTaskSymbol, assert.Arguments[0].Value) == true)
                     {
                         return i;

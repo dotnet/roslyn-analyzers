@@ -27,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     ///     - The invocation method signature receives a ct and one is already being explicitly passed, or...
     ///     - The invocation method does not have an overload with the exact same arguments that also receives a ct, or...
     ///     - The invocation method only has overloads that receive more than one ct.
+    ///     - The invocation method return types are not implicitly convertable to one another.
     /// </summary>
     public abstract class ForwardCancellationTokenToInvocationsAnalyzer : DiagnosticAnalyzer
     {
@@ -55,6 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isDataflowRule: false
         );
 
+        internal const string ShouldFix = "ShouldFix";
         internal const string ArgumentName = "ArgumentName";
         internal const string ParameterName = "ParameterName";
 
@@ -75,19 +77,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
+            // We don't care if these symbols are not defined in our compilation. They are used to special case the Task<T> <-> ValueTask<T> logic
+            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask1, out INamedTypeSymbol? genericTask);
+            context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksValueTask1, out INamedTypeSymbol? genericValueTask);
+
             context.RegisterOperationAction(context =>
             {
                 IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
-                if (!(context.ContainingSymbol is IMethodSymbol containingMethod))
+                if (context.ContainingSymbol is not IMethodSymbol containingMethod)
                 {
                     return;
                 }
 
                 if (!ShouldDiagnose(
+                    context.Compilation,
                     invocation,
                     containingMethod,
                     cancellationTokenType,
+                    genericTask,
+                    genericValueTask,
+                    out int shouldFix,
                     out string? cancellationTokenArgumentName,
                     out string? invocationTokenParameterName))
                 {
@@ -98,6 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 SyntaxNode? nodeToDiagnose = GetInvocationMethodNameNode(context.Operation.Syntax) ?? context.Operation.Syntax;
 
                 ImmutableDictionary<string, string?>.Builder properties = ImmutableDictionary.CreateBuilder<string, string?>(StringComparer.Ordinal);
+                properties.Add(ShouldFix, $"{shouldFix}");
                 properties.Add(ArgumentName, cancellationTokenArgumentName); // The new argument to pass to the invocation
                 properties.Add(ParameterName, invocationTokenParameterName); // If the passed argument should be named, then this will be non-null
 
@@ -112,12 +123,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Determines if an invocation should trigger a diagnostic for this rule or not.
         private bool ShouldDiagnose(
+            Compilation compilation,
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
-            [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName,
-            out string? invocationTokenParameterName)
+            INamedTypeSymbol? genericTask,
+            INamedTypeSymbol? genericValueTask,
+            out int shouldFix, [NotNullWhen(returnValue: true)] out string? ancestorTokenParameterName, out string? invocationTokenParameterName)
         {
+            shouldFix = 1;
             ancestorTokenParameterName = null;
             invocationTokenParameterName = null;
 
@@ -140,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
             // or an overload that takes a ct at the end
-            else if (MethodHasCancellationTokenOverload(method, cancellationTokenType, out overload))
+            else if (MethodHasCancellationTokenOverload(compilation, method, cancellationTokenType, genericTask, genericValueTask, out overload))
             {
                 if (ArgumentsImplicitOrNamed(cancellationTokenType, invocation.Arguments))
                 {
@@ -153,7 +167,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Check if there is an ancestor method that has a ct that we can pass to the invocation
-            if (!TryGetClosestAncestorThatTakesAToken(invocation, containingSymbol, cancellationTokenType, out IMethodSymbol? ancestor, out ancestorTokenParameterName))
+            if (!TryGetClosestAncestorThatTakesAToken(
+                invocation, containingSymbol, cancellationTokenType,
+                out shouldFix, out IMethodSymbol? ancestor, out ancestorTokenParameterName))
             {
                 return false;
             }
@@ -175,9 +191,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             IInvocationOperation invocation,
             IMethodSymbol containingSymbol,
             INamedTypeSymbol cancellationTokenType,
+            out int shouldFix,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? ancestor,
             [NotNullWhen(returnValue: true)] out string? cancellationTokenParameterName)
         {
+            shouldFix = 1;
             IOperation currentOperation = invocation.Parent;
             while (currentOperation != null)
             {
@@ -193,9 +211,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // When the current ancestor does not contain a ct, will continue with the next ancestor
-                if (ancestor != null && TryGetTokenParamName(ancestor, cancellationTokenType, out cancellationTokenParameterName))
+                if (ancestor != null)
                 {
-                    return true;
+                    if (TryGetTokenParamName(ancestor, cancellationTokenType, out cancellationTokenParameterName))
+                    {
+                        return true;
+                    }
+                    // If no token param was found in the previous check, return false if the current operation is an anonymous function,
+                    // we don't want to keep checking the superior ancestors because the ct may be unrelated
+                    if (currentOperation.Kind == OperationKind.AnonymousFunction)
+                    {
+                        return false;
+                    }
+
+                    // If the current operation is a local static function, and is not passing a ct, but the parent is, then the
+                    // ct cannot be passed to the inner invocations of the static local method, but we want to continue trying
+                    // to find the ancestor method passing a ct so that we still trigger a diagnostic, we just won't offer a fix
+                    if (currentOperation.Kind == OperationKind.LocalFunction && ancestor.IsStatic)
+                    {
+                        shouldFix = 0;
+                    }
                 }
 
                 currentOperation = currentOperation.Parent;
@@ -295,20 +330,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         // Check if there's a method overload with the same parameters as this one, in the same order, plus a ct at the end.
         private static bool MethodHasCancellationTokenOverload(
+            Compilation compilation,
             IMethodSymbol method,
             ITypeSymbol cancellationTokenType,
+            INamedTypeSymbol? genericTask,
+            INamedTypeSymbol? genericValueTask,
             [NotNullWhen(returnValue: true)] out IMethodSymbol? overload)
         {
             overload = method.ContainingType
                                 .GetMembers(method.Name)
                                 .OfType<IMethodSymbol>()
                                 .FirstOrDefault(methodToCompare =>
-                HasSameParametersPlusCancellationToken(cancellationTokenType, method, methodToCompare));
+                HasSameParametersPlusCancellationToken(compilation, cancellationTokenType, genericTask, genericValueTask, method, methodToCompare));
 
             return overload != null;
 
             // Checks if the parameters of the two passed methods only differ in a ct.
-            static bool HasSameParametersPlusCancellationToken(ITypeSymbol cancellationTokenType, IMethodSymbol originalMethod, IMethodSymbol methodToCompare)
+            static bool HasSameParametersPlusCancellationToken(
+                Compilation compilation,
+                ITypeSymbol cancellationTokenType,
+                INamedTypeSymbol? genericTask,
+                INamedTypeSymbol? genericValueTask,
+                IMethodSymbol originalMethod,
+                IMethodSymbol methodToCompare)
             {
                 // Avoid comparing to itself, or when there are no parameters, or when the last parameter is not a ct
                 if (originalMethod.Equals(methodToCompare) ||
@@ -320,6 +364,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 IMethodSymbol originalMethodWithAllParameters = (originalMethod.ReducedFrom ?? originalMethod).OriginalDefinition;
                 IMethodSymbol methodToCompareWithAllParameters = (methodToCompare.ReducedFrom ?? methodToCompare).OriginalDefinition;
+
+                // Ensure parameters only differ by one - the ct
+                if (originalMethodWithAllParameters.Parameters.Length != methodToCompareWithAllParameters.Parameters.Length - 1)
+                {
+                    return false;
+                }
 
                 // Now compare the types of all parameters before the ct
                 // The largest i is the number of parameters in the method that has fewer parameters
@@ -333,7 +383,61 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
 
+                // Overload is  valid if its return type is implicitly convertable
+                var toCompareReturnType = methodToCompareWithAllParameters.ReturnType;
+                var originalReturnType = originalMethodWithAllParameters.ReturnType;
+                if (!toCompareReturnType.IsAssignableTo(originalReturnType, compilation))
+                {
+                    // Generic Task-like types are special since awaiting them essentially erases the task-like type.
+                    // If both types are Task-like we will warn if their generic arguments are convertable to each other.
+                    if (IsTaskLikeType(originalReturnType) && IsTaskLikeType(toCompareReturnType) &&
+                        originalReturnType is INamedTypeSymbol originalNamedType &&
+                        toCompareReturnType is INamedTypeSymbol toCompareNamedType &&
+                        TypeArgumentsAreConvertable(originalNamedType, toCompareNamedType))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
                 return true;
+
+                bool IsTaskLikeType(ITypeSymbol typeSymbol)
+                {
+                    if (genericTask is not null &&
+                        typeSymbol.OriginalDefinition.Equals(genericTask))
+                    {
+                        return true;
+                    }
+
+                    if (genericValueTask is not null &&
+                        typeSymbol.OriginalDefinition.Equals(genericValueTask))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                bool TypeArgumentsAreConvertable(INamedTypeSymbol left, INamedTypeSymbol right)
+                {
+                    if (left.Arity != 1 ||
+                        right.Arity != 1 ||
+                        left.Arity != right.Arity)
+                    {
+                        return false;
+                    }
+
+                    var leftTypeArgument = left.TypeArguments[0];
+                    var rightTypeArgument = right.TypeArguments[0];
+                    if (!leftTypeArgument.IsAssignableTo(rightTypeArgument, compilation))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
             }
         }
     }

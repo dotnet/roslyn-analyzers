@@ -27,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: false,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription));
         internal static DiagnosticDescriptor MissHttpVerbAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5395",
@@ -36,10 +37,11 @@ namespace Microsoft.NetCore.Analyzers.Security
             RuleLevel.Disabled,
             isPortedFxCopRule: false,
             isDataflowRule: false,
+            isReportedAtCompilationEnd: true,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeDescription));
 
-        private static readonly Regex s_AntiForgeryAttributeRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
-        private static readonly Regex s_AntiForgeryRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*$", RegexOptions.Compiled);
+        private static readonly Regex s_AntiForgeryAttributeRegex = new("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
+        private static readonly Regex s_AntiForgeryRegex = new("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*$", RegexOptions.Compiled);
         private static readonly ImmutableHashSet<string> HttpVerbAttributesMarkingOnActionModifyingMethods =
             ImmutableHashSet.Create(
                 StringComparer.Ordinal,
@@ -101,7 +103,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // Verify that validate anti forgery token attributes are used somewhere within this project,
                 // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
                 var usingValidateAntiForgeryAttribute = false;
-                ConcurrentDictionary<IMethodSymbol, bool> onAuthorizationAsyncMethodSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
+                ConcurrentDictionary<IMethodSymbol, bool> onAuthorizationMethodSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
                 var actionMethodSymbols = new ConcurrentDictionary<(IMethodSymbol, string), bool>();
                 var actionMethodNeedAddingHttpVerbAttributeSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
 
@@ -188,21 +190,51 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 return;
                             }
-                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol) ||
-                                potentialAntiForgeryFilter.AllInterfaces.Contains(iAuthorizationFilterTypeSymbol))
+                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol))
                             {
-                                onAuthorizationAsyncMethodSymbols.TryAdd(
+                                // ASP.NET Core MVC seems to prioritize asynchronous over synchronous methods.
+                                // https://github.com/dotnet/aspnetcore/blob/c925f99cddac0df90ed0bc4a07ecda6b054a0b02/src/Mvc/Mvc.Core/src/Infrastructure/ResourceInvoker.cs#L311
+                                IMethodSymbol? onAuthorizationAsyncMethodSymbol =
                                     potentialAntiForgeryFilter
-                                    .GetMembers()
-                                    .OfType<IMethodSymbol>()
-                                    .FirstOrDefault(
-                                        s => (s.Name == "OnAuthorizationAsync" &&
-                                            s.ReturnType.Equals(taskTypeSymbol) ||
-                                            s.Name == "OnAuthorization" &&
-                                            s.ReturnsVoid) &&
-                                            s.Parameters.Length == 1 &&
-                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)),
-                                    placeholder);
+                                        .GetBaseTypesAndThis()
+                                        .SelectMany(s => s.GetMembers())
+                                        .OfType<IMethodSymbol>()
+                                        .FirstOrDefault(
+                                            s =>
+                                                s.Name == "OnAuthorizationAsync" &&
+                                                SymbolEqualityComparer.Default.Equals(s.ReturnType, taskTypeSymbol) &&
+                                                s.Parameters.Length == 1 &&
+                                                SymbolEqualityComparer.Default.Equals(
+                                                    s.Parameters[0].Type,
+                                                    authorizationFilterContextTypeSymbol));
+                                if (onAuthorizationAsyncMethodSymbol != null)
+                                {
+                                    onAuthorizationMethodSymbols.TryAdd(
+                                        onAuthorizationAsyncMethodSymbol,
+                                        placeholder);
+                                }
+                            }
+                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAuthorizationFilterTypeSymbol))
+                            {
+                                IMethodSymbol? onAuthorizationMethodSymbol =
+                                    potentialAntiForgeryFilter
+                                        .GetBaseTypesAndThis()
+                                        .SelectMany(s => s.GetMembers())
+                                        .OfType<IMethodSymbol>()
+                                        .FirstOrDefault(
+                                            s =>
+                                                s.Name == "OnAuthorization" &&
+                                                s.ReturnsVoid &&
+                                                s.Parameters.Length == 1 &&
+                                                SymbolEqualityComparer.Default.Equals(
+                                                    s.Parameters[0].Type,
+                                                    authorizationFilterContextTypeSymbol));
+                                if (onAuthorizationMethodSymbol != null)
+                                {
+                                    onAuthorizationMethodSymbols.TryAdd(
+                                        onAuthorizationMethodSymbol,
+                                        placeholder);
+                                }
                             }
                         }
                     }
@@ -295,13 +327,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                         var visited = new HashSet<ISymbol>();
                         var results = new Dictionary<ISymbol, HashSet<ISymbol>>();
 
-                        if (onAuthorizationAsyncMethodSymbols.Any())
+                        if (onAuthorizationMethodSymbols.Any())
                         {
                             foreach (var calleeMethod in inverseGraph.Keys)
                             {
                                 if (calleeMethod.Name == "ValidateRequestAsync" &&
                                     (calleeMethod.ContainingType.AllInterfaces.Contains(iAntiforgeryTypeSymbol) ||
-                                    calleeMethod.ContainingType.Equals(iAntiforgeryTypeSymbol)))
+                                     SymbolEqualityComparer.Default.Equals(calleeMethod.ContainingType, iAntiforgeryTypeSymbol)))
                                 {
                                     FindAllTheSpecifiedCalleeMethods(calleeMethod, visited, results);
 
@@ -354,7 +386,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         foreach (var child in callingMethods.Keys)
                         {
                             if (child is IMethodSymbol childMethodSymbol &&
-                                onAuthorizationAsyncMethodSymbols.ContainsKey(childMethodSymbol))
+                                onAuthorizationMethodSymbols.ContainsKey(childMethodSymbol))
                             {
                                 results[methodSymbol].Add(child);
                             }

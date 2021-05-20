@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/InternalUtilities/JsonWriter.cs
+// https://github.com/dotnet/roslyn/blob/main/src/Compilers/Core/Portable/InternalUtilities/JsonWriter.cs
 
 using System;
 using System.Diagnostics;
@@ -122,7 +122,7 @@ namespace Roslyn.Utilities
                 return;
             }
 
-            Debug.Assert(_pending == Pending.NewLineAndIndent || _pending == Pending.CommaNewLineAndIndent);
+            Debug.Assert(_pending is Pending.NewLineAndIndent or Pending.CommaNewLineAndIndent);
             if (_pending == Pending.CommaNewLineAndIndent)
             {
                 _output.Write(',');
@@ -161,7 +161,7 @@ namespace Roslyn.Utilities
         // String escaping implementation forked from System.Runtime.Serialization.Json to 
         // avoid a large dependency graph for this small amount of code:
         //
-        // https://github.com/dotnet/corefx/blob/master/src/System.Private.DataContractSerialization/src/System/Runtime/Serialization/Json/JavaScriptString.cs
+        // https://github.com/dotnet/corefx/blob/main/src/System.Private.DataContractSerialization/src/System/Runtime/Serialization/Json/JavaScriptString.cs
         //
         private static string EscapeString(string value)
         {
@@ -242,10 +242,10 @@ namespace Roslyn.Utilities
             // We only care about NEL, LS, and PS, since the other newline characters are all 
             // control characters so are already encoded. 
 
-            return c < ' ' ||
-                c >= (char)0xfffe || // max char 
-                (c >= (char)0xd800 && c <= (char)0xdfff) || // between high and low surrogate 
-                c == '\u0085' || c == '\u2028' || c == '\u2029'; // Unicode new line characters 
+            return c is < ' ' or
+                >= ((char)0xfffe) or // max char 
+                >= ((char)0xd800) and <= ((char)0xdfff) or // between high and low surrogate 
+                '\u0085' or '\u2028' or '\u2029'; // Unicode new line characters 
         }
     }
 }

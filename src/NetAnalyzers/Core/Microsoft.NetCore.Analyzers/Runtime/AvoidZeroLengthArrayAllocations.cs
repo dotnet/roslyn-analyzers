@@ -22,7 +22,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         /// <summary>The name of the Empty method on System.Array.</summary>
         internal const string ArrayEmptyMethodName = "Empty";
 
-        private static readonly SymbolDisplayFormat ReportFormat = new SymbolDisplayFormat(
+        private static readonly SymbolDisplayFormat ReportFormat = new(
             memberOptions: SymbolDisplayMemberOptions.IncludeContainingType | SymbolDisplayMemberOptions.IncludeParameters,
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
@@ -57,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
-    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.Length == 0)
+    methodSymbol.IsStatic && methodSymbol.Arity == 1 && methodSymbol.Parameters.IsEmpty)
                     {
                         ctx.RegisterOperationAction(AnalyzeOperation, OperationKind.ArrayCreation);
                     }
@@ -77,6 +77,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // We can't replace array allocations in attributes, as they're persisted to metadata
             // TODO: Once we have operation walkers, we can replace this syntactic check with an operation-based check.
             if (arrayCreationExpression.Syntax.Ancestors().Any(isAttributeSytnax))
+            {
+                return;
+            }
+
+            var linqExpressionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqExpressionsExpression1);
+            if (arrayCreationExpression.IsWithinExpressionTree(linqExpressionType))
             {
                 return;
             }
@@ -157,7 +163,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var parameters = targetSymbol.GetParameters();
-            if (parameters.Length == 0 || !parameters[^1].IsParams)
+            if (parameters.IsEmpty || !parameters[^1].IsParams)
             {
                 return false;
             }

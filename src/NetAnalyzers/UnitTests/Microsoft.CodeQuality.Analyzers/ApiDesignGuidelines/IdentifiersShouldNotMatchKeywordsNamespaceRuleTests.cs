@@ -148,7 +148,10 @@ namespace @namespace
     public class D {}
 }",
                 // Diagnostic for only one of the two occurrences.
-                GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"));
+                VerifyCS.Diagnostic(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule)
+                    .WithSpan(2, 11, 2, 21)
+                    .WithSpan(7, 11, 7, 21)
+                    .WithArguments("namespace", "namespace"));
         }
 
         [Fact]
@@ -165,7 +168,10 @@ Namespace [Namespace]
     End Class
 End Namespace
 ",
-                GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
+                VerifyVB.Diagnostic(IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule)
+                    .WithSpan(2, 11, 2, 22)
+                    .WithSpan(7, 11, 7, 22)
+                    .WithArguments("Namespace", "Namespace"));
         }
 
         [Theory]
@@ -188,7 +194,11 @@ namespace @namespace
 }
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 },
             }.RunAsync();
 
@@ -204,7 +214,11 @@ Namespace [Namespace]
     End Class
 End Namespace",
             },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 },
             }.RunAsync();
         }
@@ -229,7 +243,11 @@ namespace @namespace
 }
 ",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                     ExpectedDiagnostics = { GetCSharpResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "namespace", "namespace"), },
                 },
             }.RunAsync();
@@ -246,20 +264,28 @@ Namespace [Namespace]
     End Class
 End Namespace",
             },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                     ExpectedDiagnostics = { GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"), },
                 },
             }.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

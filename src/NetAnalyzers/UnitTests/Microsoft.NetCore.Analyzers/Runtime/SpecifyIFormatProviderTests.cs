@@ -403,7 +403,6 @@ GetIFormatProviderUICultureRuleCSharpResultAt(13, 9, "UICultureAsIFormatProvider
                                                      "IFormatProviderOverloads.IFormatProviderReturningNonString(string, IFormatProvider, IFormatProvider)"));
         }
 
-
         [Fact]
         public async Task CA1305_AcceptNullForIFormatProvider_CSharp()
         {
@@ -946,44 +945,166 @@ End Class
 ");
         }
 
+        [Fact]
+        public async Task CA1305_NullableInvariantTypes_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+public class SomeClass
+{
+    private char? _char;
+    private bool? _bool;
+    private Guid? _guid;
+
+    public string SomeMethod()
+    {
+        return _char.ToString() + _bool.ToString() + _guid.ToString();
+    }
+}");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Public Class SomeClass
+    Private _char As Char?
+    Private _bool As Boolean?
+    Private _guid As Guid?
+
+    Public Function SomeMethod() As String
+        Return _char.ToString() & _bool.ToString() & _guid.ToString()
+    End Function
+End Class");
+        }
+
+        [Theory, WorkItem(3507, "https://github.com/dotnet/roslyn-analyzers/issues/3507")]
+        [InlineData("DateTime")]
+        [InlineData("DateTimeOffset")]
+        public async Task CA1305_DateTimeOrDateTimeOffsetInvariantSpecifiers_NoDiagnostic(string type)
+        {
+            await VerifyCS.VerifyAnalyzerAsync($@"
+using System;
+public class C
+{{
+    public string M({type} d)
+    {{
+        return d.ToString(""o"") +
+            d.ToString(""O"") +
+            d.ToString(""r"") +
+            d.ToString(""R"") +
+            d.ToString(""s"") +
+            d.ToString(""u"");
+    }}
+}}");
+        }
+
+        [Theory, WorkItem(3507, "https://github.com/dotnet/roslyn-analyzers/issues/3507")]
+        [InlineData("DateTime")]
+        [InlineData("DateTimeOffset")]
+        public async Task CA1305_DateTimeOrDateTimeOffsetVariantSpecifiers_Diagnostic(string type)
+        {
+            await VerifyCS.VerifyAnalyzerAsync($@"
+using System;
+public class C
+{{
+    public string M({type} d)
+    {{
+        return {{|#0:d.ToString(""d"")|}} +
+            {{|#1:d.ToString(""t"")|}} +
+            {{|#2:d.ToString(""hh"")|}};
+    }}
+}}",
+                GetIFormatProviderAlternateStringRuleCSharpResultAt(0, $"{type}.ToString(string)", $"C.M({type})", $"{type}.ToString(string, IFormatProvider)"),
+                GetIFormatProviderAlternateStringRuleCSharpResultAt(1, $"{type}.ToString(string)", $"C.M({type})", $"{type}.ToString(string, IFormatProvider)"),
+                GetIFormatProviderAlternateStringRuleCSharpResultAt(2, $"{type}.ToString(string)", $"C.M({type})", $"{type}.ToString(string, IFormatProvider)"));
+        }
+
+        [Fact, WorkItem(3507, "https://github.com/dotnet/roslyn-analyzers/issues/3507")]
+        public async Task CA1305_TimeSpanInvariantSpecifiers_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C
+{
+    public string M(System.TimeSpan t)
+    {
+        return t.ToString(""c"");
+    }
+}");
+        }
+
+        [Fact, WorkItem(3507, "https://github.com/dotnet/roslyn-analyzers/issues/3507")]
+        public async Task CA1305_TimeSpanVariantSpecifiers_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public class C
+{
+    public string M(System.TimeSpan t)
+    {
+        return {|#0:t.ToString(""g"")|} +
+            {|#1:t.ToString(""hh:mm:ss"")|};
+    }
+}",
+                GetIFormatProviderAlternateStringRuleCSharpResultAt(0, "TimeSpan.ToString(string)", "C.M(TimeSpan)", "TimeSpan.ToString(string, IFormatProvider)"),
+                GetIFormatProviderAlternateStringRuleCSharpResultAt(1, "TimeSpan.ToString(string)", "C.M(TimeSpan)", "TimeSpan.ToString(string, IFormatProvider)"));
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
+                .WithArguments(arg1, arg2, arg3);
+
+        private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int markupKey, string arg1, string arg2, string arg3) =>
+            VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
+                .WithLocation(markupKey)
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyCS.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderAlternateRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureStringRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureStringRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
 
         private DiagnosticResult GetIFormatProviderUICultureRuleBasicResultAt(int line, int column, string arg1, string arg2, string arg3) =>
+#pragma warning disable RS0030 // Do not used banned APIs
             VerifyVB.Diagnostic(SpecifyIFormatProviderAnalyzer.UICultureRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arg1, arg2, arg3);
     }
 }

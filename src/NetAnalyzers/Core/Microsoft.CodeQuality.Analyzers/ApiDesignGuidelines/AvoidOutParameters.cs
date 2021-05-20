@@ -28,16 +28,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false,
-                                                                             isEnabledByDefaultInFxCopAnalyzers: false);
+                                                                             isEnabledByDefaultInAggressiveMode: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(csac =>
+            context.RegisterCompilationStartAction(csac =>
             {
                 var outAttributeType = csac.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOutAttribute);
                 var analyzer = new MethodAnalyzer(outAttributeType);
@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
 
-                if (!methodSymbol.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.Compilation, analysisContext.CancellationToken))
+                if (!analysisContext.Options.MatchesConfiguredVisibility(Rule, methodSymbol, analysisContext.Compilation, analysisContext.CancellationToken))
                 {
                     return;
                 }
@@ -82,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             private bool IsTryPatternMethod(IMethodSymbol methodSymbol, int numberOfOutParams) =>
                 methodSymbol.Name.StartsWith("Try", StringComparison.Ordinal) &&
                 methodSymbol.ReturnType.SpecialType == SpecialType.System_Boolean &&
-                methodSymbol.Parameters.Length >= 1 &&
+                !methodSymbol.Parameters.IsEmpty &&
                 IsOutParameter(methodSymbol.Parameters[^1]) &&
                 numberOfOutParams == 1;
 
@@ -90,7 +90,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (!methodSymbol.Name.Equals("Deconstruct", StringComparison.Ordinal) ||
                     !methodSymbol.ReturnsVoid ||
-                    methodSymbol.Parameters.Length == 0)
+                    methodSymbol.Parameters.IsEmpty)
                 {
                     return false;
                 }

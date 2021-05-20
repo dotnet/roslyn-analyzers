@@ -36,12 +36,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(compilationContext =>
             {
                 var formatInfo = new StringFormatInfo(compilationContext.Compilation);
 
@@ -87,14 +87,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // ensure argument is an array
                     IArgumentOperation paramsArgument = invocation.Arguments[info.FormatStringIndex + 1];
-                    if (paramsArgument.ArgumentKind != ArgumentKind.ParamArray && paramsArgument.ArgumentKind != ArgumentKind.Explicit)
+                    if (paramsArgument.ArgumentKind is not ArgumentKind.ParamArray and not ArgumentKind.Explicit)
                     {
                         // wrong format
                         return;
                     }
 
-                    if (!(paramsArgument.Value is IArrayCreationOperation arrayCreation) ||
-                        !(arrayCreation.GetElementType() is ITypeSymbol elementType) ||
+                    if (paramsArgument.Value is not IArrayCreationOperation arrayCreation ||
+                        arrayCreation.GetElementType() is not ITypeSymbol elementType ||
                         !object.Equals(elementType, formatInfo.Object) ||
                         arrayCreation.DimensionSizes.Length != 1)
                     {
@@ -234,7 +234,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         ch = format[pos];
                     }
 
-                    if (ch < '0' || ch > '9')
+                    if (ch is < '0' or > '9')
                     {
                         // wrong format after "-"
                         return -1;
@@ -261,7 +261,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     pos++;
                 }
 
-                // searching for embeded format string
+                // searching for embedded format string
                 if (ch == ':')
                 {
                     pos++;

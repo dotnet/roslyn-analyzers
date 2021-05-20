@@ -35,12 +35,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
                     Compilation compilation = compilationStartAnalysisContext.Compilation;
@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             }
 
                             var fieldReference = (IFieldReferenceOperation)target;
-                            if (!(fieldReference.Member is IFieldSymbol field) || field.Kind != SymbolKind.Field || field.IsStatic)
+                            if (fieldReference.Member is not IFieldSymbol field || field.Kind != SymbolKind.Field || field.IsStatic)
                             {
                                 return;
                             }

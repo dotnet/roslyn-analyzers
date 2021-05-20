@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <returns>FixAllProvider.</returns>
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
             return WellKnownFixAllProviders.BatchFixer;
         }
 
@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
 
         /// <summary>
-        /// Tries the get a fixer the specified <paramref name="node" />.
+        /// Tries to get a fixer for the specified <paramref name="node" />.
         /// </summary>
         /// <param name="node">The node to get a fixer for.</param>
         /// <param name="operation">The operation to get the fixer from.</param>

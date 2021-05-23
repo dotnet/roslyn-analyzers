@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -22,6 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var computeHashNode = root.FindNode(context.Span, getInnermostNodeForTie: true);
             var diagnostics = context.Diagnostics[0];
             var bufferArgNode = root.FindNode(diagnostics.AdditionalLocations[0].SourceSpan);
+
             if (computeHashNode is null || bufferArgNode is null)
             {
                 return;
@@ -33,49 +35,94 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 case 1:
                     {
                         //chained method SHA256.Create().ComputeHash(buffer)
-                        var codeActionChain = GetCodeAction(context, hashTypeName, bufferArgNode, (editor, hashDataInvoked) =>
-                        {
-                            editor.ReplaceNode(computeHashNode, hashDataInvoked);
-                        });
+                        var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
+                            hashTypeName,
+                            bufferArgNode,
+                            computeHashNode);
                         context.RegisterCodeFix(codeActionChain, diagnostics);
                         return;
                     }
                 case 2:
                     {
                         var nodeToRemove = root.FindNode(diagnostics.AdditionalLocations[1].SourceSpan);
-                        if (nodeToRemove is null || !TryGetCodeFixer(computeHashNode, bufferArgNode, nodeToRemove, out ApplyCodeFixAction? codeFixer))
+                        if (nodeToRemove is null)
                         {
                             return;
                         }
 
-                        context.RegisterCodeFix(GetCodeAction(context, hashTypeName, bufferArgNode, codeFixer), diagnostics);
+                        if (!TryGetCodeAction(context.Document, hashTypeName, bufferArgNode, computeHashNode, nodeToRemove, out HashDataCodeAction? codeAction))
+                        {
+                            return;
+                        }
+
+                        context.RegisterCodeFix(codeAction, diagnostics);
                         return;
                     }
             }
         }
 
-        private static CodeAction GetCodeAction(CodeFixContext context, string hashTypeName, SyntaxNode bufferArgNode, ApplyCodeFixAction codeFixer)
+        protected abstract bool TryGetCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode, SyntaxNode nodeToRemove,
+            [NotNullWhen(true)] out HashDataCodeAction? codeAction);
+
+        protected abstract class HashDataCodeAction : CodeAction
         {
-            return CodeAction.Create(
-                   title: MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle,
-                   createChangedDocument: async cancellationToken =>
-                   {
-                       DocumentEditor editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken).ConfigureAwait(false);
-                       SyntaxGenerator generator = editor.Generator;
+            protected HashDataCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode)
+            {
+                Document = document;
+                HashTypeName = hashTypeName;
+                BufferArgNode = bufferArgNode;
+                ComputeHashNode = computeHashNode;
+            }
+            public override string Title => MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle;
+            public override string EquivalenceKey => MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle;
 
-                       // hashTypeName.HashData
-                       var hashData = generator.MemberAccessExpression(generator.IdentifierName(hashTypeName), PreferHashDataOverComputeHashAnalyzer.HashDataMethodName);
-                       var hashDataInvoked = generator.InvocationExpression(hashData, bufferArgNode);
-                       codeFixer(editor, hashDataInvoked);
+            public Document Document { get; }
+            public string HashTypeName { get; }
+            public SyntaxNode BufferArgNode { get; }
+            public SyntaxNode ComputeHashNode { get; }
 
-                       return editor.GetChangedDocument();
-                   },
-                   equivalenceKey: MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle);
+            protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
+            {
+                DocumentEditor editor = await DocumentEditor.CreateAsync(Document, cancellationToken).ConfigureAwait(false);
+                SyntaxGenerator generator = editor.Generator;
+
+                // hashTypeName.HashData
+                var hashData = generator.MemberAccessExpression(generator.IdentifierName(HashTypeName), PreferHashDataOverComputeHashAnalyzer.HashDataMethodName);
+                var hashDataInvoked = generator.InvocationExpression(hashData, BufferArgNode);
+                EditNodes(editor, hashDataInvoked);
+
+                return editor.GetChangedDocument();
+            }
+
+            protected abstract void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked);
         }
 
-        protected abstract bool TryGetCodeFixer(SyntaxNode computeHashNode, SyntaxNode bufferArgNode, SyntaxNode nodeToRemove,
-            [NotNullWhen(true)] out ApplyCodeFixAction? codeFixer);
+        private sealed class ReplaceNodeHashDataCodeAction : HashDataCodeAction
+        {
+            public ReplaceNodeHashDataCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode) : base(document, hashTypeName, bufferArgNode, computeHashNode)
+            {
+            }
 
-        protected delegate void ApplyCodeFixAction(DocumentEditor editor, SyntaxNode hashDataInvoked);
+            protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
+            {
+                documentEditor.ReplaceNode(ComputeHashNode, hashDataInvoked);
+            }
+        }
+
+        protected sealed class RemoveNodeHashDataCodeAction : HashDataCodeAction
+        {
+            public RemoveNodeHashDataCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode, SyntaxNode nodeToRemove) : base(document, hashTypeName, bufferArgNode, computeHashNode)
+            {
+                NodeToRemove = nodeToRemove;
+            }
+
+            public SyntaxNode NodeToRemove { get; }
+
+            protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
+            {
+                documentEditor.ReplaceNode(ComputeHashNode, hashDataInvoked);
+                documentEditor.RemoveNode(NodeToRemove);
+            }
+        }
     }
 }

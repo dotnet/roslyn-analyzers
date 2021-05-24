@@ -15,6 +15,7 @@ CA1845 | Performance | Info | UseSpanBasedStringConcat, [Documentation](https://
 CA1846 | Performance | Info | PreferAsSpanOverSubstring, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846)
 CA1847 | Performance | Info | PreferHashDataOverComputeHashAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847)
 CA2250 | Usage | Info | UseCancellationTokenThrowIfCancellationRequested, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
+CA2251 | Usage | Hidden | UseStringEqualsOverStringCompare, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251)
 
 ### Removed Rules
 

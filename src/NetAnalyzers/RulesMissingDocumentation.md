@@ -11,3 +11,4 @@ CA1844 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1846 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846> | Prefer 'AsSpan' over 'Substring' |
 CA1847 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Prefer static 'HashData' method over 'ComputeHash' |
 CA2250 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250> | Use 'ThrowIfCancellationRequested' |
+CA2251 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251> | Use 'string.Equals' |

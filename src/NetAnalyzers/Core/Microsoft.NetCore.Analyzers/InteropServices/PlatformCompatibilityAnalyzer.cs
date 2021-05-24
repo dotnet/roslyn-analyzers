@@ -1025,7 +1025,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, symbol, checkParents: true);
+            CheckOperationAttributes(symbol, checkParents: true);
 
             if (symbol is IPropertySymbol property)
             {
@@ -1033,7 +1033,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 {
                     if (accessor != null)
                     {
-                        CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, checkParents: false);
+                        CheckOperationAttributes(accessor, checkParents: false);
                     }
                 }
             }
@@ -1043,32 +1043,26 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 if (accessor != null)
                 {
-                    CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, accessor, checkParents: false);
+                    CheckOperationAttributes(accessor, checkParents: false);
                 }
             }
             else if (symbol is IMethodSymbol method && method.IsGenericMethod)
             {
-                CheckTypeArguments(method.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                CheckTypeArguments(method.TypeArguments);
             }
 
             if (symbol.ContainingSymbol is INamedTypeSymbol namedType && namedType.IsGenericType)
             {
-                CheckTypeArguments(namedType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms);
+                CheckTypeArguments(namedType.TypeArguments);
             }
 
-            void CheckTypeArguments(ImmutableArray<ITypeSymbol> typeArguments, IOperation operation, OperationAnalysisContext context,
-                PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, (SmallDictionary<string, Versions> attributes,
-                SmallDictionary<string, Versions>? csAttributes)> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, PlatformAttributes> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms)
+            void CheckTypeArguments(ImmutableArray<ITypeSymbol> typeArguments)
             {
                 using var workingSet = PooledHashSet<ITypeSymbol>.GetInstance();
-                CheckTypeArgumentsCore(typeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, workingSet);
+                CheckTypeArgumentsCore(typeArguments, workingSet);
             }
 
-            void CheckTypeArgumentsCore(ImmutableArray<ITypeSymbol> typeArguments, IOperation operation, OperationAnalysisContext context,
-                PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>, (SmallDictionary<string, Versions> attributes,
-                SmallDictionary<string, Versions>? csAttributes)> platformSpecificOperations, ConcurrentDictionary<ISymbol,
-                PlatformAttributes> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, PooledHashSet<ITypeSymbol> workingSet)
+            void CheckTypeArgumentsCore(ImmutableArray<ITypeSymbol> typeArguments, PooledHashSet<ITypeSymbol> workingSet)
             {
                 foreach (var typeArgument in typeArguments)
                 {
@@ -1077,20 +1071,18 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         workingSet.Add(typeArgument);
                         if (typeArgument.SpecialType == SpecialType.None)
                         {
-                            CheckOperationAttributes(operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, typeArgument, checkParents: true);
+                            CheckOperationAttributes(typeArgument, checkParents: true);
 
                             if (typeArgument is INamedTypeSymbol nType && nType.IsGenericType)
                             {
-                                CheckTypeArgumentsCore(nType.TypeArguments, operation, context, platformSpecificOperations, platformSpecificMembers, msBuildPlatforms, workingSet);
+                                CheckTypeArgumentsCore(nType.TypeArguments, workingSet);
                             }
                         }
                     }
                 }
             }
 
-            void CheckOperationAttributes(IOperation operation, OperationAnalysisContext context, PooledConcurrentDictionary<KeyValuePair<IOperation, ISymbol>,
-                (SmallDictionary<string, Versions> attributes, SmallDictionary<string, Versions>? csAttributes)> platformSpecificOperations,
-                ConcurrentDictionary<ISymbol, PlatformAttributes> platformSpecificMembers, ImmutableArray<string> msBuildPlatforms, ISymbol symbol, bool checkParents)
+            void CheckOperationAttributes(ISymbol symbol, bool checkParents)
             {
                 if (TryGetOrCreatePlatformAttributes(symbol, checkParents, crossPlatform, platformSpecificMembers, out var operationAttributes))
                 {

@@ -140,7 +140,7 @@ public class Test
 {
     private string program;
 
-    [SupportedOSPlatform(""windows"")] // Can overwrite parent browser support as cross platform
+    [SupportedOSPlatform(""windows"")] // Can overwrite parent linux support as cross platform
     public string WindowsOnlyProgram => program;
 
     [SupportedOSPlatform(""windows"")]
@@ -148,7 +148,7 @@ public class Test
     [SupportedOSPlatform(""linux"")]
     public string WindowsIosLinuxOnlyProgram => program; // referencing internal field, should not warn
 
-    [SupportedOSPlatform(""android"")] // Can overwrite parent browser support as cross platform
+    [SupportedOSPlatform(""android"")] // Can overwrite parent linux support as cross platform
     [SupportedOSPlatform(""browser"")]
     public string AndroidBrowserOnlyProgram => program; // referencing internal field, should not warn
 
@@ -172,7 +172,7 @@ public class Test
         a = {|#3:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
         a = WindowsIosLinuxOnlyProgram;
         a = [|AndroidBrowserOnlyProgram|]; //This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
-        {|#4:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'. 42
+        {|#4:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'.
 
         List<Test> tests = new List<Test>();
         WindowsIosLinuxOnlyCallsite();

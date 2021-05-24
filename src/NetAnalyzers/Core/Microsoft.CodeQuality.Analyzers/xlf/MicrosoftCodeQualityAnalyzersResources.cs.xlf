@@ -1473,7 +1473,7 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'</source>
         <target state="needs-review-translation">Explicitním definováním typu události (například Event MyEvent As EventHandler(Of MyEventArgs)) změňte událost {0} tak, aby používala obecnou obslužnou rutinu EventHandler.</target>
         <note />
       </trans-unit>

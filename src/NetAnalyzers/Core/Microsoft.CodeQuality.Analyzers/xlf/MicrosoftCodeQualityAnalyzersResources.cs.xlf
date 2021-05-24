@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="cs" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">Připojit .ConfigureAwait(true)</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">Připojit .ConfigureAwait(true)</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -54,23 +54,23 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">Předávání typů podle odkazu (jako out nebo ref) vyžaduje zkušenost s ukazateli, porozumění rozdílu mezi hodnotovými a odkazovými typy a obeznámenost s metodami s více návratovými hodnotami. Navíc není široce rozšířeno chápání rozdílu mezi parametry out a ref.</target>
-        <note />
+        <target state="needs-review-translation">Předávání typů podle odkazu (jako out nebo ref) vyžaduje zkušenost s ukazateli, porozumění rozdílu mezi hodnotovými a odkazovými typy a obeznámenost s metodami s více návratovými hodnotami. Navíc není široce rozšířeno chápání rozdílu mezi parametry out a ref.</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">Nenastavujte parametry out, protože nejsou určené pro širokou cílovou skupinu.</target>
-        <note />
+        <target state="needs-review-translation">Nenastavujte parametry out, protože nejsou určené pro širokou cílovou skupinu.</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
         <source>Avoid 'out' parameters</source>
         <target state="needs-review-translation">Vyhněte se výstupním parametrům</target>
-        <note />
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">Obecná výjimka, třeba System.Exception, System.SystemException, nebo nepovolený typ výjimky se zachytávají příkazem catch nebo se používá obecná klauzule catch. Obecné a nepovolené výjimky by se neměly zachytávat.</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">Obecná výjimka, třeba System.Exception, System.SystemException, nebo nepovolený typ výjimky se zachytávají příkazem catch nebo se používá obecná klauzule catch. Obecné a nepovolené výjimky by se neměly zachytávat.</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">{0} je nový chráněný člen ve třídě NonInheritable {1}.</target>
-        <note />
+        <target state="needs-review-translation">{0} je nový chráněný člen ve třídě NonInheritable {1}.</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -130,12 +130,12 @@
       <trans-unit id="DoNotExposeGenericListsDescription">
         <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
         <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt; je obecná kolekce navržená pro výkon, nikoli dědičnost. List&lt;T&gt; neobsahuje virtuální členy, které by usnadňovaly změnu chování děděných tříd.</target>
-        <note />
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">Změňte {0} v {1} tak, aby se používalo Collection&lt;T&gt;, ReadOnlyCollection&lt;T&gt; nebo KeyedCollection&lt;K,V&gt;.</target>
-        <note />
+        <target state="needs-review-translation">Změňte {0} v {1} tak, aby se používalo Collection&lt;T&gt;, ReadOnlyCollection&lt;T&gt; nebo KeyedCollection&lt;K,V&gt;.</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -159,8 +159,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">Pro odkazové typy je výchozí implementace operátoru rovnosti téměř vždy správná. Ve výchozím nastavení jsou dva odkazy stejné jenom v případě, že odkazují na stejný objekt. Pokud operátor poskytuje smysluplnou rovnost hodnot, měl by typ implementovat obecné rozhraní System.IEquatable.</target>
-        <note />
+        <target state="needs-review-translation">Pro odkazové typy je výchozí implementace operátoru rovnosti téměř vždy správná. Ve výchozím nastavení jsou dva odkazy stejné jenom v případě, že odkazují na stejný objekt. Pokud operátor poskytuje smysluplnou rovnost hodnot, měl by typ implementovat obecné rozhraní System.IEquatable.</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -175,7 +175,7 @@
       <trans-unit id="DoNotPassTypesByReferenceDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="needs-review-translation">Předávání typů podle odkazu (jako out nebo ref) vyžaduje zkušenost s ukazateli, porozumění rozdílu mezi hodnotovými a odkazovými typy a obeznámenost s metodami s více návratovými hodnotami. Navíc není široce rozšířeno chápání rozdílu mezi parametry out a ref.</target>
-        <note />
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -244,8 +244,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">Použít AttributeUsageAttribute</target>
-        <note />
+        <target state="needs-review-translation">Použít AttributeUsageAttribute</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">Třída deklaruje a implementuje pole instance, které je typu System.IDisposable, přičemž tato třída neimplementuje IDisposable. Třída, která deklaruje pole IDisposable nepřímo, vlastní nespravovaný prostředek a měla by implementovat rozhraní IDisposable.</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">Třída deklaruje a implementuje pole instance, které je typu System.IDisposable, přičemž tato třída neimplementuje IDisposable. Třída, která deklaruje pole IDisposable nepřímo, vlastní nespravovaný prostředek a měla by implementovat rozhraní IDisposable.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -288,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">Výchozí hodnota neinicializovaného výčtu, stejně jako jiných typů hodnot, je nulová. Výčet s atributy bez příznaků by měl definovat člena pomocí nulové hodnoty, aby výchozí hodnota byla platnou hodnotou tohoto výčtu. Pokud výčet, u kterého se používá atribut FlagsAttribute, definuje člena s nulovou hodnotou, měl by mít název None, což značí, že v tomto výčtu nejsou nastavené žádné hodnoty.</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">Výchozí hodnota neinicializovaného výčtu, stejně jako jiných typů hodnot, je nulová. Výčet s atributy bez příznaků by měl definovat člena pomocí nulové hodnoty, aby výchozí hodnota byla platnou hodnotou tohoto výčtu. Pokud výčet, u kterého se používá atribut FlagsAttribute, definuje člena s nulovou hodnotou, měl by mít název None, což značí, že v tomto výčtu nejsou nastavené žádné hodnoty.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
@@ -323,19 +323,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">Označte sestavení atributem CLSCompliant.</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">Označte sestavení atributem CLSCompliant.</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
         <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
         <target state="needs-review-translation">CLS (Common Language Specification) definuje omezení názvů, datových typů a pravidel, kterým musí sestavení vyhovovat, pokud se budou používat v různých programovacích jazycích. Správný návrh vyžaduje, aby všechna sestavení explicitně označovala vyhovění standardu CSL atributem CLSCompliant. Pokud tento atribut u sestavení neexistuje, není toto sestavení vyhovující.</target>
-        <note />
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
         <source>Mark assemblies with 'CLSCompliant'</source>
         <target state="needs-review-translation">Označte sestavení atributem CLSCompliant.</target>
-        <note />
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -355,42 +355,42 @@
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
         <source>Mark assemblies with 'ComVisible'</source>
         <target state="needs-review-translation">Označte sestavení atributem ComVisible.</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">Atribut ComVisible určuje, jak klienti modelu COM přistupují ke spravovanému kódu. Správný návrh vyžaduje, aby sestavení explicitně označovala viditelnost modelu COM. Viditelnost modelu COM lze nastavit pro celé sestavení a následně přepsat pro jednotlivé typy a členy typů. Pokud tento atribut neexistuje, je obsah sestavení viditelný klientům modelu COM.</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">Atribut ComVisible určuje, jak klienti modelu COM přistupují ke spravovanému kódu. Správný návrh vyžaduje, aby sestavení explicitně označovala viditelnost modelu COM. Viditelnost modelu COM lze nastavit pro celé sestavení a následně přepsat pro jednotlivé typy a členy typů. Pokud tento atribut neexistuje, je obsah sestavení viditelný klientům modelu COM.</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
         <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
         <target state="needs-review-translation">Protože sestavení {0} zpřístupňuje externě viditelné typy, označte ho pomocí ComVisible(false) na úrovni sestavení a pak označte všechny typy v tomto sestavení, které mají být zpřístupněny klientům modelu COM, pomocí ComVisible(true).</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">Zvažte změnu atributu ComVisible u sestavení {0} na false a jeho připojení na úrovni typu.</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">Zvažte změnu atributu ComVisible u sestavení {0} na false a jeho připojení na úrovni typu.</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
         <source>Mark attributes with 'AttributeUsageAttribute'</source>
         <target state="needs-review-translation">Označte atributy atributem AttributeUsage.</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
         <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
         <target state="needs-review-translation">Když definujete vlastní atribut, označte ho atributem AttributeUsage, který označuje, kde ve zdrojovém kódu se dá tento vlastní atribut použít. Význam a zamýšlené použití atributu určí jeho platné umístění v kódu.</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
         <source>Specify AttributeUsage on '{0}'</source>
         <target state="needs-review-translation">Určete AttributeUsage pro {0}.</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
         <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
         <target state="needs-review-translation">Přestože atribut {0} dědí AttributeUsage od svého základního typu, měli byste zvážit explicitní určení AttributeUsage u tohoto typu kvůli zlepšení přehlednosti a dokumentace kódu.</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -435,17 +435,17 @@
       <trans-unit id="MarkEnumsWithFlagsTitle">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Označte výčty atributem FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
         <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
         <target state="needs-review-translation">Výčet je typ hodnoty, který definuje sadu souvisejících pojmenovaných konstant. Použijte u výčtu atribut FlagsAttribute, pokud se jeho pojmenované konstanty dají smysluplně kombinovat.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Označte výčty atributem FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -488,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">Metody volání nespravovaného kódu, například označené atributem System.Runtime.InteropServices.DllImportAttribute, nebo metody definované klíčovým slovem Declare ve Visual Basicu, mají přístup k nespravovanému kódu. Tyto metody mají být třídy NativeMethods, SafeNativeMethods nebo UnsafeNativeMethods.</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">Metody volání nespravovaného kódu, například označené atributem System.Runtime.InteropServices.DllImportAttribute, nebo metody definované klíčovým slovem Declare ve Visual Basicu, mají přístup k nespravovanému kódu. Tyto metody mají být třídy NativeMethods, SafeNativeMethods nebo UnsafeNativeMethods.</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -550,17 +550,17 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Neoznačujte výčty atributem FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
         <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
         <target state="needs-review-translation">Externě viditelný výčet je označený atributem FlagsAttribute a obsahuje jednu nebo více hodnot, které nejsou mocninami čísla 2 ani kombinací jiných definovaných hodnot výčtu.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Neoznačujte výčty atributem FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">Operátor přetížení je roven přepisující hodnotě typu Equals.</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">Operátor přetížení je roven přepisující hodnotě typu Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">Ve většině programovacích jazyků neexistuje výchozí implementace operátoru rovnosti (==) pro typy hodnot. Pokud váš programovací jazyk podporuje přetížení operátorů, měli byste zvážit implementaci operátoru rovnosti. Jeho chování by mělo být identické jako Equals.</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">Ve většině programovacích jazyků neexistuje výchozí implementace operátoru rovnosti (==) pro typy hodnot. Pokud váš programovací jazyk podporuje přetížení operátorů, měli byste zvážit implementaci operátoru rovnosti. Jeho chování by mělo být identické jako Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">Implementujte operátory rovnosti a zajistěte, aby se jejich chování shodovalo s metodou Equals.</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">Implementujte operátory rovnosti a zajistěte, aby se jejich chování shodovalo s metodou Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -643,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">Volá se metoda obsahující řetězcový parametr, jehož název obsahuje uri, URI, urn, URN, url nebo URL. Deklarující typ této metody obsahuje přetížení odpovídající metody s parametrem System.Uri.</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">Volá se metoda obsahující řetězcový parametr, jehož název obsahuje uri, URI, urn, URN, url nebo URL. Deklarující typ této metody obsahuje přetížení odpovídající metody s parametrem System.Uri.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -665,12 +665,12 @@
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
         <source>'CancellationToken' parameters must come last</source>
         <target state="needs-review-translation">Parametry CancellationToken musí být poslední.</target>
-        <note />
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">Metoda {0} má převzít CancellationToken jako poslední parametr.</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">Metoda {0} má převzít CancellationToken jako poslední parametr.</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -703,39 +703,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
         <target state="needs-review-translation">Protože sestavení {0} zpřístupňuje externě viditelné typy, označte ho pomocí ComVisible(false) na úrovni sestavení a pak označte všechny typy v tomto sestavení, které mají být zpřístupněny klientům modelu COM, pomocí ComVisible(true).</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
         <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
         <target state="needs-review-translation">Zvažte změnu atributu ComVisible u sestavení {0} na false a jeho připojení na úrovni typu.</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">Implementujte metody rovnosti a porovnání a operátory.</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">Implementujte metody rovnosti a porovnání a operátory.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
         <source>Implement 'IEquatable'</source>
         <target state="needs-review-translation">Implementujte rozhraní IEquatable.</target>
-        <note />
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement 'IDisposable' Interface</source>
+        <source>Implement 'IDisposable' interface</source>
         <target state="needs-review-translation">Implementujte rozhraní IDisposable.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
         <source>Remove 'FlagsAttribute' from enum.</source>
         <target state="needs-review-translation">Odeberte z výčtu atribut FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
         <source>Apply 'FlagsAttribute' to enum.</source>
         <target state="needs-review-translation">Použijte u výčtu atribut FlagsAttribute.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -973,8 +973,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">Toto pravidlo předpokládá, že vlastnost reprezentuje identifikátor URI (Uniform Resource Identifier). Řetězcová reprezentace identifikátoru URI je náchylná k chybám při parsování a kódování a může vést k ohrožení zabezpečení. Třída System.Uri poskytuje tyto služby zabezpečeným způsobem.</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">Toto pravidlo předpokládá, že vlastnost reprezentuje identifikátor URI (Uniform Resource Identifier). Řetězcová reprezentace identifikátoru URI je náchylná k chybám při parsování a kódování a může vést k ohrožení zabezpečení. Třída System.Uri poskytuje tyto služby zabezpečeným způsobem.</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -983,14 +983,14 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement 'IDisposable' Correctly</source>
+        <source>Implement 'IDisposable' correctly</source>
         <target state="needs-review-translation">Implementujte IDisposable správně.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
         <target state="needs-review-translation">Všechny typy IDisposable by měly implementovat vzor Dispose správně.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
@@ -1000,7 +1000,7 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
         <target state="needs-review-translation">Odeberte {0}, přepište Dispose(bool disposing) a vložte finalizační logiku do cesty kódu, kde je disposing hodnoty true.</target>
-        <note />
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1020,12 +1020,12 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
         <target state="needs-review-translation">Upravte {0} tak, že volá Dispose(true), pak volá GC.SupressFinalize na aktuální instanci objektu (this nebo Me ve Visual Basicu) a potom se vrací.</target>
-        <note />
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
         <target state="needs-review-translation">Upravte {0} tak, že volá Dispose(false) a potom se vrací.</target>
-        <note />
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
@@ -1140,7 +1140,7 @@
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
         <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
         <target state="needs-review-translation">Přejmenujte {0} tak, aby název končil buď na Collection, nebo na {1}.</target>
-        <note />
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1253,13 +1253,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">Přepište Equals a operátor rovnosti u typů hodnot.</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">Přepište Equals a operátor rovnosti u typů hodnot.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">Zděděná implementace Equals používá pro typy hodnot knihovnu reflexe a porovnává obsah všech polí. Reflexe je výpočetně náročná a porovnání rovnosti u každého pole může být zbytečné. Pokud očekáváte, že uživatelé budou porovnávat nebo řadit instance, nebo používat instance jako klíče zatřiďovací tabulky, měl by typ hodnoty implementovat Equals.</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">Zděděná implementace Equals používá pro typy hodnot knihovnu reflexe a porovnává obsah všech polí. Reflexe je výpočetně náročná a porovnání rovnosti u každého pole může být zbytečné. Pokud očekáváte, že uživatelé budou porovnávat nebo řadit instance, nebo používat instance jako klíče zatřiďovací tabulky, měl by typ hodnoty implementovat Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
@@ -1388,8 +1388,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">Indexery, neboli indexované vlastnosti, mají pro index používat celočíselný nebo řetězcový typ. Tyto typy se zpravidla používají pro indexování datových struktur a zvyšují použitelnost knihovny. Použití objektového typu by se mělo omezit na případy, kdy se při návrhu nedá určit konkrétní celočíselný nebo řetězcový typ. Pokud návrh vyžaduje pro index jiné typy, znovu zvažte, jestli tento typ představuje logické datové úložiště. Pokud nepředstavuje logické datové úložiště, použijte metodu.</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">Indexery, neboli indexované vlastnosti, mají pro index používat celočíselný nebo řetězcový typ. Tyto typy se zpravidla používají pro indexování datových struktur a zvyšují použitelnost knihovny. Použití objektového typu by se mělo omezit na případy, kdy se při návrhu nedá určit konkrétní celočíselný nebo řetězcový typ. Pokud návrh vyžaduje pro index jiné typy, znovu zvažte, jestli tento typ představuje logické datové úložiště. Pokud nepředstavuje logické datové úložiště, použijte metodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <target state="needs-review-translation">Když asynchronní metoda čeká přímo na Task, bude se pokračovat ve stejném vlákně, v jakém se vytvořila daná úloha. Zvažte možnost zavolat Task.ConfigureAwait(Boolean), čímž dáte najevo, že hodláte pokračovat. Když pro úlohu zavoláte ConfigureAwait(false), můžete ve fondu vláken naplánovat pokračování a vyhnout se tak vzájemnému zablokování ve vláknu uživatelského rozhraní. Pro knihovny, které nejsou závislé na aplikacích, je vhodné předat false. Volání ConfigureAwait(true) pro danou úlohu se chová stejně, jako když se explicitně nezavolá ConfigureAwait. Když tuto metodu explicitně zavoláte, dáváte čtenářům najevo, že se záměrně chystáte pokračovat v původním kontextu synchronizace.</target>
-        <note />
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">Zvažte možnost zavolat ConfigureAwait pro očekávanou úlohu</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">Zvažte možnost zavolat ConfigureAwait pro očekávanou úlohu</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">Připojte .ConfigureAwait(false).</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">Připojte .ConfigureAwait(false).</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
         <target state="needs-review-translation">Když typ T přepisuje Object.Equals(object), implementace musí před porovnáním přetypovat argument objektu na správný typ T. Pokud typ implementuje rozhraní IEquatable&lt;T&gt; a tím nabízí metodu T.Equals(T) a pokud je při kompilaci známo, že argument je typu T, kompilátor může zavolat IEquatable&lt;T&gt;.Equals(T) místo Object.Equals(object). Díky tomu není nutné nic přetypovávat, což zvyšuje výkon.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Když typ T implementuje rozhraní IEquatable&lt;T&gt;, informuje uživatele, který ve zdrojovém kódu vidí volání metody Equals, že instance daného typu se dá porovnat s instancí jiného typu. U uživatele může dojít k nedorozumění, pokud jeho pokus o porovnání typu s instancí jiného typu způsobí chybu při kompilaci. To porušuje tzv. princip minimálního překvapení.</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">Když typ T implementuje rozhraní IEquatable&lt;T&gt;, informuje uživatele, který ve zdrojovém kódu vidí volání metody Equals, že instance daného typu se dá porovnat s instancí jiného typu. U uživatele může dojít k nedorozumění, pokud jeho pokus o porovnání typu s instancí jiného typu způsobí chybu při kompilaci. To porušuje tzv. princip minimálního překvapení.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1453,8 +1453,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Odeberte {0} a nahraďte jeho použití obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">Odeberte {0} a nahraďte jeho použití obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1463,8 +1463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Změňte událost {0} tak, aby nahradila typ {1} obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">Změňte událost {0} tak, aby nahradila typ {1} obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1473,13 +1473,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">Explicitním definováním typu události (například Event MyEvent As EventHandler(Of MyEventArgs)) změňte událost {0} tak, aby používala obecnou obslužnou rutinu EventHandler.</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <target state="needs-review-translation">Explicitním definováním typu události (například Event MyEvent As EventHandler(Of MyEventArgs)) změňte událost {0} tak, aby používala obecnou obslužnou rutinu EventHandler.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">Typ obsahuje událost, která deklaruje delegáta EventHandler, který vrací hodnotu void, jehož podpis obsahuje dva parametry (prvním je objekt a druhým je typ, který se dá přiřadit k EventArgs), přičemž cílem obsahujícího sestavení je Microsoft .NET Framework 2.0.</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">Typ obsahuje událost, která deklaruje delegáta EventHandler, který vrací hodnotu void, jehož podpis obsahuje dva parametry (prvním je objekt a druhým je typ, který se dá přiřadit k EventArgs), přičemž cílem obsahujícího sestavení je Microsoft .NET Framework 2.0.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
@@ -1489,18 +1489,18 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Nepoužívejte značky cref s předponou</target>
-        <note />
+        <target state="needs-review-translation">Nepoužívejte značky cref s předponou</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">Značky cref s předponami byste neměli používat, protože brání kompilátoru v ověření odkazů a integrovanému vývojovému prostředí (IDE) v aktualizaci odkazů při refaktoringu. Pokud je nutné značku cref použít s předponou, protože kompilátor nemůže vyhledat zmiňovaný typ, můžete tuto chybu potlačit na jednom webu s dokumentací. Pokud například značka cref zmiňuje speciální atribut v plné verzi prostředí, ale vy jste v souboru, který se kompiluje proti přenosnému prostředí, nebo pokud chcete odkazovat na typ na vyšší vrstvě Roslynu, měli byste tuto chybu potlačit. Chybu byste neměli potlačovat jenom z důvodu, že si chcete ušetřit práci a vyhnout se použití úplné syntaxe.</target>
-        <note />
+        <target state="needs-review-translation">Značky cref s předponami byste neměli používat, protože brání kompilátoru v ověření odkazů a integrovanému vývojovému prostředí (IDE) v aktualizaci odkazů při refaktoringu. Pokud je nutné značku cref použít s předponou, protože kompilátor nemůže vyhledat zmiňovaný typ, můžete tuto chybu potlačit na jednom webu s dokumentací. Pokud například značka cref zmiňuje speciální atribut v plné verzi prostředí, ale vy jste v souboru, který se kompiluje proti přenosnému prostředí, nebo pokud chcete odkazovat na typ na vyšší vrstvě Roslynu, měli byste tuto chybu potlačit. Chybu byste neměli potlačovat jenom z důvodu, že si chcete ušetřit práci a vyhnout se použití úplné syntaxe.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Nepoužívejte značky cref s předponou</target>
-        <note />
+        <target state="needs-review-translation">Nepoužívejte značky cref s předponou</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1653,9 +1653,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
         <target state="needs-review-translation">{0} je interní třída, jejíž instance není zjevně vůbec vytvořená. V takovém případě odeberte tento kód ze sestavení. Pokud má tato třída obsahovat jenom statické členy, nastavte ji jako statickou (sdílenou ve Visual Basicu).</target>
-        <note />
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1898,13 +1898,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">Externě viditelná metoda přistupuje přes ukazatel k datům jednoho ze svých atributů odkazů bez ověření, jestli argument není null (Nothing v jazyce Visual Basic). Ve všech argumentech odkazů, které se předávají externě viditelným metodám, by se měla kontrolovat hodnota null. V případě potřeby vyvolejte ArgumentNullException, když je argument null, nebo přidejte předběžnou podmínku Code Contract, která vyhodnocuje argument, který není null. Pokud je metoda navržená tak, že ji budou volat jen známá sestavení, měli byste ji převést na interní metodu.</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">Externě viditelná metoda přistupuje přes ukazatel k datům jednoho ze svých atributů odkazů bez ověření, jestli argument není null (Nothing v jazyce Visual Basic). Ve všech argumentech odkazů, které se předávají externě viditelným metodám, by se měla kontrolovat hodnota null. V případě potřeby vyvolejte ArgumentNullException, když je argument null, nebo přidejte předběžnou podmínku Code Contract, která vyhodnocuje argument, který není null. Pokud je metoda navržená tak, že ji budou volat jen známá sestavení, měli byste ji převést na interní metodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">Dříve, než v externě viditelné metodě {0} použijete parametr {1}, ověřte, že tento parametr není null. V případě potřeby vyvolejte ArgumentNullException, když je argument null, nebo přidejte předběžnou podmínku Code Contract, která vyhodnocuje argument, který není null.</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">Dříve, než v externě viditelné metodě {0} použijete parametr {1}, ověřte, že tento parametr není null. V případě potřeby vyvolejte ArgumentNullException, když je argument null, nebo přidejte předběžnou podmínku Code Contract, která vyhodnocuje argument, který není null.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

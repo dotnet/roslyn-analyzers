@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="it" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">Accoda .ConfigureAwait(true)</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">Accoda .ConfigureAwait(true)</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -54,23 +54,23 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">Oltre all'esperienza con i puntatori, per passare tipi per riferimento (con 'out' o 'ref'), è necessario comprendere le differenze tra tipi valore e tipi riferimento e gestire i metodi con più valori restituiti. Anche la differenza tra parametri 'out' e 'ref' non è del tutto compresa.</target>
-        <note />
+        <target state="needs-review-translation">Oltre all'esperienza con i puntatori, per passare tipi per riferimento (con 'out' o 'ref'), è necessario comprendere le differenze tra tipi valore e tipi riferimento e gestire i metodi con più valori restituiti. Anche la differenza tra parametri 'out' e 'ref' non è del tutto compresa.</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">Evitare i parametri 'out' perché non sono progettati per utenti generici</target>
-        <note />
+        <target state="needs-review-translation">Evitare i parametri 'out' perché non sono progettati per utenti generici</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
         <source>Avoid 'out' parameters</source>
         <target state="needs-review-translation">Evitare parametri out</target>
-        <note />
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">In un'istruzione catch è stato rilevato un tipo di eccezione non consentito o un'eccezione generale, come System.Exception o System.SystemException, oppure viene usata una clausola catch generale. Le eccezioni generali e non consentite non dovrebbero essere rilevate.</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">In un'istruzione catch è stato rilevato un tipo di eccezione non consentito o un'eccezione generale, come System.Exception o System.SystemException, oppure viene usata una clausola catch generale. Le eccezioni generali e non consentite non dovrebbero essere rilevate.</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">'{0}' è un nuovo membro protetto nella classe '{1}' di 'NonInheritable'</target>
-        <note />
+        <target state="needs-review-translation">'{0}' è un nuovo membro protetto nella classe '{1}' di 'NonInheritable'</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -130,12 +130,12 @@
       <trans-unit id="DoNotExposeGenericListsDescription">
         <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
         <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt; è una raccolta generica progettata per le prestazioni e non per l'ereditarietà. List&lt;T&gt; non contiene membri virtuali che semplificano la modifica del comportamento di una classe ereditata.</target>
-        <note />
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">Modificare '{0}' in '{1}' per usare 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' o 'KeyedCollection&lt;K,V&gt;'</target>
-        <note />
+        <target state="needs-review-translation">Modificare '{0}' in '{1}' per usare 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' o 'KeyedCollection&lt;K,V&gt;'</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -159,8 +159,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">Per i tipi riferimento l'implementazione predefinita dell'operatore di uguaglianza è quasi sempre corretta. Per impostazione predefinita, due riferimenti sono uguali solo se puntano allo stesso oggetto. Se l'operatore offre uguaglianza di valori significativa, il tipo deve implementare l'interfaccia 'System.IEquatable' generica.</target>
-        <note />
+        <target state="needs-review-translation">Per i tipi riferimento l'implementazione predefinita dell'operatore di uguaglianza è quasi sempre corretta. Per impostazione predefinita, due riferimenti sono uguali solo se puntano allo stesso oggetto. Se l'operatore offre uguaglianza di valori significativa, il tipo deve implementare l'interfaccia 'System.IEquatable' generica.</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -175,7 +175,7 @@
       <trans-unit id="DoNotPassTypesByReferenceDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="needs-review-translation">Oltre all'esperienza con i puntatori, per passare tipi per riferimento (con out o ref), è necessario comprendere le differenze tra tipi valore e tipi riferimento e gestire i metodi con più valori restituiti. Anche la differenza tra parametri out e ref non è del tutto compresa.</target>
-        <note />
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -244,8 +244,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">Applica 'AttributeUsageAttribute'</target>
-        <note />
+        <target state="needs-review-translation">Applica 'AttributeUsageAttribute'</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">Una classe dichiara e implementa un campo di istanza che è un tipo System.IDisposable, ma non implementa IDisposable. Una classe che dichiara un campo IDisposable è indirettamente proprietaria di una risorsa non gestita e deve implementare l'interfaccia IDisposable.</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">Una classe dichiara e implementa un campo di istanza che è un tipo System.IDisposable, ma non implementa IDisposable. Una classe che dichiara un campo IDisposable è indirettamente proprietaria di una risorsa non gestita e deve implementare l'interfaccia IDisposable.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -288,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">Il valore predefinito di un'enumerazione non inizializzata, come altri tipi di valore, è zero. Un'enumerazione senza attributi flag deve definire un membro usando il valore zero, in modo che il valore predefinito sia un valore valido dell'enumerazione. Se un'enumerazione a cui è applicato l'attributo FlagsAttribute definisce un membro con valore zero, il relativo nome deve essere ""None"" per indicare che nell'enumerazione non è stato impostato alcun valore.</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">Il valore predefinito di un'enumerazione non inizializzata, come altri tipi di valore, è zero. Un'enumerazione senza attributi flag deve definire un membro usando il valore zero, in modo che il valore predefinito sia un valore valido dell'enumerazione. Se un'enumerazione a cui è applicato l'attributo FlagsAttribute definisce un membro con valore zero, il relativo nome deve essere ""None"" per indicare che nell'enumerazione non è stato impostato alcun valore.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
@@ -323,19 +323,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">Contrassegnare gli assembly con CLSCompliant</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">Contrassegnare gli assembly con CLSCompliant</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
         <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
         <target state="needs-review-translation">Le specifiche CLS definiscono restrizioni per l'assegnazione dei nomi, tipi di dati e regole che gli assembly devono rispettare per poter essere usati nei diversi linguaggi di programmazione. In una progettazione corretta tutti gli assembly devono indicare in modo esplicito la conformità CLS con l'attributo CLSCompliantAttribute. Se questo attributo non è presente su un assembly, l'assembly non è conforme.</target>
-        <note />
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
         <source>Mark assemblies with 'CLSCompliant'</source>
         <target state="needs-review-translation">Contrassegnare gli assembly con CLSCompliant</target>
-        <note />
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -355,42 +355,42 @@
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
         <source>Mark assemblies with 'ComVisible'</source>
         <target state="needs-review-translation">Contrassegnare gli assembly con ComVisible</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute determina il modo in cui i client COM accedono al codice gestito. In una buona progettazione gli assembly devono indicare in modo esplicito la visibilità COM. È possibile impostare la visibilità COM per l'intero assembly e quindi eseguirne l'override per singoli tipi e membri dei tipi. Se questo attributo non è presente, il contenuto dell'assembly è visibile ai client COM.</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">ComVisibleAttribute determina il modo in cui i client COM accedono al codice gestito. In una buona progettazione gli assembly devono indicare in modo esplicito la visibilità COM. È possibile impostare la visibilità COM per l'intero assembly e quindi eseguirne l'override per singoli tipi e membri dei tipi. Se questo attributo non è presente, il contenuto dell'assembly è visibile ai client COM.</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
         <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
         <target state="needs-review-translation">Dal momento che {0} espone tipi visibili esternamente, contrassegnarlo con ComVisible(false) a livello di assembly e quindi contrassegnare con ComVisible(true) tutti i tipi all'interno dell'assembly che devono essere esposti ai client COM.</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">Provare a impostare su false l'attributo ComVisible su {0} e ad acconsentire in modo esplicito a livello di tipo.</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">Provare a impostare su false l'attributo ComVisible su {0} e ad acconsentire in modo esplicito a livello di tipo.</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
         <source>Mark attributes with 'AttributeUsageAttribute'</source>
         <target state="needs-review-translation">Contrassegnare gli attributi con AttributeUsageAttribute</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
         <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
         <target state="needs-review-translation">Quando si definisce un attributo personalizzato, contrassegnarlo usando AttributeUsageAttribute per indicare la posizione in cui applicare l'attributo personalizzato nel codice sorgente. Il significato e l'utilizzo previsto di un attributo ne determinano le posizioni valide nel codice.</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
         <source>Specify AttributeUsage on '{0}'</source>
         <target state="needs-review-translation">Specificare AttributeUsage su {0}</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
         <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
         <target state="needs-review-translation">Anche se l'attributo {0} eredita AttributeUsage dal relativo tipo di base, è consigliabile provare a specificare esplicitamente AttributeUsage sul tipo per migliorare la documentazione e la leggibilità del codice.</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -435,17 +435,17 @@
       <trans-unit id="MarkEnumsWithFlagsTitle">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Contrassegnare le enumerazioni con FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
         <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
         <target state="needs-review-translation">Un'enumerazione è un tipo valore che definisce un set di costanti denominate correlate. Applicare FlagsAttribute a un'enumerazione quando le relative costanti denominate possono essere combinate in modo significativo.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Contrassegnare le enumerazioni con FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -488,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">I metodi Pinvoke, ad esempio quelli contrassegnati tramite l'attributo System.Runtime.InteropServices.DllImportAttribute o i metodi definiti tramite la parola chiave Declare in Visual Basic, accedono a codice non gestito. Questi metodi devono appartenere alla classe NativeMethods, SafeNativeMethods o UnsafeNativeMethods.</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">I metodi Pinvoke, ad esempio quelli contrassegnati tramite l'attributo System.Runtime.InteropServices.DllImportAttribute o i metodi definiti tramite la parola chiave Declare in Visual Basic, accedono a codice non gestito. Questi metodi devono appartenere alla classe NativeMethods, SafeNativeMethods o UnsafeNativeMethods.</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -550,17 +550,17 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Non contrassegnare le enumerazioni con FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
         <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
         <target state="needs-review-translation">Un'enumerazione visibile esternamente è contrassegnata tramite FlagsAttribute e contiene uno o più valori che non sono potenze di due o una combinazione degli altri valori definiti nell'enumerazione.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">Non contrassegnare le enumerazioni con FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">Eseguire l'overload dell'operatore di uguaglianza all'override del tipo valore Equals</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">Eseguire l'overload dell'operatore di uguaglianza all'override del tipo valore Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">La maggior parte dei linguaggi di programmazione non prevede alcuna implementazione predefinita dell'operatore di uguaglianza (==) per i tipi valore. Se il linguaggio di programmazione supporta gli overload degli operatori, è consigliabile provare a implementare l'operatore di uguaglianza. Il relativo comportamento dovrebbe essere identico a quello di Equals.</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">La maggior parte dei linguaggi di programmazione non prevede alcuna implementazione predefinita dell'operatore di uguaglianza (==) per i tipi valore. Se il linguaggio di programmazione supporta gli overload degli operatori, è consigliabile provare a implementare l'operatore di uguaglianza. Il relativo comportamento dovrebbe essere identico a quello di Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">Implementare gli operatori di uguaglianza e impostare il comportamento in modo che sia identico a quello del metodo Equals</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">Implementare gli operatori di uguaglianza e impostare il comportamento in modo che sia identico a quello del metodo Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -643,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">Viene effettuata una chiamata a un metodo che include un parametro di stringa il cui nome contiene "uri", "URI", "urn", "URN", "url" o "URL". Il tipo dichiarante del metodo contiene un overload del metodo corrispondente con un parametro System.Uri.</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">Viene effettuata una chiamata a un metodo che include un parametro di stringa il cui nome contiene "uri", "URI", "urn", "URN", "url" o "URL". Il tipo dichiarante del metodo contiene un overload del metodo corrispondente con un parametro System.Uri.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -665,12 +665,12 @@
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
         <source>'CancellationToken' parameters must come last</source>
         <target state="needs-review-translation">I parametri CancellationToken devono essere indicati per ultimi</target>
-        <note />
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">Il metodo '{0}' deve accettare CancellationToken come ultimo parametro</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">Il metodo '{0}' deve accettare CancellationToken come ultimo parametro</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -703,39 +703,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
         <target state="needs-review-translation">Dal momento che {0} espone tipi visibili esternamente, contrassegnarlo con ComVisible(false) a livello di assembly e quindi contrassegnare con ComVisible(true) tutti i tipi all'interno dell'assembly che devono essere esposti ai client COM</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
         <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
         <target state="needs-review-translation">Provare a impostare su false l'attributo ComVisible su {0} e ad acconsentire in modo esplicito a livello di tipo</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">Implementare metodi e operatori di uguaglianza e confronto</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">Implementare metodi e operatori di uguaglianza e confronto</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
         <source>Implement 'IEquatable'</source>
         <target state="needs-review-translation">Implementare IEquatable</target>
-        <note />
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement 'IDisposable' Interface</source>
+        <source>Implement 'IDisposable' interface</source>
         <target state="needs-review-translation">Implementare l'interfaccia IDisposable</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
         <source>Remove 'FlagsAttribute' from enum.</source>
         <target state="needs-review-translation">Rimuovere FlagsAttribute dall'enumerazione.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
         <source>Apply 'FlagsAttribute' to enum.</source>
         <target state="needs-review-translation">Applicare FlagsAttribute all'enumerazione.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -973,8 +973,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">Questa regola presuppone che la proprietà rappresenti un URI (Uniform Resource Identifier). Una rappresentazione di stringa di un URI è soggetta a errori di analisi e di codifica e può comportare vulnerabilità di sicurezza. La classe System.Uri fornisce questi servizi in modo sicuro e protetto.</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">Questa regola presuppone che la proprietà rappresenti un URI (Uniform Resource Identifier). Una rappresentazione di stringa di un URI è soggetta a errori di analisi e di codifica e può comportare vulnerabilità di sicurezza. La classe System.Uri fornisce questi servizi in modo sicuro e protetto.</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -983,14 +983,14 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement 'IDisposable' Correctly</source>
+        <source>Implement 'IDisposable' correctly</source>
         <target state="needs-review-translation">Implementare correttamente IDisposable</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
         <target state="needs-review-translation">Tutti i tipi IDisposable devono implementare correttamente il criterio Dispose.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
@@ -1000,7 +1000,7 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
         <target state="needs-review-translation">Rimuovere '{0}', eseguire l'override di Dispose(bool disposing) e inserire la logica di Dispose nel percorso del codice in cui 'disposing' è true</target>
-        <note />
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1020,12 +1020,12 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
         <target state="needs-review-translation">Modificare '{0}' in modo che chiami Dispose(true), quindi GC.SuppressFinalize nell'istanza dell'oggetto corrente ('this' o 'Me' in Visual Basic) e quindi esca dalla funzione</target>
-        <note />
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
         <target state="needs-review-translation">Modificare '{0}' in modo che chiami Dispose(false) e quindi esca dalla funzione</target>
-        <note />
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
@@ -1140,7 +1140,7 @@
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
         <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
         <target state="needs-review-translation">Rinominare {0} in modo che termini con 'Collection' o '{1}'</target>
-        <note />
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1253,13 +1253,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">Eseguire l'override di Equals e dell'operatore di uguaglianza sui tipi di valore</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">Eseguire l'override di Equals e dell'operatore di uguaglianza sui tipi di valore</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">Per i tipi di valore l'implementazione ereditata di Equals usa la libreria Reflection e confronta il contenuto di tutti i campi. La libreria Reflection è onerosa dal punto di vista del calcolo; inoltre il confronto di ogni campo per determinarne l'uguaglianza potrebbe essere superfluo. Se si prevede che gli utenti confrontino o ordinino le istanze oppure le usino come chiavi di tabelle hash, il tipo valore deve implementare Equals.</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">Per i tipi di valore l'implementazione ereditata di Equals usa la libreria Reflection e confronta il contenuto di tutti i campi. La libreria Reflection è onerosa dal punto di vista del calcolo; inoltre il confronto di ogni campo per determinarne l'uguaglianza potrebbe essere superfluo. Se si prevede che gli utenti confrontino o ordinino le istanze oppure le usino come chiavi di tabelle hash, il tipo valore deve implementare Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
@@ -1388,8 +1388,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">Gli indicizzatori, ovvero le proprietà indicizzate, devono usare tipi Integer o string per l'indice. Questi tipi vengono usati in genere per l'indicizzazione di strutture dei dati e aumentano l'usabilità della libreria. L'uso del tipo Object deve essere limitato ai casi in cui non sia possibile specificare il tipo Integer o string in fase di progettazione. Se la progettazione richiede altri tipi per l'indice, provare a verificare se l'indice rappresenta un archivio dati logico. Se non rappresenta un archivio dati logico, usare un metodo.</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">Gli indicizzatori, ovvero le proprietà indicizzate, devono usare tipi Integer o string per l'indice. Questi tipi vengono usati in genere per l'indicizzazione di strutture dei dati e aumentano l'usabilità della libreria. L'uso del tipo Object deve essere limitato ai casi in cui non sia possibile specificare il tipo Integer o string in fase di progettazione. Se la progettazione richiede altri tipi per l'indice, provare a verificare se l'indice rappresenta un archivio dati logico. Se non rappresenta un archivio dati logico, usare un metodo.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <target state="needs-review-translation">Quando un metodo asincrono attende direttamente un elemento Task, la continuazione avviene nello stesso thread che ha creato l'attività. Provare a chiamare Task.ConfigureAwait(Boolean) per segnalare l'intenzione di continuare. Chiamare ConfigureAwait(false) sull'attività per pianificare le continuazioni nel pool di thread, evitando così un deadlock nel thread dell'interfaccia utente. È consigliabile passare false per le librerie indipendenti dall'app. Chiamare ConfigureAwait(true) sull'attività per ottenere lo stesso comportamento di quando ConfigureAwait non viene chiamato in modo esplicito. Se si chiama questo metodo in modo esplicito, si consente ai lettori di sapere che si intende intenzionalmente eseguire la continuazione nel contesto di sincronizzazione originale.</target>
-        <note />
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">Provare a chiamare ConfigureAwait sull'attività attesa</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">Provare a chiamare ConfigureAwait sull'attività attesa</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">Accodare .ConfigureAwait(false)</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">Accodare .ConfigureAwait(false)</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
         <target state="needs-review-translation">Quando un tipo T esegue l'override di Object.Equals(object), prima del confronto l'implementazione deve eseguire il cast dell'argomento dell'oggetto al tipo T corretto. Se il tipo implementa IEquatable&lt;T&gt; e quindi offre il metodo T.Equals(T) e si sa che in fase di compilazione l'argomento è di tipo T, il compilatore può chiamare IEquatable&lt;T&gt;.Equals(T) invece di Object.Equals(object) senza eseguire alcun cast, migliorando in tal modo le prestazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Quando un tipo T implementa l'interfaccia IEquatable&lt;T&gt;, suggerisce a un utente che vede una chiamata al metodo Equals nel codice sorgente che è possibile uguagliare un'istanza del tipo con una di qualsiasi altro tipo. Questo potrebbe generare confusione se l'utente prova a uguagliare il tipo con un'istanza di un altro tipo, ma la compilazione non viene eseguita. Questo comportamento viola il "principio di minor sorpresa".</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">Quando un tipo T implementa l'interfaccia IEquatable&lt;T&gt;, suggerisce a un utente che vede una chiamata al metodo Equals nel codice sorgente che è possibile uguagliare un'istanza del tipo con una di qualsiasi altro tipo. Questo potrebbe generare confusione se l'utente prova a uguagliare il tipo con un'istanza di un altro tipo, ma la compilazione non viene eseguita. Questo comportamento viola il "principio di minor sorpresa".</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1453,8 +1453,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Rimuovere '{0}' e sostituirne l'utilizzo con un elemento EventHandler generico, ad esempio EventHandler&lt;T&gt;, dove T è un elemento EventArgs valido</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">Rimuovere '{0}' e sostituirne l'utilizzo con un elemento EventHandler generico, ad esempio EventHandler&lt;T&gt;, dove T è un elemento EventArgs valido</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1463,8 +1463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Modificare l'evento '{0}' per sostituire il tipo '{1}' con un elemento EventHandler generico, ad esempio EventHandler&lt;T&gt;, dove T è un elemento EventArgs valido</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">Modificare l'evento '{0}' per sostituire il tipo '{1}' con un elemento EventHandler generico, ad esempio EventHandler&lt;T&gt;, dove T è un elemento EventArgs valido</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1473,13 +1473,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">Modificare l'evento '{0}' per l'uso di un elemento EventHandler generico definendo il tipo di evento in modo esplicito, ad esempio Event MyEvent As EventHandler(Of MyEventArgs).</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <target state="needs-review-translation">Modificare l'evento '{0}' per l'uso di un elemento EventHandler generico definendo il tipo di evento in modo esplicito, ad esempio Event MyEvent As EventHandler(Of MyEventArgs).</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">Un tipo contiene un evento che dichiara un delegato di EventHandler che restituisce void, la cui firma contiene due parametri (il primo è un oggetto e il secondo è un tipo assegnabile a EventArgs) e l'assembly che lo contiene è destinato a Microsoft .NET Framework 2.0.</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">Un tipo contiene un evento che dichiara un delegato di EventHandler che restituisce void, la cui firma contiene due parametri (il primo è un oggetto e il secondo è un tipo assegnabile a EventArgs) e l'assembly che lo contiene è destinato a Microsoft .NET Framework 2.0.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
@@ -1489,18 +1489,18 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Evitare di usare tag cref con un prefisso</target>
-        <note />
+        <target state="needs-review-translation">Evitare di usare tag cref con un prefisso</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">È opportuno evitare di usare tag cref con prefissi perché impediscono al compilatore di verificare i riferimenti e all'IDE di aggiornare i riferimenti durante i refactoring. È consentito eliminare questo errore in un singolo sito di documentazione se il tag cref deve usare un prefisso perché il tipo menzionato non è individuabile dal compilatore. Se ad esempio un tag cref menziona uno speciale attributo nel framework completo ma ci si trova in un file che viene compilato con il framework portabile o si vuole fare riferimento a un tipo a un livello superiore di Roslyn, è opportuno eliminare questo errore. È opportuno non eliminare questo errore solo perché si vuole prendere una scorciatoia ed evitare di usare la sintassi completa.</target>
-        <note />
+        <target state="needs-review-translation">È opportuno evitare di usare tag cref con prefissi perché impediscono al compilatore di verificare i riferimenti e all'IDE di aggiornare i riferimenti durante i refactoring. È consentito eliminare questo errore in un singolo sito di documentazione se il tag cref deve usare un prefisso perché il tipo menzionato non è individuabile dal compilatore. Se ad esempio un tag cref menziona uno speciale attributo nel framework completo ma ci si trova in un file che viene compilato con il framework portabile o si vuole fare riferimento a un tipo a un livello superiore di Roslyn, è opportuno eliminare questo errore. È opportuno non eliminare questo errore solo perché si vuole prendere una scorciatoia ed evitare di usare la sintassi completa.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Evitare di usare tag cref con un prefisso</target>
-        <note />
+        <target state="needs-review-translation">Evitare di usare tag cref con un prefisso</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1653,9 +1653,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
         <target state="needs-review-translation">{0} è una classe internal per la quale sembra che non sia stata mai creata un'istanza. In tal caso, rimuovere il codice dall'assembly. Se questa classe deve contenere solo membri static, impostarla come static (Shared in Visual Basic).</target>
-        <note />
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1898,13 +1898,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">Un metodo visibile esternamente risolve i riferimenti a uno dei relativi argomenti di riferimento senza verificare se tale argomento è null (Nothing in Visual Basic). Tutti gli argomenti di riferimento passati a metodi visibili esternamente devono essere verificati in base a valori Null. Se appropriato, generare un'eccezione ArgumentNullException quando l'argomento è Null o aggiungere una precondizione del contratto di codice con asserzione dell'argomento non Null. Se il metodo è concepito per essere chiamato solo da assembly noti, è necessario impostare il metodo come interno.</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">Un metodo visibile esternamente risolve i riferimenti a uno dei relativi argomenti di riferimento senza verificare se tale argomento è null (Nothing in Visual Basic). Tutti gli argomenti di riferimento passati a metodi visibili esternamente devono essere verificati in base a valori Null. Se appropriato, generare un'eccezione ArgumentNullException quando l'argomento è Null o aggiungere una precondizione del contratto di codice con asserzione dell'argomento non Null. Se il metodo è concepito per essere chiamato solo da assembly noti, è necessario impostare il metodo come interno.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">Nel metodo visibile esternamente '{0}' convalidare il parametro '{1}' in modo che non sia Null prima di usarlo. Se appropriato, generare un'eccezione ArgumentNullException quando l'argomento è Null o aggiungere una precondizione del contratto di codice con asserzione dell'argomento non Null.</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">Nel metodo visibile esternamente '{0}' convalidare il parametro '{1}' in modo che non sia Null prima di usarlo. Se appropriato, generare un'eccezione ArgumentNullException quando l'argomento è Null o aggiungere una precondizione del contratto di codice con asserzione dell'argomento non Null.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

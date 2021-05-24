@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">附加 .ConfigureAwait(true)</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">附加 .ConfigureAwait(true)</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -54,23 +54,23 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">藉傳址傳遞類型 (使用 'out' 或 'ref') 需有指標經驗、了解實值型別與參考型別之間的差異，以及處理具有多個傳回值的方法。而且，大家普遍不了解 'out' 與 'ref' 參數之間的差異。</target>
-        <note />
+        <target state="needs-review-translation">藉傳址傳遞類型 (使用 'out' 或 'ref') 需有指標經驗、了解實值型別與參考型別之間的差異，以及處理具有多個傳回值的方法。而且，大家普遍不了解 'out' 與 'ref' 參數之間的差異。</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">因為不是為一般對象設計，所以請避免使用 'out' 參數</target>
-        <note />
+        <target state="needs-review-translation">因為不是為一般對象設計，所以請避免使用 'out' 參數</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
         <source>Avoid 'out' parameters</source>
         <target state="needs-review-translation">避免使用 out 參數</target>
-        <note />
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">在 catch 陳述式中捕捉到了 System.Exception 或 System.SystemException 等一般例外狀況或不允許的例外狀況類型，或是使用了一般 catch 子句。不應捕捉到一般例外狀況。</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">在 catch 陳述式中捕捉到了 System.Exception 或 System.SystemException 等一般例外狀況或不允許的例外狀況類型，或是使用了一般 catch 子句。不應捕捉到一般例外狀況。</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">'{0}' 是 'NonInheritable' 類別 '{1}' 中新的受保護成員</target>
-        <note />
+        <target state="needs-review-translation">'{0}' 是 'NonInheritable' 類別 '{1}' 中新的受保護成員</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -130,12 +130,12 @@
       <trans-unit id="DoNotExposeGenericListsDescription">
         <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
         <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt; 是為效能而非繼承所設計的泛型集合。List&lt;T&gt; 不包含讓已繼承類別行為更容易變更的虛擬成員。</target>
-        <note />
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">將 '{1}' 中的 '{0}' 變更為使用 'Collection&lt;T&gt;'、'ReadOnlyCollection&lt;T&gt;' 或 'KeyedCollection&lt;K,V&gt;'</target>
-        <note />
+        <target state="needs-review-translation">將 '{1}' 中的 '{0}' 變更為使用 'Collection&lt;T&gt;'、'ReadOnlyCollection&lt;T&gt;' 或 'KeyedCollection&lt;K,V&gt;'</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -159,8 +159,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">對參考型別而言，等號比較運算子的預設實作幾乎永遠正確。根據預設，只有當兩項參考都指向相同物件時才會相等。如果運算子提供有意義的值相等，則型別應實作泛型 'System.IEquatable' 介面。</target>
-        <note />
+        <target state="needs-review-translation">對參考型別而言，等號比較運算子的預設實作幾乎永遠正確。根據預設，只有當兩項參考都指向相同物件時才會相等。如果運算子提供有意義的值相等，則型別應實作泛型 'System.IEquatable' 介面。</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -175,7 +175,7 @@
       <trans-unit id="DoNotPassTypesByReferenceDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="needs-review-translation">藉傳址傳遞類型 (使用 out 或 ref) 需有指標經驗、了解實值型別與參考型別之間的差異，以及處理具有多個傳回值的方法。而且，大家普遍不了解 out 與 ref 參數之間的差異。</target>
-        <note />
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -244,8 +244,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">套用 'AttributeUsageAttribute'</target>
-        <note />
+        <target state="needs-review-translation">套用 'AttributeUsageAttribute'</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">類別會宣告及實作類型為 System.IDisposable 的執行個體欄位，且該類別不會實作 IDisposable。宣告 IDisposable 欄位的類別會間接擁有非受控資源，且應實作 IDisposable 介面。</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">類別會宣告及實作類型為 System.IDisposable 的執行個體欄位，且該類別不會實作 IDisposable。宣告 IDisposable 欄位的類別會間接擁有非受控資源，且應實作 IDisposable 介面。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -288,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">如同其他實值型別一般，未初始化的列舉之預設值為零。非旗標屬性的列舉應以使用零值的方法來定義成員，讓預設值成為列舉的有效值。若已套用 FlagsAttribute 屬性的列舉定義了零值成員，則其名稱應為 "None"，以表示列舉中未設定任何值。</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">如同其他實值型別一般，未初始化的列舉之預設值為零。非旗標屬性的列舉應以使用零值的方法來定義成員，讓預設值成為列舉的有效值。若已套用 FlagsAttribute 屬性的列舉定義了零值成員，則其名稱應為 "None"，以表示列舉中未設定任何值。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
@@ -323,19 +323,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">將組件標記為 CLSCompliant</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">將組件標記為 CLSCompliant</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
         <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
         <target state="needs-review-translation">Common Language Specification (CLS) 會定義命名限制、資料類型及組件必須遵守的規則 (若組件會跨程式設計語言使用)。良好的設計會要求所有組件使用 CLSCompliantAttribute 明確地表示 CLS 合規性。若此屬性未出現於組件中，則表示組件不符合標準。</target>
-        <note />
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
         <source>Mark assemblies with 'CLSCompliant'</source>
         <target state="needs-review-translation">將組件標記為 CLSCompliant</target>
-        <note />
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -355,42 +355,42 @@
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
         <source>Mark assemblies with 'ComVisible'</source>
         <target state="needs-review-translation">將組件標記為 ComVisible</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute 會判斷 COM 用戶端如何存取受控程式碼。良好的設計會要求組件明確表示 COM 的可見度。可以為整個組件設定COM 的可見度，然後再對個別的類型與類型成員進行覆寫。若此屬性不存在，則 COM 用戶端可以看到組件的內容。</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">ComVisibleAttribute 會判斷 COM 用戶端如何存取受控程式碼。良好的設計會要求組件明確表示 COM 的可見度。可以為整個組件設定COM 的可見度，然後再對個別的類型與類型成員進行覆寫。若此屬性不存在，則 COM 用戶端可以看到組件的內容。</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
         <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
         <target state="needs-review-translation">因為 {0} 會公開外部可見的類型，所以請在組件層級將其標記為 ComVisible(false)，然後將應公開給 COM 用戶端之組件內的所有類型，標記為 ComVisible(true)。</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">請考慮將 {0} 上的 ComVisible 屬性變更為 false，並於類型層級選擇加入。</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">請考慮將 {0} 上的 ComVisible 屬性變更為 false，並於類型層級選擇加入。</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
         <source>Mark attributes with 'AttributeUsageAttribute'</source>
         <target state="needs-review-translation">將屬性標記為 AttributeUsageAttribute</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
         <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
         <target state="needs-review-translation">當您定義自訂屬性時，請使用 AttributeUsageAttribute 進行標記，以指出可以在原始程式碼的何處套用自訂屬性。屬性的意義與預期用法將可決定其在程式碼中的有效位置。</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
         <source>Specify AttributeUsage on '{0}'</source>
         <target state="needs-review-translation">在 {0} 上指定 AttributeUsage</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
         <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
         <target state="needs-review-translation">即使屬性 {0} 自其基底類型繼承 AttributeUsage，仍應考慮在類型上明確指定 AttributeUsage，以改善程式碼可讀性與記錄功能。</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -435,17 +435,17 @@
       <trans-unit id="MarkEnumsWithFlagsTitle">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">將列舉標記為 FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
         <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
         <target state="needs-review-translation">列舉是一種實值型別，用以定義一組相關的具名常數。當列舉的具名常數可以有意義地加以合併時，可將 FlagsAttribute 套用至此列舉。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">將列舉標記為 FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -488,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">平台引動過程方法 (例如，使用 System.Runtime.InteropServices.DllImportAttribute 屬性標記的方法，或在 Visual Basic 中使用 Declare 關鍵字定義的方法) 都會存取非受控程式碼。這些方法應為 NativeMethods、SafeNativeMethods 或 UnsafeNativeMethods 類別。</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">平台引動過程方法 (例如，使用 System.Runtime.InteropServices.DllImportAttribute 屬性標記的方法，或在 Visual Basic 中使用 Declare 關鍵字定義的方法) 都會存取非受控程式碼。這些方法應為 NativeMethods、SafeNativeMethods 或 UnsafeNativeMethods 類別。</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -550,17 +550,17 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">請勿將列舉標記為 FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
         <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
         <target state="needs-review-translation">外部可見的列舉會使用 FlagsAttribute 加以標記，且有一或多個值不是二的次方或列舉上其他定義值的組合。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">請勿將列舉標記為 FlagsAttribute</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">覆寫實值型別 Equals 時，多載等號比較運算子</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">覆寫實值型別 Equals 時，多載等號比較運算子</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">在大多數的程式設計語言中，實值型別沒有等號比較運算子 (==) 的預設實作。若程式設計語言支援運算子多載，請考慮實作等號比較運算子。其行為與 Equals 完全相同。</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">在大多數的程式設計語言中，實值型別沒有等號比較運算子 (==) 的預設實作。若程式設計語言支援運算子多載，請考慮實作等號比較運算子。其行為與 Equals 完全相同。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">實作等號運算子，並使其行為與 Equals 方法的行為相同</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">實作等號運算子，並使其行為與 Equals 方法的行為相同</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -643,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">呼叫其字串參數名稱包含 "uri"、"URI"、"urn"、"URN"、"url" 或 "URL" 的方法。此方法的宣告類型包含具有 System.Uri 參數的相對應方法多載。</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">呼叫其字串參數名稱包含 "uri"、"URI"、"urn"、"URN"、"url" 或 "URL" 的方法。此方法的宣告類型包含具有 System.Uri 參數的相對應方法多載。</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -665,12 +665,12 @@
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
         <source>'CancellationToken' parameters must come last</source>
         <target state="needs-review-translation">CancellationToken 參數必須位於最後</target>
-        <note />
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">方法 '{0}' 應以 CancellationToken 作為最後一個參數</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">方法 '{0}' 應以 CancellationToken 作為最後一個參數</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -703,39 +703,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
         <target state="needs-review-translation">因為 {0} 會公開外部可見的型別，所以請在組件層級將其標記為 ComVisible(false)，然後將應公開給 COM 用戶端之組件內的所有型別，標記為 ComVisible(true)</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
         <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
         <target state="needs-review-translation">請考慮將 {0} 上的 ComVisible 屬性變更為 false，並於型別層級選擇加入</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">實作 Equality 與 Comparison 方法以及運算子</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">實作 Equality 與 Comparison 方法以及運算子</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
         <source>Implement 'IEquatable'</source>
         <target state="needs-review-translation">實作 IEquatable</target>
-        <note />
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement 'IDisposable' Interface</source>
+        <source>Implement 'IDisposable' interface</source>
         <target state="needs-review-translation">實作 IDisposable 介面</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
         <source>Remove 'FlagsAttribute' from enum.</source>
         <target state="needs-review-translation">從列舉移除 FlagsAttribute。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
         <source>Apply 'FlagsAttribute' to enum.</source>
         <target state="needs-review-translation">將 FlagsAttribute 套用至列舉。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -973,8 +973,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">此規則假設屬性代表統一資源識別項 (URI)。URI 的字串表示法容易發生剖析及編碼錯誤，且可能因此導致安全性弱點。System.Uri 類別以安全的方式提供這些服務。</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">此規則假設屬性代表統一資源識別項 (URI)。URI 的字串表示法容易發生剖析及編碼錯誤，且可能因此導致安全性弱點。System.Uri 類別以安全的方式提供這些服務。</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -983,14 +983,14 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement 'IDisposable' Correctly</source>
+        <source>Implement 'IDisposable' correctly</source>
         <target state="needs-review-translation">正確實作 IDisposable</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
         <target state="needs-review-translation">所有 IDisposable 類型都應正確地實作 Dispose 模式。</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
@@ -1000,7 +1000,7 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
         <target state="needs-review-translation">移除 '{0}'，覆寫 Dispose(bool disposing)，並在程式碼路徑中放置處置邏輯，其中 'disposing' 為 true</target>
-        <note />
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1020,12 +1020,12 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
         <target state="needs-review-translation">修改 '{0}'，以便其呼叫 Dispose(true)，並在目前的物件執行個體 (Visual Basic 中的 'this' 或 'Me') 上呼叫 GC.SuppressFinalize，然後傳回</target>
-        <note />
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
         <target state="needs-review-translation">修改 '{0}'，以便其呼叫 Dispose(false) 然後傳回</target>
-        <note />
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
@@ -1140,7 +1140,7 @@
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
         <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
         <target state="needs-review-translation">重新命名 {0}，使其以 'Collection' 或 '{1}' 結尾</target>
-        <note />
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1253,13 +1253,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">覆寫實值型別上的 Equals 與等號比較運算子</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">覆寫實值型別上的 Equals 與等號比較運算子</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">對於實值型別而言，Equals 的繼承實作會使用反映庫，並會比較所有欄位的內容。反映相當耗費運算資源，而且可能不需要比較每個欄位是否相等。若希望使用者比較或排序執行個體，或是將執行個體用作為雜湊資料表索引鍵，則您的實值型別應實作 Equals。</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">對於實值型別而言，Equals 的繼承實作會使用反映庫，並會比較所有欄位的內容。反映相當耗費運算資源，而且可能不需要比較每個欄位是否相等。若希望使用者比較或排序執行個體，或是將執行個體用作為雜湊資料表索引鍵，則您的實值型別應實作 Equals。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
@@ -1388,8 +1388,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">索引子 (也就是索引屬性) 應使用整數或字串作為索引類型。這些類型通常用於編製資料結構的索引，且可以提升程式庫的可用性。使用 Object 類型應限於無法在設計階段指定特定整數或字串類型的情況。若設計為索引需要其他類型，請重新考慮該類型是否代表邏輯資料存放區。若不代表邏輯資料存放區，請使用方法。</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">索引子 (也就是索引屬性) 應使用整數或字串作為索引類型。這些類型通常用於編製資料結構的索引，且可以提升程式庫的可用性。使用 Object 類型應限於無法在設計階段指定特定整數或字串類型的情況。若設計為索引需要其他類型，請重新考慮該類型是否代表邏輯資料存放區。若不代表邏輯資料存放區，請使用方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <target state="needs-review-translation">當非同步方法直接等候 Task 時，接續會發生在建立工作的同一個執行緒中。請考慮呼叫 Task.ConfigureAwait(Boolean) 以表示您打算接續。對工作呼叫 ConfigureAwait(false) 可對執行緒集區排程接續，從而避免 UI 執行緒上產生死結。傳遞 false 是適用於應用程式獨立程式庫的選項。對工作呼叫 ConfigureAwait(true) 的行為與未明確呼叫 ConfigureAwait 的行為相同。明確呼叫此方法，表示要讓讀取器知道您打算對原始同步內容執行接續。</target>
-        <note />
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">請考慮對等候的工作呼叫 ConfigureAwait</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">請考慮對等候的工作呼叫 ConfigureAwait</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">附加 .ConfigureAwait(false)</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">附加 .ConfigureAwait(false)</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
         <target state="needs-review-translation">當類型 T 覆寫 Object.Equals(object) 時，實作必須將物件引數轉換為正確的類型 T，然後才可執行比較。如果此類型會實作 IEquatable&lt;T&gt;，因而提供方法 T.Equals(T)，且引數若在編譯時期即已知為類型 T，則編譯器可呼叫 IEquatable&lt;T&gt;.Equals(T) 而非 Object.Equals(object)，而不需要轉換，如此即可改進效能。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">當類型 T 實作介面 IEquatable&lt;T&gt; 時，會向在原始程式碼中看到 Equals 方法呼叫的使用者指出，此類型的執行個體可以視為等同於其他任一類型的執行個體。如果使用者嘗試將此類型視為等同於另一個類型的執行個體，卻無法編譯，可能會感到困惑。這違反「最少意外原則」。</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">當類型 T 實作介面 IEquatable&lt;T&gt; 時，會向在原始程式碼中看到 Equals 方法呼叫的使用者指出，此類型的執行個體可以視為等同於其他任一類型的執行個體。如果使用者嘗試將此類型視為等同於另一個類型的執行個體，卻無法編譯，可能會感到困惑。這違反「最少意外原則」。</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1453,8 +1453,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">移除 '{0}'，並以泛型 EventHandler 取代其用法，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">移除 '{0}'，並以泛型 EventHandler 取代其用法，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1463,8 +1463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">變更事件 '{0}' 來取代具有泛型 EventHandler 的型別 '{1}'，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">變更事件 '{0}' 來取代具有泛型 EventHandler 的型別 '{1}'，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1473,13 +1473,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">明確定義事件類型，以將事件 '{0}' 變更為使用泛型 EventHandler，例如 Event MyEvent As EventHandler(Of MyEventArgs)。</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <target state="needs-review-translation">明確定義事件類型，以將事件 '{0}' 變更為使用泛型 EventHandler，例如 Event MyEvent As EventHandler(Of MyEventArgs)。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">類型包含的事件會宣告傳回 void 的 EventHandler 委派，其簽章內含兩個參數 (第一個為物件，第二個為可指派至 EventArgs 的類型)，而內含的組件則以 Microsoft .NET Framework 2.0 為目標。</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">類型包含的事件會宣告傳回 void 的 EventHandler 委派，其簽章內含兩個參數 (第一個為物件，第二個為可指派至 EventArgs 的類型)，而內含的組件則以 Microsoft .NET Framework 2.0 為目標。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
@@ -1489,18 +1489,18 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">避免使用有前置詞的 cref 標籤</target>
-        <note />
+        <target state="needs-review-translation">避免使用有前置詞的 cref 標籤</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">應避免使用有前置詞的 cref 標籤，因為如此會導致編譯器無法驗證參考，並導致 IDE 無法於重構期間更新參考。如果因為編譯器無法找到提及的類型，而讓 cref 必須使用前置詞時，您可在單一文件網站上隱藏此錯誤。例如，如果 cref 提及完整架構中的某個特殊屬性，但您檔案的編譯對象為可攜式架構，或若想參考 Roslyn 更高層的類型，即不應出現此錯誤。即使只是單純求快而不想使用完整語法，也不應隱藏此項錯誤。</target>
-        <note />
+        <target state="needs-review-translation">應避免使用有前置詞的 cref 標籤，因為如此會導致編譯器無法驗證參考，並導致 IDE 無法於重構期間更新參考。如果因為編譯器無法找到提及的類型，而讓 cref 必須使用前置詞時，您可在單一文件網站上隱藏此錯誤。例如，如果 cref 提及完整架構中的某個特殊屬性，但您檔案的編譯對象為可攜式架構，或若想參考 Roslyn 更高層的類型，即不應出現此錯誤。即使只是單純求快而不想使用完整語法，也不應隱藏此項錯誤。</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">避免使用有前置詞的 cref 標籤</target>
-        <note />
+        <target state="needs-review-translation">避免使用有前置詞的 cref 標籤</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1653,9 +1653,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
         <target state="needs-review-translation">{0} 是明顯從未具現化的內部類別。若是如此，請從組件中移除該程式碼。如果此類別預計只會包含靜態成員，請將其設為 Static (在 Visual Basic 中為 Shared)。</target>
-        <note />
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1898,13 +1898,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">外部可見的方法，會解除參照其中一個它的參考引數，而會不確認該引數是否為 null (在 Visual Basic 中無)。但所有傳遞到外部可見方法的參考引數，都應檢查是否為 null。若可行的話，當引數為 null 時請擲回 ArgumentNullException，或是新增程式碼合約先決條件判斷提示非 null 引數。若該方法設計為只可由已知組件呼叫，則應將該方法設為內部方法。</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">外部可見的方法，會解除參照其中一個它的參考引數，而會不確認該引數是否為 null (在 Visual Basic 中無)。但所有傳遞到外部可見方法的參考引數，都應檢查是否為 null。若可行的話，當引數為 null 時請擲回 ArgumentNullException，或是新增程式碼合約先決條件判斷提示非 null 引數。若該方法設計為只可由已知組件呼叫，則應將該方法設為內部方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">在外部可見方法 '{0}' 中，驗證參數 '{1}' 在使用前會是非 null。若可行的話，當引數為 null 時請擲回 ArgumentNullException，或是新增程式碼合約先決條件判斷提示非 null 引數。</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">在外部可見方法 '{0}' 中，驗證參數 '{1}' 在使用前會是非 null。若可行的話，當引數為 null 時請擲回 ArgumentNullException，或是新增程式碼合約先決條件判斷提示非 null 引數。</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

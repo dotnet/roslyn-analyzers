@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="ja" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">.ConfigureAwait(true) を追加します</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">.ConfigureAwait(true) を追加します</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -54,23 +54,23 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">('out' または 'ref' を使用して) 型を参照によって渡すには、ポインターの使用経験、値型と参照型の違いの理解、および複数の戻り値を持つ処理メソッドが必要です。また、'out' と 'ref' のパラメーターの違いはあまり理解されていません。</target>
-        <note />
+        <target state="needs-review-translation">('out' または 'ref' を使用して) 型を参照によって渡すには、ポインターの使用経験、値型と参照型の違いの理解、および複数の戻り値を持つ処理メソッドが必要です。また、'out' と 'ref' のパラメーターの違いはあまり理解されていません。</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">一般向けに設計されていないため、'out' パラメーターは使用しないでください</target>
-        <note />
+        <target state="needs-review-translation">一般向けに設計されていないため、'out' パラメーターは使用しないでください</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
         <source>Avoid 'out' parameters</source>
         <target state="needs-review-translation">out パラメーターを使用しません</target>
-        <note />
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">System.Exception や System.SystemException などの一般的な例外、または許可されていない例外の種類は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外と許可されていない例外をキャッチしないでください。</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception や System.SystemException などの一般的な例外、または許可されていない例外の種類は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外と許可されていない例外をキャッチしないでください。</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">'{0}' は '継承不可能' なクラス '{1}' の保護された新規メンバーです</target>
-        <note />
+        <target state="needs-review-translation">'{0}' は '継承不可能' なクラス '{1}' の保護された新規メンバーです</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -130,12 +130,12 @@
       <trans-unit id="DoNotExposeGenericListsDescription">
         <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
         <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt; は、継承のためではなく、パフォーマンスのためのジェネリック コレクションです。List&lt;T&gt; には、継承されたクラスの動作の変更を容易にする仮想メンバーが含まれていません。</target>
-        <note />
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">'{1}' の '{0}' を変更して、'Collection&lt;T&gt;'、'ReadOnlyCollection&lt;T&gt;'、または 'KeyedCollection&lt;K,V&gt;' を使用するようにします</target>
-        <note />
+        <target state="needs-review-translation">'{1}' の '{0}' を変更して、'Collection&lt;T&gt;'、'ReadOnlyCollection&lt;T&gt;'、または 'KeyedCollection&lt;K,V&gt;' を使用するようにします</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -159,8 +159,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">参照型の場合、等値演算子の既定の実装はほとんどの場合正確です。既定では、2 つの参照は、同じオブジェクトを指している場合にのみ等しくなります。演算子の値が意味を持つ等価を示している場合は、その型によって 'System.IEquatable' ジェネリック インターフェイスを実装する必要があります。</target>
-        <note />
+        <target state="needs-review-translation">参照型の場合、等値演算子の既定の実装はほとんどの場合正確です。既定では、2 つの参照は、同じオブジェクトを指している場合にのみ等しくなります。演算子の値が意味を持つ等価を示している場合は、その型によって 'System.IEquatable' ジェネリック インターフェイスを実装する必要があります。</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -175,7 +175,7 @@
       <trans-unit id="DoNotPassTypesByReferenceDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="needs-review-translation">(out または ref を使用して) 型を参照によって渡すには、ポインターの使用経験、値型と参照型の違いの理解、および複数の戻り値を持つメソッドの処理が必要です。また、out および ref パラメーターの違いはあまり理解されていません。</target>
-        <note />
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -244,8 +244,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">'AttributeUsageAttribute' の適用</target>
-        <note />
+        <target state="needs-review-translation">'AttributeUsageAttribute' の適用</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">クラスが System.IDisposable 型であるインスタンス フィールドを宣言および実装していますが、IDisposable を実装していません。IDisposable フィールドを宣言するクラスは間接的にアンマネージ リソースを所有しているため、IDisposable インターフェイスを実装する必要があります。</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">クラスが System.IDisposable 型であるインスタンス フィールドを宣言および実装していますが、IDisposable を実装していません。IDisposable フィールドを宣言するクラスは間接的にアンマネージ リソースを所有しているため、IDisposable インターフェイスを実装する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -288,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">初期化されていない列挙型の既定値は、他の値型と同様に、ゼロです。Flags 属性以外が指定された列挙型では、既定値が有効な列挙値になるように、値 0 を使用してメンバーを定義する必要があります。FlagsAttribute 属性が適用されている列挙型で 0 値のメンバーを定義する場合は、その名前を ""None"" にして、列挙型に値が設定されていないことを示す必要があります。</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">初期化されていない列挙型の既定値は、他の値型と同様に、ゼロです。Flags 属性以外が指定された列挙型では、既定値が有効な列挙値になるように、値 0 を使用してメンバーを定義する必要があります。FlagsAttribute 属性が適用されている列挙型で 0 値のメンバーを定義する場合は、その名前を ""None"" にして、列挙型に値が設定されていないことを示す必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
@@ -323,19 +323,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">アセンブリに CLSCompliant を設定します</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">アセンブリに CLSCompliant を設定します</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
         <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
         <target state="needs-review-translation">共通言語仕様 (CLS) では、名前付け制限、データ型、規則が定義されています。アセンブリは、複数のプログラミング言語で使用する場合、これらに準拠する必要があります。すべてのアセンブリに CLSCompliantAttribute を使用して CLS への準拠を明示することをお勧めします。この属性がアセンブリに存在しない場合、そのアセンブリは CLS に準拠しません。</target>
-        <note />
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
         <source>Mark assemblies with 'CLSCompliant'</source>
         <target state="needs-review-translation">アセンブリに CLSCompliant を設定します</target>
-        <note />
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -355,42 +355,42 @@
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
         <source>Mark assemblies with 'ComVisible'</source>
         <target state="needs-review-translation">アセンブリに ComVisible を設定します</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute によって、COM クライアントからマネージ コードにアクセスする方法を決定します。この場合、アセンブリが COM の参照可能性を明示的に示すことが推奨されます。COM の参照可能性は、アセンブリ全体で設定した後、個々の型と型メンバーに対してオーバーライドできます。この属性が存在しない場合、アセンブリのコンテンツは COM クライアントから参照できます。</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">ComVisibleAttribute によって、COM クライアントからマネージ コードにアクセスする方法を決定します。この場合、アセンブリが COM の参照可能性を明示的に示すことが推奨されます。COM の参照可能性は、アセンブリ全体で設定した後、個々の型と型メンバーに対してオーバーライドできます。この属性が存在しない場合、アセンブリのコンテンツは COM クライアントから参照できます。</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
         <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
         <target state="needs-review-translation">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します。</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">{0} の ComVisible 属性を false に変更してから、各型レベルで調節することを検討してください。</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">{0} の ComVisible 属性を false に変更してから、各型レベルで調節することを検討してください。</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
         <source>Mark attributes with 'AttributeUsageAttribute'</source>
         <target state="needs-review-translation">属性を AttributeUsageAttribute に設定します</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
         <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
         <target state="needs-review-translation">カスタム属性を定義する場合、AttributeUsageAttribute を使用して、ソース コード内でカスタム属性を適用できる位置を示すように設定します。属性の意味と用途により、コード内での有効な位置が決まります。</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
         <source>Specify AttributeUsage on '{0}'</source>
         <target state="needs-review-translation">AttributeUsage を {0} で指定してください</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
         <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
         <target state="needs-review-translation">属性 {0} がその基本データ型から AttributeUsage を継承した場合でも、コードの読みやすさ、ドキュメントを改善するために、AttributeUsage をその型で明示的に指定することを検討してください。</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -435,17 +435,17 @@
       <trans-unit id="MarkEnumsWithFlagsTitle">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">列挙型を FlagsAttribute に設定します</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
         <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
         <target state="needs-review-translation">列挙型は、関連する一連の名前付き定数を定義する値型です。名前付き定数を意味を持つように組み合わせることができる場合は、列挙型に FlagsAttribute を適用します。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">列挙型を FlagsAttribute に設定します</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -488,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">プラットフォーム呼び出しメソッド (System.Runtime.InteropServices.DllImportAttribute 属性を使用してマークされているメソッドなど) または Visual Basic で Declare キーワードを使用して定義されているメソッドが、アンマネージ コードにアクセスしています。これらのメソッドは、NativeMethods、SafeNativeMethods、または UnsafeNativeMethods クラスに属している必要があります。</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">プラットフォーム呼び出しメソッド (System.Runtime.InteropServices.DllImportAttribute 属性を使用してマークされているメソッドなど) または Visual Basic で Declare キーワードを使用して定義されているメソッドが、アンマネージ コードにアクセスしています。これらのメソッドは、NativeMethods、SafeNativeMethods、または UnsafeNativeMethods クラスに属している必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -550,17 +550,17 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">列挙型を FlagsAttribute に設定しません</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
         <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
         <target state="needs-review-translation">外部から参照可能な列挙型が FlagsAttribute を使用してマークされ、その列挙型に、2 の累乗でもその列挙型で定義されている他の値の組み合わせでもない値が 1 つ以上含まれています。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">列挙型を FlagsAttribute に設定しません</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">値型 Equals のオーバーライドで、演算子 equals をオーバーロードします</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">値型 Equals のオーバーライドで、演算子 equals をオーバーロードします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">ほとんどのプログラミング言語では、値型に対する等値演算子 (==) の既定の実装がありません。プログラミング言語で演算子のオーバーロードがサポートされている場合は、等値演算子の実装を検討してください。その動作は、Equals の動作と同じである必要があります。</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">ほとんどのプログラミング言語では、値型に対する等値演算子 (==) の既定の実装がありません。プログラミング言語で演算子のオーバーロードがサポートされている場合は、等値演算子の実装を検討してください。その動作は、Equals の動作と同じである必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">等値演算子を実装し、それらを Equals メソッドと同一の動作にします</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">等値演算子を実装し、それらを Equals メソッドと同一の動作にします</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -643,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">名前に "uri"、"URI"、"urn"、"URN"、"url"、または "URL" が含まれている文字列パラメーターが指定されたメソッドが呼び出されます。そのメソッドの宣言する型には、System.Uri パラメーターが指定されている対応するメソッド オーバーロードが含まれています。</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">名前に "uri"、"URI"、"urn"、"URN"、"url"、または "URL" が含まれている文字列パラメーターが指定されたメソッドが呼び出されます。そのメソッドの宣言する型には、System.Uri パラメーターが指定されている対応するメソッド オーバーロードが含まれています。</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -665,12 +665,12 @@
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
         <source>'CancellationToken' parameters must come last</source>
         <target state="needs-review-translation">CancellationToken パラメーターは最後に指定する必要があります</target>
-        <note />
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">メソッド '{0}' は、CancellationToken を最後のパラメーターとして受け取る必要があります</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">メソッド '{0}' は、CancellationToken を最後のパラメーターとして受け取る必要があります</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -703,39 +703,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
         <target state="needs-review-translation">{0} は外部から参照可能な型を公開するため、アセンブリ レベルで ComVisible(false) に設定し、COM クライアントに公開する必要があるアセンブリ内のすべての型を ComVisible(true) に設定します</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
         <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
         <target state="needs-review-translation">{0} の ComVisible 属性を false に変更してから、型レベルでオプトインすることを検討してください</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">等値および比較メソッドおよび演算子を実装します</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">等値および比較メソッドおよび演算子を実装します</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
         <source>Implement 'IEquatable'</source>
         <target state="needs-review-translation">IEquatable を実装します</target>
-        <note />
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement 'IDisposable' Interface</source>
+        <source>Implement 'IDisposable' interface</source>
         <target state="needs-review-translation">IDisposable インターフェイスを実装します</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
         <source>Remove 'FlagsAttribute' from enum.</source>
         <target state="needs-review-translation">FlagsAttribute を列挙型から削除します。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
         <source>Apply 'FlagsAttribute' to enum.</source>
         <target state="needs-review-translation">FlagsAttribute を列挙型に適用します。</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -973,8 +973,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">この規則では、プロパティが Uniform Resource Identifier (URI) を表すことを前提としています。URI の文字列表現は解析エラーやエンコーディング エラーが発生しやすく、セキュリティ上の脆弱性の原因となる場合があります。System.Uri クラスを使用すると、安全な方法でこれらのサービスが提供されます。</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">この規則では、プロパティが Uniform Resource Identifier (URI) を表すことを前提としています。URI の文字列表現は解析エラーやエンコーディング エラーが発生しやすく、セキュリティ上の脆弱性の原因となる場合があります。System.Uri クラスを使用すると、安全な方法でこれらのサービスが提供されます。</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -983,14 +983,14 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement 'IDisposable' Correctly</source>
+        <source>Implement 'IDisposable' correctly</source>
         <target state="needs-review-translation">IDisposable を正しく実装します</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
         <target state="needs-review-translation">すべての IDisposable 型は、Dispose パターンを正しく実装しなければなりません。</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
@@ -1000,7 +1000,7 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
         <target state="needs-review-translation">'{0}' を削除し、Dispose(bool disposing) をオーバーライドしてください。その後、'disposing' が true であるコード パスに dispose 論理を配置します</target>
-        <note />
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1020,12 +1020,12 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
         <target state="needs-review-translation">'{0}' を変更し、Dispose(true) を呼び出したのちに現在のオブジェクト インスタンスで GC.SuppressFinalize (Visual Basic の 'this' または 'Me') を呼び出してから戻るようにしてください</target>
-        <note />
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
         <target state="needs-review-translation">'{0}' を変更し、Dispose(false) を呼び出してから戻るようにしてください</target>
-        <note />
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
@@ -1140,7 +1140,7 @@
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
         <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
         <target state="needs-review-translation">{0} の名前が 'Collection' または '{1}' で終わるように変更してください</target>
-        <note />
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1253,13 +1253,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">equals および operator equals を値型でオーバーライドします</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">equals および operator equals を値型でオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">値型の場合、Equals を継承した実装が Reflection ライブラリを使用して、すべてのフィールドの内容を比較します。Reflection は計算コストが高いため、場合によってはすべてのフィールドで等値性を比較する必要はありません。ユーザーがインスタンスの比較または並べ替えを行うことや、ハッシュ テーブル キーとしてインスタンスを使用することが予想される場合には、値型に Equals を実装する必要があります。</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">値型の場合、Equals を継承した実装が Reflection ライブラリを使用して、すべてのフィールドの内容を比較します。Reflection は計算コストが高いため、場合によってはすべてのフィールドで等値性を比較する必要はありません。ユーザーがインスタンスの比較または並べ替えを行うことや、ハッシュ テーブル キーとしてインスタンスを使用することが予想される場合には、値型に Equals を実装する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
@@ -1388,8 +1388,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">インデクサー (インデックス付きのプロパティ) は、インデックスに整数型または文字列型を使用する必要があります。一般に、これらの型は、データ構造のインデックス作成に使用されます。また、ライブラリの操作感が改善されます。Object 型の使用は、デザイン時に特定の整数型または文字列型を指定できない場合に限定してください。デザインによってインデックスに他の型が必要な場合は、該当する型が論理的なデータ ストアを表しているかどうかを再検討してください。論理的なデータ ストアを表していない場合、メソッドを使用します。</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">インデクサー (インデックス付きのプロパティ) は、インデックスに整数型または文字列型を使用する必要があります。一般に、これらの型は、データ構造のインデックス作成に使用されます。また、ライブラリの操作感が改善されます。Object 型の使用は、デザイン時に特定の整数型または文字列型を指定できない場合に限定してください。デザインによってインデックスに他の型が必要な場合は、該当する型が論理的なデータ ストアを表しているかどうかを再検討してください。論理的なデータ ストアを表していない場合、メソッドを使用します。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <target state="needs-review-translation">非同期メソッドがタスクを直接待機すると、タスクを作成したのと同じスレッドで継続が発生します。継続の意図を示すには、Task.ConfigureAwait(Boolean) の呼び出しを検討してください。タスクで ConfigureAwait(false) を呼び出して、スレッド プールへの継続をスケジュールします。その結果、UI スレッドのデッドロックを回避できます。アプリに依存しないライブラリでは、false を渡すことが適切なオプションです。タスクで ConfigureAwait(true) を呼び出すと、ConfigureAwait を明示的に呼び出さない場合と動作が同じになります。このメソッドを明示的に呼び出すことにより、元の同期コンテキストで意図的に継続を実行していることを閲覧者に示します。</target>
-        <note />
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">.ConfigureAwait(false) を追加します</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">.ConfigureAwait(false) を追加します</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
         <target state="needs-review-translation">型 T が Object.Equals(object) をオーバーライドする場合、この実装は、比較を行う前にオブジェクトの引数を正しい型 T にキャストする必要があります。型が IEquatable&lt;T&gt; を実装してメソッド T.Equals(T) を提供する場合、およびコンパイル時に引数が型 T であることがわかっている場合、コンパイラは Object.Equals(object) の代わりに IEquatable&lt;T&gt;.Equals(T) を呼び出すことができ、キャストは必要ではなくなるため、パフォーマンスが向上します。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">型 T がインターフェイスの IEquatable&lt;T&gt; を実装することは、ソース コード内の Equals メソッドへの呼び出しを見るユーザーにとって、型のインスタンスを他の任意の型のインスタンスと結びつけることができることを意味しています。ユーザーが型を他の型のインスタンスに結びつけようとしてコンパイルが失敗すると、ユーザーは混乱する可能性があります。これは、「驚き最小の原則」に違反しています。</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">型 T がインターフェイスの IEquatable&lt;T&gt; を実装することは、ソース コード内の Equals メソッドへの呼び出しを見るユーザーにとって、型のインスタンスを他の任意の型のインスタンスと結びつけることができることを意味しています。ユーザーが型を他の型のインスタンスに結びつけようとしてコンパイルが失敗すると、ユーザーは混乱する可能性があります。これは、「驚き最小の原則」に違反しています。</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1453,8 +1453,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' を削除して、それを EventHandler&lt;T&gt; (T は有効な EventArgs) などのジェネリックの EventHandler と置き換えてください</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">'{0}' を削除して、それを EventHandler&lt;T&gt; (T は有効な EventArgs) などのジェネリックの EventHandler と置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1463,8 +1463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">イベント '{0}' を変更して、型 '{1}' を EventHandler&lt;T&gt; (T は有効な EventArgs) などのジェネリックの EventHandler と置き換えてください</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">イベント '{0}' を変更して、型 '{1}' を EventHandler&lt;T&gt; (T は有効な EventArgs) などのジェネリックの EventHandler と置き換えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1473,13 +1473,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">汎用 EventHandler を使用するために、イベント型を明示的に定義して、イベント '{0}' を変更します。例: Event MyEvent As EventHandler(Of MyEventArgs)</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <target state="needs-review-translation">汎用 EventHandler を使用するために、イベント型を明示的に定義して、イベント '{0}' を変更します。例: Event MyEvent As EventHandler(Of MyEventArgs)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">型に void を返す EventHandler デリゲートを宣言するイベントが含まれており、デリゲートのシグネチャに 2 つのパラメーター (1 つはオブジェクト、もう 1 つは EventArgs に割り当て可能な型) が含まれ、包含アセンブリの対象が .NET Framework 2.0 です。</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">型に void を返す EventHandler デリゲートを宣言するイベントが含まれており、デリゲートのシグネチャに 2 つのパラメーター (1 つはオブジェクト、もう 1 つは EventArgs に割り当て可能な型) が含まれ、包含アセンブリの対象が .NET Framework 2.0 です。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
@@ -1489,18 +1489,18 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">cref タグをプレフィックスと共に使用しない</target>
-        <note />
+        <target state="needs-review-translation">cref タグをプレフィックスと共に使用しない</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">cref タグをプレフィックスと共に使用しないでください。リファクタリング中に、コンパイラが参照を検証したり、IDE が参照を更新したりできなくなります。指定されている型をコンパイラが検出できないことが原因で cref でプレフィックスを使用する必要がある場合は、単一のドキュメント サイトでこのエラーを抑制することは許容されます。たとえば、cref に完全なフレームワークの特殊な属性を指定している一方で、移植可能なフレームワークを対象にコンパイルするファイルを使用している場合や、Roslyn の上位レイヤーの型を参照する場合は、このエラーが表示されないようにする必要があります。完全な構文の使用を避けて手軽な方法を使用したいというだけの理由でこのエラーが表示されないようにしないでください。</target>
-        <note />
+        <target state="needs-review-translation">cref タグをプレフィックスと共に使用しないでください。リファクタリング中に、コンパイラが参照を検証したり、IDE が参照を更新したりできなくなります。指定されている型をコンパイラが検出できないことが原因で cref でプレフィックスを使用する必要がある場合は、単一のドキュメント サイトでこのエラーを抑制することは許容されます。たとえば、cref に完全なフレームワークの特殊な属性を指定している一方で、移植可能なフレームワークを対象にコンパイルするファイルを使用している場合や、Roslyn の上位レイヤーの型を参照する場合は、このエラーが表示されないようにする必要があります。完全な構文の使用を避けて手軽な方法を使用したいというだけの理由でこのエラーが表示されないようにしないでください。</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">cref タグをプレフィックスと共に使用しない</target>
-        <note />
+        <target state="needs-review-translation">cref タグをプレフィックスと共に使用しない</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1653,9 +1653,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
         <target state="needs-review-translation">{0} は、インスタンス化されていない内部クラスです。その場合、コードをアセンブリから削除してください。このクラスが静的メンバーのみを含むことを意図している場合は、このクラスを static (Visual Basic の場合は Shared) にしてください。</target>
-        <note />
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1898,13 +1898,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">外部から参照できるメソッドが、引数が null (Visual Basic では Nothing) であるかどうかを確認せずに参照引数の 1 つを逆参照しています。外部から参照できるメソッドに渡されるすべての参照引数は、null でないかどうかを確認する必要があります。適切であれば、引数が null の場合は ArgumentNullException をスローするか、非 null の引数をアサートするコード コントラクトの必須条件を追加します。メソッドが既知のアセンブリからのみ呼び出されるように設計されている場合、メソッドを internal にします。</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">外部から参照できるメソッドが、引数が null (Visual Basic では Nothing) であるかどうかを確認せずに参照引数の 1 つを逆参照しています。外部から参照できるメソッドに渡されるすべての参照引数は、null でないかどうかを確認する必要があります。適切であれば、引数が null の場合は ArgumentNullException をスローするか、非 null の引数をアサートするコード コントラクトの必須条件を追加します。メソッドが既知のアセンブリからのみ呼び出されるように設計されている場合、メソッドを internal にします。</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">外部から参照できるメソッド '{0}' において、検証パラメーター '{1}' は使用前は非 null です。適切であれば、引数が null の場合に ArgumentNullException をスローするか、非 null の引数をアサートするコード コントラクトの必須条件を追加します。</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">外部から参照できるメソッド '{0}' において、検証パラメーター '{1}' は使用前は非 null です。適切であれば、引数が null の場合に ArgumentNullException をスローするか、非 null の引数をアサートするコード コントラクトの必須条件を追加します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

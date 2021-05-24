@@ -3,9 +3,9 @@
   <file datatype="xml" source-language="en" target-language="ko" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
-        <source>Append .ConfigureAwait(true)</source>
-        <target state="translated">.ConfigureAwait(true) 추가</target>
-        <note />
+        <source>Append '.ConfigureAwait(true)'</source>
+        <target state="needs-review-translation">.ConfigureAwait(true) 추가</target>
+        <note>{Locked=".ConfigureAwait(true)"}</note>
       </trans-unit>
       <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
         <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
@@ -54,23 +54,23 @@
       </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
-        <target state="translated">'out' 또는 'ref'를 사용하여 참조로 형식을 전달하려면 포인터 사용 경험, 값 형식과 참조 형식이 어떻게 다른지에 대한 이해 및 반환 값이 여러 개인 메서드 처리가 필요합니다. 또한 'out' 매개 변수와 'ref' 매개 변수의 차이점은 널리 이해되지 않습니다.</target>
-        <note />
+        <target state="needs-review-translation">'out' 또는 'ref'를 사용하여 참조로 형식을 전달하려면 포인터 사용 경험, 값 형식과 참조 형식이 어떻게 다른지에 대한 이해 및 반환 값이 여러 개인 메서드 처리가 필요합니다. 또한 'out' 매개 변수와 'ref' 매개 변수의 차이점은 널리 이해되지 않습니다.</target>
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersMessage">
         <source>Avoid 'out' parameters as they are not designed for general audience</source>
-        <target state="translated">'out' 매개 변수는 일반 사용자용으로 설계되지 않았으므로 사용하지 마세요.</target>
-        <note />
+        <target state="needs-review-translation">'out' 매개 변수는 일반 사용자용으로 설계되지 않았으므로 사용하지 마세요.</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="AvoidOutParametersTitle">
         <source>Avoid 'out' parameters</source>
         <target state="needs-review-translation">out 매개 변수를 사용하지 마십시오.</target>
-        <note />
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
-        <target state="translated">System.Exception이나 System.SystemException과 같은 일반 예외 또는 허용되지 않는 예외 형식이 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외와 허용되지 않는 예외는 catch되면 안 됩니다.</target>
-        <note />
+        <source>A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception이나 System.SystemException과 같은 일반 예외 또는 허용되지 않는 예외 형식이 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외와 허용되지 않는 예외는 catch되면 안 됩니다.</target>
+        <note>{Locked="System.Exception"}{Locked="System.SystemException"}</note>
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception</source>
@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesMessage">
         <source>'{0}' is a new protected member in the 'NonInheritable' class '{1}'</source>
-        <target state="translated">'{0}'은(는) 'NonInheritable' 클래스 '{1}'의 새 protected 멤버입니다.</target>
-        <note />
+        <target state="needs-review-translation">'{0}'은(는) 'NonInheritable' 클래스 '{1}'의 새 protected 멤버입니다.</target>
+        <note>{Locked="NonInheritable"}</note>
       </trans-unit>
       <trans-unit id="DoNotDeclareProtectedMembersInSealedTypesTitle">
         <source>Do not declare protected member in sealed type</source>
@@ -130,12 +130,12 @@
       <trans-unit id="DoNotExposeGenericListsDescription">
         <source>'System.Collections.Generic.List&lt;T&gt;' is a generic collection that's designed for performance and not inheritance. 'List&lt;T&gt;' does not contain virtual members that make it easier to change the behavior of an inherited class.</source>
         <target state="needs-review-translation">System.Collections.Generic.List&lt;T&gt;는 상속이 아닌 성능을 위해 설계된 제네릭 컬렉션입니다. List&lt;T&gt;는 상속된 클래스의 동작을 더 쉽게 변경할 수 있도록 만들어 주는 가상 멤버를 포함하지 않습니다.</target>
-        <note />
+        <note>{Locked="System.Collections.Generic.List&lt;T&gt;"}{Locked="List&lt;T&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
         <source>Change '{0}' in '{1}' to use 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' or 'KeyedCollection&lt;K,V&gt;'</source>
-        <target state="translated">'{1}'의 '{0}'이(가) 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' 또는 'KeyedCollection&lt;K,V&gt;'를 사용하도록 변경합니다.</target>
-        <note />
+        <target state="needs-review-translation">'{1}'의 '{0}'이(가) 'Collection&lt;T&gt;', 'ReadOnlyCollection&lt;T&gt;' 또는 'KeyedCollection&lt;K,V&gt;'를 사용하도록 변경합니다.</target>
+        <note>{Locked="Collection&lt;T&gt;"}{Locked="ReadOnlyCollection&lt;T&gt;"}{Locked="KeyedCollection&lt;K,V&gt;"}</note>
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
@@ -159,8 +159,8 @@
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
         <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object. If the operator is providing meaningful value equality, the type should implement the generic 'System.IEquatable' interface.</source>
-        <target state="translated">참조 형식의 경우 같음 연산자의 기본 구현은 거의 항상 올바릅니다. 기본적으로 두 참조는 같은 개체를 가리키는 경우에만 같습니다. 연산자가 의미 있는 값 같음을 제공하는 경우 형식은 제네릭 'System.IEquatable' 인터페이스를 구현해야 합니다.</target>
-        <note />
+        <target state="needs-review-translation">참조 형식의 경우 같음 연산자의 기본 구현은 거의 항상 올바릅니다. 기본적으로 두 참조는 같은 개체를 가리키는 경우에만 같습니다. 연산자가 의미 있는 값 같음을 제공하는 경우 형식은 제네릭 'System.IEquatable' 인터페이스를 구현해야 합니다.</target>
+        <note>{Locked="'System.IEquatable"}</note>
       </trans-unit>
       <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
         <source>'{0}' should not overload the equality operator</source>
@@ -175,7 +175,7 @@
       <trans-unit id="DoNotPassTypesByReferenceDescription">
         <source>Passing types by reference (using 'out' or 'ref') requires experience with pointers, understanding how value types and reference types differ, and handling methods that have multiple return values. Also, the difference between 'out' and 'ref' parameters is not widely understood.</source>
         <target state="needs-review-translation">out 또는 ref를 사용하여 참조로 형식을 전달하려면 포인터 사용 경험이 있고, 값 형식과 참조 형식의 차이점을 알고 있으며, 반환 값이 여러 개인 메서드를 처리해야 합니다. 또한 out 매개 변수와 ref 매개 변수의 차이점은 널리 알려져 있지 않습니다.</target>
-        <note />
+        <note>{Locked="out"}{Locked="ref"}</note>
       </trans-unit>
       <trans-unit id="DoNotPassTypesByReferenceMessage">
         <source>Consider a design that does not require that '{0}' be a reference parameter</source>
@@ -244,8 +244,8 @@
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageCodeFix">
         <source>Apply 'AttributeUsageAttribute'</source>
-        <target state="translated">'AttributeUsageAttribute' 적용</target>
-        <note />
+        <target state="needs-review-translation">'AttributeUsageAttribute' 적용</target>
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">클래스는 System.IDisposable 형식인 인스턴스 필드를 선언하고 구현하지만, IDisposable을 구현하지 않습니다. IDisposable 필드를 선언하는 클래스는 관리되지 않는 리소스를 간접적으로 소유하며, IDisposable 인터페이스를 구현해야 합니다.</target>
+        <source>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</source>
+        <target state="needs-review-translation">클래스는 System.IDisposable 형식인 인스턴스 필드를 선언하고 구현하지만, IDisposable을 구현하지 않습니다. IDisposable 필드를 선언하는 클래스는 관리되지 않는 리소스를 간접적으로 소유하며, IDisposable 인터페이스를 구현해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">
@@ -288,8 +288,8 @@
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueDescription">
-        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</source>
-        <target state="translated">다른 값 형식과 마찬가지로 초기화되지 않은 열거형의 기본값은 0입니다. 플래그가 없는 특성을 가진 열거형이 0 값을 사용하여 멤버를 정의하므로 기본값은 유효한 열거형 값입니다. FlagsAttribute 특성이 적용된 열거형이 0 값을 가진 멤버를 정의하는 경우 멤버 이름이 ""None""으로 명명되어 열거형에 값이 설정되지 않았음을 표시해야 합니다.</target>
+        <source>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</source>
+        <target state="needs-review-translation">다른 값 형식과 마찬가지로 초기화되지 않은 열거형의 기본값은 0입니다. 플래그가 없는 특성을 가진 열거형이 0 값을 사용하여 멤버를 정의하므로 기본값은 유효한 열거형 값입니다. FlagsAttribute 특성이 적용된 열거형이 0 값을 가진 멤버를 정의하는 경우 멤버 이름이 ""None""으로 명명되어 열거형에 값이 설정되지 않았음을 표시해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumsShouldHaveZeroValueMessageFlagsRename">
@@ -323,19 +323,19 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantTitle">
-        <source>Mark assemblies with CLSCompliant</source>
-        <target state="translated">CLSCompliant로 어셈블리를 표시하세요.</target>
-        <note />
+        <source>Mark assemblies with 'CLSCompliant'</source>
+        <target state="needs-review-translation">CLSCompliant로 어셈블리를 표시하세요.</target>
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantDescription">
         <source>The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.</source>
         <target state="needs-review-translation">CLS(공용 언어 사양)는 명명 제한, 데이터 형식 및 어셈블리가 프로그래밍 언어에 사용될 경우 준수해야 할 규칙을 정의합니다. 설계 시 CLSCompliantAttribute를 사용하여 모든 어셈블리가 명시적으로 CLS를 준수함을 나타내는 것이 좋습니다. 이 특성이 어셈블리에 표시되지 않는 경우는 어셈블리가 비규격 상태입니다.</target>
-        <note />
+        <note>{Locked="CLSCompliantAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithClsCompliantMessage">
         <source>Mark assemblies with 'CLSCompliant'</source>
         <target state="needs-review-translation">CLSCompliant로 어셈블리를 표시하세요.</target>
-        <note />
+        <note>{Locked="CLSCompliant"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionTitle">
         <source>Mark assemblies with assembly version</source>
@@ -355,42 +355,42 @@
       <trans-unit id="MarkAssembliesWithComVisibleTitle">
         <source>Mark assemblies with 'ComVisible'</source>
         <target state="needs-review-translation">ComVisible로 어셈블리를 표시하세요.</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleDescription">
-        <source>ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
-        <target state="translated">ComVisibleAttribute는 COM 클라이언트가 관리 코드에 액세스하는 방법을 결정합니다. 어셈블리가 명시적으로 COM 표시 유형 지정하는 것이 좋습니다. COM 표시 유형은 전체 어셈블리에 대해 설정된 다음 개별 형식과 형식 멤버에 대해 재정의될 수 있습니다. 이 특성이 표시되지 않는 경우 어셈블리 콘텐츠는 COM 클라이언트에 표시되지 않습니다.</target>
-        <note />
+        <source>'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.</source>
+        <target state="needs-review-translation">ComVisibleAttribute는 COM 클라이언트가 관리 코드에 액세스하는 방법을 결정합니다. 어셈블리가 명시적으로 COM 표시 유형 지정하는 것이 좋습니다. COM 표시 유형은 전체 어셈블리에 대해 설정된 다음 개별 형식과 형식 멤버에 대해 재정의될 수 있습니다. 이 특성이 표시되지 않는 경우 어셈블리 콘텐츠는 COM 클라이언트에 표시되지 않습니다.</target>
+        <note>{Locked="ComVisibleAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageNoAttribute">
         <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'.</source>
         <target state="needs-review-translation">{0}이(가) 외부에 표시되는 형식을 노출하므로 어셈블리 수준에서 ComVisible(false)로 표시한 다음 COM 클라이언트에서 ComVisible(true)로 노출되어야 하는 어셈블리 내에서 모든 형식을 표시하세요.</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="MarkAssembliesWithComVisibleMessageAttributeTrue">
-        <source>Consider changing the ComVisible attribute on {0} to false, and opting in at the type level.</source>
-        <target state="translated">{0}에서 ComVisible 특성을 false로 변경하고 형식 수준에서 선택하세요.</target>
-        <note />
+        <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</source>
+        <target state="needs-review-translation">{0}에서 ComVisible 특성을 false로 변경하고 형식 수준에서 선택하세요.</target>
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageTitle">
         <source>Mark attributes with 'AttributeUsageAttribute'</source>
         <target state="needs-review-translation">AttributeUsageAttribute로 특성을 표시하세요.</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageDescription">
         <source>When you define a custom attribute, mark it by using 'AttributeUsageAttribute' to indicate where in the source code the custom attribute can be applied. The meaning and intended usage of an attribute will determine its valid locations in code.</source>
         <target state="needs-review-translation">사용자 지정 특성을 정의하는 경우 AttributeUsageAttribute를 사용하여 표시하고 사용자 지정 특성이 적용될 수 있는 소스 코드 위치를 나타내세요. 특성의 의미와 용도가 해당 특성의 유효한 코드 위치를 결정합니다.</target>
-        <note />
+        <note>{Locked="AttributeUsageAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageDefault">
         <source>Specify AttributeUsage on '{0}'</source>
         <target state="needs-review-translation">{0}에서 AttributeUsage를 지정하세요.</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="MarkAttributesWithAttributeUsageMessageInherited">
         <source>Even though attribute '{0}' inherits 'AttributeUsage' from its base type, you should consider explicitly specifying 'AttributeUsage' on the type to improve code readability and documentation.</source>
         <target state="needs-review-translation">{0} 특성이 해당 특성의 기본 형식에서 AttributeUsage를 상속해도 형식에서 AttributeUsage를 명시적으로 지정하여 코드 가독성과 문서 품질을 향상시켜야 합니다.</target>
-        <note />
+        <note>{Locked="AttributeUsage"}</note>
       </trans-unit>
       <trans-unit id="DefineAccessorsForAttributeArgumentsTitle">
         <source>Define accessors for attribute arguments</source>
@@ -435,17 +435,17 @@
       <trans-unit id="MarkEnumsWithFlagsTitle">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">FlagsAttribute로 열거형을 표시하세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsDescription">
         <source>An enumeration is a value type that defines a set of related named constants. Apply 'FlagsAttribute' to an enumeration when its named constants can be meaningfully combined.</source>
         <target state="needs-review-translation">열거형은 관련된 명명된 상수의 집합을 정의하는 값 형식입니다. 명명된 상수가 의미 있게 결합될 수 있을 때 FlagsAttribute를 열거형에 적용하세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsMessage">
         <source>Mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">FlagsAttribute로 열거형을 표시하세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="InterfaceMethodsShouldBeCallableByChildTypesTitle">
         <source>Interface methods should be callable by child types</source>
@@ -488,8 +488,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassDescription">
-        <source>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</source>
-        <target state="translated">System.Runtime.InteropServices.DllImportAttribute 특성을 사용하여 표시되거나 Visual Basic에서 선언 키워드를 사용하여 정의되는 메서드와 같은 플랫폼 호출 메서드는 비관리 코드에 액세스합니다. 이러한 메서드는 NativeMethods, SafeNativeMethods 또는 UnsafeNativeMethods 클래스여야 합니다.</target>
+        <source>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</source>
+        <target state="needs-review-translation">System.Runtime.InteropServices.DllImportAttribute 특성을 사용하여 표시되거나 Visual Basic에서 선언 키워드를 사용하여 정의되는 메서드와 같은 플랫폼 호출 메서드는 비관리 코드에 액세스합니다. 이러한 메서드는 NativeMethods, SafeNativeMethods 또는 UnsafeNativeMethods 클래스여야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MovePInvokesToNativeMethodsClassMessage">
@@ -550,17 +550,17 @@
       <trans-unit id="DoNotMarkEnumsWithFlagsTitle">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">FlagsAttribute로 열거형을 표시하지 마세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsDescription">
         <source>An externally visible enumeration is marked by using 'FlagsAttribute', and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.</source>
         <target state="needs-review-translation">외부에 표시되는 열거형은 FlagsAttribute를 사용하여 표시되며 2의 거듭제곱 또는 열거형에서 정의된 다른 값의 조합이 아닌 하나 이상의 값을 가집니다.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsMessage">
         <source>Do not mark enums with 'FlagsAttribute'</source>
         <target state="needs-review-translation">FlagsAttribute로 열거형을 표시하지 마세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesTitle">
         <source>Operator overloads have named alternates</source>
@@ -623,18 +623,18 @@
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle">
-        <source>Overload operator equals on overriding value type Equals</source>
-        <target state="translated">값 형식 Equals를 재정의할 때 같음 연산자를 오버로드하세요.</target>
+        <source>Overload operator equals on overriding value type 'Equals'</source>
+        <target state="needs-review-translation">값 형식 Equals를 재정의할 때 같음 연산자를 오버로드하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription">
-        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</source>
-        <target state="translated">대부분의 프로그래밍 언어에서는 값 형식에 같음 연산자(==)를 기본적으로 구현하지 않습니다. 프로그래밍 언어에서 연산자 오버로드를 지원하는 경우 같음 연산자를 구현해야 합니다. 해당 연산자의 동작은 Equals의 동작과 같아야 합니다.</target>
+        <source>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</source>
+        <target state="needs-review-translation">대부분의 프로그래밍 언어에서는 값 형식에 같음 연산자(==)를 기본적으로 구현하지 않습니다. 프로그래밍 언어에서 연산자 오버로드를 지원하는 경우 같음 연산자를 구현해야 합니다. 해당 연산자의 동작은 Equals의 동작과 같아야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage">
-        <source>Implement the equality operators and make their behavior identical to that of the Equals method</source>
-        <target state="translated">같음 연산자를 구현하고 해당 동작을 Equals 메서드의 동작과 같게 만드세요.</target>
+        <source>Implement the equality operators and make their behavior identical to that of the 'Equals' method</source>
+        <target state="needs-review-translation">같음 연산자를 구현하고 해당 동작을 Equals 메서드의 동작과 같게 만드세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsTitle">
@@ -643,8 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsDescription">
-        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</source>
-        <target state="translated">이름에 "uri", "URI", "urn", "URN", "url" 또는 "URL"이 포함된 문자열 매개 변수가 있는 메서드를 호출합니다. 메서드의 선언 형식은 System.Uri 매개 변수가 있는 해당 메서드 오버로드를 포함합니다.</target>
+        <source>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</source>
+        <target state="needs-review-translation">이름에 "uri", "URI", "urn", "URN", "url" 또는 "URL"이 포함된 문자열 매개 변수가 있는 메서드를 호출합니다. 메서드의 선언 형식은 System.Uri 매개 변수가 있는 해당 메서드 오버로드를 포함합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PassSystemUriObjectsInsteadOfStringsMessage">
@@ -665,12 +665,12 @@
       <trans-unit id="CancellationTokenParametersMustComeLastTitle">
         <source>'CancellationToken' parameters must come last</source>
         <target state="needs-review-translation">CancellationToken 매개 변수는 마지막에 위치해야 합니다.</target>
-        <note />
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="CancellationTokenParametersMustComeLastMessage">
-        <source>Method '{0}' should take CancellationToken as the last parameter</source>
-        <target state="translated">메서드 '{0}'은(는) CancellationToken을(를) 마지막 매개 변수로 사용해야 합니다.</target>
-        <note />
+        <source>Method '{0}' should take 'CancellationToken' as the last parameter</source>
+        <target state="needs-review-translation">메서드 '{0}'은(는) CancellationToken을(를) 마지막 매개 변수로 사용해야 합니다.</target>
+        <note>{Locked="CancellationToken"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotContainTypeNamesTitle">
         <source>Identifier contains type name</source>
@@ -703,39 +703,39 @@
         <note />
       </trans-unit>
       <trans-unit id="AddAssemblyLevelComVisibleFalse">
-        <source>Because '{0}' exposes externally visible types, mark it with ComVisible(false) at the assembly level and then mark all types within the assembly that should be exposed to COM clients with ComVisible(true)</source>
+        <source>Because '{0}' exposes externally visible types, mark it with 'ComVisible(false)' at the assembly level and then mark all types within the assembly that should be exposed to COM clients with 'ComVisible(true)'</source>
         <target state="needs-review-translation">{0}이(가) 외부에 표시되는 형식을 노출하므로 어셈블리 수준에서 ComVisible(false)로 표시한 다음, COM 클라이언트에 노출되어야 하는 어셈블리 내의 모든 형식을 ComVisible(true)로 표시하세요.</target>
-        <note />
+        <note>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</note>
       </trans-unit>
       <trans-unit id="ChangeAssemblyLevelComVisibleToFalse">
         <source>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level</source>
         <target state="needs-review-translation">{0}에서 ComVisible 특성을 false로 변경하고 형식 수준에서 선택하는 것이 좋습니다.</target>
-        <note />
+        <note>{Locked="ComVisible"}</note>
       </trans-unit>
       <trans-unit id="ImplementComparable">
-        <source>Implement Equality and Comparison methods and operators</source>
-        <target state="translated">같음 및 비교 메서드와 연산자를 구현하세요.</target>
+        <source>Implement equality and comparison methods and operators</source>
+        <target state="needs-review-translation">같음 및 비교 메서드와 연산자를 구현하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementEquatable">
         <source>Implement 'IEquatable'</source>
         <target state="needs-review-translation">IEquatable을 구현하세요.</target>
-        <note />
+        <note>{Locked="IEquatable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableInterface">
-        <source>Implement 'IDisposable' Interface</source>
+        <source>Implement 'IDisposable' interface</source>
         <target state="needs-review-translation">IDisposable 인터페이스를 구현하세요.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="DoNotMarkEnumsWithFlagsCodeFix">
         <source>Remove 'FlagsAttribute' from enum.</source>
         <target state="needs-review-translation">열거형에서 FlagsAttribute를 제거하세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="MarkEnumsWithFlagsCodeFix">
         <source>Apply 'FlagsAttribute' to enum.</source>
         <target state="needs-review-translation">열거형에 FlagsAttribute를 적용하세요.</target>
-        <note />
+        <note>{Locked="FlagsAttribute"}</note>
       </trans-unit>
       <trans-unit id="EnumsShouldZeroValueFlagsMultipleZeroCodeFix">
         <source>Remove all members that have the value zero except for one member that is named 'None'.</source>
@@ -973,8 +973,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsDescription">
-        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</source>
-        <target state="translated">이 규칙은 속성이 URI(Uniform Resource Identifier)를 나타낸다고 가정합니다. URI의 문자열 표현은 오류를 구문 분석하거나 인코딩하기 쉬우며 이로 인해 보안이 취약해질 수 있습니다. System.Uri 클래스는 이러한 서비스를 안전하게 제공합니다.</target>
+        <source>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</source>
+        <target state="needs-review-translation">이 규칙은 속성이 URI(Uniform Resource Identifier)를 나타낸다고 가정합니다. URI의 문자열 표현은 오류를 구문 분석하거나 인코딩하기 쉬우며 이로 인해 보안이 취약해질 수 있습니다. System.Uri 클래스는 이러한 서비스를 안전하게 제공합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UriPropertiesShouldNotBeStringsMessage">
@@ -983,14 +983,14 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyTitle">
-        <source>Implement 'IDisposable' Correctly</source>
+        <source>Implement 'IDisposable' correctly</source>
         <target state="needs-review-translation">IDisposable 인터페이스를 올바르게 구현하세요.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyDescription">
-        <source>All 'IDisposable' types should implement the Dispose pattern correctly.</source>
+        <source>All 'IDisposable' types should implement the dispose pattern correctly.</source>
         <target state="needs-review-translation">모든 IDisposable 형식은 Dispose 패턴을 올바르게 구현해야 합니다.</target>
-        <note />
+        <note>{Locked="IDisposable"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove 'IDisposable' from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'</source>
@@ -1000,7 +1000,7 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override 'Dispose(bool disposing)', and put the dispose logic in the code path where 'disposing' is true</source>
         <target state="needs-review-translation">'{0}'을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>
-        <note />
+        <note>{Locked="Dispose(bool disposing)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed</source>
@@ -1020,12 +1020,12 @@
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(true)', then calls 'GC.SuppressFinalize' on the current object instance ('this' or 'Me' in Visual Basic), and then returns</source>
         <target state="needs-review-translation">'{0}'을(를) 수정하여 Dispose(true)를 호출한 다음에 현재 개체 인스턴스(Visual Basic의 경우 'this' 또는 'Me')에서 GC.SuppressFinalize를 호출한 후 반환하도록 하세요.</target>
-        <note />
+        <note>{Locked="this"}{Locked="Me"}{Locked="GC.SuppressFinalize"}{Locked="Dispose(true)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls 'Dispose(false)' and then returns</source>
         <target state="needs-review-translation">'{0}'을(를) 수정하여 Dispose(false)를 호출한 후 반환하도록 하세요.</target>
-        <note />
+        <note>{Locked="Dispose(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of 'Dispose(bool)' on '{0}' or mark the type as sealed. A call to 'Dispose(false)' should only clean up native resources. A call to 'Dispose(true)' should clean up both managed and native resources.</source>
@@ -1140,7 +1140,7 @@
       <trans-unit id="IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection">
         <source>Rename '{0}' to end in either 'Collection' or '{1}'</source>
         <target state="needs-review-translation">{0}이(가) 'Collection' 또는 '{1}'(으)로 끝나도록 이름을 바꾸세요.</target>
-        <note />
+        <note>{Locked="Collection"}</note>
       </trans-unit>
       <trans-unit id="IdentifiersShouldNotHaveIncorrectSuffixTitle">
         <source>Identifiers should not have incorrect suffix</source>
@@ -1253,13 +1253,13 @@
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesTitle">
-        <source>Override equals and operator equals on value types</source>
-        <target state="translated">값 형식에서 Equals 또는 같음 연산자를 재정의하세요.</target>
+        <source>Override 'Equals' and operator equals on value types</source>
+        <target state="needs-review-translation">값 형식에서 Equals 또는 같음 연산자를 재정의하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesDescription">
-        <source>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</source>
-        <target state="translated">값 형식의 경우 Equals의 상속된 구현에서 리플렉션 라이브러리를 사용하고 모든 필드의 콘텐츠를 비교합니다. 리플렉션은 계산을 많이 해야 하는 작업이며 모든 필드가 같은지 비교할 필요가 없습니다. 사용자가 인스턴스를 비교 또는 정리하거나 해시 테이블 키로 인스턴스를 사용할 것으로 예상하는 경우 값 형식이 Equals를 구현해야 합니다.</target>
+        <source>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</source>
+        <target state="needs-review-translation">값 형식의 경우 Equals의 상속된 구현에서 리플렉션 라이브러리를 사용하고 모든 필드의 콘텐츠를 비교합니다. 리플렉션은 계산을 많이 해야 하는 작업이며 모든 필드가 같은지 비교할 필요가 없습니다. 사용자가 인스턴스를 비교 또는 정리하거나 해시 테이블 키로 인스턴스를 사용할 것으로 예상하는 경우 값 형식이 Equals를 구현해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals">
@@ -1388,8 +1388,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
-        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
-        <target state="translated">인덱싱된 속성인 인덱서는 인덱스에 정수 또는 문자열 형식을 사용해야 합니다. 이러한 형식은 일반적으로 인덱싱 데이터 구조에 사용되며 라이브러리의 유용성을 향상시킵니다. 디자인 타임에 특정 정수 또는 문자열 형식이 지정될 수 없는 경우 개체 형식 사용이 제한되어야 합니다. 디자인에 다른 인덱스 형식이 필요한 경우 형식이 논리 데이터 저장소를 나타내는지 확인하세요. 논리 데이터 저장소를 나타내지 않는 경우 메서드를 사용하세요.</target>
+        <source>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</source>
+        <target state="needs-review-translation">인덱싱된 속성인 인덱서는 인덱스에 정수 또는 문자열 형식을 사용해야 합니다. 이러한 형식은 일반적으로 인덱싱 데이터 구조에 사용되며 라이브러리의 유용성을 향상시킵니다. 디자인 타임에 특정 정수 또는 문자열 형식이 지정될 수 없는 경우 개체 형식 사용이 제한되어야 합니다. 디자인에 다른 인덱스 형식이 필요한 경우 형식이 논리 데이터 저장소를 나타내는지 확인하세요. 논리 데이터 저장소를 나타내지 않는 경우 메서드를 사용하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersMessage">
@@ -1403,33 +1403,33 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <source>When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <target state="needs-review-translation">비동기 메서드가 작업을 바로 대기하는 경우 작업을 만든 스레드와 같은 스레드에서 연속이 발생합니다. 연속에 대한 의도를 알리려면 Task.ConfigureAwait(Boolean) 호출을 고려합니다. 작업에 대해 ConfigureAwait(false)를 호출하여 스레드 풀에 대한 연속을 예약함으로써 UI 스레드에서의 교착 상태를 방지합니다. 앱과 관계없는 라이브러리의 경우 false를 전달하는 것이 좋은 옵션이 됩니다. 작업에 대해 ConfigureAwait(true)를 호출하는 것은 명시적으로 ConfigureAwait를 호출하지 않는 것과 동작이 같습니다. 이 메서드를 명시적으로 호출하여 판독기에 원래 동기화 컨텍스트에서 의도적으로 연속을 수행하려는 것임을 알립니다.</target>
-        <note />
+        <note>{Locked="Task"}{Locked="ConfigureAwait(false)"}{Locked="ConfigureAwait(true)"}{Locked="Task.ConfigureAwait(Boolean)"}{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">대기된 작업에 대해 ConfigureAwait 호출을 고려하세요.</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling 'ConfigureAwait' on the awaited task</source>
         <target state="needs-review-translation">대기된 작업에 대해 ConfigureAwait 호출 고려</target>
-        <note />
+        <note>{Locked="ConfigureAwait"}</note>
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
-        <source>Append .ConfigureAwait(false)</source>
-        <target state="translated">.ConfigureAwait(false)를 추가하세요.</target>
-        <note />
+        <source>Append '.ConfigureAwait(false)'</source>
+        <target state="needs-review-translation">.ConfigureAwait(false)를 추가하세요.</target>
+        <note>{Locked=".ConfigureAwait(false)"}</note>
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
-        <source>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
+        <source>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</source>
         <target state="needs-review-translation">형식 T가 Object.Equals(object)를 재정의하면 해당 구현은 비교를 수행하기 전에 개체 인수를 올바른 형식 T로 캐스트해야 합니다. 해당 형식이 IEquatable&lt;T&gt;를 구현하므로 T.Equals(T) 메서드를 제공하는 경우 및 인수가 컴파일 시간에 형식 T로 알려지는 경우 컴파일러는 Object.Equals(object) 대신 IEquatable&lt;T&gt;.Equals(T)를 호출할 수 있고, 캐스트가 필요하지 않으므로 성능이 향상됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
-        <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">형식 T가 인터페이스 IEquatable&lt;T&gt;를 구현하면 소스 코드에서 Equals 메서드에 대한 호출을 확인하는 사용자에게 이 형식의 인스턴스가 다른 형식의 인스턴스와 같을 수 있음을 알려줍니다. 사용자는 이 형식과 다른 형식의 인스턴스를 동일하게 만드는 시도가 컴파일에 실패하는 경우 혼란을 겪을 수 있습니다. 이 경우는 "최소 놀람의 원칙"을 위반합니다.</target>
+        <source>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
+        <target state="needs-review-translation">형식 T가 인터페이스 IEquatable&lt;T&gt;를 구현하면 소스 코드에서 Equals 메서드에 대한 호출을 확인하는 사용자에게 이 형식의 인스턴스가 다른 형식의 인스턴스와 같을 수 있음을 알려줍니다. 사용자는 이 형식과 다른 형식의 인스턴스를 동일하게 만드는 시도가 컴파일에 실패하는 경우 혼란을 겪을 수 있습니다. 이 경우는 "최소 놀람의 원칙"을 위반합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1453,8 +1453,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
-        <source>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}'을(를) 제거하고 대신 제네릭 EventHandler(예: EventHandler&lt;T&gt;)를 사용합니다. 여기에서 T는 유효한 EventArgs입니다.</target>
+        <source>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">'{0}'을(를) 제거하고 대신 제네릭 EventHandler(예: EventHandler&lt;T&gt;)를 사용합니다. 여기에서 T는 유효한 EventArgs입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1463,8 +1463,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
-        <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' 이벤트를 변경하여 '{1}' 형식을 제네릭 EventHandler(예: EventHandler&lt;T&gt;)로 바꿉니다. 여기에서 T는 유효한 EventArgs입니다.</target>
+        <source>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</source>
+        <target state="needs-review-translation">'{0}' 이벤트를 변경하여 '{1}' 형식을 제네릭 EventHandler(예: EventHandler&lt;T&gt;)로 바꿉니다. 여기에서 T는 유효한 EventArgs입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">
@@ -1473,13 +1473,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Message">
-        <source>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</source>
-        <target state="translated">Event MyEvent As EventHandler(Of MyEventArgs)와 같이 이벤트 형식을 명시적으로 정의하여 제네릭 EventHandler를 사용하도록 이벤트 '{0}'을(를) 변경하세요.</target>
+        <source>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</source>
+        <target state="needs-review-translation">Event MyEvent As EventHandler(Of MyEventArgs)와 같이 이벤트 형식을 명시적으로 정의하여 제네릭 EventHandler를 사용하도록 이벤트 '{0}'을(를) 변경하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEvent2Description">
-        <source>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
-        <target state="translated">형식이 void를 반환하는 EventHandler 대리자를 선언하는 이벤트를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
+        <source>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</source>
+        <target state="needs-review-translation">형식이 void를 반환하는 EventHandler 대리자를 선언하는 이벤트를 포함하며 이 형식의 시그니처는 매개 변수 2개(개체 및 EventArgs에 할당할 수 있는 형식) 및 포함하는 어셈블리 대상 Microsoft .NET Framework 2.0을 포함합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideMethodsOnComparableTypesMessageBoth">
@@ -1489,18 +1489,18 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">접두사와 cref 태그를 동시에 사용하지 마세요.</target>
-        <note />
+        <target state="needs-review-translation">접두사와 cref 태그를 동시에 사용하지 마세요.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
         <source>Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.</source>
-        <target state="translated">컴파일러에서 참조를 확인할 수 없으며 IDE에서 리팩터링하는 동안 참조를 업데이트할 수 없으므로 cref 태그와 접두사를 함께 사용하지 않아야 합니다. 언급된 형식을 컴파일러에서 찾을 수 없어 cref 태그와 접두사를 함께 사용해야 하는 경우 단일 문서 사이트에서 이 오류를 표시하지 않을 수 있습니다. 예를 들어 cref가 전체 프레임워크에서 특수한 특성을 언급하고 있지만, 사용자가 이식 가능한 프레임워크에 대해 컴파일하는 파일을 사용 중이거나 Roslyn의 상위 레이어에서 형식을 참조하려는 경우 이 오류를 무시해야 합니다. 작업을 빠르고 쉽게 완료하기 위해 전체 구문을 사용하지 않으려는 의도로 이 오류를 무시할 수는 없습니다.</target>
-        <note />
+        <target state="needs-review-translation">컴파일러에서 참조를 확인할 수 없으며 IDE에서 리팩터링하는 동안 참조를 업데이트할 수 없으므로 cref 태그와 접두사를 함께 사용하지 않아야 합니다. 언급된 형식을 컴파일러에서 찾을 수 없어 cref 태그와 접두사를 함께 사용해야 하는 경우 단일 문서 사이트에서 이 오류를 표시하지 않을 수 있습니다. 예를 들어 cref가 전체 프레임워크에서 특수한 특성을 언급하고 있지만, 사용자가 이식 가능한 프레임워크에 대해 컴파일하는 파일을 사용 중이거나 Roslyn의 상위 레이어에서 형식을 참조하려는 경우 이 오류를 무시해야 합니다. 작업을 빠르고 쉽게 완료하기 위해 전체 구문을 사용하지 않으려는 의도로 이 오류를 무시할 수는 없습니다.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">접두사와 cref 태그를 동시에 사용하지 마세요.</target>
-        <note />
+        <target state="needs-review-translation">접두사와 cref 태그를 동시에 사용하지 마세요.</target>
+        <note>{Locked="cref"}</note>
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
@@ -1653,9 +1653,9 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidUninstantiatedInternalClassesMessage">
-        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it static (Shared in Visual Basic).</source>
+        <source>'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static members, make it 'static' ('Shared' in Visual Basic).</source>
         <target state="needs-review-translation">{0}은(는) 인스턴스화되지 않는 내부 클래스입니다. 어셈블리에서 해당 코드를 제거하세요. 이 클래스가 정적 멤버만 포함하는 경우 static(Visual Basic의 경우 Shared)으로 설정하세요.</target>
-        <note />
+        <note>{Locked="static"}{Locked="Shared"}{Locked="Visual Basic"}</note>
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
@@ -1898,13 +1898,13 @@
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
-        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">외부에 표시되는 메서드는 인수가 null(Visual Basic의 Nothing)인지 확인하지 않고 참조 인수 중 하나를 역참조합니다. 외부에 표시되는 메서드에 전달되는 모든 참조 인수가 null인지 확인해야 합니다. 필요한 경우 인수가 null이면 ArgumentNullException을 throw하고, 그렇지 않으면 null이 아닌 인수를 어설션하는 코드 계약 사전 조건을 추가합니다. 메서드가 알려진 어셈블리에서만 호출되도록 설계되어 있으면 메서드를 internal로 설정해야 합니다.</target>
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="needs-review-translation">외부에 표시되는 메서드는 인수가 null(Visual Basic의 Nothing)인지 확인하지 않고 참조 인수 중 하나를 역참조합니다. 외부에 표시되는 메서드에 전달되는 모든 참조 인수가 null인지 확인해야 합니다. 필요한 경우 인수가 null이면 ArgumentNullException을 throw하고, 그렇지 않으면 null이 아닌 인수를 어설션하는 코드 계약 사전 조건을 추가합니다. 메서드가 알려진 어셈블리에서만 호출되도록 설계되어 있으면 메서드를 internal로 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
-        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
-        <target state="translated">외부에 표시되는 메서드 '{0}'에서 사용하기 전에 '{1}' 매개 변수가 null이 아닌지 유효성을 검사합니다. 필요한 경우 인수가 null이면 ArgumentNullException을 throw하고, 그렇지 않으면 null이 아닌 인수를 어설션하는 코드 계약 사전 조건을 추가합니다.</target>
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="needs-review-translation">외부에 표시되는 메서드 '{0}'에서 사용하기 전에 '{1}' 매개 변수가 null이 아닌지 유효성을 검사합니다. 필요한 경우 인수가 null이면 ArgumentNullException을 throw하고, 그렇지 않으면 null이 아닌 인수를 어설션하는 코드 계약 사전 조건을 추가합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">

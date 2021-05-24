@@ -14,7 +14,7 @@ When a static member of a generic type is called, the type argument must be spec
 
 ## [CA1001](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001): Types that own disposable fields should be disposable
 
-A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.
+A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.
 
 |Item|Value|
 |-|-|
@@ -38,7 +38,7 @@ A class declares and implements an instance field that is a System.IDisposable t
 
 ## [CA1003](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1003): Use generic event handler instances
 
-A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.
+A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.
 
 |Item|Value|
 |-|-|
@@ -62,7 +62,7 @@ The more type parameters a generic type contains, the more difficult it is to kn
 
 ## [CA1008](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008): Enums should have zero value
 
-The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.
+The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.
 
 |Item|Value|
 |-|-|
@@ -96,7 +96,7 @@ Constructors on abstract types can be called only by derived types. Because publ
 |CodeFix|True|
 ---
 
-## [CA1014](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014): Mark assemblies with CLSCompliant
+## [CA1014](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1014): Mark assemblies with 'CLSCompliant'
 
 The Common Language Specification (CLS) defines naming restrictions, data types, and rules to which assemblies must conform if they will be used across programming languages. Good design dictates that all assemblies explicitly indicate CLS compliance by using 'CLSCompliantAttribute' . If this attribute is not present on an assembly, the assembly is not compliant.
 
@@ -122,7 +122,7 @@ The .NET Framework uses the version number to uniquely identify an assembly, and
 
 ## [CA1017](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1017): Mark assemblies with 'ComVisible'
 
-ComVisibleAttribute determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.
+'ComVisibleAttribute' determines how COM clients access managed code. Good design dictates that assemblies explicitly indicate COM visibility. COM visibility can be set for the whole assembly and then overridden for individual types and type members. If this attribute is not present, the contents of the assembly are visible to COM clients.
 
 |Item|Value|
 |-|-|
@@ -218,7 +218,7 @@ This rule detects methods that have names that ordinarily would be used for even
 
 ## [CA1031](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031): Do not catch general exception types
 
-A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.
+A general exception such as 'System.Exception' or 'System.SystemException' or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.
 
 |Item|Value|
 |-|-|
@@ -302,7 +302,7 @@ A type or member is marked by using a 'System.ObsoleteAttribute' attribute that 
 
 ## [CA1043](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043): Use Integral Or String Argument For Indexers
 
-Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.
+Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.
 
 |Item|Value|
 |-|-|
@@ -422,7 +422,7 @@ This rule assumes that the method returns a URI. A string representation of a UR
 
 ## [CA1056](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056): URI-like properties should not be strings
 
-This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.
+This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.
 
 |Item|Value|
 |-|-|
@@ -446,7 +446,7 @@ An externally visible type extends certain base types. Use one of the alternativ
 
 ## [CA1060](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060): Move pinvokes to native methods class
 
-Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.
+Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.
 
 |Item|Value|
 |-|-|
@@ -470,7 +470,7 @@ A method in a base type is hidden by an identically named method in a derived ty
 
 ## [CA1062](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1062): Validate arguments of public methods
 
-An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.
 
 |Item|Value|
 |-|-|
@@ -480,9 +480,9 @@ An externally visible method dereferences one of its reference arguments without
 |CodeFix|False|
 ---
 
-## [CA1063](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063): Implement 'IDisposable' Correctly
+## [CA1063](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063): Implement 'IDisposable' correctly
 
-All 'IDisposable' types should implement the Dispose pattern correctly.
+All 'IDisposable' types should implement the dispose pattern correctly.
 
 |Item|Value|
 |-|-|
@@ -518,7 +518,7 @@ A method that is not expected to throw exceptions throws an exception.
 
 ## [CA1066](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1066): Implement 'IEquatable' when overriding 'Object.Equals'
 
-When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable\<T>', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable\<T>.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.
+When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable\<T>', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable\<T>.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.
 
 |Item|Value|
 |-|-|
@@ -530,7 +530,7 @@ When a type T overrides 'Object.Equals(object)', the implementation must cast th
 
 ## [CA1067](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1067): Override 'Object.Equals(object)' when implementing 'IEquatable\<T>'
 
-When a type T implements the interface IEquatable\<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".
+When a type 'T' implements the interface 'IEquatable\<T>', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".
 
 |Item|Value|
 |-|-|
@@ -542,7 +542,7 @@ When a type T implements the interface IEquatable\<T>, it suggests to a user who
 
 ## [CA1068](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068): 'CancellationToken' parameters must come last
 
-Method '{0}' should take CancellationToken as the last parameter
+Method '{0}' should take 'CancellationToken' as the last parameter
 
 |Item|Value|
 |-|-|
@@ -1044,9 +1044,9 @@ A jagged array is an array whose elements are arrays. The arrays that make up th
 |CodeFix|False|
 ---
 
-## [CA1815](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815): Override equals and operator equals on value types
+## [CA1815](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815): Override 'Equals' and operator equals on value types
 
-For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.
+For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.
 
 |Item|Value|
 |-|-|
@@ -1334,7 +1334,7 @@ An object is said to have a weak identity when it can be directly accessed acros
 
 ## [CA2007](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2007): Consider calling 'ConfigureAwait' on the awaited task
 
-When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.
+When an asynchronous method awaits a 'Task' directly, continuation occurs in the same thread that created the task. Consider calling 'Task.ConfigureAwait(Boolean)' to signal your intention for continuation. Call 'ConfigureAwait(false)' on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling 'ConfigureAwait(true)' on the task has the same behavior as not explicitly calling 'ConfigureAwait'. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.
 
 |Item|Value|
 |-|-|
@@ -1704,9 +1704,9 @@ To fix a violation of this rule, implement the serialization constructor. For a 
 |CodeFix|True|
 ---
 
-## [CA2231](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231): Overload operator equals on overriding value type Equals
+## [CA2231](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231): Overload operator equals on overriding value type 'Equals'
 
-In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.
+In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.
 
 |Item|Value|
 |-|-|
@@ -1718,7 +1718,7 @@ In most programming languages there is no default implementation of the equality
 
 ## [CA2234](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234): Pass system uri objects instead of strings
 
-A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.
+A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.
 
 |Item|Value|
 |-|-|

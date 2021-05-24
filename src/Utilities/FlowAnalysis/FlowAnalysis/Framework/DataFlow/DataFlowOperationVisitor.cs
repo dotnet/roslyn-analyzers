@@ -321,7 +321,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 DataFlowAnalysisContext.WellKnownTypeProvider,
                 getPointsToAbstractValue: HasPointsToAnalysisResult ?
                     GetPointsToAbstractValue :
-                    (Func<IOperation, PointsToAbstractValue>?)null,
+                    null,
                 getIsInsideAnonymousObjectInitializer: () => IsInsideAnonymousObjectInitializer,
                 getIsLValueFlowCapture: IsLValueFlowCapture,
                 containingTypeSymbol: analysisContext.OwningSymbol.ContainingType,
@@ -2167,7 +2167,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             }
 
             // Check if we are already at the maximum allowed interprocedural call chain length.
-            int currentMethodCallCount = currentMethodsBeingAnalyzed.Where(m => !(m.OwningSymbol is IMethodSymbol ms && ms.IsLambdaOrLocalFunctionOrDelegate())).Count();
+            int currentMethodCallCount = currentMethodsBeingAnalyzed.Count(m => !(m.OwningSymbol is IMethodSymbol ms && ms.IsLambdaOrLocalFunctionOrDelegate()));
             int currentLambdaOrLocalFunctionCallCount = currentMethodsBeingAnalyzed.Count - currentMethodCallCount;
 
             if (currentMethodCallCount >= MaxInterproceduralMethodCallChain ||
@@ -2691,25 +2691,21 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                     HandlePossibleThrowingOperation(operation);
                 }
 
-                if (_pendingArgumentsToPostProcess.Any(arg => arg.Parent == operation))
+                var pendingArguments = _pendingArgumentsToPostProcess.ExtractAll(static (arg, operation) => arg.Parent == operation, operation);
+                foreach (IArgumentOperation argumentOperation in pendingArguments)
                 {
-                    var pendingArguments = _pendingArgumentsToPostProcess.Where(arg => arg.Parent == operation).ToImmutableArray();
-                    foreach (IArgumentOperation argumentOperation in pendingArguments)
+                    bool isEscaped;
+                    if (_pendingArgumentsToReset.Remove(argumentOperation))
                     {
-                        bool isEscaped;
-                        if (_pendingArgumentsToReset.Remove(argumentOperation))
-                        {
-                            PostProcessEscapedArgument(argumentOperation);
-                            isEscaped = true;
-                        }
-                        else
-                        {
-                            isEscaped = false;
-                        }
-
-                        PostProcessArgument(argumentOperation, isEscaped);
-                        _pendingArgumentsToPostProcess.Remove(argumentOperation);
+                        PostProcessEscapedArgument(argumentOperation);
+                        isEscaped = true;
                     }
+                    else
+                    {
+                        isEscaped = false;
+                    }
+
+                    PostProcessArgument(argumentOperation, isEscaped);
                 }
 
                 return value;

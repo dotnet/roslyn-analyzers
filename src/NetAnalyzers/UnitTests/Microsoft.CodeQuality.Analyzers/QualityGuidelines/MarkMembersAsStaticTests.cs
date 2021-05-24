@@ -860,8 +860,11 @@ public class C : System.Web.HttpApplication
 
             await new VerifyCS.Test()
             {
-                TestCode = csSource,
-                AnalyzerConfigDocument = editorConfigText,
+                TestState =
+                {
+                    Sources = { csSource },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfigText}") },
+                }
             }.RunAsync();
 
             var vbSource = @"
@@ -911,8 +914,11 @@ End Class
 ";
             await new VerifyVB.Test()
             {
-                TestCode = vbSource,
-                AnalyzerConfigDocument = editorConfigText,
+                TestState =
+                {
+                    Sources = { vbSource },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfigText}") },
+                }
             }.RunAsync();
         }
 
@@ -1157,8 +1163,11 @@ public class Test
 }";
             await new VerifyCS.Test()
             {
-                TestCode = csSource,
-                AnalyzerConfigDocument = editorConfigText,
+                TestState =
+                {
+                    Sources = { csSource },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfigText}") },
+                }
             }.RunAsync();
 
             var vbSource = @"
@@ -1181,8 +1190,11 @@ Public Class Test
 End Class";
             await new VerifyVB.Test()
             {
-                TestCode = vbSource,
-                AnalyzerConfigDocument = editorConfigText,
+                TestState =
+                {
+                    Sources = { vbSource },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfigText}") },
+                }
             }.RunAsync();
         }
 
@@ -1355,6 +1367,22 @@ public class DummyAwaiter : INotifyCompletion
 
     public void OnCompleted(Action continuation) => throw null;
 }");
+        }
+
+        [Fact]
+        public async Task InstanceMemberUsedInXml_NoDiagnostic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Class C
+    Public Property Language As String
+    Private Sub M()
+        Dim x =
+<Workspace>
+    <Project Language=<%= Me.Language %>>
+    </Project>
+</Workspace>
+        End Sub
+End Class");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)

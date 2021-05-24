@@ -1,13 +1,15 @@
 # Branches that trigger a build on commit
 trigger:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
-- master
+- main
 - release/*
+- features/*
 - 2.9.x
 
 jobs:
@@ -89,7 +91,7 @@ jobs:
         _configuration: Release
   pool:
     name: NetCorePublic-Pool
-    queue: BuildPool.Ubuntu.1604.amd64.Open
+    queue: BuildPool.Ubuntu.1804.amd64.Open
   timeoutInMinutes: 40
   steps:
     - checkout: self
@@ -112,11 +114,13 @@ jobs:
       continueOnError: true
       condition: always()
 
+- template: eng/common/templates/job/source-build.yml
+
 - job: Markdownlint
   pool:
       vmImage: ubuntu-18.04
   steps:
     - script: sudo npm install -g markdownlint-cli
       displayName: Install markdownlint-cli
-    - script: markdownlint '**/*.md' -i '**/AnalyzerReleases.*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
+    - script: markdownlint '**/*.md' -i 'docs/Analyzer reference page template.md' -i 'eng/common/**/*.md'
       displayName: Run markdownlint

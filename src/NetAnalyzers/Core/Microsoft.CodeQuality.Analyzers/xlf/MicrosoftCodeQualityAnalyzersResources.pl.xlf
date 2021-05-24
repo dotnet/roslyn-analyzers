@@ -232,6 +232,11 @@
         <target state="translated">Zdarzenia nie powinny mieć prefiksu „Przed” ani „Po”</target>
         <note />
       </trans-unit>
+      <trans-unit id="IdentifiersShouldNotContainUnderscoresCodeFixTitle">
+        <source>Remove underscores</source>
+        <target state="new">Remove underscores</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override 'Dispose(bool disposing)', and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
         <target state="needs-review-translation">Usuń finalizator z typu „{0}”, przesłoń funkcję Dispose(bool disposing) i umieść logikę finalizacji w ścieżce kodu, gdzie element „disposing” ma wartość false. W przeciwnym razie mogą pojawić się zduplikowane wywołania funkcji Dispose, ponieważ typ bazowy „{1}” także udostępnia finalizator.</target>
@@ -244,7 +249,7 @@
       </trans-unit>
       <trans-unit id="OperatorOverloadsHaveNamedAlternatesCodeFixTitle">
         <source>Add operator overload named alternate</source>
-        <target state="new">Add operator overload named alternate</target>
+        <target state="translated">Dodawanie nazwanego elementu alternatywnego przeciążenia operatora</target>
         <note />
       </trans-unit>
       <trans-unit id="RemoveRedundantElementInitializationCodeFixTitle">
@@ -266,6 +271,11 @@
         <source>Type '{0}' owns disposable field(s) '{1}' but is not disposable</source>
         <target state="translated">Typ „{0}” zawiera pola możliwe do likwidacji („{1}”), ale sam nie jest możliwy do likwidacji</target>
         <note />
+      </trans-unit>
+      <trans-unit id="UriParametersShouldNotBeStringsCodeFixTitle">
+        <source>Add 'System.Uri' overloads</source>
+        <target state="translated">Dodaj przeciążenia 'System.Uri'</target>
+        <note>{Locked="System.Uri"}</note>
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesTitle">
         <source>Use generic event handler instances</source>

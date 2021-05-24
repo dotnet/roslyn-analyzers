@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Test.Utilities
 {
@@ -40,28 +39,6 @@ namespace Test.Utilities
             public Test()
             {
                 ReferenceAssemblies = AdditionalMetadataReferences.Default;
-
-                SolutionTransforms.Add((solution, projectId) =>
-                {
-                    var project = solution.GetProject(projectId)!;
-                    var parseOptions = (CSharpParseOptions)project.ParseOptions!;
-                    solution = solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion));
-
-                    var compilationOptions = project.CompilationOptions!;
-                    compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(compilationOptions.SpecificDiagnosticOptions.SetItems(NullableWarnings));
-                    solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
-
-                    if (AnalyzerConfigDocument is not null)
-                    {
-                        solution = solution.AddAnalyzerConfigDocument(
-                            DocumentId.CreateNewId(projectId, debugName: ".editorconfig"),
-                            ".editorconfig",
-                            SourceText.From($"is_global = true" + Environment.NewLine + AnalyzerConfigDocument),
-                            filePath: @"/.editorconfig");
-                    }
-
-                    return solution;
-                });
             }
 
             private static ImmutableDictionary<string, ReportDiagnostic> GetNullableWarningsFromCompiler()
@@ -75,7 +52,17 @@ namespace Test.Utilities
 
             public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.CSharp7_3;
 
-            public string? AnalyzerConfigDocument { get; set; }
+            protected override CompilationOptions CreateCompilationOptions()
+            {
+                var compilationOptions = base.CreateCompilationOptions();
+                return compilationOptions.WithSpecificDiagnosticOptions(
+                    compilationOptions.SpecificDiagnosticOptions.SetItems(NullableWarnings));
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                return ((CSharpParseOptions)base.CreateParseOptions()).WithLanguageVersion(LanguageVersion);
+            }
         }
     }
 }

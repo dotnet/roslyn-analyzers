@@ -13,11 +13,20 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
+    <!-- Do not ship packages by default -->
+    <IsShippingPackage>false</IsShippingPackage>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <LangVersion Condition="'$(Language)' == 'C#'">preview</LangVersion>
     <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
-
+    
+    <!-- Do not warn about the version of analyzers being used in this project -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
     <!-- TODO: Enable Nullable for test and non-shipping projects -->
     <Nullable Condition="'$(Nullable)' == '' and '$(IsTestProject)' != 'true' and '$(NonShipping)' != 'true'">enable</Nullable>
+
+    <Features>strict</Features>
   </PropertyGroup>
 
   <PropertyGroup>

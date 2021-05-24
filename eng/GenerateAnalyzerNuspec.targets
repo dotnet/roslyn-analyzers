@@ -86,8 +86,16 @@
       <AnalyzerConfigurationFileDir>$(RepoRoot)docs</AnalyzerConfigurationFileDir>
       <AnalyzerConfigurationFileName>Analyzer Configuration.md</AnalyzerConfigurationFileName>
     </PropertyGroup>
-    
-    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateDocumentationAndConfigFiles\GenerateDocumentationAndConfigFiles.csproj" Targets="Build">
+
+    <PropertyGroup>
+      <!--
+        Source build's runtime environment is incomplete, so we call through a stub project to force assembly resolution
+        to choose versions from the available subset.
+      -->
+      <GenerateDocumentationAndConfigFilesProjectSuffix Condition="'$(DotNetBuildFromSource)' == 'true'">ForBrokenRuntime</GenerateDocumentationAndConfigFilesProjectSuffix>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(RepoRoot)src\Tools\GenerateDocumentationAndConfigFiles$(GenerateDocumentationAndConfigFilesProjectSuffix)\GenerateDocumentationAndConfigFiles$(GenerateDocumentationAndConfigFilesProjectSuffix).csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateDocumentationAndConfigFilesPath"/>
     </MSBuild>
 
@@ -109,7 +117,7 @@
   
   <PropertyGroup>
     <!-- Ideally, we would extract this from the MSBuild task, but we need this as the Target Output before that task is executed -->
-    <_GenerateAnalyzerNuspecPath>$(ArtifactsBinDir)GenerateAnalyzerNuspec\$(Configuration)\netcoreapp3.1\GenerateAnalyzerNuspec.dll</_GenerateAnalyzerNuspecPath>
+    <_GenerateAnalyzerNuspecPath>$(ArtifactsBinDir)GenerateAnalyzerNuspec\$(Configuration)\net6.0\GenerateAnalyzerNuspec.dll</_GenerateAnalyzerNuspecPath>
   </PropertyGroup>
 
   <Target Name="BuildGenerateAnalyzerNuspecFile"
@@ -136,7 +144,7 @@
       <_NuspecMetadata Include="copyright=$(Copyright)" />
       <_NuspecMetadata Include="license=$(PackageLicenseExpression)" />
       <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
-      <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
+      <_NuspecMetadata Include="icon=$(PackageIcon)" />
       <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
       <_NuspecMetadata Include="tags=$(PackageTags)" />
       <_NuspecMetadata Include="serviceable=$(Serviceable)" />

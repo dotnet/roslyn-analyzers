@@ -142,7 +142,7 @@
     <value>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEvent2Message" xml:space="preserve">
-    <value>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</value>
+    <value>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEvent2Description" xml:space="preserve">
     <value>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>

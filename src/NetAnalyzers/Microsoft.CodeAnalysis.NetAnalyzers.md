@@ -1406,7 +1406,7 @@ It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring'
 
 ## [CA1847](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847): Prefer static 'HashData' method over 'ComputeHash'
 
-It is simpler to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
+It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
 
 |Item|Value|
 |-|-|

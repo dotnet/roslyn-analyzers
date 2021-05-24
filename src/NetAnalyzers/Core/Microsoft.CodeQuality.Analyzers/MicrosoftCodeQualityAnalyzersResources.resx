@@ -121,7 +121,7 @@
     <value>Types that own disposable fields should be disposable</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableDescription" xml:space="preserve">
-    <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</value>
+    <value>A class declares and implements an instance field that is a 'System.IDisposable' type, and the class does not implement 'IDisposable'. A class that declares an 'IDisposable' field indirectly owns an unmanaged resource and should implement the 'IDisposable' interface.</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking" xml:space="preserve">
     <value>Type '{0}' owns disposable field(s) '{1}' but is not disposable</value>
@@ -130,28 +130,28 @@
     <value>Use generic event handler instances</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForDelegateMessage" xml:space="preserve">
-    <value>Remove '{0}' and replace its usage with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</value>
+    <value>Remove '{0}' and replace its usage with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForDelegateDescription" xml:space="preserve">
     <value>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEventMessage" xml:space="preserve">
-    <value>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for example EventHandler&lt;T&gt;, where T is a valid EventArgs</value>
+    <value>Change the event '{0}' to replace the type '{1}' with a generic 'EventHandler', for example 'EventHandler&lt;T&gt;', where 'T' is a valid 'EventArgs'</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEventDescription" xml:space="preserve">
     <value>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEvent2Message" xml:space="preserve">
-    <value>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</value>
+    <value>Change the event '{0}' to use a generic 'EventHandler' by defining the event type explicitly, for example, 'Event MyEvent As EventHandler(Of MyEventArgs)'.</value>
   </data>
   <data name="UseGenericEventHandlerInstancesForEvent2Description" xml:space="preserve">
-    <value>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
+    <value>A type contains an event that declares an 'EventHandler' delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
   </data>
   <data name="EnumsShouldHaveZeroValueTitle" xml:space="preserve">
     <value>Enums should have zero value</value>
   </data>
   <data name="EnumsShouldHaveZeroValueDescription" xml:space="preserve">
-    <value>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the FlagsAttribute attribute applied defines a zero-valued member, its name should be ""None"" to indicate that no values have been set in the enumeration.</value>
+    <value>The default value of an uninitialized enumeration, just as other value types, is zero. A nonflags-attributed enumeration should define a member by using the value of zero so that the default value is a valid value of the enumeration. If an enumeration that has the 'FlagsAttribute' attribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.</value>
   </data>
   <data name="EnumsShouldHaveZeroValueMessageFlagsRename" xml:space="preserve">
     <value>In enum '{0}', change the name of '{1}' to 'None'</value>
@@ -205,7 +205,7 @@
     <comment>{Locked="ComVisible(false)"}{Locked="ComVisible(true)"}</comment>
   </data>
   <data name="MarkAssembliesWithComVisibleMessageAttributeTrue" xml:space="preserve">
-    <value>Consider changing the 'ComVisible' attribute on {0} to false, and opting in at the type level.</value>
+    <value>Consider changing the 'ComVisible' attribute on '{0}' to false, and opting in at the type level.</value>
     <comment>{Locked="ComVisible"}</comment>
   </data>
   <data name="MarkAttributesWithAttributeUsageTitle" xml:space="preserve">
@@ -286,7 +286,7 @@
     <value>Move pinvokes to native methods class</value>
   </data>
   <data name="MovePInvokesToNativeMethodsClassDescription" xml:space="preserve">
-    <value>Platform Invocation methods, such as those that are marked by using the System.Runtime.InteropServices.DllImportAttribute attribute, or methods that are defined by using the Declare keyword in Visual Basic, access unmanaged code. These methods should be of the NativeMethods, SafeNativeMethods, or UnsafeNativeMethods class.</value>
+    <value>Platform Invocation methods, such as those that are marked by using the 'System.Runtime.InteropServices.DllImportAttribute' attribute, or methods that are defined by using the 'Declare' keyword in Visual Basic, access unmanaged code. These methods should be of the 'NativeMethods', 'SafeNativeMethods', or 'UnsafeNativeMethods' class.</value>
   </data>
   <data name="MovePInvokesToNativeMethodsClassMessage" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
@@ -370,19 +370,19 @@
     <value>Change '{0}' to be read-only by removing the property setter</value>
   </data>
   <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle" xml:space="preserve">
-    <value>Overload operator equals on overriding value type Equals</value>
+    <value>Overload operator equals on overriding value type 'Equals'</value>
   </data>
   <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsDescription" xml:space="preserve">
-    <value>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals.</value>
+    <value>In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of 'Equals'.</value>
   </data>
   <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsMessage" xml:space="preserve">
-    <value>Implement the equality operators and make their behavior identical to that of the Equals method</value>
+    <value>Implement the equality operators and make their behavior identical to that of the 'Equals' method</value>
   </data>
   <data name="PassSystemUriObjectsInsteadOfStringsTitle" xml:space="preserve">
     <value>Pass system uri objects instead of strings</value>
   </data>
   <data name="PassSystemUriObjectsInsteadOfStringsDescription" xml:space="preserve">
-    <value>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.</value>
+    <value>A call is made to a method that has a string parameter whose name contains "uri", "URI", "urn", "URN", "url", or "URL". The declaring type of the method contains a corresponding method overload that has a 'System.Uri' parameter.</value>
   </data>
   <data name="PassSystemUriObjectsInsteadOfStringsMessage" xml:space="preserve">
     <value>Modify '{0}' to call '{1}' instead of '{2}'</value>
@@ -588,7 +588,7 @@
     <value>URI-like properties should not be strings</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsDescription" xml:space="preserve">
-    <value>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The System.Uri class provides these services in a safe and secure manner.</value>
+    <value>This rule assumes that the property represents a Uniform Resource Identifier (URI). A string representation of a URI is prone to parsing and encoding errors, and can lead to security vulnerabilities. The 'System.Uri' class provides these services in a safe and secure manner.</value>
   </data>
   <data name="UriPropertiesShouldNotBeStringsMessage" xml:space="preserve">
     <value>Change the type of property '{0}' from 'string' to 'System.Uri'</value>
@@ -765,10 +765,10 @@
     <value>In member '{0}', change parameter name '{1}' to '{2}' in order to match the identifier as it has been declared in '{3}'</value>
   </data>
   <data name="OverrideEqualsAndOperatorEqualsOnValueTypesTitle" xml:space="preserve">
-    <value>Override equals and operator equals on value types</value>
+    <value>Override 'Equals' and operator equals on value types</value>
   </data>
   <data name="OverrideEqualsAndOperatorEqualsOnValueTypesDescription" xml:space="preserve">
-    <value>For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.</value>
+    <value>For value types, the inherited implementation of 'Equals' uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement 'Equals'.</value>
   </data>
   <data name="OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals" xml:space="preserve">
     <value>'{0}' should override 'Equals'</value>
@@ -846,7 +846,7 @@
     <value>Override 'Object.Equals(object)' when implementing 'IEquatable&lt;T&gt;'</value>
   </data>
   <data name="UseIntegralOrStringArgumentForIndexersDescription" xml:space="preserve">
-    <value>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the Object type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</value>
+    <value>Indexers, that is, indexed properties, should use integer or string types for the index. These types are typically used for indexing data structures and increase the usability of the library. Use of the 'Object' type should be restricted to those cases where the specific integer or string type cannot be specified at design time. If the design requires other types for the index, reconsider whether the type represents a logical data store. If it does not represent a logical data store, use a method.</value>
   </data>
   <data name="UseIntegralOrStringArgumentForIndexersMessage" xml:space="preserve">
     <value>Use Integral Or String Argument For Indexers</value>
@@ -875,10 +875,10 @@
     <comment>{Locked=".ConfigureAwait(true)"}</comment>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
-    <value>When a type T overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</value>
+    <value>When a type 'T' overrides 'Object.Equals(object)', the implementation must cast the object argument to the correct type 'T' before performing the comparison. If the type implements 'IEquatable&lt;T&gt;', and therefore offers the method 'T.Equals(T)', and if the argument is known at compile time to be of type 'T', then the compiler can call 'IEquatable&lt;T&gt;.Equals(T)' instead of 'Object.Equals(object)', and no cast is necessary, improving performance.</value>
   </data>
   <data name="OverrideObjectEqualsDescription" xml:space="preserve">
-    <value>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
+    <value>When a type 'T' implements the interface 'IEquatable&lt;T&gt;', it suggests to a user who sees a call to the 'Equals' method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</value>
   </data>
   <data name="RenameToTitle" xml:space="preserve">
     <value>Rename to '{0}'</value>
@@ -1160,10 +1160,10 @@
     <value>Remove redundant element initializer</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsDescription" xml:space="preserve">
-    <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
+    <value>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null ('Nothing' in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an \ArgumentNullException\ when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsMessage" xml:space="preserve">
-    <value>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</value>
+    <value>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is null or add a Code Contract precondition asserting non-null argument.</value>
   </data>
   <data name="ValidateArgumentsOfPublicMethodsTitle" xml:space="preserve">
     <value>Validate arguments of public methods</value>

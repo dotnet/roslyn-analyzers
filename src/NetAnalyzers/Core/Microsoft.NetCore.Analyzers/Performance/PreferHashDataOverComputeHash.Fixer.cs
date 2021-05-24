@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 return;
             }
-            var hashTypeName = diagnostics.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeName];
+            var hashTypeName = diagnostics.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
 
             switch (diagnostics.AdditionalLocations.Count)
             {
@@ -73,8 +73,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 BufferArgNode = bufferArgNode;
                 ComputeHashNode = computeHashNode;
             }
-            public override string Title => MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle;
-            public override string EquivalenceKey => MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle;
+            public override string Title => MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle;
+            public override string EquivalenceKey => MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle;
 
             public Document Document { get; }
             public string HashTypeName { get; }

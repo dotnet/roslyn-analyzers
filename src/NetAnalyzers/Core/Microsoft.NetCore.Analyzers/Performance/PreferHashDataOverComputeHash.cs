@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public sealed class PreferHashDataOverComputeHashAnalyzer : DiagnosticAnalyzer
     {
         internal const string CA1847 = nameof(CA1847);
-        internal const string TargetHashTypeName = nameof(TargetHashTypeName);
+        internal const string TargetHashTypeDiagnosticPropertyKey = nameof(TargetHashTypeDiagnosticPropertyKey);
         internal const string HashDataMethodName = "HashData";
         private const string ComputeHashMethodName = nameof(System.Security.Cryptography.HashAlgorithm.ComputeHash);
         private const string CreateMethodName = nameof(System.Security.Cryptography.SHA256.Create);
@@ -49,14 +49,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var compilation = context.Compilation;
 
-            var hashAlgoBaseType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHashAlgorithm);
-            if (hashAlgoBaseType is null)
-            {
-                return;
-            }
-
-            var sha256Type = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySHA256);
-            if (sha256Type is null)
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHashAlgorithm, out var hashAlgoBaseType) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySHA256, out var sha256Type))
             {
                 return;
             }
@@ -87,6 +81,36 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             void OnOperationBlockStart(OperationBlockStartAnalysisContext context)
             {
+                // Patterns we are looking for:
+                // Pattern #1                                               Pattern #2
+                // var obj = #HashCreation#;              or                #HashCreation#.CompuateHash(buffer);
+                // ...
+                // obj.CompuateHash(buffer); //x1
+
+                // The core search logic is split into 3 groups
+                // 1. Scan all invocations:
+                //  a. if it is a Hash Create static method, store its local symbol + declaration operation and type symbols
+                //  b. if it is HashAlgorithm.ComputeHash
+                //      1. if its instance is a local reference, store its local reference + invocation
+                //      2. if its instance is the creation of a hash instance, we found pattern #2. Report diagnostic.
+                // 2. Find all HashAlgorithm object creation (new) and store its local symbol + declaration operation and type symbols
+                // 3. Find all HashAlgorithm local references and store them
+
+                // At OperationBlockEnd:
+                // 1. Count all local references and create a set with only symbols that have a single local reference
+                // 2. Iterate all ComputeHash invocation, only report (pattern #1) the invocation whose
+                //  a. local reference appears once (exist in the set)
+                //  b. local reference was created in the block
+                //  c. hashAlgorithm type has a static HashData method
+
+                // Reporting of Diagnostic
+                // The main span reported is at the ComputeHash method
+                //
+                // Additional locations:
+                // Pattern #1                                                Pattern #2
+                // 1. buffer arg span                                        1. buffer arg span
+                // 2. span where the hash instance was created
+
                 var computeHashVariableMap = PooledConcurrentDictionary<ILocalReferenceOperation, IInvocationOperation>.GetInstance();
                 var createdSymbolMap = PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple>.GetInstance();
                 var localReferenceMap = PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol>.GetInstance();
@@ -100,11 +124,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 void CaptureHashLocalReferenceOperation(OperationAnalysisContext context)
                 {
                     var localReferenceOperation = (ILocalReferenceOperation)context.Operation;
-                    if (!localReferenceOperation.Local.Type.Inherits(hashAlgoBaseType))
+                    if (localReferenceOperation.Local.Type.Inherits(hashAlgoBaseType))
                     {
-                        return;
+                        localReferenceMap.TryAdd(localReferenceOperation, localReferenceOperation.Local);
                     }
-                    localReferenceMap.TryAdd(localReferenceOperation, localReferenceOperation.Local);
                 }
 
                 void CaptureCreateOrComputeHashInvocationOperation(OperationAnalysisContext context)
@@ -127,11 +150,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         return;
                     }
-                    if (!TryGetVariableInitializerOperation(objectCreationOperation.Parent, out var variableInitializerOperation))
+                    if (TryGetVariableInitializerOperation(objectCreationOperation.Parent, out var variableInitializerOperation))
                     {
-                        return;
+                        CaptureVariableDeclaratorOperation(objectCreationOperation.Type, variableInitializerOperation);
                     }
-                    CaptureVariableDeclaratorOperation(objectCreationOperation.Type, variableInitializerOperation);
                 }
 
                 void CaptureHashCreateInvocationOperation(IInvocationOperation hashCreateInvocation)
@@ -179,17 +201,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                 {
-                    var localRefCountMap = localReferenceMap.GroupBy(local => local.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Count());
+                    var singleLocalRefSet = localReferenceMap
+                        .GroupBy(local => local.Value)
+                        .Where(local => local.HasExactly(1))
+                        .Select(local => local.Key)
+                        .ToSet();
 
                     foreach (var (localReference, computeHashMethod) in computeHashVariableMap)
                     {
-                        if (!createdSymbolMap.TryGetValue(localReference.Local, out var declarationTuple))
-                        {
-                            continue;
-                        }
-
-                        var referenceCount = localRefCountMap[localReference.Local];
-                        if (referenceCount != 1 || !TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out var staticHashMethod))
+                        if (!createdSymbolMap.TryGetValue(localReference.Local, out var declarationTuple) ||
+                            !singleLocalRefSet.Contains(localReference.Local) ||
+                            !TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out var staticHashMethod))
                         {
                             continue;
                         }
@@ -263,7 +285,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static Diagnostic CreateDiagnostics(IInvocationOperation computeHashMethod, INamedTypeSymbol staticHashMethodType, ImmutableArray<Location> fixerLocations)
         {
             var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
-            dictBuilder.Add(TargetHashTypeName, staticHashMethodType.Name);
+            dictBuilder.Add(TargetHashTypeDiagnosticPropertyKey, staticHashMethodType.Name);
 
             return computeHashMethod.CreateDiagnostic(StringRule,
                 fixerLocations,

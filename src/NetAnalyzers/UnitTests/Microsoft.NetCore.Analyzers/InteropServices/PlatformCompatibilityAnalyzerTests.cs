@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -161,18 +162,18 @@ public class Test
         var a = {|#0:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
         a = {|#1:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
         a = WindowsIosLinuxOnlyProgram;
-        a = [|AndroidBrowserOnlyProgram|]; // This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        a = {|#2:AndroidBrowserOnlyProgram|}; // This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
         List<Test> tests = new List<Test>();
     }
 
     [SupportedOSPlatform(""linux"")]
     void LinuxOnlyCallsite()
     {   
-        var a = {|#2:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
-        a = {|#3:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        var a = {|#3:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#4:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
         a = WindowsIosLinuxOnlyProgram;
-        a = [|AndroidBrowserOnlyProgram|]; //This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
-        {|#4:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'.
+        a = {|#5:AndroidBrowserOnlyProgram|}; //This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        {|#6:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'.
 
         List<Test> tests = new List<Test>();
         WindowsIosLinuxOnlyCallsite();
@@ -203,9 +204,11 @@ public class Test
             await VerifyAnalyzerAsyncCs(source, "build_property.PlatformNeutralAssembly = true\nbuild_property.TargetFramework=net5.0",
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(3).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(4).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.AndroidBrowserOnlyProgram", "'android', 'browser'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(3).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(4).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(5).WithArguments("Test.AndroidBrowserOnlyProgram", "'android', 'browser'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(6).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
         }
 
         [Fact]
@@ -3018,7 +3021,7 @@ public class Test
     public void UnsupportedWindowsTest()
     {
         {|#0:DenyList.UnsupportedWindows()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows()' is unsupported on: 'windows' all versions.
-        {|#1:DenyList.UnsupportedWindows10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows10()' is unsupported on: 'windows' 10.0 and later.*/
+        {|#1:DenyList.UnsupportedWindows10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows10()' is unsupported on: 'windows' 10.0 and later.
         {|#2:DenyList.UnsupportedSupportedWindows8To10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedSupportedWindows8To10()' is unsupported on: 'windows' 10.0 and later.
         {|#3:AllowList.WindowsOnly()|}; // This call site is reachable on: 'windows' 9.0 and later, and all other platforms. 'AllowList.WindowsOnly()' is only supported on: 'windows'.
         {|#4:AllowList.Windows10Only()|}; // This call site is reachable on: 'windows' 9.0 and later, and all other platforms. 'AllowList.Windows10Only()' is only supported on: 'windows' 10.0 and later.
@@ -3446,7 +3449,7 @@ class Caller
     public static void Test()
     {
         {|#0:UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()|}; // This call site is reachable on all platforms. 'UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()' is supported on: 'windows' from version 9.0 to 12.0, 'ios' from version 7.0 to 14.0.
-        {|#1:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()|}; // ... 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 7.0 to 11.0.
+        {|#1:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()|}; // 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 7.0 to 11.0.
         {|#2:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()|}; // 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 9.0 to 10.0.
     }
 }
@@ -3479,11 +3482,11 @@ class UnsupportedWindows8_9_12_Ios6_7_14
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(0).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "9.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "14.0"))),
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "14.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "9.0", "12.0"))),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(1).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "11.0"))),
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "11.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"))),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(2).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "9.0", "10.0"))));
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "9.0", "10.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"))));
         }
 
         [Fact]
@@ -3785,8 +3788,8 @@ class TestType
         private string GetFormattedString(string resource, params string[] args) =>
             string.Format(CultureInfo.InvariantCulture, resource, args);
 
-        private string Join(string platform1, string platform2) =>
-            string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platform1, platform2);
+        private string Join(params string[] platforms) =>
+            string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platforms);
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {

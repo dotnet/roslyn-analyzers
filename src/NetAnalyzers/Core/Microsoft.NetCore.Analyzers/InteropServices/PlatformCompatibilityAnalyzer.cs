@@ -203,7 +203,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static bool HasCrossPlatformProperty(AnalyzerOptions options, Compilation compilation, CancellationToken cancellationToken)
             {
-                return null != options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.PlatformNeutralAssembly, compilation, cancellationToken);
+                return options.GetMSBuildPropertyValue(MSBuildPropertyOptionNames.PlatformNeutralAssembly, compilation, cancellationToken) is not null;
             }
         }
 
@@ -634,14 +634,15 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             {
                 var supportedRule = GetSupportedPlatforms(attributes, callsiteAttributes, out var platformNames);
                 var callSitePlatforms = GetCallsitePlatforms(attributes, callsiteAttributes, out var callsite, supported: supportedRule);
+                var csPlatformNames = JoinNames(callSitePlatforms);
 
                 if (callsite == Callsite.Reachable && IsDenyList(callsiteAttributes))
                 {
-                    callSitePlatforms.Add(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllPlatforms);
+                    csPlatformNames = string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, csPlatformNames, MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllPlatforms);
                 }
 
                 var rule = supportedRule ? SwitchSupportedRule(callsite) : SwitchRule(callsite, true);
-                context.ReportDiagnostic(operation.CreateDiagnostic(rule, operationName, JoinNames(platformNames), JoinNames(callSitePlatforms)));
+                context.ReportDiagnostic(operation.CreateDiagnostic(rule, operationName, JoinNames(platformNames), csPlatformNames));
 
                 static DiagnosticDescriptor SwitchSupportedRule(Callsite callsite)
                     => callsite switch
@@ -914,7 +915,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static string EncloseWithQuotes(string pName) => $"'{AddOsxIfMacOS(pName)}'";
 
-            static string JoinNames(List<string> platformNames) => string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
+            static string JoinNames(List<string> platformNames)
+            {
+                platformNames.Sort();
+                return string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
+            }
 
             static SymbolDisplayFormat GetLanguageSpecificFormat(IOperation operation) =>
                 operation.Language == LanguageNames.CSharp ? SymbolDisplayFormat.CSharpShortErrorMessageFormat : SymbolDisplayFormat.VisualBasicShortErrorMessageFormat;

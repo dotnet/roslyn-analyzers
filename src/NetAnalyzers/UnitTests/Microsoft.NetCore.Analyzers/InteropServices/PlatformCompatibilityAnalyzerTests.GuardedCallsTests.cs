@@ -4118,7 +4118,7 @@ class Test
     [SupportedOSPlatformGuard(""Windows10.0"")]
     private bool IsWindow10Supported() => true;
 
-    [SupportedOSPlatformGuard(""linux"")]
+    [SupportedOSPlatformGuard(""linux4.8"")]
     [SupportedOSPlatformGuard(""Windows10.0"")]
     [SupportedOSPlatformGuard(""Osx14.1"")]
     private readonly bool _linuxAndWindows10MacOS14Supported;
@@ -4147,7 +4147,7 @@ class Test
         if (LinuxWindows8Ios9NotSupported)
         {
             UnsupportedOnLinuxWindows10Ios91();
-            {|#1:SupportedOnWindows10LinuxMacOS14()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindows10LinuxMacOS14()' is only supported on: 'windows' 10.0 and later, 'Linux', 'macOS' 14.0 and later.
+            {|#1:SupportedOnWindows10LinuxMacOS14()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindows10LinuxMacOS14()' is only supported on: 'linux' 4.8 and later, 'macOS/OSX' 14.0 and later, 'windows' 10.0 and later.
             {|#2:SupportedOnWindows8()|}; // This call site is reachable on all platforms. 'Test.SupportedOnWindows8()' is only supported on: 'windows' 8.0 and later.
         }
     }
@@ -4156,9 +4156,9 @@ class Test
     [UnsupportedOSPlatform(""Linux"")]
     [UnsupportedOSPlatform(""ios9.1"")]
     void UnsupportedOnLinuxWindows10Ios91() { }
- 
+
     [SupportedOSPlatform(""windows10.0"")]
-    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""linux4.8"")]
     [SupportedOSPlatform(""macOS14.0"")]
     void SupportedOnWindows10LinuxMacOS14() { }
 
@@ -4171,7 +4171,8 @@ class Test
                     GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"),
                     GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "Windows", "10.0")),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(1).WithArguments("Test.SupportedOnWindows10LinuxMacOS14()",
-                    Join("'Linux'", GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"),
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "linux", "4.8"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"),
                     GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "10.0"))),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Test.SupportedOnWindows8()",
                     GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "windows", "8.0")));

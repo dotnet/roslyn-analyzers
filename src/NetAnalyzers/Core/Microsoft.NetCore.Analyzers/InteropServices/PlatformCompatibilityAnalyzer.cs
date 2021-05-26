@@ -917,7 +917,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             static string JoinNames(List<string> platformNames)
             {
-                platformNames.Sort();
+                platformNames.Sort(StringComparer.OrdinalIgnoreCase);
                 return string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platformNames);
             }
 

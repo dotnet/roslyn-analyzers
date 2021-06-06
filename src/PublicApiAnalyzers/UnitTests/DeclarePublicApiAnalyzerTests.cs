@@ -761,6 +761,118 @@ C.Property.get -> int";
             await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
         }
 
+        [Fact]
+        [WorkItem(4584, "https://github.com/dotnet/roslyn-analyzers/issues/4584")]
+        public async Task DuplicateSymbolUsingObliviousInSameApiFiles()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+~C.Property.get -> int
+";
+
+            var unshippedText = @"";
+
+#pragma warning disable RS0030 // Do not used banned APIs
+            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.DuplicateSymbolInApiFiles)
+                           .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 7, 1)
+                           .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 5, 1)
+                           .WithArguments("~C.Property.get -> int");
+#pragma warning restore RS0030 // Do not used banned APIs
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
+        }
+
+        [Fact]
+        [WorkItem(4584, "https://github.com/dotnet/roslyn-analyzers/issues/4584")]
+        public async Task DuplicateSymbolUsingObliviousInDifferentApiFiles()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+C.Field -> int
+~C.Property.get -> int
+C.Property.set -> void
+";
+
+            var unshippedText = @"#nullable enable
+C.Property.get -> int";
+
+#pragma warning disable RS0030 // Do not used banned APIs
+            var expected = new DiagnosticResult(DeclarePublicApiAnalyzer.DuplicateSymbolInApiFiles)
+#pragma warning restore RS0030 // Do not used banned APIs
+                           .WithLocation(DeclarePublicApiAnalyzer.UnshippedFileName, 2, 1)
+                           .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 5, 1)
+                           .WithArguments("C.Property.get -> int");
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expected);
+        }
+
+        [Fact]
+        [WorkItem(4584, "https://github.com/dotnet/roslyn-analyzers/issues/4584")]
+        public async Task MultipleDuplicateSymbolsUsingObliviousInDifferentApiFiles()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+C.Field -> int
+C.Property.get -> int
+C.Property.set -> void
+";
+
+            var unshippedText = @"#nullable enable
+~C.Property.get -> int
+C.Property.get -> int
+~C.Property.set -> void";
+
+#pragma warning disable RS0030 // Do not used banned APIs
+            var expectedResults = new[]
+            {
+                new DiagnosticResult(DeclarePublicApiAnalyzer.DuplicateSymbolInApiFiles)
+                    .WithLocation(DeclarePublicApiAnalyzer.UnshippedFileName, 2, 1)
+                    .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 5, 1)
+                    .WithArguments("~C.Property.get -> int"),
+                new DiagnosticResult(DeclarePublicApiAnalyzer.DuplicateSymbolInApiFiles)
+                    .WithLocation(DeclarePublicApiAnalyzer.UnshippedFileName, 3, 1)
+                    .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 5, 1)
+                    .WithArguments("C.Property.get -> int"),
+                new DiagnosticResult(DeclarePublicApiAnalyzer.DuplicateSymbolInApiFiles)
+                    .WithLocation(DeclarePublicApiAnalyzer.UnshippedFileName, 4, 1)
+                    .WithLocation(DeclarePublicApiAnalyzer.ShippedFileName, 6, 1)
+                    .WithArguments("~C.Property.set -> void"),
+            };
+#pragma warning restore RS0030 // Do not used banned APIs
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText, expectedResults);
+        }
+
         [Fact, WorkItem(773, "https://github.com/dotnet/roslyn-analyzers/issues/773")]
         public async Task ApiFileShippedWithNonExistentMembers()
         {

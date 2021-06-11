@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     public abstract class PreferHashDataOverComputeHashFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1847);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1848);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

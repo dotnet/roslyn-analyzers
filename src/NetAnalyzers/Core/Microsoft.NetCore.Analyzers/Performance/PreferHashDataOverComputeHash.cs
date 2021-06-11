@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class PreferHashDataOverComputeHashAnalyzer : DiagnosticAnalyzer
     {
-        internal const string CA1847 = nameof(CA1847);
+        internal const string CA1848 = nameof(CA1848);
         internal const string TargetHashTypeDiagnosticPropertyKey = nameof(TargetHashTypeDiagnosticPropertyKey);
         internal const string HashDataMethodName = "HashData";
         private const string ComputeHashMethodName = nameof(System.Security.Cryptography.HashAlgorithm.ComputeHash);
@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static readonly LocalizableString s_localizableStringDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor StringRule = DiagnosticDescriptorHelper.Create(
-            CA1847,
+            CA1848,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Performance,

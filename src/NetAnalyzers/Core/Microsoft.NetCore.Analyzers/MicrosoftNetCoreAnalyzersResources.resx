@@ -1647,6 +1647,33 @@
   <data name="UseStringEqualsOverStringCompareTitle" xml:space="preserve">
     <value>Use 'string.Equals'</value>
   </data>
+  <data name="ProvidePublicParameterlessSafeHandleConstructorDescription" xml:space="preserve">
+    <value>Providing a public parameterless constructor for a type derived from 'System.Runtime.InteropServices.SafeHandle' enables better performance and usage with source-generated interop solutions.</value>
+  </data>
+  <data name="ProvidePublicParameterlessSafeHandleConstructorMessage" xml:space="preserve">
+    <value>Provide a public parameterless constructor for the '{0}' type that is derived from 'System.Runtime.InteropServices.SafeHandle'</value>
+  </data>
+  <data name="ProvidePublicParameterlessSafeHandleConstructorTitle" xml:space="preserve">
+    <value>Provide a public parameterless constructor for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'</value>
+  </data>
+  <data name="AddPublicParameterlessConstructor" xml:space="preserve">
+    <value>Add a public constructor that takes zero parameters</value>
+  </data>
+  <data name="MakeParameterlessConstructorPublic" xml:space="preserve">
+    <value>Make the constructor that takes zero parameters 'public'</value>
+  </data>
+  <data name="UseStringContainsCharOverloadWithSingleCharactersDescription" xml:space="preserve">
+    <value>'string.Contains(char)' is available as a better performing overload for single char lookup.</value>
+  </data>
+  <data name="UseStringContainsCharOverloadWithSingleCharactersMessage" xml:space="preserve">
+    <value>Use 'string.Contains(char)' instead of 'string.Contains(string)' when searching for a single character</value>
+  </data>
+  <data name="UseStringContainsCharOverloadWithSingleCharactersTitle" xml:space="preserve">
+    <value>Use char literal for a single character lookup</value>
+  </data>
+  <data name="ReplaceStringLiteralWithCharLiteralCodeActionTitle" xml:space="preserve">
+    <value>Replace string literal with char literal</value>
+  </data>
   <data name="PreferHashDataOverComputeHashAnalyzerTitle" xml:space="preserve">
     <value>Prefer static 'HashData' method over 'ComputeHash'</value>
   </data>

@@ -1396,8 +1396,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 #if DEBUG
                     TAnalysisData savedCurrentAnalysisData = GetClonedCurrentAnalysisData();
 #endif
-                    FlowBranchConditionKind = ControlFlowConditionKind.WhenTrue;
                     var dummyTargetPredicateData = GetClonedCurrentAnalysisData();
+                    FlowBranchConditionKind = ControlFlowConditionKind.WhenTrue;
+                    PerformPredicateAnalysisCore(operation, dummyTargetPredicateData);
+                    FlowBranchConditionKind = ControlFlowConditionKind.WhenFalse;
                     PerformPredicateAnalysisCore(operation, dummyTargetPredicateData);
                     FlowBranchConditionKind = ControlFlowConditionKind.None;
 #if DEBUG

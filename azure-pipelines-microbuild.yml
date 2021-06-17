@@ -28,6 +28,7 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableTelemetry: true
+      enableSourceBuild: true
       jobs:
       - job: Signed_Build
         pool:

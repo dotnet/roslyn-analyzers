@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Microsoft.NetCore.Analyzers.Publish;
 using PerformanceTests.Utilities;
 using PerfUtilities;

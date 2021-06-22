@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <NonShipping>true</NonShipping>
   </PropertyGroup>
 

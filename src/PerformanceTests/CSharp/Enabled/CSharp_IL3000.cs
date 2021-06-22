@@ -58,7 +58,7 @@ class {name}
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 1_000)
+            if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
             {
                 throw new InvalidOperationException($"Expected '1,000' analyzer diagnostics but found '{diagnostics.Length}'");
             }

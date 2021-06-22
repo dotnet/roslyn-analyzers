@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <NonShipping>true</NonShipping>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.App.Ref" Version="6.0.0-preview.4.21253.7" IncludeAssets="none" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisVersion)" />
+  </ItemGroup>
+
+  <Import Project="Generated.targets" />
+</Project>

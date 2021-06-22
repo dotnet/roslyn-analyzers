@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28531.58
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -188,11 +189,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonPerfUtilities", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualBasicPerfUtilities", "src\PerformanceTests\Utilities\VisualBasic\VisualBasicPerfUtilities.csproj", "{8D764DDE-3762-4218-8BC4-CC1048095D5F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1A6F359-DF41-4E51-9D4F-2E6DDF135BA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceTests", "src\PerformanceTests\Tests\PerformanceTests.csproj", "{4FE82B4D-4AF1-4076-9E85-529205866A80}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PerformanceTests", "PerformanceTests", "{9CD62A3C-A138-4607-9231-5E2266AB59BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfDiff", "src\Tools\PerfDiff\PerfDiff.csproj", "{AE549290-1702-4ECE-AE57-5FF4E85492C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceTests", "src\PerformanceTests\Tests\PerformanceTests.csproj", "{4FE82B4D-4AF1-4076-9E85-529205866A80}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PerfDiff", "PerfDiff", "{BEE4B62A-86BD-4613-8F94-F40364350643}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -498,6 +499,10 @@ Global
 		{4FE82B4D-4AF1-4076-9E85-529205866A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FE82B4D-4AF1-4076-9E85-529205866A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FE82B4D-4AF1-4076-9E85-529205866A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE549290-1702-4ECE-AE57-5FF4E85492C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE549290-1702-4ECE-AE57-5FF4E85492C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE549290-1702-4ECE-AE57-5FF4E85492C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE549290-1702-4ECE-AE57-5FF4E85492C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -579,8 +584,9 @@ Global
 		{6A3B1816-97D3-4D30-8C6F-2F2DC288410B} = {43852421-59D7-4D63-977E-F862E1CF467D}
 		{8EC7A06A-01F2-49CF-9C45-4357AAD82546} = {43852421-59D7-4D63-977E-F862E1CF467D}
 		{8D764DDE-3762-4218-8BC4-CC1048095D5F} = {43852421-59D7-4D63-977E-F862E1CF467D}
-		{9CD62A3C-A138-4607-9231-5E2266AB59BC} = {E1A6F359-DF41-4E51-9D4F-2E6DDF135BA7}
-		{4FE82B4D-4AF1-4076-9E85-529205866A80} = {9CD62A3C-A138-4607-9231-5E2266AB59BC}
+		{4FE82B4D-4AF1-4076-9E85-529205866A80} = {CE87A0B7-E19B-4230-A73C-60F6D65EB7DC}
+		{AE549290-1702-4ECE-AE57-5FF4E85492C6} = {BEE4B62A-86BD-4613-8F94-F40364350643}
+		{BEE4B62A-86BD-4613-8F94-F40364350643} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

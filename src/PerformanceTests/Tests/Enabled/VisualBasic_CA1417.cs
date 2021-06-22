@@ -4,18 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.Runtime;
+using Microsoft.NetCore.Analyzers.InteropServices;
 using PerformanceTests.Utilities;
 using PerfUtilities;
 
 namespace VisualBasicPerformanceTests.Enabled
 {
-    public class VisualBasic_CA2015
+    public class VisualBasic_CA1417
     {
         [IterationSetup]
-        public static void CreateEnvironmentCA2015()
+        public static void CreateEnvironmentCA1417()
         {
             var sources = new List<(string name, string content)>();
             for (var i = 0; i < Constants.Number_Of_Code_Files; i++)
@@ -23,48 +25,35 @@ namespace VisualBasicPerformanceTests.Enabled
                 var name = "TypeName" + i;
                 sources.Add((name, @$"
 Imports System
-Imports System.Buffers
+Imports System.Runtime.InteropServices
 
-Class {name}(Of T)
-    Inherits MemoryManager(Of T)
+Class {name}
 
-    <Obsolete>
-    Public Overrides Function GetSpan() As Span(Of T)
-        Throw New NotImplementedException()
-    End Function
-
-    Public Overrides Function Pin(Optional elementIndex As Integer = 0) As MemoryHandle
-        Throw New NotImplementedException()
-    End Function
-
-    Public Overrides Sub Unpin()
-        Throw New NotImplementedException()
+    <DllImport(""user32.dll"", CharSet:=CharSet.Unicode)>
+    Private Shared Sub Method1(<Out> s As String)
     End Sub
 
-    Protected Overrides Sub Dispose(disposing As Boolean)
-        Throw New NotImplementedException()
+    < DllImport(""user32.dll"", CharSet:= CharSet.Unicode) >
+    Private Shared Sub Method2(s1 As String, <Out> s2 As String, <Out> s3 As String)
     End Sub
-
-    Protected Overrides Sub Finalize()
-    End Sub
-
 End Class
+
 "));
             }
 
             var compilation = VisualBasicCompilationHelper.CreateAsync(sources.ToArray()).GetAwaiter().GetResult();
             BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()));
-            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new DoNotDefineFinalizersForTypesDerivedFromMemoryManager()));
+            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new DoNotUseOutAttributeStringPInvokeParametersAnalyzer()));
         }
 
         private static CompilationWithAnalyzers BaselineCompilationWithAnalyzers;
         private static CompilationWithAnalyzers CompilationWithAnalyzers;
 
         [Benchmark]
-        public void CA2015_DiagnosticsProduced()
+        public async Task CA1417_DiagnosticsProduced()
         {
-            var analysisResult = CompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await CompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");
@@ -75,17 +64,17 @@ End Class
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
+            if (diagnostics.Length != 3 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '1,000' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{3 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 
         [Benchmark(Baseline = true)]
-        public void CA2015_Baseline()
+        public async Task CA1417_Baseline()
         {
-            var analysisResult = BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");

@@ -4,18 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
+using Microsoft.NetCore.Analyzers.Runtime;
 using PerformanceTests.Utilities;
 using PerfUtilities;
 
 namespace CSharpPerformanceTests.Enabled
 {
-    public class CSharp_CA2200
+    public class CSharp_CA2015
     {
         [IterationSetup]
-        public static void CreateEnvironmentCA2200()
+        public static void CreateEnvironmentCA2015()
         {
             var sources = new List<(string name, string content)>();
             for (var i = 0; i < Constants.Number_Of_Code_Files; i++)
@@ -23,36 +25,42 @@ namespace CSharpPerformanceTests.Enabled
                 var name = "TypeName" + i;
                 sources.Add((name, @$"
 using System;
+using System.Buffers;
 
-class {name}
+class {name}<T> : MemoryManager<T>
 {{
-    void CatchAndRethrowExplicitly()
+    public override Span<T> GetSpan()
     {{
-        try
-        {{
-        }}
-        catch (Exception e)
-        {{
-            throw e;
-        }}
+        throw new NotImplementedException();
     }}
+
+    public override MemoryHandle Pin(int elementIndex = 0)
+    {{
+        throw new NotImplementedException();
+    }}
+
+    public override void Unpin() {{ }}
+
+    ~{name}(){{ }}
+
+    protected override void Dispose(bool disposing) {{ }}
 }}
 "));
             }
 
             var compilation = CSharpCompilationHelper.CreateAsync(sources.ToArray()).GetAwaiter().GetResult();
             BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()));
-            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new RethrowToPreserveStackDetailsAnalyzer()));
+            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new DoNotDefineFinalizersForTypesDerivedFromMemoryManager()));
         }
 
         private static CompilationWithAnalyzers BaselineCompilationWithAnalyzers;
         private static CompilationWithAnalyzers CompilationWithAnalyzers;
 
         [Benchmark]
-        public void CA2200_DiagnosticsProduced()
+        public async Task CA2015_DiagnosticsProduced()
         {
-            var analysisResult = CompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await CompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");
@@ -65,15 +73,15 @@ class {name}
 
             if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '1,000' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{1 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 
         [Benchmark(Baseline = true)]
-        public void CA2200_Baseline()
+        public async Task CA2015_Baseline()
         {
-            var analysisResult = BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");

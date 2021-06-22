@@ -4,18 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.Runtime;
+using Microsoft.NetCore.Analyzers.InteropServices;
 using PerformanceTests.Utilities;
 using PerfUtilities;
 
 namespace CSharpPerformanceTests.Enabled
 {
-    public class CSharp_CA2015
+    public class CSharp_CA1416
     {
         [IterationSetup]
-        public static void CreateEnvironmentCA2015()
+        public static void CreateEnvironmentCA1416()
         {
             var sources = new List<(string name, string content)>();
             for (var i = 0; i < Constants.Number_Of_Code_Files; i++)
@@ -23,42 +25,48 @@ namespace CSharpPerformanceTests.Enabled
                 var name = "TypeName" + i;
                 sources.Add((name, @$"
 using System;
-using System.Buffers;
+using PlatformCompatDemo.SupportedUnupported;
 
-class {name}<T> : MemoryManager<T>
+class {name}
 {{
-    public override Span<T> GetSpan()
+    private B field = new B();
+    public void M1()
     {{
-        throw new NotImplementedException();
+        field.M2();
     }}
-
-    public override MemoryHandle Pin(int elementIndex = 0)
-    {{
-        throw new NotImplementedException();
-    }}
-
-    public override void Unpin() {{ }}
-
-    ~{name}(){{ }}
-
-    protected override void Dispose(bool disposing) {{ }}
 }}
 "));
             }
 
-            var compilation = CSharpCompilationHelper.CreateAsync(sources.ToArray()).GetAwaiter().GetResult();
-            BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()));
-            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new DoNotDefineFinalizersForTypesDerivedFromMemoryManager()));
+            var targetTypesForTest = @"
+using System.Runtime.Versioning;
+namespace PlatformCompatDemo.SupportedUnupported
+{
+    public class B
+    {
+        [SupportedOSPlatform(""Windows10.1.1.1"")]
+        public void M2() { }
+    }
+}";
+            sources.Add((nameof(targetTypesForTest), targetTypesForTest));
+            var properties = new[]
+            {
+                ("build_property.TargetFramework", "net6"),
+                ("build_property._SupportedPlatformList", "Linux,macOS"),
+            };
+            var (compilation, options) = CSharpCompilationHelper.CreateWithOptionsAsync(sources.ToArray(), properties).GetAwaiter().GetResult();
+            BaselineCompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new EmptyAnalyzer()), options);
+            CompilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PlatformCompatibilityAnalyzer()), options);
         }
 
         private static CompilationWithAnalyzers BaselineCompilationWithAnalyzers;
         private static CompilationWithAnalyzers CompilationWithAnalyzers;
 
         [Benchmark]
-        public void CA2015_DiagnosticsProduced()
+        public async Task CA1416_DiagnosticsProduced()
         {
-            var analysisResult = CompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await CompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");
@@ -71,15 +79,15 @@ class {name}<T> : MemoryManager<T>
 
             if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '1,000' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{1 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 
         [Benchmark(Baseline = true)]
-        public void CA2015_Baseline()
+        public async Task CA1416_Baseline()
         {
-            var analysisResult = BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(default).GetAwaiter().GetResult();
-            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.Single());
+            var analysisResult = await BaselineCompilationWithAnalyzers.GetAnalysisResultAsync(CancellationToken.None);
+            var diagnostics = analysisResult.GetAllDiagnostics(analysisResult.Analyzers.First());
             if (analysisResult.Analyzers.Length != 1)
             {
                 throw new InvalidOperationException($"Expected a single analyzer but found '{analysisResult.Analyzers.Length}'");

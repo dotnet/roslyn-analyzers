@@ -22,6 +22,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj" />
+    <ProjectReference Include="..\..\NetAnalyzers\VisualBasic\Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.vbproj" />
     <ProjectReference Include="..\Utilities\CSharp\CSharpPerfUtilities.csproj" />
+    <ProjectReference Include="..\Utilities\VisualBasic\VisualBasicPerfUtilities.csproj" />
   </ItemGroup>
 </Project>

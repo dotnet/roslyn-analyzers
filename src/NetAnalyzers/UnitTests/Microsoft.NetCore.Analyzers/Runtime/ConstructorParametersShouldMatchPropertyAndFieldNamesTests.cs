@@ -531,7 +531,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 {
                     [JsonInclude]
                     public int firstField;
-                    
+
                     [JsonInclude]
                     public object secondField;
 
@@ -553,7 +553,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 Public Class C1
                     <JsonInclude>
                     Public firstField as Integer
-                    
+
                     <JsonInclude>
                     Public secondField as Object
 
@@ -564,7 +564,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     End Sub
                 End Class");
         }
-
 
         [Fact]
         public async Task CA1071_ClassFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_CSharp()
@@ -603,7 +602,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             await VerifyCSharpAnalyzerAsync(@"
                 using System.Text.Json.Serialization;
-                
+
                 public class C1
                 {
                     private int firstField;
@@ -625,7 +624,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             await VerifyBasicAnalyzerAsync(@"
                 Imports System.Text.Json.Serialization
-            
+
                 Public Class C1
                     Private firstField as Integer
                     Private secondField as Object
@@ -992,7 +991,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 {
                     [JsonInclude]
                     public int firstField;
-                    
+
                     [JsonInclude]
                     public object secondField;
 

@@ -74,9 +74,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction((compilationStartContext) =>
+            context.RegisterCompilationStartAction((context) =>
             {
-                INamedTypeSymbol? jsonConstructorAttributeNamedSymbol = compilationStartContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute);
+                INamedTypeSymbol? jsonConstructorAttributeNamedSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute);
                 if (jsonConstructorAttributeNamedSymbol == null)
                 {
                     return;
@@ -84,15 +84,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var paramAnalyzer = new ParameterAnalyzer(jsonConstructorAttributeNamedSymbol);
 
-                compilationStartContext.RegisterSymbolStartAction((symbolStartContext) =>
+                context.RegisterSymbolStartAction((context) =>
                 {
-                    var constructors = ((INamedTypeSymbol)symbolStartContext.Symbol).InstanceConstructors;
+                    var constructors = ((INamedTypeSymbol)context.Symbol).InstanceConstructors;
 
                     foreach (var ctor in constructors)
                     {
                         if (paramAnalyzer.ShouldAnalyzeMethod(ctor))
                         {
-                            symbolStartContext.RegisterOperationAction(
+                            context.RegisterOperationAction(
                                 context => ParameterAnalyzer.AnalyzeOperationAndReport(context),
                                 OperationKind.ParameterReference);
                         }

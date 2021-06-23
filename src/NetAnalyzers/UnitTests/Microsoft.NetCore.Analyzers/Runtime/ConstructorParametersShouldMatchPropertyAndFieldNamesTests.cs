@@ -190,7 +190,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 Public Class C1
                     <JsonPropertyName(""FirstProp"")>
                     Public Property _FirstProp() As Integer
-                    
+
                     <JsonPropertyName(""SecondProp"")>
                     Public Property _SecondProp() as Object
 
@@ -244,44 +244,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondProp = secondProp
                     End Sub
                 End Class");
-        }
-
-        [Fact]
-        public async Task CA1071_ClassPropsMatchButUnreferenced_ConstructorParametersShouldBeBound_CSharp()
-        {
-            await VerifyCSharpAnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public class C1
-                {
-                    private int FirstProp { get; }
-                    private object SecondProp { get; }
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
-                    {
-                    }
-                }",
-                CA1071CSharpUnreferencedParamResultAt(0, "C1", "firstProp"),
-                CA1071CSharpUnreferencedParamResultAt(1, "C1", "secondProp"));
-        }
-
-        [Fact]
-        public async Task CA1071_ClassPropsMatchButUnreferenced_ConstructorParametersShouldBeBound_Basic()
-        {
-            await VerifyBasicAnalyzerAsync(@"
-                Imports System.Text.Json.Serialization
-
-                Public Class C1
-                    Private Property FirstProp() As Integer
-                    Private Property SecondProp() as Object
-
-                    <JsonConstructor>
-                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
-                    End Sub
-                End Class",
-                CA1071BasicUnreferencedParamResultAt(0, "C1", "firstProp"),
-                CA1071BasicUnreferencedParamResultAt(1, "C1", "secondProp"));
         }
 
         [Fact]
@@ -503,7 +465,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 Public Class C1
                     <JsonPropertyName(""firstField"")>
                     Public _firstField As Integer
-                    
+
                     <JsonPropertyName(""secondField"")>
                     Public _secondField as Object
 
@@ -603,43 +565,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class");
         }
 
-        [Fact]
-        public async Task CA1071_ClassFieldsMatchButUnreferenced_ConstructorParametersShouldBeBound_CSharp()
-        {
-            await VerifyCSharpAnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public class C1
-                {
-                    public int firstField;
-                    public object secondField;
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
-                    {
-                    }
-                }",
-                CA1071CSharpUnreferencedParamResultAt(0, "C1", "firstField"),
-                CA1071CSharpUnreferencedParamResultAt(1, "C1", "secondField"));
-        }
-
-        [Fact]
-        public async Task CA1071_ClassFieldsMatchButUnreferenced_ConstructorParametersShouldBeBound_Basic()
-        {
-            await VerifyBasicAnalyzerAsync(@"
-                Imports System.Text.Json.Serialization
-
-                Public Class C1
-                    Public firstField as Integer
-                    Public secondField as Object
-
-                    <JsonConstructor>
-                    Public Sub New({|#0:firstField|} as Integer, {|#1:secondField|} as Object)
-                    End Sub
-                End Class",
-                CA1071BasicUnreferencedParamResultAt(0, "C1", "firstField"),
-                CA1071BasicUnreferencedParamResultAt(1, "C1", "secondField"));
-        }
 
         [Fact]
         public async Task CA1071_ClassFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_CSharp()
@@ -900,26 +825,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_RecordPropsMatchButUnreferenced_ConstructorParametersShouldBeBound_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    private int FirstProp { get; }
-                    private object SecondProp { get; }
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
-                    {
-                    }
-                }",
-                CA1071CSharpUnreferencedParamResultAt(0, "C1", "firstProp"),
-                CA1071CSharpUnreferencedParamResultAt(1, "C1", "secondProp"));
-        }
-
-        [Fact]
         public async Task CA1071_RecordPropsMatchButPrivate_ConstructorParametersShouldShouldMatchPublicProperties_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
@@ -1101,26 +1006,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public async Task CA1071_RecordFieldsMatchButUnreferenced_ConstructorParametersShouldBeBound_CSharp()
-        {
-            await VerifyCSharp9AnalyzerAsync(@"
-                using System.Text.Json.Serialization;
-
-                public record C1
-                {
-                    public int firstField;
-                    public object secondField;
-
-                    [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
-                    {
-                    }
-                }",
-                CA1071CSharpUnreferencedParamResultAt(0, "C1", "firstField"),
-                CA1071CSharpUnreferencedParamResultAt(1, "C1", "secondField"));
-        }
-
-        [Fact]
         public async Task CA1071_RecordFieldsMatchButPrivateNotJsonCtor_NoDiagnostics_CSharp()
         {
             await VerifyCSharp9AnalyzerAsync(@"
@@ -1265,16 +1150,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private DiagnosticResult CA1071BasicFieldResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071CSharpUnreferencedParamResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.UnreferencedParameterRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071BasicUnreferencedParamResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.UnreferencedParameterRule)
                .WithLocation(markupKey)
                .WithArguments(arguments);
 

@@ -201,16 +201,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                 {
-                    var singleLocalRefSet = localReferenceMap
+                    var singleLocalRefElements = localReferenceMap
                         .GroupBy(local => local.Value)
                         .Where(local => local.HasExactly(1))
-                        .Select(local => local.Key)
-                        .ToSet();
+                        .Select(local => local.First().Key);
 
-                    foreach (var (localReference, computeHashMethod) in computeHashVariableMap)
+                    foreach (var localRef in singleLocalRefElements)
                     {
-                        if (!createdSymbolMap.TryGetValue(localReference.Local, out var declarationTuple) ||
-                            !singleLocalRefSet.Contains(localReference.Local) ||
+                        if (!createdSymbolMap.TryGetValue(localRef.Local, out var declarationTuple) ||
+                            !computeHashVariableMap.TryGetValue(localRef, out var computeHashMethod) ||
                             !TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out var staticHashMethod))
                         {
                             continue;

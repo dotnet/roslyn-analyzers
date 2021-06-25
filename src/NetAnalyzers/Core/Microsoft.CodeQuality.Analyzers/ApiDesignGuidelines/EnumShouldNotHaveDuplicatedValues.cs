@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                var membersByValue = new ConcurrentDictionary<object, ConcurrentBag<(SyntaxNode fieldSyntax, string fieldName)>>();
+                var membersByValue = new ConcurrentDictionary<object, ConcurrentDictionary<(SyntaxNode fieldSyntax, string fieldName), Unit>>();
 
                 // Workaround to get the value of all enum fields that don't have an explicit initializer.
                 // We will start with all of the enum fields and remove the ones with an explicit initializer.
@@ -86,18 +86,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     var onlyReferencesOneField = GetFilteredDescendants(fieldInitializerOperation, op => op.Kind != OperationKind.Binary)
                         .OfType<IFieldReferenceOperation>()
-                        .Where(fro => fro.Field.ContainingType.Equals(enumSymbol))
-                        .Any();
+                        .Any(fro => fro.Field.ContainingType.Equals(enumSymbol));
                     if (onlyReferencesOneField)
                     {
                         return;
                     }
 
-                    membersByValue.AddOrUpdate(fieldInitializerOperation.Value.ConstantValue.Value,
-                        new ConcurrentBag<(SyntaxNode, string)> { (fieldInitializerOperation.Syntax.Parent, currentField.Name) },
+                    membersByValue.AddOrUpdate(
+                        fieldInitializerOperation.Value.ConstantValue.Value,
+                        new ConcurrentDictionary<(SyntaxNode fieldSyntax, string fieldName), Unit> { [(fieldInitializerOperation.Syntax.Parent, currentField.Name)] = Unit.Default },
                         (key, value) =>
                         {
-                            value.Add((fieldInitializerOperation.Syntax.Parent, currentField.Name));
+                            value.AddOrUpdate((fieldInitializerOperation.Syntax.Parent, currentField.Name), Unit.Default, (key, value) => value);
                             return value;
                         });
                 }, OperationKind.FieldInitializer);
@@ -112,19 +112,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (fieldSyntax != null && value != null)
                         {
-                            membersByValue.AddOrUpdate(value,
-                                new ConcurrentBag<(SyntaxNode, string)> { (fieldSyntax, field.Name) },
-                                (k, v) =>
+                            membersByValue.AddOrUpdate(
+                                value,
+                                new ConcurrentDictionary<(SyntaxNode, string), Unit> { [(fieldSyntax, field.Name)] = Unit.Default },
+                                (key, value) =>
                                 {
-                                    v.Add((fieldSyntax, field.Name));
-                                    return v;
+                                    value.AddOrUpdate((fieldSyntax, field.Name), Unit.Default, (key, value) => value);
+                                    return value;
                                 });
                         }
                     }
 
                     foreach (var kvp in membersByValue)
                     {
-                        var orderedItems = kvp.Value.OrderBy(x => x.fieldSyntax.GetLocation().SourceSpan);
+                        var orderedItems = kvp.Value.Keys.OrderBy(x => x.fieldSyntax.GetLocation().SourceSpan);
                         var duplicatedMemberName = orderedItems.FirstOrDefault().fieldName;
 
                         foreach ((var fieldSyntax, var fieldName) in orderedItems.Skip(1))

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -103,13 +105,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // enum/nint are treated as integers
                 // This is missing default value of DateTime literal for VB,
                 // but since VB doesn't properly support Span, just don't consider it
-
+                switch (constantOpt.Value)
+                {
 #pragma warning disable IDE0004 // Remove Unnecessary Cast - false positive
-                return constantOpt.Value is
-                    (byte)0 or (short)0 or (int)0 or (long)0 or
-                    (sbyte)0 or (ushort)0 or (uint)0 or (ulong)0 or
-                    (float)0 or (double)0 or (decimal)0;
+                    case (byte)0 or (short)0 or (int)0 or (long)0 or
+                        (sbyte)0 or (ushort)0 or (uint)0 or (ulong)0:
+                        return true;
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
+
+                    // -0 is not all bits zero. Handle them by bits
+                    case float f:
+                        // SingleToInt32Bits not available in netstandard2.0
+                        return BitConverter.DoubleToInt64Bits(f) == 0;
+
+                    case double d:
+                        return BitConverter.DoubleToInt64Bits(d) == 0;
+
+                    case decimal d:
+                        return decimal.GetBits(d).All(b => b == 0);
+
+                    default:
+                        return false;
+                }
             }
 
             if (value is IDefaultValueOperation)

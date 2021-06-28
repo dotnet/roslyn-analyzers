@@ -67,7 +67,9 @@ class C
 
         [Theory]
         [InlineData("int", "1")]
+        [InlineData("float", "-0.0f")]
         [InlineData("double", "-0.0")]
+        [InlineData("decimal", "-0.0m")]
         [InlineData("string", "\"\"")]
         [InlineData("int?", "0")]
         public async Task TestNonDefaultValue(string type, string value)

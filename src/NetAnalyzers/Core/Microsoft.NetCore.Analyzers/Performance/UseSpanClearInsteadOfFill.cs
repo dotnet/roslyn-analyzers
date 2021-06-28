@@ -86,6 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private static bool IsDefaultValue(IArgumentOperation argumentOperation)
         {
             var value = argumentOperation.Value;
+            var type = argumentOperation.Parameter.Type;
             var constantOpt = value.ConstantValue;
 
             if (constantOpt.HasValue)
@@ -131,15 +132,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (value is IDefaultValueOperation)
             {
-                return SymbolEqualityComparer.Default.Equals(value.Type, argumentOperation.Type);
+                return SymbolEqualityComparer.Default.Equals(value.Type, type);
+            }
+
+            if (value is IConversionOperation { Operand: IDefaultValueOperation defaultValue })
+            {
+                // handle the conversion of default literal only
+                return SymbolEqualityComparer.Default.Equals(defaultValue.Type, type);
             }
 
             if (value is IObjectCreationOperation objectCreation)
             {
                 return objectCreation.Type.IsValueType
                     && objectCreation.Arguments.IsEmpty
-                    && objectCreation.Initializer.Initializers.IsEmpty
-                    && SymbolEqualityComparer.Default.Equals(value.Type, argumentOperation.Type);
+                    && (objectCreation.Initializer?.Initializers.IsEmpty ?? true)
+                    && SymbolEqualityComparer.Default.Equals(value.Type, type);
             }
 
             return false;

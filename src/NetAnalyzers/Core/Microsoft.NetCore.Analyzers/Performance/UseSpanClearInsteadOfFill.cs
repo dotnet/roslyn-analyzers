@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
-                    if (invocation.Instance.Type != spanType)
+                    if (!SymbolEqualityComparer.Default.Equals((invocation.Instance.Type as INamedTypeSymbol)?.ConstructedFrom, spanType))
                     {
                         return;
                     }

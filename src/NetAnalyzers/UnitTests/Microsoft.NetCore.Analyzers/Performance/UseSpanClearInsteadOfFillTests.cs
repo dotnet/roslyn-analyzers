@@ -102,6 +102,124 @@ class C
             await TestCS(source);
         }
 
+        [Fact]
+        public async Task TestGeneric_Unconstrained()
+        {
+            string source = @"
+using System;
+
+class C
+{
+    void M<T>(Span<T> span)
+    {
+        [|span.Fill(default)|];
+    }
+}
+";
+            await TestCS(source);
+        }
+
+        [Fact]
+        public async Task TestGeneric_Reference_Null()
+        {
+            string source = @"
+#nullable enable
+
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : class
+    {
+        [|span.Fill(null)|];
+    }
+}
+";
+            await TestCS(source);
+        }
+
+        [Fact]
+        public async Task TestGeneric_ValueType_Null()
+        {
+            string source = @"
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : struct
+    {
+        [|span.Fill(null)|];
+    }
+}
+";
+            await TestCS(source);
+        }
+
+        [Fact]
+        public async Task TestGeneric_Reference_DefaultT()
+        {
+            string source = @"
+#nullable enable
+
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : class
+    {
+        [|span.Fill(default(T))|];
+    }
+}
+";
+            await TestCS(source);
+        }
+
+        [Fact]
+        public async Task TestGeneric_ValueType_DefaultT()
+        {
+            string source = @"
+using System;
+
+class C
+{
+    void M<T>(Span<T?> span) where T : struct
+    {
+        span.Fill(default(T));
+    }
+}
+";
+            await TestCS(source);
+        }
+
+        [Fact]
+        public async Task TestCustomConversion()
+        {
+
+            string source = @"
+using System;
+
+struct S
+{
+    public static explicit operator S(int value) => throw null;
+    public static explicit operator int(S value) => throw null;
+}
+
+class C
+{
+    void M(Span<S> span)
+    {
+        span.Fill((S)0);
+    }
+
+    void M(Span<int> span)
+    {
+        span.Fill((int)(S)0);
+    }
+}
+";
+            await TestCS(source);
+        }
+
         private static Task TestCS(string source, string corrected, params DiagnosticResult[] expected)
         {
             var test = new VerifyCS.Test

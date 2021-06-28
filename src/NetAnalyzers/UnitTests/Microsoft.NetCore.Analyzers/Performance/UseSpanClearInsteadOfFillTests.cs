@@ -46,9 +46,18 @@ class C
         [InlineData("long", "0")]
         [InlineData("double", "0")]
         [InlineData("double", "0.0")]
+        [InlineData("nint", "0")]
+        [InlineData("int", "(int)-0.0")]
         [InlineData("object", "null")]
         [InlineData("string", "null")]
         [InlineData("int?", "null")]
+        [InlineData("int", "default")]
+        [InlineData("int?", "default")]
+        [InlineData("DateTime", "new DateTime()")]
+        [InlineData("DateTime", "default")]
+        [InlineData("DateTime", "default(DateTime)")]
+        [InlineData("DayOfWeek", "DayOfWeek.Sunday")]
+        [InlineData("DayOfWeek", "(DayOfWeek)0")]
         public async Task TestDefaultValue(string type, string value)
         {
             string source = $@"
@@ -72,6 +81,11 @@ class C
         [InlineData("decimal", "-0.0m")]
         [InlineData("string", "\"\"")]
         [InlineData("int?", "0")]
+        [InlineData("int?", "default(int)")]
+        [InlineData("DateTime?", "new DateTime()")]
+        [InlineData("DateTime?", "default(DateTime)")]
+        [InlineData("DateTimeOffset", "new DateTime()")]
+        [InlineData("DateTimeOffset", "default(DateTime)")]
         public async Task TestNonDefaultValue(string type, string value)
         {
             string source = $@"

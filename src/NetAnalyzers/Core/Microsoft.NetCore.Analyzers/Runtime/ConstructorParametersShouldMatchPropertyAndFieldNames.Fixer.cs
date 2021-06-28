@@ -17,8 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// CA1071: Constructor parameters should match property and field names.
     /// Based on <see cref="ParameterNamesShouldMatchBaseDeclarationFixer"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    [Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), [Shared]
     public sealed class ConstructorParametersShouldMatchPropertyAndFieldNamesFixer : CodeFixProvider
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.RuleId);

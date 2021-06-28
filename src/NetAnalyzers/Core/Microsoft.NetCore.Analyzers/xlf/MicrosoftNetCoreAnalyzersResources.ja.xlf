@@ -177,44 +177,19 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
-      <trans-unit id="ConstructorParameterShouldMatchFieldName">
-        <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</source>
-        <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound field '{2}'</target>
+      <trans-unit id="ConstructorParameterShouldMatchPropertyOrFieldName">
+        <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property or field '{2}'</source>
+        <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property or field '{2}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="ConstructorParameterShouldMatchFieldWithPublicVisibility">
-        <source>For proper deserialization, change the visibility of the bound field '{2}' to public</source>
-        <target state="new">For proper deserialization, change the visibility of the bound field '{2}' to public</target>
+      <trans-unit id="ConstructorParametersShouldMatchPropertyOrFieldNamesDescription">
+        <source>For a constructor having [JsonConstructor] attribute each parameter name must match with a public property or field name for proper deserialization.</source>
+        <target state="new">For a constructor having [JsonConstructor] attribute each parameter name must match with a public property or field name for proper deserialization.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ConstructorParameterShouldMatchPropertyName">
-        <source>For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property '{2}'</source>
-        <target state="new">For proper deserialization, change the name of parameter '{1}' in the constructor of '{0}' to match the bound property '{2}'</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstructorParameterShouldMatchPropertyWithPublicVisibility">
-        <source>For proper deserialization, change the visibility of the bound property '{2}' to public</source>
-        <target state="new">For proper deserialization, change the visibility of the bound property '{2}' to public</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription">
-        <source>For a constructor having [JsonConstructor] attribute each parameter must be bound to a public field for proper deserialization.</source>
-        <target state="new">For a constructor having [JsonConstructor] attribute each parameter must be bound to a public field for proper deserialization.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstructorParametersShouldMatchPropertyNamesDescription">
-        <source>For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</source>
-        <target state="new">For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstructorParametersShouldMatchPropertyNamesTitle">
+      <trans-unit id="ConstructorParametersShouldMatchPropertyOrFieldNamesTitle">
         <source>Constructor parameter names should match the bound property or field names</source>
         <target state="new">Constructor parameter names should match the bound property or field names</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ConstructorParametersShouldMatchPropertyWithPublicVisibilityDescription">
-        <source>For a constructor having [JsonConstructor] attribute each parameter must be bound to a public property for proper deserialization.</source>
-        <target state="new">For a constructor having [JsonConstructor] attribute each parameter must be bound to a public property for proper deserialization.</target>
         <note />
       </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">

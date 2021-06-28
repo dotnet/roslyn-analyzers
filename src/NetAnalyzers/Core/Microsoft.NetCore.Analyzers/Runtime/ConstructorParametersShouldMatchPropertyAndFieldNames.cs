@@ -20,54 +20,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1071";
 
-        internal const string ReferencedFieldOrPropertyNameKey = "ReferencedFieldOrPropertyName";
+        internal const string ReferencedFieldOrPropertyNameKey = "ReferencedPropertyOrFieldName";
         internal const string DiagnosticReasonKey = "DiagnosticReason";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageProperty = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchPropertyName), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageField = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchFieldName), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchPropertyOrFieldName), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessagePropertyPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchPropertyWithPublicVisibility), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionPropertyPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyWithPublicVisibilityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParameterShouldMatchFieldWithPublicVisibility), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionFieldPublic = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchFieldWithPublicVisibilityDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
-
-        internal static DiagnosticDescriptor PropertyNameRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static DiagnosticDescriptor PropertyOrFieldNameRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                              s_localizableTitle,
-                                                                             s_localizableMessageProperty,
+                                                                             s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              RuleLevel.BuildWarning,
                                                                              description: s_localizableDescription,
                                                                              isPortedFxCopRule: false,
                                                                              isDataflowRule: false);
-        internal static DiagnosticDescriptor FieldRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageField,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor PropertyPublicRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessagePropertyPublic,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescriptionPropertyPublic,
-                                                                             isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
-        internal static DiagnosticDescriptor FieldPublicRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageFieldPublic,
-                                                                             DiagnosticCategory.Design,
-                                                                             RuleLevel.BuildWarning,
-                                                                             description: s_localizableDescriptionFieldPublic,
-                                                                             isPortedFxCopRule: false,
-                                                                             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyNameRule, FieldRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyOrFieldNameRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -137,24 +107,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     if (!IsParamMatchesReferencedMemberName(param, field))
                     {
-                        ReportFieldDiagnostic(context, FieldRule, ParameterDiagnosticReason.NameMismatch, param, field);
+                        ReportFieldDiagnostic(context, PropertyOrFieldNameRule, ParameterDiagnosticReason.NameMismatch, param, field);
                     }
 
                     if (!field.IsPublic())
                     {
-                        ReportFieldDiagnostic(context, FieldPublicRule, ParameterDiagnosticReason.FieldInappropriateVisibility, param, field);
+                        ReportFieldDiagnostic(context, PropertyOrFieldNameRule, ParameterDiagnosticReason.FieldInappropriateVisibility, param, field);
                     }
                 }
                 else if (referencedSymbol is IPropertySymbol prop)
                 {
                     if (!IsParamMatchesReferencedMemberName(param, prop))
                     {
-                        ReportPropertyDiagnostic(context, PropertyNameRule, ParameterDiagnosticReason.NameMismatch, param, prop);
+                        ReportPropertyDiagnostic(context, PropertyOrFieldNameRule, ParameterDiagnosticReason.NameMismatch, param, prop);
                     }
 
                     if (!prop.IsPublic())
                     {
-                        ReportPropertyDiagnostic(context, PropertyPublicRule, ParameterDiagnosticReason.PropertyInappropriateVisibility, param, prop);
+                        ReportPropertyDiagnostic(context, PropertyOrFieldNameRule, ParameterDiagnosticReason.PropertyInappropriateVisibility, param, prop);
                     }
                 }
             }

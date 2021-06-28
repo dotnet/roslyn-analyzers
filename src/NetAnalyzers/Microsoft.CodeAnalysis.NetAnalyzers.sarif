@@ -1349,7 +1349,7 @@
         "CA1071": {
           "id": "CA1071",
           "shortDescription": "Constructor parameter names should match the bound property or field names",
-          "fullDescription": "For a constructor having [JsonConstructor] attribute each parameter name must match with a property or field name for proper deserialization.",
+          "fullDescription": "For a constructor having [JsonConstructor] attribute each parameter name must match with a public property or field name for proper deserialization.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1071",
           "properties": {

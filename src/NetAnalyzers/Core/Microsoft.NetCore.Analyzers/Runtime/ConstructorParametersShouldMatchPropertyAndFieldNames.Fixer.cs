@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyNamesTitle, newName),
+                        string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesTitle, newName),
                         cancellationToken => GetUpdatedDocumentForParameterRenameAsync(context.Document, declaredSymbol, newName, cancellationToken),
                         nameof(ConstructorParametersShouldMatchPropertyAndFieldNamesFixer)),
                     diagnostic);

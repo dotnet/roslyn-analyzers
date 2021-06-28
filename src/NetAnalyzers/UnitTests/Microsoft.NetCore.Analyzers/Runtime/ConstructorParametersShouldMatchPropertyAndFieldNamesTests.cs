@@ -35,8 +35,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondDrop;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstDrop", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -55,8 +55,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.SecondProp = secondDrop
                     End Sub
                 End Class",
-                CA1071BasicPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-                CA1071BasicPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstDrop", "FirstProp"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -109,8 +109,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = dropSecond;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "dropSecond", "SecondProp"));
         }
 
         [Fact]
@@ -129,8 +129,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.SecondProp = dropSecond
                     End Sub
                 End Class",
-                CA1071BasicPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
-                CA1071BasicPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "dropSecond", "SecondProp"));
         }
 
         [Fact]
@@ -150,8 +150,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         (this._FirstProp, this._SecondProp) = (firstProp, secondProp);
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "_SecondProp"));
         }
 
         [Fact]
@@ -176,8 +176,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this._SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "_SecondProp"));
         }
 
         [Fact]
@@ -200,8 +200,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me._SecondProp = secondProp
                     End Sub
                 End Class",
-                CA1071BasicPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
-                CA1071BasicPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondProp", "_SecondProp"));
         }
 
         #endregion
@@ -264,8 +264,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPublicPropertyResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071CSharpPublicPropertyResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
         }
 
         [Fact]
@@ -284,8 +284,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.SecondProp = secondProp
                     End Sub
                 End Class",
-                CA1071BasicPublicPropertyResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071BasicPublicPropertyResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
         }
 
         #endregion
@@ -310,8 +310,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondIField;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstIField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -330,8 +330,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondIField
                     End Sub
                 End Class",
-                CA1071BasicFieldResultAt(0, "C1", "firstIField", "firstField"),
-                CA1071BasicFieldResultAt(1, "C1", "secondIField", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstIField", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -384,8 +384,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = fieldSecond;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "fieldFirst", "firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "fieldSecond", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "fieldSecond", "secondField"));
         }
 
         [Fact]
@@ -404,8 +404,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = fieldSecond
                     End Sub
                 End Class",
-                CA1071BasicFieldResultAt(0, "C1", "fieldFirst", "firstField"),
-                CA1071BasicFieldResultAt(1, "C1", "fieldSecond", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "fieldSecond", "secondField"));
         }
 
         [Fact]
@@ -425,8 +425,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         (_firstField, _secondField) = (firstField, secondField);
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         [Fact]
@@ -451,8 +451,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this._secondField = secondField;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         [Fact]
@@ -475,8 +475,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me._secondField = secondField
                     End Sub
                 End Class",
-                CA1071BasicFieldResultAt(0, "C1", "firstField", "_firstField"),
-                CA1071BasicFieldResultAt(1, "C1", "secondField", "_secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         #endregion
@@ -615,8 +615,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -635,8 +635,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondField
                     End Sub
                 End Class",
-                CA1071BasicPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071BasicPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -660,8 +660,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -683,8 +683,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         Me.secondField = secondField
                     End Sub
                 End Class",
-                CA1071BasicPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071BasicPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         #endregion
@@ -709,8 +709,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondDrop;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstDrop", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -748,8 +748,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = dropSecond;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "dropFirst", "FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "dropSecond", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "dropFirst", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "dropSecond", "SecondProp"));
         }
 
         [Fact]
@@ -769,8 +769,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         (this.FirstProp, this.SecondProp) = (firstDrop, secondDrop);
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstDrop", "FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondDrop", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstDrop", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondDrop", "SecondProp"));
         }
 
         [Fact]
@@ -795,8 +795,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this._SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPropertyResultAt(0, "C1", "firstProp", "_FirstProp"),
-                CA1071CSharpPropertyResultAt(1, "C1", "secondProp", "_SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "_FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "_SecondProp"));
         }
 
         #endregion
@@ -841,8 +841,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPublicPropertyResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071CSharpPublicPropertyResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
         }
 
         #endregion
@@ -867,8 +867,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondIField;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstIField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -906,8 +906,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = fieldSecond;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "fieldFirst", "firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "fieldSecond", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "fieldFirst", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "fieldSecond", "secondField"));
         }
 
         [Fact]
@@ -927,8 +927,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         (this.firstField, this.secondField) = (firstIField, secondIField);
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstIField", "firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondIField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstIField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondIField", "secondField"));
         }
 
         [Fact]
@@ -953,8 +953,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this._secondField = secondField;
                     }
                 }",
-                CA1071CSharpFieldResultAt(0, "C1", "firstField", "_firstField"),
-                CA1071CSharpFieldResultAt(1, "C1", "secondField", "_secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "_firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "_secondField"));
         }
 
         #endregion
@@ -1039,8 +1039,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -1064,8 +1064,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPublicFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPublicFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
         }
 
         #endregion
@@ -1112,43 +1112,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             await basicTest.RunAsync();
         }
 
-        private DiagnosticResult CA1071CSharpPropertyResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyNameRule)
+        private DiagnosticResult CA1071CSharpPropertyOrFieldResultAt(int markupKey, params string[] arguments)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyOrFieldNameRule)
                .WithLocation(markupKey)
                .WithArguments(arguments);
 
-        private DiagnosticResult CA1071BasicPropertyResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyNameRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071CSharpPublicPropertyResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071BasicPublicPropertyResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyPublicRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071CSharpPublicFieldResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldPublicRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071BasicPublicFieldResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldPublicRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071CSharpFieldResultAt(int markupKey, params string[] arguments)
-           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
-               .WithLocation(markupKey)
-               .WithArguments(arguments);
-
-        private DiagnosticResult CA1071BasicFieldResultAt(int markupKey, params string[] arguments)
-            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.FieldRule)
+        private DiagnosticResult CA1071BasicPropertyOrFieldResultAt(int markupKey, params string[] arguments)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyOrFieldNameRule)
                .WithLocation(markupKey)
                .WithArguments(arguments);
 

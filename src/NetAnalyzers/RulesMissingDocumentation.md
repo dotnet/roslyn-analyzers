@@ -10,5 +10,6 @@ CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843> | Do not use 'WaitAll' with a single task |
 CA1844 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1844> | Provide memory-based overrides of async methods when subclassing 'Stream' |
 CA1847 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847> | Use char literal for a single character lookup |
+CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Use Clear instead of Fill with default value |
 CA2250 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250> | Use 'ThrowIfCancellationRequested' |
 CA2251 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251> | Use 'string.Equals' |

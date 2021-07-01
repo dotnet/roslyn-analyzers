@@ -763,6 +763,32 @@ C.Property.get -> int";
 
         [Fact]
         [WorkItem(4584, "https://github.com/dotnet/roslyn-analyzers/issues/4584")]
+        public async Task DuplicateObliviousSymbolsInSameApiFile()
+        {
+            var source = @"
+public class C
+{
+    public int Field;
+    public int Property { get; set; }
+}
+";
+
+            var shippedText = @"#nullable enable
+C
+C.C() -> void
+C.Field -> int
+C.Property.set -> void
+~C.Property.get -> int
+{|RS0025:~C.Property.get -> int|}
+";
+
+            var unshippedText = @"";
+
+            await VerifyCSharpAsync(source, shippedText, unshippedText);
+        }
+
+        [Fact]
+        [WorkItem(4584, "https://github.com/dotnet/roslyn-analyzers/issues/4584")]
         public async Task DuplicateSymbolUsingObliviousInSameApiFiles()
         {
             var source = @"

@@ -39,8 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 RuleLevel.Disabled,
                 description: s_Description,
                 isPortedFxCopRule: false,
-                isDataflowRule: true,
-                isEnabledByDefaultInFxCopAnalyzers: false);
+                isDataflowRule: true);
 
         internal static ImmutableArray<(string nspace, string policyIdentifierName)> NamespaceAndPolicyIdentifierNamePairs = ImmutableArray.Create(
                                                                                                     ("Blob", "groupPolicyIdentifier"),
@@ -103,8 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
-                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol, operationBlockStartContext.Compilation))
                     {
                         return;
                     }
@@ -145,7 +143,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                 operationAnalysisContext.Operation,
                                                                                 operationAnalysisContext.Compilation,
                                                                                 defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                                                cancellationToken: operationAnalysisContext.CancellationToken,
                                                                                 defaultMaxInterproceduralMethodCallChain: 1);
                                         var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
                                                                         cfg,
@@ -168,11 +165,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
                                     }
+                                    else
+                                    {
+                                        return;
+                                    }
                                 }
 
                                 operationAnalysisContext.ReportDiagnostic(
-                                            invocationOperation.CreateDiagnostic(
-                                                Rule));
+                                    invocationOperation.CreateDiagnostic(
+                                        Rule));
                             }
                         }
                     }, OperationKind.Invocation);

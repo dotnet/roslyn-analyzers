@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 IMethodSymbol invokedPlatformCheckMethod,
                 ImmutableArray<IArgumentOperation> arguments,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
-                INamedTypeSymbol osPlatformType,
+                INamedTypeSymbol? osPlatformType,
                 ArrayBuilder<PlatformMethodValue> infosBuilder)
             {
                 // Accelerators like OperatingSystem.IsPlatformName()
@@ -129,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             private static bool TryDecodeRuntimeInformationIsOSPlatform(
                 IOperation argumentValue,
-                INamedTypeSymbol osPlatformType,
+                INamedTypeSymbol? osPlatformType,
                 ValueContentAnalysisResult? valueContentAnalysisResult,
                 ArrayBuilder<string> decodedOsPlatformNamesBuilder)
             {
@@ -244,7 +244,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 => obj is PlatformMethodValue otherInfo && Equals(otherInfo);
 
             public override int GetHashCode()
-                => HashUtilities.Combine(InvokedMethodName.GetHashCode(), PlatformName.GetHashCode(), Version.GetHashCode(), Negated.GetHashCode());
+            {
+                return RoslynHashCode.Combine(
+                    InvokedMethodName.GetHashCode(),
+                    PlatformName.GetHashCode(),
+                    Version.GetHashCode(),
+                    Negated.GetHashCode());
+            }
 
             bool IEquatable<IAbstractAnalysisValue>.Equals(IAbstractAnalysisValue other)
                 => other is PlatformMethodValue otherInfo && Equals(otherInfo);

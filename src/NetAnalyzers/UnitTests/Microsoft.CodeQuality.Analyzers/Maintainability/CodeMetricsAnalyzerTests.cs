@@ -127,7 +127,11 @@ CA1501: 0
                 TestState =
                 {
                     Sources = { "public class MyUC : System.Windows.Forms.UserControl {}", },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 },
                 ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithWinForms,
             }.RunAsync();
@@ -143,7 +147,11 @@ Public Class MyUC
     Inherits System.Windows.Forms.UserControl
 End Class",
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 },
                 ReferenceAssemblies = AdditionalMetadataReferences.DefaultWithWinForms,
             }.RunAsync();
@@ -223,8 +231,15 @@ public class C2 : SomeClass2 {}"
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                 },
             };
@@ -297,8 +312,15 @@ End Class"
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                 },
             };
@@ -326,11 +348,12 @@ End Class"
         }
 
         [Theory, WorkItem(1839, "https://github.com/dotnet/roslyn-analyzers/issues/1839")]
-        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProduct.MyFunction.*")]
-        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProduct.*")]
-        // The presence of the '.' before the wildcard matters for the match
-        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.*")]
+        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProduct.MyFunction*")]
+        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProduct.MyFunct*")]
+        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProduct*")]
+        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany.MyProd*")]
         [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyCompany*")]
+        [InlineData("dotnet_code_quality.CA1501.additional_inheritance_excluded_symbol_names = N:MyComp*")]
         public async Task CA1501_WildcardNamespacePrefix(string editorConfigText)
         {
             var codeMetricsConfigText = @"
@@ -365,8 +388,15 @@ public class C1 : SomeClass {}
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                     ExpectedDiagnostics =
                     {
@@ -375,7 +405,8 @@ public class C1 : SomeClass {}
                 },
             };
 
-            if (!editorConfigText.Contains("N:MyCompany*", StringComparison.Ordinal))
+            if (!editorConfigText.Contains("N:MyCompany*", StringComparison.Ordinal) &&
+                !editorConfigText.Contains("N:MyComp*", StringComparison.Ordinal))
             {
                 csharpTest.ExpectedDiagnostics.Add(GetCSharpCA1501ExpectedDiagnostic(11, 18, "C1", 1, 1, "SomeClass"));
             }
@@ -416,8 +447,15 @@ End Class"
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                     ExpectedDiagnostics =
                     {
@@ -426,7 +464,8 @@ End Class"
                 },
             };
 
-            if (!editorConfigText.Contains("N:MyCompany*", StringComparison.Ordinal))
+            if (!editorConfigText.Contains("N:MyCompany*", StringComparison.Ordinal) &&
+                !editorConfigText.Contains("N:MyComp*", StringComparison.Ordinal))
             {
                 vbnetTest.ExpectedDiagnostics.Add(GetBasicCA1501ExpectedDiagnostic(15, 18, "C1", 1, 1, "SomeClass"));
             }
@@ -481,8 +520,15 @@ public class C1 : SomeClass {}
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                 },
             }.RunAsync();
@@ -532,8 +578,15 @@ End Class"
                     },
                     AdditionalFiles =
                     {
-                        (".editorconfig", editorConfigText),
                         (AdditionalFileName, codeMetricsConfigText),
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"),
                     },
                 },
             }.RunAsync();
@@ -1236,48 +1289,66 @@ CA 1501: 10
 
         #region Helpers
         private static DiagnosticResult GetCSharpCA1501ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.CA1501Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold, baseTypes);
 
         private static DiagnosticResult GetBasicCA1501ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(CodeMetricsAnalyzer.CA1501Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold, baseTypes);
 
         private static DiagnosticResult GetCSharpCA1502ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.CA1502Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold);
 
         private static DiagnosticResult GetBasicCA1502ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(CodeMetricsAnalyzer.CA1502Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold);
 
         private static DiagnosticResult GetCSharpCA1505ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.CA1505Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold);
 
         private static DiagnosticResult GetBasicCA1505ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(CodeMetricsAnalyzer.CA1505Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, metricValue, threshold);
 
         private static DiagnosticResult GetCSharpCA1506ExpectedDiagnostic(int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.CA1506Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, coupledTypesCount, namespaceCount, threshold);
 
         private static DiagnosticResult GetBasicCA1506ExpectedDiagnostic(int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(CodeMetricsAnalyzer.CA1506Rule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(symbolName, coupledTypesCount, namespaceCount, threshold);
 
         private static DiagnosticResult GetCA1509ExpectedDiagnostic(int line, int column, string entry, string additionalFile)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CodeMetricsAnalyzer.InvalidEntryInCodeMetricsConfigFileRule)
                 .WithLocation(additionalFile, line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(entry, additionalFile);
 
         private const string AdditionalFileName = "CodeMetricsConfig.txt";

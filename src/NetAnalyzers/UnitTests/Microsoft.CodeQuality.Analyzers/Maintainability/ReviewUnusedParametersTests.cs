@@ -1,18 +1,16 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Text;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Maintainability.ReviewUnusedParametersAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpReviewUnusedParametersAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpReviewUnusedParametersFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Maintainability.ReviewUnusedParametersAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicReviewUnusedParametersAnalyzer,
     Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicReviewUnusedParametersFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
@@ -24,7 +22,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         [WorkItem(4039, "https://github.com/dotnet/roslyn-analyzers/issues/4039")]
         public async Task NoDiagnosticForUnnamedParameterTest()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(
+#pragma warning disable RS0030 // Do not used banned APIs
+@"
 public class NeatCode
 {
     public void DoSomething(string)
@@ -32,6 +32,7 @@ public class NeatCode
     }
 }
 ", DiagnosticResult.CompilerError("CS1001").WithLocation(4, 35));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
@@ -863,7 +864,11 @@ public class C
     }}
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") },
                 }
             }.RunAsync();
 
@@ -879,7 +884,11 @@ Public Class C
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             }.RunAsync();
         }
@@ -915,14 +924,14 @@ public class C
     {{
     }}
 }}"
-                    }
+                    },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]{Environment.NewLine}{editorConfigText}") },
                 },
-                SolutionTransforms = { WithAnalyzerConfigDocument }
             };
 
             if (expectDiagnostic)
             {
-                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(@"z:\Test0.cs", 4, 23, 4, 29).WithArguments("unused", "M"));
+                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(4, 23, 4, 29).WithArguments("unused", "M"));
             }
 
             await csTest.RunAsync();
@@ -939,35 +948,16 @@ Public Class C
     End Sub
 End Class"
                     },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]{Environment.NewLine}{editorConfigText}") },
                 },
-                SolutionTransforms = { WithAnalyzerConfigDocument }
             };
 
             if (expectDiagnostic)
             {
-                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(@"z:\Test0.vb", 3, 18, 3, 24).WithArguments("unused", "M"));
+                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(3, 18, 3, 24).WithArguments("unused", "M"));
             }
 
             await vbTest.RunAsync();
-            return;
-
-            Solution WithAnalyzerConfigDocument(Solution solution, ProjectId projectId)
-            {
-                var project = solution.GetProject(projectId)!;
-                var projectFilePath = project.Language == LanguageNames.CSharp ? @"z:\Test.csproj" : @"z:\Test.vbproj";
-                solution = solution.WithProjectFilePath(projectId, projectFilePath);
-
-                var documentId = project.DocumentIds.Single();
-                var documentExtension = project.Language == LanguageNames.CSharp ? "cs" : "vb";
-                solution = solution.WithDocumentFilePath(documentId, $@"z:\Test0.{documentExtension}");
-
-                return solution.GetProject(projectId)!
-                    .AddAnalyzerConfigDocument(
-                        ".editorconfig",
-                        SourceText.From($"[*.{documentExtension}]" + Environment.NewLine + editorConfigText),
-                        filePath: @"z:\.editorconfig")
-                    .Project.Solution;
-            }
         }
 
         [Theory]
@@ -1002,14 +992,17 @@ public class C
     }}
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
-                SolutionTransforms = { WithAnalyzerConfigDocument }
             };
 
             if (expectDiagnostic)
             {
-                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(@"z:\Test0.cs", 4, 23, 4, 29).WithArguments("unused", "M"));
+                csTest.ExpectedDiagnostics.Add(VerifyCS.Diagnostic().WithSpan(4, 23, 4, 29).WithArguments("unused", "M"));
             }
 
             await csTest.RunAsync();
@@ -1026,36 +1019,20 @@ Public Class C
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
-                SolutionTransforms = { WithAnalyzerConfigDocument }
             };
 
             if (expectDiagnostic)
             {
-                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(@"z:\Test0.vb", 3, 18, 3, 24).WithArguments("unused", "M"));
+                vbTest.ExpectedDiagnostics.Add(VerifyVB.Diagnostic().WithSpan(3, 18, 3, 24).WithArguments("unused", "M"));
             }
 
             await vbTest.RunAsync();
-            return;
-
-            Solution WithAnalyzerConfigDocument(Solution solution, ProjectId projectId)
-            {
-                var project = solution.GetProject(projectId)!;
-                var projectFilePath = project.Language == LanguageNames.CSharp ? @"z:\Test.csproj" : @"z:\Test.vbproj";
-                solution = solution.WithProjectFilePath(projectId, projectFilePath);
-
-                var documentId = project.DocumentIds.Single();
-                var documentExtension = project.Language == LanguageNames.CSharp ? "cs" : "vb";
-                solution = solution.WithDocumentFilePath(documentId, $@"z:\Test0.{documentExtension}");
-
-                return solution.GetProject(projectId)!
-                    .AddAnalyzerConfigDocument(
-                        ".editorconfig",
-                        SourceText.From($"[*.{documentExtension}]" + Environment.NewLine + editorConfigText),
-                        filePath: @"z:\.editorconfig")
-                    .Project.Solution;
-            }
         }
 
         [Fact, WorkItem(3106, "https://github.com/dotnet/roslyn-analyzers/issues/3106")]
@@ -1183,17 +1160,29 @@ public class Class1
         {
             await new VerifyCS.Test()
             {
-                TestCode = @"int x = 0;",
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources =
                     {
-                        var project = solution.GetProject(projectId);
-                        project = project.WithCompilationOptions(project.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
-                        return project.Solution;
+                        @"int x = 0;",
                     },
-                }
+                },
+            }.RunAsync();
+        }
+
+        [Fact, WorkItem(4462, "https://github.com/dotnet/roslyn-analyzers/issues/4462")]
+        public async Task CA1801_CSharp_ImplicitRecord()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = @"
+public record Person(string Name, int Age = 0);
+
+public record Person2(string Name, int Age = 0) {}",
             }.RunAsync();
         }
 
@@ -1371,18 +1360,40 @@ public class C
 }");
         }
 
+        [Fact, WorkItem(4462, "https://github.com/dotnet/roslyn-analyzers/issues/4462")]
+        public async Task CA1801_CSharp_Record()
+        {
+            await new VerifyCS.Test
+            {
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = @"
+public record OtherPerson
+{
+    public string Name { get; init; }
+
+    public OtherPerson(string name, int [|age|] = 0)
+        => Name = name;
+}",
+            }.RunAsync();
+        }
+
         #endregion
 
         #region Helpers
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(parameterName, methodName);
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(parameterName, methodName);
 
         #endregion

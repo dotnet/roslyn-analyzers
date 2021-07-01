@@ -49,14 +49,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 DefinitelyWithSimpleTypeResolver,
                 MaybeWithSimpleTypeResolver);
 
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+        private static readonly PropertyMapperCollection PropertyMappers = new(
             new PropertyMapper(
                 "...dummy name",    // There isn't *really* a property for what we're tracking; just the constructor argument.
                 (PointsToAbstractValue v) => PropertySetAbstractValueKind.Unknown));
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            return (propertySetAbstractValue[0]) switch
+            return propertySetAbstractValue[0] switch
             {
                 PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
                 PropertySetAbstractValueKind.Unflagged => HazardousUsageEvaluationResult.Unflagged,
@@ -155,10 +155,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyWithSimpleTypeResolver, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeWithSimpleTypeResolver, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(DefinitelyWithSimpleTypeResolver,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation) &&
+                                operationBlockStartAnalysisContext.Options.IsConfiguredToSkipAnalysis(MaybeWithSimpleTypeResolver,
+                                    owningSymbol, operationBlockStartAnalysisContext.Compilation))
                             {
                                 return;
                             }
@@ -224,8 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             SupportedDiagnostics,
                                             rootOperationsNeedingAnalysis.First().Operation,
                                             compilationAnalysisContext.Compilation,
-                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: compilationAnalysisContext.CancellationToken));
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive));
                                 }
 
                                 if (allResults == null)

@@ -1,7 +1,8 @@
 # Branches that trigger a build on commit
 trigger:
-  - master
+  - main
   - release/*
+  - features/*
   - 2.9.x
 
 variables:
@@ -14,6 +15,12 @@ stages:
 - stage: build
   displayName: Build
   jobs:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - template: /eng/common/templates/job/onelocbuild.yml
+      parameters:
+        MirrorRepo: roslyn-analyzers
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ROSANLZR'
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
       enableMicrobuild: true
@@ -22,6 +29,7 @@ stages:
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
       enableTelemetry: true
+      enableSourceBuild: true
       jobs:
       - job: Signed_Build
         pool:

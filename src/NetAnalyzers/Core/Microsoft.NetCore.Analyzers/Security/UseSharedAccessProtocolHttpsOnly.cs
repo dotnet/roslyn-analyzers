@@ -38,8 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 RuleLevel.Disabled,
                 description: s_Description,
                 isPortedFxCopRule: false,
-                isDataflowRule: true,
-                isEnabledByDefaultInFxCopAnalyzers: false);
+                isDataflowRule: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -89,8 +88,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule,
-                            operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    if (operationBlockStartContext.Options.IsConfiguredToSkipAnalysis(Rule, owningSymbol,
+                            operationBlockStartContext.Compilation))
                     {
                         return;
                     }
@@ -143,7 +142,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                         protocolsArgumentOperation,
                                                                         operationAnalysisContext.Compilation,
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                                        cancellationToken: operationAnalysisContext.CancellationToken,
                                                                         defaultMaxInterproceduralMethodCallChain: 1);
                                     var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                                                                                 cfg,

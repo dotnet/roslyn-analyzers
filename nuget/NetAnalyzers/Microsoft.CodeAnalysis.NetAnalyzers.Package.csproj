@@ -13,6 +13,7 @@
     <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
 	  <AnalyzerDocumentationFileDir>$(RepoRoot)src\NetAnalyzers</AnalyzerDocumentationFileDir>
     <AnalyzerSarifFileDir>$(RepoRoot)src\NetAnalyzers</AnalyzerSarifFileDir>
+    <IsShippingPackage>true</IsShippingPackage>
 
     <!-- Override the version prefix and label for NetAnalyzers projects -->
     <VersionPrefix>$(NetAnalyzersVersionPrefix)</VersionPrefix>
@@ -24,7 +25,7 @@
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.VisualBasic.NetAnalyzers.dll" />
 	</ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\NetAnalyzers\Core\Microsoft.CodeAnalysis.NetAnalyzers.csproj" />
     <ProjectReference Include="..\..\src\NetAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.csproj" /> 

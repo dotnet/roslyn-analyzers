@@ -44,8 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     if (operationBlockContext.OwningSymbol is not IMethodSymbol containingMethod ||
                         !containingMethod.IsExternallyVisible() ||
                         !containingMethod.Parameters.Any(p => p.Type.IsReferenceType) ||
-                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
-                            Rule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
+                        operationBlockContext.Options.IsConfiguredToSkipAnalysis(Rule, containingMethod, operationBlockContext.Compilation))
                     {
                         return;
                     }
@@ -74,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         }
                     }
 
-                    // Bail out early if we have no parameter references in the method body. 
+                    // Bail out early if we have no parameter references in the method body.
                     if (!operationBlockContext.OperationBlocks.HasAnyOperationDescendant(OperationKind.ParameterReference))
                     {
                         return;
@@ -88,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         {
                             hazardousParameterUsages = ParameterValidationAnalysis.GetOrComputeHazardousParameterUsages(
                                 topmostBlock, operationBlockContext.Compilation, containingMethod,
-                                operationBlockContext.Options, Rule, operationBlockContext.CancellationToken);
+                                operationBlockContext.Options, Rule);
                             break;
                         }
                     }
@@ -109,8 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                     rule: Rule,
                                     containingMethod,
                                     operationBlockContext.Compilation,
-                                    defaultValue: false,
-                                    cancellationToken: operationBlockContext.CancellationToken);
+                                    defaultValue: false);
                                 if (excludeThisParameterOption)
                                 {
                                     continue;

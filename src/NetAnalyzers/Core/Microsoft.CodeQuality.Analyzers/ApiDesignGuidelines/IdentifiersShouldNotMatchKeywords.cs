@@ -80,12 +80,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(MemberParameterRule, MemberRule, TypeRule, NamespaceRule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var namespaceRuleAnalyzer = new NamespaceRuleAnalyzer();
                 compilationStartAnalysisContext.RegisterSymbolAction(
@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool ShouldAnalyze(SymbolAnalysisContext context, DiagnosticDescriptor rule)
         {
-            if (!context.Symbol.MatchesConfiguredVisibility(context.Options, rule, context.Compilation, context.CancellationToken))
+            if (!context.Options.MatchesConfiguredVisibility(rule, context.Symbol, context.Compilation))
             {
                 return false;
             }
@@ -109,12 +109,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         }
 
         private static ImmutableHashSet<SymbolKind> GetSymbolKindsToAnalyze(SymbolAnalysisContext context, DiagnosticDescriptor rule)
-            => context.Options.GetAnalyzedSymbolKindsOption(rule, context.Symbol, context.Compilation, s_defaultAnalyzedSymbolKinds, context.CancellationToken);
+            => context.Options.GetAnalyzedSymbolKindsOption(rule, context.Symbol, context.Compilation, s_defaultAnalyzedSymbolKinds);
 
         private sealed class NamespaceRuleAnalyzer
         {
             private readonly ISet<string> _namespaceWithKeywordSet = new HashSet<string>();
-            private readonly object _lockGuard = new object();
+            private readonly object _lockGuard = new();
 
             public void Analyze(SymbolAnalysisContext context)
             {
@@ -126,7 +126,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 // Don't complain about a namespace unless it contains at least one public type.
-                if (!type.MatchesConfiguredVisibility(context.Options, NamespaceRule, context.Compilation, context.CancellationToken))
+                if (!context.Options.MatchesConfiguredVisibility(NamespaceRule, type, context.Compilation))
                 {
                     return;
                 }
@@ -157,7 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (doReportDiagnostic)
                         {
-                            var diagnostic = Diagnostic.Create(NamespaceRule, containingNamespace.Locations[0], namespaceDisplayString, matchingKeyword);
+                            var diagnostic = containingNamespace.CreateDiagnostic(NamespaceRule, namespaceDisplayString, matchingKeyword);
                             context.ReportDiagnostic(diagnostic);
                         }
                     }
@@ -211,7 +211,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var method = (IMethodSymbol)context.Symbol;
             if (!GetSymbolKindsToAnalyze(context, MemberParameterRule).Contains(SymbolKind.Parameter) ||
-                !method.MatchesConfiguredVisibility(context.Options, MemberParameterRule, context.Compilation, context.CancellationToken))
+                !context.Options.MatchesConfiguredVisibility(MemberParameterRule, method, context.Compilation))
             {
                 return;
             }

@@ -35,12 +35,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartAction(context =>
             {
                 var obsoleteAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
-            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, context.Symbol, context.Compilation, SymbolVisibilityGroup.Public, context.CancellationToken);
+            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, context.Symbol, context.Compilation, SymbolVisibilityGroup.Public);
             if (!configuredVisibilities.Contains(symbol.GetResultantVisibility()))
             {
                 return;
@@ -125,7 +125,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], symbol.Name, identifier);
+                        diagnostic = symbol.CreateDiagnostic(Rule, symbol.Name, identifier);
                         break;
                     }
 
@@ -134,7 +134,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         && member.Kind == SymbolKind.Property
                         && !symbol.ContainingType.Equals(type)) // prevent reporting duplicate diagnostics
                     {
-                        diagnostic = Diagnostic.Create(Rule, symbol.Locations[0], identifier, symbol.Name);
+                        diagnostic = symbol.CreateDiagnostic(Rule, identifier, symbol.Name);
                         break;
                     }
                 }

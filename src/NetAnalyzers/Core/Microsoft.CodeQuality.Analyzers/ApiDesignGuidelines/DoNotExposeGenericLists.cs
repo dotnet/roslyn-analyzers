@@ -25,17 +25,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             RuleLevel.Disabled,
             description: s_localizableDescription,
             isPortedFxCopRule: true,
-            isDataflowRule: false,
-            isEnabledByDefaultInFxCopAnalyzers: false);
+            isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartAction(context =>
             {
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericList1, out var genericListType))
                 {
@@ -47,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     var field = (IFieldSymbol)context.Symbol;
 
                     // FxCop compat: only analyze externally visible symbols by default.
-                    if (!field.MatchesConfiguredVisibility(context.Options, Rule, context.Compilation, context.CancellationToken))
+                    if (!context.Options.MatchesConfiguredVisibility(Rule, field, context.Compilation))
                     {
                         return;
                     }
@@ -71,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // FxCop compat: only analyze externally visible symbols by default.
-                    if (!property.MatchesConfiguredVisibility(context.Options, Rule, context.Compilation, context.CancellationToken))
+                    if (!context.Options.MatchesConfiguredVisibility(Rule, property, context.Compilation))
                     {
                         return;
                     }
@@ -101,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     // FxCop compat: only analyze externally visible symbols by default.
-                    if (!methodSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.Compilation, context.CancellationToken))
+                    if (!context.Options.MatchesConfiguredVisibility(Rule, methodSymbol, context.Compilation))
                     {
                         return;
                     }

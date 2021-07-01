@@ -27,7 +27,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        description: s_localizableDescription,
                                                                                        isPortedFxCopRule: true,
                                                                                        isDataflowRule: false,
-                                                                                       isEnabledByDefaultInFxCopAnalyzers: false,
                                                                                        isEnabledByDefaultInAggressiveMode: false,
                                                                                        isReportedAtCompilationEnd: true);
 
@@ -39,18 +38,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        description: s_localizableDescription,
                                                                                        isPortedFxCopRule: true,
                                                                                        isDataflowRule: false,
-                                                                                       isEnabledByDefaultInFxCopAnalyzers: false,
                                                                                        isEnabledByDefaultInAggressiveMode: false,
                                                                                        isReportedAtCompilationEnd: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleChangeComVisible, RuleAddComVisible);
 
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationAction(AnalyzeCompilation);
+            context.RegisterCompilationAction(AnalyzeCompilation);
         }
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)

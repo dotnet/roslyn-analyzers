@@ -19,9 +19,9 @@ namespace PerfDiff
             token.ThrowIfCancellationRequested();
 
             var (success, shouldCheckETL) = await BenchmarkDotNetDiffer.TryCompareBenchmarkDotNetResultsAsync(baselineFolder, resultsFolder, logger).ConfigureAwait(false);
-            if (!success)
+            if (success)
             {
-                return 1;
+                return 0;
             }
 
             if (shouldCheckETL)

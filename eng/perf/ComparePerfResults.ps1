@@ -19,12 +19,7 @@ try {
     
     $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot '..\..')
     $perfDiff = Join-Path $RepoRoot "src\Tools\PerfDiff\PerfDiff.csproj"
-    $global:LASTEXITCODE = 0
     Invoke-Expression "dotnet run -c Release --project $perfDiff -- --baseline $baselineFolder --results $resultsFolder --failOnRegression --verbosity diag"
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Performance run failed"
-        exit $LASTEXITCODE
-    }
 }
 catch {
     Write-Host $_

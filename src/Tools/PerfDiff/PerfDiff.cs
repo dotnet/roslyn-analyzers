@@ -59,7 +59,12 @@ namespace PerfDiff
             if (Directory.Exists(path))
             {
                 var files = Directory.GetFiles(path, $"*{ETLFileExtension}", SearchOption.AllDirectories);
-                etlPath = files.Single();
+                etlPath = files.SingleOrDefault();
+                if (etlPath is null)
+                {
+                    etlPath = null;
+                    return false;
+                }
                 return true;
             }
             else if (File.Exists(path) || !path.EndsWith(ETLFileExtension, StringComparison.OrdinalIgnoreCase))

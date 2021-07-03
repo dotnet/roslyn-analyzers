@@ -53,13 +53,23 @@ namespace PerfDiff
             if (betterCount > 0)
             {
                 var betterGeoMean = Math.Pow(10, better.Skip(1).Aggregate(Math.Log10(GetRatio(better.First())), (x, y) => x + Math.Log10(GetRatio(y))) / better.Count());
-                logger.LogInformation($"better: {betterCount}, geomean: {betterGeoMean:F3}");
+                logger.LogInformation($"better: {betterCount}, geomean: {betterGeoMean:F3}%");
+                foreach (var (betterId, betterBaseResult, betterDiffResult, conclusion) in worse)
+                {
+                    var mean = GetRatio(conclusion, betterBaseResult, betterDiffResult);
+                    logger.LogInformation($"' test: '{betterId}' tool '{mean:F3}' times less");
+                }
             }
 
             if (worseCount > 0)
             {
                 var worseGeoMean = Math.Pow(10, worse.Skip(1).Aggregate(Math.Log10(GetRatio(worse.First())), (x, y) => x + Math.Log10(GetRatio(y))) / worse.Count());
-                logger.LogInformation($"worse: {worseCount}, geomean: {worseGeoMean:F3}");
+                logger.LogInformation($"' worse: {worseCount}, geomean: {worseGeoMean:F3}%");
+                foreach (var (worseId, worseBaseResult, worseDiffResult, conclusion) in worse)
+                {
+                    var mean = GetRatio(conclusion, worseBaseResult, worseDiffResult);
+                    logger.LogInformation($"' test: '{worseId}' took '{mean:F3}' times longer");
+                }
             }
 
             if (worseCount > 0)
@@ -114,11 +124,13 @@ namespace PerfDiff
 
             var benchmarkIdToDiffResults = diffResults
                 .SelectMany(result => result.Benchmarks)
-                .ToDictionary(benchmarkResult => benchmarkResult.DisplayInfo, benchmarkResult => benchmarkResult);
+                .ToDictionary(benchmarkResult => benchmarkResult.FullName, benchmarkResult => benchmarkResult);
 
-            return baseResults
+            var benchmarkIdToBaseResults = baseResults
                 .SelectMany(result => result.Benchmarks)
-                .ToDictionary(benchmarkResult => benchmarkResult.DisplayInfo, benchmarkResult => benchmarkResult) // we use ToDictionary to make sure the results have unique IDs
+                .ToDictionary(benchmarkResult => benchmarkResult.FullName, benchmarkResult => benchmarkResult); // we use ToDictionary to make sure the results have unique IDs
+
+            return benchmarkIdToBaseResults
                 .Where(baseResult => benchmarkIdToDiffResults.ContainsKey(baseResult.Key))
                 .Select(baseResult => (id: baseResult.Key, baseResult: baseResult.Value, diffResult: benchmarkIdToDiffResults[baseResult.Key]))
                 .ToArray();

@@ -29,7 +29,6 @@ jobs:
     - checkout: self
       clean: true
     - pwsh: eng\perf\PerfCore.ps1 -v diag -diff -ci 
-      failOnStderr: true
       displayName: Validate Performance
     - task: PublishBuildArtifacts@1
       displayName: Publish Performance Results

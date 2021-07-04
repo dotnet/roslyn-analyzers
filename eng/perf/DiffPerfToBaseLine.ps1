@@ -29,8 +29,8 @@ try {
     Write-Host "Running Baseline Tests"
     
     # Ensure output directory has been created
+    EnsureFolder Join-Path $output "baseline"
     $resultsOutput = Join-Path $output "baseline"
-    EnsureFolder $resultsOutput
     
     # Checkout SHA
     $baselineFolder = Join-Path $Temp "perfBaseline"
@@ -50,8 +50,8 @@ try {
     Write-Host "Done with baseline run"    
     
     # Ensure output directory has been created
-    $testOutput = Join-Path $output "perfTest" 
-    EnsureFolder $testOutput
+    EnsureFolder Join-Path $output "perfTest"
+    $testOutput = Join-Path $output "perfTest"
     
     $commandArgs = @{
         perftestRootFolder = $RepoRoot
@@ -69,10 +69,10 @@ try {
     
     # Diff perf results
     if ($ci) {
-        & $ComparePerfResults -baseline '$resultsOutput' -results '$testOutput' -ci
+        & $ComparePerfResults -baseline $resultsOutput -results $testOutput -ci
     }
     else {
-        & $ComparePerfResults -baseline '$resultsOutput' -results '$testOutput'
+        & $ComparePerfResults -baseline $resultsOutput -results $testOutput
     }
 }
 catch {
@@ -80,7 +80,7 @@ catch {
     Write-Host $_.Exception
     Write-Host $_.ScriptStackTrace
     $host.SetShouldExit(1)
-    exit
+    exit 1
 }
 finally {
 }

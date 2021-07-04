@@ -16,15 +16,15 @@ namespace PerfDiff
 {
     public static class BenchmarkDotNetDiffer
     {
-        public static async Task<(bool success, bool shouldCheckETL)> TryCompareBenchmarkDotNetResultsAsync(string baselineFolder, string resultsFolder, ILogger logger)
+        public static async Task<(bool compareSucceeded, bool regressionDetected)> TryCompareBenchmarkDotNetResultsAsync(string baselineFolder, string resultsFolder, ILogger logger)
         {
-            bool shouldCheckETL = false;
+            bool regressionDetected = false;
 
             // search folder for benchmark dotnet results
             var comparison = await TryGetBdnResultsAsync(baselineFolder, resultsFolder, logger).ConfigureAwait(false);
             if (comparison is null)
             {
-                return (false, shouldCheckETL);
+                return (false, regressionDetected);
             }
 
             // compare bdn results
@@ -37,7 +37,7 @@ namespace PerfDiff
             if (!notSame.Any())
             {
                 logger.LogInformation($"No differences found between the benchmark results with threshold {testThreshold}.");
-                return (false, shouldCheckETL);
+                return (true, regressionDetected);
             }
 
             var better = notSame.Where(result => result.conclusion == EquivalenceTestConclusion.Faster);
@@ -74,10 +74,10 @@ namespace PerfDiff
 
             if (worseCount > 0)
             {
-                shouldCheckETL = true;
+                regressionDetected = true;
             }
 
-            return (true, shouldCheckETL);
+            return (true, regressionDetected);
         }
 
         private static double GetRatio((string id, Benchmark baseResult, Benchmark diffResult, EquivalenceTestConclusion conclusion) item) => GetRatio(item.conclusion, item.baseResult, item.diffResult);

@@ -48,7 +48,7 @@ try {
     $output = Join-Path $RepoRoot "artifacts\performance\perfResults"
      
     #  Diff two different SHAs
-    if ($diff) {
+    if ($true) {
         $DiffPerfToBaseLine = Join-Path $RepoRoot "eng\perf\DiffPerfToBaseLine.ps1"
         $baselinejson = Get-Content -Raw -Path (Join-Path $RepoRoot "eng\perf\baseline.json") | ConvertFrom-Json
         $baselineSHA = $baselinejson.sha
@@ -83,7 +83,7 @@ catch {
     Write-Host $_.Exception
     Write-Host $_.ScriptStackTrace
     $host.SetShouldExit(1)
-    exit
+    exit 1
 }
 finally {
 }

@@ -37,7 +37,7 @@ catch {
     Write-Host $_.Exception
     Write-Host $_.ScriptStackTrace
     $host.SetShouldExit(1)
-    exit
+    exit 1
 }
 finally {
     Pop-Location

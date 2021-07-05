@@ -60,10 +60,6 @@ namespace PerfDiff
             try
             {
                 var exitCode = await PerfDiff.CompareAsync(baseline, results, failOnRegression, logger, cancellationTokenSource.Token).ConfigureAwait(false);
-                if (exitCode != 0 && failOnRegression)
-                {
-                    throw new Exception("Performance run failed");
-                }
                 return exitCode;
             }
             catch (FileNotFoundException fex)

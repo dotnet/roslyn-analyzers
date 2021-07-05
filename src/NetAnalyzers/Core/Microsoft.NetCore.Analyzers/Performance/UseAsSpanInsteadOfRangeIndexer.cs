@@ -93,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     IOperation indexerArgument;
                     ITypeSymbol containingType;
-
+                    System.Threading.Thread.Sleep(50); // add 50ms regression
                     if (operationContext.Operation is IPropertyReferenceOperation propertyReference)
                     {
                         if (!propertyReference.Property.IsIndexer || propertyReference.Arguments.Length != 1)

@@ -59,7 +59,8 @@ namespace PerfDiff
 
             try
             {
-                return await PerfDiff.CompareAsync(baseline, results, failOnRegression, logger, cancellationTokenSource.Token).ConfigureAwait(false);
+                var exitCode = await PerfDiff.CompareAsync(baseline, results, failOnRegression, logger, cancellationTokenSource.Token).ConfigureAwait(false);
+                return exitCode;
             }
             catch (FileNotFoundException fex)
             {

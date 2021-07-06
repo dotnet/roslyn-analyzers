@@ -18,38 +18,64 @@ namespace PerfDiff
         {
             token.ThrowIfCancellationRequested();
 
-            var (success, shouldCheckETL) = await BenchmarkDotNetDiffer.TryCompareBenchmarkDotNetResultsAsync(baselineFolder, resultsFolder, logger).ConfigureAwait(false);
-            if (!success)
+            var (compareSucceeded, regressionDetected) = await BenchmarkDotNetDiffer.TryCompareBenchmarkDotNetResultsAsync(baselineFolder, resultsFolder, logger).ConfigureAwait(false);
+
+            if (!compareSucceeded)
             {
+                logger.LogError("Failed to compare the performance results see log.");
                 return 1;
             }
 
-            if (shouldCheckETL)
+            if (!regressionDetected)
             {
-                // get file paths
-                if (!TryGetETLPaths(baselineFolder, out var baselineEtlPath))
-                {
-                    return 1;
-                }
-
-                if (!TryGetETLPaths(resultsFolder, out var resultsEtlPath))
-                {
-                    return 1;
-                }
-
-                // Compare ETL
-                if (!EtlDiffer.TryCompareETL(resultsEtlPath, baselineEtlPath, out var regression))
-                {
-                    return 1;
-                }
-
-                if (regression && failOnRegression)
-                {
-                    return 1;
-                }
+                logger.LogTrace("No performance regression found.");
+                return 0;
             }
 
+            var (etlCompareSucceeded, etlRegressionDetected) = CheckEltTraces(baselineFolder, resultsFolder, failOnRegression);
+            if (!etlCompareSucceeded)
+            {
+                logger.LogTrace("We detected a regression in BMDN and there is no ETL info.");
+                return 1;
+            }
+
+            if (etlRegressionDetected)
+            {
+                logger.LogTrace(" We detected a regression in BMDN and there _is_ ETL info which agress there was a regression.");
+                return 1;
+            }
+
+            logger.LogTrace("We detected a regression in BMDN but examining the ETL trace determined that is was noise.");
             return 0;
+        }
+
+        private static (bool compareSucceeded, bool regressionDetected) CheckEltTraces(string baselineFolder, string resultsFolder, bool failOnRegression)
+        {
+            var regressionDetected = false;
+
+            // try look for ETL traces 
+            if (!TryGetETLPaths(baselineFolder, out var baselineEtlPath))
+            {
+                return (false, regressionDetected);
+            }
+
+            if (!TryGetETLPaths(resultsFolder, out var resultsEtlPath))
+            {
+                return (false, regressionDetected);
+            }
+
+            // Compare ETL
+            if (!EtlDiffer.TryCompareETL(resultsEtlPath, baselineEtlPath, out regressionDetected))
+            {
+                return (false, regressionDetected);
+            }
+
+            if (regressionDetected && failOnRegression)
+            {
+                return (true, regressionDetected);
+            }
+
+            return (false, regressionDetected);
         }
 
         private const string ETLFileExtension = "etl.zip";
@@ -59,7 +85,12 @@ namespace PerfDiff
             if (Directory.Exists(path))
             {
                 var files = Directory.GetFiles(path, $"*{ETLFileExtension}", SearchOption.AllDirectories);
-                etlPath = files.Single();
+                etlPath = files.SingleOrDefault();
+                if (etlPath is null)
+                {
+                    etlPath = null;
+                    return false;
+                }
                 return true;
             }
             else if (File.Exists(path) || !path.EndsWith(ETLFileExtension, StringComparison.OrdinalIgnoreCase))

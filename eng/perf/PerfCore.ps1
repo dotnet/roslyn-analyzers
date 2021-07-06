@@ -17,7 +17,7 @@ Param(
     Write-Host ""
   
     Write-Host "Actions:"
-    Write-Host "  -diff                   Compare HEAD to baseline perf results"
+    Write-Host "  -diff                   Compare to baseline perf results"
     Write-Host ""
     
     Write-Host "Advanced settings:"
@@ -48,31 +48,34 @@ try {
     $output = Join-Path $RepoRoot "artifacts\performance\perfResults"
      
     #  Diff two different SHAs
-    if ($diff) {
+    if ($true) {
         $DiffPerfToBaseLine = Join-Path $RepoRoot "eng\perf\DiffPerfToBaseLine.ps1"
         $baselinejson = Get-Content -Raw -Path (Join-Path $RepoRoot "eng\perf\baseline.json") | ConvertFrom-Json
         $baselineSHA = $baselinejson.sha
-        $commandArguments = "-baselineSHA $baselineSHA -testSHA HEAD -projects '$projects' -output '$output' -filter '$filter'"
-        if ($etl) {
-            $commandArguments = "$commandArguments -etl"
+        Write-Host "Running performance comparison against baseline: '$baselineSHA'"
+        $commandArguments = @{
+            baselineSHA = $baselineSHA
+            projects = $projects
+            output = $output
+            filter = $filter
         }
-        if ($ci) {
-            $commandArguments = "$commandArguments -ci"
-        }
-        Invoke-Expression "$DiffPerfToBaseLine $commandArguments"
+        if ($etl) { $commandArguments.etl = $True }
+        if ($ci) { $commandArguments.ci =  $True}
+        & $DiffPerfToBaseLine @commandArguments
         exit
     }
 
-    $commandArguments = "-projects '$projects' -root '$RepoRoot' -output '$output\perfTest' -filter '$filter'"
-    if ($etl) {
-        $commandArguments = "$commandArguments -etl"
+    $commandArguments = @{
+        projects = $projects
+        filter = $filter
+        perftestRootFolder = $RepoRoot
+        output = "$output\perfTest"
     }
-    if ($ci) {
-        $commandArguments = "$commandArguments -ci"
-    }
+    if ($etl) { $commandArguments.etl = $True }
+    if ($ci) { $commandArguments.ci =  $True}
     
     $RunPerfTests = Join-Path $RepoRoot "eng\perf\RunPerfTests.ps1"
-    Invoke-Expression "$RunPerfTests $commandArguments"
+    & $RunPerfTests @commandArguments
     exit
 }
 catch {
@@ -80,7 +83,7 @@ catch {
     Write-Host $_.Exception
     Write-Host $_.ScriptStackTrace
     $host.SetShouldExit(1)
-    exit
+    exit 1
 }
 finally {
 }

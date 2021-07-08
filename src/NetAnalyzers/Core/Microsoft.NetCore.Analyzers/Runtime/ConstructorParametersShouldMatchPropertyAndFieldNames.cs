@@ -186,8 +186,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     .SetItem(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
-                    param.CreateDiagnostic(
+                    param.Locations[0].CreateDiagnostic(
                         diagnosticDescriptor,
+                        reason == ParameterDiagnosticReason.FieldInappropriateVisibility ? field.Locations : ImmutableArray<Location>.Empty,
                         properties,
                         param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                         param.Name,
@@ -201,8 +202,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     .SetItem(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
-                    param.CreateDiagnostic(
+                    param.Locations[0].CreateDiagnostic(
                         diagnosticDescriptor,
+                        reason == ParameterDiagnosticReason.PropertyInappropriateVisibility ? prop.Locations : ImmutableArray<Location>.Empty,
                         properties,
                         param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                         param.Name,

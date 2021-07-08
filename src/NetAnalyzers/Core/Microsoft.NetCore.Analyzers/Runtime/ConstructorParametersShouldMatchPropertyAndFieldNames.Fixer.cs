@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Globalization;
@@ -8,8 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
+using static Microsoft.NetCore.Analyzers.Runtime.ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -20,7 +23,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class ConstructorParametersShouldMatchPropertyAndFieldNamesFixer : CodeFixProvider
     {
-        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.RuleId);
+        private static readonly Type DiagnosticReasonEnumType = typeof(ParameterDiagnosticReason);
+
+        public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -43,16 +48,45 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     continue;
                 }
 
-                // This approach is very naive. Most likely we want to support NamingStyleOptions, available in Roslyn.
-                string newName = LowerFirstLetter(diagnostic.Properties[ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.ReferencedFieldOrPropertyNameKey]);
+                var diagnosticReason = (ParameterDiagnosticReason)Enum.Parse(DiagnosticReasonEnumType, diagnostic.Properties[DiagnosticReasonKey]);
 
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesTitle, newName),
-                        cancellationToken => GetUpdatedDocumentForParameterRenameAsync(context.Document, declaredSymbol, newName, cancellationToken),
-                        nameof(ConstructorParametersShouldMatchPropertyAndFieldNamesFixer)),
-                    diagnostic);
+                switch (diagnosticReason)
+                {
+                    case ParameterDiagnosticReason.NameMismatch:
+                        RegisterParameterRenameCodeFix(context, diagnostic, declaredSymbol);
+                        break;
+                    case ParameterDiagnosticReason.FieldInappropriateVisibility:
+                    case ParameterDiagnosticReason.PropertyInappropriateVisibility:
+                        SyntaxNode fieldOrProperty = syntaxRoot.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
+                        RegisterMakeFieldOrPropertyPublicCodeFix(context, diagnostic, fieldOrProperty);
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                };
             }
+        }
+
+        private static void RegisterParameterRenameCodeFix(CodeFixContext context, Diagnostic diagnostic, ISymbol declaredSymbol)
+        {
+            // This approach is very naive. Most likely we want to support NamingStyleOptions, available in Roslyn.
+            string newName = LowerFirstLetter(diagnostic.Properties[ReferencedFieldOrPropertyNameKey]);
+
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesTitle, newName),
+                    cancellationToken => GetUpdatedDocumentForParameterRenameAsync(context.Document, declaredSymbol, newName, cancellationToken),
+                    nameof(ConstructorParametersShouldMatchPropertyAndFieldNamesFixer)),
+                diagnostic);
+        }
+
+        private static void RegisterMakeFieldOrPropertyPublicCodeFix(CodeFixContext context, Diagnostic diagnostic, SyntaxNode fieldOrProperty)
+        {
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.ConstructorParametersShouldMatchPropertyOrFieldNamesTitle, fieldOrProperty),
+                    cancellationToken => GetUpdatedDocumentForMakingFieldOrPropertyPublicAsync(context.Document, fieldOrProperty, cancellationToken),
+                    nameof(ConstructorParametersShouldMatchPropertyAndFieldNamesFixer)),
+                diagnostic);
         }
 
         private static string LowerFirstLetter(string targetName)
@@ -64,6 +98,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             Solution newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, parameter, newName, null, cancellationToken).ConfigureAwait(false);
             return newSolution.GetDocument(document.Id)!;
+        }
+
+        private static async Task<Document> GetUpdatedDocumentForMakingFieldOrPropertyPublicAsync(Document document, SyntaxNode fieldOrProperty, CancellationToken cancellationToken)
+        {
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+
+            editor.SetAccessibility(fieldOrProperty, Accessibility.Public);
+
+            return editor.GetChangedDocument();
         }
     }
 }

@@ -286,6 +286,75 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class");
         }
 
+        [Fact]
+        public async Task CA1071_ClassSingleFieldPrivate_CSharp()
+        {
+            await VerifyCSharpCodeFixAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    private int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int [|firstField|], object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }",
+                @"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+    public int firstField { get; }
+
+                    public object secondField { get; }
+
+                    [JsonConstructor]
+                    public C1(int firstField, object secondField)
+                    {
+                        this.firstField = firstField;
+                        this.secondField = secondField;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassSingleFieldPrivate_Basic()
+        {
+            await VerifyBasicCodeFixAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Private firstField As Integer
+                    Public secondField as Object
+
+                    <JsonConstructor>
+                    Public Sub New([|firstField|] as Integer, secondField as Object)
+                        Me.firstField = firstField
+                        Me.secondField = secondField
+                    End Sub
+                End Class",
+                @"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+    Public firstField As Integer
+
+                    Public secondField as Object
+
+                    <JsonConstructor>
+                    Public Sub New(firstField as Integer, secondField as Object)
+                        Me.firstField = firstField
+                        Me.secondField = secondField
+                    End Sub
+                End Class");
+        }
+
         private static async Task VerifyCSharpCodeFixAsync(string source, string expected)
         {
             var csharpTest = new VerifyCS.Test

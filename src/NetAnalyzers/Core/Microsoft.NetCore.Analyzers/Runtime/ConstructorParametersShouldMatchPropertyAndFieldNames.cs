@@ -76,7 +76,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             NameMismatch,
             PropertyInappropriateVisibility,
             FieldInappropriateVisibility,
-            UnreferencedParameter,
         }
 
         private sealed class ParameterAnalyzer

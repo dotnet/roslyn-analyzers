@@ -89,7 +89,7 @@ namespace Test.Utilities
             referenceAssemblies = referenceAssemblies.AddAssemblies(ImmutableArray.Create("System.Xml.Data"));
 #endif
 
-            referenceAssemblies = referenceAssemblies.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.0.0")));
+            referenceAssemblies = referenceAssemblies.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.6.0")));
 
 #if NETCOREAPP
             referenceAssemblies = referenceAssemblies.AddPackages(ImmutableArray.Create(

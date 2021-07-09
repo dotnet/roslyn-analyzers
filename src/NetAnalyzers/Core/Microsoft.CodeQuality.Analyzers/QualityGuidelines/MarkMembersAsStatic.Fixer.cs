@@ -83,11 +83,37 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             // Update definition to add static modifier.
             document = solution.GetDocument(document.Id)!;
             root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            node = root.GetAnnotatedNodes(s_annotationForFixedDeclaration).Single();
             var syntaxGenerator = SyntaxGenerator.GetGenerator(document);
-            var oldModifiersAndStatic = syntaxGenerator.GetModifiers(node).WithIsStatic(true);
-            var newNode = syntaxGenerator.WithModifiers(node, oldModifiersAndStatic);
-            return document.WithSyntaxRoot(root.ReplaceNode(node, newNode)).Project.Solution;
+            var nodesToFix = GetNodesToFix(symbol, cancellationToken);
+            foreach (var nodeToFix in nodesToFix)
+            {
+                var oldModifiersAndStatic = syntaxGenerator.GetModifiers(nodeToFix).WithIsStatic(true);
+                var fixedNode = syntaxGenerator.WithModifiers(nodeToFix, oldModifiersAndStatic);
+                root = root.ReplaceNode(nodeToFix, fixedNode);
+            }
+
+            return document.WithSyntaxRoot(root).Project.Solution;
+        }
+
+        private static IEnumerable<SyntaxNode> GetNodesToFix(ISymbol? symbol, CancellationToken cancellationToken)
+        {
+            if (symbol is null)
+            {
+                yield break;
+            }
+
+            foreach (var syntaxReference in symbol.DeclaringSyntaxReferences)
+            {
+                yield return syntaxReference.GetSyntax(cancellationToken);
+            }
+
+            if (symbol is IMethodSymbol { PartialDefinitionPart: var partialDefinition })
+            {
+                foreach (var syntaxReference in partialDefinition.DeclaringSyntaxReferences)
+                {
+                    yield return syntaxReference.GetSyntax(cancellationToken);
+                }
+            }
         }
 
         /// <summary>

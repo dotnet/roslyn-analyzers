@@ -1456,6 +1456,7 @@ partial class Class1
         [Fact]
         [WorkItem(4733, "https://github.com/dotnet/roslyn-analyzers/issues/4733")]
         [WorkItem(5168, "https://github.com/dotnet/roslyn-analyzers/issues/5168")]
+        [WorkItem(5171, "https://github.com/dotnet/roslyn-analyzers/issues/5171")]
         public async Task CA1822_PartialMethod_CanBeStatic()
         {
             string source = @"
@@ -1482,14 +1483,13 @@ partial class Class1
     }
 }
 ";
-            // The fixed source shouldn't have diagnostics. Tracked by https://github.com/dotnet/roslyn-analyzers/issues/5171.
             string fixedSource = @"
 using System.Threading;
 using System.Threading.Tasks;
 
 public partial class Class1
 {
-    public partial Task Example(CancellationToken token = default);
+    public static partial Task Example(CancellationToken token = default);
 }
 
 partial class Class1
@@ -1501,7 +1501,7 @@ partial class Class1
         this.timeout = timeout;
     }
 
-    public static async partial Task {|CS0763:Example|}(CancellationToken token)
+    public static async partial Task Example(CancellationToken token)
     {
         await Task.Delay(0);
     }

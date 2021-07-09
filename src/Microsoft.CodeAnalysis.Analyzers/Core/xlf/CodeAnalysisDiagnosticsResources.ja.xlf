@@ -232,6 +232,21 @@
         <target state="translated">'{0}' と '{1}' の両方に DiagnosticAnalyzer 属性を適用します。</target>
         <note />
       </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeDescription">
+        <source>Go add it, fool</source>
+        <target state="new">Go add it, fool</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeMessage">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeTitle">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">
         <source>Specify at least one SymbolKind of interest when registering a symbol analyzer action</source>
         <target state="translated">シンボル アナライザー アクションを登録する際に、関心のある SymbolKind を 1 つ以上指定してください</target>

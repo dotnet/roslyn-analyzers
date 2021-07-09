@@ -232,6 +232,21 @@
         <target state="translated">Aplique o atributo DiagnosticAnalyzer para '{0}' e para '{1}'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeDescription">
+        <source>Go add it, fool</source>
+        <target state="new">Go add it, fool</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeMessage">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeTitle">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">
         <source>Specify at least one SymbolKind of interest when registering a symbol analyzer action</source>
         <target state="translated">Especifique pelo menos um SymbolKind de interesse ao registrar uma ação de analisador de símbolo</target>

@@ -44,6 +44,8 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisDiagnosticsCompilationStartAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.CompilationStartAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsDiagnosticAnalyzer = "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer";
         public const string MicrosoftCodeAnalysisDiagnosticsDiagnosticAnalyzerAttribute = "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzerAttribute";
+        public const string MicrosoftCodeAnalysisISourceGenerator = "Microsoft.CodeAnalysis.ISourceGenerator";
+        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisDiagnosticsGeneratedCodeAnalysisFlags = "Microsoft.CodeAnalysis.Diagnostics.GeneratedCodeAnalysisFlags";
         public const string MicrosoftCodeAnalysisDiagnosticsOperationAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.OperationAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsOperationBlockAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.OperationBlockAnalysisContext";

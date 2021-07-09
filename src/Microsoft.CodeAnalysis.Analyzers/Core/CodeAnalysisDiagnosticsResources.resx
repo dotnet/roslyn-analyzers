@@ -529,4 +529,13 @@
   <data name="PreferIsKindFix" xml:space="preserve">
     <value>Use 'IsKind' instead of 'Kind'</value>
   </data>
+  <data name="MissingSourceGeneratorAttributeDescription" xml:space="preserve">
+    <value>Go add it, fool</value>
+  </data>
+  <data name="MissingSourceGeneratorAttributeMessage" xml:space="preserve">
+    <value>Missing [Generator] Attribute</value>
+  </data>
+  <data name="MissingSourceGeneratorAttributeTitle" xml:space="preserve">
+    <value>Missing [Generator] Attribute</value>
+  </data>
 </root>

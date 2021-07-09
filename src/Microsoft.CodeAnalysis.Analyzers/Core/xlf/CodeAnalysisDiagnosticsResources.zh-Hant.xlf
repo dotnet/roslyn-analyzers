@@ -232,6 +232,21 @@
         <target state="translated">同時為 '{0}' 與 '{1}' 套用 DiagnosticAnalyzer 屬性。</target>
         <note />
       </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeDescription">
+        <source>Go add it, fool</source>
+        <target state="new">Go add it, fool</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeMessage">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingSourceGeneratorAttributeTitle">
+        <source>Missing [Generator] Attribute</source>
+        <target state="new">Missing [Generator] Attribute</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">
         <source>Specify at least one SymbolKind of interest when registering a symbol analyzer action</source>
         <target state="translated">註冊符號分析器動作時，請至少指定一個關注的 SymbolKind</target>

@@ -1465,7 +1465,7 @@ using System.Threading.Tasks;
 
 public partial class Class1
 {
-    public partial Task Example(CancellationToken token = default);
+    public partial Task [|Example|](CancellationToken token = default);
 }
 
 partial class Class1
@@ -1477,7 +1477,7 @@ partial class Class1
         this.timeout = timeout;
     }
 
-    public async partial Task [|Example|](CancellationToken token)
+    public async partial Task Example(CancellationToken token)
     {
         await Task.Delay(0);
     }

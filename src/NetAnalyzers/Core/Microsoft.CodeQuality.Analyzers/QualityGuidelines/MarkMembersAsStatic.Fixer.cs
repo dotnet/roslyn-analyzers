@@ -107,9 +107,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 yield return syntaxReference.GetSyntax(cancellationToken);
             }
 
-            if (symbol is IMethodSymbol { PartialDefinitionPart: var partialDefinition })
+            if (symbol is IMethodSymbol { PartialImplementationPart: IMethodSymbol partialImpl })
             {
-                foreach (var syntaxReference in partialDefinition.DeclaringSyntaxReferences)
+                foreach (var syntaxReference in partialImpl.DeclaringSyntaxReferences)
                 {
                     yield return syntaxReference.GetSyntax(cancellationToken);
                 }

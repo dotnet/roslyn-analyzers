@@ -134,7 +134,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             {
                                 if (!IsOnObsoleteMemberChain(methodSymbol, wellKnownTypeProvider))
                                 {
-                                    blockEndContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.Name));
+                                    // Always report on the definition since this is what the codefix works correctly on.
+                                    if (methodSymbol.PartialDefinitionPart is not null)
+                                    {
+                                        blockEndContext.ReportDiagnostic(methodSymbol.PartialDefinitionPart.CreateDiagnostic(Rule, methodSymbol.Name));
+                                    }
+                                    else
+                                    {
+                                        blockEndContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.Name));
+                                    }
                                 }
                             }
                             else
@@ -156,7 +164,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                         if (!IsOnObsoleteMemberChain(candidate, wellKnownTypeProvider))
                         {
-                            symbolEndContext.ReportDiagnostic(candidate.CreateDiagnostic(Rule, candidate.Name));
+                            // Always report on the definition since this is what the codefix works correctly on.
+                            if (candidate.PartialDefinitionPart is not null)
+                            {
+                                symbolEndContext.ReportDiagnostic(candidate.PartialDefinitionPart.CreateDiagnostic(Rule, candidate.Name));
+                            }
+                            else
+                            {
+                                symbolEndContext.ReportDiagnostic(candidate.CreateDiagnostic(Rule, candidate.Name));
+                            }
                         }
                     }
 

@@ -99,7 +99,10 @@ namespace Analyzer.Utilities
         public const string SystemAttributeUsageAttribute = "System.AttributeUsageAttribute";
         public const string SystemBoolean = "System.Boolean";
         public const string SystemBuffersMemoryManager1 = "System.Buffers.MemoryManager`1";
+        public const string SystemBuffer = "System.Buffer";
+        public const string SystemArray = "System.Array";
         public const string SystemByte = "System.Byte";
+        public const string SystemSByte = "System.SByte";
         public const string SystemChar = "System.Char";
         public const string SystemCLSCompliantAttribute = "System.CLSCompliantAttribute";
         public const string SystemCodeDomCompilerGeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";

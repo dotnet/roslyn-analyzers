@@ -69,6 +69,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             return;
                         }
 
+                        int foo = 1, bar = 1;
+
+                        int blah = 0;
+
                         IVariableDeclarationGroupOperation variableGroupDeclarationOperation = (IVariableDeclarationGroupOperation)variableDeclarationOperation.Parent;
                         if (variableGroupDeclarationOperation.Declarations.Length != 1)
                         {

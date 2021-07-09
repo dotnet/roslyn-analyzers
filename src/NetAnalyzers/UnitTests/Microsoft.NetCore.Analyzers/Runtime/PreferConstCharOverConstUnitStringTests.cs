@@ -83,7 +83,7 @@ End Module
         [Fact]
         public async Task TestMultipleDeclarations()
         {
-            const string multipleDeclarations_cs = @" 
+            const string multipleDeclarations_cs = @"
 using System; 
 using System.Text;
  

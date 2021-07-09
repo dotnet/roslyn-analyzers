@@ -137,6 +137,21 @@
         <target state="translated">Güvenli olmayan seri kaldırıcı BinaryFormatter kullanmayın</target>
         <note />
       </trans-unit>
+      <trans-unit id="BufferBlockCopyDescription">
+        <source>Buffer.BlockCopy expects the length of the items of the array to be copied. Using .Length on a premitive type returns the size of that data type and not the length of the items.</source>
+        <target state="new">Buffer.BlockCopy expects the length of the items of the array to be copied. Using .Length on a premitive type returns the size of that data type and not the length of the items.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthMessage">
+        <source>.Length returns the size of the premitive type '{0}' which may lead to unwanted results</source>
+        <target state="new">.Length returns the size of the premitive type '{0}' which may lead to unwanted results</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthTitle">
+        <source>.Length returns the size of type '{0}'</source>
+        <target state="new">.Length returns the size of type '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">
         <source>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual Basic).</source>
         <target state="translated">Dispose uygulaması olan bir metot GC.SuppressFinalize çağrısı yapmıyor, Dispose uygulaması olmayan bir metot GC.SuppressFinalize çağrısı yapıyor ya da bir metot GC.SuppressFinalize çağrısı yapıyor ve this (Visual Basic’te Me) dışında bir şey geçiriyor.</target>

@@ -137,6 +137,21 @@
         <target state="translated">Nie używaj niezabezpieczonego deserializatora BinaryFormatter</target>
         <note />
       </trans-unit>
+      <trans-unit id="BufferBlockCopyDescription">
+        <source>Buffer.BlockCopy expects the length of the items of the array to be copied. Using .Length on a premitive type returns the size of that data type and not the length of the items.</source>
+        <target state="new">Buffer.BlockCopy expects the length of the items of the array to be copied. Using .Length on a premitive type returns the size of that data type and not the length of the items.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthMessage">
+        <source>.Length returns the size of the premitive type '{0}' which may lead to unwanted results</source>
+        <target state="new">.Length returns the size of the premitive type '{0}' which may lead to unwanted results</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BufferBlockCopyLengthTitle">
+        <source>.Length returns the size of type '{0}'</source>
+        <target state="new">.Length returns the size of type '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">
         <source>A method that is an implementation of Dispose does not call GC.SuppressFinalize; or a method that is not an implementation of Dispose calls GC.SuppressFinalize; or a method calls GC.SuppressFinalize and passes something other than this (Me in Visual Basic).</source>
         <target state="translated">Implementacja metody Dispose nie wywołuje metody GC.SuppressFinalize lub metoda niebędąca implementacją metody Dispose wywołuje metodę GC.SuppressFinalize lub metoda wywołuje metodę GC.SuppressFinalize i przekazuje coś innego niż obiekt this (Me w języku Visual Basic).</target>

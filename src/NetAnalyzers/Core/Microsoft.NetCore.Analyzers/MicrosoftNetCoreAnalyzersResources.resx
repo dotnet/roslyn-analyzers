@@ -1519,4 +1519,13 @@
     <value>and all other platforms</value>
     <comment>This call site is reachable on: 'windows' 10.0.2000 and later, and all other platforms</comment>
   </data>
+  <data name="BufferBlockCopyLengthMessage" xml:space="preserve">
+    <value>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</value>
+  </data>
+  <data name="BufferBlockCopyLengthTitle" xml:space="preserve">
+    <value>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter</value>
+  </data>
+  <data name="BufferBlockCopyDescription" xml:space="preserve">
+    <value>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</value>
+  </data>
 </root>

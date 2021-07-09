@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            if (symbol.GetApplicableAttributes(null).Any(a => a.AttributeClass.Inherits(sourceGenerator)))
+            if (symbol.GetApplicableAttributes(null).Any(a => a.AttributeClass.Inherits(sourceGeneratorAttribute)))
             {
                 return;
             }

@@ -59,7 +59,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 [Generator]
-public class [|CustomGenerator|] : ISourceGenerator
+public class {|RS1035:CustomGenerator|} : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context) {}
 
@@ -77,7 +77,7 @@ public class [|CustomGenerator|] : ISourceGenerator
                 FixedState =
                 {
                     Sources = { fixedCode, SourceGenerator },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference},
                 },
             }.RunAsync();
         }

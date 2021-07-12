@@ -233,8 +233,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeDescription">
-        <source>Go add it, fool</source>
-        <target state="new">Go add it, fool</target>
+        <source>'{0}' inherits from ISourceGenerator but does not have the [Generator] attribute</source>
+        <target state="new">'{0}' inherits from ISourceGenerator but does not have the [Generator] attribute</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeMessage">

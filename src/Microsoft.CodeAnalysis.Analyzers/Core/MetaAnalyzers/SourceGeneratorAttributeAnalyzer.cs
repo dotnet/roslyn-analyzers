@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            c.ReportDiagnostic(symbol.CreateDiagnostic(DiagnosticRule));
+            c.ReportDiagnostic(symbol.CreateDiagnostic(DiagnosticRule, symbol.Name));
         }
     }
 }

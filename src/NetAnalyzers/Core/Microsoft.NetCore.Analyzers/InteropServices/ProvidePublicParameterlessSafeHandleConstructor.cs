@@ -73,6 +73,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return;
                     }
 
+                    if ((constructor.DeclaredAccessibility == Accessibility.ProtectedAndInternal && type.DeclaredAccessibility == Accessibility.ProtectedAndInternal)
+                        || constructor.DeclaredAccessibility == Accessibility.Internal && type.DeclaredAccessibility == Accessibility.Internal)
+                    {
+                        // The parameterless constructor is as visible as the containing type, so there is no diagnostic to emit.
+                        return;
+                    }
+
                     // If a parameterless constructor has been defined, emit the diagnostic on the constructor instead of on the type.
                     targetWarningSymbol = constructor;
                     diagnosticPropertyBag = diagnosticPropertyBag.Add(DiagnosticPropertyConstructorExists, string.Empty);

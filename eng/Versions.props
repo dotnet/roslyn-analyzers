@@ -3,7 +3,7 @@
     <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
     <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>preview6</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersPreReleaseVersionLabel>rc1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
@@ -16,7 +16,7 @@
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
     <!-- Toolset -->
-    <MicrosoftVSSDKBuildToolsVersion>16.5.2044</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>16.9.1050</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
     <CodecovVersion>1.12.3</CodecovVersion>
     <CoverletVersion>2.9.0</CoverletVersion>
@@ -42,14 +42,23 @@
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.21202.2</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
+    <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
+    <HumanizerVersion>2.2.0</HumanizerVersion>
+    <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
+    <MicrosoftDiagnosticsTracingTraceEventVersion>2.0.69</MicrosoftDiagnosticsTracingTraceEventVersion>
+    <MicrosoftExtensionsLoggingVersion>6.0.0-preview.5.21301.5</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftNETCoreAppRefVersion>6.0.0-preview.4.21253.7</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
+    <MicrosoftVisualStudioCompositionVersion>16.1.8</MicrosoftVisualStudioCompositionVersion>
+    <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>
+    <PerfolizerVersion>0.2.1</PerfolizerVersion>
+    <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
+    <SystemCommandLineRenderingVersion>2.0.0-beta1.20074.1</SystemCommandLineRenderingVersion>
+    <SystemCommandLineVersion>2.0.0-beta1.21216.1</SystemCommandLineVersion>
     <SystemComponentModelCompositionVersion>4.7.0</SystemComponentModelCompositionVersion>
     <SystemDirectoryServicesVersion>4.7.0</SystemDirectoryServicesVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
-    <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
-    <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
-    <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
-    <HumanizerVersion>2.2.0</HumanizerVersion>
     <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
   <PropertyGroup>

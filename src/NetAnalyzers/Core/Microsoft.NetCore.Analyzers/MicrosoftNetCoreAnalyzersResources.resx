@@ -1089,6 +1089,24 @@
   <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage" xml:space="preserve">
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
+  <data name="DoNotCallEnumerableCastThatWillFailDescription" xml:space="preserve">
+    <value>If the source sequence contains at least 1 element, the call to 'Cast' will throw a InvalidCastException at runtime when enumerated. Make sure the types are compatible or remove this call.</value>
+  </data>
+  <data name="DoNotCallEnumerableCastThatWillFailMessage" xml:space="preserve">
+    <value>Elements of type '{0}' cannot be converted to type incompatible type '{1}' and will cause a InvalidCastException to be thrown when enumerated</value>
+  </data>
+  <data name="DoNotCallEnumerableCastThatWillFailTitle" xml:space="preserve">
+    <value>Do not call 'Enumerable.Cast&lt;T&gt;' with incompatible types</value>
+  </data>
+  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage" xml:space="preserve">
+    <value>Type '{0}' can never be 'OfType' '{1}' and will always result in an empty sequence</value>
+  </data>
+  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle" xml:space="preserve">
+    <value>Do not call 'OfType&lt;T&gt;' with incompatible types, as the enumerable returned will never return any values</value>
+  </data>
+  <data name="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription" xml:space="preserve">
+    <value>This call to 'OfType' will always result in an empty sequence. Make sure the types are compatible or remove this call.</value>
+  </data>
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerTitle" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>

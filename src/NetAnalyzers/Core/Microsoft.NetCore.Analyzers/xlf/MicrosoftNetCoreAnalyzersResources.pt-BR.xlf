@@ -452,6 +452,36 @@
         <target state="translated">Ao desserializar uma instância da classe {0}, o método {1} pode chamar o método perigoso {2}. As possíveis invocações de método são: {3}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessage">
+        <source>Type '{0}' can never be 'OfType' '{1}' and will always result in an empty sequence</source>
+        <target state="new">Type '{0}' can never be 'OfType' '{1}' and will always result in an empty sequence</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesMessageDescription">
+        <source>This call to 'OfType' will always result in an empty sequence. Make sure the types are compatible or remove this call.</source>
+        <target state="new">This call to 'OfType' will always result in an empty sequence. Make sure the types are compatible or remove this call.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerablOfTypeThatWillNeverReturnAnyValuesTitle">
+        <source>Do not call 'OfType&lt;T&gt;' with incompatible types, as the enumerable returned will never return any values</source>
+        <target state="new">Do not call 'OfType&lt;T&gt;' with incompatible types, as the enumerable returned will never return any values</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailDescription">
+        <source>If the source sequence contains at least 1 element, the call to 'Cast' will throw a InvalidCastException at runtime when enumerated. Make sure the types are compatible or remove this call.</source>
+        <target state="new">If the source sequence contains at least 1 element, the call to 'Cast' will throw a InvalidCastException at runtime when enumerated. Make sure the types are compatible or remove this call.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailMessage">
+        <source>Elements of type '{0}' cannot be converted to type incompatible type '{1}' and will cause a InvalidCastException to be thrown when enumerated</source>
+        <target state="new">Elements of type '{0}' cannot be converted to type incompatible type '{1}' and will cause a InvalidCastException to be thrown when enumerated</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallEnumerableCastThatWillFailTitle">
+        <source>Do not call 'Enumerable.Cast&lt;T&gt;' with incompatible types</source>
+        <target state="new">Do not call 'Enumerable.Cast&lt;T&gt;' with incompatible types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
         <target state="translated">Quando um construtor chama um método virtual, o construtor para a instância que invoca o método pode não ter sido executado.</target>

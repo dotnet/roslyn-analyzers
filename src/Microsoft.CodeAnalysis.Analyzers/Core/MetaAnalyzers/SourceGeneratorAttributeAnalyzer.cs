@@ -21,6 +21,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             DiagnosticSeverity.Warning,
+            description: s_localizableDescription,
             isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticRule);
@@ -46,6 +47,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static void AnalyzeSymbol(SymbolAnalysisContext c, INamedTypeSymbol sourceGenerator, INamedTypeSymbol sourceGeneratorAttribute)
         {
             var symbol = (INamedTypeSymbol)c.Symbol;
+
+            if (symbol.IsAbstract || symbol.IsAnonymousType)
+            {
+                return;
+            }
 
             if (!symbol.AllInterfaces.Any(i => sourceGenerator.Equals(i, SymbolEqualityComparer.Default)))
             {

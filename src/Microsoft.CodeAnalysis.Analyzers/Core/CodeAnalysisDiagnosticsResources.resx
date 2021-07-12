@@ -539,6 +539,6 @@
     <value>Missing 'Generator' Attribute</value>
   </data>
   <data name="AddGeneratorAttribute" xml:space="preserve">
-    <value>Add Generator Attribute</value>
+    <value>Add 'Generator' Attribute</value>
   </data>
 </root>

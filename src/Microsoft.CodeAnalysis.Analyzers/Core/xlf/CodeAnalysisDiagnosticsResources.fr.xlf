@@ -8,8 +8,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AddGeneratorAttribute">
-        <source>Add Generator Attribute</source>
-        <target state="new">Add Generator Attribute</target>
+        <source>Add 'Generator' Attribute</source>
+        <target state="new">Add 'Generator' Attribute</target>
         <note />
       </trans-unit>
       <trans-unit id="ClassIsNotDiagnosticAnalyzerMessage">

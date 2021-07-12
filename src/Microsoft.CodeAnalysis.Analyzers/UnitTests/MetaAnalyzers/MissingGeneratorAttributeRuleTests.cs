@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
 {
     public class MissingGeneratorAttributeRuleTests
     {
-        private static readonly ReferenceAssemblies ReferenceAssemblies = 
+        private static readonly ReferenceAssemblies ReferenceAssemblies =
             ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.10.0")));
 
         [Fact]

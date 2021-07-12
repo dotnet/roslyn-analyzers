@@ -44,8 +44,6 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisDiagnosticsCompilationStartAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.CompilationStartAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsDiagnosticAnalyzer = "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer";
         public const string MicrosoftCodeAnalysisDiagnosticsDiagnosticAnalyzerAttribute = "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzerAttribute";
-        public const string MicrosoftCodeAnalysisISourceGenerator = "Microsoft.CodeAnalysis.ISourceGenerator";
-        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisDiagnosticsGeneratedCodeAnalysisFlags = "Microsoft.CodeAnalysis.Diagnostics.GeneratedCodeAnalysisFlags";
         public const string MicrosoftCodeAnalysisDiagnosticsOperationAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.OperationAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsOperationBlockAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.OperationBlockAnalysisContext";
@@ -54,7 +52,9 @@ namespace Analyzer.Utilities
         public const string MicrosoftCodeAnalysisDiagnosticsSymbolAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SymbolAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxNodeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext";
         public const string MicrosoftCodeAnalysisDiagnosticsSyntaxTreeAnalysisContext = "Microsoft.CodeAnalysis.Diagnostics.SyntaxTreeAnalysisContext";
+        public const string MicrosoftCodeAnalysisGeneratorAttribute = "Microsoft.CodeAnalysis.GeneratorAttribute";
         public const string MicrosoftCodeAnalysisHostMefMefConstruction = "Microsoft.CodeAnalysis.Host.Mef.MefConstruction";
+        public const string MicrosoftCodeAnalysisISourceGenerator = "Microsoft.CodeAnalysis.ISourceGenerator";
         public const string MicrosoftCodeAnalysisLocalizableString = "Microsoft.CodeAnalysis.LocalizableString";
         public const string MicrosoftCodeAnalysisLocalizableResourceString = "Microsoft.CodeAnalysis.LocalizableResourceString";
         public const string MicrosoftCodeAnalysisSharedCollectionsTemporaryArrayExtensions = "Microsoft.CodeAnalysis.Shared.Collections.TemporaryArrayExtensions";

@@ -530,12 +530,15 @@
     <value>Use 'IsKind' instead of 'Kind'</value>
   </data>
   <data name="MissingSourceGeneratorAttributeDescription" xml:space="preserve">
-    <value>'{0}' inherits from ISourceGenerator but does not have the [Generator] attribute</value>
+    <value>'{0}' implements 'ISourceGenerator' but does not have the Generator attribute.</value>
   </data>
   <data name="MissingSourceGeneratorAttributeMessage" xml:space="preserve">
-    <value>Missing [Generator] Attribute</value>
+    <value>Missing Generator attribute</value>
   </data>
   <data name="MissingSourceGeneratorAttributeTitle" xml:space="preserve">
-    <value>Missing [Generator] Attribute</value>
+    <value>Missing Generator Attribute</value>
+  </data>
+  <data name="AddGeneratorAttribute" xml:space="preserve">
+    <value>Add Generator Attribute</value>
   </data>
 </root>

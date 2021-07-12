@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.SourceGeneratorAttributeAnalyzer,
@@ -16,150 +16,73 @@ namespace Microsoft.CodeAnalysis.Analyzers.UnitTests.MetaAnalyzers
 {
     public class MissingGeneratorAttributeRuleTests
     {
-        private const string SourceGeneratorStub_CSharp = @"
-using System;
-using Microsoft.CodeAnalysis;
-
-namespace Microsoft.CodeAnalysis
-{
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class GeneratorAttribute : Attribute
-    {
-    }
-
-    public interface ISourceGenerator
-    {
-        void Initialize(GeneratorInitializationContext context);
-        void Execute(GeneratorExecutionContext context);
-    }
-
-    public struct GeneratorInitializationContext
-    {
-    }
-
-    public readonly struct GeneratorExecutionContext
-    {
-    }
-}";
-
-        private const string SourceGeneratorStub_VisualBasic = @"
-Imports System
-Imports Microsoft.CodeAnalysis
-
-Namespace Microsoft.CodeAnalysis
-    <AttributeUsage(AttributeTargets.Class)>
-    public Class GeneratorAttribute
-            Inherits Attribute
-    End Class
-
-    public interface ISourceGenerator
-        Sub Initialize(context As GeneratorInitializationContext)
-        Sub Execute(context As GeneratorExecutionContext)
-    End Interface
-
-    public Class GeneratorInitializationContext
-    End Class
-
-    public Class GeneratorExecutionContext
-    End Class
-End Namespace";
-
-        [Fact]
-        public async Task TestMissing_CSharp()
-        {
-            var code = @"
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-
-[Generator]
-public class CustomGenerator : ISourceGenerator
-{
-    public void Initialize(GeneratorInitializationContext context) {}
-
-    public void Execute(GeneratorExecutionContext context)
-    {
-    }
-}";
-
-            await new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources = { code , SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
-                }
-            }.RunAsync();
-        }
-
-        [Fact]
-        public async Task TestMissing_VisualBasic()
-        {
-            var code = @"
-Imports Microsoft.CodeAnalysis
-
-<Generator>
-Public Class CustomGenerator 
-    Implements ISourceGenerator
-
-    Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
-
-    End Sub
-
-    Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
-
-    End Sub
-End Class";
-
-            await new VerifyVB.Test
-            {
-                TestState =
-                {
-                    Sources = { code , SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
-                }
-            }.RunAsync();
-        }
+        private static readonly ReferenceAssemblies ReferenceAssemblies = 
+            ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis", "3.10.0")));
 
         [Fact]
         public async Task TestSimpleClass_CSharp()
         {
             var code = @"
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 public class [|CustomGenerator|] : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context) {}
-
-    public void Execute(GeneratorExecutionContext context)
-    {
-    }
+    public void Execute(GeneratorExecutionContext context) {}
 }";
 
             var fixedCode = @"
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 [Generator]
 public class CustomGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context) {}
-
-    public void Execute(GeneratorExecutionContext context)
-    {
-    }
+    public void Execute(GeneratorExecutionContext context) {}
 }";
             await new VerifyCS.Test
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
-                    Sources = { fixedCode, SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference},
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestSimpleClass_FullyQualified_CSharp()
+        {
+            var code = @"
+public class [|CustomGenerator|] : Microsoft.CodeAnalysis.ISourceGenerator
+{
+    public void Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext context) {}
+    public void Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext context) {}
+}";
+
+            var fixedCode = @"
+[Microsoft.CodeAnalysis.Generator]
+public class CustomGenerator : Microsoft.CodeAnalysis.ISourceGenerator
+{
+    public void Initialize(Microsoft.CodeAnalysis.GeneratorInitializationContext context) {}
+    public void Execute(Microsoft.CodeAnalysis.GeneratorExecutionContext context) {}
+}";
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
+                },
+                FixedState =
+                {
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -202,13 +125,54 @@ End Class";
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
-                    Sources = { fixedCode, SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference},
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
+                },
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestSimpleClass_FullyQualified_VisualBasic()
+        {
+            var code = @"
+Public Class [|CustomGenerator|] 
+    Implements Microsoft.CodeAnalysis.ISourceGenerator
+
+    Public Sub Initialize(context As Microsoft.CodeAnalysis.GeneratorInitializationContext) Implements Microsoft.CodeAnalysis.ISourceGenerator.Initialize
+    End Sub
+
+    Sub Execute(context As Microsoft.CodeAnalysis.GeneratorExecutionContext) Implements Microsoft.CodeAnalysis.ISourceGenerator.Execute
+    End Sub
+End Class";
+
+            var fixedCode = @"
+<Microsoft.CodeAnalysis.Generator>
+Public Class CustomGenerator 
+    Implements Microsoft.CodeAnalysis.ISourceGenerator
+
+    Public Sub Initialize(context As Microsoft.CodeAnalysis.GeneratorInitializationContext) Implements Microsoft.CodeAnalysis.ISourceGenerator.Initialize
+    End Sub
+
+    Sub Execute(context As Microsoft.CodeAnalysis.GeneratorExecutionContext) Implements Microsoft.CodeAnalysis.ISourceGenerator.Execute
+    End Sub
+End Class";
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
+                },
+                FixedState =
+                {
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -223,17 +187,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 public abstract class CustomGeneratorBase : ISourceGenerator
 {
     public abstract void Initialize(GeneratorInitializationContext context);
-
     public abstract void Execute(GeneratorExecutionContext context);
 }
 
 public class [|CustomGenerator|] : CustomGeneratorBase
 {
     public override void Initialize(GeneratorInitializationContext context) {}
-
-    public override void Execute(GeneratorExecutionContext context)
-    {
-    }
+    public override void Execute(GeneratorExecutionContext context) {}
 }";
 
             var fixedCode = @"
@@ -243,7 +203,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 public abstract class CustomGeneratorBase : ISourceGenerator
 {
     public abstract void Initialize(GeneratorInitializationContext context);
-
     public abstract void Execute(GeneratorExecutionContext context);
 }
 
@@ -251,22 +210,19 @@ public abstract class CustomGeneratorBase : ISourceGenerator
 public class CustomGenerator : CustomGeneratorBase
 {
     public override void Initialize(GeneratorInitializationContext context) {}
-
-    public override void Execute(GeneratorExecutionContext context)
-    {
-    }
+    public override void Execute(GeneratorExecutionContext context) {}
 }";
             await new VerifyCS.Test
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
-                    Sources = { fixedCode, SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference},
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -288,11 +244,9 @@ Public Class [|CustomGenerator|]
     Inherits CustomGeneratorBase
 
     Public Overrides Sub Initialize(context As GeneratorInitializationContext)
-
     End Sub
 
     Public Overrides Sub Execute(context As GeneratorExecutionContext)
-
     End Sub
 End Class";
 
@@ -311,11 +265,9 @@ Public Class CustomGenerator
     Inherits CustomGeneratorBase
 
     Public Overrides Sub Initialize(context As GeneratorInitializationContext)
-
     End Sub
 
     Public Overrides Sub Execute(context As GeneratorExecutionContext)
-
     End Sub
 End Class";
 
@@ -323,13 +275,13 @@ End Class";
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
-                    Sources = { fixedCode, SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference},
+                    Sources = { fixedCode },
+                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -345,24 +297,20 @@ using Microsoft.CodeAnalysis.Diagnostics;
 public abstract class CustomGeneratorBase : ISourceGenerator
 {
     public abstract void Initialize(GeneratorInitializationContext context);
-
     public abstract void Execute(GeneratorExecutionContext context);
 }
 
 public class CustomGenerator : CustomGeneratorBase
 {
     public override void Initialize(GeneratorInitializationContext context) {}
-
-    public override void Execute(GeneratorExecutionContext context)
-    {
-    }
+    public override void Execute(GeneratorExecutionContext context) {}
 }";
             await new VerifyCS.Test
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_CSharp },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 }
             }.RunAsync();
         }
@@ -385,11 +333,9 @@ Public Class CustomGenerator
     Inherits CustomGeneratorBase
 
     Public Overrides Sub Initialize(context As GeneratorInitializationContext)
-
     End Sub
 
     Public Overrides Sub Execute(context As GeneratorExecutionContext)
-
     End Sub
 End Class";
 
@@ -397,8 +343,8 @@ End Class";
             {
                 TestState =
                 {
-                    Sources = { code , SourceGeneratorStub_VisualBasic },
-                    AdditionalReferences = { AdditionalMetadataReferences.CodeAnalysisReference}
+                    Sources = { code },
+                    ReferenceAssemblies = ReferenceAssemblies
                 }
             }.RunAsync();
         }

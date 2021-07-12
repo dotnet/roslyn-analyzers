@@ -31,20 +31,17 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                var sourceGenerator = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisISourceGenerator);
-                var sourceGeneratorAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute);
-
-                if (sourceGenerator == null || sourceGeneratorAttribute == null)
-                    // We don't need to check assemblies unless they're referencing Microsoft.CodeAnalysis which defines DiagnosticAnalyzer.
-                    return;
-
-                compilationContext.RegisterSymbolAction(c => AnalyzeSymbol(c, sourceGenerator, sourceGeneratorAttribute), SymbolKind.NamedType);
+                if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisISourceGenerator, out var sourceGenerator) &&
+                    context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute, out var generatorAttribute))
+                {
+                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, sourceGenerator, generatorAttribute), SymbolKind.NamedType);
+                }
             });
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext c, INamedTypeSymbol sourceGenerator, INamedTypeSymbol sourceGeneratorAttribute)
+        private static void AnalyzeSymbol(SymbolAnalysisContext c, INamedTypeSymbol sourceGenerator, INamedTypeSymbol generatorAttribute)
         {
             var symbol = (INamedTypeSymbol)c.Symbol;
 
@@ -58,7 +55,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            if (symbol.GetApplicableAttributes(null).Any(a => a.AttributeClass.Inherits(sourceGeneratorAttribute)))
+            if (symbol.GetApplicableAttributes(null).Any(a => a.AttributeClass.Equals(generatorAttribute, SymbolEqualityComparer.Default)))
             {
                 return;
             }

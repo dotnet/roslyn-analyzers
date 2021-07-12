@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
@@ -31,10 +31,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(new MyCodeAction(
-                    "Fix stuff",
-                    (c) => FixDocumentAsync(document, node, c),
-                    "Fix stuff"), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        CodeAnalysisDiagnosticsResources.AddGeneratorAttribute,
+                        c => FixDocumentAsync(document, node, c),
+                        equivalenceKey: nameof(SourceGeneratorAttributeAnalyzerFix)),
+                    diagnostic);
             }
         }
 
@@ -49,13 +51,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             editor.ReplaceNode(node, generator.AddAttributes(node, generatorAttribute));
 
             return editor.GetChangedDocument();
-        }
-
-        private class MyCodeAction : DocumentChangeAction
-        {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) : base(title, createChangedDocument, equivalenceKey)
-            {
-            }
         }
     }
 }

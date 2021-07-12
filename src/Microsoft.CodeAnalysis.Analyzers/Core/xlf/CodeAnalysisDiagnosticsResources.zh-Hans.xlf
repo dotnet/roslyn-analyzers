@@ -7,6 +7,11 @@
         <target state="translated">将规则项添加到未提供的版本文件</target>
         <note />
       </trans-unit>
+      <trans-unit id="AddGeneratorAttribute">
+        <source>Add Generator Attribute</source>
+        <target state="new">Add Generator Attribute</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ClassIsNotDiagnosticAnalyzerMessage">
         <source>Inherit type '{0}' from DiagnosticAnalyzer or remove the DiagnosticAnalyzerAttribute(s)</source>
         <target state="translated">从 DiagnosticAnalyzer 继承类型“{0}”，或者删除 DiagnosticAnalyzerAttribute</target>
@@ -233,18 +238,18 @@
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeDescription">
-        <source>'{0}' inherits from ISourceGenerator but does not have the [Generator] attribute</source>
-        <target state="new">'{0}' inherits from ISourceGenerator but does not have the [Generator] attribute</target>
+        <source>'{0}' implements 'ISourceGenerator' but does not have the Generator attribute.</source>
+        <target state="new">'{0}' implements 'ISourceGenerator' but does not have the Generator attribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeMessage">
-        <source>Missing [Generator] Attribute</source>
-        <target state="new">Missing [Generator] Attribute</target>
+        <source>Missing Generator attribute</source>
+        <target state="new">Missing Generator attribute</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingSourceGeneratorAttributeTitle">
-        <source>Missing [Generator] Attribute</source>
-        <target state="new">Missing [Generator] Attribute</target>
+        <source>Missing Generator Attribute</source>
+        <target state="new">Missing Generator Attribute</target>
         <note />
       </trans-unit>
       <trans-unit id="MissingSymbolKindArgumentToRegisterActionMessage">

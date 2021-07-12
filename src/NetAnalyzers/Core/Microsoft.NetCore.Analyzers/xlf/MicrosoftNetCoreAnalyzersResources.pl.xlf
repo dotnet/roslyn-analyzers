@@ -2427,6 +2427,26 @@
         <target state="translated">Jeśli to możliwe, rozważ użycie kontroli dostępu opartej na rolach platformy Azure zamiast sygnatury dostępu współdzielonego (SAS). Jeśli nadal chcesz używać sygnatury SAS, określ właściwość SharedAccessProtocol.HttpsOnly.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
+        <source>Use 'Clear()'</source>
+        <target state="new">Use 'Clear()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillDescription">
+        <source>It is more efficient to use 'Clear', instead of 'Fill' with default value.</source>
+        <target state="new">It is more efficient to use 'Clear', instead of 'Fill' with default value.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillMessage">
+        <source>Use 'Clear' instead of 'Fill' with default value for spans</source>
+        <target state="new">Use 'Clear' instead of 'Fill' with default value for spans</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillTitle">
+        <source>Use Clear instead of Fill with default value</source>
+        <target state="new">Use Clear instead of Fill with default value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">
         <source>Use 'string.Equals'</source>
         <target state="new">Use 'string.Equals'</target>

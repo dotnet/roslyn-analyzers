@@ -2447,6 +2447,26 @@
         <target state="new">Use span-based 'string.Concat'</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillCodeFixTitle">
+        <source>Use 'Clear()'</source>
+        <target state="new">Use 'Clear()'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillDescription">
+        <source>It is more efficient to use 'Clear', instead of 'Fill' with default value.</source>
+        <target state="new">It is more efficient to use 'Clear', instead of 'Fill' with default value.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillMessage">
+        <source>Use 'Clear' instead of 'Fill' with default value for spans</source>
+        <target state="new">Use 'Clear' instead of 'Fill' with default value for spans</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSpanClearInsteadOfFillTitle">
+        <source>Use Clear instead of Fill with default value</source>
+        <target state="new">Use Clear instead of Fill with default value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseStringContainsCharOverloadWithSingleCharactersDescription">
         <source>'string.Contains(char)' is available as a better performing overload for single char lookup.</source>
         <target state="new">'string.Contains(char)' is available as a better performing overload for single char lookup.</target>

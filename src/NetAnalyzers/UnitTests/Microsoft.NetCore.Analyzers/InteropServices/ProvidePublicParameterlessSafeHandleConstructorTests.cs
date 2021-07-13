@@ -2,6 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.InteropServices.ProvidePublicParameterlessSafeHandleConstructorAnalyzer,
@@ -438,6 +439,7 @@ End Class";
         }
 
         [Fact]
+        [WorkItem(5231, "https://github.com/dotnet/roslyn-analyzers/issues/5231")]
         public async Task SafeHandleDerived_WithInternalParameterlessConstructor_InternalType_NoDiagnostic_CS()
         {
             string source = @"
@@ -458,6 +460,7 @@ internal class BarHandle : SafeHandleZeroOrMinusOneIsInvalid
         }
 
         [Fact]
+        [WorkItem(5231, "https://github.com/dotnet/roslyn-analyzers/issues/5231")]
         public async Task SafeHandleDerived_WithInternalParameterlessConstructor_DefaultAccessibilityType_NoDiagnostic_CS()
         {
             string source = @"
@@ -478,6 +481,7 @@ class BarHandle : SafeHandleZeroOrMinusOneIsInvalid
         }
 
         [Fact]
+        [WorkItem(5231, "https://github.com/dotnet/roslyn-analyzers/issues/5231")]
         public async Task SafeHandleDerived_WithPrivateProtectedParameterlessConstructor_PrivateProtectedType_NoDiagnostic_CS()
         {
             string source = @"

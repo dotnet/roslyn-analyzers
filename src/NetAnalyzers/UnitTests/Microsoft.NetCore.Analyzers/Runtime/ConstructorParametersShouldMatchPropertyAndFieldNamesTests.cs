@@ -254,18 +254,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 public class C1
                 {
-                    private int FirstProp { get; }
-                    private object SecondProp { get; }
+                    private int {|#1:FirstProp|} { get; }
+                    private object {|#3:SecondProp|} { get; }
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    public C1(int {|#0:firstProp|}, object {|#2:secondProp|})
                     {
                         this.FirstProp = firstProp;
                         this.SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstProp", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondProp", "SecondProp"));
         }
 
         [Fact]
@@ -275,17 +275,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 Imports System.Text.Json.Serialization
 
                 Public Class C1
-                    Private Property FirstProp() As Integer
-                    Private Property SecondProp() as Object
+                    Private Property {|#1:FirstProp|}() As Integer
+                    Private Property {|#3:SecondProp|}() as Object
 
                     <JsonConstructor>
-                    Public Sub New({|#0:firstProp|} as Integer, {|#1:secondProp|} as Object)
+                    Public Sub New({|#0:firstProp|} as Integer, {|#2:secondProp|} as Object)
                         Me.FirstProp = firstProp
                         Me.SecondProp = secondProp
                     End Sub
                 End Class",
-                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071BasicPropertyOrFieldResultAt(0, 1, "C1", "firstProp", "FirstProp"),
+                CA1071BasicPropertyOrFieldResultAt(2, 3, "C1", "secondProp", "SecondProp"));
         }
 
         #endregion
@@ -605,18 +605,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 public class C1
                 {
-                    private int firstField;
-                    private object secondField;
+                    private int {|#1:firstField|};
+                    private object {|#3:secondField|};
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    public C1(int {|#0:firstField|}, object {|#2:secondField|})
                     {
                         this.firstField = firstField;
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -626,17 +626,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 Imports System.Text.Json.Serialization
 
                 Public Class C1
-                    Private firstField as Integer
-                    Private secondField as Object
+                    Private {|#1:firstField|} as Integer
+                    Private {|#3:secondField|} as Object
 
                     <JsonConstructor>
-                    Public Sub New({|#0:firstField|} as Integer, {|#1:secondField|} as Object)
+                    Public Sub New({|#0:firstField|} as Integer, {|#2:secondField|} as Object)
                         Me.firstField = firstField
                         Me.secondField = secondField
                     End Sub
                 End Class",
-                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -648,20 +648,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 public class C1
                 {
                     [JsonInclude]
-                    private int firstField;
+                    private int {|#1:firstField|};
 
                     [JsonInclude]
-                    private object secondField;
+                    private object {|#3:secondField|};
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    public C1(int {|#0:firstField|}, object {|#2:secondField|})
                     {
                         this.firstField = firstField;
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -672,19 +672,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 Public Class C1
                     <JsonInclude>
-                    Private firstField as Integer
+                    Private {|#1:firstField|} as Integer
 
                     <JsonInclude>
-                    Private secondField as Object
+                    Private {|#3:secondField|} as Object
 
                     <JsonConstructor>
-                    Public Sub New({|#0:firstField|} as Integer, {|#1:secondField|} as Object)
+                    Public Sub New({|#0:firstField|} as Integer, {|#2:secondField|} as Object)
                         Me.firstField = firstField
                         Me.secondField = secondField
                     End Sub
                 End Class",
-                CA1071BasicPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071BasicPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071BasicPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071BasicPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         #endregion
@@ -831,18 +831,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 public record C1
                 {
-                    private int FirstProp { get; }
-                    private object SecondProp { get; }
+                    private int {|#1:FirstProp|} { get; }
+                    private object {|#3:SecondProp|} { get; }
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstProp|}, object {|#1:secondProp|})
+                    public C1(int {|#0:firstProp|}, object {|#2:secondProp|})
                     {
                         this.FirstProp = firstProp;
                         this.SecondProp = secondProp;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstProp", "FirstProp"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondProp", "SecondProp"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstProp", "FirstProp"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondProp", "SecondProp"));
         }
 
         #endregion
@@ -1029,18 +1029,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 public record C1
                 {
-                    private int firstField;
-                    private object secondField;
+                    private int {|#1:firstField|};
+                    private object {|#3:secondField|};
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    public C1(int {|#0:firstField|}, object {|#2:secondField|})
                     {
                         this.firstField = firstField;
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         [Fact]
@@ -1052,20 +1052,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 public record C1
                 {
                     [JsonInclude]
-                    private int firstField;
+                    private int {|#1:firstField|};
 
                     [JsonInclude]
-                    private object secondField;
+                    private object {|#3:secondField|};
 
                     [JsonConstructor]
-                    public C1(int {|#0:firstField|}, object {|#1:secondField|})
+                    public C1(int {|#0:firstField|}, object {|#2:secondField|})
                     {
                         this.firstField = firstField;
                         this.secondField = secondField;
                     }
                 }",
-                CA1071CSharpPropertyOrFieldResultAt(0, "C1", "firstField", "firstField"),
-                CA1071CSharpPropertyOrFieldResultAt(1, "C1", "secondField", "secondField"));
+                CA1071CSharpPropertyOrFieldResultAt(0, 1, "C1", "firstField", "firstField"),
+                CA1071CSharpPropertyOrFieldResultAt(2, 3, "C1", "secondField", "secondField"));
         }
 
         #endregion
@@ -1117,9 +1117,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                .WithLocation(markupKey)
                .WithArguments(arguments);
 
+        private DiagnosticResult CA1071CSharpPropertyOrFieldResultAt(int markupKeyParam, int markupKeyFieldOrProp, params string[] arguments)
+           => VerifyCS.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyOrFieldNameRule)
+               .WithLocation(markupKeyParam)
+               .WithLocation(markupKeyFieldOrProp)
+               .WithArguments(arguments);
+
         private DiagnosticResult CA1071BasicPropertyOrFieldResultAt(int markupKey, params string[] arguments)
             => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyOrFieldNameRule)
                .WithLocation(markupKey)
+               .WithArguments(arguments);
+
+        private DiagnosticResult CA1071BasicPropertyOrFieldResultAt(int markupKey, int markupKeyFieldOrProp, params string[] arguments)
+            => VerifyVB.Diagnostic(ConstructorParametersShouldMatchPropertyAndFieldNamesAnalyzer.PropertyOrFieldNameRule)
+               .WithLocation(markupKey)
+               .WithLocation(markupKeyFieldOrProp)
                .WithArguments(arguments);
 
         #endregion

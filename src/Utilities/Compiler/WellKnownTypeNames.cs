@@ -94,15 +94,14 @@ namespace Analyzer.Utilities
         public const string SystemAppContext = "System.AppContext";
         public const string SystemAppDomain = "System.AppDomain";
         public const string SystemArgumentException = "System.ArgumentException";
+        public const string SystemArray = "System.Array";
         public const string SystemAttribute = "System.Attribute";
         public const string SystemAttributeTargets = "System.AttributeTargets";
         public const string SystemAttributeUsageAttribute = "System.AttributeUsageAttribute";
         public const string SystemBoolean = "System.Boolean";
         public const string SystemBuffer = "System.Buffer";
         public const string SystemBuffersMemoryManager1 = "System.Buffers.MemoryManager`1";
-        public const string SystemArray = "System.Array";
         public const string SystemByte = "System.Byte";
-        public const string SystemSByte = "System.SByte";
         public const string SystemChar = "System.Char";
         public const string SystemCLSCompliantAttribute = "System.CLSCompliantAttribute";
         public const string SystemCodeDomCompilerGeneratedCodeAttribute = "System.CodeDom.Compiler.GeneratedCodeAttribute";
@@ -298,6 +297,7 @@ namespace Analyzer.Utilities
         public const string SystemRuntimeSerializationOnSerializingAttribute = "System.Runtime.Serialization.OnSerializingAttribute";
         public const string SystemRuntimeSerializationSerializationInfo = "System.Runtime.Serialization.SerializationInfo";
         public const string SystemRuntimeSerializationStreamingContext = "System.Runtime.Serialization.StreamingContext";
+        public const string SystemSByte = "System.SByte";
         public const string SystemSecurityAuthenticationSslProtocols = "System.Security.Authentication.SslProtocols";
         public const string SystemSecurityCryptographyAesCcm = "System.Security.Cryptography.AesCcm";
         public const string SystemSecurityCryptographyAesGcm = "System.Security.Cryptography.AesGcm";

@@ -355,6 +355,74 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class");
         }
 
+        [Fact]
+        public async Task CA1071_ClassSinglePropertyPrivate_CSharp()
+        {
+            await VerifyCSharpCodeFixAsync(@"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+                    private int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int [|firstProp|], object secondProp)
+                    {
+                        this.FirstProp = firstProp;
+                        this.SecondProp = secondProp;
+                    }
+                }",
+                @"
+                using System.Text.Json.Serialization;
+
+                public class C1
+                {
+    public int FirstProp { get; }
+
+                    public object SecondProp { get; }
+
+                    [JsonConstructor]
+                    public C1(int firstProp, object secondProp)
+                    {
+                        this.FirstProp = firstProp;
+                        this.SecondProp = secondProp;
+                    }
+                }");
+        }
+
+        [Fact]
+        public async Task CA1071_ClassSinglePropertyPrivate_Basic()
+        {
+            await VerifyBasicCodeFixAsync(@"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+                    Private Property FirstProp() As Integer
+                    Property SecondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New([|firstProp|] as Integer, secondProp as Object)
+                        Me.FirstProp = firstProp
+                        Me.SecondProp = secondProp
+                    End Sub
+                End Class",
+                @"
+                Imports System.Text.Json.Serialization
+
+                Public Class C1
+    Public Property FirstProp() As Integer
+                    Property SecondProp() as Object
+
+                    <JsonConstructor>
+                    Public Sub New(firstProp as Integer, secondProp as Object)
+                        Me.FirstProp = firstProp
+                        Me.SecondProp = secondProp
+                    End Sub
+                End Class");
+        }
+
         private static async Task VerifyCSharpCodeFixAsync(string source, string expected)
         {
             var csharpTest = new VerifyCS.Test

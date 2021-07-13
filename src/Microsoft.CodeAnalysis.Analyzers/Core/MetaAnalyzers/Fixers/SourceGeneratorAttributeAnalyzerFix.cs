@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -32,10 +33,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
-                    CodeAction.Create(
-                        CodeAnalysisDiagnosticsResources.AddGeneratorAttribute,
-                        c => FixDocumentAsync(document, node, c),
-                        equivalenceKey: nameof(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute)),
+                    new MyCodeAction(c => FixDocumentAsync(document, node, c)),
                     diagnostic);
             }
         }
@@ -51,6 +49,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             editor.ReplaceNode(node, generator.AddAttributes(node, generatorAttribute));
 
             return editor.GetChangedDocument();
+        }
+
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(Func<CancellationToken, Task<Document>> func)
+                : base(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute, func, nameof(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute))
+            {
+            }
         }
     }
 }

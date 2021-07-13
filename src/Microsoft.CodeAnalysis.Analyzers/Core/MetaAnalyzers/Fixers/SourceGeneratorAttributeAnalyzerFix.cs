@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                     CodeAction.Create(
                         CodeAnalysisDiagnosticsResources.AddGeneratorAttribute,
                         c => FixDocumentAsync(document, node, c),
-                        equivalenceKey: nameof(SourceGeneratorAttributeAnalyzerFix)),
+                        equivalenceKey: nameof(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute)),
                     diagnostic);
             }
         }

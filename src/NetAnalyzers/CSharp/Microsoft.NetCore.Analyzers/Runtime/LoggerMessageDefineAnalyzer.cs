@@ -46,20 +46,22 @@ namespace Microsoft.Extensions.Logging.Analyzers
                                                                          s_localizableTitleCA1727,
                                                                          s_localizableMessageCA1727,
                                                                          DiagnosticCategory.Naming,
-                                                                         RuleLevel.IdeSuggestion,
+                                                                         RuleLevel.Disabled,
                                                                          description: s_localizableDescriptionCA1727,
                                                                          isPortedFxCopRule: true,
                                                                          isDataflowRule: false,
+                                                                         // isEnabledByDefaultInAggressiveMode: false,
                                                                          isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA1839Rule = DiagnosticDescriptorHelper.Create(CA1839RuleId,
                                                                          s_localizableTitleCA1839,
                                                                          s_localizableMessageCA1839,
                                                                          DiagnosticCategory.Performance,
-                                                                         RuleLevel.IdeSuggestion,
+                                                                         RuleLevel.Disabled,
                                                                          description: s_localizableDescriptionCA1839,
                                                                          isPortedFxCopRule: true,
                                                                          isDataflowRule: false,
+                                                                         // isEnabledByDefaultInAggressiveMode: false,
                                                                          isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA2250Rule = DiagnosticDescriptorHelper.Create(CA2250RuleId,

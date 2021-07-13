@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.Extensions.Logging.Analyzers;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -17,6 +14,56 @@ namespace Microsoft.Extensions.Logging.Analyzer
 {
     public class FormatStringAnalyzerTests
     {
+        [Theory]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2250:""{0}""|}", "1", 1)]
+        public async Task CA2250IsProducedForNumericFormatArgument(string format)
+        {
+            // Make sure CA1727 is enabled for this test so we can verify it does not trigger on numeric arguments.
+            await TriggerCodeAsync(format);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2251:$""{string.Empty}""|}", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2251:""string"" + 2|}", "")]
+        public async Task CA2251IsProducedForDynamicFormatArgument(string format)
+        {
+            await TriggerCodeAsync(format);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2252:{|CA1727:""{string}""|}|}", "1, 2", 2)]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2252:{|CA1727:""{str"" + ""ing}""|}|}", "1, 2", 2)]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2252:""{"" + nameof(ILogger) + ""}""|}", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2252:{|CA1727:""{"" + Const + ""}""|}|}", "")]
+        public async Task CA2252IsProducedForFormatArgumentCountMismatch(string format)
+        {
+            await TriggerCodeAsync(format);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:""{camelCase}""|}", "1", 1)]
+        public async Task CA1727IsProducedForCamelCasedFormatArgument(string format)
+        {
+            await TriggerCodeAsync(format);
+        }
+
+        [Theory]
+        // Concat would be optimized by compiler
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"nameof(ILogger) + "" string""", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @""" string"" + "" string""", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"$"" string"" + $"" string""", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:""{st"" + ""ring}""|}", "1", 1)]
+
+        // we are unable to parse expressions
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:{|CA1727:""{string} {string}""|}|}", "new object[] { 1 }", 2)]
+
+        // CA2250 is not enabled by default.
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:""{camelCase}""|}", "1", 1)]
+        public async Task TemplateDiagnosticsAreNotProduced(string format)
+        {
+            await TriggerCodeAsync(format);
+        }
+
         [Theory]
         [InlineData(@"LoggerMessage.Define(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
         [InlineData(@"LoggerMessage.Define<int>(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
@@ -47,10 +94,27 @@ namespace Microsoft.Extensions.Logging.Analyzer
 
         public static IEnumerable<object[]> GenerateTemplateAndDefineUsages(string template, string arguments)
         {
-            return GenerateTemplateUsages(template, arguments).Concat(GenerateDefineUsages(template));
+            return GenerateTemplateUsages(template, arguments, skipDiagnosticForBeginScope: true).Concat(GenerateDefineUsages(template, numArgs: -1));
         }
 
-        public static IEnumerable<object[]> GenerateTemplateUsages(string template, string arguments)
+        public static IEnumerable<object[]> GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope(string template, string arguments, int numArgs = -1)
+        {
+            return GenerateTemplateUsages(template, arguments, skipDiagnosticForBeginScope: false).Concat(GenerateDefineUsages(template, numArgs));
+        }
+
+        private static IEnumerable<object[]> GenerateDefineUsages(string template, int numArgs)
+        {
+            // This is super rudimentary, but it works
+            int numberOfArguments = template.Count(c => c == '{');
+            if (numArgs != -1)
+            {
+                numberOfArguments = numArgs;
+            }
+            yield return new[] { $"LoggerMessage.{GenerateGenericInvocation(numberOfArguments, "DefineScope")}({template});" };
+            yield return new[] { $"LoggerMessage.{GenerateGenericInvocation(numberOfArguments, "Define")}(LogLevel.Information, 42, {template});" };
+        }
+
+        public static IEnumerable<object[]> GenerateTemplateUsages(string template, string arguments, bool skipDiagnosticForBeginScope)
         {
             var templateAndArguments = template;
             if (!string.IsNullOrEmpty(arguments))
@@ -69,19 +133,18 @@ namespace Microsoft.Extensions.Logging.Analyzer
             {
                 foreach (var format in formats)
                 {
-                    yield return new[] { $"logger.{method}({format}{templateAndArguments});" };
+                    yield return new[] { $"{{|CA1839:logger.{method}({format}{templateAndArguments})|}};" };
                 }
             }
 
-            yield return new[] { $"logger.BeginScope({templateAndArguments});" };
-        }
-
-        private static IEnumerable<object[]> GenerateDefineUsages(string template)
-        {
-            // This is super rudimentary, but it works
-            var braceCount = template.Count(c => c == '{');
-            yield return new[] { $"LoggerMessage.{GenerateGenericInvocation(braceCount, "DefineScope")}({template});" };
-            yield return new[] { $"LoggerMessage.{GenerateGenericInvocation(braceCount, "Define")}(LogLevel.Information, 42, {template});" };
+            if (skipDiagnosticForBeginScope)
+            {
+                yield return new[] { $"logger.BeginScope({templateAndArguments});" };
+            }
+            else
+            {
+                yield return new[] { $"{{|CA1839:logger.BeginScope({templateAndArguments})|}};" };
+            }
         }
 
         private static string GenerateGenericInvocation(int i, string method)
@@ -101,6 +164,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
 using Microsoft.Extensions.Logging;
 public class Program
 {{
+    public const string Const = ""const"";
     public static void Main()
     {{
         ILogger logger = null;

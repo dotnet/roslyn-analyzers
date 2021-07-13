@@ -73,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return;
                     }
 
-                    if (!constructor.GetResultantVisibility().IsAtLeastAsVisibleAs(type.GetResultantVisibility()))
+                    if (constructor.GetResultantVisibility().IsAtLeastAsVisibleAs(type.GetResultantVisibility()))
                     {
                         // The parameterless constructor is as visible as the containing type, so there is no diagnostic to emit.
                         return;

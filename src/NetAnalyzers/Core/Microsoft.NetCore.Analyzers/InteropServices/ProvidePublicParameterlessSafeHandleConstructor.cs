@@ -73,8 +73,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         return;
                     }
 
-                    if ((constructor.DeclaredAccessibility == Accessibility.ProtectedAndInternal && type.DeclaredAccessibility == Accessibility.ProtectedAndInternal)
-                        || constructor.DeclaredAccessibility == Accessibility.Internal && type.DeclaredAccessibility == Accessibility.Internal)
+                    if (!constructor.GetResultantVisibility().IsAtLeastAsVisibleAs(type.GetResultantVisibility()))
                     {
                         // The parameterless constructor is as visible as the containing type, so there is no diagnostic to emit.
                         return;

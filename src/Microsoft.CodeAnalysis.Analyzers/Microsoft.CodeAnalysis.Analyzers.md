@@ -424,6 +424,18 @@ Prefer 'syntax.IsKind(kind)' to 'syntax.Kind() == kind' when checking syntax kin
 |CodeFix|True|
 ---
 
+## RS1035: Missing 'Generator' Attribute
+
+'{0}' implements 'ISourceGenerator' but does not have the 'Generator' attribute.
+
+|Item|Value|
+|-|-|
+|Category|MicrosoftCodeAnalysisCorrectness|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
 ## [RS2000](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md): Add analyzer diagnostic IDs to analyzer release
 
 All supported analyzer diagnostic IDs should be part of an analyzer release.

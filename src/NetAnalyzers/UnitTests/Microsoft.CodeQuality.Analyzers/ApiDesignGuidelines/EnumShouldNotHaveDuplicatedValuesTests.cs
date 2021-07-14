@@ -310,6 +310,27 @@ End Enum");
         }
 
         [Fact]
+        public async Task EnumValueReferenceExplicitDuplicateMember_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public enum MyEnum
+{
+    Value1 = 1,
+    Value2 = Value1,
+    Value3 = Value2,
+}",
+                GetCSharpResultAt(6, 5, "Value3", "1", "Value1"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Enum MyEnum
+    Value1 = 1
+    Value2 = Value1
+    Value3 = Value2
+End Enum",
+                GetCSharpResultAt(5, 5, "Value3", "1", "Value1"));
+        }
+
+        [Fact]
         public async Task EnumDuplicatedBitwiseValueReference_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

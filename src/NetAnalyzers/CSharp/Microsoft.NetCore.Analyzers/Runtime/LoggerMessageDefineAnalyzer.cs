@@ -17,30 +17,30 @@ namespace Microsoft.Extensions.Logging.Analyzers
     public class LoggerMessageDefineAnalyzer : DiagnosticAnalyzer
     {
         internal const string CA1727RuleId = "CA1727";
-        internal const string CA1839RuleId = "CA1839";
-        internal const string CA2250RuleId = "CA2250";
-        internal const string CA2251RuleId = "CA2251";
+        internal const string CA1848RuleId = "CA1848";
         internal const string CA2252RuleId = "CA2252";
+        internal const string CA2253RuleId = "CA2253";
+        internal const string CA2254RuleId = "CA2254";
 
         private static readonly LocalizableString s_localizableTitleCA1727 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUsePascalCasedLogMessageTokensTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageCA1727 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUsePascalCasedLogMessageTokensMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionCA1727 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUsePascalCasedLogMessageTokensDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1839 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1839 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1839 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1848 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1848 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1848 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticUseCompiledLogMessagesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA2250 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2250 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2250 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticNumericsInFormatStringDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA2251 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2251 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2251 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA2253 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA2253 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2253 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticConcatenationInFormatStringDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2252 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA2254 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA2254 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2254 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.LoggerMessageDiagnosticFormatParameterCountMismatchDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor CA1727Rule = DiagnosticDescriptorHelper.Create(CA1727RuleId,
                                                                          s_localizableTitleCA1727,
@@ -53,48 +53,48 @@ namespace Microsoft.Extensions.Logging.Analyzers
                                                                          // isEnabledByDefaultInAggressiveMode: false,
                                                                          isReportedAtCompilationEnd: true);
 
-        internal static DiagnosticDescriptor CA1839Rule = DiagnosticDescriptorHelper.Create(CA1839RuleId,
-                                                                         s_localizableTitleCA1839,
-                                                                         s_localizableMessageCA1839,
+        internal static DiagnosticDescriptor CA1848Rule = DiagnosticDescriptorHelper.Create(CA1848RuleId,
+                                                                         s_localizableTitleCA1848,
+                                                                         s_localizableMessageCA1848,
                                                                          DiagnosticCategory.Performance,
                                                                          RuleLevel.Disabled,
-                                                                         description: s_localizableDescriptionCA1839,
+                                                                         description: s_localizableDescriptionCA1848,
                                                                          isPortedFxCopRule: true,
                                                                          isDataflowRule: false,
                                                                          // isEnabledByDefaultInAggressiveMode: false,
-                                                                         isReportedAtCompilationEnd: true);
-
-        internal static DiagnosticDescriptor CA2250Rule = DiagnosticDescriptorHelper.Create(CA2250RuleId,
-                                                                         s_localizableTitleCA2250,
-                                                                         s_localizableMessageCA2250,
-                                                                         DiagnosticCategory.Usage,
-                                                                         RuleLevel.IdeSuggestion,
-                                                                         description: s_localizableDescriptionCA2250,
-                                                                         isPortedFxCopRule: true,
-                                                                         isDataflowRule: false,
-                                                                         isReportedAtCompilationEnd: true);
-
-        internal static DiagnosticDescriptor CA2251Rule = DiagnosticDescriptorHelper.Create(CA2251RuleId,
-                                                                         s_localizableTitleCA2251,
-                                                                         s_localizableMessageCA2251,
-                                                                         DiagnosticCategory.Usage,
-                                                                         RuleLevel.IdeSuggestion,
-                                                                         description: s_localizableDescriptionCA2251,
-                                                                         isPortedFxCopRule: true,
-                                                                         isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: true);
 
         internal static DiagnosticDescriptor CA2252Rule = DiagnosticDescriptorHelper.Create(CA2252RuleId,
                                                                          s_localizableTitleCA2252,
                                                                          s_localizableMessageCA2252,
                                                                          DiagnosticCategory.Usage,
-                                                                         RuleLevel.BuildWarning,
+                                                                         RuleLevel.IdeSuggestion,
                                                                          description: s_localizableDescriptionCA2252,
                                                                          isPortedFxCopRule: true,
                                                                          isDataflowRule: false,
                                                                          isReportedAtCompilationEnd: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1727Rule, CA1839Rule, CA2250Rule, CA2251Rule, CA2252Rule);
+        internal static DiagnosticDescriptor CA2253Rule = DiagnosticDescriptorHelper.Create(CA2253RuleId,
+                                                                         s_localizableTitleCA2253,
+                                                                         s_localizableMessageCA2253,
+                                                                         DiagnosticCategory.Usage,
+                                                                         RuleLevel.IdeSuggestion,
+                                                                         description: s_localizableDescriptionCA2253,
+                                                                         isPortedFxCopRule: true,
+                                                                         isDataflowRule: false,
+                                                                         isReportedAtCompilationEnd: true);
+
+        internal static DiagnosticDescriptor CA2254Rule = DiagnosticDescriptorHelper.Create(CA2254RuleId,
+                                                                         s_localizableTitleCA2254,
+                                                                         s_localizableMessageCA2254,
+                                                                         DiagnosticCategory.Usage,
+                                                                         RuleLevel.BuildWarning,
+                                                                         description: s_localizableDescriptionCA2254,
+                                                                         isPortedFxCopRule: true,
+                                                                         isDataflowRule: false,
+                                                                         isReportedAtCompilationEnd: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1727Rule, CA1848Rule, CA2252Rule, CA2253Rule, CA2254Rule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -131,7 +131,7 @@ namespace Microsoft.Extensions.Logging.Analyzers
 
             if (methodSymbol.ContainingType == loggerExtensionsType)
             {
-                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA1839Rule, invocation.GetLocation(), methodSymbol.Name));
+                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA1848Rule, invocation.GetLocation(), methodSymbol.Name));
             }
             else if (methodSymbol.ContainingType != loggerType && methodSymbol.ContainingType != loggerMessageType)
             {
@@ -192,7 +192,7 @@ namespace Microsoft.Extensions.Logging.Analyzers
             var text = TryGetFormatText(formatExpression, syntaxContext.SemanticModel);
             if (text == null)
             {
-                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2251Rule, formatExpression.GetLocation()));
+                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2253Rule, formatExpression.GetLocation()));
                 return;
             }
 
@@ -212,7 +212,7 @@ namespace Microsoft.Extensions.Logging.Analyzers
             {
                 if (int.TryParse(valueName, out _))
                 {
-                    syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2250Rule, formatExpression.GetLocation()));
+                    syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2252Rule, formatExpression.GetLocation()));
                 }
                 else if (char.IsLower(valueName[0]))
                 {
@@ -223,7 +223,7 @@ namespace Microsoft.Extensions.Logging.Analyzers
             var argsPassedDirectly = argsIsArray && paramsCount == 1;
             if (!argsPassedDirectly && paramsCount != formatter.ValueNames.Count)
             {
-                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2252Rule, formatExpression.GetLocation()));
+                syntaxContext.ReportDiagnostic(Diagnostic.Create(CA2254Rule, formatExpression.GetLocation()));
             }
         }
 

@@ -15,27 +15,27 @@ namespace Microsoft.Extensions.Logging.Analyzer
     public class FormatStringAnalyzerTests
     {
         [Theory]
-        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2250:""{0}""|}", "1", 1)]
-        public async Task CA2250IsProducedForNumericFormatArgument(string format)
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2252:""{0}""|}", "1", 1)]
+        public async Task CA2252IsProducedForNumericFormatArgument(string format)
         {
             // Make sure CA1727 is enabled for this test so we can verify it does not trigger on numeric arguments.
             await TriggerCodeAsync(format);
         }
 
         [Theory]
-        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2251:$""{string.Empty}""|}", "")]
-        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2251:""string"" + 2|}", "")]
-        public async Task CA2251IsProducedForDynamicFormatArgument(string format)
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2253:$""{string.Empty}""|}", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2253:""string"" + 2|}", "")]
+        public async Task CA2253IsProducedForDynamicFormatArgument(string format)
         {
             await TriggerCodeAsync(format);
         }
 
         [Theory]
-        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2252:{|CA1727:""{string}""|}|}", "1, 2", 2)]
-        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2252:{|CA1727:""{str"" + ""ing}""|}|}", "1, 2", 2)]
-        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2252:""{"" + nameof(ILogger) + ""}""|}", "")]
-        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2252:{|CA1727:""{"" + Const + ""}""|}|}", "")]
-        public async Task CA2252IsProducedForFormatArgumentCountMismatch(string format)
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2254:{|CA1727:""{string}""|}|}", "1, 2", 2)]
+        [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA2254:{|CA1727:""{str"" + ""ing}""|}|}", "1, 2", 2)]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2254:""{"" + nameof(ILogger) + ""}""|}", "")]
+        [MemberData(nameof(GenerateTemplateAndDefineUsages), @"{|CA2254:{|CA1727:""{"" + Const + ""}""|}|}", "")]
+        public async Task CA2254IsProducedForFormatArgumentCountMismatch(string format)
         {
             await TriggerCodeAsync(format);
         }
@@ -57,7 +57,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
         // we are unable to parse expressions
         [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:{|CA1727:""{string} {string}""|}|}", "new object[] { 1 }", 2)]
 
-        // CA2250 is not enabled by default.
+        // CA2252 is not enabled by default.
         [MemberData(nameof(GenerateTemplateAndDefineUsagesWithDiagnosticForBeginScope), @"{|CA1727:""{camelCase}""|}", "1", 1)]
         public async Task TemplateDiagnosticsAreNotProduced(string format)
         {
@@ -65,15 +65,15 @@ namespace Microsoft.Extensions.Logging.Analyzer
         }
 
         [Theory]
-        [InlineData(@"LoggerMessage.Define(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.Define<int>(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.Define<int, int>(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.Define<int, int, int>(LogLevel.Information, 42, {|CA2252:""{One} {Two}""|});")]
-        [InlineData(@"LoggerMessage.Define<int, int, int, int>(LogLevel.Information, 42, {|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int, int>({|CA2252:""{One} {Two} {Three}""|});")]
-        [InlineData(@"LoggerMessage.DefineScope<int, int, int>({|CA2252:""{One} {Two}""|});")]
-        public async Task CA2252IsProducedForDefineMessageTypeParameterMismatch(string expression)
+        [InlineData(@"LoggerMessage.Define(LogLevel.Information, 42, {|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.Define<int>(LogLevel.Information, 42, {|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.Define<int, int>(LogLevel.Information, 42, {|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.Define<int, int, int>(LogLevel.Information, 42, {|CA2254:""{One} {Two}""|});")]
+        [InlineData(@"LoggerMessage.Define<int, int, int, int>(LogLevel.Information, 42, {|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int>({|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int, int>({|CA2254:""{One} {Two} {Three}""|});")]
+        [InlineData(@"LoggerMessage.DefineScope<int, int, int>({|CA2254:""{One} {Two}""|});")]
+        public async Task CA2254IsProducedForDefineMessageTypeParameterMismatch(string expression)
         {
             await TriggerCodeAsync(expression);
         }
@@ -86,9 +86,9 @@ namespace Microsoft.Extensions.Logging.Analyzer
         [InlineData("LogError", @"""This is a test {Message}"", ""Foo""")]
         [InlineData("LogCritical", @"""This is a test {Message}"", ""Foo""")]
         [InlineData("BeginScope", @"""This is a test {Message}"", ""Foo""")]
-        public async Task CA1839IsProducedForInvocationsOfAllLoggerExtensions(string method, string args)
+        public async Task CA1848IsProducedForInvocationsOfAllLoggerExtensions(string method, string args)
         {
-            string expression = @$"{{|CA1839:logger.{method}({args})|}};";
+            string expression = @$"{{|CA1848:logger.{method}({args})|}};";
             await TriggerCodeAsync(expression);
         }
 
@@ -133,7 +133,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
             {
                 foreach (var format in formats)
                 {
-                    yield return new[] { $"{{|CA1839:logger.{method}({format}{templateAndArguments})|}};" };
+                    yield return new[] { $"{{|CA1848:logger.{method}({format}{templateAndArguments})|}};" };
                 }
             }
 
@@ -143,7 +143,7 @@ namespace Microsoft.Extensions.Logging.Analyzer
             }
             else
             {
-                yield return new[] { $"{{|CA1839:logger.BeginScope({templateAndArguments})|}};" };
+                yield return new[] { $"{{|CA1848:logger.BeginScope({templateAndArguments})|}};" };
             }
         }
 

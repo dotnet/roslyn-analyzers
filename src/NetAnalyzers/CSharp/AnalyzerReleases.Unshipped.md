@@ -3,7 +3,7 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1727 | Naming | Disabled | LoggerMessageDefineAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727)
-CA1839 | Performance | Disabled | LoggerMessageDefineAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839)
-CA2250 | Usage | Info | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
-CA2251 | Usage | Info | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251)
-CA2252 | Usage | Warning | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252)
+CA1848 | Performance | Disabled | LoggerMessageDefineAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848)
+CA2252 | Usage | Info | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252)
+CA2253 | Usage | Info | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253)
+CA2254 | Usage | Warning | Descriptors, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254)

@@ -47,9 +47,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterSymbolStartAction(visitEnumSymbol, SymbolKind.NamedType);
 
-            void visitEnumSymbol(SymbolStartAnalysisContext symbolStartAnalysisContext)
+            void visitEnumSymbol(SymbolStartAnalysisContext context)
             {
-                if (symbolStartAnalysisContext.Symbol is not INamedTypeSymbol { TypeKind: TypeKind.Enum } enumSymbol)
+                if (context.Symbol is not INamedTypeSymbol { TypeKind: TypeKind.Enum } enumSymbol)
                 {
                     return;
                 }
@@ -80,11 +80,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
                 }
 
-                symbolStartAnalysisContext.RegisterOperationAction(visitFieldInitializer, OperationKind.FieldInitializer);
+                context.RegisterOperationAction(visitFieldInitializer, OperationKind.FieldInitializer);
+                context.RegisterSymbolEndAction(endVisitEnumSymbol);
 
-                void visitFieldInitializer(OperationAnalysisContext operationAnalysisContext)
+                void visitFieldInitializer(OperationAnalysisContext context)
                 {
-                    var initializer = (IFieldInitializerOperation)operationAnalysisContext.Operation;
+                    var initializer = (IFieldInitializerOperation)context.Operation;
                     if (initializer.InitializedFields.Length != 1)
                     {
                         return;
@@ -97,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         if (initializer.Value is not IConversionOperation { Operand: IFieldReferenceOperation { Field: IFieldSymbol referencedField } }
                             || !SymbolEqualityComparer.Default.Equals(referencedField, duplicatedField))
                         {
-                            operationAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
+                            context.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
                         }
                     }
 
@@ -105,7 +106,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     var referencedSymbols = PooledHashSet<IFieldSymbol>.GetInstance(SymbolEqualityComparer.Default);
                     var containingType = field.ContainingType;
                     visitInitializerValue(initializer.Value);
-                    referencedSymbols.Free(operationAnalysisContext.CancellationToken);
+                    referencedSymbols.Free(context.CancellationToken);
 
                     void visitInitializerValue(IOperation operation)
                     {
@@ -118,7 +119,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 if (SymbolEqualityComparer.Default.Equals(referencedField.ContainingType, containingType)
                                     && !referencedSymbols.Add(referencedField))
                                 {
-                                    operationAnalysisContext.ReportDiagnostic(fieldOperation.CreateDiagnostic(RuleDuplicatedBitwiseValuePart, referencedField.Name));
+                                    context.ReportDiagnostic(fieldOperation.CreateDiagnostic(RuleDuplicatedBitwiseValuePart, referencedField.Name));
                                 }
                                 break;
                             default:
@@ -131,19 +132,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
                 }
 
-                symbolStartAnalysisContext.RegisterSymbolEndAction(endVisitEnumSymbol);
-
-                void endVisitEnumSymbol(SymbolAnalysisContext symbolAnalysisContext)
+                void endVisitEnumSymbol(SymbolAnalysisContext context)
                 {
-                    var enumSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                    var enumSymbol = (INamedTypeSymbol)context.Symbol;
                     // visit any duplicates which didn't have an initializer
                     foreach (var field in duplicates)
                     {
                         var duplicatedField = membersByValue[field.ConstantValue];
-                        symbolAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
+                        context.ReportDiagnostic(field.CreateDiagnostic(RuleDuplicatedValue, field.Name, field.ConstantValue, duplicatedField.Name));
                     }
-                    duplicates.Free(symbolAnalysisContext.CancellationToken);
-                    membersByValue.Free(symbolAnalysisContext.CancellationToken);
+                    duplicates.Free(context.CancellationToken);
+                    membersByValue.Free(context.CancellationToken);
                 }
             }
         }

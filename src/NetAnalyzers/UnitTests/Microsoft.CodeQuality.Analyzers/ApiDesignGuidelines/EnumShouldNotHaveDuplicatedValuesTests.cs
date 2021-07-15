@@ -379,6 +379,35 @@ End Enum",
         }
 
         [Fact]
+        public async Task EnumBitwiseDuplicatedValue_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+public enum MyEnum
+{
+    None = 0,
+    Flag1 = 1 << 0,
+    Flag2 = 1 << 1,
+    AlsoNone = None,
+    Flag1AndNone = Flag1 | None,
+    Flag1AndAlsoNone = Flag1 | AlsoNone
+}",
+            GetCSharpResultAt(8, 5, "Flag1AndNone", "1", "Flag1"),
+            GetCSharpResultAt(9, 5, "Flag1AndAlsoNone", "1", "Flag1"));
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Public Enum MyEnum
+    None = 0
+    Flag1 = 1 << 0
+    Flag2 = 1 << 1
+    AlsoNone = None
+    Flag1AndNone = Flag1 Or None
+    Flag1AndAlsoNone = Flag1 Or AlsoNone
+End Enum",
+            GetBasicResultAt(7, 5, "Flag1AndNone", "1", "Flag1"),
+            GetBasicResultAt(8, 5, "Flag1AndAlsoNone", "1", "Flag1"));
+        }
+
+        [Fact]
         public async Task EnumDuplicatedBitwiseValueReferenceAndValue_Diagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

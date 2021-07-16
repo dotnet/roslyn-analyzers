@@ -549,9 +549,8 @@ public class C
 
 public enum MyEnum
 {
-    Value1 = C.I
-}",
-                DiagnosticResult.CompilerError("CS0133").WithSpan(9, 14, 9, 17).WithArguments("MyEnum.Value1"));
+    Value1 = {|CS0133:C.I|}
+}");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Module M
@@ -559,10 +558,9 @@ Public Module M
 End Module
 
 Public Enum MyEnum
-    Value1 = M.I
+    Value1 = {|BC30059:M.I|}
 End Enum
-",
-                DiagnosticResult.CompilerError("BC30059").WithSpan(7, 14, 7, 17));
+");
         }
 
         [Fact]
@@ -571,9 +569,8 @@ End Enum
             await VerifyCS.VerifyAnalyzerAsync(@"
 public enum MyEnum
 {
-    Value1 = null
-}",
-                DiagnosticResult.CompilerError("CS0037").WithSpan(4, 14, 4, 18).WithArguments("int"));
+    Value1 = {|CS0037:null|}
+}");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Public Enum MyEnum

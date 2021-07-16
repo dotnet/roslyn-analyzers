@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class BufferBlockCopyLengthAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2250";
+        internal const string RuleId = "CA2252";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyLengthTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyLengthMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -37,9 +37,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffer, out INamedTypeSymbol? bufferType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemBuffer, out INamedTypeSymbol? bufferType))
                 {
                     return;
                 }
@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArray, out INamedTypeSymbol? arrayType))
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArray, out INamedTypeSymbol? arrayType))
                 {
                     return;
                 }
@@ -69,31 +69,26 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemByte, out INamedTypeSymbol? byteType))
+                INamedTypeSymbol byteType = context.Compilation.GetSpecialType(SpecialType.System_Byte);
+                INamedTypeSymbol sByteType = context.Compilation.GetSpecialType(SpecialType.System_SByte);
+
+                if (byteType is null || sByteType is null)
                 {
                     return;
                 }
 
-                if (!compilationContext.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSByte, out INamedTypeSymbol? sByteType))
-                {
-                    return;
-                }
-
-                compilationContext.RegisterOperationAction(context =>
+                context.RegisterOperationAction(context =>
                 {
                     var invocationOperation = (IInvocationOperation)context.Operation;
-                    if (invocationOperation.Arguments.IsEmpty)
-                    {
-                        return;
-                    }
-
-                    ImmutableArray<IArgumentOperation> arguments = invocationOperation.Arguments;
-                    if (arguments.Length != 5)
-                    {
-                        return;
-                    }
 
                     if (!invocationOperation.TargetMethod.Equals(blockCopyMethod))
+                    {
+                        return;
+                    }
+
+                    ImmutableArray<IArgumentOperation> arguments = IOperationExtensions.GetArgumentsInParameterOrder(invocationOperation.Arguments);
+
+                    if (arguments.Length != 5)
                     {
                         return;
                     }

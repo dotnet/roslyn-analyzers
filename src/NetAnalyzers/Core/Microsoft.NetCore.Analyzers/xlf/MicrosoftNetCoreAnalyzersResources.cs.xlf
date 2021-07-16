@@ -138,18 +138,18 @@
         <note />
       </trans-unit>
       <trans-unit id="BufferBlockCopyDescription">
-        <source>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</source>
-        <target state="new">Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</target>
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using '.Length' on an array returns the length of the array.</source>
+        <target state="new">'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using '.Length' on an array returns the length of the array.</target>
         <note />
       </trans-unit>
       <trans-unit id="BufferBlockCopyLengthMessage">
-        <source>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</source>
-        <target state="new">Buffer.BlockCopy expects the number of bytes to be copied as the last parameter. Using .Length on an array returns the length of the array.</target>
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using '.Length' on an array returns the length of the array.</source>
+        <target state="new">'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument. Using '.Length' on an array returns the length of the array.</target>
         <note />
       </trans-unit>
       <trans-unit id="BufferBlockCopyLengthTitle">
-        <source>Buffer.BlockCopy expects the number of bytes to be copied as the last parameter</source>
-        <target state="new">Buffer.BlockCopy expects the number of bytes to be copied as the last parameter</target>
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument</source>
+        <target state="new">'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">

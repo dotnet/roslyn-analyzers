@@ -466,13 +466,45 @@ class Program
 ");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-imports system
+Imports System
 
-module program
-    sub main(args as string())
-        buffer.blockcopy(new integer() {1, 2, 3, 4}, 0, new integer() {0, 0, 0, 0}, 0, 8)
-    end sub
-end module
+Module Program
+    Sub Main(args As String())
+        Buffer.Blockcopy(new Integer() {1, 2, 3, 4}, 0, new Integer() {0, 0, 0, 0}, 0, 8)
+    End Sub
+End Module
+");
+        }
+
+        [Fact]
+        public async Task NamedArgumentsNotInOrder()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] src = new int[] {1, 2, 3, 4};
+        int[] dst = new int[] {0, 0, 0, 0};
+        
+        Buffer.BlockCopy(srcOffset: 0, src: src, count: [|src.Length|], dstOffset: 0, dst: dst);
+    }
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Dim src = New Integer() {1, 2, 3, 4}
+        Dim dst = New Integer() {0, 0, 0, 0}
+
+        Buffer.BlockCopy(srcOffset:=0, src:=src, count:=[|src.Length|], dstOffset:=0, dst:=dst)
+    End Sub
+End Module
 ");
         }
     }

@@ -1662,6 +1662,39 @@
   <data name="MakeParameterlessConstructorPublic" xml:space="preserve">
     <value>Make the constructor that takes zero parameters 'public'</value>
   </data>
+  <data name="DynamicInterfaceCastableImplementationUnsupportedDescription" xml:space="preserve">
+    <value>Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attributed interface requires the Default Interface Members feature, which is unsupported in Visual Basic.</value>
+  </data>
+  <data name="DynamicInterfaceCastableImplementationUnsupportedMessage" xml:space="preserve">
+    <value>Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported</value>
+  </data>
+  <data name="DynamicInterfaceCastableImplementationUnsupportedTitle" xml:space="preserve">
+    <value>Providing a 'DynamicInterfaceCastableImplementation' interface in Visual Basic is unsupported</value>
+  </data>
+  <data name="ImplementInterfacesOnDynamicCastableImplementation" xml:space="preserve">
+    <value>Implement inherited interfaces</value>
+  </data>
+  <data name="InterfaceMembersMissingImplementationDescription" xml:space="preserve">
+    <value>Types attributed with 'DynamicInterfaceCastableImplementationAttribute' act as an interface implementation for a type that implements the 'IDynamicInterfaceCastable' type. As a result, it must provide an implementation of all of the members defined in the inherited interfaces, because the type that implements 'IDynamicInterfaceCastable' will not provide them otherwise.</value>
+  </data>
+  <data name="InterfaceMembersMissingImplementationMessage" xml:space="preserve">
+    <value>Type '{0}' has the 'DynamicInterfaceCastableImplementationAttribute' applied to it but does not provide an implementation of all interface members defined in inherited interfaces</value>
+  </data>
+  <data name="InterfaceMembersMissingImplementationTitle" xml:space="preserve">
+    <value>All members declared in parent interfaces must have an implementation in a DynamicInterfaceCastableImplementation-attributed interface</value>
+  </data>
+  <data name="MembersDeclaredOnImplementationTypeMustBeSealedDescription" xml:space="preserve">
+    <value>Since a type that implements 'IDynamicInterfaceCastable' will conventionally not specify that it implements a 'DynamicInterfaceCastableImplementationAttribute'-attributed type, only the public interface type, virtual interface method lookup will fail even if the method has an implementation. As a result, all members on 'DynamicInterfaceCastableImplementation'-attributed types should be 'sealed'.</value>
+  </data>
+  <data name="MembersDeclaredOnImplementationTypeMustBeSealedMessage" xml:space="preserve">
+    <value>The '{0}' member on the '{1}' type should be marked 'sealed' as '{1}' has the 'DynamicInterfaceImplementationAttribute' applied</value>
+  </data>
+  <data name="MembersDeclaredOnImplementationTypeMustBeSealedTitle" xml:space="preserve">
+    <value>Members defined on an interface with the 'DynamicInterfaceCastableImplementationAttribute' should be 'sealed'</value>
+  </data>
+  <data name="SealMethodDeclaredOnImplementationType" xml:space="preserve">
+    <value>Mark method as sealed</value>
+  </data>
   <data name="UseStringContainsCharOverloadWithSingleCharactersDescription" xml:space="preserve">
     <value>'string.Contains(char)' is available as a better performing overload for single char lookup.</value>
   </data>

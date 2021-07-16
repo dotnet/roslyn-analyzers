@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class BufferBlockCopyLengthAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2252";
+        internal const string RuleId = "CA2017";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyLengthTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyLengthMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.BufferBlockCopyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                       s_localizableTitle,
                                                                                       s_localizableMessage,
-                                                                                      DiagnosticCategory.Usage,
+                                                                                      DiagnosticCategory.Reliability,
                                                                                       RuleLevel.IdeSuggestion,
                                                                                       s_localizableDescription,
                                                                                       isPortedFxCopRule: false,

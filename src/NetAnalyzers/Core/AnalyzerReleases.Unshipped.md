@@ -2,4 +2,4 @@
 ### New Rules
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-CA2252 | Usage | Info | BufferBlockCopyLengthAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252)
+CA2017 | Reliability | Info | BufferBlockCopyLengthAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017)

@@ -60,7 +60,7 @@ You do not need to manually install this NuGet package to your project if you ar
 
 **NOTE:** Starting version `3.3.2`, `Microsoft.CodeAnalysis.FxCopAnalyzers` has been **deprecated** in favor of `Microsoft.CodeAnalysis.NetAnalyzers`. Documentation to migrate from FxCopAnalyzers to NetAnalyzers is available [here](https://docs.microsoft.com/visualstudio/code-quality/migrate-from-fxcop-analyzers-to-net-analyzers).
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&view=overview&package=Microsoft.CodeAnalysis.FxCopAnalyzers&protocolType=NuGet)
 
@@ -76,7 +76,7 @@ This analyzer package contains all the ported FxCop rules that are applicable fo
 
 #### Microsoft.CodeQuality.Analyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeQuality.Analyzers&protocolType=NuGet)
 
@@ -84,7 +84,7 @@ This package contains common code quality improvement rules that are not specifi
 
 #### Microsoft.NetCore.Analyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.NetCore.Analyzers&protocolType=NuGet)
 
@@ -94,7 +94,7 @@ This package contains rules for correct usage of APIs that are present in _.NetC
 
 #### Microsoft.NetFramework.Analyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.NetFramework.Analyzers&protocolType=NuGet)
 
@@ -106,7 +106,7 @@ This package contains rules for correct usage of APIs that are present only in _
 
 ### Microsoft.CodeAnalysis.Analyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet6&package=Microsoft.CodeAnalysis.Analyzers&protocolType=NuGet)
 
@@ -114,7 +114,7 @@ This package contains rules for correct usage of APIs from the [Microsoft.CodeAn
 
 ### Roslyn.Diagnostics.Analyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Roslyn.Diagnostics.Analyzers&protocolType=NuGet)
 
@@ -122,7 +122,7 @@ This package contains rules that are very specific to the .NET Compiler Platform
 
 ### Microsoft.CodeAnalysis.BannedApiAnalyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeAnalysis.BannedApiAnalyzers&protocolType=NuGet)
 
@@ -130,7 +130,7 @@ This package contains customizable rules for identifying references to banned AP
 
 ### Microsoft.CodeAnalysis.PublicApiAnalyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers)</sub>
 
 *Latest pre-release version:* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet5&package=Microsoft.CodeAnalysis.PublicApiAnalyzers&protocolType=NuGet)
 
@@ -172,7 +172,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 ## Recommended version of Analyzer Packages
 
-Recommended Analyzer Package Version: [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
+Recommended Analyzer Package Version: <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)</sub>
 
 Required Visual Studio Version: **Visual Studio 2019 16.9 RTW or later**
 

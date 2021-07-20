@@ -1,0 +1,41 @@
+# Branches that trigger a build on commit
+trigger:
+  - main
+  - release/*
+
+variables:
+  - name: _TeamName
+    value: Roslyn
+  - name: _DotNetArtifactsCategory
+    value: .NETCore
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableRichCodeNavigation: true
+      richCodeNavigationEnvironment: "production"
+      richCodeNavigationLanguage: "csharp"
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enableTelemetry: true
+      enableSourceBuild: true
+      jobs:
+      - job: Debug_Build
+        pool:
+          name: NetCoreInternal-Pool
+          queue: BuildPool.Windows.10.Amd64.VS2019.Pre
+        variables:
+          - group: DotNet-Blob-Feed
+          - group: Publish-Build-Assets
+          - name: _BuildConfig
+            value: Debug
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\CIBuild.cmd 
+                    -configuration $(_BuildConfig)
+          displayName: Build and Test

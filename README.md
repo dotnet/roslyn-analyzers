@@ -32,7 +32,7 @@ Recently the set of analyzer packages produced by this repository have been cons
 
 ### Microsoft.CodeAnalysis.NetAnalyzers
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
+*Latest stable version:* <sub>[![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.NetAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)</sub>
 
 *Latest pre-release version (.NET6 analyzers):* [here](https://dev.azure.com/dnceng/public/_packaging?_a=package&feed=dotnet6&package=Microsoft.CodeAnalysis.NetAnalyzers&protocolType=NuGet)
 

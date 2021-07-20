@@ -4022,7 +4022,7 @@ class Test
 
     [SupportedOSPlatform(""linux"")]
     void SupportedOnLinux() { }
-}" + MockAttributesCsSource;
+}" + MockApisCsSource;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).
@@ -4052,11 +4052,13 @@ class Test
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios"")]
+    [UnsupportedOSPlatformGuard(""maccatalyst"")]
     [UnsupportedOSPlatformGuard(""Windows"")]
     private bool IsLinuxWindowsIosNotSupported() => true;
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios"")]
+    [UnsupportedOSPlatformGuard(""maccatalyst"")]
     [UnsupportedOSPlatformGuard(""Windows"")]
     [UnsupportedOSPlatformGuard(""Android"")]
     private readonly bool _linuxWindowsIosAndroidNotSupported;
@@ -4072,7 +4074,7 @@ class Test
         if (LinuxAndWindowsNotSupported)
         {
             UnsupportedOnLinux();
-            {|#0:UnsupportedOnLinuxWindowsIos()|}; // This call site is reachable on all platforms. 'Test.UnsupportedOnLinuxWindowsIos()' is unsupported on: 'ios'.
+            [|UnsupportedOnLinuxWindowsIos()|]; // This call site is reachable on all platforms. 'Test.UnsupportedOnLinuxWindowsIos()' is unsupported on: 'ios'.
         }
 
         if (_linuxWindowsIosAndroidNotSupported)
@@ -4099,11 +4101,9 @@ class Test
     [UnsupportedOSPlatform(""Linux"")]
     [UnsupportedOSPlatform(""ios"")]
     void UnsupportedOnLinuxWindowsIos() { }
-}" + MockAttributesCsSource;
+}" + MockApisCsSource;
 
-            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
-                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsAllPlatforms).WithLocation(0).
-                WithArguments("Test.UnsupportedOnLinuxWindowsIos()", "'ios'"));
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -4124,6 +4124,7 @@ class Test
     private readonly bool _linuxAndWindows10MacOS14Supported;
 
     [UnsupportedOSPlatformGuard(""linux"")]
+    [UnsupportedOSPlatformGuard(""maccatalyst9.0"")]
     [UnsupportedOSPlatformGuard(""ios9.0"")]
     [UnsupportedOSPlatformGuard(""Windows8.0"")]
     private bool LinuxWindows8Ios9NotSupported { get; }
@@ -4164,7 +4165,7 @@ class Test
 
     [SupportedOSPlatform(""windows8.0"")]
     void SupportedOnWindows8() { }
-}" + MockAttributesCsSource;
+}" + MockApisCsSource;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnLinuxWindows10Ios91()",
@@ -4199,6 +4200,9 @@ class Test
     [UnsupportedOSPlatformGuard(""ios"")]
     [SupportedOSPlatformGuard(""ios14.0"")]
     [UnsupportedOSPlatformGuard(""ios18.0"")]
+    [UnsupportedOSPlatformGuard(""maccatalyst"")]
+    [SupportedOSPlatformGuard(""maccatalyst14.0"")]
+    [UnsupportedOSPlatformGuard(""maccatalyst18.0"")]
     [UnsupportedOSPlatformGuard(""Windows8.0"")]
     private readonly bool _windows8IosNotSupportedSupportedIos14_18;
 
@@ -4246,7 +4250,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     [UnsupportedOSPlatform(""Windows10.0"")]
     void SupportedOnWindowsUntil10() { }
-}" + MockAttributesCsSource;
+}" + MockApisCsSource;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnWindows8IosSupportsIos14_19()",
@@ -4274,6 +4278,7 @@ class Test
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios9.0"")]
+    [UnsupportedOSPlatformGuard(""MacCatalyst9.0"")]
     private bool LinuxIos9NotSupported { get; set;}
 
     void M1()
@@ -4318,7 +4323,7 @@ class Test
 
     [SupportedOSPlatform(""windows8.0"")]
     void SupportedOnWindows8() { }
-}" + MockAttributesCsSource;
+}" + MockApisCsSource;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
@@ -4370,12 +4375,79 @@ class WindowsOnlyType
     public static bool IsSupported { get; }
     public static void M2() { }
 }
-" + MockAttributesCsSource;
+" + MockApisCsSource;
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
-        private readonly string MockAttributesCsSource = @"
+        [Fact]
+        public async Task IosGuardsMacCatalyst()
+        {
+            var source = @"
+using System;
+using System.Runtime.Versioning;
+
+class Test
+{
+    [SupportedOSPlatform(""ios"")]
+    private void IosSupported() { }
+
+    [SupportedOSPlatform(""maccatalyst"")]
+    internal void SupportsMacCatalyst() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""Linux"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    void SupportedOnIOSLinuxMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""maccatalyst"")]
+    static void UnsupportsMacCatalyst() { }
+
+    [UnsupportedOSPlatform(""ios"")]
+    static void UnsupportsIos() { }
+
+    [SupportedOSPlatform(""ios"")]
+    [UnsupportedOSPlatform(""MacCatalyst"")]
+    static void SupportsIOSNotMacCatalyst() { }
+
+    void M1()
+    {
+        if (MockOperatingSystem.IsIOS())
+        {
+            SupportedOnIOSLinuxMacCatalyst();
+            [|SupportsMacCatalyst()|]; // This call site is reachable on: 'IOS'. 'Test.MacCatalystSupported()' is only supported on: 'maccatalyst'.
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'maccatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'maccatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (MockOperatingSystem.IsMacCatalyst())
+        {          
+            SupportedOnIOSLinuxMacCatalyst();
+            SupportsMacCatalyst();
+            IosSupported();
+            [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'MacCatalyst'. 'Test.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+            [|UnsupportsIos()|];             // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsIos()' is unsupported on: 'maccatalyst'.
+            [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'MacCatalyst'. 'Test.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
+        }
+
+        if (MockOperatingSystem.IsIOS() && !MockOperatingSystem.IsMacCatalyst())
+        {            
+            SupportedOnIOSLinuxMacCatalyst();              
+            [|SupportsMacCatalyst()|];       // This call site is reachable on: 'IOS'. 'Test.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.     
+            IosSupported();
+            SupportsIOSNotMacCatalyst();
+            [|UnsupportsIos()|];             // This call site is reachable on: 'IOS'. 'Test.UnsupportsIos()' is unsupported on: 'ios'.
+            UnsupportsMacCatalyst();      
+        }
+    }
+}" + MockApisCsSource;
+
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
+        }
+
+        private readonly string MockApisCsSource = @"
 namespace System.Runtime.Versioning
 {
     [AttributeUsage(AttributeTargets.Class |
@@ -4399,7 +4471,21 @@ namespace System.Runtime.Versioning
     {
         public UnsupportedOSPlatformGuardAttribute(string platformName) { }
     }
-}";
+}
+
+namespace System
+{
+    public class MockOperatingSystem
+    {
+        [SupportedOSPlatformGuard(""maccatalyst"")]
+        public static bool IsIOS() => true;
+        [SupportedOSPlatformGuard(""maccatalyst"")]
+        public static bool IsIOSVersionAtLeast(int major, int minor = 0, int build = 0) => false;
+        public static bool IsMacCatalyst() => false;
+        public static bool IsMacCatalystVersionAtLeast(int major, int minor = 0, int build = 0) => true;
+    }
+}
+";
 
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported

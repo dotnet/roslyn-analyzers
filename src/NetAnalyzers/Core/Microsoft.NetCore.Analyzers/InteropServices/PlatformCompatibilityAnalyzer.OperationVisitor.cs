@@ -54,10 +54,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 value = GlobalFlowStateAnalysisValueSet.Unknown;
 
                 return false;
-
-                static bool HasAnyGuardAttribute(ImmutableArray<AttributeData> attributes) =>
-                    attributes.Any(a => a.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute);
             }
+
+            private static bool HasAnyGuardAttribute(ImmutableArray<AttributeData> attributes) =>
+                    attributes.Any(a => a.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute);
 
             public override GlobalFlowStateAnalysisValueSet VisitInvocation_NonLambdaOrDelegateOrLocalFunction(
                 IMethodSymbol method,
@@ -78,6 +78,19 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         {
                             var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
                             value = i == 0 ? newValue : GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
+                        }
+
+                        infosBuilder.Clear();
+                        var attributes = method.GetAttributes();
+                        if (HasAnyGuardAttribute(attributes) && PlatformMethodValue.TryDecode(attributes, infosBuilder))
+                        {
+                            for (var i = 0; i < infosBuilder.Count; i++)
+                            {
+                                var newValue = GlobalFlowStateAnalysisValueSet.Create(infosBuilder[i]);
+                                // if the incoming value is negated it should be merged with AND logic, else with OR. 
+                                value = infosBuilder[i].Negated ? value.WithAdditionalAnalysisValues(newValue, false) :
+                                    GlobalFlowStateAnalysis.GlobalFlowStateAnalysisValueSetDomain.Instance.Merge(value, newValue);
+                            }
                         }
 
                         return value;

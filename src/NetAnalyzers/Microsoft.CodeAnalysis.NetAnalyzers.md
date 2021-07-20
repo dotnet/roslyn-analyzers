@@ -708,6 +708,30 @@ String parameters passed by value with the 'OutAttribute' can destabilize the ru
 |CodeFix|False|
 ---
 
+## [CA1418](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418): Use valid platform string
+
+Platform compatibility analyzer requires a valid platform name and version.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
+## [CA1419](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419): Provide a public parameterless constructor for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'
+
+Providing a public parameterless constructor for a type derived from 'System.Runtime.InteropServices.SafeHandle' enables better performance and usage with source-generated interop solutions.
+
+|Item|Value|
+|-|-|
+|Category|Interoperability|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
 ## [CA1501](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501): Avoid excessive inheritance
 
 Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.
@@ -945,18 +969,6 @@ Consistent naming of parameters in an override hierarchy increases the usability
 |Category|Naming|
 |Enabled|True|
 |Severity|Hidden|
-|CodeFix|True|
----
-
-## [CA1801](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801): Review unused parameters
-
-Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.
-
-|Item|Value|
-|-|-|
-|Category|Usage|
-|Enabled|False|
-|Severity|Warning|
 |CodeFix|True|
 ---
 
@@ -1306,6 +1318,114 @@ Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in
 |Enabled|True|
 |Severity|Hidden|
 |CodeFix|False|
+---
+
+## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Use 'Environment.ProcessPath'
+
+'Environment.ProcessPath' is simpler and faster than 'Process.GetCurrentProcess().MainModule.FileName'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1840](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840): Use 'Environment.CurrentManagedThreadId'
+
+'Environment.CurrentManagedThreadId' is simpler and faster than 'Thread.CurrentThread.ManagedThreadId'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1841](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1841): Prefer Dictionary.Contains methods
+
+Many dictionary implementations lazily initialize the Values collection. To avoid unnecessary allocations, prefer 'ContainsValue' over 'Values.Contains'.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1842](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842): Do not use 'WhenAll' with a single task
+
+Using 'WhenAll' with a single task may result in performance loss, await or return the task instead.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1843](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843): Do not use 'WaitAll' with a single task
+
+Using 'WaitAll' with a single task may result in performance loss, await or return the task instead.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1844](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1844): Provide memory-based overrides of async methods when subclassing 'Stream'
+
+To improve performance, override the memory-based async methods when subclassing 'Stream'. Then implement the array-based methods in terms of the memory-based methods.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA1845](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1845): Use span-based 'string.Concat'
+
+It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring' and a concatenation operator.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1846](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846): Prefer 'AsSpan' over 'Substring'
+
+'AsSpan' is more efficient then 'Substring'. 'Substring' performs an O(n) string copy, while 'AsSpan' does not and has a constant cost.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA1847](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847): Use char literal for a single character lookup
+
+'string.Contains(char)' is available as a better performing overload for single char lookup.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
@@ -1858,6 +1978,42 @@ Calls to 'string.IndexOf' where the result is used to check for the presence/abs
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+---
+
+## [CA2250](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250): Use 'ThrowIfCancellationRequested'
+
+'ThrowIfCancellationRequested' automatically checks whether the token has been canceled, and throws an 'OperationCanceledException' if it has.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
+---
+
+## [CA2251](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251): Use 'string.Equals'
+
+It is both clearer and likely faster to use 'string.Equals' instead of comparing the result of 'string.Compare' to zero.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|True|
+---
+
+## [CA2252](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252): This API requires opting into preview features
+
+An assembly has to opt into preview features before using them.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
 ---
 
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter
@@ -2924,30 +3080,6 @@ Hard-coded certificates in source code are vulnerable to being exploited.
 |-|-|
 |Category|Security|
 |Enabled|False|
-|Severity|Warning|
-|CodeFix|False|
----
-
-## [IL3000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/il3000): Avoid using accessing Assembly file path when publishing as a single-file
-
-'{0}' always returns an empty string for assemblies embedded in a single-file app. If the path to the app directory is needed, consider calling 'System.AppContext.BaseDirectory'.
-
-|Item|Value|
-|-|-|
-|Category|Publish|
-|Enabled|True|
-|Severity|Warning|
-|CodeFix|False|
----
-
-## [IL3001](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/il3001): Avoid using accessing Assembly file path when publishing as a single-file
-
-'{0}' will throw for assemblies embedded in a single-file app
-
-|Item|Value|
-|-|-|
-|Category|Publish|
-|Enabled|True|
 |Severity|Warning|
 |CodeFix|False|
 ---

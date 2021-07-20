@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -20,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {
     public partial class PlatformCompatabilityAnalyzerTests
     {
-        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser, ios;\nbuild_property.TargetFramework=net5.0";
+        private const string s_msBuildPlatforms = "build_property._SupportedPlatformList=windows,browser,macOS, ios, linux;\nbuild_property.TargetFramework=net5.0";
 
         [Fact(Skip = "TODO need to be fixed: Test for for wrong arguments, not sure how to report the Compiler error diagnostic")]
         public async Task TestOsPlatformAttributesWithNonStringArgument()
@@ -126,6 +127,88 @@ namespace CallerTargetsBelow5_0
     }
 }";
             await VerifyAnalyzerAsyncCs(source, tfmAndOption);
+        }
+
+        [Fact]
+        public async Task ProjectWithPlatformNeutralAssemblyPropertyTest()
+        {
+            var source = @"
+using System.Collections.Generic;
+using System.Runtime.Versioning;
+
+[assembly:SupportedOSPlatform(""linux"")] 
+public class Test
+{
+    private string program;
+
+    [SupportedOSPlatform(""windows"")] // Can overwrite parent linux support as cross platform
+    public string WindowsOnlyProgram => program;
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""linux"")]
+    public string WindowsIosLinuxOnlyProgram => program; // referencing internal field, should not warn
+
+    [SupportedOSPlatform(""android"")] // Can overwrite parent linux support as cross platform
+    [SupportedOSPlatform(""browser"")]
+    public string AndroidBrowserOnlyProgram => program; // referencing internal field, should not warn
+
+    [UnsupportedOSPlatform(""linux"")]
+    public string UnsupportedLinuxProgram => program;
+
+    void CrossPlatformCallSite()
+    {   
+        // should warn as WindowsOnlyProgram is windows only
+        var a = {|#0:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#1:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram;
+        a = {|#2:AndroidBrowserOnlyProgram|}; // This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        List<Test> tests = new List<Test>();
+    }
+
+    [SupportedOSPlatform(""linux"")]
+    void LinuxOnlyCallsite()
+    {   
+        var a = {|#3:WindowsOnlyProgram|};  // This call site is reachable on: 'linux'. 'Test.WindowsOnlyProgram' is only supported on: 'windows'.
+        a = {|#4:UnsupportedLinuxProgram|}; // This call site is reachable on: 'linux'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram;
+        a = {|#5:AndroidBrowserOnlyProgram|}; //This call site is reachable on: 'linux'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+        {|#6:BrowserOnlyCallsite()|};  // This call site is reachable on: 'linux'. 'Test.BrowserOnlyCallsite()' is only supported on: 'browser'.
+
+        List<Test> tests = new List<Test>();
+        WindowsIosLinuxOnlyCallsite();
+    }
+
+    [SupportedOSPlatform(""windows"")]
+    [SupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""linux"")]
+    void WindowsIosLinuxOnlyCallsite()
+    {   
+        var a = [|WindowsOnlyProgram|]; 
+        a = [|UnsupportedLinuxProgram|]; // This call site is reachable on: 'linux', 'ios', 'windows'. 'Test.UnsupportedLinuxProgram' is unsupported on: 'linux'.
+        a = WindowsIosLinuxOnlyProgram; 
+        a = [|AndroidBrowserOnlyProgram|]; // This call site is reachable on: 'linux', 'ios', 'windows'. 'Test.AndroidBrowserOnlyProgram' is only supported on: 'android', 'browser'.
+
+        List<Test> tests = new List<Test>();
+    }
+
+    [SupportedOSPlatform(""browser"")] // causes emtpy set, not warn inside for any reference
+    void BrowserOnlyCallsite()
+    {   
+        var a = WindowsOnlyProgram; 
+        a = UnsupportedLinuxProgram; 
+        a = WindowsIosLinuxOnlyProgram; 
+        a = AndroidBrowserOnlyProgram;
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, "build_property.PlatformNeutralAssembly = true\nbuild_property.TargetFramework=net5.0",
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(1).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(2).WithArguments("Test.AndroidBrowserOnlyProgram", "'android', 'browser'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(3).WithArguments("Test.WindowsOnlyProgram", "'windows'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(4).WithArguments("Test.UnsupportedLinuxProgram", "'linux'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(5).WithArguments("Test.AndroidBrowserOnlyProgram", "'android', 'browser'", "'linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(6).WithArguments("Test.BrowserOnlyCallsite()", "'browser'", "'linux'"));
         }
 
         [Fact]
@@ -1570,6 +1653,151 @@ namespace CallerUnsupportsNonSubsetOfTarget
         }
 
         [Fact]
+        public async Task MacOsSuppressesOsxAndViseVersa()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace CallerUnsupportsNonSubsetOfTarget
+{
+    class Caller
+    {
+        [SupportedOSPlatform(""MacOS"")]
+        public static void TestWithMacOsSupported()
+        {
+            Target.SupportedOnOSXAndLinux();
+            {|#0:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'macOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            Target.SupportedOnMacOs();
+        }
+
+        [SupportedOSPlatform(""Linux"")]
+        [SupportedOSPlatform(""MacOS"")]
+        public static void TestWithMacOsLinuxSupported()
+        {
+            Target.SupportedOnOSXAndLinux();
+            [|Target.SupportedOnMacOs()|]; // This call site is reachable on: 'Linux', 'macOS/OSX'. 'Target.SupportedOnMacOs()' is only supported on: 'macos/OSX'.
+        }
+
+        [SupportedOSPlatform(""OSX"")]
+        public static void TestWithOsxSupported()
+        {
+            Target.SupportedOnOSXAndLinux();
+            Target.SupportedOnMacOs();
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'macOS/OSX' all versions. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+        }
+
+        [SupportedOSPlatform(""Linux"")]
+        public static void TestWithLinuxSupported()
+        {
+            Target.SupportedOnOSXAndLinux();
+            {|#1:Target.SupportedOnOSX14()|}; // This call site is reachable on: 'Linux'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+        }
+
+        public void CrossPlatform()
+        {
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+            {|#2:Target.SupportedOnMacOs()|}; // This call site is reachable on all platforms. 'Target.SupportedOnMacOs()' is only supported on: 'macOS/OSX'.
+        }
+        
+        [SupportedOSPlatform(""Browser"")]
+        public void TestWithSupportedOnBrowserWarns()
+        {
+            [|Target.SupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSXAndLinux()' is only supported on: 'macOS/OSX', 'linux'.
+            [|Target.SupportedOnOSX14()|]; // This call site is reachable on: 'Browser'. 'Target.SupportedOnOSX14()' is only supported on: 'macOS/OSX' 14.0 and later.
+        }
+
+        [SupportedOSPlatform(""macos15.1"")]
+        public void TestWithSupportedOnMacOs15()
+        {
+            Target.SupportedOnOSXAndLinux();
+            Target.SupportedOnOSX14();
+            Target.SupportedOnMacOs();
+        }
+    }
+    class Target
+    {
+        [SupportedOSPlatform(""osx""), SupportedOSPlatform(""linux"")]
+        public static void SupportedOnOSXAndLinux() { }
+        [SupportedOSPlatform(""osx14.0"")]
+        public static void SupportedOnOSX14() { }
+        [SupportedOSPlatform(""macos"")]
+        public static void SupportedOnMacOs() { }
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(0).WithArguments("Target.SupportedOnOSX14()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"),
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityAllVersions, "macOS/OSX")),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsReachable).WithLocation(1).WithArguments("Target.SupportedOnOSX14()",
+                    GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityVersionAndLater, "macOS/OSX", "14.0"), "'Linux'"),
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(2).WithArguments("Target.SupportedOnMacOs()", "'macOS/OSX'"));
+        }
+
+        [Fact]
+        public async Task MacOsSuppressesOsxAndViseVersa_Unsupported()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace ns
+{
+    class Caller
+    {
+        [SupportedOSPlatform(""MacOS"")]
+        public static void TestWithMacOsSupported()
+        {
+            {|#0:Target.UnsupportedOnOSXAndLinux()|}; // This call site is reachable on: 'macOS/OSX'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX'.
+            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on: 'macOS/OSX' all versions. 'Target.UnsupportedOnOSX14()' is unsupported on: 'macOS/OSX' 14.0 and later.
+        }
+
+        [UnsupportedOSPlatform(""MacOS"")]
+        public static void TestWithMacOsLinuxSupported()
+        {
+            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'linux'.
+            Target.UnsupportedOnOSX14();
+        }
+
+        [UnsupportedOSPlatform(""OSX"")]
+        public static void TestWithOsxSupported()
+        {
+            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'linux'.
+            Target.UnsupportedOnOSX14();
+        }
+
+        [SupportedOSPlatform(""Linux"")]
+        public static void TestWithLinuxSupported()
+        {
+            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on: 'Linux'. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'linux'.
+            Target.UnsupportedOnOSX14();
+        }
+
+        public void CrossPlatform()
+        {
+            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX'.
+            [|Target.UnsupportedOnOSX14()|]; // This call site is reachable on all platforms. 'Target.UnsupportedOnOSX14()' is unsupported on: 'macOS/OSX' 14.0 and later.
+        }
+        
+        [UnsupportedOSPlatform(""macOs13.0"")]
+        public void TestWithSupportedOnBrowserWarns()
+        {
+            [|Target.UnsupportedOnOSXAndLinux()|]; // This call site is reachable on: 'macOS/OSX' 13.0 and before. 'Target.UnsupportedOnOSXAndLinux()' is unsupported on: 'macOS/OSX' all versions.
+            Target.UnsupportedOnOSX14();
+        }
+    }
+    class Target
+    {
+        [UnsupportedOSPlatform(""osx""), UnsupportedOSPlatform(""linux"")]
+        public static void UnsupportedOnOSXAndLinux() { }
+        [UnsupportedOSPlatform(""osx14.0"")]
+        public static void UnsupportedOnOSX14() { }
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
+                VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Target.UnsupportedOnOSXAndLinux()", "'macOS/OSX'", "'macOS/OSX'"));
+        }
+
+        [Fact]
         public async Task CallerUnsupportsSubsetOfTargetUsupportedFirstThenSupportsNotWarn()
         {
             var source = @"
@@ -1755,6 +1983,67 @@ namespace CallerSupportsSubsetOfTarget
     }
 }";
             await VerifyAnalyzerAsyncCs(source);
+        }
+
+        [Fact]
+        public async Task AllowDenyListMixedApisTest()
+        {
+            var source = @"
+using System.Runtime.Versioning;
+
+namespace ns
+{
+    class Caller
+    {
+        public static void CrossPlatfomr()
+        {
+            [|Target.UnsupportedBrowserSupportedOnWindowsLinux()|];
+            [|Target.SupportedOnWindowsLinuxUnsupportedBrowser()|];
+        }
+
+        [SupportedOSPlatform(""windows"")]
+        public static void SupportedWindows()
+        {
+            Target.UnsupportedBrowserSupportedOnWindowsLinux();
+            Target.SupportedOnWindowsLinuxUnsupportedBrowser();
+        }
+
+        [UnsupportedOSPlatform(""windows"")]
+        public static void UnsuportedWindows()
+        {
+            [|Target.UnsupportedBrowserSupportedOnWindowsLinux()|];
+            [|Target.SupportedOnWindowsLinuxUnsupportedBrowser()|];
+        }
+
+        [UnsupportedOSPlatform(""browser"")]
+        public static void UnsupportedBrowser()
+        {
+            [|Target.UnsupportedBrowserSupportedOnWindowsLinux()|];
+            [|Target.SupportedOnWindowsLinuxUnsupportedBrowser()|];
+        }
+
+        [SupportedOSPlatform(""browser"")]
+        public static void SupportedBrowser()
+        {
+            [|Target.UnsupportedBrowserSupportedOnWindowsLinux()|];
+            [|Target.SupportedOnWindowsLinuxUnsupportedBrowser()|];
+        }
+    }
+
+    class Target
+    {
+        [UnsupportedOSPlatform(""browser"")]
+        [SupportedOSPlatform(""windows"")]
+        [SupportedOSPlatform(""Linux"")]
+        public static void UnsupportedBrowserSupportedOnWindowsLinux() { }
+
+        [SupportedOSPlatform(""windows"")]
+        [SupportedOSPlatform(""Linux"")]
+        [UnsupportedOSPlatform(""browser"")]
+        public static void SupportedOnWindowsLinuxUnsupportedBrowser() { }
+    }
+}";
+            await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
         [Fact]
@@ -2011,7 +2300,7 @@ namespace ns
             yield return new object[] { "MACOS", "10.1.2.3", "macos", "10.2.2.0", false };
             yield return new object[] { "OSX", "10.1.2.3", "Osx", "11.1.1.0", false };
             yield return new object[] { "Osx", "10.1.2.3", "osx", "10.2", false };
-            yield return new object[] { "Windows", "10.1.2.3", "Osx", "11.1.1.4", true };
+            yield return new object[] { "Windows", "10.1.2.3", "macOS/OSX", "11.1.1.4", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.0.1.9", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "10.1.1.4", true };
             yield return new object[] { "Windows", "10.1.2.3", "Windows", "8.2.3.3", true };
@@ -2732,7 +3021,7 @@ public class Test
     public void UnsupportedWindowsTest()
     {
         {|#0:DenyList.UnsupportedWindows()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows()' is unsupported on: 'windows' all versions.
-        {|#1:DenyList.UnsupportedWindows10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows10()' is unsupported on: 'windows' 10.0 and later.*/
+        {|#1:DenyList.UnsupportedWindows10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedWindows10()' is unsupported on: 'windows' 10.0 and later.
         {|#2:DenyList.UnsupportedSupportedWindows8To10()|}; // This call site is reachable on: 'windows' 9.0 and later. 'DenyList.UnsupportedSupportedWindows8To10()' is unsupported on: 'windows' 10.0 and later.
         {|#3:AllowList.WindowsOnly()|}; // This call site is reachable on: 'windows' 9.0 and later, and all other platforms. 'AllowList.WindowsOnly()' is only supported on: 'windows'.
         {|#4:AllowList.Windows10Only()|}; // This call site is reachable on: 'windows' 9.0 and later, and all other platforms. 'AllowList.Windows10Only()' is only supported on: 'windows' 10.0 and later.
@@ -3160,7 +3449,7 @@ class Caller
     public static void Test()
     {
         {|#0:UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()|}; // This call site is reachable on all platforms. 'UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()' is supported on: 'windows' from version 9.0 to 12.0, 'ios' from version 7.0 to 14.0.
-        {|#1:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()|}; // ... 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 7.0 to 11.0.
+        {|#1:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()|}; // 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 7.0 to 11.0.
         {|#2:UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()|}; // 'UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()' is supported on: 'windows' from version 10.0 to 12.0, 'ios' from version 9.0 to 10.0.
     }
 }
@@ -3193,11 +3482,11 @@ class UnsupportedWindows8_9_12_Ios6_7_14
 }";
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(0).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.ApiWithNoAttrbiute()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "9.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "14.0"))),
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "14.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "9.0", "12.0"))),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(1).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.ApiWithNoAttrbiute()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "11.0"))),
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "7.0", "11.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"))),
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.SupportedCsAllPlatforms).WithLocation(2).WithArguments("UnsupportedWindows8_9_12_Ios6_7_14.UnsupportedWindows6_10_Ios_1_5_11.UnsupportedWindowsIos2_9_10()",
-                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "9.0", "10.0"))));
+                    Join(GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "ios", "9.0", "10.0"), GetFormattedString(MicrosoftNetCoreAnalyzersResources.PlatformCompatibilityFromVersionToVersion, "windows", "10.0", "12.0"))));
         }
 
         [Fact]
@@ -3499,8 +3788,8 @@ class TestType
         private string GetFormattedString(string resource, params string[] args) =>
             string.Format(CultureInfo.InvariantCulture, resource, args);
 
-        private string Join(string platform1, string platform2) =>
-            string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platform1, platform2);
+        private string Join(params string[] platforms) =>
+            string.Join(MicrosoftNetCoreAnalyzersResources.CommaSeparator, platforms);
 
         private static VerifyCS.Test PopulateTestCs(string sourceCode, params DiagnosticResult[] expected)
         {

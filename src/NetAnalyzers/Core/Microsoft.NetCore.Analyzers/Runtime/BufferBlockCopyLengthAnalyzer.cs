@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                       s_localizableTitle,
                                                                                       s_localizableMessage,
                                                                                       DiagnosticCategory.Reliability,
-                                                                                      RuleLevel.IdeSuggestion,
+                                                                                      RuleLevel.BuildWarning,
                                                                                       s_localizableDescription,
                                                                                       isPortedFxCopRule: false,
                                                                                       isDataflowRule: false);
@@ -64,19 +64,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     .OfType<IPropertySymbol>()
                     .FirstOrDefault();
 
-                if (arrayLengthProperty is null)
-                {
-                    return;
-                }
-
-                INamedTypeSymbol byteType = context.Compilation.GetSpecialType(SpecialType.System_Byte);
-                INamedTypeSymbol sByteType = context.Compilation.GetSpecialType(SpecialType.System_SByte);
-
-                if (byteType is null || sByteType is null)
-                {
-                    return;
-                }
-
                 context.RegisterOperationAction(context =>
                 {
                     var invocationOperation = (IInvocationOperation)context.Operation;
@@ -95,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     IArgumentOperation sourceArgument = arguments[0];
                     IArgumentOperation destinationArgument = arguments[2];
-                    IArgumentOperation lastArgument = arguments[4];
+                    IArgumentOperation countArgument = arguments[4];
 
                     bool CheckArrayLengthLocalReference(IArgumentOperation targetArgument, IPropertyReferenceOperation lengthPropertyArgument)
                     {
@@ -103,8 +90,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         {
                             if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgValue.Operand.GetReferencedMemberOrLocalOrParameter())
                             {
-                                IArrayTypeSymbol lastArgumentArrayTypeSymbol = (IArrayTypeSymbol)lengthPropertyArgument.Instance.Type;
-                                if (!lastArgumentArrayTypeSymbol.ElementType.Equals(byteType) && !lastArgumentArrayTypeSymbol.ElementType.Equals(sByteType))
+                                IArrayTypeSymbol countArgumentArrayTypeSymbol = (IArrayTypeSymbol)lengthPropertyArgument.Instance.Type;
+                                if (countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Byte && countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_SByte)
                                 {
                                     return true;
                                 }
@@ -113,40 +100,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return false;
                     }
 
-                    bool CheckLengthPropertyOnByteOrSByteArrays(IPropertyReferenceOperation lastArgument)
+                    bool CheckLengthPropertyOnByteOrSByteArrays(IPropertyReferenceOperation countArgument)
                     {
-                        if (lastArgument.Property.Equals(arrayLengthProperty))
+                        if (countArgument.Property.Equals(arrayLengthProperty))
                         {
-                            return CheckArrayLengthLocalReference(sourceArgument, lastArgument) || CheckArrayLengthLocalReference(destinationArgument, lastArgument);
+                            return CheckArrayLengthLocalReference(sourceArgument, countArgument) || CheckArrayLengthLocalReference(destinationArgument, countArgument);
                         }
 
                         return false;
                     }
 
-                    if (lastArgument.Value is IPropertyReferenceOperation lastArgumentValue && CheckLengthPropertyOnByteOrSByteArrays(lastArgumentValue))
+                    if (countArgument.Value is IPropertyReferenceOperation countArgumentValue && CheckLengthPropertyOnByteOrSByteArrays(countArgumentValue))
                     {
-                        context.ReportDiagnostic(lastArgument.Value.CreateDiagnostic(Rule));
+                        context.ReportDiagnostic(countArgument.Value.CreateDiagnostic(Rule));
                     }
                     else
                     {
-                        if (lastArgument.Value is not ILocalReferenceOperation localReferenceOperation)
+                        if (countArgument.Value is not ILocalReferenceOperation localReferenceOperation)
                         {
                             return;
                         }
 
-                        SemanticModel semanticModel = lastArgument.SemanticModel;
+                        SemanticModel semanticModel = countArgument.SemanticModel;
                         CancellationToken cancellationToken = context.CancellationToken;
 
-                        if (semanticModel is null)
-                        {
-                            return;
-                        }
-
                         ILocalSymbol localArgumentDeclaration = localReferenceOperation.Local;
-                        if (localArgumentDeclaration is null)
-                        {
-                            return;
-                        }
 
                         SyntaxReference declaringSyntaxReference = localArgumentDeclaration.DeclaringSyntaxReferences.FirstOrDefault();
                         if (declaringSyntaxReference is null)
@@ -163,11 +141,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         if (variableInitializer is not null && variableInitializer.Value is IPropertyReferenceOperation variableInitializerPropertyReference && CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReference))
                         {
-                            context.ReportDiagnostic(lastArgument.Value.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(countArgument.Value.CreateDiagnostic(Rule));
                         }
                         else if (variableDeclaratorOperation.Parent is IVariableDeclarationOperation variableDeclarationOperation && variableDeclarationOperation.Initializer is not null && variableDeclarationOperation.Initializer.Value is IPropertyReferenceOperation variableInitializerPropertyReferenceVB && CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReferenceVB))
                         {
-                            context.ReportDiagnostic(lastArgument.Value.CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(countArgument.Value.CreateDiagnostic(Rule));
                         }
                     }
                 },
@@ -176,4 +154,3 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
     }
 }
-

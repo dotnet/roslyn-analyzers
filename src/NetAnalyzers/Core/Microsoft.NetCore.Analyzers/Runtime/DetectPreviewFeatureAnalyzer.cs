@@ -112,7 +112,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             foreach (INamedTypeSymbol anInterface in interfaces)
             {
                 var interfaceMembers = anInterface.GetMembers();
-                if (interfaceMembers.Length == 0)
+                if (interfaceMembers.Length == 0 && ProcessPreviewAttribute(anInterface, requiresPreviewFeaturesSymbols))
                 {
                     // Only tag empty interfaces to prevent breaking changes in the future
                     requiresPreviewFeaturesSymbolsToUsageType.GetOrAdd(symbol, PreviewFeatureUsageType.EmptyInterface);

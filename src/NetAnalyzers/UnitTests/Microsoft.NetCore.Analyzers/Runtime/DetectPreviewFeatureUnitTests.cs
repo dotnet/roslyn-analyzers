@@ -584,6 +584,33 @@ namespace Preview_Feature_Scratch
         }
 
         [Fact]
+        public async Task TestNonPreviewEmptyInterface()
+        {
+            var csInput = @" 
+using System.Runtime.Versioning; using System;
+namespace Preview_Feature_Scratch
+{" +
+@"
+
+    class Program : IProgram
+    {
+        static void Main(string[] args)
+        {
+            new Program();
+        }
+    }
+
+    public interface IProgram
+    {
+    }
+}
+
+    ";
+
+            await TestCS(csInput);
+        }
+
+        [Fact]
         public async Task TestInterfaceMethodInvocation()
         {
             var csInput = @" 

@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug, false-positive or false-negative
+about: Report a bug, false-positive or false-negative for a CAxxxx rule. For IDExxxx, please open an issue in dotnet/roslyn repository.
 title: ''
 labels: ''
 assignees: ''
@@ -17,11 +17,16 @@ assignees: ''
 
 **Version**: [SDK 5.0.100](https://dotnet.microsoft.com/download/dotnet/5.0)
 
+<!--
+Note: Updates to NuGet package are more frequent than SDK, which means the NuGet package has fixes that haven't yet made it into the SDK.
+      Please check whether you can reproduce the bug you encountered in the latest NuGet package.
+-->
+
 _OR_
 
 **NuGet Package**: [Microsoft.CodeAnalysis.NetAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers)
 
-**Version**: 5.0.1 (Latest)
+**Version**: 5.0.3 (Latest)
 
 <!--
 NOTE: `Microsoft.CodeAnalysis.FxCopAnalyzers` package has been deprecated in favor of 'Microsoft.CodeAnalysis.NetAnalyzers', that ships with the .NET SDK.

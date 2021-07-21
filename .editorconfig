@@ -12,6 +12,11 @@ indent_style = space
 # https://github.com/dotnet/roslyn-analyzers/issues/3389
 dotnet_diagnostic.RS1024.severity = none
 
+# IDE0078: Use pattern matching
+# https://github.com/dotnet/roslyn/issues/51691
+# https://github.com/dotnet/roslyn/issues/51693
+dotnet_diagnostic.IDE0078.severity = silent
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
@@ -75,11 +80,6 @@ dotnet_style_prefer_inferred_tuple_names = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 
-# Dispose rules (CA2000 and CA2213) ported to IDE analyzers. We already execute the CA rules on the repo, so disable the IDE ones.
-dotnet_diagnostic.IDE0067.severity = none
-dotnet_diagnostic.IDE0068.severity = none
-dotnet_diagnostic.IDE0069.severity = none
-
 ### CSharp code style settings ###
 [*.cs]
 
@@ -97,10 +97,6 @@ csharp_style_expression_bodied_operators = false:none
 csharp_style_expression_bodied_local_functions = false:none
 csharp_style_expression_bodied_lambdas = true:none
 
-# Prefer property-like constructs to have an expression-body
-csharp_style_expression_bodied_properties = true:none
-csharp_style_expression_bodied_indexers = true:none
-csharp_style_expression_bodied_accessors = true:none
 
 # Pattern matching preferences
 csharp_style_pattern_matching_over_as_with_null_check = true:warning
@@ -269,10 +265,6 @@ dotnet_diagnostic.CA1711.severity = suggestion
 
 # CA1309: Use ordinal string comparison
 dotnet_diagnostic.CA1309.severity = suggestion
-
-# CA1725: Parameter names should match base declaration
-# TODO: Enable this rule as warning and fix violations.
-dotnet_diagnostic.CA1725.severity = suggestion
 
 ### Configuration for PublicAPI analyzers executed on this repo ###
 [*.{cs,vb}]

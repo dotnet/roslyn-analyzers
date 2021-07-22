@@ -26,7 +26,7 @@ stages:
       jobs:
       - job: Debug_Build
         pool:
-          name: NetCoreInternal-Pool
+          name: NetCorePublic-Pool
           queue: BuildPool.Windows.10.Amd64.VS2019.Pre
         variables:
           - group: DotNet-Blob-Feed

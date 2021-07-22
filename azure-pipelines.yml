@@ -22,7 +22,7 @@ jobs:
     - job: Debug_Build
       pool:
         name: NetCorePublic-Pool
-        queue: BuildPool.Windows.10.Amd64.VS2019.Pre
+        queue: BuildPool.Windows.10.Amd64.VS2019.Pre.Open
       variables:
         - name: _BuildConfig
           value: Debug

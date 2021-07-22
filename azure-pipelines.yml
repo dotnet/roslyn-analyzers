@@ -12,7 +12,7 @@ pr:
 - features/*
 - 2.9.x
 
-jobs:        
+jobs:
 - job: Windows
   strategy:
     maxParallel: 4

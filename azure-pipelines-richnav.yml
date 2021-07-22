@@ -3,12 +3,6 @@ trigger:
   - main
   - release/*
 
-variables:
-  - name: _TeamName
-    value: Roslyn
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-
 stages:
 - stage: build
   displayName: Build
@@ -31,4 +25,4 @@ stages:
         clean: true
       - script: eng\common\CIBuild.cmd 
                   -configuration $(_BuildConfig)
-        displayName: Build and Test
+        displayName: Build and Index

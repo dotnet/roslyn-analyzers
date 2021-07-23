@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. 
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -24,7 +23,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         csInput
                     }
                 },
-                MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 ReferenceAssemblies = AdditionalMetadataReferences.Net60,
             }.RunAsync();
         }
@@ -41,7 +39,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         csInput
                     }
                 },
-                MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 ReferenceAssemblies = AdditionalMetadataReferences.Net60,
             }.RunAsync();
         }
@@ -59,7 +56,7 @@ namespace Preview_Feature_Scratch
         static void Main(string[] args)
         {
             var a = new Fraction();
-            var b = [|+a|];
+            var b = {|CA2252:+a|};
         }
     }
 
@@ -97,7 +94,7 @@ namespace Preview_Feature_Scratch
             {
                 Console.WriteLine(""Foo"");
             }
-            catch [|(DerivedException ex)|]
+            catch {|CA2252:(DerivedException ex)|}
             {
                 throw;
             }
@@ -121,7 +118,7 @@ namespace Preview_Feature_Scratch
     {
         static void Main(string[] args)
         {
-            Lib[] array = [|new Lib[] { }|];
+            Lib[] array = {|CA2252:new Lib[] { }|};
         }
     }
 
@@ -149,7 +146,7 @@ namespace Preview_Feature_Scratch
         {
             var a = new Fraction();
             var b = new Fraction();
-            b = [|b + a|];
+            b = {|CA2252:b + a|};
         }
     }
 
@@ -259,7 +256,7 @@ namespace Preview_Feature_Scratch
 
     public partial class Derived : UnmarkedPreviewClass
     {
-        public override void [|UnmarkedVirtualMethodInPreviewClass|]()
+        public override void {|CA2252:UnmarkedVirtualMethodInPreviewClass|}()
         {
             throw new NotImplementedException();
         }
@@ -290,7 +287,7 @@ namespace Preview_Feature_Scratch
         static void Main(string[] args)
         {
             var prog = new Program();
-            [|prog.PreviewMethod()|];
+            {|CA2252:prog.PreviewMethod()|};
         }
     }
 }";
@@ -326,9 +323,9 @@ namespace Preview_Feature_Scratch
         {
         }
 
-        public override void [|PreviewMethod|]()
+        public override void {|CA2252:PreviewMethod|}()
         {
-            [|base.PreviewMethod()|];
+            {|CA2252:base.PreviewMethod()|};
         }
     }
 }";
@@ -369,17 +366,17 @@ namespace Preview_Feature_Scratch
 {" +
 @"
 
-    class [|Program|] : AbClass
+    class {|CA2252:Program|} : AbClass
     {
         static void Main(string[] args)
         {
             Program prog = new Program();
             prog.Bar();
-            [|prog.FooBar()|];
-            [|prog.BarImplemented()|];
+            {|CA2252:prog.FooBar()|};
+            {|CA2252:prog.BarImplemented()|};
         }
 
-        public override void [|Bar|]()
+        public override void {|CA2252:Bar|}()
         {
             throw new NotImplementedException();
         }
@@ -424,7 +421,7 @@ namespace Preview_Feature_Scratch
             new Program();
         }
 
-        public bool [|MarkedPropertyInInterface|] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); } // [] if not opted in yet
+        public bool {|CA2252:MarkedPropertyInInterface|} { get => throw new NotImplementedException(); set => throw new NotImplementedException(); } // [] if not opted in yet
     }
 
     public interface IProgram
@@ -455,7 +452,7 @@ namespace Preview_Feature_Scratch
             new Program();
         }
 
-        public void [|MarkedMethodInInterface|]()
+        public void {|CA2252:MarkedMethodInInterface|}()
         {
             throw new NotImplementedException();
         }        
@@ -474,7 +471,7 @@ namespace Preview_Feature_Scratch
 
         }
 
-        [Fact(Skip = "Not yet working")]
+        [Fact]
         public async Task TestPreviewLanguageFeatures()
         {
             var csInput = @" 
@@ -496,8 +493,8 @@ namespace Preview_Feature_Scratch
 
             public interface IProgram
             {
-                public static abstract bool [|StaticMethod|]();
-                public static abstract bool [|AProperty|] { [|get|]; }
+                public static abstract bool {|CA2253:StaticMethod|}();
+                public static abstract bool {|CA2253:AProperty|} { {|CA2253:get|}; }
             }
         }
 
@@ -522,7 +519,7 @@ namespace Preview_Feature_Scratch
             new Program();
         }
 
-        public void [|UnmarkedMethodInMarkedInterface|]() { }
+        public void {|CA2252:UnmarkedMethodInMarkedInterface|}() { }
 
     }
 
@@ -547,7 +544,7 @@ namespace Preview_Feature_Scratch
 {" +
 @"
 
-    class [|Program|] : IProgram
+    class {|CA2254:Program|} : IProgram
     {
         static void Main(string[] args)
         {
@@ -581,14 +578,14 @@ namespace Preview_Feature_Scratch
         {
             Program progObject = new Program();
             IProgram prog = progObject;
-            [|prog.Foo()|];
-            [|prog.FooDelegate()|];
-            bool prop = [|prog.AProperty|];
-            bool anotherProp = [|progObject.AnotherInterfaceProperty|];
+            {|CA2252:prog.Foo()|};
+            {|CA2252:prog.FooDelegate()|};
+            bool prop = {|CA2252:prog.AProperty|};
+            bool anotherProp = {|CA2252:progObject.AnotherInterfaceProperty|};
             Console.WriteLine(""prop.ToString() + anotherProp.ToString()"");
         }
 
-        public IProgram.IProgramDelegate [|FooDelegate|]()
+        public IProgram.IProgramDelegate {|CA2252:FooDelegate|}()
         {
             throw new NotImplementedException();
         }
@@ -639,7 +636,7 @@ namespace Preview_Feature_Scratch
 
         public Program()
         {
-            [|_field|] = true;
+            {|CA2252:_field|} = true;
         } 
 
         static void Main(string[] args)
@@ -671,7 +668,7 @@ namespace Preview_Feature_Scratch
         static void Main(string[] args)
         {
             Program prog = new Program();
-            bool foo = [|prog.Foo|];
+            bool foo = {|CA2252:prog.Foo|};
 
             Derived derived = new Derived();
             bool prop = derived.AProperty;
@@ -680,7 +677,7 @@ namespace Preview_Feature_Scratch
 
     class Derived: Program
     {
-        public override bool [|AProperty|] => true;
+        public override bool {|CA2252:AProperty|} => true;
     }
 }";
 
@@ -703,7 +700,7 @@ namespace Preview_Feature_Scratch
 
         static void Main(string[] args)
         {
-            Del del = [|new(() => { })|];
+            Del del = {|CA2252:new(() => { })|};
         }
     }
 }";
@@ -736,7 +733,7 @@ namespace Preview_Feature_Scratch
 
         static void Main(string[] args)
         {
-            AnEnum fooEnum = [|AnEnum.Foo|];
+            AnEnum fooEnum = {|CA2252:AnEnum.Foo|};
         }
     }
 }";
@@ -800,7 +797,7 @@ namespace Preview_Feature_Scratch
 
         static void Main(string[] args)
         {
-            AnEnum fooEnum = [|AnEnum.Foo|];
+            AnEnum fooEnum = {|CA2252:AnEnum.Foo|};
         }
     }
 }";
@@ -830,7 +827,7 @@ namespace Preview_Feature_Scratch
 
         static void Main(string[] args)
         {
-            [|SampleEvent|]?.Invoke(new Program(), new bool());
+            {|CA2252:SampleEvent|}?.Invoke(new Program(), new bool());
         }
     }
 }";

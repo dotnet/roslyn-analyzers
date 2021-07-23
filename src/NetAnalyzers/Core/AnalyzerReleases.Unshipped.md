@@ -18,6 +18,8 @@ CA1847 | Performance | Info | UseStringContainsCharOverloadWithSingleCharactersA
 CA2250 | Usage | Info | UseCancellationTokenThrowIfCancellationRequested, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250)
 CA2251 | Usage | Hidden | UseStringEqualsOverStringCompare, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251)
 CA2252 | Usage | Info | DetectPreviewFeatureAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252)
+CA2253 | Usage | Info | DetectPreviewFeatureAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253)
+CA2254 | Usage | Info | DetectPreviewFeatureAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254)
 
 ### Removed Rules
 

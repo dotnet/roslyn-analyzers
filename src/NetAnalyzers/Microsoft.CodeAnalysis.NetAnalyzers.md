@@ -837,7 +837,7 @@ By convention, identifier names do not contain the underscore (_) character. Thi
 |Category|Naming|
 |Enabled|True|
 |Severity|Hidden|
-|CodeFix|False|
+|CodeFix|True|
 ---
 
 ## [CA1708](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708): Identifiers should differ by more than case
@@ -2014,6 +2014,18 @@ It is both clearer and likely faster to use 'string.Equals' instead of comparing
 |Enabled|True|
 |Severity|Hidden|
 |CodeFix|True|
+---
+
+## [CA2252](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252): This API requires opting into preview features
+
+An assembly has to opt into preview features before using them.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
 ---
 
 ## [CA2300](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300): Do not use insecure deserializer BinaryFormatter

@@ -13,3 +13,4 @@ CA1847 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Prefer static 'HashData' method over 'ComputeHash' |
 CA2250 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2250> | Use 'ThrowIfCancellationRequested' |
 CA2251 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251> | Use 'string.Equals' |
+CA2252 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252> | This API requires opting into preview features |

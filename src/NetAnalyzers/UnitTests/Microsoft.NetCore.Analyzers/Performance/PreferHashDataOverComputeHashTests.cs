@@ -14,852 +14,1102 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public class PreferHashDataOverComputeHashTests
     {
+        private const string HashTypeMD5 = "MD5";
+        private const string HashTypeSHA1 = "SHA1";
+        private const string HashTypeSHA256 = "SHA256";
+        private const string HashTypeSHA384 = "SHA384";
+        private const string HashTypeSHA512 = "SHA512";
+
         [Fact]
         public async Task CSharpBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
-    public static void TestMethod(SHA256 sha256)
-    {
+{{
+    public static void TestMethod({hashType} hash)
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = sha256.ComputeHash(buffer);
+        byte[] digest = hash.ComputeHash(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task BasicBailOutNoFixCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
-    Public Shared Sub TestMethod(sha256 As SHA256)
-        Dim buffer = New Byte(1023) {}
+    Public Shared Sub TestMethod(sha256 As {hashType})
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
         Dim digest As Byte() = sha256.ComputeHash(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVB(vbInput);
+                await TestVB(vbInput);
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        var sha256 = SHA256.Create();
+        var hasher = {hashType}.Create();
         int aboveLine = 20;
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperBailOutNoFixCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Dim sha256 As SHA256 = SHA256.Create()
+        Dim buffer = New Byte(1023) {{}}
+        Dim sha256 As {hashType} = {hashType}.Create()
         Dim aboveLine = 20
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVB(vbInput);
+                await TestVB(vbInput);
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperChainCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = {|#0:SHA256.Create().ComputeHash({|#1:buffer|})|};
+        byte[] digest = {{|#0:{hashType}.Create().ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithoutVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithoutVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperChainCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = {|#0:SHA256.Create().ComputeHash({|#1:buffer|})|}
+        Dim digest As Byte() = {{|#0:{hashType}.Create().ComputeHash({{|#1:buffer|}})|}}
         Dim belowLine = 10
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithoutVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithoutVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperNoUsingStatementBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        var sha256 = SHA256.Create();
+        var hasher = {hashType}.Create();
         int aboveLine = 20;
-        byte[] digest = sha256.ComputeHash(buffer);
+        byte[] digest = hasher.ComputeHash(buffer);
         int belowLine = 10;
-        byte[] digest2 = sha256.ComputeHash(buffer);
-    }
-}
+        byte[] digest2 = hasher.ComputeHash(buffer);
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperNoUsingBlockBailOutNoFixCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Dim sha256 As SHA256 = SHA256.Create()
+        Dim buffer = New Byte(1023) {{}}
+        Dim hasher As {hashType} = {hashType}.Create()
         Dim aboveLine = 20
-        Dim digest As Byte() = sha256.ComputeHash(buffer)
+        Dim digest As Byte() = hasher.ComputeHash(buffer)
         Dim belowLine = 10
-        Dim digest2 As Byte() = sha256.ComputeHash(buffer)
+        Dim digest2 As Byte() = hasher.ComputeHash(buffer)
     End Sub
 End Class
 ";
-            await TestVB(vbInput);
+                await TestVB(vbInput);
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperNoUsingStatementCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        {|#2:var sha256 = SHA256.Create();|}
+        {{|#2:var hasher = {hashType}.Create();|}}
         int aboveLine = 20;
-        byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperNoUsingBlockCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        {|#2:Dim sha256 As SHA256 = SHA256.Create()|}
+        Dim buffer = New Byte(1023) {{}}
+        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim aboveLine = 20
-        Dim digest As Byte() = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
         Dim belowLine = 10
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingStatementBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using (var sha256 = SHA256.Create())
-        {
+        using (var hasher = {hashType}.Create())
+        {{
             int aboveLine = 20;
-            byte[] digest = sha256.ComputeHash(buffer);
+            byte[] digest = hasher.ComputeHash(buffer);
             int belowLine = 10;
-            byte[] digest2 = sha256.ComputeHash(buffer);
-        }
-    }
-}
+            byte[] digest2 = hasher.ComputeHash(buffer);
+        }}
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperUsingBlockBailOutNoFixCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Using sha256 As SHA256 = SHA256.Create()
+        Dim buffer = New Byte(1023) {{}}
+        Using hasher As {hashType} = {hashType}.Create()
             Dim aboveLine = 20
-            Dim digest As Byte() = sha256.ComputeHash(buffer)
+            Dim digest As Byte() = hasher.ComputeHash(buffer)
             Dim belowLine = 10
-            Dim digest2 As Byte() = sha256.ComputeHash(buffer)
+            Dim digest2 As Byte() = hasher.ComputeHash(buffer)
         End Using
     End Sub
 End Class
 ";
-            await TestVB(vbInput);
+                await TestVB(vbInput);
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingDeclarationCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        {|#2:using var sha256 = SHA256.Create();|}
+        {{|#2:using var hasher = {hashType}.Create();|}}
         int aboveLine2 = 30;
-        byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
         int aboveLine2 = 30;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingStatementCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using ({|#2:var sha256 = SHA256.Create()|})
-        {
+        using ({{|#2:var hasher = {hashType}.Create()|}})
+        {{
             int aboveLine = 20;
-            byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-        }
-    }
-}
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperUsingBlockCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        {|#2:Using sha256 As SHA256 = SHA256.Create()|}
+        Dim buffer = New Byte(1023) {{}}
+        {{|#2:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
         End Using
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingStatementCase2()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         byte[] digest;
-        using ({|#2:SHA256 sha256 = SHA256.Create()|})
-        {
+        using ({{|#2:{hashType} hasher = {hashType}.Create()|}})
+        {{
             int aboveLine = 20;
-            digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-        }
-    }
-}
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         byte[] digest;
         int aboveLine = 20;
-        digest = SHA256.HashData(buffer);
+        digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperUsingBlockCase2()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim digest As Byte()
-        {|#2:Using sha256 As SHA256 = SHA256.Create()|}
+        {{|#2:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim aboveLine = 20
-            digest = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+            digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
         End Using
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim digest As Byte()
         Dim aboveLine = 20
-        digest = SHA256.HashData(buffer)
+        digest = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingStatementCastedCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using ({|#2:HashAlgorithm sha256 = SHA256.Create()|})
-        {
+        using ({{|#2:HashAlgorithm hasher = {hashType}.Create()|}})
+        {{
             int aboveLine = 20;
-            byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-        }
-    }
-}
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
-        public async Task BasicCreateHelperUsingBlockCastedCaseNoFix()
+        public async Task BasicCreateHelperUsingBlockCastedCase()
         {
-            // unable to get type info for SHA256
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim digest As Byte()
-        Using sha256 As HashAlgorithm = SHA256.Create()
+        {{|#2:Using hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim aboveLine = 20
-            digest = sha256.ComputeHash(buffer)
+            digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
         End Using
     End Sub
 End Class
 ";
 
-            await TestVB(vbInput);
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim digest As Byte()
+        Dim aboveLine = 20
+        digest = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+    End Sub
+End Class
+";
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpCreateHelperUsingStatements2Case()
         {
-            string csInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using (SHA256 {|#2:sha256 = SHA256.Create()|}, sha2562 = SHA256.Create())
-        {
+        using ({hashType} {{|#2:hasher = {hashType}.Create()|}}, hasher2 = {hashType}.Create())
+        {{
             int aboveLine = 20;
-            byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-            byte[] digest2 = sha2562.ComputeHash(sha2562.ComputeHash(digest));
-        }
-    }
-}
+            byte[] digest2 = hasher2.ComputeHash(hasher2.ComputeHash(digest));
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using (SHA256 sha2562 = SHA256.Create())
-        {
+        using ({hashType} hasher2 = {hashType}.Create())
+        {{
             int aboveLine = 20;
-            byte[] digest = SHA256.HashData(buffer);
+            byte[] digest = {hashType}.HashData(buffer);
             int belowLine = 10;
-            byte[] digest2 = sha2562.ComputeHash(sha2562.ComputeHash(digest));
-        }
-    }
-}
+            byte[] digest2 = hasher2.ComputeHash(hasher2.ComputeHash(digest));
+        }}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicCreateHelperUsingBlocks2Case()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Using {|#2:sha256 As SHA256 = SHA256.Create()|}, sha2562 As SHA256 = SHA256.Create()
+        Dim buffer = New Byte(1023) {{}}
+        Using {{|#2:hasher As {hashType} = {hashType}.Create()|}}, hasher2 As {hashType} = {hashType}.Create()
             Dim aboveLine = 20
-            Dim digest As Byte() = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
-            Dim digest2 As Byte() = sha2562.ComputeHash(sha2562.ComputeHash(buffer))
+            Dim digest2 As Byte() = hasher2.ComputeHash(hasher2.ComputeHash(buffer))
         End Using
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Using sha2562 As SHA256 = SHA256.Create()
+        Dim buffer = New Byte(1023) {{}}
+        Using hasher2 As {hashType} = {hashType}.Create()
             Dim aboveLine = 20
-            Dim digest As Byte() = SHA256.HashData(buffer)
+            Dim digest As Byte() = {hashType}.HashData(buffer)
             Dim belowLine = 10
-            Dim digest2 As Byte() = sha2562.ComputeHash(sha2562.ComputeHash(buffer))
+            Dim digest2 As Byte() = hasher2.ComputeHash(hasher2.ComputeHash(buffer))
         End Using
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        var sha256 = new SHA256Managed();
+        var sha256 = new {hashType}Managed();
         int aboveLine = 20;
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationChainCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = {|#0:new SHA256Managed().ComputeHash({|#1:buffer|})|};
+        byte[] digest = {{|#0:new {hashType}Managed().ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithoutVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithoutVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicObjectCreationChainCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = {|#0:New SHA256Managed().ComputeHash({|#1:buffer|})|}
+        Dim digest As Byte() = {{|#0:New {hashType}Managed().ComputeHash({{|#1:buffer|}})|}}
         Dim belowLine = 10
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithoutVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithoutVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationChainInArgumentCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        Test2({|#0:new SHA256Managed().ComputeHash({|#1:buffer|})|});
+        Test2({{|#0:new {hashType}Managed().ComputeHash({{|#1:buffer|}})|}});
         int belowLine = 10;
-    }
+    }}
     private static void Test2(byte[] buffer)
-    {
-    }
-}
+    {{
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        Test2(SHA256.HashData(buffer));
+        Test2({hashType}.HashData(buffer));
         int belowLine = 10;
-    }
+    }}
     private static void Test2(byte[] buffer)
-    {
-    }
-}
+    {{
+    }}
+}}
 ";
-            await TestCSWithoutVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithoutVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicObjectCreationChainInArgumentCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Test2({|#0:New SHA256Managed().ComputeHash({|#1:buffer|})|})
+        Test2({{|#0:New {hashType}Managed().ComputeHash({{|#1:buffer|}})|}})
         Dim belowLine = 10
     End Sub
     Public Shared Sub Test2(buffer As Byte())
@@ -867,234 +1117,283 @@ Public Class Test
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Test2(SHA256.HashData(buffer))
+        Test2({hashType}.HashData(buffer))
         Dim belowLine = 10
     End Sub
     Public Shared Sub Test2(buffer As Byte())
     End Sub
 End Class
 ";
-            await TestVBWithoutVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithoutVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationUsingStatementBailOutNoFixCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using (var sha256 = new SHA256Managed())
-        {
+        using (var hasher = new {hashType}Managed())
+        {{
             int aboveLine = 20;
-            byte[] digest = sha256.ComputeHash(buffer);
+            byte[] digest = hasher.ComputeHash(buffer);
             int belowLine = 10;
-            byte[] digest2 = sha256.ComputeHash(buffer);
-        }
-    }
-}
+            byte[] digest2 = hasher.ComputeHash(buffer);
+        }}
+    }}
+}}
 ";
-            await TestCS(csInput);
+                await TestCS(csInput);
+            }
         }
 
         [Fact]
         public async Task BasicObjectCreationUsingBlockBailOutNoFixCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        Using sha256 As New SHA256Managed()
+        Dim buffer = New Byte(1023) {{}}
+        Using hasher As New {hashType}Managed()
             Dim aboveLine = 20
-            Dim digest As Byte() = sha256.ComputeHash(buffer)
+            Dim digest As Byte() = hasher.ComputeHash(buffer)
             Dim belowLine = 10
-            Dim digest2 As Byte() = sha256.ComputeHash(buffer)
+            Dim digest2 As Byte() = hasher.ComputeHash(buffer)
         End Using
     End Sub
 End Class
 ";
-            await TestVB(vbInput);
+                await TestVB(vbInput);
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationUsingStatementCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using ({|#2:var sha256 = new SHA256Managed()|})
-        {
+        using ({{|#2:var hasher = new {hashType}Managed()|}})
+        {{
             int aboveLine = 20;
-            byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-        }
-    }
-}
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicObjectCreationUsingBlockCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        {|#2:Using sha256 As New SHA256Managed()|}
+        Dim buffer = New Byte(1023) {{}}
+        {{|#2:Using hasher As New {hashType}Managed()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
         End Using
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task CSharpObjectCreationUsingStatementCastedCase()
         {
-            string csInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
-        using ({|#2:HashAlgorithm sha256 = new SHA256Managed()|})
-        {
+        using ({{|#2:HashAlgorithm hasher = new {hashType}Managed()|}})
+        {{
             int aboveLine = 20;
-            byte[] digest = {|#0:sha256.ComputeHash({|#1:buffer|})|};
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-        }
-    }
-}
+        }}
+    }}
+}}
 ";
 
-            string csFix = @"
+                string csFix = $@"
 using System;
 using System.Security.Cryptography;
 
 public class Test
-{
+{{
     public static void TestMethod()
-    {
+    {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = SHA256.HashData(buffer);
+        byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
-    }
-}
+    }}
+}}
 ";
-            await TestCSWithVariable(
-                csInput,
-                csFix,
-                "System.Security.Cryptography.SHA256");
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         [Fact]
         public async Task BasicObjectCreationUsingBlockCastedCase()
         {
-            string vbInput = @"
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
-        {|#2:Using sha256 As HashAlgorithm = New SHA256Managed()|}
+        Dim buffer = New Byte(1023) {{}}
+        {{|#2:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = {|#0:sha256.ComputeHash({|#1:buffer|})|}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
         End Using
     End Sub
 End Class
 ";
 
-            string vbFix = @"
+                string vbFix = $@"
 Imports System
 Imports System.Security.Cryptography
 
 Public Class Test
     Public Shared Sub TestMethod()
-        Dim buffer = New Byte(1023) {}
+        Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = SHA256.HashData(buffer)
+        Dim digest As Byte() = {hashType}.HashData(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-            await TestVBWithVariable(
-                vbInput,
-                vbFix,
-                "System.Security.Cryptography.SHA256");
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
+            }
         }
 
         private static VerifyCS.Test GetTestCS(string source, string corrected, ReferenceAssemblies referenceAssemblies)

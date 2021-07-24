@@ -21,43 +21,39 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var computeHashNode = root.FindNode(context.Span, getInnermostNodeForTie: true);
-            var diagnostics = context.Diagnostics[0];
-            var bufferArgNode = root.FindNode(diagnostics.AdditionalLocations[0].SourceSpan);
+            var diagnostic = context.Diagnostics[0];
+            var bufferArgNode = root.FindNode(diagnostic.AdditionalLocations[0].SourceSpan);
 
             if (computeHashNode is null || bufferArgNode is null)
             {
                 return;
             }
-            var hashTypeName = diagnostics.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
+            var hashTypeName = diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
 
-            switch (diagnostics.AdditionalLocations.Count)
+            switch (diagnostic.AdditionalLocations.Count)
             {
                 case 1:
-                    {
-                        //chained method SHA256.Create().ComputeHash(buffer)
-                        var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
-                            hashTypeName,
-                            bufferArgNode,
-                            computeHashNode);
-                        context.RegisterCodeFix(codeActionChain, diagnostics);
-                        return;
-                    }
+                    //chained method SHA256.Create().ComputeHash(buffer)
+                    var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
+                        hashTypeName,
+                        bufferArgNode,
+                        computeHashNode);
+                    context.RegisterCodeFix(codeActionChain, diagnostic);
+                    return;
                 case 2:
+                    var nodeToRemove = root.FindNode(diagnostic.AdditionalLocations[1].SourceSpan);
+                    if (nodeToRemove is null)
                     {
-                        var nodeToRemove = root.FindNode(diagnostics.AdditionalLocations[1].SourceSpan);
-                        if (nodeToRemove is null)
-                        {
-                            return;
-                        }
-
-                        if (!TryGetCodeAction(context.Document, hashTypeName, bufferArgNode, computeHashNode, nodeToRemove, out HashDataCodeAction? codeAction))
-                        {
-                            return;
-                        }
-
-                        context.RegisterCodeFix(codeAction, diagnostics);
                         return;
                     }
+
+                    if (!TryGetCodeAction(context.Document, hashTypeName, bufferArgNode, computeHashNode, nodeToRemove, out HashDataCodeAction? codeAction))
+                    {
+                        return;
+                    }
+
+                    context.RegisterCodeFix(codeAction, diagnostic);
+                    return;
             }
         }
 
@@ -74,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 ComputeHashNode = computeHashNode;
             }
             public override string Title => MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle;
-            public override string EquivalenceKey => MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle;
+            public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
 
             public Document Document { get; }
             public string HashTypeName { get; }

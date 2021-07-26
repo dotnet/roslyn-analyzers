@@ -4447,7 +4447,6 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
-#endif
 
         private readonly string MockApisCsSource = @"
 namespace System
@@ -4463,6 +4462,7 @@ namespace System
     }
 }
 ";
+#endif
 
         private readonly string TargetTypesForTest = @"
 namespace PlatformCompatDemo.SupportedUnupported

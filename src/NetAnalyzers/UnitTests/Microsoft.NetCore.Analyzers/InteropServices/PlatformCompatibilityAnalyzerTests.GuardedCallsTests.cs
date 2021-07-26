@@ -4022,7 +4022,7 @@ class Test
 
     [SupportedOSPlatform(""linux"")]
     void SupportedOnLinux() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.OnlySupportedCsAllPlatforms).WithLocation(0).
@@ -4101,7 +4101,7 @@ class Test
     [UnsupportedOSPlatform(""Linux"")]
     [UnsupportedOSPlatform(""ios"")]
     void UnsupportedOnLinuxWindowsIos() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
@@ -4165,7 +4165,7 @@ class Test
 
     [SupportedOSPlatform(""windows8.0"")]
     void SupportedOnWindows8() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnLinuxWindows10Ios91()",
@@ -4250,7 +4250,7 @@ class Test
     [SupportedOSPlatform(""Windows"")]
     [UnsupportedOSPlatform(""Windows10.0"")]
     void SupportedOnWindowsUntil10() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms,
                 VerifyCS.Diagnostic(PlatformCompatibilityAnalyzer.UnsupportedCsReachable).WithLocation(0).WithArguments("Test.UnsupportedOnWindows8IosSupportsIos14_19()",
@@ -4323,7 +4323,7 @@ class Test
 
     [SupportedOSPlatform(""windows8.0"")]
     void SupportedOnWindows8() { }
-}" + MockApisCsSource;
+}";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
@@ -4375,7 +4375,7 @@ class WindowsOnlyType
     public static bool IsSupported { get; }
     public static void M2() { }
 }
-" + MockApisCsSource;
+";
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
@@ -4450,31 +4450,6 @@ class Test
 #endif
 
         private readonly string MockApisCsSource = @"
-namespace System.Runtime.Versioning
-{
-    [AttributeUsage(AttributeTargets.Class |
-                    AttributeTargets.Method |
-                    AttributeTargets.Property |
-                    AttributeTargets.Field |
-                    AttributeTargets.Struct,
-                    AllowMultiple = true, Inherited = false)]
-    public sealed class SupportedOSPlatformGuardAttribute : Attribute
-    {
-        public SupportedOSPlatformGuardAttribute(string platformName) { }
-    }
-
-    [AttributeUsage(AttributeTargets.Class |
-                    AttributeTargets.Method |
-                    AttributeTargets.Property |
-                    AttributeTargets.Field |
-                    AttributeTargets.Struct,
-                    AllowMultiple = true, Inherited = false)]
-    public sealed class UnsupportedOSPlatformGuardAttribute : Attribute
-    {
-        public UnsupportedOSPlatformGuardAttribute(string platformName) { }
-    }
-}
-
 namespace System
 {
     public class MockOperatingSystem

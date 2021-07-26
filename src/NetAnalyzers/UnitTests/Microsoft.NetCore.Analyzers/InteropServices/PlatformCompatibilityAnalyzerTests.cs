@@ -3975,7 +3975,7 @@ class TestType
             var test = new VerifyCS.Test
             {
                 TestCode = sourceCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = AdditionalMetadataReferences.Net60,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 TestState = { }
             };
@@ -4027,7 +4027,7 @@ class TestType
             var test = new VerifyVB.Test
             {
                 TestCode = sourceCode,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = AdditionalMetadataReferences.Net60,
                 MarkupOptions = MarkupOptions.UseFirstDescriptor,
                 TestState = { },
             };

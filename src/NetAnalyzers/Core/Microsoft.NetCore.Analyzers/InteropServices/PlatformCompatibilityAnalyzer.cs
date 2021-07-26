@@ -146,7 +146,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 var osPlatformType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesOSPlatform);
                 var runtimeInformationType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesRuntimeInformation);
-                var mockOSType = context.Compilation.GetOrCreateTypeByMetadataName("System.MockOperatingSystem");
 
                 var stringType = context.Compilation.GetSpecialType(SpecialType.System_String);
                 if (stringType == null)
@@ -162,7 +161,13 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         m.Parameters.Length == 1 &&
                         m.Parameters[0].Type.Equals(osPlatformType));
 
-                var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType, mockOSType, out var relatedPlatforms);
+                var guardMethods = GetOperatingSystemGuardMethods(runtimeIsOSPlatformMethod, operatingSystemType, out var relatedPlatforms);
+#if DEBUG
+                if (context.Compilation.TryGetOrCreateTypeByMetadataName("System.MockOperatingSystem", out var mockOSType))
+                {
+                    guardMethods.AddRange(FilterPlatformCheckMethods(mockOSType, relatedPlatforms));
+                }
+#endif
                 var platformSpecificMembers = new ConcurrentDictionary<ISymbol, PlatformAttributes>();
                 var osPlatformCreateMethod = osPlatformType?.GetMembers("Create").OfType<IMethodSymbol>().FirstOrDefault(m =>
                     m.IsStatic &&
@@ -173,47 +178,42 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 var crossPlatform = HasCrossPlatformProperty(context.Options, context.Compilation);
 
                 context.RegisterOperationBlockStartAction(
-                    context => AnalyzeOperationBlock(context, guardMethods, runtimeIsOSPlatformMethod, osPlatformCreateMethod, crossPlatform,
+                    context => AnalyzeOperationBlock(context, guardMethods.ToImmutableArray(), runtimeIsOSPlatformMethod, osPlatformCreateMethod, crossPlatform,
                                     osPlatformType, stringType, platformSpecificMembers, msBuildPlatforms, notSupportedExceptionType, relatedPlatforms));
             });
 
-            static ImmutableArray<IMethodSymbol> GetOperatingSystemGuardMethods(IMethodSymbol? runtimeIsOSPlatformMethod,
-                INamedTypeSymbol operatingSystemType, INamedTypeSymbol? mockOSType, out SmallDictionary<string, string> relatedPlatforms)
+            static List<IMethodSymbol> GetOperatingSystemGuardMethods(IMethodSymbol? runtimeIsOSPlatformMethod,
+                INamedTypeSymbol operatingSystemType, out SmallDictionary<string, string> relatedPlatforms)
             {
                 relatedPlatforms = new SmallDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
                 var methods = FilterPlatformCheckMethods(operatingSystemType, relatedPlatforms).ToList();
-
-                if (mockOSType != null)
-                {
-                    methods.AddRange(FilterPlatformCheckMethods(mockOSType, relatedPlatforms));
-                }
 
                 if (runtimeIsOSPlatformMethod != null)
                 {
                     methods.Add(runtimeIsOSPlatformMethod);
                 }
 
-                return methods.ToImmutableArray();
-
-                static IEnumerable<IMethodSymbol> FilterPlatformCheckMethods(INamedTypeSymbol symbol, SmallDictionary<string, string> relatedPlatforms)
-                {
-                    return symbol.GetMembers().OfType<IMethodSymbol>().Where(m =>
-                    {
-                        if (m.IsStatic &&
-                            m.ReturnType.SpecialType == SpecialType.System_Boolean &&
-                            (IsOSPlatform == m.Name) || NameAndParametersValid(m))
-                        {
-                            CheckDependentPlatofmrs(m, relatedPlatforms);
-                            return true;
-                        }
-
-                        return false;
-                    });
-                }
+                return methods;
             }
 
-            static void CheckDependentPlatofmrs(IMethodSymbol m, SmallDictionary<string, string> relatedPlatforms)
+            static IEnumerable<IMethodSymbol> FilterPlatformCheckMethods(INamedTypeSymbol symbol, SmallDictionary<string, string> relatedPlatforms)
+            {
+                return symbol.GetMembers().OfType<IMethodSymbol>().Where(m =>
+                {
+                    if (m.IsStatic &&
+                        m.ReturnType.SpecialType == SpecialType.System_Boolean &&
+                        (IsOSPlatform == m.Name) || NameAndParametersValid(m))
+                    {
+                        CheckDependentPlatforms(m, relatedPlatforms);
+                        return true;
+                    }
+
+                    return false;
+                });
+            }
+
+            static void CheckDependentPlatforms(IMethodSymbol m, SmallDictionary<string, string> relatedPlatforms)
             {
                 if (TryExtractPlatformName(m.Name, out var name))
                 {
@@ -565,21 +565,29 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                         if (value.AnalysisValues.Count != 0 && value.AnalysisValues.Count == parent.AnalysisValues.Count)
                         {
-                            var parentEnumerator = parent.AnalysisValues.GetEnumerator();
-                            foreach (var val in value.AnalysisValues)
+                            if (IsNegationOfParentValues(value, parent.AnalysisValues.GetEnumerator()))
                             {
-                                if (parentEnumerator.MoveNext() && !parentEnumerator.Current.Equals(val.GetNegatedValue()))
-                                {
-                                    goto label;
-                                }
+                                continue;
                             }
-                            continue;
                         }
 
-                        label: if (!IsKnownValueGuarded(parentAttributes, ref csAttributes, parent, parentCapturedVersions))
+                        if (!IsKnownValueGuarded(parentAttributes, ref csAttributes, parent, parentCapturedVersions))
                         {
                             return false;
                         }
+                    }
+                }
+
+                return true;
+            }
+
+            static bool IsNegationOfParentValues(GlobalFlowStateAnalysisValueSet value, ImmutableHashSet<IAbstractAnalysisValue>.Enumerator parentEnumerator)
+            {
+                foreach (var val in value.AnalysisValues)
+                {
+                    if (parentEnumerator.MoveNext() && !parentEnumerator.Current.Equals(val.GetNegatedValue()))
+                    {
+                        return false;
                     }
                 }
 

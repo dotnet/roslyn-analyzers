@@ -3766,6 +3766,7 @@ class TestType
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
+#if DEBUG
         [Fact]
         public async Task IosSupportedOnMacCatalyst()
         {
@@ -3961,6 +3962,7 @@ class TestType
 }" + MockApisCsSource;
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
+#endif
 
         private string GetFormattedString(string resource, params string[] args) =>
             string.Format(CultureInfo.InvariantCulture, resource, args);

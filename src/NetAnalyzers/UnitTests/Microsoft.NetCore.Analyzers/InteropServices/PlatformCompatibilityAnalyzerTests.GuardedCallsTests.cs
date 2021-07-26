@@ -4380,6 +4380,7 @@ class WindowsOnlyType
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
 
+#if DEBUG
         [Fact]
         public async Task IosGuardsMacCatalyst()
         {
@@ -4446,6 +4447,7 @@ class Test
 
             await VerifyAnalyzerAsyncCs(source, s_msBuildPlatforms);
         }
+#endif
 
         private readonly string MockApisCsSource = @"
 namespace System.Runtime.Versioning

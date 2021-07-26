@@ -18,9 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DetectPreviewFeatureAnalyzer : DiagnosticAnalyzer
     {
-        internal const string CA2252RuleId = "CA2252";
-        internal const string CA2253RuleId = "CA2253";
-        internal const string CA2254RuleId = "CA2254";
+        internal const string RuleID = "CA2252";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_staticAbstractMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.StaticAndAbstractRequiresPreviewFeatures), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -28,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
-        internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(CA2252RuleId,
+        internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleID,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_localizableMessage,
                                                                                                                     DiagnosticCategory.Usage,
@@ -37,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     isPortedFxCopRule: false,
                                                                                                                     isDataflowRule: false);
 
-        internal static DiagnosticDescriptor StaticAbstractIsPreviewFeatureRule = DiagnosticDescriptorHelper.Create(CA2253RuleId,
+        internal static DiagnosticDescriptor StaticAbstractIsPreviewFeatureRule = DiagnosticDescriptorHelper.Create(RuleID,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_staticAbstractMessage,
                                                                                                                     DiagnosticCategory.Usage,
@@ -45,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     s_localizableDescription,
                                                                                                                     isPortedFxCopRule: false,
                                                                                                                     isDataflowRule: false);
-        internal static DiagnosticDescriptor ImplementsEmptyPreviewInterfaceRule = DiagnosticDescriptorHelper.Create(CA2254RuleId,
+        internal static DiagnosticDescriptor ImplementsEmptyPreviewInterfaceRule = DiagnosticDescriptorHelper.Create(RuleID,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_implementsEmptyPreviewInterface,
                                                                                                                     DiagnosticCategory.Usage,
@@ -92,12 +90,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         .GetMembers("VirtualStaticsInInterfaces")
                         .OfType<IFieldSymbol>()
                         .FirstOrDefault();
-                    if (virtualStaticsInInterfaces is null)
-                    {
-                        return;
-                    }
 
-                    ProcessPreviewAttribute(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols, previewFeaturesAttribute);
+                    if (virtualStaticsInInterfaces != null)
+                    {
+                        ProcessPreviewAttribute(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols, previewFeaturesAttribute);
+                    }
                 }
 
                 // Handle user side invocation/references to preview features
@@ -115,7 +112,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     );
 
                 // Handle library side definitions of preview features
-                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols, requiresPreviewFeaturesSymbolsToUsageType, virtualStaticsInInterfaces!, previewFeaturesAttribute), s_symbols);
+                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols, requiresPreviewFeaturesSymbolsToUsageType, virtualStaticsInInterfaces, previewFeaturesAttribute), s_symbols);
             });
         }
 
@@ -165,7 +162,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return symbol.IsStatic && symbol.IsAbstract && symbol.ContainingType != null && symbol.ContainingType.TypeKind == TypeKind.Interface && !ProcessContainingTypePreviewAttributes(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
         }
 
-        private static bool ProcessPropertyOrMethodAttributes(ISymbol propertyOrMethodSymbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, ConcurrentDictionary<ISymbol, PreviewFeatureUsageType> requiresPreviewFeaturesSymbolsToUsageType, IFieldSymbol virtualStaticsInInterfaces, INamedTypeSymbol previewFeatureAttributeSymbol)
+        private static bool ProcessPropertyOrMethodAttributes(ISymbol propertyOrMethodSymbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, ConcurrentDictionary<ISymbol, PreviewFeatureUsageType> requiresPreviewFeaturesSymbolsToUsageType, IFieldSymbol? virtualStaticsInInterfaces, INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (SymbolIsStaticAndAbstract(propertyOrMethodSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
             {
@@ -196,7 +193,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, ConcurrentDictionary<ISymbol, PreviewFeatureUsageType> requiresPreviewFeaturesSymbolsToUsageType, IFieldSymbol virtualStaticsInInterfaces, INamedTypeSymbol previewFeatureAttributeSymbol)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, ConcurrentDictionary<ISymbol, PreviewFeatureUsageType> requiresPreviewFeaturesSymbolsToUsageType, IFieldSymbol? virtualStaticsInInterfaces, INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbol = context.Symbol;
 

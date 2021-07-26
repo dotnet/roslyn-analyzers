@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     public abstract class AbstractAddMissingInterpolationTokenAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2251";
+        internal const string RuleId = "CA2253";
 
         internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AddMissingInterpolationTokenTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),

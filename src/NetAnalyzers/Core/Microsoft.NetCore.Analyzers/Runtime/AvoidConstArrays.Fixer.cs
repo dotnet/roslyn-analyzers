@@ -6,11 +6,11 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-// using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-// using Microsoft.CodeAnalysis.Editing;
-// using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -23,10 +23,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Document document = context.Document;
-            // SemanticModel model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            // SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            // SyntaxNode node = root.FindNode(context.Span);
+            Document document = context.Document;
+
+            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
+            context.RegisterCodeFix(
+                new MyCodeAction(
+                    title,
+                    async cancellationToken =>
+                    {
+                        DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken);
+                        // Make changes here
+                        return editor.GetChangedDocument();
+                    },
+                    equivalenceKey: title
+                ),
+                context.Diagnostics
+            );
             await Task.Run(() => { }).ConfigureAwait(false);
         }
 

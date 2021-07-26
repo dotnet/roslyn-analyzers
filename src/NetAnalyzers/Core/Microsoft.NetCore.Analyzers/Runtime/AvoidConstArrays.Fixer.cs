@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-// using System;
+using System;
 using System.Collections.Immutable;
 using System.Composition;
-// using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
-// using Analyzer.Utilities;
+using Analyzer.Utilities;
 // using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -29,5 +29,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // SyntaxNode node = root.FindNode(context.Span);
             await Task.Run(() => { }).ConfigureAwait(false);
         }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private sealed class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) :
+                base(title, createChangedDocument, equivalenceKey)
+            {
+            }
+        }
     }
+
 }

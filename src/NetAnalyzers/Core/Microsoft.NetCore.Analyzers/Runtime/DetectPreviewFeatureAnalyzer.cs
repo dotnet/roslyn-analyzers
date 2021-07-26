@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DetectPreviewFeatureAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleID = "CA2252";
+        internal const string RuleId = "CA2252";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_staticAbstractMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.StaticAndAbstractRequiresPreviewFeatures), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -26,7 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
-        internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleID,
+        internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_localizableMessage,
                                                                                                                     DiagnosticCategory.Usage,
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     isPortedFxCopRule: false,
                                                                                                                     isDataflowRule: false);
 
-        internal static DiagnosticDescriptor StaticAbstractIsPreviewFeatureRule = DiagnosticDescriptorHelper.Create(RuleID,
+        internal static DiagnosticDescriptor StaticAbstractIsPreviewFeatureRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_staticAbstractMessage,
                                                                                                                     DiagnosticCategory.Usage,
@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     s_localizableDescription,
                                                                                                                     isPortedFxCopRule: false,
                                                                                                                     isDataflowRule: false);
-        internal static DiagnosticDescriptor ImplementsEmptyPreviewInterfaceRule = DiagnosticDescriptorHelper.Create(RuleID,
+        internal static DiagnosticDescriptor ImplementsEmptyPreviewInterfaceRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                                     s_localizableTitle,
                                                                                                                     s_implementsEmptyPreviewInterface,
                                                                                                                     DiagnosticCategory.Usage,

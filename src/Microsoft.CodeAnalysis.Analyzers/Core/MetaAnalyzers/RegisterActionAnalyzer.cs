@@ -14,11 +14,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
-    public abstract class RegisterActionAnalyzer<TClassDeclarationSyntax, TInvocationExpressionSyntax, TArgumentSyntax, TLanguageKindEnum> : DiagnosticAnalyzerCorrectnessAnalyzer
-        where TClassDeclarationSyntax : SyntaxNode
-        where TInvocationExpressionSyntax : SyntaxNode
-        where TArgumentSyntax : SyntaxNode
-        where TLanguageKindEnum : struct
+    public abstract class RegisterActionAnalyzer : DiagnosticAnalyzerCorrectnessAnalyzer
     {
         private static readonly LocalizableString s_localizableTitleMissingKindArgument = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingKindArgumentToRegisterActionTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableMessageMissingSymbolKindArgument = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.MissingSymbolKindArgumentToRegisterActionMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
@@ -110,7 +106,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: s_localizableDescriptionStatefulAnalyzerRegisterActionsDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             MissingSymbolKindArgumentRule,
             MissingSyntaxKindArgumentRule,
             MissingOperationKindArgumentRule,
@@ -118,7 +114,14 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             InvalidSyntaxKindTypeArgumentRule,
             StartActionWithNoRegisteredActionsRule,
             StartActionWithOnlyEndActionRule);
+    }
 
+    public abstract class RegisterActionAnalyzer<TClassDeclarationSyntax, TInvocationExpressionSyntax, TArgumentSyntax, TLanguageKindEnum> : RegisterActionAnalyzer
+        where TClassDeclarationSyntax : SyntaxNode
+        where TInvocationExpressionSyntax : SyntaxNode
+        where TArgumentSyntax : SyntaxNode
+        where TLanguageKindEnum : struct
+    {
         protected override DiagnosticAnalyzerSymbolAnalyzer? GetDiagnosticAnalyzerSymbolAnalyzer(CompilationStartAnalysisContext compilationContext, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
         {
             Compilation compilation = compilationContext.Compilation;

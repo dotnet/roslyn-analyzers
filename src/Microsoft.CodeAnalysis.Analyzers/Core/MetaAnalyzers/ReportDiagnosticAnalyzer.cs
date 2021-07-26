@@ -13,12 +13,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
-    public abstract class ReportDiagnosticAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TInvocationExpressionSyntax, TIdentifierNameSyntax, TVariableDeclaratorSyntax> : DiagnosticAnalyzerCorrectnessAnalyzer
-        where TClassDeclarationSyntax : SyntaxNode
-        where TStructDeclarationSyntax : SyntaxNode
-        where TInvocationExpressionSyntax : SyntaxNode
-        where TIdentifierNameSyntax : SyntaxNode
-        where TVariableDeclaratorSyntax : SyntaxNode
+    public abstract class ReportDiagnosticAnalyzer : DiagnosticAnalyzerCorrectnessAnalyzer
     {
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.InvalidReportDiagnosticTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.InvalidReportDiagnosticMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
@@ -34,8 +29,16 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InvalidReportDiagnosticRule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InvalidReportDiagnosticRule);
+    }
 
+    public abstract class ReportDiagnosticAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TInvocationExpressionSyntax, TIdentifierNameSyntax, TVariableDeclaratorSyntax> : ReportDiagnosticAnalyzer
+        where TClassDeclarationSyntax : SyntaxNode
+        where TStructDeclarationSyntax : SyntaxNode
+        where TInvocationExpressionSyntax : SyntaxNode
+        where TIdentifierNameSyntax : SyntaxNode
+        where TVariableDeclaratorSyntax : SyntaxNode
+    {
         [SuppressMessage("AnalyzerPerformance", "RS1012:Start action has no registered actions.", Justification = "Method returns an analyzer that is registered by the caller.")]
         protected override DiagnosticAnalyzerSymbolAnalyzer? GetDiagnosticAnalyzerSymbolAnalyzer(CompilationStartAnalysisContext compilationContext, INamedTypeSymbol diagnosticAnalyzer, INamedTypeSymbol diagnosticAnalyzerAttribute)
         {

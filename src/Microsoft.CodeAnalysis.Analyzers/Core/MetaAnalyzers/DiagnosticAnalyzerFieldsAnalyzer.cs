@@ -10,19 +10,14 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
-    public abstract class DiagnosticAnalyzerFieldsAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TFieldDeclarationSyntax, TTypeSyntax, TVariableTypeDeclarationSyntax> : DiagnosticAnalyzerCorrectnessAnalyzer
-        where TClassDeclarationSyntax : SyntaxNode
-        where TStructDeclarationSyntax : SyntaxNode
-        where TFieldDeclarationSyntax : SyntaxNode
-        where TTypeSyntax : SyntaxNode
-        where TVariableTypeDeclarationSyntax : SyntaxNode
+    public abstract class DiagnosticAnalyzerFieldsAnalyzer : DiagnosticAnalyzerCorrectnessAnalyzer
     {
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotStorePerCompilationDataOntoFieldsTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotStorePerCompilationDataOntoFieldsMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotStorePerCompilationDataOntoFieldsDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources), nameof(AnalysisContext), DiagnosticWellKnownNames.RegisterCompilationStartActionName);
-        private static readonly string s_compilationTypeFullName = typeof(Compilation).FullName;
-        private static readonly string s_symbolTypeFullName = typeof(ISymbol).FullName;
-        private static readonly string s_operationTypeFullName = typeof(IOperation).FullName;
+        protected static readonly string CompilationTypeFullName = typeof(Compilation).FullName;
+        protected static readonly string SymbolTypeFullName = typeof(ISymbol).FullName;
+        protected static readonly string OperationTypeFullName = typeof(IOperation).FullName;
 
         public static readonly DiagnosticDescriptor DoNotStorePerCompilationDataOntoFieldsRule = new(
             DiagnosticIds.DoNotStorePerCompilationDataOntoFieldsRuleId,
@@ -34,8 +29,16 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotStorePerCompilationDataOntoFieldsRule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotStorePerCompilationDataOntoFieldsRule);
+    }
 
+    public abstract class DiagnosticAnalyzerFieldsAnalyzer<TClassDeclarationSyntax, TStructDeclarationSyntax, TFieldDeclarationSyntax, TTypeSyntax, TVariableTypeDeclarationSyntax> : DiagnosticAnalyzerFieldsAnalyzer
+        where TClassDeclarationSyntax : SyntaxNode
+        where TStructDeclarationSyntax : SyntaxNode
+        where TFieldDeclarationSyntax : SyntaxNode
+        where TTypeSyntax : SyntaxNode
+        where TVariableTypeDeclarationSyntax : SyntaxNode
+    {
 #pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext context)
 #pragma warning restore RS1025 // Configure generated code analysis
@@ -50,19 +53,19 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         {
             Compilation compilation = compilationContext.Compilation;
 
-            INamedTypeSymbol? compilationType = compilation.GetOrCreateTypeByMetadataName(s_compilationTypeFullName);
+            INamedTypeSymbol? compilationType = compilation.GetOrCreateTypeByMetadataName(CompilationTypeFullName);
             if (compilationType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol? symbolType = compilation.GetOrCreateTypeByMetadataName(s_symbolTypeFullName);
+            INamedTypeSymbol? symbolType = compilation.GetOrCreateTypeByMetadataName(SymbolTypeFullName);
             if (symbolType == null)
             {
                 return null;
             }
 
-            INamedTypeSymbol? operationType = compilation.GetOrCreateTypeByMetadataName(s_operationTypeFullName);
+            INamedTypeSymbol? operationType = compilation.GetOrCreateTypeByMetadataName(OperationTypeFullName);
             if (operationType == null)
             {
                 return null;

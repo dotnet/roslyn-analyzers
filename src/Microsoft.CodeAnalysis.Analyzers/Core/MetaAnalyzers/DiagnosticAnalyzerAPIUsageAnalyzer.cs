@@ -15,15 +15,14 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 {
-    public abstract class DiagnosticAnalyzerApiUsageAnalyzer<TTypeSyntax> : DiagnosticAnalyzer
-        where TTypeSyntax : SyntaxNode
+    public abstract class DiagnosticAnalyzerApiUsageAnalyzer : DiagnosticAnalyzer
     {
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseTypesFromAssemblyRuleTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseTypesFromAssemblyRuleDirectMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableIndirectMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseTypesFromAssemblyRuleIndirectMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.DoNotUseTypesFromAssemblyRuleDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources), nameof(AnalysisContext), DiagnosticWellKnownNames.RegisterCompilationStartActionName);
-        private const string CodeActionMetadataName = "Microsoft.CodeAnalysis.CodeActions.CodeAction";
-        private static readonly ImmutableArray<string> s_WorkspaceAssemblyNames = ImmutableArray.Create(
+
+        protected static readonly ImmutableArray<string> WorkspaceAssemblyNames = ImmutableArray.Create(
             "Microsoft.CodeAnalysis.Workspaces",
             "Microsoft.CodeAnalysis.CSharp.Workspaces",
             "Microsoft.CodeAnalysis.VisualBasic.Workspaces");
@@ -47,6 +46,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             isEnabledByDefault: true,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTagsExtensions.CompilationEndAndTelemetry);
+    }
+
+    public abstract class DiagnosticAnalyzerApiUsageAnalyzer<TTypeSyntax> : DiagnosticAnalyzerApiUsageAnalyzer
+        where TTypeSyntax : SyntaxNode
+    {
+        private const string CodeActionMetadataName = "Microsoft.CodeAnalysis.CodeActions.CodeAction";
 
         protected abstract bool IsNamedTypeDeclarationBlock(SyntaxNode syntax);
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseTypesFromAssemblyDirectRule, DoNotUseTypesFromAssemblyIndirectRule);
@@ -119,7 +124,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                             foreach (INamedTypeSymbol usedType in namedTypesToAccessedTypesMap[typeToProcess])
                             {
                                 if (usedType.ContainingAssembly != null &&
-                                    s_WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
+                                    WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
                                 {
                                     violatingTypeNamesBuilder.Add(usedType.ToDisplayString());
                                     violatingUsedTypeNamesBuilder.Add(typeToProcess.ToDisplayString());
@@ -246,7 +251,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                 if (!hasAccessToTypeFromWorkspaceAssemblies &&
                     usedType.ContainingAssembly != null &&
-                    s_WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
+                    WorkspaceAssemblyNames.Contains(usedType.ContainingAssembly.Name))
                 {
                     hasAccessToTypeFromWorkspaceAssemblies = true;
                 }

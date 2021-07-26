@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -11,8 +9,7 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class AddMissingInterpolationTokenAnalyzer : DiagnosticAnalyzer
+    public abstract class AbstractAddMissingInterpolationTokenAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2251";
 
@@ -29,6 +26,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        private protected abstract bool ShouldReport(ILiteralOperation operation);
+
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
@@ -42,66 +41,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                var parts = GetInterpolationParts(stringText);
-                if (parts.All(s => IsValidInterpolationPart(s, literalOperation.SemanticModel, literalOperation.Syntax.SpanStart)))
+                if (ShouldReport(literalOperation))
                 {
                     context.ReportDiagnostic(literalOperation.CreateDiagnostic(Rule));
                 }
             }, OperationKind.Literal);
         }
-
-        private static bool IsValidInterpolationPart(string s, SemanticModel semanticModel, int position)
-        {
-            if (uint.TryParse(s, out _))
-            {
-                // Numerical literals are valid interpolation from language perspective.
-                // But we don't want the analyzer to flag for them. So,
-                // they're invalid from analyzer perspective.
-                return false;
-            }
-            return !semanticModel.LookupSymbols(position, name: s).IsDefaultOrEmpty;
-        }
-
-        private static IEnumerable<string> GetInterpolationParts(string s)
-        {
-            var index = 0;
-            var isInsideInterpolation = false;
-            var currentPart = string.Empty;
-            var list = new List<string>();
-            while (index < s.Length)
-            {
-                if (ContainsEscapedBraces(index, s) && !isInsideInterpolation)
-                {
-                    // Escaped brace - either {{ or }}.
-                    index += 2;
-                    continue;
-                }
-
-                if (s[index] == '{')
-                {
-                    if (isInsideInterpolation)
-                    {
-                        // The analyzer doesn't flag for nested interpolation.
-                        return Enumerable.Empty<string>();
-                    }
-                    isInsideInterpolation = true;
-                }
-                else if (s[index] == '}')
-                {
-                    isInsideInterpolation = false;
-                    list.Add(currentPart);
-                    currentPart = string.Empty;
-                }
-                else if (isInsideInterpolation)
-                {
-                    currentPart += s[index];
-                }
-                index++;
-            }
-            return list;
-        }
-
-        private static bool ContainsEscapedBraces(int index, string s)
-            => index != s.Length - 1 && s[index] == s[index + 1] && s[index] is '{' or '}';
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.AddMissingInterpolationTokenAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationToken,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
@@ -26,7 +26,7 @@ class Program
         Console.WriteLine([|""{x}""|]);
     }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact]
@@ -43,11 +43,27 @@ class Program
         Console.WriteLine(""{y}"");
     }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact]
-        public async Task ContainsNumberedArguments_NoDiagnostic()
+        public async Task ContainsOnlyLiterals_NoDiagnostic()
+        {
+            var code = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine(""{0}"");
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task ContainsLiteralAndBindableExpression_Diagnostic()
         {
             var code = @"
 using System;
@@ -57,10 +73,10 @@ class Program
     public static void Main()
     {
         int x = 5;
-        Console.WriteLine(""{x}, {0}"");
+        Console.WriteLine([|""{x}, {0}""|]);
     }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
     }
 }

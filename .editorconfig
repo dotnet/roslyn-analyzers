@@ -191,7 +191,7 @@ dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
 dotnet_diagnostic.IDE0066.severity = suggestion
 
 # IDE0073: File header
-file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 # IDE0001: Name can be simplified
 dotnet_diagnostic.IDE0001.severity = silent

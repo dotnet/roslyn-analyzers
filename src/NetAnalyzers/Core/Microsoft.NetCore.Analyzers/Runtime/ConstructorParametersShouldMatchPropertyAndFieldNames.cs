@@ -46,8 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction((context) =>
             {
-                INamedTypeSymbol? jsonConstructorAttributeNamedSymbol = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute);
-                if (jsonConstructorAttributeNamedSymbol == null)
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute, out var jsonConstructorAttributeNamedSymbol))
                 {
                     return;
                 }

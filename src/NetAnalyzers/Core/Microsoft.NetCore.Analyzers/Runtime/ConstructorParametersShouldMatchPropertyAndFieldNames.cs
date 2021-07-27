@@ -188,7 +188,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         diagnosticDescriptor,
                         reason == ParameterDiagnosticReason.FieldInappropriateVisibility ? field.Locations : ImmutableArray<Location>.Empty,
                         properties,
-                        param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        param.ContainingType.Name,
                         param.Name,
                         field.Name));
             }
@@ -204,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         diagnosticDescriptor,
                         reason == ParameterDiagnosticReason.PropertyInappropriateVisibility ? prop.Locations : ImmutableArray<Location>.Empty,
                         properties,
-                        param.ContainingType.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                        param.ContainingType.Name,
                         param.Name,
                         prop.Name));
             }

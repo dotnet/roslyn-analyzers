@@ -44,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction((context) =>
+            context.RegisterCompilationStartAction(context =>
             {
                 if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemTextJsonSerializationJsonConstructorAttribute, out var jsonConstructorAttributeNamedSymbol))
                 {
@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var paramAnalyzer = new ParameterAnalyzer(jsonConstructorAttributeNamedSymbol);
 
-                context.RegisterSymbolStartAction((context) =>
+                context.RegisterSymbolStartAction(context =>
                 {
                     var constructors = ((INamedTypeSymbol)context.Symbol).InstanceConstructors;
 

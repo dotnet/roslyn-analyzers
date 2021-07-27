@@ -6,11 +6,9 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -31,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     title,
                     async cancellationToken =>
                     {
-                        DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken);
+                        DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
                         // Make changes here
                         return editor.GetChangedDocument();
                     },
@@ -51,5 +49,4 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
     }
-
 }

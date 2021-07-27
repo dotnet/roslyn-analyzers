@@ -23,7 +23,7 @@ namespace PerfDiff
         private static async Task<int> Main(string[] args)
         {
             var rootCommand = DiffCommand.CreateCommandLineOptions();
-            rootCommand.Handler = CommandHandler.Create(new DiffCommand.Handler(Run));
+            rootCommand.Handler = CommandHandler.Create(new DiffCommand.Handler(RunAsync));
 
             // Parse the incoming args so we can give warnings when deprecated options are used.
             s_parseResult = rootCommand.Parse(args);
@@ -31,7 +31,7 @@ namespace PerfDiff
             return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
         }
 
-        public static async Task<int> Run(
+        public static async Task<int> RunAsync(
             string baseline,
             string results,
             string? verbosity,

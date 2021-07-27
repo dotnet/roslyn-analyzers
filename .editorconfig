@@ -271,3 +271,12 @@ dotnet_diagnostic.CA1309.severity = suggestion
 
 # Analyzers bail-out if the PublicAPI.*.txt file is not found
 dotnet_public_api_analyzer.require_api_files = true
+
+### Configuration for vs-threading analyzers executed on this repo ###
+[*.{cs,vb}]
+
+# VSTHRD002: Avoid problematic synchronous waits
+dotnet_diagnostic.VSTHRD002.severity = none
+
+# VSTHRD011: Use AsyncLazy<T>
+dotnet_diagnostic.VSTHRD011.severity = none

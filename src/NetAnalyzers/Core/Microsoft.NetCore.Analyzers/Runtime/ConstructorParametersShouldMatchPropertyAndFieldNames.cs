@@ -181,8 +181,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private static void ReportFieldDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IFieldSymbol field)
             {
                 var properties = ImmutableDictionary<string, string?>.Empty
-                    .SetItem(ReferencedFieldOrPropertyNameKey, field.Name)
-                    .SetItem(DiagnosticReasonKey, reason.ToString());
+                    .Add(ReferencedFieldOrPropertyNameKey, field.Name)
+                    .Add(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
                     param.Locations[0].CreateDiagnostic(
@@ -197,8 +197,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private static void ReportPropertyDiagnostic(OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ParameterDiagnosticReason reason, IParameterSymbol param, IPropertySymbol prop)
             {
                 var properties = ImmutableDictionary<string, string?>.Empty
-                    .SetItem(ReferencedFieldOrPropertyNameKey, prop.Name)
-                    .SetItem(DiagnosticReasonKey, reason.ToString());
+                    .Add(ReferencedFieldOrPropertyNameKey, prop.Name)
+                    .Add(DiagnosticReasonKey, reason.ToString());
 
                 context.ReportDiagnostic(
                     param.Locations[0].CreateDiagnostic(

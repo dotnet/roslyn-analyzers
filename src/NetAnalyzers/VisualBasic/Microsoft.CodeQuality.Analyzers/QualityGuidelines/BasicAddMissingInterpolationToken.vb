@@ -12,36 +12,30 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
     Public NotInheritable Class BasicAddMissingInterpolationToken
         Inherits AbstractAddMissingInterpolationTokenAnalyzer
 
-        Private Protected Overrides Function ShouldReport(operation As ILiteralOperation) As Boolean
-            Dim annotation As New SyntaxAnnotation()
-            Dim dummyNode = TryCast(SyntaxFactory.ParseExpression("$" + operation.Syntax.ToString()).WithAdditionalAnnotations(annotation), InterpolatedStringExpressionSyntax)
-            If dummyNode Is Nothing Then
-                Return False
-            End If
+        Private Protected Overrides Function TryGetSpeculativeSemanticModel(operation As ILiteralOperation, dummyNode As SyntaxNode, ByRef model As SemanticModel) As Boolean
+            Return operation.SemanticModel.TryGetSpeculativeSemanticModel(operation.Syntax.SpanStart, dummyNode.FirstAncestorOrSelf(Of ExecutableStatementSyntax)(), model)
+        End Function
 
-            Dim root = operation.Syntax.SyntaxTree.GetRoot()
-            root = root.ReplaceNode(operation.Syntax, dummyNode)
-            dummyNode = DirectCast(root.GetAnnotatedNodes(annotation).Single(), InterpolatedStringExpressionSyntax)
-
-            Dim model As SemanticModel = Nothing
-            If Not operation.SemanticModel.TryGetSpeculativeSemanticModel(operation.Syntax.SpanStart, dummyNode.FirstAncestorOrSelf(Of ExecutableStatementSyntax)(), model) Then
-                Return False
-            End If
-
-            Dim interpolations = dummyNode.Contents.OfType(Of InterpolationSyntax)()
+        Private Protected Overrides Function AreAllInterpolationsBindable(node As SyntaxNode, model As SemanticModel) As Boolean
+            Dim interpolations = DirectCast(node, InterpolatedStringExpressionSyntax).Contents.OfType(Of InterpolationSyntax)()
             Dim hasNonConstantInterpolation = False
             For Each interpolation In interpolations
                 If TypeOf interpolation.Expression Is LiteralExpressionSyntax Then
                     Continue For
                 End If
 
-                hasNonConstantInterpolation = True
                 If model.GetSymbolInfo(interpolation.Expression).Symbol Is Nothing Then
                     Return False
                 End If
+
+                hasNonConstantInterpolation = True
             Next
 
             Return hasNonConstantInterpolation
+        End Function
+
+        Private Protected Overrides Function ParseStringLiteralAsInterpolatedString(operation As ILiteralOperation) As SyntaxNode
+            Return TryCast(SyntaxFactory.ParseExpression("$" + operation.Syntax.ToString()), InterpolatedStringExpressionSyntax)
         End Function
     End Class
 End Namespace

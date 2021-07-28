@@ -13,24 +13,9 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpAddMissingInterpolationToken : AbstractAddMissingInterpolationTokenAnalyzer
     {
-        private protected override bool ShouldReport(ILiteralOperation operation)
+        private protected override bool AreAllInterpolationsBindable(SyntaxNode node, SemanticModel model)
         {
-            var annotation = new SyntaxAnnotation();
-            if (SyntaxFactory.ParseExpression("$" + operation.Syntax.ToString(), options: operation.Syntax.SyntaxTree.Options).WithAdditionalAnnotations(annotation)
-                is not InterpolatedStringExpressionSyntax dummyNode)
-            {
-                return false;
-            }
-
-            var root = operation.Syntax.SyntaxTree.GetRoot();
-            root = root.ReplaceNode(operation.Syntax, dummyNode);
-            dummyNode = (InterpolatedStringExpressionSyntax)root.GetAnnotatedNodes(annotation).Single();
-            if (!operation.SemanticModel.TryGetSpeculativeSemanticModel(operation.Syntax.SpanStart, dummyNode.FirstAncestorOrSelf<StatementSyntax>(), out var model))
-            {
-                return false;
-            }
-
-            var interpolations = dummyNode.Contents.OfType<InterpolationSyntax>();
+            var interpolations = ((InterpolatedStringExpressionSyntax)node).Contents.OfType<InterpolationSyntax>();
             bool hasNonConstantInterpolation = false;
             foreach (var interpolation in interpolations)
             {
@@ -39,14 +24,21 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     continue;
                 }
 
-                hasNonConstantInterpolation = true;
                 if (model.GetSymbolInfo(interpolation.Expression).Symbol is null)
                 {
                     return false;
                 }
+
+                hasNonConstantInterpolation = true;
             }
 
             return hasNonConstantInterpolation;
         }
+
+        private protected override SyntaxNode? ParseStringLiteralAsInterpolatedString(ILiteralOperation operation)
+            => SyntaxFactory.ParseExpression("$" + operation.Syntax.ToString(), options: operation.Syntax.SyntaxTree.Options) as InterpolatedStringExpressionSyntax;
+
+        private protected override bool TryGetSpeculativeSemanticModel(ILiteralOperation operation, SyntaxNode dummyNode, out SemanticModel model)
+            => operation.SemanticModel.TryGetSpeculativeSemanticModel(operation.Syntax.SpanStart, dummyNode.FirstAncestorOrSelf<StatementSyntax>(), out model);
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public sealed class CSharpAddMissingInterpolationTokeFixer : AbstractAddMissingInterpolationTokenFixer
+    public sealed class CSharpAddMissingInterpolationTokenFixer : AbstractAddMissingInterpolationTokenFixer
     {
         private protected override SyntaxNode GetReplacement(SyntaxNode node)
             => SyntaxFactory.ParseExpression("$" + node.ToString());

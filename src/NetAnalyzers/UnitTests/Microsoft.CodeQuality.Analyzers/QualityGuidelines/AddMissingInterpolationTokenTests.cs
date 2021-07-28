@@ -4,7 +4,11 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationToken,
-    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationTokeFixer>;
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationTokenFixer>;
+
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicAddMissingInterpolationToken,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicAddMissingInterpolationTokenFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
 {
@@ -13,7 +17,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
         [Fact]
         public async Task HasValidVariableInScope_Diagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -25,7 +29,7 @@ class Program
     }
 }";
 
-            var fixedCode = @"
+            var csFixedCode = @"
 using System;
 
 class Program
@@ -36,13 +40,34 @@ class Program
         Console.WriteLine($""{x}"");
     }
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csFixedCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine([|""{x}""|])
+    End Sub
+End Class";
+
+            var vbFixedCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine($""{x}"")
+    End Sub
+End Class";
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbFixedCode);
         }
 
         [Fact]
         public async Task DoesNotHaveValidVariableInScope_NoDiagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -53,13 +78,24 @@ class Program
         Console.WriteLine(""{y}"");
     }
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, code);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine(""{y}"")
+    End Sub
+End Class";
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbCode);
         }
 
         [Fact]
         public async Task ContainsOnlyLiterals_NoDiagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -69,13 +105,23 @@ class Program
         Console.WriteLine(""{0}"");
     }
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, code);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Console.WriteLine(""{0}"")
+    End Sub
+End Class";
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbCode);
         }
 
         [Fact]
         public async Task ContainsLiteralAndBindableExpression_Diagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -87,7 +133,7 @@ class Program
     }
 }";
 
-            var fixedCode = @"
+            var csFixedCode = @"
 using System;
 
 class Program
@@ -98,13 +144,34 @@ class Program
         Console.WriteLine($""{x}, {0}"");
     }
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csFixedCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine([|""{x}, {0}""|])
+    End Sub
+End Class";
+
+            var vbFixedCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine($""{x}, {0}"")
+    End Sub
+End Class";
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbFixedCode);
         }
 
         [Fact]
         public async Task ContainsBindableExpression_Diagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -118,7 +185,7 @@ class Program
     private static string M(int x) => x.ToString();
 }";
 
-            var fixedCode = @"
+            var csFixedCode = @"
 using System;
 
 class Program
@@ -131,13 +198,42 @@ class Program
 
     private static string M(int x) => x.ToString();
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csFixedCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine([|""{M(x)}""|])
+    End Sub
+
+    Private Shared Function M(x As Integer) As String
+        Return x.ToString()
+    End Function
+End Class";
+
+            var vbFixedCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine($""{M(x)}"")
+    End Sub
+
+    Private Shared Function M(x As Integer) As String
+        Return x.ToString()
+    End Function
+End Class";
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbFixedCode);
         }
 
         [Fact]
         public async Task ContainsNonBindableExpression_NoDiagnostic()
         {
-            var code = @"
+            var csCode = @"
 using System;
 
 class Program
@@ -151,7 +247,23 @@ class Program
     private static string M(int x) => x.ToString();
 }";
 
-            await VerifyCS.VerifyCodeFixAsync(code, code);
+            await VerifyCS.VerifyCodeFixAsync(csCode, csCode);
+
+            var vbCode = @"
+Imports System
+
+Class Program
+    Sub Main()
+        Dim x As Integer = 5
+        Console.WriteLine(""{N(x)}"")
+    End Sub
+
+    Private Shared Function M(x As Integer) As String
+        Return x.ToString()
+    End Function
+End Class";
+
+            await VerifyVB.VerifyCodeFixAsync(vbCode, vbCode);
         }
     }
 }

@@ -1272,4 +1272,7 @@
   <data name="AddMissingInterpolationTokenTitle" xml:space="preserve">
     <value>Possible missing interpolation token</value>
   </data>
+  <data name="AddMissingInterpolationTokenCodeFixTitle" xml:space="preserve">
+    <value>Add missing interpolation token</value>
+  </data>
 </root>

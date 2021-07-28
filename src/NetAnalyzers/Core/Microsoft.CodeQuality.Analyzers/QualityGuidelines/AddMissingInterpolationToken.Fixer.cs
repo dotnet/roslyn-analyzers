@@ -37,7 +37,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private class MyCodeAction : DocumentChangeAction
         {
             public MyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base("", createChangedDocument, "")
+                : base(MicrosoftCodeQualityAnalyzersResources.AddMissingInterpolationTokenCodeFixTitle,
+                      createChangedDocument,
+                      nameof(MicrosoftCodeQualityAnalyzersResources.AddMissingInterpolationTokenCodeFixTitle))
             {
             }
         }

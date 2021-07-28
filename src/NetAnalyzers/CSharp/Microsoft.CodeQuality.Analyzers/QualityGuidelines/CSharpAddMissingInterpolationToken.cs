@@ -40,8 +40,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 }
 
                 hasNonConstantInterpolation = true;
-                var info = model.GetSymbolInfo(interpolation.Expression);
-                if (info.Symbol is null)
+                if (model.GetSymbolInfo(interpolation.Expression).Symbol is null)
                 {
                     return false;
                 }

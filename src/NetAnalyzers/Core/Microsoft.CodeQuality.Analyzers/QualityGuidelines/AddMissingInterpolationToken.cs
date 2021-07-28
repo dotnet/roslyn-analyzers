@@ -24,24 +24,20 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         private protected abstract bool ShouldReport(ILiteralOperation operation);
 
-        public override void Initialize(AnalysisContext context)
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterOperationAction(context =>
             {
                 var literalOperation = (ILiteralOperation)context.Operation;
-                if (!literalOperation.ConstantValue.HasValue ||
-                    literalOperation.ConstantValue.Value is not string stringText)
-                {
-                    return;
-                }
-
-                if (ShouldReport(literalOperation))
+                if (literalOperation.ConstantValue.HasValue &&
+                    literalOperation.ConstantValue.Value is string &&
+                    ShouldReport(literalOperation))
                 {
                     context.ReportDiagnostic(literalOperation.CreateDiagnostic(Rule));
                 }

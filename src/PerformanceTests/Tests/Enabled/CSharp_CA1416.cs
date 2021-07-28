@@ -36,6 +36,42 @@ class {name}
     }}
 }}
 "));
+                name += "Unsupported";
+                sources.Add((name + "Unsupport", @$"
+using System;
+using PlatformCompatDemo.SupportedUnupported;
+
+class {name}
+{{
+    private B field = new B();
+    public void M1()
+    {{
+        field.M3();
+    }}
+}}
+"));
+
+                name += "Flow";
+                sources.Add((name, @$"
+using System;
+using PlatformCompatDemo.SupportedUnupported;
+
+class {name}
+{{
+    private B field = new B();
+    public void M1()
+    {{
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 2))
+        {{
+            field.M2();
+        }}
+        else
+        {{
+            field.M2();
+        }}
+    }}
+}}
+"));
             }
 
             var targetTypesForTest = @"
@@ -46,6 +82,8 @@ namespace PlatformCompatDemo.SupportedUnupported
     {
         [SupportedOSPlatform(""Windows10.1.1.1"")]
         public void M2() { }
+        [UnsupportedOSPlatform(""macOS11.0.1"")]
+        public void M3() {}
     }
 }";
             sources.Add((nameof(targetTypesForTest), targetTypesForTest));
@@ -77,7 +115,7 @@ namespace PlatformCompatDemo.SupportedUnupported
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
+            if (diagnostics.Length != 3 * Constants.Number_Of_Code_Files)
             {
                 throw new InvalidOperationException($"Expected '{1 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }

@@ -1,12 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationToken,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpAddMissingInterpolationTokeFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
 {
@@ -26,7 +24,19 @@ class Program
         Console.WriteLine([|""{x}""|]);
     }
 }";
-            await VerifyCS.VerifyCodeFixAsync(code, code);
+
+            var fixedCode = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        int x = 5;
+        Console.WriteLine($""{x}"");
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -76,6 +86,71 @@ class Program
         Console.WriteLine([|""{x}, {0}""|]);
     }
 }";
+
+            var fixedCode = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        int x = 5;
+        Console.WriteLine($""{x}, {0}"");
+    }
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact]
+        public async Task ContainsBindableExpression_Diagnostic()
+        {
+            var code = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        int x = 5;
+        Console.WriteLine([|""{M(x)}""|]);
+    }
+
+    private static string M(int x) => x.ToString();
+}";
+
+            var fixedCode = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        int x = 5;
+        Console.WriteLine($""{M(x)}"");
+    }
+
+    private static string M(int x) => x.ToString();
+}";
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact]
+        public async Task ContainsNonBindableExpression_NoDiagnostic()
+        {
+            var code = @"
+using System;
+
+class Program
+{
+    public static void Main()
+    {
+        int x = 5;
+        Console.WriteLine(""{N(x)}"");
+    }
+
+    private static string M(int x) => x.ToString();
+}";
+
             await VerifyCS.VerifyCodeFixAsync(code, code);
         }
     }

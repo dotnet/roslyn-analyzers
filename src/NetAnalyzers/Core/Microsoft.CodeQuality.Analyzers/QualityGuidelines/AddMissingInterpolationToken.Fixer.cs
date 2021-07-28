@@ -16,6 +16,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AbstractAddMissingInterpolationTokenAnalyzer.RuleId);
 
+        public override FixAllProvider GetFixAllProvider()
+            => WellKnownFixAllProviders.BatchFixer;
+
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

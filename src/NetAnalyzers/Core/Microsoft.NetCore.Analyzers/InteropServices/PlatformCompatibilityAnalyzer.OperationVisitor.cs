@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         {
             private readonly ImmutableArray<IMethodSymbol> _platformCheckMethods;
             private readonly INamedTypeSymbol? _osPlatformType;
-            private SmallDictionary<string, (string relatedPlatform, bool isSubset)> _relatedPlatforms;
+            private readonly SmallDictionary<string, (string relatedPlatform, bool isSubset)> _relatedPlatforms;
 
             public OperationVisitor(
                 ImmutableArray<IMethodSymbol> platformCheckMethods,

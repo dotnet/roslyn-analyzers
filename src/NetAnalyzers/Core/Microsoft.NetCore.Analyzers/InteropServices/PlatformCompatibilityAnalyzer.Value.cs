@@ -107,20 +107,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return false;
             }
 
-            public static bool TryDecode(ImmutableArray<AttributeData> attributes, ArrayBuilder<PlatformMethodValue> infosBuilder)
-            {
-                foreach (var attribute in attributes)
-                {
-                    if (attribute.AttributeClass.Name is SupportedOSPlatformGuardAttribute or UnsupportedOSPlatformGuardAttribute &&
-                        TryParsePlatformNameAndVersion(attribute, out var platformName, out var version))
-                    {
-                        var info = new PlatformMethodValue(platformName, version, negated: attribute.AttributeClass.Name == UnsupportedOSPlatformGuardAttribute);
-                        infosBuilder.Add(info);
-                    }
-                }
-                return infosBuilder.Any();
-            }
-
             private static bool TryDecodeRuntimeInformationIsOSPlatform(
                 IOperation argumentValue,
                 INamedTypeSymbol? osPlatformType,

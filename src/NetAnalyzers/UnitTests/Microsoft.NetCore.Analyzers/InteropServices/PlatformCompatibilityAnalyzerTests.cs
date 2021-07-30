@@ -3797,47 +3797,55 @@ class TestType
     [UnsupportedOSPlatform(""MacCatalyst"")]
     static void SupportsIOSNotMacCatalyst() { }
 
-    void M1()
+    [UnsupportedOSPlatform(""ios"")]
+    [SupportedOSPlatform(""maccatalyst"")]
+    public void WorksOnMacCatalystNotIOS() { }
+
+    void CrossPlatformMethod()
     {
         [|SupportsIOSLinuxMacCatalyst()|]; // This call site is reachable on all platforms. 'TestType.SupportsIOSLinuxMacCatalyst()' is only supported on: 'ios', 'Linux', 'maccatalyst'.
         [|SupportsMacCatalyst()|];         // This call site is reachable on all platforms. 'TestType.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
         [|SupportsIOS()|];                 // This call site is reachable on all platforms. 'TestType.SupportsIOS()' is only supported on: 'ios', 'maccatalyst'.
         [|SupportsIOSNotMacCatalyst()|];   // This call site is reachable on all platforms. 'TestType.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+        [|WorksOnMacCatalystNotIOS()|];    // This call site is reachable on all platforms. 'TestType.WorksOnMacCatalystNotIOS()' is only supported on: 'maccatalyst'.
         UnsupportsIos();                   // no warning because not in the MSBuild default list
         UnsupportsMacCatalyst();
     }
 
     [SupportedOSPlatform(""iOS"")]
-    void IOSMethod()
+    void MethodReachableOnIOS()
     {
         SupportsIOSLinuxMacCatalyst();
         [|SupportsMacCatalyst()|];       // This call site is reachable on: 'iOS', 'maccatalyst'. 'TestType.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.
         SupportsIOS();
         [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'iOS', 'maccatalyst'. 'TestType.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+        [|WorksOnMacCatalystNotIOS()|];  // This call site is reachable on: 'iOS', 'maccatalyst'. 'TestType.WorksOnMacCatalystNotIOS()' is only supported on: 'maccatalyst'.
         [|UnsupportsIos()|];             // This call site is reachable on: 'iOS', 'maccatalyst'. 'TestType.UnsupportsIos()' is unsupported on: 'ios', 'maccatalyst'.
         [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'iOS', 'maccatalyst'. 'TestType.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
     }
 
     [SupportedOSPlatform(""MacCatalyst"")]
-    void MacCatalystMethod()
+    void MethodReachableOnMacCatalyst()
     {
         SupportsIOSLinuxMacCatalyst();
         SupportsMacCatalyst();
         SupportsIOS();
         [|SupportsIOSNotMacCatalyst()|]; // This call site is reachable on: 'MacCatalyst'. 'TestType.SupportsIOSNotMacCatalyst()' is only supported on: 'ios'.
+        WorksOnMacCatalystNotIOS();
         [|UnsupportsIos()|];             // This call site is reachable on: 'MacCatalyst'. 'TestType.UnsupportsIos()' is unsupported on: 'maccatalyst'.
         [|UnsupportsMacCatalyst()|];     // This call site is reachable on: 'MacCatalyst'. 'TestType.UnsupportsMacCatalyst()' is unsupported on: 'maccatalyst'.
     }
 
     [SupportedOSPlatform(""ios"")]
     [UnsupportedOSPlatform(""MacCatalyst"")]
-    void IOSButNotMacCatalystMethod()
+    void MethodReachableOnIOSButNotMacCatalyst()
     {
-        SupportsIOSLinuxMacCatalyst();     
-        [|SupportsMacCatalyst()|];   // This call site is reachable on: 'ios'. 'TestType.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.    
+        SupportsIOSLinuxMacCatalyst();
+        [|SupportsMacCatalyst()|];     // This call site is reachable on: 'ios'. 'TestType.SupportsMacCatalyst()' is only supported on: 'maccatalyst'.    
         SupportsIOS();
         SupportsIOSNotMacCatalyst();
-        [|UnsupportsIos()|];         // This call site is reachable on: 'ios'. 'TestType.UnsupportsIos()' is unsupported on: 'ios'.
+        [|WorksOnMacCatalystNotIOS()|]; // This call site is unreachable on: 'ios', 'maccatalyst'. 'TestType.WorksOnMacCatalystNotIOS()' is only supported on: 'maccatalyst'.
+        [|UnsupportsIos()|];            // This call site is reachable on: 'ios'. 'TestType.UnsupportsIos()' is unsupported on: 'ios'.
         UnsupportsMacCatalyst();    
     }
 }" + MockApisCsSource;

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -15,8 +16,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// <summary>
     /// CA1822: Mark members as static
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class MarkMembersAsStaticAnalyzer : DiagnosticAnalyzer
+    public abstract class MarkMembersAsStaticAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1822";
 
@@ -34,9 +34,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              isPortedFxCopRule: true,
                                                                              isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext context)
+        protected abstract bool SupportStaticLocalFunctions(ParseOptions parseOptions);
+
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
@@ -59,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             return;
 
-            static void OnSymbolStart(
+            void OnSymbolStart(
                 SymbolStartAnalysisContext symbolStartContext,
                 WellKnownTypeProvider wellKnownTypeProvider,
                 ImmutableArray<INamedTypeSymbol> skippedAttributes,
@@ -91,56 +93,60 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 void OnOperationBlockStart(OperationBlockStartAnalysisContext blockStartContext)
                 {
-                    if (blockStartContext.OwningSymbol is not IMethodSymbol methodSymbol)
+                    if (blockStartContext.OwningSymbol is not IMethodSymbol methodSymbol ||
+                        // Don't run any other check for this method if it isn't a valid analysis context
+                        !ShouldAnalyze(methodSymbol, wellKnownTypeProvider, skippedAttributes, isWebProject, blockStartContext))
                     {
                         return;
                     }
 
-                    // Don't run any other check for this method if it isn't a valid analysis context
-                    if (!ShouldAnalyze(methodSymbol, wellKnownTypeProvider, skippedAttributes, isWebProject, blockStartContext))
-                    {
-                        return;
-                    }
-
+                    var localVariables = PooledConcurrentSet<ISymbol>.GetInstance();
                     bool isInstanceReferenced = false;
 
                     blockStartContext.RegisterOperationAction(operationContext =>
-                    {
-                        if (((IInstanceReferenceOperation)operationContext.Operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
-                        {
-                            isInstanceReferenced = true;
-                        }
-                    }, OperationKind.InstanceReference);
+                        CheckHasInstanceReference(operationContext.Operation, ref isInstanceReferenced)
+                        , OperationKind.InstanceReference);
 
-                    // Workaround for https://github.com/dotnet/roslyn/issues/27564
                     blockStartContext.RegisterOperationAction(operationContext =>
+                        CheckHasReferenceInXml(operationContext.Operation, ref isInstanceReferenced)
+                        , OperationKind.None);
+
+                    if (SupportStaticLocalFunctions(blockStartContext.OperationBlocks[0].Syntax.SyntaxTree.Options))
                     {
-                        if (!operationContext.Operation.IsOperationNoneRoot())
-                        {
-                            isInstanceReferenced = true;
-                        }
-                    }, OperationKind.None);
+                        // We want to keep all local declarations because they could be captured by local functions.
+                        blockStartContext.RegisterOperationAction(context =>
+                            localVariables.Add(((IVariableDeclaratorOperation)context.Operation).Symbol)
+                            , OperationKind.VariableDeclarator);
+
+                        // The block start analysis context is not called for local functions and there is no start analysis
+                        // alternative so we will have to manually check the children operations.
+                        blockStartContext.RegisterOperationAction(context =>
+                            AnalyzeLocalFunction(context, wellKnownTypeProvider, localVariables, methodCandidates)
+                            , OperationKind.LocalFunction);
+                    }
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {
-                        if (!isInstanceReferenced)
+                        if (isInstanceReferenced)
                         {
-                            if (methodSymbol.IsAccessorMethod())
+                            return;
+                        }
+
+                        if (methodSymbol.IsAccessorMethod())
+                        {
+                            accessorCandidates.Add(methodSymbol);
+                            propertyOrEventCandidates.Add(methodSymbol.AssociatedSymbol);
+                        }
+                        else if (methodSymbol.IsExternallyVisible())
+                        {
+                            if (!IsOnObsoleteMemberChain(methodSymbol, wellKnownTypeProvider))
                             {
-                                accessorCandidates.Add(methodSymbol);
-                                propertyOrEventCandidates.Add(methodSymbol.AssociatedSymbol);
+                                blockEndContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.Name));
                             }
-                            else if (methodSymbol.IsExternallyVisible())
-                            {
-                                if (!IsOnObsoleteMemberChain(methodSymbol, wellKnownTypeProvider))
-                                {
-                                    blockEndContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.Name));
-                                }
-                            }
-                            else
-                            {
-                                methodCandidates.Add(methodSymbol);
-                            }
+                        }
+                        else
+                        {
+                            methodCandidates.Add(methodSymbol);
                         }
                     });
                 }
@@ -273,16 +279,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            // If this looks like an event handler don't flag such cases.
-            // However, we do want to consider EventRaise accessor as a candidate
-            // so we can flag the associated event if none of it's accessors need instance reference.
-            if (methodSymbol.HasEventHandlerSignature(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs)) &&
-                methodSymbol.MethodKind != MethodKind.EventRaise)
-            {
-                return false;
-            }
-
-            if (IsExplicitlyVisibleFromCom(methodSymbol, wellKnownTypeProvider))
+            if (IsEventHandlerLike(methodSymbol, wellKnownTypeProvider) ||
+                IsExplicitlyVisibleFromCom(methodSymbol, wellKnownTypeProvider))
             {
                 return false;
             }
@@ -296,6 +294,32 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             return true;
         }
+
+        private static bool ShouldAnalyzeLocalFunction(IMethodSymbol methodSymbol, WellKnownTypeProvider wellKnownTypeProvider, OperationAnalysisContext context)
+        {
+            Debug.Assert(methodSymbol.MethodKind == MethodKind.LocalFunction);
+
+            if (methodSymbol.IsStatic || IsEventHandlerLike(methodSymbol, wellKnownTypeProvider))
+            {
+                return false;
+            }
+
+            var hasCorrectVisibility = context.Options.MatchesConfiguredVisibility(Rule, methodSymbol, wellKnownTypeProvider.Compilation,
+                defaultRequiredVisibility: SymbolVisibilityGroup.All);
+            if (!hasCorrectVisibility)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        // If this looks like an event handler don't flag such cases.
+        // However, we do want to consider EventRaise accessor as a candidate
+        // so we can flag the associated event if none of it's accessors need instance reference.
+        private static bool IsEventHandlerLike(IMethodSymbol methodSymbol, WellKnownTypeProvider wellKnownTypeProvider)
+            => methodSymbol.HasEventHandlerSignature(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs))
+                && methodSymbol.MethodKind != MethodKind.EventRaise;
 
         private static bool IsExplicitlyVisibleFromCom(IMethodSymbol methodSymbol, WellKnownTypeProvider wellKnownTypeProvider)
         {
@@ -371,6 +395,80 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             return allAttributes.Any(attribute => attribute.AttributeClass.Equals(obsoleteAttributeType));
+        }
+
+        private static void CheckHasInstanceReference(IOperation operation, ref bool isInstanceReferenced)
+        {
+            Debug.Assert(operation.Kind == OperationKind.InstanceReference);
+
+            if (((IInstanceReferenceOperation)operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+            {
+                isInstanceReferenced = true;
+            }
+        }
+
+        private static void CheckHasReferenceInXml(IOperation operation, ref bool isInstanceReferenced)
+        {
+            // Workaround for https://github.com/dotnet/roslyn/issues/27564
+            if (!operation.IsOperationNoneRoot())
+            {
+                isInstanceReferenced = true;
+            }
+        }
+
+        private static void AnalyzeLocalFunction(OperationAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider,
+            PooledConcurrentSet<ISymbol> realFunctionVariables, PooledConcurrentSet<IMethodSymbol> methodCandidates)
+        {
+            Debug.Assert(context.Operation.Kind == OperationKind.LocalFunction);
+
+            var workStack = new Queue<ILocalFunctionOperation>();
+            workStack.Enqueue((ILocalFunctionOperation)context.Operation);
+
+            while (workStack.Count > 0)
+            {
+                var localFunction = workStack.Dequeue();
+
+                if (!ShouldAnalyzeLocalFunction(localFunction.Symbol, wellKnownTypeProvider, context))
+                {
+                    continue;
+                }
+
+                var hasLocalOrInstanceReference = false;
+                foreach (var childOperation in localFunction.Descendants())
+                {
+                    switch (childOperation.Kind)
+                    {
+                        case OperationKind.None:
+                            CheckHasReferenceInXml(childOperation, ref hasLocalOrInstanceReference);
+                            break;
+
+                        case OperationKind.InstanceReference:
+                            CheckHasInstanceReference(childOperation, ref hasLocalOrInstanceReference);
+                            break;
+
+                        case OperationKind.LocalReference:
+                            if (realFunctionVariables.Contains(((ILocalReferenceOperation)childOperation).Local))
+                            {
+                                hasLocalOrInstanceReference = true;
+                            }
+                            break;
+
+                        // Local functions can contain local functions so we need to queue them for analysis
+                        case OperationKind.LocalFunction:
+                            workStack.Enqueue((ILocalFunctionOperation)childOperation);
+                            break;
+
+                        default:
+                            // Do nothing
+                            break;
+                    }
+                }
+
+                if (!hasLocalOrInstanceReference)
+                {
+                    methodCandidates.Add(localFunction.Symbol);
+                }
+            }
         }
     }
 }

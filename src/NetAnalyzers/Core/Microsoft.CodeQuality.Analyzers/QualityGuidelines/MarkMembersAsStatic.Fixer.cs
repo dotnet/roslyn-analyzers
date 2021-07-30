@@ -153,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             break;
 
                         case IInvocationOperation invocation:
-                            if (IsReplacableOperation(invocation.Instance))
+                            if (IsReplacableOperation(invocation.Instance) && invocation.TargetMethod.MethodKind != MethodKind.LocalFunction)
                             {
                                 nodeToReplace = GetExpressionOfInvocation(invocation.Syntax);
                             }

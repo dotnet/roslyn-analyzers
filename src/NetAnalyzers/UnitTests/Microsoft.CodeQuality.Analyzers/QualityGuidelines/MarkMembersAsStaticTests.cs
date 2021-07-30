@@ -6,10 +6,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticAnalyzer,
     Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
@@ -1460,6 +1460,55 @@ Public Class C
 </Workspace>
         End Sub
 End Class");
+        }
+
+        [Fact]
+        public async Task CSharp_StaticLocalFunction_NoDiagnostic()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+public class C
+{
+    private int _count;
+
+    public void M()
+    {
+        _count++;
+        AlreadyStatic();
+
+        // Local functions
+        static void AlreadyStatic() {}
+    }
+}",
+                LanguageVersion = LanguageVersion.CSharp8,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CSharp_LocalFunction_CouldBeStatic_TooOldCSharp_NoDiagnostic()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+public class C
+{
+    private int _count;
+
+    public void M()
+    {
+        _count++;
+        CouldBeStatic();
+
+        // Local functions
+        void CouldBeStatic()
+        {
+            System.Console.WriteLine(42);
+        }
+    }
+}",
+                LanguageVersion = LanguageVersion.CSharp7_3,
+            }.RunAsync();
         }
     }
 }

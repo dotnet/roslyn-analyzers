@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticAnalyzer,
     Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
@@ -1512,6 +1513,147 @@ partial class Class1
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
                 TestCode = source,
                 FixedCode = fixedSource,
+            }.RunAsync();
+        }
+
+        [Fact]
+        public async Task CSharp_LocalFunctions()
+        {
+            await new VerifyCS.Test
+            {
+                TestCode = @"
+public class C
+{
+    private int _count;
+    private int _count2;
+
+    public void M()
+    {
+        _count++;
+        var x = _count;
+
+        CanBeStatic();
+        CantBeStaticBecauseUsesField();
+        CantBeStaticBecauseCapturesVariable();
+        ChainOfLocalFunctions();
+
+        // Local functions
+        void [|CanBeStatic|]()
+        {
+            System.Console.WriteLine(""something"");
+        }
+
+        void CantBeStaticBecauseUsesField()
+        {
+            _count2++;
+        }
+
+        void CantBeStaticBecauseCapturesVariable()
+        {
+            x++;
+        }
+
+        void [|CanBeStaticAndIsUncalled|]()
+        {
+            var y = 1;
+        }
+
+        void EventHandlerLikeMethod(object sender, System.EventArgs args) {}
+
+        void ChainOfLocalFunctions()
+        {
+            CanBeStatic_SubFunction();
+            CantBeStatic_SubFunction();
+
+            void [|CanBeStatic_SubFunction|]()
+            {
+                CanBeStatic_SubSubFunction();
+
+                void [|CanBeStatic_SubSubFunction|]()
+                {
+                    var todo = ""something"";
+                }
+            }
+
+            void CantBeStatic_SubFunction()
+            {
+                CantBeStatic_SubSubFunction();
+
+                void CantBeStatic_SubSubFunction()
+                {
+                    x++;
+                }
+            }
+        }
+    }
+}",
+                FixedCode = @"
+public class C
+{
+    private int _count;
+    private int _count2;
+
+    public void M()
+    {
+        _count++;
+        var x = _count;
+
+        CanBeStatic();
+        CantBeStaticBecauseUsesField();
+        CantBeStaticBecauseCapturesVariable();
+        ChainOfLocalFunctions();
+
+        // Local functions
+        static void CanBeStatic()
+        {
+            System.Console.WriteLine(""something"");
+        }
+
+        void CantBeStaticBecauseUsesField()
+        {
+            _count2++;
+        }
+
+        void CantBeStaticBecauseCapturesVariable()
+        {
+            x++;
+        }
+
+        static void CanBeStaticAndIsUncalled()
+        {
+            var y = 1;
+        }
+
+        void EventHandlerLikeMethod(object sender, System.EventArgs args) {}
+
+        void ChainOfLocalFunctions()
+        {
+            CanBeStatic_SubFunction();
+            CantBeStatic_SubFunction();
+
+            static void CanBeStatic_SubFunction()
+            {
+                CanBeStatic_SubSubFunction();
+
+                static void CanBeStatic_SubSubFunction()
+                {
+                    var todo = ""something"";
+                }
+            }
+
+            void CantBeStatic_SubFunction()
+            {
+                CantBeStatic_SubSubFunction();
+
+                void CantBeStatic_SubSubFunction()
+                {
+                    x++;
+                }
+            }
+        }
+    }
+}",
+                LanguageVersion = LanguageVersion.CSharp8,
             }.RunAsync();
         }
     }

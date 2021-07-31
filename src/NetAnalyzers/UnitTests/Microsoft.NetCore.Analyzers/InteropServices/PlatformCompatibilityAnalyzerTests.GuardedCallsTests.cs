@@ -4051,13 +4051,11 @@ class Test
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios"")]
-    [UnsupportedOSPlatformGuard(""maccatalyst"")]
     [UnsupportedOSPlatformGuard(""Windows"")]
     private bool IsLinuxWindowsIosNotSupported() => true;
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios"")]
-    [UnsupportedOSPlatformGuard(""maccatalyst"")]
     [UnsupportedOSPlatformGuard(""Windows"")]
     [UnsupportedOSPlatformGuard(""Android"")]
     private readonly bool _linuxWindowsIosAndroidNotSupported;
@@ -4123,7 +4121,6 @@ class Test
     private readonly bool _linuxAndWindows10MacOS14Supported;
 
     [UnsupportedOSPlatformGuard(""linux"")]
-    [UnsupportedOSPlatformGuard(""maccatalyst9.0"")]
     [UnsupportedOSPlatformGuard(""ios9.0"")]
     [UnsupportedOSPlatformGuard(""Windows8.0"")]
     private bool LinuxWindows8Ios9NotSupported { get; }
@@ -4199,9 +4196,6 @@ class Test
     [UnsupportedOSPlatformGuard(""ios"")]
     [SupportedOSPlatformGuard(""ios14.0"")]
     [UnsupportedOSPlatformGuard(""ios18.0"")]
-    [UnsupportedOSPlatformGuard(""maccatalyst"")]
-    [SupportedOSPlatformGuard(""maccatalyst14.0"")]
-    [UnsupportedOSPlatformGuard(""maccatalyst18.0"")]
     [UnsupportedOSPlatformGuard(""Windows8.0"")]
     private readonly bool _windows8IosNotSupportedSupportedIos14_18;
 
@@ -4277,7 +4271,6 @@ class Test
 
     [UnsupportedOSPlatformGuard(""linux"")]
     [UnsupportedOSPlatformGuard(""ios9.0"")]
-    [UnsupportedOSPlatformGuard(""MacCatalyst9.0"")]
     private bool LinuxIos9NotSupported { get; set;}
 
     void M1()
@@ -4448,7 +4441,7 @@ class Test
         }
 
         [Fact]
-        public async Task SupporetedIosGuardAttrbiutesInferMacCatalyst()
+        public async Task IOSSupportGuardAttributesInferMacCatalyst()
         {
             var source = @"
 using System;
@@ -4539,7 +4532,7 @@ class Test
         }
 
         [Fact]
-        public async Task UnsupporetedIosGuardAttrbiutesInferMacCatalyst()
+        public async Task IOSUnsupportGuardAttributesInferMacCatalyst()
         {
             var source = @"
 using System;

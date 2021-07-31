@@ -43,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 }
 
                 using var infosBuilder = ArrayBuilder<PlatformMethodValue>.GetInstance();
-                if (TryDecodeGuardAttribute(guardAttributes, infosBuilder))
+                if (TryDecodeGuardAttributes(guardAttributes, infosBuilder))
                 {
                     for (var i = 0; i < infosBuilder.Count; i++)
                     {
@@ -95,7 +95,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return mappedAttributes != null;
             }
 
-            public bool TryDecodeGuardAttribute(SmallDictionary<string, Versions> mappedAttributes, ArrayBuilder<PlatformMethodValue> infosBuilder)
+            public bool TryDecodeGuardAttributes(SmallDictionary<string, Versions> mappedAttributes, ArrayBuilder<PlatformMethodValue> infosBuilder)
             {
                 foreach (var (name, versions) in mappedAttributes)
                 {
@@ -168,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                         infosBuilder.Clear();
                         var attributes = method.GetAttributes();
-                        if (HasAnyGuardAttribute(attributes, out var mappedAttributes) && TryDecodeGuardAttribute(mappedAttributes, infosBuilder))
+                        if (HasAnyGuardAttribute(attributes, out var mappedAttributes) && TryDecodeGuardAttributes(mappedAttributes, infosBuilder))
                         {
                             for (var i = 0; i < infosBuilder.Count; i++)
                             {

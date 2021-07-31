@@ -1540,7 +1540,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     return;
                 }
 
-                CheckAttributesConsistency(childAttributes, relatedPlatforms);
+                CheckAttributesConsistency(childAttributes);
                 var pAttributes = parentAttributes.Platforms;
                 if (pAttributes != null && !pAttributes.IsEmpty)
                 {
@@ -1633,6 +1633,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                         }
                     }
 
+                    CheckAttributesConsistency(pAttributes);
                     if (crossPlatform && parentAttributes.IsAssemblyAttribute)
                     {
                         foreach (var childAttribute in childAttributes)
@@ -1675,23 +1676,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
                 return;
 
-                static void CheckAttributesConsistency(SmallDictionary<string, Versions> childAttributes,
-                    SmallDictionary<string, (string relatedPlatform, bool isSubset)> relatedPlatforms)
+                static void CheckAttributesConsistency(SmallDictionary<string, Versions> childAttributes)
                 {
                     bool allowList = false;
                     using var unsupportedList = PooledHashSet<string>.GetInstance();
 
                     foreach (var (platform, attributes) in childAttributes)
                     {
+                        NormalizeAttribute(attributes);
                         if (AllowList(attributes))
                         {
-                            NormalizeSupportedList(attributes, childAttributes, platform, relatedPlatforms, unsupportedList);
                             allowList = true;
                         }
                         else
                         {
                             Debug.Assert(DenyList(attributes));
-                            NormalizeUnsupportedList(attributes);
                             unsupportedList.Add(platform);
                         }
                     }
@@ -1704,38 +1703,24 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     }
                 }
 
-                static Versions NormalizeSupportedList(Versions attributes, SmallDictionary<string, Versions> childAttributes, string platform,
-                    SmallDictionary<string, (string relatedPlatform, bool isSubset)> relatedPlatforms, PooledHashSet<string> unsupportedList)
+                static Versions NormalizeAttribute(Versions attributes)
                 {
-                    // For Allow list UnsupportedSecond should not be used.
-                    attributes.UnsupportedSecond = null;
-                    if (attributes.UnsupportedFirst != null && attributes.UnsupportedFirst == attributes.SupportedFirst)
+                    if (AllowList(attributes))
                     {
-                        if (relatedPlatforms.TryGetValue(platform, out var relation) &&
-                            childAttributes.TryGetValue(relation.relatedPlatform, out var version) &&
-                            AllowList(version))
+                        // For Allow list UnsupportedSecond should not be used.
+                        attributes.UnsupportedSecond = null;
+                        if (attributes.UnsupportedFirst != null && attributes.UnsupportedFirst == attributes.SupportedFirst)
                         {
                             attributes.SupportedFirst = null;
-                            unsupportedList.Add(platform);
-                        }
-                        else
-                        {
-                            attributes.UnsupportedFirst = null;
                         }
                     }
-                    return attributes;
-                }
-
-                static Versions NormalizeUnsupportedList(Versions attributes)
-                {
                     // For deny list UnsupportedSecond should only set if there is SupportedFirst verison between UnsupportedSecond and UnsupportedFirst 
-                    if (attributes.SupportedFirst == null ||
-                        (attributes.UnsupportedSecond != null &&
-                         attributes.SupportedFirst > attributes.UnsupportedSecond))
+                    else if (attributes.SupportedFirst == null ||
+                            (attributes.UnsupportedSecond != null &&
+                             attributes.SupportedFirst > attributes.UnsupportedSecond))
                     {
                         attributes.UnsupportedSecond = null;
                     }
-
                     return attributes;
                 }
             }
@@ -1753,8 +1738,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                     attributes[platformName] = new Versions();
                 }
 
-                AddAttribute(attribute.AttributeClass.Name, version, attributes[platformName]);
-                if (relatedPlatforms.TryGetValue(platformName, out var relation) && relation.isSubset)
+                if (!AddAttribute(attribute.AttributeClass.Name, version, attributes[platformName]))
+                {
+                    attributes.Remove(platformName);
+                }
+                else if (relatedPlatforms.TryGetValue(platformName, out var relation) && relation.isSubset)
                 {
                     if (!attributes.TryGetValue(relation.relatedPlatform, out var _))
                     {
@@ -1825,17 +1813,33 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private static string GetNameAsMacOsWhenOSX(string platformName) =>
             platformName.Equals(OSX, StringComparison.OrdinalIgnoreCase) ? macOS : platformName;
 
-        private static void AddAttribute(string name, Version version, Versions attributes)
+        private static bool AddAttribute(string name, Version version, Versions attributes)
         {
             if (name == SupportedOSPlatformAttribute)
             {
-                AddOrUpdateSupportedAttribute(attributes, version);
+                if (attributes.UnsupportedFirst != null && attributes.UnsupportedFirst == version)
+                {
+                    attributes.UnsupportedFirst = null;
+                    return false;
+                }
+                else
+                {
+                    AddOrUpdateSupportedAttribute(attributes, version);
+                }
             }
             else
             {
                 Debug.Assert(name == UnsupportedOSPlatformAttribute);
+
+                if (attributes.SupportedFirst != null && attributes.SupportedFirst == version)
+                {
+                    attributes.SupportedFirst = null;
+                }
+
                 AddOrUpdateUnsupportedAttribute(attributes, version);
             }
+
+            return true;
 
             static void AddOrUpdateUnsupportedAttribute(Versions attributes, Version version)
             {

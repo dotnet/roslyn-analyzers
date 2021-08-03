@@ -13,8 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class BufferBlockCopyLengthTests
     {
-        [Fact]
-        public async Task SrcIsByteArray()
+        [Theory]
+        [InlineData("src")]
+        [InlineData("dst")]
+        public async Task UsingByteArray(string array)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -26,7 +28,7 @@ class Program
         byte[] src = new byte[] {1, 2, 3, 4};
         byte[] dst = new byte[] {0, 0, 0, 0};
         
-        Buffer.BlockCopy(src, 0, dst, 0, src.Length);
+        Buffer.BlockCopy(src, 0, dst, 0, " + array + @".Length);
     }
 }
 ");
@@ -39,46 +41,16 @@ Module Program
         Dim src = New Byte() {1, 2, 3, 4}
         Dim dst = New Byte() {0, 0, 0, 0}
 
-        Buffer.BlockCopy(src, 0, dst, 0, src.Length)
+        Buffer.BlockCopy(src, 0, dst, 0, " + array + @".Length)
     End Sub
 End Module
 ");
         }
 
-        [Fact]
-        public async Task DstIsByteArray()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-
-class Program
-{
-    static void Main()
-    {
-        byte[] src = new byte[] {1, 2, 3, 4};
-        byte[] dst = new byte[] {0, 0, 0, 0};
-        
-        Buffer.BlockCopy(src, 0, dst, 0, dst.Length);
-    }
-}
-");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Module Program
-    Sub Main(args As String())
-        Dim src = New Byte() {1, 2, 3, 4}
-        Dim dst = New Byte() {0, 0, 0, 0}
-
-        Buffer.BlockCopy(src, 0, dst, 0, dst.Length)
-    End Sub
-End Module
-");
-        }
-
-        [Fact]
-        public async Task SrcIsSbyteArray()
+        [Theory]
+        [InlineData("src")]
+        [InlineData("dst")]
+        public async Task UsingSbyteArray(string array)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -90,7 +62,7 @@ class Program
         sbyte[] src = new sbyte[] {1, 2, 3, 4};
         sbyte[] dst = new sbyte[] {0, 0, 0, 0};
         
-        Buffer.BlockCopy(src, 0, dst, 0, src.Length);
+        Buffer.BlockCopy(src, 0, dst, 0, " + array + @".Length);
     }
 }
 ");
@@ -103,46 +75,16 @@ Module Program
         Dim src = New SByte() {1, 2, 3, 4}
         Dim dst = New SByte() {0, 0, 0, 0}
 
-        Buffer.BlockCopy(src, 0, dst, 0, src.Length)
+        Buffer.BlockCopy(src, 0, dst, 0, " + array + @".Length)
     End Sub
 End Module
 ");
         }
 
-        [Fact]
-        public async Task DstIsSbyteArray()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-
-class Program
-{
-    static void Main()
-    {
-        sbyte[] src = new sbyte[] {1, 2, 3, 4};
-        sbyte[] dst = new sbyte[] {0, 0, 0, 0};
-        
-        Buffer.BlockCopy(src, 0, dst, 0, dst.Length);
-    }
-}
-");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Module Program
-    Sub Main(args As String())
-        Dim src = New SByte() {1, 2, 3, 4}
-        Dim dst = New SByte() {0, 0, 0, 0}
-
-        Buffer.BlockCopy(src, 0, dst, 0, dst.Length)
-    End Sub
-End Module
-");
-        }
-
-        [Fact]
-        public async Task SrcIsIntArray()
+        [Theory]
+        [InlineData("src")]
+        [InlineData("dst")]
+        public async Task UsingIntArray(string array)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -154,7 +96,7 @@ class Program
         int[] src = new int[] {1, 2, 3, 4};
         int[] dst = new int[] {0, 0, 0, 0};
         
-        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|]);
+        Buffer.BlockCopy(src, 0, dst, 0, [|" + array + @".Length|]);
     }
 }
 ");
@@ -167,7 +109,7 @@ Module Program
         Dim src = New Integer() {1, 2, 3, 4}
         Dim dst = New Integer() {0, 0, 0, 0}
 
-        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|])
+        Buffer.BlockCopy(src, 0, dst, 0, [|" + array + @".Length|])
     End Sub
 End Module
 ");
@@ -207,8 +149,10 @@ End Module
 ");
         }
 
-        [Fact]
-        public async Task SrcNumOfBytesAsReference()
+        [Theory]
+        [InlineData("src")]
+        [InlineData("dst")]
+        public async Task SrcNumOfBytesAsReference(string array)
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -219,7 +163,7 @@ class Program
     {
         int[] src = new int[] {1, 2, 3, 4};
         int[] dst = new int[] {0, 0, 0, 0};
-        int numOfBytes = src.Length;
+        int numOfBytes = " + array + @".Length;
         
         Buffer.BlockCopy(src, 0, dst, 0, [|numOfBytes|]);
     }
@@ -233,40 +177,7 @@ Module Program
     Sub Main(args As String())
         Dim src = New Integer() {1, 2, 3, 4}
         Dim dst = New Integer() {0, 0, 0, 0}
-        Dim numOfBytes = src.Length
-
-        Buffer.BlockCopy(src, 0, dst, 0, [|numOfBytes|])
-    End Sub
-End Module
-");
-        }
-
-        [Fact]
-        public async Task DstNumOfBytesAsReference()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-
-class Program
-{
-    static void Main()
-    {
-        int[] src = new int[] {1, 2, 3, 4};
-        int[] dst = new int[] {0, 0, 0, 0};
-        int numOfBytes = dst.Length;
-        
-        Buffer.BlockCopy(src, 0, dst, 0, [|numOfBytes|]);
-    }
-}
-");
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Imports System
-
-Module Program
-    Sub Main(args As String())
-        Dim src = New Integer() {1, 2, 3, 4}
-        Dim dst = New Integer() {0, 0, 0, 0}
-        Dim numOfBytes = dst.Length
+        Dim numOfBytes = " + array + @".Length
 
         Buffer.BlockCopy(src, 0, dst, 0, [|numOfBytes|])
     End Sub
@@ -374,7 +285,7 @@ End Module
         }
 
         [Fact]
-        public async Task NumOfBytesAsClassConstProperty()
+        public async Task NumOfBytesAsClassConstField()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -404,6 +315,44 @@ Module Program
         Buffer.BlockCopy(src, 0, dst, 0, Program.field)
     End Sub
 End Module
+");
+        }
+
+        [Fact]
+        public async Task NumOfBytesAsClassPropertyGetter()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    private const int field = 8;
+    public int Field => field;
+    static void Main()
+    {
+        int[] src = new int[] {1, 2, 3, 4};
+        int[] dst = new int[] {0, 0, 0, 0};
+        Program p = new Program();
+
+        Buffer.BlockCopy(src, 0, dst, 0, p.Field);
+    }
+}
+");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Public Class Program
+    Private Property Field As Integer = 8
+    Public Shared Sub Main(args As String())
+        Dim src = New Integer() {1, 2, 3, 4}
+        Dim dst = New Integer() {0, 0, 0, 0}
+        Dim p As Program = New Program()
+
+        Buffer.BlockCopy(src, 0, dst, 0, p.Field)
+    End Sub
+End Class
+
 ");
         }
 
@@ -543,6 +492,45 @@ Module Program
         Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|])
     End Sub
 End Module
+");
+        }
+
+        [Fact]
+        public async Task SrcArrayAsFunctionReturn()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] dst = new int[] {0, 0, 0, 0};
+        
+        Buffer.BlockCopy(GetSrcArray(), 0, dst, 0, [|dst.Length|]);
+    }
+
+    static int[] GetSrcArray()
+    {
+        return new int[] { 1, 2, 3, 4 };
+    }
+}
+");
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Dim dst = New Integer() {0, 0, 0, 0}
+
+        Buffer.BlockCopy(GetSrcArray(), 0, dst, 0, [|dst.Length|])
+    End Sub
+
+    Function GetSrcArray()
+        Return New Integer() {1, 2, 3, 4}
+    End Function
+End Module
+
 ");
         }
     }

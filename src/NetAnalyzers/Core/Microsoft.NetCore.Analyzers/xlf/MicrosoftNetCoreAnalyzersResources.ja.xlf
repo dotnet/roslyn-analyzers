@@ -138,8 +138,8 @@
         <note />
       </trans-unit>
       <trans-unit id="BufferBlockCopyLengthTitle">
-        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument.</source>
-        <target state="new">'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument.</target>
+        <source>'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument</source>
+        <target state="new">'Buffer.BlockCopy' expects the number of bytes to be copied for the 'count' argument</target>
         <note />
       </trans-unit>
       <trans-unit id="CallGCSuppressFinalizeCorrectlyDescription">

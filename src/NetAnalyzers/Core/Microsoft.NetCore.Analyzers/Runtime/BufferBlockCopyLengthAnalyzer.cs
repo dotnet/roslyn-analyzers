@@ -80,6 +80,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
+                    if (arguments[0].Parameter.Type.SpecialType != SpecialType.System_Array ||
+                        arguments[1].Parameter.Type.SpecialType != SpecialType.System_Int32 ||
+                        arguments[2].Parameter.Type.SpecialType != SpecialType.System_Array ||
+                        arguments[3].Parameter.Type.SpecialType != SpecialType.System_Int32 ||
+                        arguments[4].Parameter.Type.SpecialType != SpecialType.System_Int32)
+                    {
+                        return;
+                    }
+
+                    // Buffer.BlockCopy(Array src, int srcOffset, Array dst, int dstOffset, int count)
                     IArgumentOperation sourceArgument = arguments[0];
                     IArgumentOperation destinationArgument = arguments[2];
                     IArgumentOperation countArgument = arguments[4];

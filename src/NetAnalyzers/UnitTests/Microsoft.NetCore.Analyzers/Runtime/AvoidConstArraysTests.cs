@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region C# Tests
 
         [Fact]
-        public async Task CA1839CSharpIdentifyConstArrays()
+        public async Task CA1839_CSharp_IdentifyConstArrays()
         {
             // Implicit initialization check
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -48,7 +48,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1839CSharpIgnoreOtherArgs()
+        public async Task CA1839_CSharp_NoDiagnostic_IgnoreOtherArgs()
         {
             // A string
             await VerifyCS.VerifyAnalyzerAsync(@"
@@ -98,7 +98,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine(string.Join(' ', new[] { ""Cake"", ""is"", ""good"" }));
+        Console.WriteLine("" "".Join(new[] { ""Cake"", ""is"", ""good"" }));
     }
 }
 ");
@@ -109,7 +109,7 @@ public class A
         #region Visual Basic Tests
 
         [Fact]
-        public async Task CA1839VisualBasicIdentifyConstArrays()
+        public async Task CA1839_VisualBasic_IdentifyConstArrays()
         {
             // Implicit initialization check
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -135,7 +135,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1839VisualBasicIgnoreOtherArgs()
+        public async Task CA1839_VisualBasic_NoDiagnostic_IgnoreOtherArgs()
         {
             // A string
             await VerifyVB.VerifyAnalyzerAsync(@"

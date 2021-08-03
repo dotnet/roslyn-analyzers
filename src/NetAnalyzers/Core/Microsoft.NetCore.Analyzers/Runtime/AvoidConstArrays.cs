@@ -45,12 +45,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var argument = (IArgumentOperation)operationContext.Operation;
 
                 if (argument.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
-                    || argument.Value.Kind != OperationKind.Literal // Must be literal array, which contains constant, literal values
+                    || argument.Value.Kind != OperationKind.Literal // Must be literal array
                     || argument.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared
                 {
                     return;
                 }
 
+                // Report diagnostic from argument context rather than argument.Value context
                 operationContext.ReportDiagnostic(argument.CreateDiagnostic(Rule));
             }, OperationKind.Argument);
         }

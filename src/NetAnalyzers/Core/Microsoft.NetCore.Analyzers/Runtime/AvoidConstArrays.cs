@@ -32,11 +32,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        // Note that this analyzer doesn't analyze local variables that are only referenced once ever when passed as arguments,
+        // as cleaning up useless allocations is not in the scope of this analyzer
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
+            // Analyzes an argument operation
             context.RegisterOperationAction(operationContext =>
             {
                 var argument = (IArgumentOperation)operationContext.Operation;

@@ -22,7 +22,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Document document = context.Document;
+            SyntaxTree tree = await document.GetSyntaxTreeAsync(context.CancellationToken).ConfigureAwait(false);
 
+            // Apply fix depending on how original constant was written
+            // Name of static field can be [type]Array
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(

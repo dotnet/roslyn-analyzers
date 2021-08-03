@@ -2,14 +2,14 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-// using Test.Utilities;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.AttributeStringLiteralsShouldParseCorrectlyAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-// using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-//     Microsoft.NetCore.Analyzers.Runtime.AttributeStringLiteralsShouldParseCorrectlyAnalyzer,
-//     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {

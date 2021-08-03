@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             DiagnosticCategory.Performance,
             RuleLevel.IdeSuggestion,
             s_localizableDescription,
-            isPortedFxCopRule: false,
+            isPortedFxCopRule: true,
             isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -41,13 +41,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var argument = (IArgumentOperation)operationContext.Operation;
                 if (argument.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
-                    || argument.Value.Kind != OperationKind.Literal // Must be literal array, which contains constant, literal values 
+                    || argument.Value.Kind != OperationKind.Literal // Must be literal array, which contains constant, literal values
                     || argument.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared
                 {
                     return;
                 }
 
-                operationContext.ReportDiagnostic(argument.Value.CreateDiagnostic(Rule));
+                operationContext.ReportDiagnostic(argument.CreateDiagnostic(Rule));
             }, OperationKind.Argument);
         }
     }

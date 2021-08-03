@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -40,6 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterOperationAction(operationContext =>
             {
                 var argument = (IArgumentOperation)operationContext.Operation;
+
                 if (argument.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
                     || argument.Value.Kind != OperationKind.Literal // Must be literal array, which contains constant, literal values
                     || argument.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared

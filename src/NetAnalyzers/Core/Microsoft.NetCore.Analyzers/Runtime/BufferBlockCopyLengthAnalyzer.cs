@@ -44,17 +44,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                IMethodSymbol blockCopyMethod = bufferType
+                INamedTypeSymbol arrayType = context.Compilation.GetSpecialType(SpecialType.System_Array);
+                INamedTypeSymbol int32Type = context.Compilation.GetSpecialType(SpecialType.System_Int32);
+
+                // Buffer.BlockCopy(Array src, int srcOffset, Array dst, int dstOffset, int count)
+                ParameterInfo[] blockCopyParameterInfo = {
+                    ParameterInfo.GetParameterInfo(arrayType, false, 1, false),
+                    ParameterInfo.GetParameterInfo(int32Type, false, 1, false),
+                    ParameterInfo.GetParameterInfo(arrayType, false, 1, false),
+                    ParameterInfo.GetParameterInfo(int32Type, false, 1, false),
+                    ParameterInfo.GetParameterInfo(int32Type, false, 1, false)};
+
+                IMethodSymbol? blockCopyMethod = bufferType
                    .GetMembers("BlockCopy")
                    .OfType<IMethodSymbol>()
-                   .FirstOrDefault();
+                   .GetFirstOrDefaultMemberWithParameterInfos(blockCopyParameterInfo);
 
                 if (blockCopyMethod is null)
-                {
-                    return;
-                }
-
-                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArray, out INamedTypeSymbol? arrayType))
                 {
                     return;
                 }
@@ -75,21 +81,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     ImmutableArray<IArgumentOperation> arguments = IOperationExtensions.GetArgumentsInParameterOrder(invocationOperation.Arguments);
 
-                    if (arguments.Length != 5)
-                    {
-                        return;
-                    }
-
-                    if (arguments[0].Parameter.Type.SpecialType != SpecialType.System_Array ||
-                        arguments[1].Parameter.Type.SpecialType != SpecialType.System_Int32 ||
-                        arguments[2].Parameter.Type.SpecialType != SpecialType.System_Array ||
-                        arguments[3].Parameter.Type.SpecialType != SpecialType.System_Int32 ||
-                        arguments[4].Parameter.Type.SpecialType != SpecialType.System_Int32)
-                    {
-                        return;
-                    }
-
-                    // Buffer.BlockCopy(Array src, int srcOffset, Array dst, int dstOffset, int count)
                     IArgumentOperation sourceArgument = arguments[0];
                     IArgumentOperation destinationArgument = arguments[2];
                     IArgumentOperation countArgument = arguments[4];
@@ -101,7 +92,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgValue.Operand.GetReferencedMemberOrLocalOrParameter())
                             {
                                 IArrayTypeSymbol countArgumentArrayTypeSymbol = (IArrayTypeSymbol)lengthPropertyArgument.Instance.Type;
-                                if (countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Byte && countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_SByte)
+                                if (countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Byte &&
+                                countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_SByte)
                                 {
                                     return true;
                                 }
@@ -149,11 +141,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         IVariableInitializerOperation variableInitializer = variableDeclaratorOperation.Initializer;
 
-                        if (variableInitializer is not null && variableInitializer.Value is IPropertyReferenceOperation variableInitializerPropertyReference && CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReference))
+                        if (variableInitializer is not null && variableInitializer.Value is IPropertyReferenceOperation variableInitializerPropertyReference &&
+                        CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReference))
                         {
                             context.ReportDiagnostic(countArgument.Value.CreateDiagnostic(Rule));
                         }
-                        else if (variableDeclaratorOperation.Parent is IVariableDeclarationOperation variableDeclarationOperation && variableDeclarationOperation.Initializer is not null && variableDeclarationOperation.Initializer.Value is IPropertyReferenceOperation variableInitializerPropertyReferenceVB && CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReferenceVB))
+                        else if (variableDeclaratorOperation.Parent is IVariableDeclarationOperation variableDeclarationOperation &&
+                        variableDeclarationOperation.Initializer is not null &&
+                        variableDeclarationOperation.Initializer.Value is IPropertyReferenceOperation variableInitializerPropertyReferenceVB &&
+                        CheckLengthPropertyOnByteOrSByteArrays(variableInitializerPropertyReferenceVB))
                         {
                             context.ReportDiagnostic(countArgument.Value.CreateDiagnostic(Rule));
                         }

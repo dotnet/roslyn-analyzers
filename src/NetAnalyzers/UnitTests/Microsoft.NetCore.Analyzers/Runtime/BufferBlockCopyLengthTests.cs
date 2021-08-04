@@ -533,5 +533,43 @@ End Module
 
 ");
         }
+
+        [Fact]
+        public async Task SrcAndDstAsGlobalArrays()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    private int[] src;
+    private int[] dst;
+
+    static void Main()
+    {
+        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|]);
+    }
+}
+");
+        }
+
+        [Fact]
+        public async Task SrcAndDstAsArrayCreateInstance()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Array src = Array.CreateInstance(typeof(int), 4);
+        Array dst = Array.CreateInstance(typeof(int), 4);
+
+        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|]);
+    }
+}
+");
+        }
     }
 }

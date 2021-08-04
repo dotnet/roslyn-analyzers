@@ -51,8 +51,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                ImmutableDictionary<string, string?> properties = ImmutableDictionary.Create<string, string?>();
+                properties.Add("matchingParameter", argument.Parameter.Name);
+
                 // Report diagnostic from argument context rather than argument.Value context
-                operationContext.ReportDiagnostic(argument.CreateDiagnostic(Rule));
+                operationContext.ReportDiagnostic(argument.CreateDiagnostic(Rule, properties));
             }, OperationKind.Argument);
         }
     }

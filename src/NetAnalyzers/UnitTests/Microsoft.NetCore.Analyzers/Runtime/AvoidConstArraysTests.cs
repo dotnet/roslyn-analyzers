@@ -13,6 +13,9 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
+    // Analyzer and code fix tests are both in this file
+    // "Do not separate analyzer tests from code fix tests"
+    // https://github.com/dotnet/roslyn-analyzers/blob/main/docs/NetCore_GettingStarted.md#definition-of-done
     public class AvoidConstArraysTests
     {
         #region C# Tests
@@ -21,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         public async Task CA1839_CSharp_IdentifyConstArrays()
         {
             // Implicit initialization check
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class A
@@ -31,10 +34,22 @@ public class A
         Console.WriteLine(new[]{ 1, 2, 3 });
     }
 }
+", @"
+using System;
+
+public class A
+{
+    private static readonly int[] valueArray = new[]{ 1, 2, 3 };
+
+    public void B()
+    {
+        Console.WriteLine(valueArray);
+    }
+}
 ");
 
             // Explicit initialization check
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class A
@@ -44,14 +59,38 @@ public class A
         Console.WriteLine(new int[]{ 1, 2, 3 });
     }
 }
+", @"
+using System;
+
+public class A
+{
+    private static readonly int[] valueArray = new int[]{ 1, 2, 3 };
+
+    public void B()
+    {
+        Console.WriteLine(valueArray);
+    }
+}
 ");
         }
 
         [Fact]
         public async Task CA1839_CSharp_NoDiagnostic_IgnoreOtherArgs()
         {
+            // All code fix tests in this method result in no changes, as the analyzer will ignore these
+
             // A string
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        Console.WriteLine(""Lorem ipsum"");
+    }
+}
+", @"
 using System;
 
 public class A
@@ -64,7 +103,17 @@ public class A
 ");
 
             // Test another type to be extra safe
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        Console.WriteLine(123);
+    }
+}
+", @"
 using System;
 
 public class A
@@ -77,7 +126,18 @@ public class A
 ");
 
             // Non-literal array
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        string str = ""Lorem ipsum"";
+        Console.WriteLine(str.Split(' '));
+    }
+}
+", @"
 using System;
 
 public class A
@@ -91,7 +151,17 @@ public class A
 ");
 
             // Nested arguments
-            await VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        Console.WriteLine("" "".Join(new[] { ""Cake"", ""is"", ""good"" }));
+    }
+}
+", @"
 using System;
 
 public class A
@@ -112,7 +182,7 @@ public class A
         public async Task CA1839_VisualBasic_IdentifyConstArrays()
         {
             // Implicit initialization check
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Class A
@@ -120,15 +190,35 @@ Public Class A
         Console.WriteLine({1, 2, 3})
     End Sub
 End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly valueArray As Integer() = {1, 2, 3}
+
+    Public Sub B()
+        Console.WriteLine(valueArray)
+    End Sub
+End Class
 ");
 
             // Explicit initialization check
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Class A
     Public Sub B()
         Console.WriteLine(New Integer() {1, 2, 3})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly valueArray As Integer() = New Integer() {1, 2, 3}
+
+    Public Sub B()
+        Console.WriteLine(valueArray)
     End Sub
 End Class
 ");
@@ -137,8 +227,18 @@ End Class
         [Fact]
         public async Task CA1839_VisualBasic_NoDiagnostic_IgnoreOtherArgs()
         {
+            // All code fix tests in this method result in no changes, as the analyzer will ignore these
+
             // A string
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(""Lorem ipsum"")
+    End Sub
+End Class
+", @"
 Imports System
 
 Public Class A
@@ -149,7 +249,15 @@ End Class
 ");
 
             // Test another type to be extra safe
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(123)
+    End Sub
+End Class
+", @"
 Imports System
 
 Public Class A
@@ -160,7 +268,16 @@ End Class
 ");
 
             // Non-literal array
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Dim str As String = ""Lorem ipsum""
+        Console.WriteLine(str.Split("" ""c))
+    End Sub
+End Class
+", @"
 Imports System
 
 Public Class A
@@ -172,7 +289,15 @@ End Class
 ");
 
             // Nested arguments
-            await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
+    End Sub
+End Class
+", @"
 Imports System
 
 Public Class A

@@ -294,7 +294,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(Join("" ""c, {""Cake"", ""is"", ""good""}))
+        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
     End Sub
 End Class
 ", @"
@@ -302,7 +302,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(Join("" ""c, {""Cake"", ""is"", ""good""}))
+        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
     End Sub
 End Class
 ");

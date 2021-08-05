@@ -40,8 +40,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            // The containing method accessibility and the called method accessibility
-            // should both be considered when setting the new member's accessibility
             var memberGroup = model.GetMemberGroup(root, cancellationToken).FirstOrDefault();
 
             string newMemberName = GetExtractedMemberName(
@@ -72,6 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // resolved by directly referencing the static readonly field everywhere it's needed
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
+            // Half-shot attempt at getting a unique field name
             string nameOption = parameterName;
 
             if (memberNames.Contains(nameOption))

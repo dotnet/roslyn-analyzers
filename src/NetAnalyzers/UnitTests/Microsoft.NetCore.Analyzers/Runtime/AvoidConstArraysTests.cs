@@ -6,10 +6,10 @@ using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+    Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {

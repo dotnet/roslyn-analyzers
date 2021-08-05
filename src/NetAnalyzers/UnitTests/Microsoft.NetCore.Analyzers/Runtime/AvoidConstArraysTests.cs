@@ -158,7 +158,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine("" "".Join(new[] { ""Cake"", ""is"", ""good"" }));
+        Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
     }
 }
 ", @"
@@ -168,7 +168,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine("" "".Join(new[] { ""Cake"", ""is"", ""good"" }));
+        Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
     }
 }
 ");
@@ -294,7 +294,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
+        Console.WriteLine(Join("" ""c, {""Cake"", ""is"", ""good""}))
     End Sub
 End Class
 ", @"
@@ -302,7 +302,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
+        Console.WriteLine(Join("" ""c, {""Cake"", ""is"", ""good""}))
     End Sub
 End Class
 ");

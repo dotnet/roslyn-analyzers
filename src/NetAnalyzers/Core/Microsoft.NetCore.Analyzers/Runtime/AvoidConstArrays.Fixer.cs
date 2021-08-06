@@ -39,23 +39,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-
-            var memberGroup = model.GetMemberGroup(root, cancellationToken).FirstOrDefault();
-
-            string newMemberName = GetExtractedMemberName(
-                memberGroup.ContainingType.MemberNames,
-                diagnostics.First().Properties["matchingParameter"]
-            );
-
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
+            // Get method containing the symbol that is being diagnosed. Should always be in a method
+            IMethodSymbol containingMethod = GetContainingMethod(model.GetSymbolInfo(root, cancellationToken).Symbol)!;
+
+            // Get a valid member name for the extracted constant            
+            IEnumerable<string> memberNames = model.GetTypeInfo(root, cancellationToken).Type.GetMembers().Where(x => x is IFieldSymbol).Select(x => x.Name);
+            string newMemberName = GetExtractedMemberName(memberNames, diagnostics.First().Properties["matchingParameter"]);
+
+            // Create the new member
             SyntaxNode newMember = generator.WithName(root, newMemberName);
             newMember = generator.WithModifiers(newMember, DeclarationModifiers.Static | DeclarationModifiers.ReadOnly);
-            newMember = generator.WithAccessibility(newMember, memberGroup.DeclaredAccessibility); // same as the method accessibility
+            newMember = generator.WithAccessibility(newMember, containingMethod.DeclaredAccessibility); // same as the method accessibility
 
-            SyntaxNode lastFieldSyntaxNode = await generator.GetMembers(root).Where(x => x is IFieldSymbol)
-                .Select(x => (IFieldSymbol)x).Last().DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+            // Add the new member to the end of the class fields
+            SyntaxNode lastFieldSyntaxNode = generator.GetMembers(root).Last(x => model.GetSymbolInfo(x).Symbol is IFieldSymbol);
             editor.AddMember(lastFieldSyntaxNode, newMember);
 
             // Replace argument with a reference to our new member 
@@ -63,6 +63,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Return changed document
             return editor.GetChangedDocument();
+        }
+
+        private static IMethodSymbol? GetContainingMethod(ISymbol symbol)
+        {
+            ISymbol current = symbol;
+            while (current != null)
+            {
+                if (current is IMethodSymbol method)
+                {
+                    return method;
+                }
+                current = current.ContainingSymbol;
+            }
+            return default;
         }
 
         // The called method's parameter names won't need to be checked in the case that both

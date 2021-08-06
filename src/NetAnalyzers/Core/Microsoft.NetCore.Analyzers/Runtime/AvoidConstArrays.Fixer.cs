@@ -43,9 +43,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             // Get method containing the symbol that is being diagnosed. Should always be in a method
-            IMethodSymbol containingMethod = GetContainingMethod(model.GetSymbolInfo(root, cancellationToken).Symbol)!;
+            IMethodSymbol containingMethod = model.GetSymbolInfo(root, cancellationToken).Symbol.GetContainingMethod()!;
 
-            // Get a valid member name for the extracted constant            
+            // Get a valid member name for the extracted constant
             IEnumerable<string> memberNames = model.GetTypeInfo(root, cancellationToken).Type.GetMembers().Where(x => x is IFieldSymbol).Select(x => x.Name);
             string newMemberName = GetExtractedMemberName(memberNames, diagnostics.First().Properties["matchingParameter"]);
 
@@ -58,25 +58,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode lastFieldSyntaxNode = generator.GetMembers(root).Last(x => model.GetSymbolInfo(x).Symbol is IFieldSymbol);
             editor.AddMember(lastFieldSyntaxNode, newMember);
 
-            // Replace argument with a reference to our new member 
+            // Replace argument with a reference to our new member
             editor.ReplaceNode(root, generator.Argument(newMember));
 
             // Return changed document
             return editor.GetChangedDocument();
-        }
-
-        private static IMethodSymbol? GetContainingMethod(ISymbol symbol)
-        {
-            ISymbol current = symbol;
-            while (current != null)
-            {
-                if (current is IMethodSymbol method)
-                {
-                    return method;
-                }
-                current = current.ContainingSymbol;
-            }
-            return default;
         }
 
         // The called method's parameter names won't need to be checked in the case that both
@@ -109,6 +95,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+    }
+
+    public static class ISymbolExtensions
+    {
+        public static IMethodSymbol? GetContainingMethod(this ISymbol symbol)
+        {
+            ISymbol current = symbol;
+            while (current != null)
+            {
+                if (current is IMethodSymbol method)
+                {
+                    return method;
+                }
+                current = current.ContainingSymbol;
+            }
+            return default;
         }
     }
 }

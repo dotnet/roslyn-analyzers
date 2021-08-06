@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// - Not be generic or contained in a generic type
     /// - Be accessible in the module using public or internal
     /// </remarks>
-#pragma warning disable RS1004 // The [ModuleInitializer] feature only applies to C#
+#pragma warning disable RS1004 // The ModuleInitializer attribute feature only applies to C#
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
 #pragma warning restore RS1004
     public sealed class ModuleInitializerAttributeShouldNotBeUsedInLibraries : DiagnosticAnalyzer
@@ -45,19 +45,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterCompilationStartAction(compilationContext =>
+            context.RegisterCompilationStartAction(context =>
             {
-                INamedTypeSymbol? moduleInitializerAttributeType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesModuleInitializerAttribute);
+                // Only validate libraries (which will still produce some false positives, but that is acceptable)
+                if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary) return;
 
+                INamedTypeSymbol? moduleInitializerAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesModuleInitializerAttribute);
                 if (moduleInitializerAttributeType is null) return;
 
-                compilationContext.RegisterSymbolAction(context =>
+                context.RegisterSymbolAction(context =>
                 {
                     if (context.Symbol is IMethodSymbol method)
                     {
-                        if (method.IsPrivate() ||
+                        if (method.GetResultantVisibility() == SymbolVisibility.Private ||
                             method.Parameters.Length > 0 ||
                             method.IsGenericMethod ||
+                            method.ContainingType.IsGenericType ||
                             !method.IsStatic ||
                             !method.ReturnsVoid
                         )
@@ -66,10 +69,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                         AttributeData? initializerAttribute = context.Symbol.GetAttributes(moduleInitializerAttributeType).FirstOrDefault();
+                        SyntaxReference? attributeReference = initializerAttribute?.ApplicationSyntaxReference;
 
-                        if (initializerAttribute is not null)
+                        if (attributeReference is not null)
                         {
-                            context.ReportDiagnostic(initializerAttribute.ApplicationSyntaxReference.GetSyntax().CreateDiagnostic(Rule));
+                            context.ReportDiagnostic(attributeReference.GetSyntax(context.CancellationToken).CreateDiagnostic(Rule));
                         }
                     }
                 },

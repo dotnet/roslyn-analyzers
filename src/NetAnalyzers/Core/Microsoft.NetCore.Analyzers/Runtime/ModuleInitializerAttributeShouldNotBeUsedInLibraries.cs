@@ -47,16 +47,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(context =>
             {
+                if (!context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesModuleInitializerAttribute, out var moduleInitializerAttribute))
+                {
+                    return;
+                }
+
                 // Only validate libraries (which will still produce some false positives, but that is acceptable)
                 if (context.Compilation.Options.OutputKind != OutputKind.DynamicallyLinkedLibrary) return;
-
-                INamedTypeSymbol? moduleInitializerAttributeType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesModuleInitializerAttribute);
-                if (moduleInitializerAttributeType is null) return;
 
                 context.RegisterSymbolAction(context =>
                 {
                     if (context.Symbol is IMethodSymbol method)
                     {
+                        // Eliminate methods that would fail the CS8814, CS8815, and CS8816 checks
+                        // for what can have [ModuleInitializer] applied
                         if (method.GetResultantVisibility() == SymbolVisibility.Private ||
                             method.Parameters.Length > 0 ||
                             method.IsGenericMethod ||
@@ -68,7 +72,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             return;
                         }
 
-                        AttributeData? initializerAttribute = context.Symbol.GetAttributes(moduleInitializerAttributeType).FirstOrDefault();
+                        AttributeData? initializerAttribute = context.Symbol.GetAttributes(moduleInitializerAttribute).FirstOrDefault();
                         SyntaxReference? attributeReference = initializerAttribute?.ApplicationSyntaxReference;
 
                         if (attributeReference is not null)

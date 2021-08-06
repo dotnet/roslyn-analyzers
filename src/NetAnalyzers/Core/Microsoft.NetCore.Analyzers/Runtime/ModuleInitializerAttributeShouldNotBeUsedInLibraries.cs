@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CS2255: ModuleInitializer attributes should not be used in libraries.
+    /// CA2255: ModuleInitializer attributes should not be used in libraries.
     /// </summary>
     /// <remarks>
     /// ModuleInitializer methods must:

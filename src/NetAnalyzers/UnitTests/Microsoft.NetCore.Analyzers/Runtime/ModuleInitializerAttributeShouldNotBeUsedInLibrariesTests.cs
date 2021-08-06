@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @$"
                         {classModifier} class AccessibleClass
                         {{
-                            [{{|CA2255:System.Runtime.CompilerServices.ModuleInitializer|}}]
+                            [[|System.Runtime.CompilerServices.ModuleInitializer|]]
                             {methodModifier} static {(useAsync ? "async" : "")} void AccessibleInitializer() {{ }}
                         }}
                         "
@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @$"
                         {classModifier} class AccessibleClass
                         {{
-                            [{{|CA2255:System.Runtime.CompilerServices.ModuleInitializer()|}}]
+                            [[|System.Runtime.CompilerServices.ModuleInitializer()|]]
                             {methodModifier} static {(useAsync ? "async" : "")} void AccessibleInitializer() {{ }}
                         }}
                         "
@@ -116,14 +116,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @"
                         public class PublicClass
                         {
-                            // CS8814 is reported on inaccessible initializers
-                            [{|CS8814:System.Runtime.CompilerServices.ModuleInitializer|}]
+                            [System.Runtime.CompilerServices.ModuleInitializer]
                             private static void PrivateInitializer() { }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8814 is reported on inaccessible initializers
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
 
@@ -141,15 +142,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         {
                             private class PrivateNestedClass
                             {
-                                // CS8814 is reported on inaccessible initializers                                
-                                [{|CS8814:System.Runtime.CompilerServices.ModuleInitializer|}]
+                                [System.Runtime.CompilerServices.ModuleInitializer]
                                 public static void PublicInitializer() { }
                             }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8814 is reported on inaccessible initializers 
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
 
@@ -165,14 +167,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @"
                         public class PublicClass
                         {
-                            // CS8815 is reported on non-void initializers
-                            [{|CS8815:System.Runtime.CompilerServices.ModuleInitializer|}]
+                            [System.Runtime.CompilerServices.ModuleInitializer]
                             public static bool NonVoidInitializer() { return true; }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8815 is reported on non-void initializers
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
 
@@ -188,14 +191,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @"
                         public class PublicClass
                         {
-                            // CS8815 is reported on instance initializers
-                            [{|CS8815:System.Runtime.CompilerServices.ModuleInitializer|}]
+                            [System.Runtime.CompilerServices.ModuleInitializer]
                             public void InstanceInitializer() { }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8815 is reported on instance initializers
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
 
@@ -211,14 +215,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @"
                         public class GenericClass<T>
                         {
-                            // CS8816 is reported on Generic type initializers
-                            [{|CS8816:System.Runtime.CompilerServices.ModuleInitializer|}]
+                            [System.Runtime.CompilerServices.ModuleInitializer]
                             public static void Initializer() { }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8816 is reported on Generic type initializers
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
 
@@ -234,14 +239,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                         @"
                         public class PublicClass<T>
                         {
-                            // CS8816 is reported on Generic initializers
-                            [{|CS8816:System.Runtime.CompilerServices.ModuleInitializer|}]
+                            [System.Runtime.CompilerServices.ModuleInitializer]
                             public static void GenericInitializer<T>() { }
                         }
                         "
                     }
                 },
-                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp9,
+                // CS8816 is reported on Generic initializers
+                CompilerDiagnostics = CompilerDiagnostics.None
             }.RunAsync();
         }
     }

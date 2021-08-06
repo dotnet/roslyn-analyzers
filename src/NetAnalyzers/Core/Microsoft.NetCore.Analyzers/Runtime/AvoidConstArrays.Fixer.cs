@@ -23,19 +23,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            await Task.Run(() =>
-            {
-                string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
-                context.RegisterCodeFix(
-                    new MyCodeAction(
-                        title,
-                        c => ExtractConstArrayAsync(context.Document, context.Diagnostics, c),
-                        equivalenceKey: title),
-                    context.Diagnostics);
-            }).ConfigureAwait(false);
+            string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
+            context.RegisterCodeFix(
+                new MyCodeAction(
+                    title,
+                    async c => await ExtractConstArrayAsync(context.Document, context.Diagnostics.First(), c).ConfigureAwait(false),
+                    equivalenceKey: title),
+                context.Diagnostics);
+            await Task.Run(() => { }).ConfigureAwait(false);
         }
 
-        private static async Task<Document> ExtractConstArrayAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        private static async Task<Document> ExtractConstArrayAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -47,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Get a valid member name for the extracted constant
             IEnumerable<string> memberNames = model.GetTypeInfo(root, cancellationToken).Type.GetMembers().Where(x => x is IFieldSymbol).Select(x => x.Name);
-            string newMemberName = GetExtractedMemberName(memberNames, diagnostics.First().Properties["matchingParameter"]);
+            string newMemberName = GetExtractedMemberName(memberNames, diagnostic.Properties["matchingParameter"]);
 
             // Create the new member
             SyntaxNode newMember = generator.WithName(root, newMemberName);

@@ -24,12 +24,12 @@ namespace CSharpPerformanceTests.Enabled
             {
                 var name = "TypeName" + i;
                 sources.Add((name, @$"
-class {name}
-{{
-    [System.Runtime.CompilerServices.ModuleInitializer]
-    void Initialize() {{ }}
-}}
-"));
+                    public class {name}
+                    {{
+                        [System.Runtime.CompilerServices.ModuleInitializer]
+                        public static void Initialize() {{ }}
+                    }}
+                "));
             }
 
             var compilation = CSharpCompilationHelper.CreateAsync(sources.ToArray()).GetAwaiter().GetResult();

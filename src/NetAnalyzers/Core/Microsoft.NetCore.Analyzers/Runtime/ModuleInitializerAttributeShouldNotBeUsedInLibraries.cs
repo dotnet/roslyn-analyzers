@@ -66,8 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             method.IsGenericMethod ||
                             method.ContainingType.IsGenericType ||
                             !method.IsStatic ||
-                            !method.ReturnsVoid
-                        )
+                            !method.ReturnsVoid)
                         {
                             return;
                         }

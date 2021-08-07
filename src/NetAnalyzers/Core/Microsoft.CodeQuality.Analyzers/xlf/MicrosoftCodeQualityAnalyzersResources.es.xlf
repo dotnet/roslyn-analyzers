@@ -67,6 +67,21 @@
         <target state="translated">Evitar parámetros out</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersDescription">
+        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'. This method appears to only require base class members in its implementation.</source>
+        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'. This method appears to only require base class members in its implementation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersMessage">
+        <source>Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</source>
+        <target state="new">Consider changing the type of parameter '{0}' from '{1}' to its base type '{2}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsiderPassingBaseTypesAsParametersTitle">
+        <source>Consider using base type of parameter</source>
+        <target state="new">Consider using base type of parameter</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Una excepción general, como System.Exception o System.SystemException, o un tipo de excepción no permitido se captura con una instrucción catch, o bien se utiliza una cláusula catch general. No deben capturarse excepciones generales o no permitidas.</target>

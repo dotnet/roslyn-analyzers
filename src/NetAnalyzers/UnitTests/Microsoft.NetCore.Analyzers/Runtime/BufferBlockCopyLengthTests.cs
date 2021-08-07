@@ -530,7 +530,6 @@ Module Program
         Return New Integer() {1, 2, 3, 4}
     End Function
 End Module
-
 ");
         }
 
@@ -547,9 +546,22 @@ class Program
 
     static void Main()
     {
-        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|]);
+        Program program = new Program();
+        Buffer.BlockCopy(program.src, 0, program.dst, 0, [|program.src.Length|]);
     }
 }
+");
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Class Program
+    Private src As Integer()
+    Private dst As Integer()
+    Sub Main(args As String())
+        Dim program = New Program()
+        Buffer.BlockCopy(program.src, 0, program.dst, 0, [|program.src.Length|])
+    End Sub
+End Class
 ");
         }
 
@@ -569,6 +581,18 @@ class Program
         Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|]);
     }
 }
+");
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Dim src = Array.CreateInstance(GetType(Integer), 4)
+        Dim dst = Array.CreateInstance(GetType(Integer), 4)
+
+        Buffer.BlockCopy(src, 0, dst, 0, [|src.Length|])
+    End Sub
+End Module
 ");
         }
     }

@@ -972,6 +972,18 @@ Consistent naming of parameters in an override hierarchy increases the usability
 |CodeFix|True|
 ---
 
+## [CA1727](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1727): Use PascalCase for named placeholders
+
+Use PascalCase for named placeholders in the logging message template.
+
+|Item|Value|
+|-|-|
+|Category|Naming|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+---
+
 ## [CA1802](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802): Use literals where appropriate
 
 A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.
@@ -1428,6 +1440,18 @@ It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring'
 |CodeFix|True|
 ---
 
+## [CA1848](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848): Use the LoggerMessage delegates
+
+For improved performance, use the LoggerMessage delegates.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Hidden|
+|CodeFix|False|
+---
+
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope
 
 If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.
@@ -1558,6 +1582,18 @@ Forward the 'CancellationToken' parameter to methods to ensure the operation can
 |Enabled|True|
 |Severity|Info|
 |CodeFix|True|
+---
+
+## [CA2017](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2017): Parameter count mismatch
+
+Number of parameters supplied in the logging message template do not match the number of named placeholders.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
 ---
 
 ## [CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
@@ -2013,6 +2049,42 @@ An assembly has to opt into preview features before using them.
 |Category|Usage|
 |Enabled|True|
 |Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2253](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2253): Named placeholders should not be numeric values
+
+Named placeholders in the logging message template should not be comprised of only numeric characters.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2254](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2254): Template should be a static expression
+
+The logging message template should not vary between calls.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|False|
+---
+
+## [CA2255](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2255): The 'ModuleInitializer' attribute should not be used in libraries
+
+Module initializers are intended to be used by application code to ensure an application's components are initialized before the application code begins executing. If library code declares a 'ModuleInitializer' method, it can interfere with application initialization and also lead to limitations in that application's trimming abilities. Library code should therefore not utilize the 'ModuleInitializer' attribute, but instead expose methods that can be used to initialize any components within the library and allow the application to invoke the method during application initialization.
+
+|Item|Value|
+|-|-|
+|Category|Usage|
+|Enabled|True|
+|Severity|Warning|
 |CodeFix|False|
 ---
 

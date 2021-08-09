@@ -97,7 +97,6 @@ namespace Analyzer.Utilities
         public const string SystemAppContext = "System.AppContext";
         public const string SystemAppDomain = "System.AppDomain";
         public const string SystemArgumentException = "System.ArgumentException";
-        public const string SystemArray = "System.Array";
         public const string SystemAttribute = "System.Attribute";
         public const string SystemAttributeTargets = "System.AttributeTargets";
         public const string SystemAttributeUsageAttribute = "System.AttributeUsageAttribute";

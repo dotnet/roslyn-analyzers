@@ -65,16 +65,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                IPropertySymbol arrayLengthProperty = arrayType
+                ISymbol arrayLengthProperty = arrayType
                     .GetMembers("Length")
-                    .OfType<IPropertySymbol>()
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => p is IPropertySymbol);
 
                 context.RegisterOperationAction(context =>
                 {
                     var invocationOperation = (IInvocationOperation)context.Operation;
 
-                    if (!invocationOperation.TargetMethod.Equals(blockCopyMethod))
+                    if (!invocationOperation.TargetMethod.Equals(blockCopyMethod, SymbolEqualityComparer.Default))
                     {
                         return;
                     }

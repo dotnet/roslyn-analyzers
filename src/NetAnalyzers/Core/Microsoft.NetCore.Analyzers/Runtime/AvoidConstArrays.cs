@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
     /// CA1839: Avoid const arrays. Replace with static readonly arrays.
-    ///</summary>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidConstArraysAnalyzer : DiagnosticAnalyzer
     {
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        // Note that this analyzer doesn't analyze local variables that are only referenced once ever when passed as arguments,
+        // Note that this analyzer doesn't analyze local variables that are only referenced once ever, when passed as arguments,
         // as cleaning up useless allocations is not in the scope of this analyzer
         public override void Initialize(AnalysisContext context)
         {
@@ -42,21 +42,63 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Analyzes an argument operation
             context.RegisterOperationAction(operationContext =>
             {
-                var argument = (IArgumentOperation)operationContext.Operation;
-
-                if (argument.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
-                    || argument.Value.Kind != OperationKind.Literal // Must be literal array
-                    || argument.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared
+                if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation
+                    && arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument) != null)
                 {
-                    return;
+                    var test = "test";
                 }
 
-                ImmutableDictionary<string, string?> properties = ImmutableDictionary.Create<string, string?>();
-                properties.Add("matchingParameter", argument.Parameter.Name);
+                if (operationContext.Operation is IArgumentOperation argumentOperation)
+                {
+                    if (argumentOperation.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
+                        || argumentOperation.Value.Kind != OperationKind.Literal // Must be literal array
+                        || argumentOperation.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared
+                    {
+                        return;
+                    }
 
-                // Report diagnostic from argument context rather than argument.Value context
-                operationContext.ReportDiagnostic(argument.CreateDiagnostic(Rule, properties));
-            }, OperationKind.Argument);
+                    ImmutableDictionary<string, string?> properties = ImmutableDictionary.Create<string, string?>();
+                    properties.Add("matchingParameter", argumentOperation.Parameter.Name);
+
+                    // Report diagnostic from argument context rather than argument.Value context
+                    operationContext.ReportDiagnostic(argumentOperation.CreateDiagnostic(Rule, properties));
+                }
+                // else if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation)
+                // {
+                //     if (arrayCreationOperation.Kind != OperationKind.Literal) // Must be literal array
+                //     {
+                //         return;
+                //     }
+
+                //     operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule));
+                // }
+                // else if (operationContext.Operation is IArrayInitializerOperation arrayInitializerOperation)
+                // {
+                //     if (arrayInitializerOperation.Kind != OperationKind.Literal) // Must be literal array
+                //     {
+                //         return;
+                //     }
+
+                //     operationContext.ReportDiagnostic(arrayInitializerOperation.CreateDiagnostic(Rule));
+                // }
+                // else if (operationContext.Operation is ILiteralOperation literalOperation)
+                // {
+                //     if (literalOperation.Type.TypeKind != TypeKind.Array) // Must be literal array
+                //     {
+                //         return;
+                //     }
+
+                //     operationContext.ReportDiagnostic(literalOperation.CreateDiagnostic(Rule));
+                // }
+            },
+            OperationKind.Argument,
+            OperationKind.ArrayCreation,
+            OperationKind.ArrayInitializer,
+            OperationKind.Literal,
+            OperationKind.Invocation,
+            OperationKind.ExpressionStatement, // Hopefully not necessary
+            OperationKind.Block, // Hopefully not necessary
+            OperationKind.MethodBody); // Hopefully not necessary
         }
     }
 }

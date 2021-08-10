@@ -11,9 +11,13 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
+    /// <summary>
+    /// CA1839: Avoid const arrays. Replace with static readonly arrays.
+    /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidConstArraysFixer : CodeFixProvider
     {
@@ -45,7 +49,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             // Get a valid member name for the extracted constant
             IEnumerable<string> memberNames = model.GetTypeInfo(root, cancellationToken).Type.GetMembers().Where(x => x is IFieldSymbol).Select(x => x.Name);
-            string newMemberName = GetExtractedMemberName(memberNames, diagnostic.Properties["matchingParameter"]);
+            if (!diagnostic.Properties.TryGetValue("matchingParamater", out string matchingParamater))
+            {
+                matchingParamater = ((IArgumentOperation)model.GetOperation(root)).Parameter.Name;
+            }
+            string newMemberName = GetExtractedMemberName(memberNames, matchingParamater);
 
             // Create the new member
             SyntaxNode newMember = generator.WithName(root, newMemberName);

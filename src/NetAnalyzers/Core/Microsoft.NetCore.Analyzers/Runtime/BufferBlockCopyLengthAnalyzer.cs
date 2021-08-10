@@ -86,9 +86,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     bool CheckArrayLengthLocalReference(IArgumentOperation targetArgument, IPropertyReferenceOperation lengthPropertyArgument)
                     {
-                        if (targetArgument.Value is IConversionOperation targetArgValue)
+                        if (targetArgument.Value is IConversionOperation targetArgumentValue)
                         {
-                            if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgValue.Operand.GetReferencedMemberOrLocalOrParameter())
+                            if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgumentValue.Operand.GetReferencedMemberOrLocalOrParameter())
                             {
                                 IArrayTypeSymbol countArgumentArrayTypeSymbol = (IArrayTypeSymbol)lengthPropertyArgument.Instance.Type;
                                 if (countArgumentArrayTypeSymbol.ElementType.SpecialType != SpecialType.System_Byte &&
@@ -98,9 +98,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
                             }
                         }
-                        else if (targetArgument.Value is ILocalReferenceOperation local)
+                        else if (targetArgument.Value is ILocalReferenceOperation targetArgumentLocalReference)
                         {
-                            if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == local.Local)
+                            if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgumentLocalReference.Local)
                             {
                                 return true;
                             }

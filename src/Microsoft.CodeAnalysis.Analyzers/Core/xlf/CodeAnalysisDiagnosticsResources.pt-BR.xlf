@@ -7,10 +7,15 @@
         <target state="translated">Adicionar uma entrada de regra ao arquivo de versão não enviado</target>
         <note />
       </trans-unit>
-      <trans-unit id="AddGeneratorAttribute">
-        <source>Add 'Generator' Attribute</source>
-        <target state="new">Add 'Generator' Attribute</target>
-        <note />
+      <trans-unit id="AddGeneratorAttribute_1">
+        <source>Apply Generator attribute for '{0}'.</source>
+        <target state="new">Apply Generator attribute for '{0}'.</target>
+        <note>"Generator" is a named type and should not be changed</note>
+      </trans-unit>
+      <trans-unit id="AddGeneratorAttribute_2">
+        <source>Apply Generator attribute for both '{0}' and '{1}'.</source>
+        <target state="new">Apply Generator attribute for both '{0}' and '{1}'.</target>
+        <note>"Generator" is a type name and should not be changed</note>
       </trans-unit>
       <trans-unit id="ClassIsNotDiagnosticAnalyzerMessage">
         <source>Inherit type '{0}' from DiagnosticAnalyzer or remove the DiagnosticAnalyzerAttribute(s)</source>

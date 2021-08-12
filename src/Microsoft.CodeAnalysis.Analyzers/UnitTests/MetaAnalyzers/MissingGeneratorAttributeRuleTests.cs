@@ -73,15 +73,14 @@ public class CustomGenerator : Microsoft.CodeAnalysis.ISourceGenerator
 }";
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -122,15 +121,14 @@ End Class";
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -163,15 +161,14 @@ End Class";
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -213,15 +210,14 @@ public class CustomGenerator : CustomGeneratorBase
 }";
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -272,15 +268,14 @@ End Class";
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }
@@ -306,10 +301,10 @@ public class CustomGenerator : CustomGeneratorBase
 }";
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 }
             }.RunAsync();
         }
@@ -340,10 +335,10 @@ End Class";
 
             await new VerifyVB.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
-                    Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
+                    Sources = { code }
                 }
             }.RunAsync();
         }

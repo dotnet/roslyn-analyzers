@@ -538,7 +538,12 @@
   <data name="MissingSourceGeneratorAttributeTitle" xml:space="preserve">
     <value>Missing 'Generator' Attribute</value>
   </data>
-  <data name="AddGeneratorAttribute" xml:space="preserve">
-    <value>Add 'Generator' Attribute</value>
+  <data name="AddGeneratorAttribute_1" xml:space="preserve">
+    <value>Apply Generator attribute for '{0}'.</value>
+    <comment>"Generator" is a named type and should not be changed</comment>
+  </data>
+  <data name="AddGeneratorAttribute_2" xml:space="preserve">
+    <value>Apply Generator attribute for both '{0}' and '{1}'.</value>
+    <comment>"Generator" is a type name and should not be changed</comment>
   </data>
 </root>

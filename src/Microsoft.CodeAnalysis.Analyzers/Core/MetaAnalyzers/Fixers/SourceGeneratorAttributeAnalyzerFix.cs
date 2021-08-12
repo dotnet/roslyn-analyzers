@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -32,21 +34,73 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var codeAction = CodeAction.Create(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute,
-                    (cancellationToken) => FixDocumentAsync(document, node, cancellationToken),
-                    nameof(SourceGeneratorAttributeAnalyzerFix));
+                AddFix(
+                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
+                    context, document, node, diagnostic, LanguageNames.CSharp);
 
-                context.RegisterCodeFix(codeAction, diagnostic);
+                AddFix(
+                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
+                    context, document, node, diagnostic, LanguageNames.VisualBasic);
+
+                AddFix(
+                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
+                    context, document, node, diagnostic, LanguageNames.CSharp, LanguageNames.VisualBasic);
             }
+        }
+
+        private void AddFix(string title, CodeFixContext context, Document document, SyntaxNode node, Diagnostic diagnostic, params string[] languageNames)
+        {
+            var codeAction = CodeAction.Create(
+                title,
+                (cancellationToken) => FixDocumentAsync(document, node, languageNames, cancellationToken),
+                equivalenceKey: nameof(SourceGeneratorAttributeAnalyzerFix));
+
+            context.RegisterCodeFix(codeAction, diagnostic);
         }
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
-        private static async Task<Document> FixDocumentAsync(Document document, SyntaxNode node, CancellationToken cancellationToken)
+        private static async Task<Document> FixDocumentAsync(Document document, SyntaxNode node, string[] languageNames, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
-            var generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute);
+
+            SyntaxNode? generatorAttribute;
+
+            if (languageNames.Length == 1 && languageNames[0] == LanguageNames.CSharp)
+            {
+                // CSharp is the only language, which is the default paramterless 
+                // constructor for the Generator attribute
+                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute);
+            }
+            else
+            {
+                // For cases where the language is VB or VB and CSharp, add 
+                // an argument to signify that
+                var languageNamesFullName = typeof(LanguageNames).FullName;
+                var splitLanguageNames = languageNamesFullName.Split('.');
+
+                var baseLanguageNameExpression = generator.IdentifierName(splitLanguageNames[0]);
+                foreach (var identifier in splitLanguageNames.Skip(1))
+                {
+                    baseLanguageNameExpression = generator.MemberAccessExpression(baseLanguageNameExpression, identifier);
+                }
+
+                var arguments = new SyntaxNode[languageNames.Length];
+                for (var i = 0; i < languageNames.Length; i++)
+                {
+                    RoslynDebug.Assert(languageNames[i] == LanguageNames.CSharp || languageNames[i] == LanguageNames.VisualBasic);
+
+                    var language = languageNames[i] == LanguageNames.CSharp
+                        ? nameof(LanguageNames.CSharp)
+                        : nameof(LanguageNames.VisualBasic);
+
+                    var finalExpression = generator.MemberAccessExpression(baseLanguageNameExpression, language);
+                    arguments[i] = finalExpression;
+                }
+
+                generatorAttribute = generator.Attribute(WellKnownTypeNames.MicrosoftCodeAnalysisGeneratorAttribute, arguments);
+            }
 
             editor.ReplaceNode(node, generator.AddAttributes(node, generatorAttribute));
 

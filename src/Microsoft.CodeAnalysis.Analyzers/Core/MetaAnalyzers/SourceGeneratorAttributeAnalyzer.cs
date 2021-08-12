@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            if (!symbol.AllInterfaces.Any(i => sourceGenerator.Equals(i, SymbolEqualityComparer.Default)))
+            if (!symbol.AllInterfaces.Contains(sourceGenerator))
             {
                 return;
             }

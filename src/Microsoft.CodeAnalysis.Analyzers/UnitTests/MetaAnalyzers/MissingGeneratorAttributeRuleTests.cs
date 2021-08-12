@@ -42,15 +42,14 @@ public class CustomGenerator : ISourceGenerator
 }";
             await new VerifyCS.Test
             {
+                ReferenceAssemblies = ReferenceAssemblies,
                 TestState =
                 {
                     Sources = { code },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
                 FixedState =
                 {
                     Sources = { fixedCode },
-                    ReferenceAssemblies = ReferenceAssemblies
                 },
             }.RunAsync();
         }

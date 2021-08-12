@@ -98,13 +98,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
                             }
                         }
-                        else if (targetArgument.Value is ILocalReferenceOperation targetArgumentLocalReference)
-                        {
-                            if (lengthPropertyArgument.Instance.GetReferencedMemberOrLocalOrParameter() == targetArgumentLocalReference.Local)
-                            {
-                                return true;
-                            }
-                        }
                         return false;
                     }
 

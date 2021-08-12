@@ -565,7 +565,7 @@ End Class
 ");
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/5371")]
         public async Task SrcAndDstAsArrayCreateInstance()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

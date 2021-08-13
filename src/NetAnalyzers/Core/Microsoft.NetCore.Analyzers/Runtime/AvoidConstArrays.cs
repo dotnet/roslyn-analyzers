@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -42,63 +44,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Analyzes an argument operation
             context.RegisterOperationAction(operationContext =>
             {
-                if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation
-                    && arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument) != null)
+                if (operationContext.Operation is not IArrayCreationOperation arrayCreationOperation)
                 {
-                    var test = "test";
+                    return;
                 }
 
-                if (operationContext.Operation is IArgumentOperation argumentOperation)
+                IArgumentOperation? argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+
+                if (argumentOperation == null || // Must be literal array
+                    !arrayCreationOperation.Children.First(x => x is IArrayInitializerOperation).Children.All(x => x is ILiteralOperation))
                 {
-                    if (argumentOperation.Value.Type.TypeKind != TypeKind.Array // Check that argument is an array
-                        || argumentOperation.Value.Kind != OperationKind.Literal // Must be literal array
-                        || argumentOperation.ArgumentKind != ArgumentKind.Explicit) // Must be explicitly declared
-                    {
-                        return;
-                    }
-
-                    ImmutableDictionary<string, string?> properties = ImmutableDictionary.Create<string, string?>();
-                    properties.Add("matchingParameter", argumentOperation.Parameter.Name);
-
-                    // Report diagnostic from argument context rather than argument.Value context
-                    operationContext.ReportDiagnostic(argumentOperation.CreateDiagnostic(Rule, properties));
+                    return;
                 }
-                // else if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation)
-                // {
-                //     if (arrayCreationOperation.Kind != OperationKind.Literal) // Must be literal array
-                //     {
-                //         return;
-                //     }
 
-                //     operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule));
-                // }
-                // else if (operationContext.Operation is IArrayInitializerOperation arrayInitializerOperation)
-                // {
-                //     if (arrayInitializerOperation.Kind != OperationKind.Literal) // Must be literal array
-                //     {
-                //         return;
-                //     }
+                ImmutableDictionary<string, string?> properties = new Dictionary<string, string?>
+                {
+                    { "matchingParameter", argumentOperation.Parameter.Name }
+                }
+                .ToImmutableDictionary();
 
-                //     operationContext.ReportDiagnostic(arrayInitializerOperation.CreateDiagnostic(Rule));
-                // }
-                // else if (operationContext.Operation is ILiteralOperation literalOperation)
-                // {
-                //     if (literalOperation.Type.TypeKind != TypeKind.Array) // Must be literal array
-                //     {
-                //         return;
-                //     }
-
-                //     operationContext.ReportDiagnostic(literalOperation.CreateDiagnostic(Rule));
-                // }
-            },
-            OperationKind.Argument,
-            OperationKind.ArrayCreation,
-            OperationKind.ArrayInitializer,
-            OperationKind.Literal,
-            OperationKind.Invocation,
-            OperationKind.ExpressionStatement, // Hopefully not necessary
-            OperationKind.Block, // Hopefully not necessary
-            OperationKind.MethodBody); // Hopefully not necessary
+                operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties));
+            }, OperationKind.ArrayCreation);
         }
     }
 }

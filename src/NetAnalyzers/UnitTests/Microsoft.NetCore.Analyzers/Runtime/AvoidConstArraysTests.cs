@@ -34,16 +34,17 @@ public class A
         Console.WriteLine(new[]{ 1, 2, 3 });
     }
 }
-", @"
+",
+VerifyCS.Diagnostic().WithSpan(8, 27, 8, 43), @"
 using System;
 
 public class A
 {
-    private static readonly int[] valueArray = new[]{ 1, 2, 3 };
+    private static readonly int[] value = new[]{ 1, 2, 3 };
 
     public void B()
     {
-        Console.WriteLine(valueArray);
+        Console.WriteLine(value);
     }
 }
 ");
@@ -59,16 +60,43 @@ public class A
         Console.WriteLine(new int[]{ 1, 2, 3 });
     }
 }
-", @"
+",
+VerifyCS.Diagnostic().WithSpan(8, 27, 8, 47), @"
 using System;
 
 public class A
 {
-    private static readonly int[] valueArray = new int[]{ 1, 2, 3 };
+    private static readonly int[] value = new int[]{ 1, 2, 3 };
 
     public void B()
     {
-        Console.WriteLine(valueArray);
+        Console.WriteLine(value);
+    }
+}
+");
+
+            // Nested arguments
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
+    }
+}
+",
+VerifyCS.Diagnostic().WithSpan(8, 44, 8, 74), @"
+using System;
+
+public class A
+{
+    private static readonly string[] value = new[] { ""Cake"", ""is"", ""good"" };
+
+    public void B()
+    {
+        Console.WriteLine(string.Join("" "", value));
     }
 }
 ");
@@ -134,7 +162,7 @@ public class A
     public void B()
     {
         string str = ""Lorem ipsum"";
-        Console.WriteLine(str.Split(' '));
+        Console.WriteLine(new[] { str });
     }
 }
 ", @"
@@ -145,30 +173,7 @@ public class A
     public void B()
     {
         string str = ""Lorem ipsum"";
-        Console.WriteLine(str.Split(' '));
-    }
-}
-");
-
-            // Nested arguments
-            await VerifyCS.VerifyCodeFixAsync(@"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
-    }
-}
-", @"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
+        Console.WriteLine(new[] { str });
     }
 }
 ");
@@ -190,14 +195,15 @@ Public Class A
         Console.WriteLine({1, 2, 3})
     End Sub
 End Class
-", @"
+",
+VerifyVB.Diagnostic().WithSpan(6, 27, 6, 36), @"
 Imports System
 
 Public Class A
-    Private Shared ReadOnly valueArray As Integer() = {1, 2, 3}
+    Private Shared ReadOnly value As Integer() = {1, 2, 3}
 
     Public Sub B()
-        Console.WriteLine(valueArray)
+        Console.WriteLine(value)
     End Sub
 End Class
 ");
@@ -211,14 +217,37 @@ Public Class A
         Console.WriteLine(New Integer() {1, 2, 3})
     End Sub
 End Class
-", @"
+",
+VerifyVB.Diagnostic().WithSpan(6, 27, 6, 50), @"
 Imports System
 
 Public Class A
-    Private Shared ReadOnly valueArray As Integer() = New Integer() {1, 2, 3}
+    Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
 
     Public Sub B()
-        Console.WriteLine(valueArray)
+        Console.WriteLine(value)
+    End Sub
+End Class
+");
+
+            // Nested arguments
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
+    End Sub
+End Class
+",
+VerifyVB.Diagnostic().WithSpan(6, 45, 6, 67), @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
+
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, value))
     End Sub
 End Class
 ");
@@ -274,7 +303,7 @@ Imports System
 Public Class A
     Public Sub B()
         Dim str As String = ""Lorem ipsum""
-        Console.WriteLine(str.Split("" ""c))
+        Console.WriteLine({ str })
     End Sub
 End Class
 ", @"
@@ -283,26 +312,7 @@ Imports System
 Public Class A
     Public Sub B()
         Dim str As String = ""Lorem ipsum""
-        Console.WriteLine(str.Split("" ""c))
-    End Sub
-End Class
-");
-
-            // Nested arguments
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
+        Console.WriteLine({ str })
     End Sub
 End Class
 ");

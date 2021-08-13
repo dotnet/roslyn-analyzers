@@ -23,49 +23,72 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AvoidConstArraysAnalyzer.RuleId);
 
+        private static readonly string[] collectionMemberEndings = new[] { "array", "collection", "enumerable", "list" };
+
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            Document document = context.Document;
+            SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(context.Span);
+            SemanticModel model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            DocumentEditor editor = await DocumentEditor.CreateAsync(document, context.CancellationToken).ConfigureAwait(false);
+            SyntaxGenerator generator = editor.Generator;
             string title = MicrosoftNetCoreAnalyzersResources.AvoidConstArraysTitle;
+
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
-                    async c => await ExtractConstArrayAsync(context.Document, context.Diagnostics.First(), c).ConfigureAwait(false),
+                    async c => await ExtractConstArrayAsync(root, node, model, editor, generator, context.Diagnostics.First(), c).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
-            await Task.Run(() => { }).ConfigureAwait(false);
         }
 
-        private static async Task<Document> ExtractConstArrayAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> ExtractConstArrayAsync(SyntaxNode root, SyntaxNode node, SemanticModel model,
+            DocumentEditor editor, SyntaxGenerator generator, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            IOperation nodeOperation = model.GetOperation(node, cancellationToken);
+            INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
+            IEnumerable<ISymbol> typeMemberSymbols = containingType.GetMembers();
+            IEnumerable<ISymbol> typeMemberFields = typeMemberSymbols.Where(x => x is IFieldSymbol);
 
             // Get method containing the symbol that is being diagnosed. Should always be in a method
-            IMethodSymbol containingMethod = model.GetSymbolInfo(root, cancellationToken).Symbol.GetContainingMethod()!;
+            IMethodBodyOperation? containingMethod = nodeOperation.GetFirstAncestorOfType<IMethodBodyOperation>();
+            ISymbol containingMethodSymbol = typeMemberSymbols.First(x => x.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken) == containingMethod!.Syntax);
+            Accessibility newMemberAccessibility = containingMethodSymbol.DeclaredAccessibility;
+            // NOTE: need to get minimum viable accessibility
 
             // Get a valid member name for the extracted constant
-            IEnumerable<string> memberNames = model.GetTypeInfo(root, cancellationToken).Type.GetMembers().Where(x => x is IFieldSymbol).Select(x => x.Name);
-            if (!diagnostic.Properties.TryGetValue("matchingParamater", out string matchingParamater))
-            {
-                matchingParamater = ((IArgumentOperation)model.GetOperation(root)).Parameter.Name;
-            }
-            string newMemberName = GetExtractedMemberName(memberNames, matchingParamater);
+            IEnumerable<string> memberNames = typeMemberFields.Select(x => x.Name);
+            string newMemberName = GetExtractedMemberName(memberNames, diagnostic.Properties["matchingParameter"]);
 
             // Create the new member
-            SyntaxNode newMember = generator.WithName(root, newMemberName);
+            SyntaxNode newMember = generator.WithName(node, newMemberName);
             newMember = generator.WithModifiers(newMember, DeclarationModifiers.Static | DeclarationModifiers.ReadOnly);
-            newMember = generator.WithAccessibility(newMember, containingMethod.DeclaredAccessibility); // same as the method accessibility
+            newMember = generator.WithAccessibility(newMember, newMemberAccessibility); // same as the method accessibility
 
             // Add the new member to the end of the class fields
-            SyntaxNode lastFieldSyntaxNode = generator.GetMembers(root).Last(x => model.GetSymbolInfo(x).Symbol is IFieldSymbol);
-            editor.AddMember(lastFieldSyntaxNode, newMember);
+            ISymbol lastFieldSymbol = typeMemberFields.LastOrDefault();
+            if (lastFieldSymbol != null)
+            {
+                // Insert after last field if any fields are present
+                SyntaxNode lastFieldNode = await lastFieldSymbol.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+                editor.InsertAfter(lastFieldNode, newMember);
+            }
+            else
+            {
+                // Insert before first member if no fields are present
+                SyntaxNode firstMemberNode = (await containingType.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false))
+                        .ChildNodes().First();
+                editor.InsertBefore(firstMemberNode, newMember);
+            }
 
             // Replace argument with a reference to our new member
-            editor.ReplaceNode(root, generator.Argument(newMember));
+            //editor.ReplaceNode(node, generator.Argument(newMember));
+
+            // Replace root
+            editor.ReplaceNode(node, editor.GetChangedRoot());
 
             // Return changed document
             return editor.GetChangedDocument();
@@ -76,10 +99,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         // resolved by directly referencing the static readonly field everywhere it's needed
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
-            // Half-shot attempt at getting a unique field name
             string nameOption = parameterName;
+            bool hasCollectionEnding = collectionMemberEndings.Any(x => nameOption.EndsWith(x, true, System.Globalization.CultureInfo.InvariantCulture));
 
-            if (memberNames.Contains(nameOption))
+            if (memberNames.Contains(nameOption) && !hasCollectionEnding)
             {
                 nameOption += "Array";
             }
@@ -104,18 +127,30 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
     }
 
-    public static class ISymbolExtensions
+    public static class IOperationExtensions
     {
-        public static IMethodSymbol? GetContainingMethod(this ISymbol symbol)
+        public static T? GetFirstAncestorOfType<T>(this IOperation operation, OperationKind kind) where T : IOperation
         {
-            ISymbol current = symbol;
-            while (current != null)
+            while (operation != null)
             {
-                if (current is IMethodSymbol method)
+                if (operation.Kind == kind)
                 {
-                    return method;
+                    return (T)operation;
                 }
-                current = current.ContainingSymbol;
+                operation = operation.Parent;
+            }
+            return default;
+        }
+
+        public static T? GetFirstAncestorOfType<T>(this IOperation operation) where T : IOperation
+        {
+            while (operation != null)
+            {
+                if (operation is T outOperation)
+                {
+                    return outOperation;
+                }
+                operation = operation.Parent;
             }
             return default;
         }

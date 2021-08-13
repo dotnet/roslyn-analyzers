@@ -58,8 +58,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidConstArraysMessage">
-        <source>Make any 'const' arrays 'static readonly'</source>
-        <target state="new">Make any 'const' arrays 'static readonly'</target>
+        <source>Make any constant arrays passed as arguments into 'static readonly' fields</source>
+        <target state="new">Make any constant arrays passed as arguments into 'static readonly' fields</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidConstArraysTitle">

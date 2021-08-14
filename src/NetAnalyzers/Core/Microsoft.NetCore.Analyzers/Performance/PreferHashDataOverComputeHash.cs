@@ -97,9 +97,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // 3. Find all HashAlgorithm local references and store them
 
                 // At OperationBlockEnd:
-                // 1. Count all local references and create a set with only symbols that have a single local reference
-                // 2. Iterate all ComputeHash invocation, only report (pattern #1) the invocation whose
-                //  a. local reference appears once (exist in the set)
+                // 1. Group the local references by its symbols
+                // 2. Iterate the local references, only report the invocation (pattern #1) whose
+                //  a. local reference appears once
                 //  b. local reference was created in the block
                 //  c. hashAlgorithm type has a static HashData method
 

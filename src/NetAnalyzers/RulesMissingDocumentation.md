@@ -8,5 +8,5 @@ CA1839 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-r
 CA1840 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840> | Use 'Environment.CurrentManagedThreadId' |
 CA1842 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1842> | Do not use 'WhenAll' with a single task |
 CA1843 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1843> | Do not use 'WaitAll' with a single task |
-CA1848 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848> | Prefer static 'HashData' method over 'ComputeHash' |
+CA1849 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849> | Prefer static 'HashData' method over 'ComputeHash' |
 CA2252 | <https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252> | This API requires opting into preview features |

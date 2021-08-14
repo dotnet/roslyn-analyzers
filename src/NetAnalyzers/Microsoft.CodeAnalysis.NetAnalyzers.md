@@ -1428,7 +1428,7 @@ It is more efficient to use 'AsSpan' and 'string.Concat', instead of 'Substring'
 |CodeFix|True|
 ---
 
-## [CA1848](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1848): Prefer static 'HashData' method over 'ComputeHash'
+## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Prefer static 'HashData' method over 'ComputeHash'
 
 It is more efficient to use the static 'HashData' method over creating and managing a HashAlgorithm instance to call 'ComputeHash'.
 

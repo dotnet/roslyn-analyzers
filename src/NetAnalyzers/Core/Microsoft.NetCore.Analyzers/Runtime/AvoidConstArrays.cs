@@ -43,7 +43,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterOperationAction(operationContext =>
             {
                 IArgumentOperation? argumentOperation;
-                Dictionary<string, string?> properties = new();
 
                 if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                 {
@@ -64,11 +63,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     argumentOperation = invocationOperation.Arguments.FirstOrDefault();
                     if (argumentOperation is null || argumentOperation.Children.First() is not IConversionOperation conversionOperation
-                        || conversionOperation.Operand is not IArrayCreationOperation)
+                        || conversionOperation.Operand is not IArrayCreationOperation arrayCreation)
                     {
                         return;
                     }
-                    arrayCreationOperation = (IArrayCreationOperation)conversionOperation.Operand;
+                    arrayCreationOperation = arrayCreation;
                 }
                 else
                 {
@@ -81,7 +80,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                properties["paramName"] = argumentOperation.Parameter.Name;
+                Dictionary<string, string?> properties = new()
+                {
+                    { "paramName", argumentOperation.Parameter.Name }
+                };
 
                 operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
             },

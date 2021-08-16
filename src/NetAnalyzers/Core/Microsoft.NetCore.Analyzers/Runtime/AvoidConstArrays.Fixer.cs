@@ -52,12 +52,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
-            INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
-            IEnumerable<ISymbol> typeFields = containingType.GetMembers().Where(x => x is IFieldSymbol);
+            IEnumerable<ISymbol> typeFields = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType
+                .GetMembers().Where(x => x is IFieldSymbol);
 
             // Get a valid member name for the extracted constant
-            IEnumerable<string> memberNames = typeFields.Select(x => x.Name);
-            string newMemberName = GetExtractedMemberName(memberNames, properties["paramName"]);
+            string newMemberName = GetExtractedMemberName(typeFields.Select(x => x.Name), properties["paramName"]);
 
             // Get method containing the symbol that is being diagnosed. Should always be in a method
             IOperation? containingMethodBody = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
@@ -121,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
             string nameOption = parameterName;
-            bool hasCollectionEnding = collectionMemberEndings.Any(x => nameOption.EndsWith(x, true, System.Globalization.CultureInfo.InvariantCulture));
+            bool hasCollectionEnding = collectionMemberEndings.Any(x => nameOption.EndsWith(x, true, null));
 
             if (parameterName == "source" // for LINQ, "sourceArray" is clearer than "source"
                 || (memberNames.Contains(nameOption) && !hasCollectionEnding))

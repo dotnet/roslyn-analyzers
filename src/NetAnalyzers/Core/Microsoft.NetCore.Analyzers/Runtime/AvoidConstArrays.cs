@@ -34,8 +34,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        // Note that this analyzer doesn't analyze local variables that are only referenced once ever, when passed as arguments,
-        // as cleaning up useless allocations is not in the scope of this analyzer
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
@@ -44,27 +42,51 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Analyzes an argument operation
             context.RegisterOperationAction(operationContext =>
             {
-                if (operationContext.Operation is not IArrayCreationOperation arrayCreationOperation)
+                IArgumentOperation? argumentOperation;
+                Dictionary<string, string?> properties = new();
+
+                if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
+                {
+                    argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+                    if (argumentOperation is null)
+                    {
+                        return;
+                    }
+                }
+                else if (operationContext.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
+                {
+                    if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation))
+                    {
+                        // This is an invocation that contains an array in it
+                        // This will get caught by the first case in another cycle
+                        return;
+                    }
+
+                    argumentOperation = invocationOperation.Arguments.FirstOrDefault();
+                    if (argumentOperation is null || argumentOperation.Children.First() is not IConversionOperation conversionOperation
+                        || conversionOperation.Operand is not IArrayCreationOperation)
+                    {
+                        return;
+                    }
+                    arrayCreationOperation = (IArrayCreationOperation)conversionOperation.Operand;
+                }
+                else
                 {
                     return;
                 }
 
-                IArgumentOperation? argumentOperation = arrayCreationOperation.GetAncestor<IArgumentOperation>(OperationKind.Argument);
-
-                if (argumentOperation == null || // Must be literal array
-                    !arrayCreationOperation.Children.First(x => x is IArrayInitializerOperation).Children.All(x => x is ILiteralOperation))
+                // Must be literal array
+                if (!arrayCreationOperation.Children.First(x => x is IArrayInitializerOperation).Children.All(x => x is ILiteralOperation))
                 {
                     return;
                 }
 
-                ImmutableDictionary<string, string?> properties = new Dictionary<string, string?>
-                {
-                    { "matchingParameter", argumentOperation.Parameter.Name }
-                }
-                .ToImmutableDictionary();
+                properties["paramName"] = argumentOperation.Parameter.Name;
 
-                operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties));
-            }, OperationKind.ArrayCreation);
+                operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));
+            },
+            OperationKind.ArrayCreation,
+            OperationKind.Invocation);
         }
     }
 }

@@ -8,9 +8,11 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
@@ -25,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static readonly string[] collectionMemberEndings = new[] { "array", "collection", "enumerable", "list" };
 
+        // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -40,37 +43,42 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
-                    async c => await ExtractConstArrayAsync(root, node, model, editor, generator, context.Diagnostics.First(), c).ConfigureAwait(false),
+                    async c => await ExtractConstArrayAsync(node, model, editor, generator, context.Diagnostics.First().Properties, c).ConfigureAwait(false),
                     equivalenceKey: title),
                 context.Diagnostics);
         }
 
-        private static async Task<Document> ExtractConstArrayAsync(SyntaxNode root, SyntaxNode node, SemanticModel model,
-            DocumentEditor editor, SyntaxGenerator generator, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> ExtractConstArrayAsync(SyntaxNode node, SemanticModel model, DocumentEditor editor,
+            SyntaxGenerator generator, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
-            IOperation nodeOperation = model.GetOperation(node, cancellationToken);
+            IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
             INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
-            IEnumerable<ISymbol> typeMemberSymbols = containingType.GetMembers();
-            IEnumerable<ISymbol> typeMemberFields = typeMemberSymbols.Where(x => x is IFieldSymbol);
-
-            // Get method containing the symbol that is being diagnosed. Should always be in a method
-            IMethodBodyOperation? containingMethod = nodeOperation.GetFirstAncestorOfType<IMethodBodyOperation>();
-            ISymbol containingMethodSymbol = typeMemberSymbols.First(x => x.DeclaringSyntaxReferences.First().GetSyntax(cancellationToken) == containingMethod!.Syntax);
-            Accessibility newMemberAccessibility = containingMethodSymbol.DeclaredAccessibility;
-            // NOTE: need to get minimum viable accessibility
+            IEnumerable<ISymbol> typeFields = containingType.GetMembers().Where(x => x is IFieldSymbol);
 
             // Get a valid member name for the extracted constant
-            IEnumerable<string> memberNames = typeMemberFields.Select(x => x.Name);
-            string newMemberName = GetExtractedMemberName(memberNames, diagnostic.Properties["matchingParameter"]);
+            IEnumerable<string> memberNames = typeFields.Select(x => x.Name);
+            string newMemberName = GetExtractedMemberName(memberNames, properties["paramName"]);
+
+            // Get method containing the symbol that is being diagnosed. Should always be in a method
+            IOperation? containingMethodBody = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
+            if (containingMethodBody is null)
+            {
+                // This is due to VB methods having a different structure than CS methods
+                containingMethodBody = arrayArgument.GetAncestor<IBlockOperation>(OperationKind.Block);
+            }
 
             // Create the new member
-            SyntaxNode newMember = generator.WithName(node, newMemberName);
-            newMember = generator.WithModifiers(newMember, DeclarationModifiers.Static | DeclarationModifiers.ReadOnly);
-            newMember = generator.WithAccessibility(newMember, newMemberAccessibility); // same as the method accessibility
+            SyntaxNode newMember = generator.FieldDeclaration(
+                newMemberName,
+                generator.TypeExpression(arrayArgument.Type),
+                GetAccessibility(model.GetEnclosingSymbol(containingMethodBody!.Syntax.SpanStart, cancellationToken)),
+                DeclarationModifiers.Static | DeclarationModifiers.ReadOnly,
+                arrayArgument.Syntax
+            ).FormatForExtraction(containingMethodBody.Syntax);
 
-            // Add the new member to the end of the class fields
-            ISymbol lastFieldSymbol = typeMemberFields.LastOrDefault();
-            if (lastFieldSymbol != null)
+            // Add the new extracted member
+            ISymbol lastFieldSymbol = typeFields.LastOrDefault();
+            if (lastFieldSymbol is not null)
             {
                 // Insert after last field if any fields are present
                 SyntaxNode lastFieldNode = await lastFieldSymbol.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
@@ -78,31 +86,45 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else
             {
-                // Insert before first member if no fields are present
-                SyntaxNode firstMemberNode = (await containingType.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false))
-                        .ChildNodes().First();
-                editor.InsertBefore(firstMemberNode, newMember);
+                // Insert before first method if no fields are present, as a method already exists
+                editor.InsertBefore(containingMethodBody.Syntax, newMember);
             }
 
             // Replace argument with a reference to our new member
-            //editor.ReplaceNode(node, generator.Argument(newMember));
-
-            // Replace root
-            editor.ReplaceNode(node, editor.GetChangedRoot());
+            SyntaxNode identifier = generator.IdentifierName(newMemberName);
+            if (isInvoked)
+            {
+                editor.ReplaceNode(node, generator.WithExpression(identifier, node));
+            }
+            else
+            {
+                editor.ReplaceNode(node, generator.Argument(identifier));
+            }
 
             // Return changed document
-            return editor.GetChangedDocument();
+            return await Formatter.FormatAsync(editor.GetChangedDocument(), cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        // The called method's parameter names won't need to be checked in the case that both
-        // methods are in the same type as conflicts in paramter names and field names can be
-        // resolved by directly referencing the static readonly field everywhere it's needed
+        private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken,
+                out bool isInvoked)
+        {
+            // If this is a LINQ invocation, the node is already an IArrayCreationOperation
+            if (model.GetOperation(node, cancellationToken) is IArrayCreationOperation arrayCreation)
+            {
+                isInvoked = true;
+                return arrayCreation;
+            }
+            isInvoked = false;
+            return (IArrayCreationOperation)model.GetOperation(node.ChildNodes().First(), cancellationToken);
+        }
+
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
             string nameOption = parameterName;
             bool hasCollectionEnding = collectionMemberEndings.Any(x => nameOption.EndsWith(x, true, System.Globalization.CultureInfo.InvariantCulture));
 
-            if (memberNames.Contains(nameOption) && !hasCollectionEnding)
+            if (parameterName == "source" // for LINQ, "sourceArray" is clearer than "source"
+                || (memberNames.Contains(nameOption) && !hasCollectionEnding))
             {
                 nameOption += "Array";
             }
@@ -117,6 +139,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return nameOption;
         }
 
+        private static Accessibility GetAccessibility(ISymbol originMethodSymbol)
+        {
+            if (Enum.TryParse(originMethodSymbol.GetResultantVisibility().ToString(), out Accessibility accessibility))
+            {
+                return accessibility == Accessibility.Public
+                    ? Accessibility.Private // public accessibility not wanted for fields
+                    : accessibility;
+            }
+            return Accessibility.Private;
+        }
+
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private sealed class MyCodeAction : DocumentChangeAction
         {
@@ -127,32 +160,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
     }
 
-    public static class IOperationExtensions
+    internal static class SyntaxNodeExtensions
     {
-        public static T? GetFirstAncestorOfType<T>(this IOperation operation, OperationKind kind) where T : IOperation
+        internal static SyntaxNode FormatForExtraction(this SyntaxNode node, SyntaxNode previouslyContainingNode)
         {
-            while (operation != null)
-            {
-                if (operation.Kind == kind)
-                {
-                    return (T)operation;
-                }
-                operation = operation.Parent;
-            }
-            return default;
-        }
-
-        public static T? GetFirstAncestorOfType<T>(this IOperation operation) where T : IOperation
-        {
-            while (operation != null)
-            {
-                if (operation is T outOperation)
-                {
-                    return outOperation;
-                }
-                operation = operation.Parent;
-            }
-            return default;
+            return node.HasTrailingTrivia ? node : node.WithTrailingTrivia(previouslyContainingNode.GetTrailingTrivia());
         }
     }
 }

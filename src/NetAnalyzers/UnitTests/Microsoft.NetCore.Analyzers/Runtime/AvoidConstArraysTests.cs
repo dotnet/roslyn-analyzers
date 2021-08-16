@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.AvoidConstArraysAnalyzer,
@@ -34,13 +32,12 @@ public class A
         Console.WriteLine(new[]{ 1, 2, 3 });
     }
 }
-",
-VerifyCS.Diagnostic().WithSpan(8, 27, 8, 43), @"
+", VerifyCS.Diagnostic().WithSpan(8, 27, 8, 43), @"
 using System;
 
 public class A
 {
-    private static readonly int[] value = new[]{ 1, 2, 3 };
+    private static readonly int[] value = new[] { 1, 2, 3 };
 
     public void B()
     {
@@ -60,13 +57,12 @@ public class A
         Console.WriteLine(new int[]{ 1, 2, 3 });
     }
 }
-",
-VerifyCS.Diagnostic().WithSpan(8, 27, 8, 47), @"
+", VerifyCS.Diagnostic().WithSpan(8, 27, 8, 47), @"
 using System;
 
 public class A
 {
-    private static readonly int[] value = new int[]{ 1, 2, 3 };
+    private static readonly int[] value = new int[] { 1, 2, 3 };
 
     public void B()
     {
@@ -86,8 +82,7 @@ public class A
         Console.WriteLine(string.Join("" "", new[] { ""Cake"", ""is"", ""good"" }));
     }
 }
-",
-VerifyCS.Diagnostic().WithSpan(8, 44, 8, 74), @"
+", VerifyCS.Diagnostic().WithSpan(8, 44, 8, 74), @"
 using System;
 
 public class A
@@ -97,6 +92,35 @@ public class A
     public void B()
     {
         Console.WriteLine(string.Join("" "", value));
+    }
+}
+");
+
+            // Extension method usage
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+using System.Linq;
+
+public class A
+{
+    public void B()
+    {
+        string y = new[] { ""a"", ""b"", ""c"" }.First();
+        Console.WriteLine(y);
+    }
+}
+", VerifyCS.Diagnostic().WithSpan(9, 20, 9, 43), @"
+using System;
+using System.Linq;
+
+public class A
+{
+    private static readonly string[] sourceArray = new[] { ""a"", ""b"", ""c"" };
+
+    public void B()
+    {
+        string y = sourceArray.First();
+        Console.WriteLine(y);
     }
 }
 ");
@@ -195,13 +219,11 @@ Public Class A
         Console.WriteLine({1, 2, 3})
     End Sub
 End Class
-",
-VerifyVB.Diagnostic().WithSpan(6, 27, 6, 36), @"
+", VerifyVB.Diagnostic().WithSpan(6, 27, 6, 36), @"
 Imports System
 
 Public Class A
     Private Shared ReadOnly value As Integer() = {1, 2, 3}
-
     Public Sub B()
         Console.WriteLine(value)
     End Sub
@@ -217,13 +239,11 @@ Public Class A
         Console.WriteLine(New Integer() {1, 2, 3})
     End Sub
 End Class
-",
-VerifyVB.Diagnostic().WithSpan(6, 27, 6, 50), @"
+", VerifyVB.Diagnostic().WithSpan(6, 27, 6, 50), @"
 Imports System
 
 Public Class A
     Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
-
     Public Sub B()
         Console.WriteLine(value)
     End Sub
@@ -239,13 +259,11 @@ Public Class A
         Console.WriteLine(String.Join("" ""c, {""Cake"", ""is"", ""good""}))
     End Sub
 End Class
-",
-VerifyVB.Diagnostic().WithSpan(6, 45, 6, 67), @"
+", VerifyVB.Diagnostic().WithSpan(6, 45, 6, 67), @"
 Imports System
 
 Public Class A
     Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
-
     Public Sub B()
         Console.WriteLine(String.Join("" ""c, value))
     End Sub

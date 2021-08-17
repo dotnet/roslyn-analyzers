@@ -28,6 +28,8 @@ jobs:
   steps:
     - checkout: self
       clean: true
+    - pwsh: eng\common\build.ps1 -restore
+      displayName: Build and Test
     - pwsh: eng\perf\PerfCore.ps1 -v diag -diff -ci 
       displayName: Validate Performance
     - task: PublishBuildArtifacts@1

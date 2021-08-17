@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         #region C# Tests
 
         [Fact]
-        public async Task CA1848_CSharp_IdentifyConstArrays()
+        public async Task CA1849_CSharp_IdentifyConstArrays()
         {
             // Implicit initialization check
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -29,7 +29,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine({|CA1848:new[]{ 1, 2, 3 }|});
+        Console.WriteLine({|CA1849:new[]{ 1, 2, 3 }|});
     }
 }
 ", @"
@@ -54,7 +54,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine({|CA1848:new int[]{ 1, 2, 3 }|});
+        Console.WriteLine({|CA1849:new int[]{ 1, 2, 3 }|});
     }
 }
 ", @"
@@ -79,7 +79,7 @@ public class A
 {
     public void B()
     {
-        Console.WriteLine(string.Join("" "", {|CA1848:new[] { ""Cake"", ""is"", ""good"" }|}));
+        Console.WriteLine(string.Join("" "", {|CA1849:new[] { ""Cake"", ""is"", ""good"" }|}));
     }
 }
 ", @"
@@ -105,7 +105,7 @@ public class A
 {
     public void B()
     {
-        string y = {|CA1848:new[] { ""a"", ""b"", ""c"" }|}.First();
+        string y = {|CA1849:new[] { ""a"", ""b"", ""c"" }|}.First();
         Console.WriteLine(y);
     }
 }
@@ -127,7 +127,7 @@ public class A
         }
 
         [Fact]
-        public async Task CA1848_CSharp_NoDiagnostic_IgnoreOtherArgs()
+        public async Task CA1849_CSharp_NoDiagnostic_IgnoreOtherArgs()
         {
             // All code fix tests in this method result in no changes, as the analyzer will ignore these
 
@@ -208,7 +208,7 @@ public class A
         #region Visual Basic Tests
 
         [Fact]
-        public async Task CA1848_VisualBasic_IdentifyConstArrays()
+        public async Task CA1849_VisualBasic_IdentifyConstArrays()
         {
             // Implicit initialization check
             await VerifyVB.VerifyCodeFixAsync(@"
@@ -216,7 +216,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine({|CA1848:{1, 2, 3}|})
+        Console.WriteLine({|CA1849:{1, 2, 3}|})
     End Sub
 End Class
 ", @"
@@ -236,7 +236,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine({|CA1848:New Integer() {1, 2, 3}|})
+        Console.WriteLine({|CA1849:New Integer() {1, 2, 3}|})
     End Sub
 End Class
 ", @"
@@ -256,7 +256,7 @@ Imports System
 
 Public Class A
     Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {|CA1848:{""Cake"", ""is"", ""good""}|}))
+        Console.WriteLine(String.Join("" ""c, {|CA1849:{""Cake"", ""is"", ""good""}|}))
     End Sub
 End Class
 ", @"
@@ -272,7 +272,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA1848_VisualBasic_NoDiagnostic_IgnoreOtherArgs()
+        public async Task CA1849_VisualBasic_NoDiagnostic_IgnoreOtherArgs()
         {
             // All code fix tests in this method result in no changes, as the analyzer will ignore these
 

@@ -18,7 +18,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1848: Avoid const arrays. Replace with static readonly arrays.
+    /// CA1849: Avoid const arrays. Replace with static readonly arrays.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidConstArraysFixer : CodeFixProvider

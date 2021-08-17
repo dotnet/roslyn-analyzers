@@ -37,7 +37,7 @@ using System;
 
 public class A
 {
-    private static readonly int[] value = new[] { 1, 2, 3 };
+    private static readonly int[] value = new[]{ 1, 2, 3 };
 
     public void B()
     {
@@ -62,7 +62,7 @@ using System;
 
 public class A
 {
-    private static readonly int[] value = new int[] { 1, 2, 3 };
+    private static readonly int[] value = new int[]{ 1, 2, 3 };
 
     public void B()
     {

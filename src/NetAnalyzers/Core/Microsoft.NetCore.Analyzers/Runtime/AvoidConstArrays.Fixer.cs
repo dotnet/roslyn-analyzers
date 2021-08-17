@@ -99,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             // Return changed document
-            return await Formatter.FormatAsync(editor.GetChangedDocument(), cancellationToken: cancellationToken).ConfigureAwait(false);
+            return editor.GetChangedDocument();
         }
 
         private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken,

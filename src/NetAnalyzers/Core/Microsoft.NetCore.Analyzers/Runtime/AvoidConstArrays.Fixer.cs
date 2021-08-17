@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AvoidConstArraysAnalyzer.RuleId);
 
-        private static readonly string[] collectionMemberEndings = new[] { "array", "collection", "enumerable", "list" };
+        private static readonly ImmutableArray<string> s_collectionMemberEndings = ImmutableArray.Create("array", "collection", "enumerable", "list");
 
         // See https://github.com/dotnet/roslyn/blob/main/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -119,23 +119,25 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static string GetExtractedMemberName(IEnumerable<string> memberNames, string parameterName)
         {
-            string nameOption = parameterName;
-            bool hasCollectionEnding = collectionMemberEndings.Any(x => nameOption.EndsWith(x, true, null));
+            bool hasCollectionEnding = s_collectionMemberEndings.Any(x => parameterName.EndsWith(x, true, null));
 
             if (parameterName == "source" // for LINQ, "sourceArray" is clearer than "source"
-                || (memberNames.Contains(nameOption) && !hasCollectionEnding))
+                || (memberNames.Contains(parameterName) && !hasCollectionEnding))
             {
-                nameOption += "Array";
+                parameterName += "Array";
             }
 
-            int suffix = 1;
-            while (memberNames.Contains(nameOption))
+            if (memberNames.Contains(parameterName))
             {
-                nameOption += suffix;
-                suffix++;
+                int suffix = 0;
+                while (memberNames.Contains(parameterName + suffix))
+                {
+                    suffix++;
+                }
+                return parameterName + suffix;
             }
 
-            return nameOption;
+            return parameterName;
         }
 
         private static Accessibility GetAccessibility(ISymbol originMethodSymbol)

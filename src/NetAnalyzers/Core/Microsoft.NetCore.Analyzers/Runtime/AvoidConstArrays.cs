@@ -75,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // Must be literal array
-                if (!arrayCreationOperation.Children.First(x => x is IArrayInitializerOperation).Children.All(x => x is ILiteralOperation))
+                if (!arrayCreationOperation.Initializer.ElementValues.All(x => x is ILiteralOperation))
                 {
                     return;
                 }

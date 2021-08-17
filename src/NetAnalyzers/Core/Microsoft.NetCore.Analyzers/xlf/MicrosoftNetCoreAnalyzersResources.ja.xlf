@@ -52,6 +52,21 @@
         <target state="translated">属性文字列リテラルは、正しく解析する必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidConstArraysDescription">
+        <source>Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.</source>
+        <target state="new">Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysMessage">
+        <source>Make any 'const' arrays 'static readonly'</source>
+        <target state="new">Make any 'const' arrays 'static readonly'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidConstArraysTitle">
+        <source>Avoid const arrays</source>
+        <target state="new">Avoid const arrays</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">
         <source>Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in multiple allocations for one marshalling operation.</source>
         <target state="translated">'StringBuilder' をマーシャリングすると、ネイティブ バッファーのコピーが常に作成され、1 回のマーシャリング操作に対して複数の割り当てが発生します。</target>

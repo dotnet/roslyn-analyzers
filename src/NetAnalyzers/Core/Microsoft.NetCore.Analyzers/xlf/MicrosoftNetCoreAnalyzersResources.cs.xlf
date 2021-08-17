@@ -63,8 +63,8 @@
         <note>{Locked="static readonly"}</note>
       </trans-unit>
       <trans-unit id="AvoidConstArraysTitle">
-        <source>Avoid const arrays</source>
-        <target state="new">Avoid const arrays</target>
+        <source>Avoid constant arrays as arguments</source>
+        <target state="new">Avoid constant arrays as arguments</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidStringBuilderPInvokeParametersDescription">

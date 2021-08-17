@@ -12,13 +12,12 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1849: Avoid const arrays. Replace with static readonly arrays.
+    /// CA1849: Avoid constant arrays as arguments. Replace with static readonly arrays.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class AvoidConstArraysFixer : CodeFixProvider
@@ -51,12 +50,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxGenerator generator, ImmutableDictionary<string, string> properties, CancellationToken cancellationToken)
         {
             IArrayCreationOperation arrayArgument = GetArrayCreationOperation(node, model, cancellationToken, out bool isInvoked);
-            INamedTypeSymbol containingType = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType;
-            IEnumerable<ISymbol> typeFields = containingType.GetMembers().Where(x => x is IFieldSymbol);
+            IEnumerable<ISymbol> typeFields = model.GetEnclosingSymbol(node.SpanStart, cancellationToken).ContainingType
+                .GetMembers().Where(x => x is IFieldSymbol);
 
             // Get a valid member name for the extracted constant
-            IEnumerable<string> memberNames = typeFields.Select(x => x.Name);
-            string newMemberName = GetExtractedMemberName(memberNames, properties["paramName"]);
+            string newMemberName = GetExtractedMemberName(typeFields.Select(x => x.Name), properties["paramName"]);
 
             // Get method containing the symbol that is being diagnosed. Should always be in a method
             IOperation? containingMethodBody = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);

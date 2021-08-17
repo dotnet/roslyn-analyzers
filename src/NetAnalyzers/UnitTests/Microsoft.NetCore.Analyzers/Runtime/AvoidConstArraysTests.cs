@@ -11,9 +11,6 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    // Analyzer and code fix tests are both in this file
-    // "Do not separate analyzer tests from code fix tests"
-    // https://github.com/dotnet/roslyn-analyzers/blob/main/docs/NetCore_GettingStarted.md#definition-of-done
     public class AvoidConstArraysTests
     {
         #region C# Tests

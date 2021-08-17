@@ -247,7 +247,7 @@
     <value>Avoid unsealed attributes</value>
   </data>
   <data name="AvoidConstArraysTitle" xml:space="preserve">
-    <value>Avoid const arrays</value>
+    <value>Avoid constant arrays as arguments</value>
   </data>
   <data name="AvoidConstArraysDescription" xml:space="preserve">
     <value>Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.</value>

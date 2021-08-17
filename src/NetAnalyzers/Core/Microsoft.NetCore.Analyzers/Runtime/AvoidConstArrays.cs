@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA1849: Avoid const arrays. Replace with static readonly arrays.
+    /// CA1849: Avoid constant arrays as arguments. Replace with static readonly arrays.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidConstArraysAnalyzer : DiagnosticAnalyzer

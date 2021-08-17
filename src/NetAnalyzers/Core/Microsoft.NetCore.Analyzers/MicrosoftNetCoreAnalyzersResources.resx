@@ -246,6 +246,17 @@
   <data name="AvoidUnsealedAttributesMessage" xml:space="preserve">
     <value>Avoid unsealed attributes</value>
   </data>
+  <data name="AvoidConstArraysTitle" xml:space="preserve">
+    <value>Avoid const arrays</value>
+  </data>
+  <data name="AvoidConstArraysDescription" xml:space="preserve">
+    <value>Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.</value>
+    <comment>{Locked="static", "readonly"}</comment>
+  </data>
+  <data name="AvoidConstArraysMessage" xml:space="preserve">
+    <value>Make any constant arrays passed as arguments into 'static readonly' fields</value>
+    <comment>{Locked="static", "readonly"}</comment>
+  </data>
   <data name="TestForEmptyStringsUsingStringLengthTitle" xml:space="preserve">
     <value>Test for empty strings using string length</value>
   </data>

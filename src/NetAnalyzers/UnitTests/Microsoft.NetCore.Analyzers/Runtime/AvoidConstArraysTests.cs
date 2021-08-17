@@ -13,10 +13,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class AvoidConstArraysTests
     {
-        #region C# Tests
-
         [Fact]
-        public async Task CA1849_CSharp_IdentifyConstArrays()
+        public async Task IdentifyConstArrays()
         {
             // Implicit initialization check
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -41,6 +39,25 @@ public class A
         Console.WriteLine(value);
     }
 }
+");
+
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine({|CA1849:{1, 2, 3}|})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As Integer() = {1, 2, 3}
+    Public Sub B()
+        Console.WriteLine(value)
+    End Sub
+End Class
 ");
 
             // Explicit initialization check
@@ -68,6 +85,25 @@ public class A
 }
 ");
 
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine({|CA1849:New Integer() {1, 2, 3}|})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
+    Public Sub B()
+        Console.WriteLine(value)
+    End Sub
+End Class
+");
+
             // Nested arguments
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -91,6 +127,25 @@ public class A
         Console.WriteLine(string.Join("" "", value));
     }
 }
+");
+
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, {|CA1849:{""Cake"", ""is"", ""good""}|}))
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
+    Public Sub B()
+        Console.WriteLine(String.Join("" ""c, value))
+    End Sub
+End Class
 ");
 
             // Extension method usage
@@ -124,10 +179,8 @@ public class A
         }
 
         [Fact]
-        public async Task CA1849_CSharp_NoDiagnostic_IgnoreOtherArgs()
+        public async Task IgnoreOtherArgs_NoDiagnostic()
         {
-            // All code fix tests in this method result in no changes, as the analyzer will ignore these
-
             // A string
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -151,6 +204,24 @@ public class A
 }
 ");
 
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(""Lorem ipsum"")
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(""Lorem ipsum"")
+    End Sub
+End Class
+");
+
             // Test another type to be extra safe
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
@@ -172,6 +243,24 @@ public class A
         Console.WriteLine(123);
     }
 }
+");
+
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(123)
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Public Sub B()
+        Console.WriteLine(123)
+    End Sub
+End Class
 ");
 
             // Non-literal array
@@ -198,120 +287,7 @@ public class A
     }
 }
 ");
-        }
 
-        #endregion
-
-        #region Visual Basic Tests
-
-        [Fact]
-        public async Task CA1849_VisualBasic_IdentifyConstArrays()
-        {
-            // Implicit initialization check
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine({|CA1849:{1, 2, 3}|})
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As Integer() = {1, 2, 3}
-    Public Sub B()
-        Console.WriteLine(value)
-    End Sub
-End Class
-");
-
-            // Explicit initialization check
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine({|CA1849:New Integer() {1, 2, 3}|})
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As Integer() = New Integer() {1, 2, 3}
-    Public Sub B()
-        Console.WriteLine(value)
-    End Sub
-End Class
-");
-
-            // Nested arguments
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, {|CA1849:{""Cake"", ""is"", ""good""}|}))
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Private Shared ReadOnly value As String() = {""Cake"", ""is"", ""good""}
-    Public Sub B()
-        Console.WriteLine(String.Join("" ""c, value))
-    End Sub
-End Class
-");
-        }
-
-        [Fact]
-        public async Task CA1849_VisualBasic_NoDiagnostic_IgnoreOtherArgs()
-        {
-            // All code fix tests in this method result in no changes, as the analyzer will ignore these
-
-            // A string
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(""Lorem ipsum"")
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(""Lorem ipsum"")
-    End Sub
-End Class
-");
-
-            // Test another type to be extra safe
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(123)
-    End Sub
-End Class
-", @"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(123)
-    End Sub
-End Class
-");
-
-            // Non-literal array
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
@@ -332,7 +308,5 @@ Public Class A
 End Class
 ");
         }
-
-        #endregion
     }
 }

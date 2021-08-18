@@ -55,9 +55,9 @@ namespace CSharpPerformanceTests.Enabled
                 throw new InvalidOperationException($"Expected no compilation diagnostics but found '{analysisResult.CompilationDiagnostics.Count}'");
             }
 
-            if (diagnostics.Length != 3 * Constants.Number_Of_Code_Files)
+            if (diagnostics.Length != 1 * Constants.Number_Of_Code_Files)
             {
-                throw new InvalidOperationException($"Expected '{3 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
+                throw new InvalidOperationException($"Expected '{1 * Constants.Number_Of_Code_Files:N0}' analyzer diagnostics but found '{diagnostics.Length}'");
             }
         }
 

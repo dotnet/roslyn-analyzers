@@ -148,6 +148,31 @@ Public Class A
 End Class
 ");
 
+            // Trivia tests
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        Console.WriteLine(string.Join("" "", {|CA1849:new[] { ""a"", ""b"" } /* test comment */|}))
+    }
+}
+", @"
+using System;
+
+public class A
+{
+    private static readonly string[] value = new[] { ""a"", ""b"" }; /* test comment */
+
+    public void B()
+    {
+        Console.WriteLine(string.Join("" "", value));
+    }
+}
+");
+
             // Extension method usage
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;

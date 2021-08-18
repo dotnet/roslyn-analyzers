@@ -82,9 +82,15 @@ try {
 
   if ($ArtifactToolsList -and $ArtifactToolsList.Count -gt 0) {
     & $(Join-Path $PSScriptRoot 'run-sdl.ps1') -GuardianCliLocation $guardianCliLocation -WorkingDirectory $workingDirectory -TargetDirectory $ArtifactsDirectory -GdnFolder $gdnFolder -ToolsList $ArtifactToolsList -AzureDevOpsAccessToken $AzureDevOpsAccessToken -UpdateBaseline $UpdateBaseline -GuardianLoggerLevel $GuardianLoggerLevel -CrScanAdditionalRunConfigParams $CrScanAdditionalRunConfigParams -PoliCheckAdditionalRunConfigParams $PoliCheckAdditionalRunConfigParams
+    if ($LASTEXITCODE -ne 0) {
+      ExitWithExitCode $LASTEXITCODE
+    }
   }
   if ($SourceToolsList -and $SourceToolsList.Count -gt 0) {
     & $(Join-Path $PSScriptRoot 'run-sdl.ps1') -GuardianCliLocation $guardianCliLocation -WorkingDirectory $workingDirectory -TargetDirectory $SourceDirectory -GdnFolder $gdnFolder -ToolsList $SourceToolsList -AzureDevOpsAccessToken $AzureDevOpsAccessToken -UpdateBaseline $UpdateBaseline -GuardianLoggerLevel $GuardianLoggerLevel -CrScanAdditionalRunConfigParams $CrScanAdditionalRunConfigParams -PoliCheckAdditionalRunConfigParams $PoliCheckAdditionalRunConfigParams
+    if ($LASTEXITCODE -ne 0) {
+      ExitWithExitCode $LASTEXITCODE
+    }
   }
 
   if ($TsaPublish) {

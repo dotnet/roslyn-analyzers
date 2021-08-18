@@ -68,8 +68,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 generator.TypeExpression(arrayArgument.Type),
                 GetAccessibility(model.GetEnclosingSymbol(containingMethodBody!.Syntax.SpanStart, cancellationToken)),
                 DeclarationModifiers.Static | DeclarationModifiers.ReadOnly,
-                arrayArgument.Syntax
-            ).FormatForExtraction(containingMethodBody.Syntax);
+                arrayArgument.Syntax.WithoutTrailingTrivia() // don't include extra trivia before the end of the declaration
+            ).FormatForExtraction(containingMethodBody.Syntax); // any additional formatting
 
             // Add the new extracted member
             ISymbol lastFieldSymbol = typeFields.LastOrDefault();
@@ -93,7 +93,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else
             {
-                editor.ReplaceNode(node, generator.Argument(identifier));
+                editor.ReplaceNode(node, generator.Argument(identifier)
+                    .WithTrailingTrivia(arrayArgument.Syntax.GetTrailingTrivia())); // add any extra trivia that was after the original argument
             }
 
             // Return changed document

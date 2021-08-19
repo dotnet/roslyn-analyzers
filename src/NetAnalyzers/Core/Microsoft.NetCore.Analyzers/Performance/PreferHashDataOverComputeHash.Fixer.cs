@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1849);
 
-        public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
+        public sealed override FixAllProvider? GetFixAllProvider() => null;
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
@@ -33,7 +33,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             switch (diagnostic.AdditionalLocations.Count)
             {
                 case 1:
-                    //chained method SHA256.Create().ComputeHash(buffer)
+                case 2 when !diagnostic.Properties.ContainsKey(PreferHashDataOverComputeHashAnalyzer.SingleLocalRefDiagnosticPropertyKey):
+                    // chained method SHA256.Create().ComputeHash(buffer)
+                    // instance.ComputeHash(buffer) xN where N > 1
                     var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
                         hashTypeName,
                         bufferArgNode,

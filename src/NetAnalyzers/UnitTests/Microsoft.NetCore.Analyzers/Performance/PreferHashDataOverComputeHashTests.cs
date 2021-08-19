@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         private const string HashTypeSHA512 = "SHA512";
 
         [Fact]
-        public async Task CSharpBailOutNoFixCase()
+        public async Task CSharpParameterReferenceCase()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -34,24 +34,40 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 string csInput = $@"
 using System;
 using System.Security.Cryptography;
-
 public class Test
 {{
     public static void TestMethod({hashType} hash)
     {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = hash.ComputeHash(buffer);
+        byte[] digest = {{|#0:hash.ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
     }}
 }}
 ";
-                await TestCS(csInput);
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+public class Test
+{{
+    public static void TestMethod({hashType} hash)
+    {{
+        var buffer = new byte[1024];
+        int aboveLine = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int belowLine = 10;
+    }}
+}}
+";
+                await TestCSWithoutVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}");
             }
         }
 
         [Fact]
-        public async Task BasicBailOutNoFixCase()
+        public async Task BasicParameterReferenceCase()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -69,12 +85,29 @@ Public Class Test
     Public Shared Sub TestMethod(sha256 As {hashType})
         Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = sha256.ComputeHash(buffer)
+        Dim digest As Byte() = {{|#0:sha256.ComputeHash({{|#1:buffer|}})|}}
         Dim belowLine = 10
     End Sub
 End Class
 ";
-                await TestVB(vbInput);
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod(sha256 As {hashType})
+        Dim buffer = New Byte(1023) {{}}
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+    End Sub
+End Class
+";
+                await TestVBWithoutVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}");
             }
         }
 
@@ -231,7 +264,7 @@ End Class
         }
 
         [Fact]
-        public async Task CSharpCreateHelperNoUsingStatementBailOutNoFixCase()
+        public async Task CSharpCreateHelperNoUsingStatement2Case()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -250,20 +283,41 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        var hasher = {hashType}.Create();
+        {{|#4:var hasher = {hashType}.Create();|}}
         int aboveLine = 20;
-        byte[] digest = hasher.ComputeHash(buffer);
+        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
-        byte[] digest2 = hasher.ComputeHash(buffer);
+        byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
     }}
 }}
 ";
-                await TestCS(csInput);
+
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int aboveLine = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int belowLine = 10;
+        byte[] digest2 = {hashType}.HashData(buffer);
+    }}
+}}
+";
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
         [Fact]
-        public async Task BasicCreateHelperNoUsingBlockBailOutNoFixCase()
+        public async Task BasicCreateHelperNoUsingBlock2Case()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -280,15 +334,34 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Dim hasher As {hashType} = {hashType}.Create()
+        {{|#4:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim aboveLine = 20
-        Dim digest As Byte() = hasher.ComputeHash(buffer)
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
         Dim belowLine = 10
-        Dim digest2 As Byte() = hasher.ComputeHash(buffer)
+        Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
     End Sub
 End Class
 ";
-                await TestVB(vbInput);
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+        Dim digest2 As Byte() = {hashType}.HashData(buffer)
+    End Sub
+End Class
+";
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
@@ -389,7 +462,7 @@ End Class
         }
 
         [Fact]
-        public async Task CSharpCreateHelperUsingStatementBailOutNoFixCase()
+        public async Task CSharpCreateHelperUsingStatement2Case()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -408,22 +481,43 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using (var hasher = {hashType}.Create())
+        using ({{|#4:var hasher = {hashType}.Create()|}})
         {{
             int aboveLine = 20;
-            byte[] digest = hasher.ComputeHash(buffer);
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-            byte[] digest2 = hasher.ComputeHash(buffer);
+            byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
         }}
     }}
 }}
 ";
-                await TestCS(csInput);
+
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int aboveLine = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int belowLine = 10;
+        byte[] digest2 = {hashType}.HashData(buffer);
+    }}
+}}
+";
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
         [Fact]
-        public async Task BasicCreateHelperUsingBlockBailOutNoFixCase()
+        public async Task BasicCreateHelperUsingBlock2Case()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -440,16 +534,35 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Using hasher As {hashType} = {hashType}.Create()
+        {{|#4:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = hasher.ComputeHash(buffer)
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
-            Dim digest2 As Byte() = hasher.ComputeHash(buffer)
+            Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
         End Using
     End Sub
 End Class
 ";
-                await TestVB(vbInput);
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+        Dim digest2 As Byte() = {hashType}.HashData(buffer)
+    End Sub
+End Class
+";
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
@@ -828,12 +941,12 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({hashType} {{|#2:hasher = {hashType}.Create()|}}, hasher2 = {hashType}.Create())
+        using ({hashType} {{|#5:hasher = {hashType}.Create()|}}, {{|#6:hasher2 = {hashType}.Create()|}})
         {{
             int aboveLine = 20;
             byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-            byte[] digest2 = hasher2.ComputeHash(hasher2.ComputeHash(digest));
+            byte[] digest2 = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash({{|#4:digest|}})|}})|}};
         }}
     }}
 }}
@@ -848,20 +961,34 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({hashType} hasher2 = {hashType}.Create())
-        {{
-            int aboveLine = 20;
-            byte[] digest = {hashType}.HashData(buffer);
-            int belowLine = 10;
-            byte[] digest2 = hasher2.ComputeHash(hasher2.ComputeHash(digest));
-        }}
+        int aboveLine = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int belowLine = 10;
+        byte[] digest2 = {hashType}.HashData({hashType}.HashData(digest));
     }}
 }}
 ";
+                var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
                 await TestCSWithVariable(
                     csInput,
                     csFix,
-                    $"System.Security.Cryptography.{hashType}");
+                    new[] {
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1)
+                        .WithLocation(5),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(2)
+                        .WithLocation(3)
+                        .WithLocation(6),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(3)
+                        .WithLocation(4)
+                        .WithLocation(6)
+                    });
             }
         }
 
@@ -883,11 +1010,11 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Using {{|#2:hasher As {hashType} = {hashType}.Create()|}}, hasher2 As {hashType} = {hashType}.Create()
+        Using {{|#5:hasher As {hashType} = {hashType}.Create()|}}, {{|#6:hasher2 As {hashType} = {hashType}.Create()|}}
             Dim aboveLine = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
-            Dim digest2 As Byte() = hasher2.ComputeHash(hasher2.ComputeHash(buffer))
+            Dim digest2 As Byte() = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash({{|#4:digest|}})|}})|}}
         End Using
     End Sub
 End Class
@@ -900,19 +1027,34 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Using hasher2 As {hashType} = {hashType}.Create()
-            Dim aboveLine = 20
-            Dim digest As Byte() = {hashType}.HashData(buffer)
-            Dim belowLine = 10
-            Dim digest2 As Byte() = hasher2.ComputeHash(hasher2.ComputeHash(buffer))
-        End Using
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+        Dim digest2 As Byte() = {hashType}.HashData({hashType}.HashData(digest))
     End Sub
 End Class
 ";
+                var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
                 await TestVBWithVariable(
                     vbInput,
                     vbFix,
-                    $"System.Security.Cryptography.{hashType}");
+                    new[] {
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1)
+                        .WithLocation(5),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(2)
+                        .WithLocation(3)
+                        .WithLocation(6),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(3)
+                        .WithLocation(4)
+                        .WithLocation(6)
+                    });
             }
         }
 
@@ -1140,7 +1282,7 @@ End Class
         }
 
         [Fact]
-        public async Task CSharpObjectCreationUsingStatementBailOutNoFixCase()
+        public async Task CSharpObjectCreationUsingStatement2Case()
         {
             await TestWithType(HashTypeSHA1);
             await TestWithType(HashTypeSHA256);
@@ -1158,22 +1300,43 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using (var hasher = new {hashType}Managed())
+        using ({{|#4:var hasher = new {hashType}Managed()|}})
         {{
             int aboveLine = 20;
-            byte[] digest = hasher.ComputeHash(buffer);
+            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
             int belowLine = 10;
-            byte[] digest2 = hasher.ComputeHash(buffer);
+            byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
         }}
     }}
 }}
 ";
-                await TestCS(csInput);
+
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int aboveLine = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int belowLine = 10;
+        byte[] digest2 = {hashType}.HashData(buffer);
+    }}
+}}
+";
+                await TestCSWithVariable(
+                    csInput,
+                    csFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
         [Fact]
-        public async Task BasicObjectCreationUsingBlockBailOutNoFixCase()
+        public async Task BasicObjectCreationUsingBlock2Case()
         {
             await TestWithType(HashTypeSHA1);
             await TestWithType(HashTypeSHA256);
@@ -1189,16 +1352,35 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Using hasher As New {hashType}Managed()
+        {{|#4:Using hasher As New {hashType}Managed()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = hasher.ComputeHash(buffer)
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
             Dim belowLine = 10
-            Dim digest2 As Byte() = hasher.ComputeHash(buffer)
+            Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
         End Using
     End Sub
 End Class
 ";
-                await TestVB(vbInput);
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim belowLine = 10
+        Dim digest2 As Byte() = {hashType}.HashData(buffer)
+    End Sub
+End Class
+";
+                await TestVBWithVariable(
+                    vbInput,
+                    vbFix,
+                    $"System.Security.Cryptography.{hashType}",
+                    expectedDiagnosticCount: 2);
             }
         }
 
@@ -1414,16 +1596,35 @@ End Class
             await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestCSWithVariable(string source, string corrected, string hashAlgorithmTypeName)
+        private static async Task TestCSWithVariable(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
         {
-            var expected = VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                .WithArguments(hashAlgorithmTypeName)
-                .WithLocation(0)
-                .WithLocation(1)
-                .WithLocation(2);
-
             var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
-            test.ExpectedDiagnostics.Add(expected);
+
+            var lastId = expectedDiagnosticCount * 2;
+            for (int i = 0; i < expectedDiagnosticCount; i++)
+            {
+                var expected = VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                    .WithArguments(hashAlgorithmTypeName)
+                    .WithLocation(i * 2)
+                    .WithLocation(i * 2 + 1)
+                    .WithLocation(lastId);
+                test.ExpectedDiagnostics.Add(expected);
+            }
+
+            await test.RunAsync();
+            await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
+        }
+
+        private static async Task TestCSWithVariable(string source, string corrected, params DiagnosticResult[] diagnosticResults)
+        {
+            var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
+
+            for (int i = 0; i < diagnosticResults.Length; i++)
+            {
+                var expected = diagnosticResults[i];
+                test.ExpectedDiagnostics.Add(expected);
+            }
+
             await test.RunAsync();
             await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
@@ -1459,15 +1660,33 @@ End Class
             await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestVBWithVariable(string source, string corrected, string hashAlgorithmTypeName)
+        private static async Task TestVBWithVariable(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
         {
-            var expected = VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                .WithArguments(hashAlgorithmTypeName)
-                .WithLocation(0)
-                .WithLocation(1)
-                .WithLocation(2);
             var test = GetTestVB(source, corrected, ReferenceAssemblies.Net.Net50);
-            test.ExpectedDiagnostics.Add(expected);
+            var lastId = expectedDiagnosticCount * 2;
+            for (int i = 0; i < expectedDiagnosticCount; i++)
+            {
+                var expected = VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                    .WithArguments(hashAlgorithmTypeName)
+                    .WithLocation(i * 2)
+                    .WithLocation(i * 2 + 1)
+                    .WithLocation(lastId);
+                test.ExpectedDiagnostics.Add(expected);
+            }
+            await test.RunAsync();
+            await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
+        }
+
+        private static async Task TestVBWithVariable(string source, string corrected, params DiagnosticResult[] diagnosticResults)
+        {
+            var test = GetTestVB(source, corrected, ReferenceAssemblies.Net.Net50);
+
+            for (int i = 0; i < diagnosticResults.Length; i++)
+            {
+                var expected = diagnosticResults[i];
+                test.ExpectedDiagnostics.Add(expected);
+            }
+
             await test.RunAsync();
             await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }

@@ -201,6 +201,18 @@ public class A
     }
 }
 ");
+
+        await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System
+Imports System.Linq
+
+Public Class A
+    Public Sub B()
+        Dim y As String = {|CA1849:{""a"", ""b"", ""c""}|}.First()
+        Console.WriteLine(y)
+    End Sub
+End Class
+");
         }
 
         [Fact]

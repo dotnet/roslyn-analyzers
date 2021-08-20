@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         private const string HashTypeSHA512 = "SHA512";
 
         [Fact]
-        public async Task CSharpParameterReferenceCase()
+        public async Task CSharpBailOutNoFixCase()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -34,40 +34,24 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 string csInput = $@"
 using System;
 using System.Security.Cryptography;
+
 public class Test
 {{
     public static void TestMethod({hashType} hash)
     {{
         var buffer = new byte[1024];
         int aboveLine = 20;
-        byte[] digest = {{|#0:hash.ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = hash.ComputeHash(buffer);
         int belowLine = 10;
     }}
 }}
 ";
-                string csFix = $@"
-using System;
-using System.Security.Cryptography;
-public class Test
-{{
-    public static void TestMethod({hashType} hash)
-    {{
-        var buffer = new byte[1024];
-        int aboveLine = 20;
-        byte[] digest = {hashType}.HashData(buffer);
-        int belowLine = 10;
-    }}
-}}
-";
-                await TestCSWithoutVariable(
-                    csInput,
-                    csFix,
-                    $"System.Security.Cryptography.{hashType}");
+                await TestCSAsync(csInput);
             }
         }
 
         [Fact]
-        public async Task BasicParameterReferenceCase()
+        public async Task BasicBailOutNoFixCase()
         {
             await TestWithType(HashTypeMD5);
             await TestWithType(HashTypeSHA1);
@@ -85,29 +69,12 @@ Public Class Test
     Public Shared Sub TestMethod(sha256 As {hashType})
         Dim buffer = New Byte(1023) {{}}
         Dim aboveLine = 20
-        Dim digest As Byte() = {{|#0:sha256.ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = sha256.ComputeHash(buffer)
         Dim belowLine = 10
     End Sub
 End Class
 ";
-
-                string vbFix = $@"
-Imports System
-Imports System.Security.Cryptography
-
-Public Class Test
-    Public Shared Sub TestMethod(sha256 As {hashType})
-        Dim buffer = New Byte(1023) {{}}
-        Dim aboveLine = 20
-        Dim digest As Byte() = {hashType}.HashData(buffer)
-        Dim belowLine = 10
-    End Sub
-End Class
-";
-                await TestVBWithoutVariable(
-                    vbInput,
-                    vbFix,
-                    $"System.Security.Cryptography.{hashType}");
+                await TestVBAsync(vbInput);
             }
         }
 
@@ -137,7 +104,7 @@ public class Test
     }}
 }}
 ";
-                await TestCS(csInput);
+                await TestCSAsync(csInput);
             }
         }
 
@@ -165,7 +132,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVB(vbInput);
+                await TestVBAsync(vbInput);
             }
         }
 
@@ -192,6 +159,7 @@ public class Test
         int aboveLine = 20;
         byte[] digest = {{|#0:{hashType}.Create().ComputeHash({{|#1:buffer|}})|}};
         int belowLine = 10;
+        byte[] digest2 = {{|#2:{hashType}.Create().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}};
     }}
 }}
 ";
@@ -208,13 +176,26 @@ public class Test
         int aboveLine = 20;
         byte[] digest = {hashType}.HashData(buffer);
         int belowLine = 10;
+        byte[] digest2 = {hashType}.HashData(buffer.AsSpan(0, 10));
     }}
 }}
 ";
-                await TestCSWithoutVariable(
+                var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
+                await TestCSAsync(
                     csInput,
                     csFix,
-                    $"System.Security.Cryptography.{hashType}");
+                    new[] {
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(2)
+                        .WithLocation(3)
+                        .WithLocation(4)
+                        .WithLocation(5)
+                    });
             }
         }
 
@@ -256,7 +237,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithoutVariable(
+                await TestVBWithoutVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -308,7 +289,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -357,7 +338,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -408,7 +389,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -454,7 +435,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -508,7 +489,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -558,7 +539,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -611,7 +592,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -663,7 +644,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -710,7 +691,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -764,7 +745,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -813,7 +794,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -865,7 +846,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -914,7 +895,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -969,7 +950,7 @@ public class Test
 }}
 ";
                 var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
-                await TestCSWithVariable(
+                await TestCSAsync(
                     csInput,
                     csFix,
                     new[] {
@@ -1035,7 +1016,7 @@ Public Class Test
 End Class
 ";
                 var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
-                await TestVBWithVariable(
+                await TestVBAsync(
                     vbInput,
                     vbFix,
                     new[] {
@@ -1083,7 +1064,7 @@ public class Test
     }}
 }}
 ";
-                await TestCS(csInput);
+                await TestCSAsync(csInput);
             }
         }
 
@@ -1128,7 +1109,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithoutVariable(
+                await TestCSWithoutVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1172,7 +1153,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithoutVariable(
+                await TestVBWithoutVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1226,7 +1207,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithoutVariable(
+                await TestCSWithoutVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1274,7 +1255,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithoutVariable(
+                await TestVBWithoutVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1327,7 +1308,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -1376,7 +1357,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}",
@@ -1428,7 +1409,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1474,7 +1455,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1525,7 +1506,7 @@ public class Test
     }}
 }}
 ";
-                await TestCSWithVariable(
+                await TestCSWithVariableAsync(
                     csInput,
                     csFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1571,7 +1552,7 @@ Public Class Test
     End Sub
 End Class
 ";
-                await TestVBWithVariable(
+                await TestVBWithVariableAsync(
                     vbInput,
                     vbFix,
                     $"System.Security.Cryptography.{hashType}");
@@ -1590,13 +1571,13 @@ End Class
             return test;
         }
 
-        private static async Task TestCS(string source)
+        private static async Task TestCSAsync(string source)
         {
             await GetTestCS(source, source, ReferenceAssemblies.Net.Net50).RunAsync();
             await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestCSWithVariable(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
+        private static async Task TestCSWithVariableAsync(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
         {
             var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
 
@@ -1615,21 +1596,7 @@ End Class
             await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestCSWithVariable(string source, string corrected, params DiagnosticResult[] diagnosticResults)
-        {
-            var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
-
-            for (int i = 0; i < diagnosticResults.Length; i++)
-            {
-                var expected = diagnosticResults[i];
-                test.ExpectedDiagnostics.Add(expected);
-            }
-
-            await test.RunAsync();
-            await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
-        }
-
-        private static async Task TestCSWithoutVariable(string source, string corrected, string hashAlgorithmTypeName)
+        private static async Task TestCSWithoutVariableAsync(string source, string corrected, string hashAlgorithmTypeName)
         {
             var expected = VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                 .WithArguments(hashAlgorithmTypeName)
@@ -1638,6 +1605,19 @@ End Class
 
             var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
             test.ExpectedDiagnostics.Add(expected);
+            await test.RunAsync();
+            await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
+        }
+
+        private static async Task TestCSAsync(string source, string corrected, params DiagnosticResult[] diagnosticResults)
+        {
+            var test = GetTestCS(source, corrected, ReferenceAssemblies.Net.Net50);
+
+            for (int i = 0; i < diagnosticResults.Length; i++)
+            {
+                var expected = diagnosticResults[i];
+                test.ExpectedDiagnostics.Add(expected);
+            }
             await test.RunAsync();
             await GetTestCS(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
@@ -1654,13 +1634,13 @@ End Class
             return test;
         }
 
-        private static async Task TestVB(string source)
+        private static async Task TestVBAsync(string source)
         {
             await GetTestVB(source, source, ReferenceAssemblies.Net.Net50).RunAsync();
             await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestVBWithVariable(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
+        private static async Task TestVBWithVariableAsync(string source, string corrected, string hashAlgorithmTypeName, int expectedDiagnosticCount = 1)
         {
             var test = GetTestVB(source, corrected, ReferenceAssemblies.Net.Net50);
             var lastId = expectedDiagnosticCount * 2;
@@ -1677,7 +1657,7 @@ End Class
             await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestVBWithVariable(string source, string corrected, params DiagnosticResult[] diagnosticResults)
+        private static async Task TestVBAsync(string source, string corrected, params DiagnosticResult[] diagnosticResults)
         {
             var test = GetTestVB(source, corrected, ReferenceAssemblies.Net.Net50);
 
@@ -1691,7 +1671,7 @@ End Class
             await GetTestVB(source, source, ReferenceAssemblies.NetCore.NetCoreApp31).RunAsync();
         }
 
-        private static async Task TestVBWithoutVariable(string source, string corrected, string hashAlgorithmTypeName)
+        private static async Task TestVBWithoutVariableAsync(string source, string corrected, string hashAlgorithmTypeName)
         {
             var expected = VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                 .WithArguments(hashAlgorithmTypeName)

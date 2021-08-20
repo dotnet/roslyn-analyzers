@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Composition;
 using System.Diagnostics.CodeAnalysis;
@@ -15,7 +15,14 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpPreferHashDataOverComputeHashFixer : PreferHashDataOverComputeHashFixer
     {
-        protected override bool TryGetCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode, SyntaxNode nodeToRemove, [NotNullWhen(true)] out HashDataCodeAction? codeAction)
+        protected override bool TryGetCodeAction(
+            Document document,
+            string hashTypeName,
+            SyntaxNode computeHashNode,
+            PreferHashDataOverComputeHashAnalyzer.ComputeType computeType,
+            SyntaxNode[] argNodes,
+            SyntaxNode nodeToRemove,
+            [NotNullWhen(true)] out HashDataCodeAction? codeAction)
         {
             switch (nodeToRemove)
             {
@@ -23,8 +30,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     {
                         codeAction = new RemoveNodeHashDataCodeAction(document,
                             hashTypeName,
-                            bufferArgNode,
                             computeHashNode,
+                            computeType,
+                            argNodes,
                             nodeToRemove);
                         return true;
                     }
@@ -32,8 +40,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     {
                         codeAction = new CSharpRemoveUsingStatementHashDataCodeAction(document,
                             hashTypeName,
-                            bufferArgNode,
                             computeHashNode,
+                            computeType,
+                            argNodes,
                             usingStatement);
                         return true;
                     }
@@ -47,7 +56,12 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         private sealed class CSharpRemoveUsingStatementHashDataCodeAction : HashDataCodeAction
         {
-            public CSharpRemoveUsingStatementHashDataCodeAction(Document document, string hashTypeName, SyntaxNode bufferArgNode, SyntaxNode computeHashNode, UsingStatementSyntax usingStatementToRemove) : base(document, hashTypeName, bufferArgNode, computeHashNode)
+            public CSharpRemoveUsingStatementHashDataCodeAction(Document document,
+                string hashTypeName,
+                SyntaxNode computeHashNode,
+                PreferHashDataOverComputeHashAnalyzer.ComputeType computeType,
+                SyntaxNode[] argNodes,
+                UsingStatementSyntax usingStatementToRemove) : base(document, hashTypeName, computeHashNode, computeType, argNodes)
             {
                 UsingStatementToRemove = usingStatementToRemove;
             }

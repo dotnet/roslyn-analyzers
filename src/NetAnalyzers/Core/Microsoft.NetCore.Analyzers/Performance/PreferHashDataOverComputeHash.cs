@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -18,9 +18,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         internal const string CA1849 = nameof(CA1849);
         internal const string TargetHashTypeDiagnosticPropertyKey = nameof(TargetHashTypeDiagnosticPropertyKey);
-        internal const string SingleLocalRefDiagnosticPropertyKey = nameof(SingleLocalRefDiagnosticPropertyKey);
+        internal const string DeleteHashCreationPropertyKey = nameof(DeleteHashCreationPropertyKey);
+        internal const string ComputeTypePropertyKey = nameof(ComputeTypePropertyKey);
         internal const string HashDataMethodName = "HashData";
+        internal const string TryHashDataMethodName = "TryHashData";
         private const string ComputeHashMethodName = nameof(System.Security.Cryptography.HashAlgorithm.ComputeHash);
+        private const string TryComputeHashMethodName = "TryComputeHash";
         private const string CreateMethodName = nameof(System.Security.Cryptography.SHA256.Create);
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataOverComputeHashAnalyzerTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -51,18 +54,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var compilation = context.Compilation;
 
             if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyHashAlgorithm, out var hashAlgoBaseType) ||
-                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySHA256, out var sha256Type))
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySHA256, out var sha256Type) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReadOnlySpan1, out var rosType) ||
+                !compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1, out var spanType))
             {
                 return;
             }
 
             var byteType = context.Compilation.GetSpecialType(SpecialType.System_Byte);
-            if (byteType.IsErrorType())
+            var intType = context.Compilation.GetSpecialType(SpecialType.System_Int32);
+            if (byteType.IsErrorType() || intType.IsErrorType())
             {
                 return;
             }
+            var rosByteType = rosType.Construct(byteType);
+            var spanByteType = spanType.Construct(byteType);
 
             var byteArrayParameter = ParameterInfo.GetParameterInfo(byteType, isArray: true, arrayRank: 1);
+            var rosByteParameter = ParameterInfo.GetParameterInfo(rosByteType);
+            var spanByteParameter = ParameterInfo.GetParameterInfo(spanByteType);
+            var intParameter = ParameterInfo.GetParameterInfo(intType);
 
             // method introduced in .NET 5.0
             var hashDataMethodType = sha256Type.GetMembers(HashDataMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(byteArrayParameter);
@@ -72,7 +83,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             var computeHashMethodBaseType = hashAlgoBaseType.GetMembers(ComputeHashMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(byteArrayParameter);
-            if (computeHashMethodBaseType is null)
+            var computeHashSectionMethodBaseType = hashAlgoBaseType.GetMembers(ComputeHashMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(byteArrayParameter, intParameter, intParameter);
+            var tryComputeHashMethodBaseType = hashAlgoBaseType.GetMembers(TryComputeHashMethodName).OfType<IMethodSymbol>().GetFirstOrDefaultMemberWithParameterInfos(rosByteParameter, spanByteParameter, intParameter);
+            if (computeHashMethodBaseType is null && computeHashSectionMethodBaseType is null && tryComputeHashMethodBaseType is null)
             {
                 return;
             }
@@ -83,15 +96,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
             void OnOperationBlockStart(OperationBlockStartAnalysisContext context)
             {
                 // Patterns we are looking for:
-                // Pattern #1                                      Pattern #2                                    Pattern #3
-                // var obj = #HashCreation#;           or          #HashCreation#.CompuateHash(buffer);    or    obj.CompuateHash(buffer);
+                // Pattern #1                                      Pattern #2
+                // var obj = #HashCreation#;           or          #HashCreation#.CompuateHash(buffer);  
                 // ...
                 // obj.CompuateHash(buffer);
 
                 // The core search logic is split into 3 groups
                 // 1. Scan all invocations:
                 //  a. if it is a Hash Create static method, store its local symbol + declaration operation and type symbols
-                //  b. if it is HashAlgorithm.ComputeHash
+                //  b. if it is HashAlgorithm.ComputeHash /  HashAlgorithm.TryComputeHash
                 //      1. if its instance is a local reference, store its local reference + invocation
                 //      2. if its instance is the creation of a hash instance, we found pattern #2. Report diagnostic.
                 // 2. Find all HashAlgorithm object creation (new) and store its local symbol + declaration operation and type symbols
@@ -101,19 +114,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // 1. Create a set of local reference whose symbols appears only once
                 // 2. Iterate the invocation, only report the invocation
                 //    a. hashAlgorithm type has a static HashData method
+                //    b. hashAlgorithm instance was created in the block
+                //    c. hashAlgorithm instance did not invoked other methods
 
                 // Reporting of Diagnostic
                 // The main span reported is at the ComputeHash method
                 //
                 // Properties:
-                //  if there is only 1 local reference of a symbol, SingleLocalRefDiagnosticPropertyKey is set
+                //  if there is only 1 local reference of a symbol, DeleteHashCreationPropertyKey is set
                 //
                 // Additional locations:
-                // Pattern #1                                      Pattern #2                                    Pattern #3
-                // 1. buffer arg span                              1. buffer arg span                            1. buffer arg span
+                // Pattern #1                                      Pattern #2        
+                // 1. buffer arg span                              1. buffer arg span
                 // 2. span where the hash instance was created
 
-                var computeHashSet = PooledConcurrentSet<IInvocationOperation>.GetInstance();
+                var computeHashSet = PooledConcurrentDictionary<IInvocationOperation, ComputeType>.GetInstance();
+                var nonComputeHashSymbolSet = PooledConcurrentSet<ILocalSymbol>.GetInstance();
                 var createdSymbolMap = PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple>.GetInstance();
                 var localReferenceMap = PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol>.GetInstance();
 
@@ -142,6 +158,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     else if (invocationOperation.TargetMethod.Equals(computeHashMethodBaseType, SymbolEqualityComparer.Default))
                     {
                         CaptureOrReportComputeHashInvocationOperation(context, invocationOperation);
+                    }
+                    else if (invocationOperation.TargetMethod.Equals(computeHashSectionMethodBaseType, SymbolEqualityComparer.Default))
+                    {
+                        CaptureOrReportComputeHashSectionInvocationOperation(context, invocationOperation);
+                    }
+                    else if (invocationOperation.TargetMethod.Equals(tryComputeHashMethodBaseType, SymbolEqualityComparer.Default))
+                    {
+                        CaptureOrReportTryComputeHashInvocationOperation(context, invocationOperation);
+                    }
+                    else if (invocationOperation.Instance is ILocalReferenceOperation localReferenceOperation)
+                    {
+                        nonComputeHashSymbolSet.Add(localReferenceOperation.Local);
                     }
                 }
 
@@ -189,15 +217,91 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     switch (computeHashInvocation.Instance)
                     {
-                        case ILocalReferenceOperation or IParameterReferenceOperation:
-                            computeHashSet.Add(computeHashInvocation);
+                        case ILocalReferenceOperation:
+                            computeHashSet.TryAdd(computeHashInvocation, ComputeType.ComputeHash);
                             break;
                         case IInvocationOperation chainedInvocationOperation when IsHashCreateMethod(chainedInvocationOperation.TargetMethod):
-                            ReportChainedComputeHashInvocationOperation(context, computeHashInvocation, chainedInvocationOperation.TargetMethod.ContainingType, byteArrayParameter);
+                            ReportChainedComputeHashInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
                             break;
                         case IObjectCreationOperation chainObjectCreationOperation when chainObjectCreationOperation.Type.Inherits(hashAlgoBaseType):
-                            ReportChainedComputeHashInvocationOperation(context, computeHashInvocation, chainObjectCreationOperation.Type, byteArrayParameter);
+                            ReportChainedComputeHashInvocationOperation(chainObjectCreationOperation.Type);
                             break;
+                    }
+
+                    void ReportChainedComputeHashInvocationOperation(ITypeSymbol originalHashType)
+                    {
+                        if (!TryGetHashDataMethod(originalHashType, byteArrayParameter, out var staticHashMethod))
+                        {
+                            return;
+                        }
+
+                        var builder = ImmutableArray.CreateBuilder<Location>(1);
+                        FillLocationForComputeHash(builder, computeHashInvocation);
+                        var codefixerLocations = builder.MoveToImmutable();
+                        var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.ComputeHash);
+
+                        context.ReportDiagnostic(diagnostics);
+                    }
+                }
+
+                void CaptureOrReportComputeHashSectionInvocationOperation(OperationAnalysisContext context, IInvocationOperation computeHashInvocation)
+                {
+                    switch (computeHashInvocation.Instance)
+                    {
+                        case ILocalReferenceOperation:
+                            computeHashSet.TryAdd(computeHashInvocation, ComputeType.ComputeHashSection);
+                            break;
+                        case IInvocationOperation chainedInvocationOperation when IsHashCreateMethod(chainedInvocationOperation.TargetMethod):
+                            ReportChainedComputeHashSectionInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
+                            break;
+                        case IObjectCreationOperation chainObjectCreationOperation when chainObjectCreationOperation.Type.Inherits(hashAlgoBaseType):
+                            ReportChainedComputeHashSectionInvocationOperation(chainObjectCreationOperation.Type);
+                            break;
+                    }
+
+                    void ReportChainedComputeHashSectionInvocationOperation(ITypeSymbol originalHashType)
+                    {
+                        if (!TryGetHashDataMethod(originalHashType, rosByteParameter, out var staticHashMethod))
+                        {
+                            return;
+                        }
+                        var builder = ImmutableArray.CreateBuilder<Location>(3);
+                        FillLocationForComputeHash3Args(builder, computeHashInvocation);
+                        var codefixerLocations = builder.MoveToImmutable();
+                        var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.ComputeHashSection);
+
+                        context.ReportDiagnostic(diagnostics);
+                    }
+                }
+
+                void CaptureOrReportTryComputeHashInvocationOperation(OperationAnalysisContext context, IInvocationOperation computeHashInvocation)
+                {
+                    switch (computeHashInvocation.Instance)
+                    {
+                        case ILocalReferenceOperation:
+                            computeHashSet.TryAdd(computeHashInvocation, ComputeType.TryComputeHash);
+                            break;
+                        case IInvocationOperation chainedInvocationOperation when IsHashCreateMethod(chainedInvocationOperation.TargetMethod):
+                            ReportChainedTryComputeHashInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
+                            break;
+                        case IObjectCreationOperation chainObjectCreationOperation when chainObjectCreationOperation.Type.Inherits(hashAlgoBaseType):
+                            ReportChainedTryComputeHashInvocationOperation(chainObjectCreationOperation.Type);
+                            break;
+                    }
+
+                    void ReportChainedTryComputeHashInvocationOperation(ITypeSymbol originalHashType)
+                    {
+                        if (!TryGetTryHashDataMethod(originalHashType, rosByteParameter, spanByteParameter, intParameter, out var staticHashMethod))
+                        {
+                            return;
+                        }
+
+                        var builder = ImmutableArray.CreateBuilder<Location>(3);
+                        FillLocationForComputeHash3Args(builder, computeHashInvocation);
+                        var codefixerLocations = builder.MoveToImmutable();
+                        var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.TryComputeHash);
+
+                        context.ReportDiagnostic(diagnostics);
                     }
                 }
 
@@ -205,45 +309,29 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     var singleLocalRefSet = GetSingleLocalReferences(localReferenceMap);
 
-                    foreach (var computeHash in computeHashSet)
+                    foreach (var (computeHash, type) in computeHashSet)
                     {
                         ImmutableArray<Location> codefixerLocations;
-                        IMethodSymbol? staticHashMethod;
-                        bool isSingleLocalRef = false;
-                        switch (computeHash.Instance)
+                        var localReferenceOperation = (ILocalReferenceOperation)computeHash.Instance;
+                        var isToDeleteHashCreation = singleLocalRefSet.Contains(localReferenceOperation);
+
+                        if (createdSymbolMap.TryGetValue(localReferenceOperation.Local, out var declarationTuple) &&
+                            !nonComputeHashSymbolSet.Contains(localReferenceOperation.Local) &&
+                            TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out var staticHashMethod))
                         {
-                            case IParameterReferenceOperation:
-                                if (!TryGetHashDataMethod(computeHash.Instance.Type, byteArrayParameter, out staticHashMethod))
-                                {
-                                    continue;
-                                }
-                                codefixerLocations = GetFixerLocations(computeHash);
-                                break;
-                            case ILocalReferenceOperation localReferenceOperation:
-                                isSingleLocalRef = singleLocalRefSet.Contains(localReferenceOperation);
-                                if (createdSymbolMap.TryGetValue(localReferenceOperation.Local, out var declarationTuple) &&
-                                    TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out staticHashMethod))
-                                {
-                                    codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, computeHash);
-                                }
-                                else if (TryGetHashDataMethod(computeHash.Instance.Type, byteArrayParameter, out staticHashMethod))
-                                {
-                                    codefixerLocations = GetFixerLocations(computeHash);
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                                break;
-                            default:
-                                continue;
+                            codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, computeHash, type);
+                        }
+                        else
+                        {
+                            continue;
                         }
 
-                        var diagnostics = CreateDiagnostics(computeHash, staticHashMethod.ContainingType, codefixerLocations, isSingleLocalRef);
+                        var diagnostics = CreateDiagnostics(computeHash, staticHashMethod.ContainingType, codefixerLocations, type, isToDeleteHashCreation);
                         context.ReportDiagnostic(diagnostics);
                     }
 
                     computeHashSet.Free(context.CancellationToken);
+                    nonComputeHashSymbolSet.Free(context.CancellationToken);
                     createdSymbolMap.Free(context.CancellationToken);
                     localReferenceMap.Free(context.CancellationToken);
                     singleLocalRefSet.Free(context.CancellationToken);
@@ -264,7 +352,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         .Select(local => local.First().Key);
 
                     var hashSet = PooledHashSet<ILocalReferenceOperation>.GetInstance();
-                    foreach(var localRef in singleLocalRefElements)
+                    foreach (var localRef in singleLocalRefElements)
                     {
                         hashSet.Add(localRef);
                     }
@@ -289,26 +377,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             };
         }
 
-        private static void ReportChainedComputeHashInvocationOperation(OperationAnalysisContext context, IInvocationOperation computeHashMethod, ITypeSymbol originalHashType, ParameterInfo byteArrayParameter)
-        {
-            if (!TryGetHashDataMethod(originalHashType, byteArrayParameter, out var staticHashMethod))
-            {
-                return;
-            }
-
-            var codefixerLocations = GetChainedFixerLocations(computeHashMethod);
-            var diagnostics = CreateDiagnostics(computeHashMethod, staticHashMethod.ContainingType, codefixerLocations);
-
-            context.ReportDiagnostic(diagnostics);
-        }
-
-        private static bool TryGetHashDataMethod(ITypeSymbol originalHashType, ParameterInfo byteArrayParameter, [NotNullWhen(true)] out IMethodSymbol? staticHashMethod)
+        private static bool TryGetHashDataMethod(ITypeSymbol originalHashType, ParameterInfo firstArgument, [NotNullWhen(true)] out IMethodSymbol? staticHashMethod)
         {
             var currInstanceType = originalHashType;
             do
             {
                 staticHashMethod = currInstanceType.GetMembers(HashDataMethodName).OfType<IMethodSymbol>()
-                    .GetFirstOrDefaultMemberWithParameterInfos(byteArrayParameter);
+                    .GetFirstOrDefaultMemberWithParameterInfos(firstArgument);
 
                 if (staticHashMethod is not null)
                 {
@@ -320,16 +395,40 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return false;
         }
 
-        private static Diagnostic CreateDiagnostics(IInvocationOperation computeHashMethod, 
-            INamedTypeSymbol staticHashMethodType, 
+        private static bool TryGetTryHashDataMethod(ITypeSymbol originalHashType,
+            ParameterInfo sourceArgument,
+            ParameterInfo destArgument,
+            ParameterInfo intArgument,
+            [NotNullWhen(true)] out IMethodSymbol? staticHashMethod)
+        {
+            var currInstanceType = originalHashType;
+            do
+            {
+                staticHashMethod = currInstanceType.GetMembers(TryHashDataMethodName).OfType<IMethodSymbol>()
+                    .GetFirstOrDefaultMemberWithParameterInfos(sourceArgument, destArgument, intArgument);
+
+                if (staticHashMethod is not null)
+                {
+                    return true;
+                }
+
+                currInstanceType = currInstanceType.BaseType;
+            } while (currInstanceType is { });
+            return false;
+        }
+
+        private static Diagnostic CreateDiagnostics(IInvocationOperation computeHashMethod,
+            INamedTypeSymbol staticHashMethodType,
             ImmutableArray<Location> fixerLocations,
+            ComputeType computeType,
             bool isSingleLocalRef = false)
         {
             var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
             dictBuilder.Add(TargetHashTypeDiagnosticPropertyKey, staticHashMethodType.Name);
-            if(isSingleLocalRef)
+            dictBuilder.Add(ComputeTypePropertyKey, computeType.ToString());
+            if (isSingleLocalRef)
             {
-                dictBuilder.Add(SingleLocalRefDiagnosticPropertyKey, SingleLocalRefDiagnosticPropertyKey);
+                dictBuilder.Add(DeleteHashCreationPropertyKey, DeleteHashCreationPropertyKey);
             }
 
             return computeHashMethod.CreateDiagnostic(StringRule,
@@ -338,20 +437,22 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 staticHashMethodType.ToDisplayString());
         }
 
-        private static Location GetBufferArgLocation(IInvocationOperation computeHashInvocationOperation)
+        private static ImmutableArray<Location> GetFixerLocations(
+            IVariableDeclaratorOperation declaratorOperation,
+            IInvocationOperation computeHashInvocationOperation,
+            ComputeType computeType)
         {
-            return computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation();
-        }
-
-        private static ImmutableArray<Location> GetFixerLocations(IInvocationOperation computeHashInvocationOperation)
-        {
-            var bufferArgLocation = GetBufferArgLocation(computeHashInvocationOperation);
-            return ImmutableArray.Create(bufferArgLocation);
-        }
-
-        private static ImmutableArray<Location> GetFixerLocations(IVariableDeclaratorOperation declaratorOperation, IInvocationOperation computeHashInvocationOperation)
-        {
-            var bufferArgLocation = GetBufferArgLocation(computeHashInvocationOperation);
+            ImmutableArray<Location>.Builder builder;
+            if (computeType is ComputeType.ComputeHash)
+            {
+                builder = ImmutableArray.CreateBuilder<Location>(2);
+                FillLocationForComputeHash(builder, computeHashInvocationOperation);
+            }
+            else
+            {
+                builder = ImmutableArray.CreateBuilder<Location>(4);
+                FillLocationForComputeHash3Args(builder, computeHashInvocationOperation);
+            }
             var lineDeclaration = declaratorOperation.GetAncestor<IVariableDeclarationGroupOperation>(OperationKind.VariableDeclarationGroup);
 
             Location nodeToRemove;
@@ -367,15 +468,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 nodeToRemove = declaratorOperation.Syntax.GetLocation();
             }
+            builder.Add(nodeToRemove);
 
-            return ImmutableArray.Create(bufferArgLocation, nodeToRemove);
+            return builder.MoveToImmutable();
         }
 
-        private static ImmutableArray<Location> GetChainedFixerLocations(IInvocationOperation computeHashInvocationOperation)
+        private static void FillLocationForComputeHash(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
         {
-            var bufferArgLocation = computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation();
+            builder.Add(computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation());
+        }
 
-            return ImmutableArray.Create(bufferArgLocation);
+        private static void FillLocationForComputeHash3Args(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
+        {
+            builder.Add(computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[1].Value.Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[2].Value.Syntax.GetLocation());
         }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
@@ -391,6 +498,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 DeclaratorOperation = declaratorOperation;
                 OriginalType = type;
             }
+        }
+
+        public enum ComputeType
+        {
+            ComputeHash,
+            ComputeHashSection,
+            TryComputeHash
         }
     }
 }

@@ -54,20 +54,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
                 else if (operationContext.Operation is IInvocationOperation invocationOperation) // For arrays passed in extension methods, like in LINQ
                 {
-                    if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation))
+                    if (invocationOperation.Descendants().Any(x => x is IArrayCreationOperation)
+                        && invocationOperation.Descendants().Any(x => x is IArgumentOperation))
                     {
-                        // This is an invocation that contains an array in it
+                        // This is an invocation that contains an array as an argument
                         // This will get caught by the first case in another cycle
                         return;
                     }
 
                     argumentOperation = invocationOperation.Arguments.FirstOrDefault();
-                    if (argumentOperation is null || argumentOperation.Children.First() is not IConversionOperation conversionOperation
-                        || conversionOperation.Operand is not IArrayCreationOperation)
+                    if (argumentOperation is not null)
                     {
-                        return;
+                        if (argumentOperation.Children.First() is not IConversionOperation conversionOperation
+                            || conversionOperation.Operand is not IArrayCreationOperation arrayCreation)
+                        {
+                            return;
+                        }
+                        arrayCreationOperation = arrayCreation;
                     }
-                    arrayCreationOperation = (IArrayCreationOperation)conversionOperation.Operand;
+                    else // An invocation, extension or regular, has an argument, unless it's a VB extension method call
+                    {
+                        // For VB extension method invocations, find a matching child
+                        arrayCreationOperation = (IArrayCreationOperation)invocationOperation.Descendants()
+                            .FirstOrDefault(x => x is IArrayCreationOperation);
+                        if (arrayCreationOperation is null)
+                        {
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -82,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 Dictionary<string, string?> properties = new()
                 {
-                    { "paramName", argumentOperation.Parameter.Name }
+                    { "paramName", argumentOperation is not null ? argumentOperation.Parameter.Name : null }
                 };
 
                 operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));

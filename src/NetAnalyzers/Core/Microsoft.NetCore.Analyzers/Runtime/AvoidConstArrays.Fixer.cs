@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 .GetMembers().Where(x => x is IFieldSymbol);
 
             // Get a valid member name for the extracted constant
-            string newMemberName = GetExtractedMemberName(typeFields.Select(x => x.Name), properties["paramName"]);
+            string newMemberName = GetExtractedMemberName(typeFields.Select(x => x.Name), properties["paramName"] ?? GetMemberNameFromType(arrayArgument));
 
             // Get method containing the symbol that is being diagnosed. Should always be in a method
             IOperation? containingMethodBody = arrayArgument.GetAncestor<IMethodBodyOperation>(OperationKind.MethodBody);
@@ -141,6 +141,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return parameterName;
+        }
+
+        private static string GetMemberNameFromType(IArrayCreationOperation arrayCreationOperation)
+        {
+#pragma warning disable CA1308
+            return ((IArrayTypeSymbol)arrayCreationOperation.Type).ElementType.Name.ToLowerInvariant() + "Array";
+#pragma warning restore CA1308
         }
 
         private static Accessibility GetAccessibility(ISymbol originMethodSymbol)

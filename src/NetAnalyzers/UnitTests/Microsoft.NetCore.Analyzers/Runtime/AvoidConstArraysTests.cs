@@ -148,7 +148,7 @@ Public Class A
 End Class
 ");
 
-            // Trivia tests, CS only
+            // Trivia test, CS only
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
@@ -202,13 +202,24 @@ public class A
 }
 ");
 
-        await VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Linq
 
 Public Class A
     Public Sub B()
         Dim y As String = {|CA1849:{""a"", ""b"", ""c""}|}.First()
+        Console.WriteLine(y)
+    End Sub
+End Class
+", @"
+Imports System
+Imports System.Linq
+
+Public Class A
+    Private Shared ReadOnly stringArray As String() = {""a"", ""b"", ""c""}
+    Public Sub B()
+        Dim y As String = stringArray.First()
         Console.WriteLine(y)
     End Sub
 End Class

@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // Insert after last field if any fields are present
                 SyntaxNode lastFieldNode = await lastFieldSymbol.DeclaringSyntaxReferences.First().GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
-                editor.InsertAfter(lastFieldNode, newMember);
+                editor.InsertAfter(generator.GetDeclaration(lastFieldNode), newMember);
             }
             else
             {

@@ -224,6 +224,71 @@ Public Class A
     End Sub
 End Class
 ");
+
+            // Member extraction tests
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
+
+public class A
+{
+    private static readonly string value = ""hello"";
+    private static readonly int[] valueArray = new[]{ -2, -1, 0 };
+    private static readonly bool[] valueArray1 = new[]{ true, false, true };
+
+    private static readonly int x = 1;
+
+    public void B()
+    {
+        Console.WriteLine({|CA1849:new[]{ 1, 2, 3 }|});
+    }
+}
+", @"
+using System;
+
+public class A
+{
+    private static readonly string value = ""hello"";
+    private static readonly int[] valueArray = new[]{ -2, -1, 0 };
+    private static readonly bool[] valueArray1 = new[]{ true, false, true };
+
+    private static readonly int x = 1;
+    private static readonly int[] valueArray0 = new[]{ 1, 2, 3 };
+
+    public void B()
+    {
+        Console.WriteLine(valueArray0);
+    }
+}
+");
+
+            await VerifyVB.VerifyCodeFixAsync(@"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As String = ""hello""
+    Private Shared ReadOnly valueArray As Integer() = {-2, -1, 0}
+    Private Shared ReadOnly valueArray1 As Boolean() = {True, False, True}
+    Private Shared ReadOnly x As Integer = 1
+
+    Public Sub B()
+        Console.WriteLine({|CA1849:{1, 2, 3}|})
+    End Sub
+End Class
+", @"
+Imports System
+
+Public Class A
+    Private Shared ReadOnly value As String = ""hello""
+    Private Shared ReadOnly valueArray As Integer() = {-2, -1, 0}
+    Private Shared ReadOnly valueArray1 As Boolean() = {True, False, True}
+    Private Shared ReadOnly x As Integer = 1
+    Private Shared ReadOnly valueArray0 As Integer() = {1, 2, 3}
+
+    Public Sub B()
+        Console.WriteLine(valueArray0)
+    End Sub
+End Class
+");
         }
 
         [Fact]

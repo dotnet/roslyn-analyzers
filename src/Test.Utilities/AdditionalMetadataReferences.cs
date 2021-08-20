@@ -93,7 +93,7 @@ namespace Test.Utilities
                     "net6.0",
                     new PackageIdentity(
                         "Microsoft.NETCore.App.Ref",
-                        "6.0.0-preview.6.21352.12"),
+                        "6.0.100-rc.2.21420.21"),
                     Path.Combine("ref", "net6.0"));
             });
 

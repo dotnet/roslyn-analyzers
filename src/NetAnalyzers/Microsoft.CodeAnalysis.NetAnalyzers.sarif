@@ -2701,6 +2701,26 @@
             ]
           }
         },
+        "CA1849": {
+          "id": "CA1849",
+          "shortDescription": "Avoid constant arrays as arguments",
+          "fullDescription": "Having a constant array passed as an argument is not ideally performant. Extract constant arrays as 'static readonly'.",
+          "defaultLevel": "note",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidConstArraysAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",

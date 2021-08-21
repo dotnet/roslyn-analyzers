@@ -167,7 +167,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         CaptureOrReportTryComputeHashInvocationOperation(context, invocationOperation);
                     }
-                    else if (invocationOperation.Instance is ILocalReferenceOperation localReferenceOperation)
+                    else if (invocationOperation.Instance is ILocalReferenceOperation localReferenceOperation &&
+                        localReferenceOperation.Type.Inherits(hashAlgoBaseType))
                     {
                         nonComputeHashSymbolSet.Add(localReferenceOperation.Local);
                     }
@@ -475,14 +476,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static void FillLocationForComputeHash(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
         {
-            builder.Add(computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
         }
 
         private static void FillLocationForComputeHash3Args(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
         {
-            builder.Add(computeHashInvocationOperation.Arguments[0].Value.Syntax.GetLocation());
-            builder.Add(computeHashInvocationOperation.Arguments[1].Value.Syntax.GetLocation());
-            builder.Add(computeHashInvocationOperation.Arguments[2].Value.Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[1].Syntax.GetLocation());
+            builder.Add(computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
         }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types

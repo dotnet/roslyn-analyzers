@@ -23,6 +23,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.AvoidConstArraysDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
+        private const string s_readonlySpanTypeName = WellKnownTypeNames.SystemReadOnlySpan1;
+
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
             s_localizableMessage,
@@ -43,6 +45,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterOperationAction(operationContext =>
             {
                 IArgumentOperation? argumentOperation;
+                string readonlySpanTypeString = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation)
+                    .GetOrCreateTypeByMetadataName(s_readonlySpanTypeName)!.Name;
 
                 if (operationContext.Operation is IArrayCreationOperation arrayCreationOperation) // For arrays passed as arguments
                 {
@@ -84,6 +88,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
                 else
+                {
+                    return;
+                }
+
+                // Can't be a ReadOnlySpan, as those are already optimized
+                if (argumentOperation is not null && argumentOperation.Parameter.Type.Name == readonlySpanTypeString)
                 {
                     return;
                 }

@@ -295,17 +295,7 @@ End Class
         public async Task IgnoreOtherArgs_NoDiagnostic()
         {
             // A string
-            await VerifyCS.VerifyCodeFixAsync(@"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        Console.WriteLine(""Lorem ipsum"");
-    }
-}
-", @"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class A
@@ -317,15 +307,7 @@ public class A
 }
 ");
 
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(""Lorem ipsum"")
-    End Sub
-End Class
-", @"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class A
@@ -336,17 +318,7 @@ End Class
 ");
 
             // Test another type to be extra safe
-            await VerifyCS.VerifyCodeFixAsync(@"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        Console.WriteLine(123);
-    }
-}
-", @"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class A
@@ -358,15 +330,7 @@ public class A
 }
 ");
 
-            await VerifyVB.VerifyCodeFixAsync(@"
-Imports System
-
-Public Class A
-    Public Sub B()
-        Console.WriteLine(123)
-    End Sub
-End Class
-", @"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class A
@@ -377,18 +341,7 @@ End Class
 ");
 
             // Non-literal array
-            await VerifyCS.VerifyCodeFixAsync(@"
-using System;
-
-public class A
-{
-    public void B()
-    {
-        string str = ""Lorem ipsum"";
-        Console.WriteLine(new[] { str });
-    }
-}
-", @"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class A
@@ -401,7 +354,7 @@ public class A
 }
 ");
 
-            await VerifyVB.VerifyCodeFixAsync(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class A
@@ -410,15 +363,23 @@ Public Class A
         Console.WriteLine({ str })
     End Sub
 End Class
-", @"
-Imports System
+");
 
-Public Class A
-    Public Sub B()
-        Dim str As String = ""Lorem ipsum""
-        Console.WriteLine({ str })
-    End Sub
-End Class
+            // A ReadOnlySpan, which is already optimized
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
+
+public class A
+{
+    public void B()
+    {
+        C(new bool[] { true, false });
+    }
+
+    private void C(ReadOnlySpan<bool> span)
+    {
+    }
+}
 ");
         }
     }

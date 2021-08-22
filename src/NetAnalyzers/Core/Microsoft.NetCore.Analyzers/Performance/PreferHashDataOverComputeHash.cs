@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
@@ -115,7 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // 2. Iterate the invocation, only report the invocation
                 //    a. hashAlgorithm type has a static HashData method
                 //    b. hashAlgorithm instance was created in the block
-                //    c. hashAlgorithm instance did not invoked other methods
+                //    c. hashAlgorithm ref count is the same number as the number of computehash invoked
 
                 // Reporting of Diagnostic
                 // The main span reported is at the ComputeHash method
@@ -129,8 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // 2. span where the hash instance was created
 
                 var computeHashSet = PooledConcurrentDictionary<IInvocationOperation, ComputeType>.GetInstance();
-                var nonComputeHashSymbolSet = PooledConcurrentSet<ILocalSymbol>.GetInstance();
-                var createdSymbolMap = PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple>.GetInstance();
+                var createdSymbolMap = PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple>.GetInstance(SymbolEqualityComparer.Default);
                 var localReferenceMap = PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol>.GetInstance();
 
                 context.RegisterOperationAction(CaptureHashLocalReferenceOperation, OperationKind.LocalReference);
@@ -166,11 +165,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     else if (invocationOperation.TargetMethod.Equals(tryComputeHashMethodBaseType, SymbolEqualityComparer.Default))
                     {
                         CaptureOrReportTryComputeHashInvocationOperation(context, invocationOperation);
-                    }
-                    else if (invocationOperation.Instance is ILocalReferenceOperation localReferenceOperation &&
-                        localReferenceOperation.Type.Inherits(hashAlgoBaseType))
-                    {
-                        nonComputeHashSymbolSet.Add(localReferenceOperation.Local);
                     }
                 }
 
@@ -308,18 +302,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                 {
-                    var singleLocalRefSet = GetSingleLocalReferences(localReferenceMap);
+                    var computeHashOnlySymbolMap = GetComputeHashOnlySymbols(localReferenceMap, computeHashSet, context.CancellationToken);
 
                     foreach (var (computeHash, type) in computeHashSet)
                     {
                         ImmutableArray<Location> codefixerLocations;
                         var localReferenceOperation = (ILocalReferenceOperation)computeHash.Instance;
-                        var isToDeleteHashCreation = singleLocalRefSet.Contains(localReferenceOperation);
+                        var isToDeleteHashCreation = false;
 
                         if (createdSymbolMap.TryGetValue(localReferenceOperation.Local, out var declarationTuple) &&
-                            !nonComputeHashSymbolSet.Contains(localReferenceOperation.Local) &&
+                            computeHashOnlySymbolMap.TryGetValue(localReferenceOperation.Local, out var refCount) &&
                             TryGetHashDataMethod(declarationTuple.OriginalType, byteArrayParameter, out var staticHashMethod))
                         {
+                            isToDeleteHashCreation = refCount == 1;
                             codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, computeHash, type);
                         }
                         else
@@ -332,10 +327,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                     computeHashSet.Free(context.CancellationToken);
-                    nonComputeHashSymbolSet.Free(context.CancellationToken);
                     createdSymbolMap.Free(context.CancellationToken);
                     localReferenceMap.Free(context.CancellationToken);
-                    singleLocalRefSet.Free(context.CancellationToken);
+                    computeHashOnlySymbolMap.Free(context.CancellationToken);
                 }
 
                 bool IsHashCreateMethod(IMethodSymbol methodSymbol)
@@ -345,18 +339,51 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         methodSymbol.Name.Equals(CreateMethodName, StringComparison.Ordinal);
                 }
 
-                static PooledHashSet<ILocalReferenceOperation> GetSingleLocalReferences(PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol> map)
+                static PooledDictionary<ILocalSymbol, int> GetComputeHashOnlySymbols(
+                    PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol> map,
+                    PooledConcurrentDictionary<IInvocationOperation, ComputeType> computeHashMap,
+                    CancellationToken cancellationToken)
                 {
-                    var singleLocalRefElements = map
-                        .GroupBy(local => local.Value)
-                        .Where(local => local.HasExactly(1))
-                        .Select(local => local.First().Key);
+                    // we find the symbol whose local ref count matches the count of computeHash invoked
+                    var hashSet = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
+                    var localRefSymbolCountMap = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
+                    var computeHashSymbolCountMap = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
 
-                    var hashSet = PooledHashSet<ILocalReferenceOperation>.GetInstance();
-                    foreach (var localRef in singleLocalRefElements)
+                    foreach (var (localRef, local) in map)
                     {
-                        hashSet.Add(localRef);
+                        if (!localRefSymbolCountMap.TryGetValue(local, out var count))
+                        {
+                            count = 0;
+                        }
+                        localRefSymbolCountMap[local] = count + 1;
                     }
+
+                    foreach (var (computeHash, _) in computeHashMap)
+                    {
+                        var local = ((ILocalReferenceOperation)computeHash.Instance).Local;
+                        if (!computeHashSymbolCountMap.TryGetValue(local, out var count))
+                        {
+                            count = 0;
+                        }
+                        computeHashSymbolCountMap[local] = count + 1;
+                    }
+
+                    foreach (var (local, refCount) in localRefSymbolCountMap)
+                    {
+                        if (!computeHashSymbolCountMap.TryGetValue(local, out var computeHashCount))
+                        {
+                            continue;
+                        }
+
+                        if (refCount == computeHashCount)
+                        {
+                            hashSet.Add(local, refCount);
+                        }
+                    }
+
+                    localRefSymbolCountMap.Free(cancellationToken);
+                    computeHashSymbolCountMap.Free(cancellationToken);
+
                     return hashSet;
                 }
             }

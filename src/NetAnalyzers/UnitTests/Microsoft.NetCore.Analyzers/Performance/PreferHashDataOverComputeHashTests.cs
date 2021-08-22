@@ -79,6 +79,73 @@ End Class
         }
 
         [Fact]
+        public async Task CSharpCreateHelperUnknownMethodBailOutNoFixCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void UnknownMethod(HashAlgorithm hasher)
+    {{
+    }}
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        var hasher = {hashType}.Create();
+        UnknownMethod(hasher);
+        int aboveLine = 20;
+        byte[] digest = hasher.ComputeHash(buffer);
+        int belowLine = 10;
+    }}
+}}
+";
+                await TestCSAsync(csInput);
+            }
+        }
+
+        [Fact]
+        public async Task BasicCreateHelperUnknownMethodBailOutNoFixCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub UnknownMethod(hasher As HashAlgorithm)
+    End Sub
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim hasher As {hashType} = {hashType}.Create()
+        UnknownMethod(hasher)
+        Dim aboveLine = 20
+        Dim digest As Byte() = hasher.ComputeHash(buffer)
+        Dim belowLine = 10
+    End Sub
+End Class
+";
+                await TestVBAsync(vbInput);
+            }
+        }
+
+        [Fact]
         public async Task CSharpCreateHelperBailOutNoFixCase()
         {
             await TestWithType(HashTypeMD5);

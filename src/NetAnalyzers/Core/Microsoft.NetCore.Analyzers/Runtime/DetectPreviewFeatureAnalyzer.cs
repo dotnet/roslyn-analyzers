@@ -626,22 +626,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return true;
                 }
 
-                if (symbol.ContainingAssembly != null && symbol.ContainingAssembly.HasAttribute(previewFeatureAttribute))
+                ISymbol? parent = symbol.ContainingSymbol;
+                while (parent is INamespaceSymbol)
                 {
-                    requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
-                    return true;
-                }
-
-                if (symbol.ContainingModule != null && symbol.ContainingModule.HasAttribute(previewFeatureAttribute))
-                {
-                    requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
-                    return true;
-                }
-
-                INamedTypeSymbol? parent = symbol.ContainingType;
-                if (parent is INamespaceSymbol)
-                {
-                    parent = parent.ContainingType;
+                    parent = parent.ContainingSymbol;
                 }
 
                 if (parent != null)

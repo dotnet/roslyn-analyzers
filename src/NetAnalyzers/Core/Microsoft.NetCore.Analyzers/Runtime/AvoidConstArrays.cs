@@ -106,7 +106,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 Dictionary<string, string?> properties = new()
                 {
-                    { "paramName", argumentOperation is not null ? argumentOperation.Parameter.Name : null }
+                    { "paramName", argumentOperation?.Parameter?.Name }
                 };
 
                 operationContext.ReportDiagnostic(arrayCreationOperation.CreateDiagnostic(Rule, properties.ToImmutableDictionary()));

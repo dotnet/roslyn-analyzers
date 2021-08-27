@@ -1764,4 +1764,16 @@
   <data name="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle" xml:space="preserve">
     <value>The 'ModuleInitializer' attribute should not be used in libraries</value>
   </data>
+  <data name="DoNotPassMutableValueTypesByValueCodeFixTitle" xml:space="preserve">
+    <value>Pass mutable value type by reference</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValueDescription" xml:space="preserve">
+    <value>Passing mutable value types by value can result in mutations of the copy being lost.</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValueMessage" xml:space="preserve">
+    <value>Do not pass mutable value type '{0}' by value</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValueTitle" xml:space="preserve">
+    <value>Do not pass mutable value types by value</value>
+  </data>
 </root>

@@ -707,6 +707,26 @@
         <target state="translated">리터럴을 지역화된 매개 변수로 전달하지 마십시오.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueCodeFixTitle">
+        <source>Pass mutable value type by reference</source>
+        <target state="new">Pass mutable value type by reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueDescription">
+        <source>Passing mutable value types by value can result in mutations of the copy being lost.</source>
+        <target state="new">Passing mutable value types by value can result in mutations of the copy being lost.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueMessage">
+        <source>Do not pass mutable value type '{0}' by value</source>
+        <target state="new">Do not pass mutable value type '{0}' by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueTitle">
+        <source>Do not pass mutable value types by value</source>
+        <target state="new">Do not pass mutable value types by value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
         <target state="translated">충분히 구체적이지 않거나 런타임에서 예약된 형식의 예외는 사용자 지정 코드에서 발생할 수 없습니다. 이로 인해 원래 오류를 감지하거나 디버그하기 어려워집니다. 이러한 예외 인스턴스가 throw되면 다른 예외 형식을 사용하세요.</target>

@@ -707,6 +707,26 @@
         <target state="translated">No pasar cadenas literal como parámetros localizados</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueCodeFixTitle">
+        <source>Pass mutable value type by reference</source>
+        <target state="new">Pass mutable value type by reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueDescription">
+        <source>Passing mutable value types by value can result in mutations of the copy being lost.</source>
+        <target state="new">Passing mutable value types by value can result in mutations of the copy being lost.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueMessage">
+        <source>Do not pass mutable value type '{0}' by value</source>
+        <target state="new">Do not pass mutable value type '{0}' by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValueTitle">
+        <source>Do not pass mutable value types by value</source>
+        <target state="new">Do not pass mutable value types by value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">
         <source>An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.</source>
         <target state="translated">El código de usuario nunca debe provocar una excepción de tipo que no sea suficientemente específica o esté reservada por el tiempo de ejecución. Esto provoca que el error original sea difícil de detectar y depurar. Si puede iniciarse esta instancia de excepción, utilice un tipo de excepción diferente.</target>

@@ -3,7 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -17,6 +18,92 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class DoNotPassMutableValueTypesByValueTests
     {
+        public static IEnumerable<object[]> CS_KnownProblematicTypeNames
+        {
+            get
+            {
+                yield return new[] { "System.Threading.SpinLock" };
+                yield return new[] { "System.Text.Json.Utf8JsonReader" };
+            }
+        }
 
+        public static IEnumerable<object[]> VB_KnownProblematicTypeNames
+        {
+            get
+            {
+                yield return new[] { "System.Threading.SpinLock" };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(CS_KnownProblematicTypeNames))]
+        public Task KnownProblematicTypes_ByValue_Diagnostic_CS(string knownTypeName)
+        {
+            string source = $@"
+public class Testopolis
+{{
+    public void ByValue({{|#0:{knownTypeName} x|}}) {{ }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0);
+
+            return VerifyCS.VerifyAnalyzerAsync(source, diagnostics);
+        }
+
+        [Theory]
+        [MemberData(nameof(VB_KnownProblematicTypeNames))]
+        public Task KnownProblematicTypes_ByValue_Diagnostic_VB(string knownTypeName)
+        {
+            string source = $@"
+Public Class Testopolis
+    Public Sub ByValue({{|#0:x As {knownTypeName}|}})
+    End Sub
+End Class";
+            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0);
+
+            return VerifyVB.VerifyAnalyzerAsync(source, diagnostics);
+        }
+
+        [Theory]
+        [MemberData(nameof(CS_KnownProblematicTypeNames))]
+        public Task KnownProblematicTypes_ByReferenceReadOnly_Diagnostic_CS(string knownTypeName)
+        {
+            string source = $@"
+public class Testopolis
+{{
+    public void ByReferenceReadOnly({{|#0:in {knownTypeName} x|}}) {{ }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0);
+
+            return VerifyCS.VerifyAnalyzerAsync(source, diagnostics);
+        }
+
+        [Theory]
+        [MemberData(nameof(CS_KnownProblematicTypeNames))]
+        public Task KnownProblematicTypes_ByReference_NoDiagnostic_CS(string knownTypeName)
+        {
+            string source = $@"
+public class Testopolis
+{{
+    public void ByReference(ref {knownTypeName} x) {{ }}
+    public void ByOutReference(out {knownTypeName} x) => x = default;
+}}";
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(VB_KnownProblematicTypeNames))]
+        public Task KnownProblematicTypes_ByReference_NoDiagnostic_VB(string knownTypeName)
+        {
+            string source = $@"
+Public Class Testopolis
+    Public Sub ByReference(ByRef x As {knownTypeName})
+    End Sub
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        private static DiagnosticDescriptor Rule => DoNotPassMutableValueTypesByValueAnalyzer.Rule;
     }
 }

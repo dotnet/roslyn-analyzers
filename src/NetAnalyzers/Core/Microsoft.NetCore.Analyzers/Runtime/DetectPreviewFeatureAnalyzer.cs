@@ -15,8 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// <summary>
     /// Detect the use of [RequiresPreviewFeatures] in assemblies that have not opted into preview features
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DetectPreviewFeatureAnalyzer : DiagnosticAnalyzer
+    public abstract class DetectPreviewFeatureAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2252";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DetectPreviewFeaturesTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));

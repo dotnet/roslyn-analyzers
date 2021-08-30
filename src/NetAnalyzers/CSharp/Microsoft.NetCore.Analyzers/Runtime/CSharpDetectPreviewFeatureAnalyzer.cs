@@ -3,10 +3,12 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.NetCore.Analyzers.Runtime;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDetectPreviewFeatureAnalyzer : DetectPreviewFeatureAnalyzer
     {
         protected override SyntaxNode? GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(ISymbol typeSymbol, ISymbol previewInterfaceSymbol)
@@ -20,8 +22,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 if (typeSymbolDefinition is ClassDeclarationSyntax classDeclaration)
                 {
                     SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = classDeclaration.BaseList.Types;
-                    ret = GetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol);
-                    if (ret != null)
+                    if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
                     {
                         return ret;
                     }
@@ -29,8 +30,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 else if (typeSymbolDefinition is StructDeclarationSyntax structDeclaration)
                 {
                     SeparatedSyntaxList<BaseTypeSyntax> baseListTypes = structDeclaration.BaseList.Types;
-                    ret = GetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol);
-                    if (ret != null)
+                    if (TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(baseListTypes, previewInterfaceSymbol, out ret))
                     {
                         return ret;
                     }
@@ -40,24 +40,23 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             return ret;
         }
 
-        private SyntaxNode? GetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(SeparatedSyntaxList<BaseTypeSyntax> baseListTypes, ISymbol previewInterfaceSymbol)
+        private static bool TryGetPreviewInterfaceNodeForClassOrStructImplementingPreviewInterface(SeparatedSyntaxList<BaseTypeSyntax> baseListTypes, ISymbol previewInterfaceSymbol, out SyntaxNode? previewInterfaceNode)
         {
             foreach (BaseTypeSyntax baseTypeSyntax in baseListTypes)
             {
                 if (baseTypeSyntax is SimpleBaseTypeSyntax simpleBaseTypeSyntax)
                 {
                     TypeSyntax type = simpleBaseTypeSyntax.Type;
-                    if (type is IdentifierNameSyntax identifier)
+                    if (type is IdentifierNameSyntax identifier && identifier.Identifier.ValueText == previewInterfaceSymbol.Name)
                     {
-                        if (identifier.Identifier.ValueText == previewInterfaceSymbol.Name)
-                        {
-                            return simpleBaseTypeSyntax;
-                        }
+                        previewInterfaceNode = simpleBaseTypeSyntax;
+                        return true;
                     }
                 }
             }
 
-            return null;
+            previewInterfaceNode = null;
+            return false;
         }
     }
 }

@@ -9,10 +9,10 @@ using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueAnalyzer,
-    Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueFixer>;
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotPassMutableValueTypesByValueFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueAnalyzer,
-    Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueFixer>;
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotPassMutableValueTypesByValueFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -44,9 +44,14 @@ public class Testopolis
 {{
     public void ByValue({{|#0:{knownTypeName} x|}}) {{ }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0);
+            string fixedSource = $@"
+public class Testopolis
+{{
+    public void ByValue(ref {knownTypeName} x) {{ }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
 
-            return VerifyCS.VerifyAnalyzerAsync(source, diagnostics);
+            return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
@@ -58,9 +63,14 @@ Public Class Testopolis
     Public Sub ByValue({{|#0:x As {knownTypeName}|}})
     End Sub
 End Class";
-            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0);
+            string fixedSource = $@"
+Public Class Testopolis
+    Public Sub ByValue(ByRef x As {knownTypeName})
+    End Sub
+End Class";
+            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
 
-            return VerifyVB.VerifyAnalyzerAsync(source, diagnostics);
+            return VerifyVB.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
@@ -72,9 +82,14 @@ public class Testopolis
 {{
     public void ByReferenceReadOnly({{|#0:in {knownTypeName} x|}}) {{ }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0);
+            string fixedSource = $@"
+public class Testopolis
+{{
+    public void ByReferenceReadOnly(ref {knownTypeName} x) {{ }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
 
-            return VerifyCS.VerifyAnalyzerAsync(source, diagnostics);
+            return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]

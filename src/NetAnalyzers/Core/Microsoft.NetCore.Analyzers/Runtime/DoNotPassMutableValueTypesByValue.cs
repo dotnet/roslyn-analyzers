@@ -1,11 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
@@ -28,12 +31,41 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
+        private static readonly HashSet<string> _knownProblematicTypeNames = new()
+        {
+            WellKnownTypeNames.SystemThreadingSpinLock,
+            WellKnownTypeNames.SystemTextJsonUtf8JsonReader
+        };
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
         public override void Initialize(AnalysisContext context)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
+
+            context.RegisterSymbolAction(context =>
+            {
+                var parameter = (IParameterSymbol)context.Symbol;
+
+                if (parameter.RefKind is RefKind.Ref or RefKind.Out || !parameter.IsInSource())
+                    return;
+
+                if (IsProblematicType(parameter.Type))
+                {
+                    foreach (var syntaxReference in parameter.DeclaringSyntaxReferences)
+                    {
+                        var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
+                        var diagnostic = location.CreateDiagnostic(Rule, parameter.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+            }, SymbolKind.Parameter);
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+        private static bool IsProblematicType(ITypeSymbol typeSymbol)
+        {
+            return _knownProblematicTypeNames.Contains(typeSymbol.ToString());
+        }
     }
 }

@@ -643,13 +643,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyDescription">
-        <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. 'Remove()' already checks whether the key exists, and will not throw if it does not.</source>
-        <target state="new">Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. 'Remove()' already checks whether the key exists, and will not throw if it does not.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyFix">
-        <source>Replace 'Dictionary.ContainsKey' condition with just 'Dictionary.Remove'.</source>
-        <target state="new">Replace 'Dictionary.ContainsKey' condition with just 'Dictionary.Remove'.</target>
+        <source>Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.</source>
+        <target state="new">Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotGuardDictionaryRemoveByContainsKeyMessage">
@@ -2010,6 +2005,11 @@
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
         <target state="translated">Удалить избыточный вызов</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveRedundantGuardCall">
+        <source>Remove redundant guard call</source>
+        <target state="new">Remove redundant guard call</target>
         <note />
       </trans-unit>
       <trans-unit id="ReplaceStringLiteralWithCharLiteralCodeActionTitle">

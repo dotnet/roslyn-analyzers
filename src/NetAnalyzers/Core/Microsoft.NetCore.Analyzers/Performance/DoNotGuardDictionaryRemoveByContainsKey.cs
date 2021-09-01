@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotGuardDictionaryRemoveByContainsKey : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1839";
+        internal const string RuleId = "CA1849";
 
         private static readonly LocalizableString s_localizableTitle =
             new LocalizableResourceString(nameof(Resx.DoNotGuardDictionaryRemoveByContainsKeyTitle), Resx.ResourceManager, typeof(Resx));

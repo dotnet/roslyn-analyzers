@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -65,7 +66,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static bool IsProblematicType(ITypeSymbol typeSymbol)
         {
-            return _knownProblematicTypeNames.Contains(typeSymbol.ToString());
+            return _knownProblematicTypeNames.Contains(typeSymbol.ToString()) || IsStructEnumeratorType(typeSymbol);
+        }
+
+        private static bool IsStructEnumeratorType(ITypeSymbol typeSymbol)
+        {
+            return typeSymbol.IsValueType && typeSymbol.BaseType.SpecialType != SpecialType.System_Enum &&
+                typeSymbol.ContainingSymbol is ITypeSymbol &&
+                typeSymbol.ToString().EndsWith("Enumerator", StringComparison.Ordinal);
         }
     }
 }

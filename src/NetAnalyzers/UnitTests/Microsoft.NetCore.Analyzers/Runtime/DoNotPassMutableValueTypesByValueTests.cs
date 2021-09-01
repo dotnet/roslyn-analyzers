@@ -35,6 +35,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             }
         }
 
+        public static IEnumerable<object[]> EnumeratorTypeNames
+        {
+            get
+            {
+                yield return new[] { "Enumerator" };
+                yield return new[] { "FrobbingEnumerator" };
+            }
+        }
+
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
         public Task KnownProblematicTypes_ByValue_Diagnostic_CS(string knownTypeName)
@@ -113,6 +122,160 @@ public class Testopolis
             string source = $@"
 Public Class Testopolis
     Public Sub ByReference(ByRef x As {knownTypeName})
+    End Sub
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(EnumeratorTypeNames))]
+        public Task EnumeratorTypes_ByValue_Diagnostic_CS(string enumeratorTypeName)
+        {
+            string source = $@"
+public class MyList
+{{
+    public struct {enumeratorTypeName} {{ }}
+}}
+
+public class Testopolis
+{{
+    public void ByValue({{|#0:MyList.{enumeratorTypeName} x|}}) {{ }}
+}}";
+            string fixedSource = $@"
+public class MyList
+{{
+    public struct {enumeratorTypeName} {{ }}
+}}
+
+public class Testopolis
+{{
+    public void ByValue(ref MyList.{enumeratorTypeName} x) {{ }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
+
+            return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
+        }
+
+        [Theory]
+        [MemberData(nameof(EnumeratorTypeNames))]
+        public Task EnumeratorTypes_ByValue_Diagnostic_VB(string enumeratorTypeName)
+        {
+            string source = $@"
+Public Class MyList
+    Public Structure {enumeratorTypeName}
+    End Structure
+End Class
+Public Class Testopolis
+    Public Sub ByValue({{|#0:x As MyList.{enumeratorTypeName}|}})
+    End Sub
+End Class";
+            string fixedSource = $@"
+Public Class MyList
+    Public Structure {enumeratorTypeName}
+    End Structure
+End Class
+Public Class Testopolis
+    Public Sub ByValue(ByRef x As MyList.{enumeratorTypeName})
+    End Sub
+End Class";
+            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
+
+            return VerifyVB.VerifyCodeFixAsync(source, diagnostics, fixedSource);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_NonNested_NoDiagnostic_CS()
+        {
+            string source = @"
+public struct Enumerator { }
+
+public class Testopolis
+{
+    public void ByValue(Enumerator x) { }
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_NonNested_NoDiagnostic_VB()
+        {
+            string source = $@"
+Public Structure Enumerator
+End Structure
+
+Public Class Testopolis
+    Public Sub ByValue(x As Enumerator)
+    End Sub
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_Class_NoDiagnostic_CS()
+        {
+            string source = @"
+public class MyList
+{
+    public class Enumerator { }
+}
+
+public class Testopolis
+{
+    public void ByValue(MyList.Enumerator x) { }
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_Class_NoDiagnostic_VB()
+        {
+            string source = @"
+Public Class MyList
+    Public Class Enumerator
+    End Class
+End Class
+
+Public Class Testopolis
+    Public Sub ByValue(x As MyList.Enumerator)
+    End Sub
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_Enum_NoDiagnostic_CS()
+        {
+            string source = @"
+public class MyList
+{
+    public enum Enumerator { None }
+}
+
+public class Testopolis
+{
+    public void ByValue(MyList.Enumerator x) { }
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_Enum_NoDiagnostic_VB()
+        {
+            string source = @"
+Public Class MyList
+    Public Enum Enumerator
+        None
+    End Enum
+End Class
+
+Public Class Testopolis
+    Public Sub ByValue(x As MyList.Enumerator)
     End Sub
 End Class";
 

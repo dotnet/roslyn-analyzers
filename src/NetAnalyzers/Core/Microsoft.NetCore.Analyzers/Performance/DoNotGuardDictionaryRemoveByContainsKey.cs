@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return;
                 }
 
-                if (invocationOperation!.TargetMethod.Name != "ContainsKey")
+                if (invocationOperation == null || invocationOperation.TargetMethod.Name != "ContainsKey")
                 {
                     return;
                 }

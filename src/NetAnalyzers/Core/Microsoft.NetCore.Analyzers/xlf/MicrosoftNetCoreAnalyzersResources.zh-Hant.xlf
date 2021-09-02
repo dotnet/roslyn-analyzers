@@ -2502,6 +2502,26 @@
         <target state="translated">使用 Win32 API 的受控對等項</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyLiteralAlwaysNullDescription">
+        <source>Remove null suppression from any null literals or null-valued default literals, as this defeats the purpose of null suppression.</source>
+        <target state="new">Remove null suppression from any null literals or null-valued default literals, as this defeats the purpose of null suppression.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyLiteralNeverNullDescription">
+        <source>Remove null suppression from any non-null literals and non-null default literals, as these literals are never null and therefore need no null suppression.</source>
+        <target state="new">Remove null suppression from any non-null literals and non-null default literals, as these literals are never null and therefore need no null suppression.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyMessage">
+        <source>There are some cases in which null suppression is unnecessary</source>
+        <target state="new">There are some cases in which null suppression is unnecessary</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyTitle">
+        <source>Use null suppression correctly</source>
+        <target state="new">Use null suppression correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonDescription">
         <source>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</source>
         <target state="translated">非語言的字串比較作業不會將 StringComparison 參數設為 Ordinal 或 OrdinalIgnoreCase。將參數明確設定為 StringComparison.Ordinal 或 StringComparison.OrdinalIgnoreCase 時，程式碼通常會更快速、精確且更可靠。</target>

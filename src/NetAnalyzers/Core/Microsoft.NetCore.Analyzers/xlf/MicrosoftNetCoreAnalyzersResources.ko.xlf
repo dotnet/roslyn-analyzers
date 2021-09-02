@@ -2502,6 +2502,26 @@
         <target state="translated">Win32 API에 있는 동일한 기능의 관리되는 항목을 사용하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyLiteralAlwaysNullDescription">
+        <source>Remove null suppression from any null literals or null-valued default literals, as this defeats the purpose of null suppression.</source>
+        <target state="new">Remove null suppression from any null literals or null-valued default literals, as this defeats the purpose of null suppression.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyLiteralNeverNullDescription">
+        <source>Remove null suppression from any non-null literals and non-null default literals, as these literals are never null and therefore need no null suppression.</source>
+        <target state="new">Remove null suppression from any non-null literals and non-null default literals, as these literals are never null and therefore need no null suppression.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyMessage">
+        <source>There are some cases in which null suppression is unnecessary</source>
+        <target state="new">There are some cases in which null suppression is unnecessary</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseNullSuppressionCorrectlyTitle">
+        <source>Use null suppression correctly</source>
+        <target state="new">Use null suppression correctly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonDescription">
         <source>A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.</source>
         <target state="translated">비언어적 문자열 비교 작업에서는 StringComparison 매개 변수를 서수 또는 OrdinalIgnoreCase로 설정하지 않습니다. 매개 변수를 명시적으로 StringComparison.Ordinal 또는 StringComparison.OrdinalIgnoreCase로 설정하면 코드의 속도가 빨라지고, 정확도와 신뢰도가 더 높아집니다.</target>

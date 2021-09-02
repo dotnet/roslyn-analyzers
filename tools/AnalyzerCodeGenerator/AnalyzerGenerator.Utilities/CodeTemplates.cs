@@ -34,9 +34,9 @@ namespace {0}.Analyzers
     {{
         internal const string RuleId = ""{3}"";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Title), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Title));
         {5}
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Description), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Description));
         {6}
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create({7});
@@ -53,7 +53,7 @@ namespace {0}.Analyzers
         // 2: Name
         private const string _messageTemplate =
 @"
-        private static readonly LocalizableString s_localizableMessage{0} = new LocalizableResourceString(nameof({1}AnalyzersResources.{2}Message{0}), {1}AnalyzersResources.ResourceManager, typeof({1}AnalyzersResources));";
+        private static readonly LocalizableString s_localizableMessage{0} = CreateLocalizableResourceString(nameof({1}AnalyzersResources.{2}Message{0}));";
 
         // 0: MessageName
         // 1: Category

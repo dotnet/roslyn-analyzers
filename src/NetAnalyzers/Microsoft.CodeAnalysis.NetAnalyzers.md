@@ -1332,10 +1332,6 @@ Marshalling of 'StringBuilder' always creates a native buffer copy, resulting in
 |CodeFix|False|
 ---
 
-## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'
-
-Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
-
 ## [CA1839](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839): Use 'Environment.ProcessPath'
 
 'Environment.ProcessPath' is simpler and faster than 'Process.GetCurrentProcess().MainModule.FileName'.
@@ -1454,6 +1450,18 @@ For improved performance, use the LoggerMessage delegates.
 |Enabled|True|
 |Severity|Hidden|
 |CodeFix|False|
+---
+
+## [CA1849](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849): Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'
+
+Do not guard 'Dictionary.Remove(key)' with 'Dictionary.ContainsKey(key)'. The former already checks whether the key exists, and will not throw if it does not.
+
+|Item|Value|
+|-|-|
+|Category|Performance|
+|Enabled|True|
+|Severity|Info|
+|CodeFix|True|
 ---
 
 ## [CA2000](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000): Dispose objects before losing scope

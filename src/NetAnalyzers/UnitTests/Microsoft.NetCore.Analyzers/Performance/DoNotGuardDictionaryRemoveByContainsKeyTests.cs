@@ -17,6 +17,18 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     {
         #region Tests
         [Fact]
+        public async Task NonInvocationConditionDoesNotThrow_CS()
+        {
+            string source = CSUsings + CSNamespaceAndClassStart + @"
+        public MyClass()
+        {
+            if (!true) { }
+        }" + CSNamespaceAndClassEnd;
+
+            await VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
         public async Task RemoveIsTheOnlyStatement_OffersFixer_CS()
         {
             string source = CSUsings + CSNamespaceAndClassStart + @"

@@ -173,7 +173,7 @@ namespace {0}.Analyzers
     /// </summary>
     public abstract class {1}Fixer : CodeFixProvider
     {{
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create({1}Analyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create({1}Analyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {{

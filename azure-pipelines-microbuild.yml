@@ -10,6 +10,13 @@ variables:
     value: Roslyn
   - name: _DotNetArtifactsCategory
     value: .NETCore
+  - name: _DotNetValidationArtifactsCategory
+    value: .NETCoreValidation
+  - group: DotNet-Roslyn-SDLValidation-Params
+  - group: DotNet-Blob-Feed
+  - group: DotNet-Symbol-Server-Pats
+  - group: DotNet-Versions-Publish
+  - group: ManagedLanguageSecrets
 
 stages:
 - stage: build

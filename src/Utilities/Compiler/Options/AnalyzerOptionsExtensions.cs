@@ -243,6 +243,13 @@ namespace Analyzer.Utilities
             Compilation compilation)
             => options.GetSymbolNamesWithValueOption<Unit>(EditorConfigOptionNames.AdditionalStringFormattingMethods, rule, tree, compilation, static name => new SymbolNamesWithValueOption<Unit>.NameParts(name, Unit.Default), namePrefix: "M:");
 
+        public static SymbolNamesWithValueOption<Unit> GetAdditionalMutableValueTypesOption(
+            this AnalyzerOptions options,
+            DiagnosticDescriptor rule,
+            SyntaxTree tree,
+            Compilation compilation)
+            => options.GetSymbolNamesWithValueOption<Unit>(EditorConfigOptionNames.AdditionalMutableValueTypes, rule, tree, compilation, static name => new SymbolNamesWithValueOption<Unit>.NameParts(name, Unit.Default), namePrefix: "T:");
+
         public static bool IsConfiguredToSkipAnalysis(
             this AnalyzerOptions options,
             DiagnosticDescriptor rule,

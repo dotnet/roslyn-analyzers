@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Xunit;
 
@@ -41,6 +42,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             {
                 yield return new[] { "Enumerator" };
                 yield return new[] { "FrobbingEnumerator" };
+            }
+        }
+
+        public static IEnumerable<object[]> EditorConfigText_SingleType
+        {
+            get
+            {
+                yield return new[] { $"dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = MyMutableStruct" };
+                yield return new[] { $"dotnet_code_quality.{DoNotPassMutableValueTypesByValueAnalyzer.RuleId}.{EditorConfigOptionNames.AdditionalMutableValueTypes} = MyMutableStruct" };
+                yield return new[] { $"dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = T:MyMutableStruct" };
             }
         }
 
@@ -280,6 +291,76 @@ Public Class Testopolis
 End Class";
 
             return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Theory]
+        [MemberData(nameof(EditorConfigText_SingleType))]
+        public Task EditorConfigTypes_SingleType_Diagnostic_CS(string editorConfigText)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+public struct MyMutableStruct {{ }}
+public class Testopolis
+{{
+    public void ByValue({{|#0:MyMutableStruct x|}}) {{ }}
+}}"
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+[*]
+{editorConfigText}
+")
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("MyMutableStruct")
+                    }
+                }
+            };
+
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [MemberData(nameof(EditorConfigText_SingleType))]
+        public Task EditorConfigTypes_SingleType_Diagnostic_VB(string editorConfigText)
+        {
+            var test = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+Public Structure MyMutableStruct
+End Structure
+
+Public Class Testopolis
+    Public Sub ByValue({{|#0:x As MyMutableStruct|}})
+    End Sub
+End Class"
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+[*]
+{editorConfigText}
+")
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments("MyMutableStruct")
+                    }
+                }
+            };
+
+            return test.RunAsync();
         }
 
         private static DiagnosticDescriptor Rule => DoNotPassMutableValueTypesByValueAnalyzer.Rule;

@@ -38,42 +38,48 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             WellKnownTypeNames.SystemTextJsonUtf8JsonReader
         };
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
+            context.RegisterSymbolAction(AnalyzeParameterSymbol, SymbolKind.Parameter);
+        }
 
-            context.RegisterSymbolAction(context =>
+        private static void AnalyzeParameterSymbol(SymbolAnalysisContext context)
+        {
+            var parameter = (IParameterSymbol)context.Symbol;
+
+            if (parameter.RefKind is RefKind.Ref or RefKind.Out || !parameter.IsInSource())
+                return;
+
+            if (_knownProblematicTypeNames.Contains(parameter.Type.ToString()) ||
+                IsStructEnumeratorType(parameter.Type) ||
+                parameter.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(Rule, syntaxReference.SyntaxTree, context.Compilation).Contains(parameter.Type)))
             {
-                var parameter = (IParameterSymbol)context.Symbol;
-
-                if (parameter.RefKind is RefKind.Ref or RefKind.Out || !parameter.IsInSource())
-                    return;
-
-                if (IsProblematicType(parameter.Type))
+                foreach (var syntaxReference in parameter.DeclaringSyntaxReferences)
                 {
-                    foreach (var syntaxReference in parameter.DeclaringSyntaxReferences)
-                    {
-                        var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
-                        var diagnostic = location.CreateDiagnostic(Rule, parameter.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
-                        context.ReportDiagnostic(diagnostic);
-                    }
+                    var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
+                    var diagnostic = location.CreateDiagnostic(Rule, parameter.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
+                    context.ReportDiagnostic(diagnostic);
                 }
-            }, SymbolKind.Parameter);
-        }
+            }
+            return;
 
-        private static bool IsProblematicType(ITypeSymbol typeSymbol)
-        {
-            return _knownProblematicTypeNames.Contains(typeSymbol.ToString()) || IsStructEnumeratorType(typeSymbol);
-        }
+            //  Local functions
 
-        private static bool IsStructEnumeratorType(ITypeSymbol typeSymbol)
-        {
-            return typeSymbol.IsValueType && typeSymbol.BaseType.SpecialType != SpecialType.System_Enum &&
-                typeSymbol.ContainingSymbol is ITypeSymbol &&
-                typeSymbol.ToString().EndsWith("Enumerator", StringComparison.Ordinal);
+            //  We report on any type that is
+            //  1) A value type
+            //  2) Not an enum
+            //  3) A nested type
+            //  4) Ends with "Enumerator"
+            static bool IsStructEnumeratorType(ITypeSymbol typeSymbol)
+            {
+                return typeSymbol.IsValueType && typeSymbol.BaseType.SpecialType != SpecialType.System_Enum &&
+                    typeSymbol.ContainingSymbol is ITypeSymbol &&
+                    typeSymbol.ToString().EndsWith("Enumerator", StringComparison.Ordinal);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,15 +34,15 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             foreach (var diagnostic in context.Diagnostics)
             {
                 AddFix(
-                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
+                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.CSharp),
                     context, document, node, diagnostic, LanguageNames.CSharp);
 
                 AddFix(
-                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
+                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_1, LanguageNames.VisualBasic),
                     context, document, node, diagnostic, LanguageNames.VisualBasic);
 
                 AddFix(
-                    string.Format(CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
+                    string.Format(CultureInfo.CurrentCulture, CodeAnalysisDiagnosticsResources.AddGeneratorAttribute_2, LanguageNames.CSharp, LanguageNames.VisualBasic),
                     context, document, node, diagnostic, LanguageNames.CSharp, LanguageNames.VisualBasic);
             }
         }

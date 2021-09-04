@@ -67,6 +67,16 @@
         <target state="translated">避免使用 out 參數</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesDescription">
+        <source>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDecending'.</source>
+        <target state="new">Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDecending'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesTitle">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">在 catch 陳述式中捕捉到了 System.Exception 或 System.SystemException 等一般例外狀況或不允許的例外狀況類型，或是使用了一般 catch 子句。不應捕捉到一般例外狀況。</target>

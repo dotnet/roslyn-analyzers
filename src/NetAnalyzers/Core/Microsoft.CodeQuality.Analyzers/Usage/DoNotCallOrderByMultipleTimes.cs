@@ -2,8 +2,10 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Usage
 {
@@ -16,20 +18,68 @@ namespace Microsoft.CodeQuality.Analyzers.Usage
 
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
-            "",
-            CreateLocalizableResourceString(""),
-            DiagnosticCategory.Maintainability,
-            RuleLevel.Disabled,
+            CreateLocalizableResourceString(nameof(DoNotCallOrderByMultipleTimesTitle)),
+            CreateLocalizableResourceString(nameof(DoNotCallOrderByMultipleTimesDescription)),
+            DiagnosticCategory.Usage,
+            RuleLevel.BuildWarning,
             description: null,
             isPortedFxCopRule: false,
-            isDataflowRule: true);
+            isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
-            = ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {
-            throw new System.NotImplementedException();
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            context.RegisterCompilationStartAction(OnCompilationStart);
+        }
+
+        private static void OnCompilationStart(CompilationStartAnalysisContext context)
+        {
+            var compilation = context.Compilation;
+
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable, out var enumerableType))
+                return;
+
+            var analyzeOperation = new AnalyzeOperation(enumerableType);
+
+            context.RegisterOperationAction(ctx => analyzeOperation.Analyze(ctx),
+                                            OperationKind.Invocation);
+        }
+
+        private class AnalyzeOperation
+        {
+            public INamedTypeSymbol EnumerableType { get; }
+            public IInvocationOperation? PreviousOrderByInvocation { get; private set; }
+
+            public AnalyzeOperation(INamedTypeSymbol enumerableType)
+            {
+                EnumerableType = enumerableType;
+            }
+
+            public void Analyze(OperationAnalysisContext context)
+            {
+                if (context.Operation is not IInvocationOperation invocationOperation)
+                    return;
+
+                if (invocationOperation.TargetMethod.ReceiverType != EnumerableType)
+                    return;
+
+                if (invocationOperation.TargetMethod.Name is not "OrderBy" and not "OrderByDescending")
+                    return;
+
+                if (PreviousOrderByInvocation is null)
+                {
+                    PreviousOrderByInvocation = invocationOperation;
+                }
+                else
+                {
+                    context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule));
+                }
+            }
         }
     }
 }

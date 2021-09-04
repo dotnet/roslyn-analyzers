@@ -187,10 +187,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         CaptureOrReportTryComputeHashInvocationOperation(context, invocationOperation);
                     }
-                    else if (invocationOperation.TargetMethod.Equals(tryComputeHashMethodBaseType, SymbolEqualityComparer.Default))
-                    {
-                        CaptureOrReportTryComputeHashInvocationOperation(context, invocationOperation);
-                    }
                     else if (invocationOperation.TargetMethod.Equals(disposeHashMethodBaseType, SymbolEqualityComparer.Default) &&
                         invocationOperation.Instance is ILocalReferenceOperation)
                     {

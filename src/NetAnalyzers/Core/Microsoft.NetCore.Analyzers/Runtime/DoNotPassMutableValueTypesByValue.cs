@@ -1,15 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
 using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
@@ -32,11 +29,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        private static readonly HashSet<string> _knownProblematicTypeNames = new()
-        {
-            WellKnownTypeNames.SystemThreadingSpinLock,
-            WellKnownTypeNames.SystemTextJsonUtf8JsonReader
-        };
+        private static readonly ImmutableHashSet<string> _wellKnownMutableValueTypes = ImmutableHashSet.Create(
+            WellKnownTypeNames.SystemTextJsonUtf8JsonReader,
+            WellKnownTypeNames.SystemThreadingSpinLock);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
@@ -47,6 +42,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterSymbolAction(AnalyzeParameterSymbol, SymbolKind.Parameter);
         }
 
+        //  We flag any parameter that:
+        //  1) Is not a ref or out parameter
+        //  2) Is in source code
+        //  3) Who's type satisfies at least one of the following:
+        //      a) Is on our hard-coded list of well-known mutable value types
+        //      b) Is added as a mutable value type via .editorconfig
+        //      c) Is a suspected struct enumerator type, which is any type that:
+        //          - Is a value type
+        //          - Is not an enum
+        //          - Is a nested type
+        //          - Name ends with "Enumerator"
         private static void AnalyzeParameterSymbol(SymbolAnalysisContext context)
         {
             var parameter = (IParameterSymbol)context.Symbol;
@@ -54,7 +60,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (parameter.RefKind is RefKind.Ref or RefKind.Out || !parameter.IsInSource())
                 return;
 
-            if (_knownProblematicTypeNames.Contains(parameter.Type.ToString()) ||
+            if (_wellKnownMutableValueTypes.Contains(parameter.Type.ToString()) ||
                 IsStructEnumeratorType(parameter.Type) ||
                 parameter.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(Rule, syntaxReference.SyntaxTree, context.Compilation).Contains(parameter.Type)))
             {
@@ -69,11 +75,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             //  Local functions
 
-            //  We report on any type that is
-            //  1) A value type
-            //  2) Not an enum
-            //  3) A nested type
-            //  4) Ends with "Enumerator"
             static bool IsStructEnumeratorType(ITypeSymbol typeSymbol)
             {
                 return typeSymbol.IsValueType && typeSymbol.BaseType.SpecialType != SpecialType.System_Enum &&

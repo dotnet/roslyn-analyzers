@@ -2443,8 +2443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseSpanClearInsteadOfFillTitle">
-        <source>Use Clear instead of Fill with default value</source>
-        <target state="new">Use Clear instead of Fill with default value</target>
+        <source>Use 'Clear' instead of 'Fill' with default value</source>
+        <target state="new">Use 'Clear' instead of 'Fill' with default value</target>
         <note />
       </trans-unit>
       <trans-unit id="UseStringEqualsOverStringCompareCodeFixTitle">

@@ -222,6 +222,27 @@ class C
             await TestCS(source);
         }
 
+        [Fact]
+        public async Task TestDerived()
+        {
+            string source = @"
+
+using System;
+
+class Base { }
+class Derived : Base { }
+
+class C
+{
+    void M(Span<Base> span)
+    {
+        [|span.Fill(default(Derived))|];
+    }
+}
+";
+            await TestCS(source);
+        }
+
         private static Task TestCS(string source, string corrected)
         {
             var test = new VerifyCS.Test

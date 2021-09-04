@@ -53,29 +53,24 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
+            var spanFillMethod = spanType.GetMembers(FillMethod)
+                .OfType<IMethodSymbol>()
+                .FirstOrDefault();
+
+            if (spanFillMethod?.Parameters.Length != 1)
+            {
+                return;
+            }
+
             context.RegisterOperationAction(
                 context =>
                 {
                     var invocation = (IInvocationOperation)context.Operation;
 
-                    if (!SymbolEqualityComparer.Default.Equals((invocation.Instance.Type as INamedTypeSymbol)?.ConstructedFrom, spanType))
+                    if (SymbolEqualityComparer.Default.Equals(invocation.TargetMethod.OriginalDefinition, spanFillMethod)
+                        && IsDefaultValue(invocation.Arguments[0]))
                     {
-                        return;
-                    }
-
-                    if (invocation.TargetMethod.Name != FillMethod)
-                    {
-                        return;
-                    }
-
-                    if (invocation.Arguments.Length != 1)
-                    {
-                        return;
-                    }
-
-                    if (IsDefaultValue(invocation.Arguments[0]))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(s_Rule, invocation.Syntax.GetLocation()));
+                        context.ReportDiagnostic(invocation.CreateDiagnostic(s_Rule));
                     }
                 },
                 OperationKind.Invocation);

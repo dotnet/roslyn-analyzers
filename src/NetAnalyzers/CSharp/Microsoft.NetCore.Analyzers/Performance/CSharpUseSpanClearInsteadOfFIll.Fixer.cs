@@ -16,7 +16,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class CSharpUseSpanClearInsteadOfFillFixer : UseSpanClearInsteadOfFillFixer
     {
-        protected override SyntaxNode? GetInvocationTarget(SyntaxNode node)
+        protected override SyntaxNode? GetInvocationTarget(SyntaxNode? node)
         {
             if (node is InvocationExpressionSyntax
                 {

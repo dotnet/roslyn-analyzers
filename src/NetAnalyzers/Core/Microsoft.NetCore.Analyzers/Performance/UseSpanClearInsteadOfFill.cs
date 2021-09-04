@@ -48,17 +48,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             var compilation = context.Compilation;
-            var spanType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1);
-
-            if (spanType == null)
+            if (!compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSpan1, out var spanType))
             {
                 return;
             }
 
             context.RegisterOperationAction(
-                operationContext =>
+                context =>
                 {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
+                    var invocation = (IInvocationOperation)context.Operation;
 
                     if (!SymbolEqualityComparer.Default.Equals((invocation.Instance.Type as INamedTypeSymbol)?.ConstructedFrom, spanType))
                     {
@@ -77,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                     if (IsDefaultValue(invocation.Arguments[0]))
                     {
-                        operationContext.ReportDiagnostic(Diagnostic.Create(s_Rule, invocation.Syntax.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(s_Rule, invocation.Syntax.GetLocation()));
                     }
                 },
                 OperationKind.Invocation);

@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         editor.ReplaceNode(node, invocation);
                         return editor.GetChangedDocument();
                     },
-                    equivalenceKey: diagnostic.Id),
+                    equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseSpanClearInsteadOfFillCodeFixTitle)),
                 diagnostic);
         }
 

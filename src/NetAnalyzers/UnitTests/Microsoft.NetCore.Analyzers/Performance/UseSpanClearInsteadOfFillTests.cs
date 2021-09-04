@@ -220,7 +220,7 @@ class C
             await TestCS(source);
         }
 
-        private static Task TestCS(string source, string corrected, params DiagnosticResult[] expected)
+        private static Task TestCS(string source, string corrected)
         {
             var test = new VerifyCS.Test
             {
@@ -230,11 +230,10 @@ class C
                 FixedCode = corrected,
             };
 
-            test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync();
         }
 
-        private static Task TestCS(string source, params DiagnosticResult[] expected)
+        private static Task TestCS(string source)
         {
             var test = new VerifyCS.Test
             {
@@ -243,7 +242,6 @@ class C
                 LanguageVersion = LanguageVersion.Preview,
             };
 
-            test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync();
         }
     }

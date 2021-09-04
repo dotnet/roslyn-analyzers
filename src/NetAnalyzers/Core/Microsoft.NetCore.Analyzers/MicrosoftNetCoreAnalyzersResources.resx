@@ -1684,6 +1684,6 @@
     <value>Use 'Clear' instead of 'Fill' with default value for spans</value>
   </data>
   <data name="UseSpanClearInsteadOfFillTitle" xml:space="preserve">
-    <value>Use Clear instead of Fill with default value</value>
+    <value>Use 'Clear' instead of 'Fill' with default value</value>
   </data>
 </root>

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DetectPreviewFeatureAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDetectPreviewFeatureAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
@@ -15,15 +15,45 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             return new VerifyCS.Test
             {
+                ReferenceAssemblies = AdditionalMetadataReferences.Net60,
                 LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp10,
                 TestState =
                 {
                     Sources =
                     {
                         csInput
-                    }
+                    },
                 },
+            };
+        }
+
+        private static VerifyCS.Test SetupDependencyAndTestCSWithOneSourceFile(string csInput, string csDependencyCode)
+        {
+            return new VerifyCS.Test
+            {
                 ReferenceAssemblies = AdditionalMetadataReferences.Net60,
+                LanguageVersion = CodeAnalysis.CSharp.LanguageVersion.CSharp10,
+                TestState =
+                {
+                    Sources =
+                    {
+                        csInput
+                    },
+                    AdditionalProjects =
+                    {
+                        ["PreviewAssembly"] =
+                        {
+                            Sources =
+                            {
+                                ("/PreviewAssembly/AssemblyInfo.g.cs", csDependencyCode)
+                            },
+                        },
+                    },
+                    AdditionalProjectReferences =
+                    {
+                        "PreviewAssembly",
+                    },
+                },
             };
         }
 

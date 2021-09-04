@@ -377,7 +377,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 static PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>> CompileDisposeMap(PooledConcurrentSet<IInvocationOperation> disposeSet, CancellationToken cancellationToken)
                 {
                     var map = PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>.GetInstance(SymbolEqualityComparer.Default);
-                    if(disposeSet.IsEmpty)
+                    if (disposeSet.IsEmpty)
                     {
                         return map;
                     }
@@ -412,7 +412,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 static ImmutableArray<IInvocationOperation> GetValueOrEmtpty(PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>> dictionary, ILocalSymbol key)
                 {
-                    if(dictionary.TryGetValue(key, out var value))
+                    if (dictionary.TryGetValue(key, out var value))
                     {
                         return value;
                     }
@@ -427,7 +427,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     // we find the symbol whose local ref count matches the count of computeHash invoked
                     var hashSet = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
-                    if(map.IsEmpty || computeHashMap.IsEmpty)
+                    if (map.IsEmpty || computeHashMap.IsEmpty)
                     {
                         return hashSet;
                     }
@@ -605,7 +605,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
             hashCreationLocationIndex = builder.Count;
             builder.Add(nodeToRemove);
-
 
             foreach (var disposeInvocation in disposeArray)
             {

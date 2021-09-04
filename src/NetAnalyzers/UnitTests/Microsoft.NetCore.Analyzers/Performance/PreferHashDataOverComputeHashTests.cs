@@ -932,7 +932,6 @@ End Class
             }
         }
 
-
         [Fact]
         public async Task CSharpCreateHelperUsingStatement2Case()
         {
@@ -3008,6 +3007,5 @@ End Class
                         .WithLocation(15)
                     };
         }
-
     }
 }

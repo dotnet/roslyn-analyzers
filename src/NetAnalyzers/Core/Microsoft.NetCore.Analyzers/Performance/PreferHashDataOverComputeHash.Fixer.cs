@@ -54,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            if(!int.TryParse(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey], out int hashCreationIndex))
+            if (!int.TryParse(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey], out int hashCreationIndex))
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
             var disposeNodes = new SyntaxNode[disposeCount];
 
-            for(int i = 0; i < disposeNodes.Length; i++)
+            for (int i = 0; i < disposeNodes.Length; i++)
             {
                 var node = root.FindNode(additionalLocations[hashCreationIndex + i + 1].SourceSpan);
                 if (node is null)
@@ -232,7 +232,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 Document document,
                 string hashTypeName,
                 SyntaxNode computeHashNode,
-                PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, 
+                PreferHashDataOverComputeHashAnalyzer.ComputeType computeType,
                 SyntaxNode[] argNode,
                 SyntaxNode hashCreationNode,
                 SyntaxNode[] disposeNodes) : base(document, hashTypeName, computeHashNode, computeType, argNode)

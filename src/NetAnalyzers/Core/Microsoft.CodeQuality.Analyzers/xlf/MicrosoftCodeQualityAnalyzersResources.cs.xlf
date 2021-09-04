@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">Třída deklaruje a implementuje pole instance, které je typu System.IDisposable, přičemž tato třída neimplementuje IDisposable. Třída, která deklaruje pole IDisposable nepřímo, vlastní nespravovaný prostředek a měla by implementovat rozhraní IDisposable.</target>
+        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface</source>
+        <target state="needs-review-translation">Třída deklaruje a implementuje pole instance, které je typu System.IDisposable, přičemž tato třída neimplementuje IDisposable. Třída, která deklaruje pole IDisposable nepřímo, vlastní nespravovaný prostředek a měla by implementovat rozhraní IDisposable.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">

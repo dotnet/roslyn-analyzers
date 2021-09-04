@@ -121,7 +121,7 @@
     <value>Types that own disposable fields should be disposable</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableDescription" xml:space="preserve">
-    <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</value>
+    <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface</value>
   </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking" xml:space="preserve">
     <value>Type '{0}' owns disposable field(s) '{1}' but is not disposable</value>

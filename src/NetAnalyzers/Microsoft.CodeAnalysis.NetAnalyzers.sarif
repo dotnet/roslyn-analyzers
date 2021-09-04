@@ -12,7 +12,7 @@
         "CA1001": {
           "id": "CA1001",
           "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001",
           "properties": {
@@ -5070,7 +5070,7 @@
         "CA1001": {
           "id": "CA1001",
           "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface",
           "defaultLevel": "hidden",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001",
           "properties": {

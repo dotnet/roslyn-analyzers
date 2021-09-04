@@ -14,7 +14,7 @@ When a static member of a generic type is called, the type argument must be spec
 
 ## [CA1001](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1001): Types that own disposable fields should be disposable
 
-A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.
+A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface
 
 |Item|Value|
 |-|-|

@@ -263,8 +263,8 @@
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableDescription">
-        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</source>
-        <target state="translated">Bir sınıf, System.IDisposable türü olan bir örnek alanını bildirip uygular ve sınıf tarafından IDisposable uygulanmaz. IDisposable alanı bildiren bir sınıf dolaylı olarak yönetilmeyen bir kaynağa sahip olur ve IDisposable arabirimini uygulamalıdır.</target>
+        <source>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface</source>
+        <target state="needs-review-translation">Bir sınıf, System.IDisposable türü olan bir örnek alanını bildirip uygular ve sınıf tarafından IDisposable uygulanmaz. IDisposable alanı bildiren bir sınıf dolaylı olarak yönetilmeyen bir kaynağa sahip olur ve IDisposable arabirimini uygulamalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking">

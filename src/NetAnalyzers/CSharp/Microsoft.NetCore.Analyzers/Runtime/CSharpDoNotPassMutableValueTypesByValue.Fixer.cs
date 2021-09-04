@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using Microsoft.NetCore.Analyzers.Runtime;
+using System.Collections.Generic;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 {
@@ -28,6 +29,21 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             var newModifiers = (inModifierToken.HasValue ? cast.Modifiers.Remove(inModifierToken.Value) : cast.Modifiers).Add(refModifierToken);
 
             return cast.WithModifiers(newModifiers);
+        }
+
+        private protected override SyntaxNode ConvertToByRefArgument(SyntaxNode argumentNode)
+        {
+            var cast = (ArgumentSyntax)argumentNode;
+            var refKindKeywordToken = SyntaxFactory.Token(SyntaxKind.RefKeyword);
+
+            var result = cast.WithRefKindKeyword(refKindKeywordToken);
+            return result;
+        }
+
+        private protected override IEnumerable<SyntaxNode> GetArgumentNodes(SyntaxNode root)
+        {
+            return root.DescendantNodes(x => true)
+                .Where(node => node is ArgumentSyntax);
         }
     }
 }

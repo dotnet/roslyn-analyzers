@@ -16,6 +16,14 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
 
             Return cast.AddModifiers(byrefModifierToken)
         End Function
+
+        Private Protected Overrides Function GetArgumentNodes(root As SyntaxNode) As IEnumerable(Of SyntaxNode)
+            Return root.DescendantNodes(Function(x) True).Where(Function(node) TryCast(node, ArgumentSyntax) IsNot Nothing)
+        End Function
+
+        Private Protected Overrides Function ConvertToByRefArgument(argumentNode As SyntaxNode) As SyntaxNode
+            Return argumentNode
+        End Function
     End Class
 End Namespace
 

@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -45,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             }
         }
 
-        public static IEnumerable<object[]> EditorConfigText_SingleType
+        public static IEnumerable<object[]> EditorConfigText
         {
             get
             {
@@ -294,8 +293,8 @@ End Class";
         }
 
         [Theory]
-        [MemberData(nameof(EditorConfigText_SingleType))]
-        public Task EditorConfigTypes_SingleType_Diagnostic_CS(string editorConfigText)
+        [MemberData(nameof(EditorConfigText))]
+        public Task EditorConfigTypes_Diagnostic_CS(string editorConfigText)
         {
             var test = new VerifyCS.Test
             {
@@ -328,8 +327,8 @@ public class Testopolis
         }
 
         [Theory]
-        [MemberData(nameof(EditorConfigText_SingleType))]
-        public Task EditorConfigTypes_SingleType_Diagnostic_VB(string editorConfigText)
+        [MemberData(nameof(EditorConfigText))]
+        public Task EditorConfigTypes_Diagnostic_VB(string editorConfigText)
         {
             var test = new VerifyVB.Test
             {
@@ -356,6 +355,111 @@ End Class"
                     ExpectedDiagnostics =
                     {
                         VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments("MyMutableStruct")
+                    }
+                }
+            };
+
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("fieldArgument")]
+        [InlineData("localArgument")]
+        public Task LValueArguments_AreFixed_CS(string argument)
+        {
+            string source = $@"
+using System.Threading;
+
+public class Testopolis
+{{
+    private SpinLock fieldArgument;
+    
+    public void ByValue({{|#0:SpinLock x|}}) {{ }}
+
+    public void Consumer()
+    {{
+        SpinLock localArgument = new SpinLock();
+        ByValue({argument});
+    }}
+}}";
+            string fixedSource = $@"
+using System.Threading;
+
+public class Testopolis
+{{
+    private SpinLock fieldArgument;
+    
+    public void ByValue(ref SpinLock x) {{ }}
+
+    public void Consumer()
+    {{
+        SpinLock localArgument = new SpinLock();
+        ByValue(ref {argument});
+    }}
+}}";
+            var diagnostics = VerifyCS.Diagnostic(Rule).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock).WithLocation(0);
+
+            return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
+        }
+
+        [Theory]
+        [InlineData("Factory()")]
+        [InlineData("Property")]
+        [InlineData("readOnlyField")]
+        public Task RValueArguments_AreNotFixed_CS(string argument)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+using System.Threading;
+
+public class Testopolis
+{{
+    private SpinLock Factory() => new SpinLock();
+    private SpinLock Property {{ get; set; }}
+    private readonly SpinLock readOnlyField;
+
+    public void ByValue({{|#0:SpinLock x|}}) {{ }}
+
+    public void Consumer()
+    {{
+        ByValue({argument});
+    }}
+}}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(Rule).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock).WithLocation(0)
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+$@"
+using System.Threading;
+
+public class Testopolis
+{{
+    private SpinLock Factory() => new SpinLock();
+    private SpinLock Property {{ get; set; }}
+    private readonly SpinLock readOnlyField;
+
+    public void ByValue(ref SpinLock x) {{ }}
+
+    public void Consumer()
+    {{
+        ByValue({{|#0:{argument}|}});
+    }}
+}}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        DiagnosticResult.CompilerError("CS1620").WithLocation(0)
                     }
                 }
             };

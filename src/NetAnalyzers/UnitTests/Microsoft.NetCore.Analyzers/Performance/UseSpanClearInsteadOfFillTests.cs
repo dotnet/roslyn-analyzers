@@ -58,6 +58,8 @@ class C
         [InlineData("DateTime", "default(DateTime)")]
         [InlineData("DayOfWeek", "DayOfWeek.Sunday")]
         [InlineData("DayOfWeek", "(DayOfWeek)0")]
+        [InlineData("char", "'\\0'")]
+        [InlineData("bool", "false")]
         public async Task TestDefaultValue(string type, string value)
         {
             string source = $@"

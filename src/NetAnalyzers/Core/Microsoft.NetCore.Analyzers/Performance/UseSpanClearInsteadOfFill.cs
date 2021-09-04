@@ -103,7 +103,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
 #pragma warning disable IDE0004 // Remove Unnecessary Cast - false positive
                     case (byte)0 or (short)0 or (int)0 or (long)0 or
-                        (sbyte)0 or (ushort)0 or (uint)0 or (ulong)0:
+                        (sbyte)0 or (ushort)0 or (uint)0 or (ulong)0 or
+                        false or '\0':
                         return true;
 #pragma warning restore IDE0004 // Remove Unnecessary Cast
 

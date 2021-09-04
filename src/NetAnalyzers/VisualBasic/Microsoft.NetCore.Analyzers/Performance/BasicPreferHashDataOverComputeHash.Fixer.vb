@@ -16,9 +16,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                                                       computeHashNode As SyntaxNode,
                                                       computeType As PreferHashDataOverComputeHashAnalyzer.ComputeType,
                                                       argNodes As SyntaxNode(),
-                                                      nodeToRemove As SyntaxNode,
+                                                      createHashNode As SyntaxNode,
+                                                      disposeNodes As SyntaxNode(),
                                                       <NotNullWhen(True)> ByRef codeAction As HashDataCodeAction) As Boolean
-            Dim usingStatement = TryCast(nodeToRemove, UsingStatementSyntax)
+            Dim usingStatement = TryCast(createHashNode, UsingStatementSyntax)
             If usingStatement IsNot Nothing Then
                 Dim usingBlock = TryCast(usingStatement.Parent, UsingBlockSyntax)
                 If usingBlock IsNot Nothing Then
@@ -29,10 +30,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 End If
             End If
 
-            Dim localDeclarationStatement = TryCast(nodeToRemove, LocalDeclarationStatementSyntax)
-            Dim variableDeclaratorSyntax = TryCast(nodeToRemove, VariableDeclaratorSyntax)
+            Dim localDeclarationStatement = TryCast(createHashNode, LocalDeclarationStatementSyntax)
+            Dim variableDeclaratorSyntax = TryCast(createHashNode, VariableDeclaratorSyntax)
             If localDeclarationStatement IsNot Nothing Or variableDeclaratorSyntax IsNot Nothing Then
-                codeAction = New RemoveNodeHashDataCodeAction(document, hashTypeName, computeHashNode, computeType, argNodes, nodeToRemove)
+                codeAction = New RemoveNodeHashDataCodeAction(document, hashTypeName, computeHashNode, computeType, argNodes, createHashNode, disposeNodes)
                 Return True
             End If
             Return False

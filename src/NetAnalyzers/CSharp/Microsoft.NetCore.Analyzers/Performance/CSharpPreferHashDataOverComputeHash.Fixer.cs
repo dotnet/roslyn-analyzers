@@ -21,10 +21,11 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             SyntaxNode computeHashNode,
             PreferHashDataOverComputeHashAnalyzer.ComputeType computeType,
             SyntaxNode[] argNodes,
-            SyntaxNode nodeToRemove,
+            SyntaxNode createHashNode,
+            SyntaxNode[] disposeNodes,
             [NotNullWhen(true)] out HashDataCodeAction? codeAction)
         {
-            switch (nodeToRemove)
+            switch (createHashNode)
             {
                 case LocalDeclarationStatementSyntax or VariableDeclaratorSyntax:
                     {
@@ -33,7 +34,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                             computeHashNode,
                             computeType,
                             argNodes,
-                            nodeToRemove);
+                            createHashNode,
+                            disposeNodes);
                         return true;
                     }
                 case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:

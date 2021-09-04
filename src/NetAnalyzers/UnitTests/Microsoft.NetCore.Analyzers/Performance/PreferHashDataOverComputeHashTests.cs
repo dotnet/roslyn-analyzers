@@ -752,6 +752,188 @@ End Class
         }
 
         [Fact]
+        public async Task CSharpCreateHelperManualDisposeCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string csInput = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        {{|#2:var hasher = {hashType}.Create();|}}
+        int line1 = 20;
+        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+        int line2 = 10;
+        {{|#3:hasher.Dispose();|}}
+    }}
+
+    public static void TestMethod2()
+    {{
+        var buffer = new byte[1024];
+        {{|#8:var hasher = {hashType}.Create();|}}
+        int line1 = 20;
+        byte[] digest = {{|#4:hasher.ComputeHash({{|#5:buffer|}}, {{|#6:0|}}, {{|#7:10|}})|}};
+        int line2 = 10;
+        {{|#9:hasher.Dispose();|}}
+    }}
+
+    public static void TestMethod3()
+    {{
+        var buffer = new byte[1024];
+        {{|#14:var hasher = {hashType}.Create();|}}
+        int line1 = 20;
+        byte[] digest3 = new byte[1024];
+        int line2 = 10;
+        if ({{|#10:hasher.TryComputeHash({{|#11:buffer|}}, {{|#12:digest3|}}, {{|#13:out var i|}})|}})
+        {{
+            int line3 = 10;
+        }}
+        int line4 = 10;
+        {{|#15:hasher.Dispose();|}}
+    }}
+}}
+";
+                string csFix = $@"
+using System;
+using System.Security.Cryptography;
+
+public class Test
+{{
+    public static void TestMethod()
+    {{
+        var buffer = new byte[1024];
+        int line1 = 20;
+        byte[] digest = {hashType}.HashData(buffer);
+        int line2 = 10;
+    }}
+
+    public static void TestMethod2()
+    {{
+        var buffer = new byte[1024];
+        int line1 = 20;
+        byte[] digest = {hashType}.HashData(buffer.AsSpan(0, 10));
+        int line2 = 10;
+    }}
+
+    public static void TestMethod3()
+    {{
+        var buffer = new byte[1024];
+        int line1 = 20;
+        byte[] digest3 = new byte[1024];
+        int line2 = 10;
+        if ({hashType}.TryHashData(buffer, digest3, out var i))
+        {{
+            int line3 = 10;
+        }}
+        int line4 = 10;
+    }}
+}}
+";
+                await TestCSAsync(
+                    csInput,
+                    csFix,
+                    GetCreationSingleInvokeWithDisposeCSDiagnostics($"System.Security.Cryptography.{hashType}"));
+            }
+        }
+
+        [Fact]
+        public async Task BasicCreateHelperManualDisposeCase()
+        {
+            await TestWithType(HashTypeMD5);
+            await TestWithType(HashTypeSHA1);
+            await TestWithType(HashTypeSHA256);
+            await TestWithType(HashTypeSHA384);
+            await TestWithType(HashTypeSHA512);
+
+            static async Task TestWithType(string hashType)
+            {
+                string vbInput = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim line1 = 20
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+        Dim line2 = 10
+        {{|#3:hasher.Dispose()|}}
+    End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        {{|#8:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim line1 = 20
+        Dim digest As Byte() = {{|#4:hasher.ComputeHash({{|#5:buffer|}}, {{|#6:0|}}, {{|#7:10|}})|}}
+        Dim line2 = 10
+        {{|#9:hasher.Dispose()|}}
+    End Sub
+    Public Shared Sub TestMethod3()
+        Dim buffer = New Byte(1023) {{}}
+        {{|#14:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim line1 = 20
+        Dim digest = New Byte(1023) {{}}
+        Dim i As Integer
+        Dim line2 = 10
+        If {{|#10:hasher.TryComputeHash({{|#11:buffer|}}, {{|#12:digest|}}, {{|#13:i|}})|}} Then
+            Dim line3 = 10
+        End If
+        Dim line4 = 10
+        {{|#15:hasher.Dispose()|}}
+    End Sub
+End Class
+";
+
+                string vbFix = $@"
+Imports System
+Imports System.Security.Cryptography
+
+Public Class Test
+    Public Shared Sub TestMethod()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line1 = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer)
+        Dim line2 = 10
+    End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line1 = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer.AsSpan(0, 10))
+        Dim line2 = 10
+    End Sub
+    Public Shared Sub TestMethod3()
+        Dim buffer = New Byte(1023) {{}}
+        Dim line1 = 20
+        Dim digest = New Byte(1023) {{}}
+        Dim i As Integer
+        Dim line2 = 10
+        If {hashType}.TryHashData(buffer, digest, i) Then
+            Dim line3 = 10
+        End If
+        Dim line4 = 10
+    End Sub
+End Class
+";
+                await TestVBAsync(
+                    vbInput,
+                    vbFix,
+                    GetCreationSingleInvokeWithDisposeVBDiagnostics($"System.Security.Cryptography.{hashType}"));
+            }
+        }
+
+
+        [Fact]
         public async Task CSharpCreateHelperUsingStatement2Case()
         {
             await TestWithType(HashTypeMD5);
@@ -2746,6 +2928,34 @@ End Class
                     };
         }
 
+        private static DiagnosticResult[] GetCreationSingleInvokeWithDisposeCSDiagnostics(string hashAlgorithmTypeName)
+        {
+            return new[] {
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1)
+                        .WithLocation(2)
+                        .WithLocation(3),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(4)
+                        .WithLocation(5)
+                        .WithLocation(6)
+                        .WithLocation(7)
+                        .WithLocation(8)
+                        .WithLocation(9),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(10)
+                        .WithLocation(11)
+                        .WithLocation(12)
+                        .WithLocation(13)
+                        .WithLocation(14)
+                        .WithLocation(15)
+                    };
+        }
+
         private static DiagnosticResult[] GetCreationSingleInvokeVBDiagnostics(string hashAlgorithmTypeName)
         {
             return new[] {
@@ -2770,5 +2980,34 @@ End Class
                         .WithLocation(12)
                     };
         }
+
+        private static DiagnosticResult[] GetCreationSingleInvokeWithDisposeVBDiagnostics(string hashAlgorithmTypeName)
+        {
+            return new[] {
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1)
+                        .WithLocation(2)
+                        .WithLocation(3),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(4)
+                        .WithLocation(5)
+                        .WithLocation(6)
+                        .WithLocation(7)
+                        .WithLocation(8)
+                        .WithLocation(9),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(10)
+                        .WithLocation(11)
+                        .WithLocation(12)
+                        .WithLocation(13)
+                        .WithLocation(14)
+                        .WithLocation(15)
+                    };
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -53,18 +54,25 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return;
             }
 
-            var nodeToRemove = root.FindNode(diagnostic.AdditionalLocations[args.Length].SourceSpan);
-            if (nodeToRemove is null)
+            if(!int.TryParse(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey], out int hashCreationIndex))
             {
                 return;
             }
+
+            var createHashNode = root.FindNode(diagnostic.AdditionalLocations[hashCreationIndex].SourceSpan);
+            if (createHashNode is null)
+            {
+                return;
+            }
+            var disposeNodes = GetDisposeNodes(root, diagnostic.AdditionalLocations, hashCreationIndex);
 
             if (!TryGetCodeAction(context.Document,
                 hashTypeName,
                 computeHashNode,
                 computeType,
                 args,
-                nodeToRemove,
+                createHashNode,
+                disposeNodes,
                 out HashDataCodeAction? codeAction))
             {
                 return;
@@ -72,6 +80,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             context.RegisterCodeFix(codeAction, diagnostic);
 
+        }
+
+        private static SyntaxNode[] GetDisposeNodes(SyntaxNode root, IReadOnlyList<Location> additionalLocations, int hashCreationIndex)
+        {
+            var disposeCount = additionalLocations.Count - hashCreationIndex - 1;
+            if (disposeCount == 0)
+            {
+                return Array.Empty<SyntaxNode>();
+            }
+            var disposeNodes = new SyntaxNode[disposeCount];
+
+            for(int i = 0; i < disposeNodes.Length; i++)
+            {
+                var node = root.FindNode(additionalLocations[hashCreationIndex + i + 1].SourceSpan);
+                if (node is null)
+                {
+                    return Array.Empty<SyntaxNode>();
+                }
+                disposeNodes[i] = node;
+            }
+
+            return disposeNodes;
         }
 
         private static SyntaxNode[]? GetArgNodes(SyntaxNode root, Diagnostic diagnostic, PreferHashDataOverComputeHashAnalyzer.ComputeType computeType)
@@ -119,7 +149,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             SyntaxNode computeHashNode,
             PreferHashDataOverComputeHashAnalyzer.ComputeType computeType,
             SyntaxNode[] argNodes,
-            SyntaxNode nodeToRemove,
+            SyntaxNode createHashNode,
+            SyntaxNode[] disposeNodes,
             [NotNullWhen(true)] out HashDataCodeAction? codeAction);
 
         protected abstract class HashDataCodeAction : CodeAction
@@ -196,17 +227,31 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected sealed class RemoveNodeHashDataCodeAction : HashDataCodeAction
         {
-            public RemoveNodeHashDataCodeAction(Document document, string hashTypeName, SyntaxNode computeHashNode, PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, SyntaxNode[] argNode, SyntaxNode nodeToRemove) : base(document, hashTypeName, computeHashNode, computeType, argNode)
+            private readonly SyntaxNode[] _disposeNodes;
+            public RemoveNodeHashDataCodeAction(
+                Document document,
+                string hashTypeName,
+                SyntaxNode computeHashNode,
+                PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, 
+                SyntaxNode[] argNode,
+                SyntaxNode hashCreationNode,
+                SyntaxNode[] disposeNodes) : base(document, hashTypeName, computeHashNode, computeType, argNode)
             {
-                NodeToRemove = nodeToRemove;
+                HashCreationNode = hashCreationNode;
+                _disposeNodes = disposeNodes;
             }
 
-            public SyntaxNode NodeToRemove { get; }
+            public SyntaxNode HashCreationNode { get; }
 
             protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
             {
                 documentEditor.ReplaceNode(ComputeHashNode, hashDataInvoked);
-                documentEditor.RemoveNode(NodeToRemove);
+                documentEditor.RemoveNode(HashCreationNode);
+
+                foreach (var disposeNode in _disposeNodes)
+                {
+                    documentEditor.RemoveNode(disposeNode);
+                }
             }
         }
     }

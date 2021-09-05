@@ -36,6 +36,10 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 .Where(node => node is ArgumentSyntax);
         }
 
+        //  We attempt to update all callsites when possible.
+        //  If the argument is an lvalue, we insert the "ref" keyword. Otherwise, we leave it as-is.
+        //  This will result in compiler errors after applying the code fix for any callsites where
+        //  the argument is an rvalue.
         private protected override async Task UpdateMatchingArgumentsAsync(SolutionEditor solutionEditor, Project originalProject, IParameterSymbol parameterSymbol, CancellationToken token)
         {
             //  Find all documents that can access parameterSymbol
@@ -43,7 +47,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 .Where(project => project.Id == originalProject.Id || project.ProjectReferences.Select(x => x.ProjectId).Contains(originalProject.Id))
                 .SelectMany(x => x.Documents);
 
-            var argumentOperations = new List<IArgumentOperation>();
+            var matchingArgumentsInDocument = new List<IArgumentOperation>();
 
             foreach (var document in referencingDocuments)
             {
@@ -55,23 +59,23 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     //  Select all lvalue arguments that match parameterSymbol
                     if (model.GetOperation(argumentNode, token) is IArgumentOperation argumentOperation &&
                         argumentOperation.Parameter.Equals(parameterSymbol, SymbolEqualityComparer.Default) &&
-                        IsLValue(argumentOperation))
+                        IsLValue(argumentOperation.Value))
                     {
-                        argumentOperations.Add(argumentOperation);
+                        matchingArgumentsInDocument.Add(argumentOperation);
                     }
                 }
 
                 //  We find all matching arguments in the document before fixing so that we can
                 //  skip creating the document editor when the document contains no matching arguments.
-                if (argumentOperations.Count > 0)
+                if (matchingArgumentsInDocument.Count > 0)
                 {
                     var documentEditor = await solutionEditor.GetDocumentEditorAsync(document.Id, token).ConfigureAwait(false);
-                    foreach (var argumentOperation in argumentOperations)
+                    foreach (var argumentOperation in matchingArgumentsInDocument)
                     {
-                        documentEditor.ReplaceNode(argumentOperation.Syntax, AddRefKeywordToArgument(argumentOperation.Syntax));
+                        documentEditor.ReplaceNode(argumentOperation.Syntax, AddRefKeywordToArgumentNode(argumentOperation.Syntax));
                     }
 
-                    argumentOperations.Clear();
+                    matchingArgumentsInDocument.Clear();
                 }
             }
 
@@ -79,10 +83,8 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             //  Local functions
 
-            static bool IsLValue(IArgumentOperation argumentOperation)
+            static bool IsLValue(IOperation value)
             {
-                var value = argumentOperation.Value;
-
                 return (value is ILocalReferenceOperation localRef && !localRef.Local.IsConst) ||
                     (value is IFieldReferenceOperation fieldRef && !fieldRef.Field.IsReadOnly && !fieldRef.Field.IsConst) ||
                     (value is IParameterReferenceOperation parameterRef && parameterRef.Parameter.RefKind is not RefKind.In) ||
@@ -91,7 +93,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                     (value is IPropertyReferenceOperation propertyRef && propertyRef.Property.ReturnsByRef);
             }
 
-            static SyntaxNode AddRefKeywordToArgument(SyntaxNode argumentNode)
+            static SyntaxNode AddRefKeywordToArgumentNode(SyntaxNode argumentNode)
             {
                 var cast = (ArgumentSyntax)argumentNode;
                 var refKindKeywordToken = SyntaxFactory.Token(SyntaxKind.RefKeyword);

@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var diagnostic = context.Diagnostics.First();
             var codeAction = CodeAction.Create(
                 Resx.DoNotPassMutableValueTypesByValueCodeFixTitle,
-                ChangeParameterAndUpdateLValueCallsites,
+                ChangeParameterAndUpdateCallsites,
                 Resx.DoNotPassMutableValueTypesByValueCodeFixTitle);
             context.RegisterCodeFix(codeAction, diagnostic);
 
@@ -29,7 +29,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             //  Local functions
 
-            async Task<Solution> ChangeParameterAndUpdateLValueCallsites(CancellationToken token)
+            //  We convert the parameter to a ref parameter.
+            //  For C#, update all callsites where the respective argument is an lvalue.
+            async Task<Solution> ChangeParameterAndUpdateCallsites(CancellationToken token)
             {
                 var root = await context.Document.GetSyntaxRootAsync(token).ConfigureAwait(false);
                 var model = await context.Document.GetSemanticModelAsync(token).ConfigureAwait(false);

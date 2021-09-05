@@ -6,6 +6,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using System.Threading;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueAnalyzer,
@@ -56,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownProblematicTypes_ByValue_Diagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByValue_Diagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -75,7 +76,7 @@ public class Testopolis
 
         [Theory]
         [MemberData(nameof(VB_KnownProblematicTypeNames))]
-        public Task KnownProblematicTypes_ByValue_Diagnostic_VB(string knownTypeName)
+        public Task KnownTypes_ByValue_Diagnostic_VB(string knownTypeName)
         {
             string source = $@"
 Public Class Testopolis
@@ -94,7 +95,7 @@ End Class";
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownProblematicTypes_ByReferenceReadOnly_Diagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByReferenceReadOnly_Diagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -113,7 +114,7 @@ public class Testopolis
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownProblematicTypes_ByReference_NoDiagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByReference_NoDiagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -127,7 +128,7 @@ public class Testopolis
 
         [Theory]
         [MemberData(nameof(VB_KnownProblematicTypeNames))]
-        public Task KnownProblematicTypes_ByReference_NoDiagnostic_VB(string knownTypeName)
+        public Task KnownTypes_ByReference_NoDiagnostic_VB(string knownTypeName)
         {
             string source = $@"
 Public Class Testopolis
@@ -363,43 +364,270 @@ End Class"
         }
 
         [Theory]
-        [InlineData("fieldArgument")]
-        [InlineData("localArgument")]
+        [InlineData("local")]
+        [InlineData("parameter")]
+        [InlineData("Widget.Field")]
+        [InlineData("Widget.RefProperty")]
+        [InlineData("Widget.RefMethod()")]
+        [InlineData("Widget.RefDelegateField()")]
         public Task LValueArguments_AreFixed_CS(string argument)
         {
             string source = $@"
 using System.Threading;
 
+public delegate ref SpinLock RefDelegate();
+public class Widget
+{{
+    public static Widget Value;
+    
+    public static SpinLock Field;
+    public static ref SpinLock RefProperty => ref Field;
+    public static ref SpinLock RefMethod() => ref Field;
+    public static RefDelegate RefDelegateField;
+}}
+
 public class Testopolis
 {{
-    private SpinLock fieldArgument;
-    
     public void ByValue({{|#0:SpinLock x|}}) {{ }}
-
-    public void Consumer()
+    public void Consume(ref SpinLock parameter)
     {{
-        SpinLock localArgument = new SpinLock();
+        var local = new SpinLock();
         ByValue({argument});
     }}
 }}";
             string fixedSource = $@"
 using System.Threading;
 
+public delegate ref SpinLock RefDelegate();
+public class Widget
+{{
+    public static Widget Value;
+    
+    public static SpinLock Field;
+    public static ref SpinLock RefProperty => ref Field;
+    public static ref SpinLock RefMethod() => ref Field;
+    public static RefDelegate RefDelegateField;
+}}
+
 public class Testopolis
 {{
-    private SpinLock fieldArgument;
-    
     public void ByValue(ref SpinLock x) {{ }}
-
-    public void Consumer()
+    public void Consume(ref SpinLock parameter)
     {{
-        SpinLock localArgument = new SpinLock();
+        var local = new SpinLock();
         ByValue(ref {argument});
     }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock).WithLocation(0);
+            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock);
 
-            return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
+            return VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
+        }
+
+        [Fact]
+        public Task LValueArguments_SeparateDocument_AreFixed_CS()
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Threading;
+
+public static class Provider
+{
+    public static void ByValue({|#0:SpinLock x|}) { }
+}",
+                        @"
+using System.Threading;
+
+public class Testopolis
+{
+    public void Consume()
+    {
+        SpinLock x = new SpinLock();
+        Provider.ByValue(x);
+    }
+}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
+                    }
+                },
+
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Threading;
+
+public static class Provider
+{
+    public static void ByValue(ref SpinLock x) { }
+}",
+                        @"
+using System.Threading;
+
+public class Testopolis
+{
+    public void Consume()
+    {
+        SpinLock x = new SpinLock();
+        Provider.ByValue(ref x);
+    }
+}"
+                    }
+                }
+            };
+
+            return test.RunAsync();
+        }
+
+        [Fact]
+        public Task LValueArguments_SeparateProjects_AreFixed_CS()
+        {
+            ProjectState consumer1 = new("Consumer1", LanguageNames.CSharp, "/1/c", "cs")
+            {
+                Sources =
+                {
+                    @"
+using System.Threading;
+public class Consumer
+{
+    public void Consume()
+    {
+        var x = new SpinLock();
+        Provider.ByValue(x);
+    }
+}"
+                },
+                AdditionalProjectReferences =
+                {
+                    "TestProject"
+                }
+            };
+
+            ProjectState fixedConsumer1 = new("Consumer1", LanguageNames.CSharp, "/1/c", "cs")
+            {
+                Sources =
+                {
+                    @"
+using System.Threading;
+public class Consumer
+{
+    public void Consume()
+    {
+        var x = new SpinLock();
+        Provider.ByValue(ref x);
+    }
+}"
+                },
+                AdditionalProjectReferences =
+                {
+                    "TestProject"
+                }
+            };
+
+            ProjectState consumer2 = new("Consumer2", LanguageNames.CSharp, "/2/c", "cs")
+            {
+                Sources =
+                {
+                    @"
+using System.Threading;
+public class Consumer
+{
+    public void Consume()
+    {
+        var x = new SpinLock();
+        Provider.ByValue(x);
+        Provider.ByValue(x);
+    }
+}"
+                },
+                AdditionalProjectReferences =
+                {
+                    "TestProject"
+                }
+            };
+
+            ProjectState fixedConsumer2 = new("Consumer2", LanguageNames.CSharp, "/2/c", "cs")
+            {
+                Sources =
+                {
+                    @"
+using System.Threading;
+public class Consumer
+{
+    public void Consume()
+    {
+        var x = new SpinLock();
+        Provider.ByValue(ref x);
+        Provider.ByValue(ref x);
+    }
+}"
+                },
+                AdditionalProjectReferences =
+                {
+                    "TestProject"
+                }
+            };
+
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Threading;
+public static class Provider
+{
+    public static void ByValue({|#0:SpinLock x|}) { }
+    public static void Consume()
+    {
+        var y = new SpinLock();
+        ByValue(y);
+    }
+}"
+                    },
+                    AdditionalProjects =
+                    {
+                        { "Consumer1", consumer1 },
+                        { "Consumer2", consumer2 }
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
+using System.Threading;
+public static class Provider
+{
+    public static void ByValue(ref SpinLock x) { }
+    public static void Consume()
+    {
+        var y = new SpinLock();
+        ByValue(ref y);
+    }
+}"
+                    },
+                    AdditionalProjects =
+                    {
+                        { "Consumer1", fixedConsumer1 },
+                        { "Consumer2", fixedConsumer2 }
+                    }
+                }
+            };
+
+            return test.RunAsync();
         }
 
         [Theory]

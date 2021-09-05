@@ -131,17 +131,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         CaptureHashCreateInvocationOperation(dataCollector, invocationOperation);
                     }
-                    else if (methodHelper.IsComputeHashMethod(invocationOperation))
+                    else if (methodHelper.IsComputeHashMethod(invocationOperation, out ComputeType computeType))
                     {
-                        CaptureOrReportComputeHashInvocationOperation(context, methodHelper, dataCollector, invocationOperation);
-                    }
-                    else if (methodHelper.IsComputeHashSectionMethod(invocationOperation))
-                    {
-                        CaptureOrReportComputeHashSectionInvocationOperation(context, methodHelper, dataCollector, invocationOperation);
-                    }
-                    else if (methodHelper.IsTryComputeHashMethod(invocationOperation))
-                    {
-                        CaptureOrReportTryComputeHashInvocationOperation(context, methodHelper, dataCollector, invocationOperation);
+                        CaptureOrReportComputeHashInvocationOperation(context, methodHelper, dataCollector, invocationOperation, computeType);
                     }
                     else if (invocationOperation.Instance is ILocalReferenceOperation && methodHelper.IsDisposeMethod(invocationOperation))
                     {
@@ -165,20 +157,25 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 void OnOperationBlockEnd(OperationBlockAnalysisContext context)
                 {
                     var cancellationToken = context.CancellationToken;
-                    var (disposeMap, computeHashOnlySymbolMap) = dataCollector.Compile(cancellationToken);
+                    var dataResult = dataCollector.Compile(cancellationToken);
 
-                    foreach (var (computeHash, type) in dataCollector.ComputeHashMap)
+                    if (dataResult is null)
+                    {
+                        return;
+                    }
+
+                    foreach (var (computeHash, type) in dataResult.ComputeHashMap)
                     {
                         ImmutableArray<Location> codefixerLocations;
                         var localSymbol = ((ILocalReferenceOperation)computeHash.Instance).Local;
                         var isToDeleteHashCreation = false;
                         int hashCreationLocationIndex;
 
-                        if (dataCollector.TryGetDeclarationTuple(localSymbol, out var declarationTuple) &&
-                            computeHashOnlySymbolMap.TryGetValue(localSymbol, out var refCount) &&
+                        if (dataResult.TryGetDeclarationTuple(localSymbol, out var declarationTuple) &&
+                            dataResult.TryGetSymbolComputeHashRefCountTuple(localSymbol, out var refCount) &&
                             methodHelper.TryGetHashDataMethod(declarationTuple.OriginalType, type, out var hashDataMethodSymbol))
                         {
-                            var disposeArray = GetValueOrEmtpty(disposeMap, localSymbol);
+                            var disposeArray = dataResult.GetDisposeInvocationArray(localSymbol);
                             isToDeleteHashCreation = refCount == 1;
                             codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, computeHash, type, disposeArray, out hashCreationLocationIndex);
                         }
@@ -190,10 +187,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         var diagnostics = CreateDiagnostics(computeHash, hashDataMethodSymbol.ContainingType, codefixerLocations, type, isToDeleteHashCreation, hashCreationLocationIndex);
                         context.ReportDiagnostic(diagnostics);
                     }
-
-                    dataCollector.Free(cancellationToken);
-                    disposeMap?.Free(cancellationToken);
-                    computeHashOnlySymbolMap.Free(cancellationToken);
+                    dataResult.Free(cancellationToken);
                 }
             }
 
@@ -224,12 +218,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            static void CaptureOrReportComputeHashInvocationOperation(OperationAnalysisContext context, MethodHelper methodHelper, DataCollector dataCollector, IInvocationOperation computeHashInvocation)
+            static void CaptureOrReportComputeHashInvocationOperation(OperationAnalysisContext context, MethodHelper methodHelper, DataCollector dataCollector, IInvocationOperation computeHashInvocation, ComputeType computeType)
             {
                 switch (computeHashInvocation.Instance)
                 {
                     case ILocalReferenceOperation:
-                        dataCollector.CollectComputeHashInvocation(computeHashInvocation);
+                        dataCollector.CollectComputeHashInvocation(computeHashInvocation, computeType);
                         break;
                     case IInvocationOperation chainedInvocationOperation when methodHelper.IsHashCreateMethod(chainedInvocationOperation):
                         ReportChainedComputeHashInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
@@ -241,77 +235,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 void ReportChainedComputeHashInvocationOperation(ITypeSymbol originalHashType)
                 {
-                    if (!methodHelper.TryGetHashDataMethodByteArg(originalHashType, out var staticHashMethod))
+                    if (!methodHelper.TryGetHashDataMethod(originalHashType, computeType, out var staticHashMethod))
                     {
                         return;
                     }
 
-                    var builder = ImmutableArray.CreateBuilder<Location>(1);
-                    FillLocationForComputeHash(builder, computeHashInvocation);
-                    var codefixerLocations = builder.MoveToImmutable();
-                    var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.ComputeHash);
-
-                    context.ReportDiagnostic(diagnostics);
-                }
-            }
-
-            static void CaptureOrReportComputeHashSectionInvocationOperation(OperationAnalysisContext context, MethodHelper methodHelper, DataCollector dataCollector, IInvocationOperation computeHashInvocation)
-            {
-                switch (computeHashInvocation.Instance)
-                {
-                    case ILocalReferenceOperation:
-                        dataCollector.CollectComputeHashSectionInvocation(computeHashInvocation);
-                        break;
-                    case IInvocationOperation chainedInvocationOperation when methodHelper.IsHashCreateMethod(chainedInvocationOperation):
-                        ReportChainedComputeHashSectionInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
-                        break;
-                    case IObjectCreationOperation chainObjectCreationOperation when methodHelper.IsObjectCreationInheritingHashAlgorithm(chainObjectCreationOperation):
-                        ReportChainedComputeHashSectionInvocationOperation(chainObjectCreationOperation.Type);
-                        break;
-                }
-
-                void ReportChainedComputeHashSectionInvocationOperation(ITypeSymbol originalHashType)
-                {
-                    if (!methodHelper.TryGetHashDataMethodSpanArg(originalHashType, out var staticHashMethod))
-                    {
-                        return;
-                    }
-                    var builder = ImmutableArray.CreateBuilder<Location>(3);
-                    FillLocationForComputeHash3Args(builder, computeHashInvocation);
-                    var codefixerLocations = builder.MoveToImmutable();
-                    var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.ComputeHashSection);
-
-                    context.ReportDiagnostic(diagnostics);
-                }
-            }
-
-            static void CaptureOrReportTryComputeHashInvocationOperation(OperationAnalysisContext context, MethodHelper methodHelper, DataCollector dataCollector, IInvocationOperation computeHashInvocation)
-            {
-                switch (computeHashInvocation.Instance)
-                {
-                    case ILocalReferenceOperation:
-                        dataCollector.CollectTryComputeHashInvocation(computeHashInvocation);
-                        break;
-                    case IInvocationOperation chainedInvocationOperation when methodHelper.IsHashCreateMethod(chainedInvocationOperation):
-                        ReportChainedTryComputeHashInvocationOperation(chainedInvocationOperation.TargetMethod.ContainingType);
-                        break;
-                    case IObjectCreationOperation chainObjectCreationOperation when methodHelper.IsObjectCreationInheritingHashAlgorithm(chainObjectCreationOperation):
-                        ReportChainedTryComputeHashInvocationOperation(chainObjectCreationOperation.Type);
-                        break;
-                }
-
-                void ReportChainedTryComputeHashInvocationOperation(ITypeSymbol originalHashType)
-                {
-                    if (!methodHelper.TryGetTryHashDataMethod(originalHashType, out var staticHashMethod))
-                    {
-                        return;
-                    }
-
-                    var builder = ImmutableArray.CreateBuilder<Location>(3);
-                    FillLocationForComputeHash3Args(builder, computeHashInvocation);
-                    var codefixerLocations = builder.MoveToImmutable();
-                    var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, codefixerLocations, ComputeType.TryComputeHash);
-
+                    var diagnostics = CreateDiagnostics(computeHashInvocation, staticHashMethod.ContainingType, computeType);
                     context.ReportDiagnostic(diagnostics);
                 }
             }
@@ -335,12 +264,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private static Diagnostic CreateDiagnostics(IInvocationOperation computeHashMethod,
             INamedTypeSymbol staticHashMethodType,
-            ImmutableArray<Location> fixerLocations,
             ComputeType computeType)
         {
             var dictBuilder = ImmutableDictionary.CreateBuilder<string, string?>();
             dictBuilder.Add(TargetHashTypeDiagnosticPropertyKey, staticHashMethodType.Name);
             dictBuilder.Add(ComputeTypePropertyKey, computeType.ToString());
+
+            var fixerLocations = GetComputeHashLocations(computeHashMethod, computeType);
 
             return computeHashMethod.CreateDiagnostic(StringRule,
                 fixerLocations,
@@ -370,6 +300,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 staticHashMethodType.ToDisplayString());
         }
 
+        private static ImmutableArray<Location> GetComputeHashLocations(IInvocationOperation computeHashInvocationOperation, ComputeType computeType)
+        {
+            if (computeType is ComputeType.ComputeHash)
+            {
+                return ImmutableArray.Create(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
+            }
+
+            return ImmutableArray.Create(
+                computeHashInvocationOperation.Arguments[0].Syntax.GetLocation(),
+                computeHashInvocationOperation.Arguments[1].Syntax.GetLocation(),
+                computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
+        }
+
         private static ImmutableArray<Location> GetFixerLocations(
             IVariableDeclaratorOperation declaratorOperation,
             IInvocationOperation computeHashInvocationOperation,
@@ -381,12 +324,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             if (computeType is ComputeType.ComputeHash)
             {
                 builder = ImmutableArray.CreateBuilder<Location>(2 + disposeArray.Length);
-                FillLocationForComputeHash(builder, computeHashInvocationOperation);
+                builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
             }
             else
             {
                 builder = ImmutableArray.CreateBuilder<Location>(4 + disposeArray.Length);
-                FillLocationForComputeHash3Args(builder, computeHashInvocationOperation);
+                builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
+                builder.Add(computeHashInvocationOperation.Arguments[1].Syntax.GetLocation());
+                builder.Add(computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
             }
             var lineDeclaration = declaratorOperation.GetAncestor<IVariableDeclarationGroupOperation>(OperationKind.VariableDeclarationGroup);
 
@@ -415,25 +360,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             return builder.MoveToImmutable();
         }
 
-        private static ImmutableArray<IInvocationOperation> GetValueOrEmtpty(PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? dictionary, ILocalSymbol key)
+        private static ImmutableArray<IInvocationOperation> GetValueOrEmpty(PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? dictionary, ILocalSymbol key)
         {
             if (dictionary is not null && dictionary.TryGetValue(key, out var value))
             {
                 return value;
             }
             return ImmutableArray<IInvocationOperation>.Empty;
-        }
-
-        private static void FillLocationForComputeHash(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
-        {
-            builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
-        }
-
-        private static void FillLocationForComputeHash3Args(ImmutableArray<Location>.Builder builder, IInvocationOperation computeHashInvocationOperation)
-        {
-            builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
-            builder.Add(computeHashInvocationOperation.Arguments[1].Syntax.GetLocation());
-            builder.Add(computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
         }
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
@@ -516,6 +449,28 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return methodSymbol.ContainingType.Inherits(_hashAlgorithmBaseType) &&
                     methodSymbol.ReturnType.Inherits(_hashAlgorithmBaseType) &&
                     methodSymbol.Name.Equals(CreateMethodName, StringComparison.Ordinal);
+            }
+
+            public bool IsComputeHashMethod(IInvocationOperation invocationOperation, out ComputeType computeType)
+            {
+                if (IsComputeHashMethod(invocationOperation))
+                {
+                    computeType = ComputeType.ComputeHash;
+                    return true;
+                }
+                if (IsComputeHashSectionMethod(invocationOperation))
+                {
+                    computeType = ComputeType.ComputeHashSection;
+                    return true;
+                }
+                if (IsTryComputeHashMethod(invocationOperation))
+                {
+                    computeType = ComputeType.TryComputeHash;
+                    return true;
+                }
+
+                computeType = default;
+                return false;
             }
 
             public bool IsComputeHashMethod(IInvocationOperation invocationOperation) => invocationOperation.TargetMethod.Equals(_computeHashMethodSymbol, SymbolEqualityComparer.Default);
@@ -658,26 +613,32 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly PooledConcurrentSet<IInvocationOperation> _disposeHashSet = PooledConcurrentSet<IInvocationOperation>.GetInstance();
             private readonly PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple> _createdSymbolMap = PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple>.GetInstance(SymbolEqualityComparer.Default);
             private readonly PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol> _localReferenceMap = PooledConcurrentDictionary<ILocalReferenceOperation, ILocalSymbol>.GetInstance();
-
-            public PooledConcurrentDictionary<IInvocationOperation, ComputeType> ComputeHashMap { get; } = PooledConcurrentDictionary<IInvocationOperation, ComputeType>.GetInstance();
+            private readonly PooledConcurrentDictionary<IInvocationOperation, ComputeType> _computeHashMap = PooledConcurrentDictionary<IInvocationOperation, ComputeType>.GetInstance();
 
             public void CollectLocalReferenceInheritingHashAlgorithm(ILocalReferenceOperation localReferenceOperation) => _localReferenceMap.TryAdd(localReferenceOperation, localReferenceOperation.Local);
 
             public void CollectVariableDeclaratorOperation(IVariableDeclaratorOperation declaratorOperation, ITypeSymbol createdType) => _createdSymbolMap.TryAdd(declaratorOperation.Symbol, new DeclarationTuple(declaratorOperation, createdType));
 
-            public void CollectComputeHashInvocation(IInvocationOperation computeHashInvocation) => ComputeHashMap.TryAdd(computeHashInvocation, ComputeType.ComputeHash);
-
-            public void CollectComputeHashSectionInvocation(IInvocationOperation computeHashInvocation) => ComputeHashMap.TryAdd(computeHashInvocation, ComputeType.ComputeHashSection);
-
-            public void CollectTryComputeHashInvocation(IInvocationOperation computeHashInvocation) => ComputeHashMap.TryAdd(computeHashInvocation, ComputeType.TryComputeHash);
+            public void CollectComputeHashInvocation(IInvocationOperation computeHashInvocation, ComputeType computeType) => _computeHashMap.TryAdd(computeHashInvocation, computeType);
 
             public void CollectDisposeInvocation(IInvocationOperation disposeInvocation) => _disposeHashSet.Add(disposeInvocation);
 
-            public (PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? DisposeMap, PooledDictionary<ILocalSymbol, int> ComputeHashOnlyMap) Compile(CancellationToken cancellationToken)
+            public DataResult? Compile(CancellationToken cancellationToken)
             {
                 var disposeMap = CompileDisposeMap(cancellationToken);
                 var computeHashOnlyMap = GetComputeHashOnlySymbols(disposeMap, cancellationToken);
-                return (disposeMap, computeHashOnlyMap);
+                _disposeHashSet.Free(cancellationToken);
+                _localReferenceMap.Free(cancellationToken);
+
+                if (computeHashOnlyMap is null)
+                {
+                    disposeMap?.Free(cancellationToken);
+                    _createdSymbolMap.Free(cancellationToken);
+                    _computeHashMap.Free(cancellationToken);
+                    return null;
+                }
+
+                return new DataResult(_createdSymbolMap, disposeMap, computeHashOnlyMap, _computeHashMap);
             }
 
             private PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? CompileDisposeMap(CancellationToken cancellationToken)
@@ -716,15 +677,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return map;
             }
 
-            private PooledDictionary<ILocalSymbol, int> GetComputeHashOnlySymbols(PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? disposeMap, CancellationToken cancellationToken)
+            private PooledDictionary<ILocalSymbol, int>? GetComputeHashOnlySymbols(PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? disposeMap, CancellationToken cancellationToken)
             {
-                var hashSet = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
-                if (_localReferenceMap.IsEmpty || ComputeHashMap.IsEmpty)
+                if (_localReferenceMap.IsEmpty || _computeHashMap.IsEmpty)
                 {
-                    return hashSet;
+                    return null;
                 }
 
                 // we find the symbol whose local ref count matches the count of computeHash invoked
+                PooledDictionary<ILocalSymbol, int>? hashSet = null;
                 var localRefSymbolCountMap = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
                 var computeHashSymbolCountMap = PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
 
@@ -737,7 +698,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     localRefSymbolCountMap[local] = count + 1;
                 }
 
-                foreach (var (computeHash, _) in ComputeHashMap)
+                foreach (var (computeHash, _) in _computeHashMap)
                 {
                     var local = ((ILocalReferenceOperation)computeHash.Instance).Local;
                     if (!computeHashSymbolCountMap.TryGetValue(local, out var count))
@@ -753,11 +714,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         continue;
                     }
-                    var disposeArray = GetValueOrEmtpty(disposeMap, local);
+                    var disposeArray = GetValueOrEmpty(disposeMap, local);
 
                     var refCountWithoutDispose = refCount - disposeArray.Length;
                     if (refCountWithoutDispose == computeHashCount)
                     {
+                        hashSet ??= PooledDictionary<ILocalSymbol, int>.GetInstance(SymbolEqualityComparer.Default);
                         hashSet.Add(local, refCountWithoutDispose);
                     }
                 }
@@ -767,15 +729,39 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 return hashSet;
             }
+        }
 
-            public bool TryGetDeclarationTuple(ILocalSymbol localSymbol, [NotNullWhen(true)] out DeclarationTuple declarationTuple) => _createdSymbolMap.TryGetValue(localSymbol, out declarationTuple);
+        private sealed class DataResult
+        {
+            private readonly PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple> _createdSymbolMap;
+            private readonly PooledDictionary<ILocalSymbol, int> _computeHashOnlySymbolCountMap;
+            private readonly PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? _disposeMap;
+
+            public DataResult(PooledConcurrentDictionary<ILocalSymbol, DeclarationTuple> createdSymbolMap,
+                PooledDictionary<ILocalSymbol, ImmutableArray<IInvocationOperation>>? disposeMap,
+                PooledDictionary<ILocalSymbol, int> computeHashOnlySymbolCountMap,
+                PooledConcurrentDictionary<IInvocationOperation, ComputeType> computeHashMap)
+            {
+                _createdSymbolMap = createdSymbolMap;
+                _disposeMap = disposeMap;
+                _computeHashOnlySymbolCountMap = computeHashOnlySymbolCountMap;
+                ComputeHashMap = computeHashMap;
+            }
+
+            public PooledConcurrentDictionary<IInvocationOperation, ComputeType> ComputeHashMap { get; }
+
+            public bool TryGetDeclarationTuple(ILocalSymbol localSymbol, out DeclarationTuple declarationTuple) => _createdSymbolMap.TryGetValue(localSymbol, out declarationTuple);
+
+            public bool TryGetSymbolComputeHashRefCountTuple(ILocalSymbol localSymbol, out int refCount) => _computeHashOnlySymbolCountMap.TryGetValue(localSymbol, out refCount);
+
+            public ImmutableArray<IInvocationOperation> GetDisposeInvocationArray(ILocalSymbol localSymbol) => GetValueOrEmpty(_disposeMap, localSymbol);
 
             public void Free(CancellationToken cancellationToken)
             {
-                ComputeHashMap.Free(cancellationToken);
-                _disposeHashSet.Free(cancellationToken);
+                _disposeMap?.Free(cancellationToken);
+                _computeHashOnlySymbolCountMap.Free(cancellationToken);
                 _createdSymbolMap.Free(cancellationToken);
-                _localReferenceMap.Free(cancellationToken);
+                ComputeHashMap.Free(cancellationToken);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
@@ -37,7 +37,7 @@ class C
     }
 }
 ";
-            await TestCS(source, expected);
+            await VerifyCSCodeFixAsync(source, expected);
         }
 
         [Theory]
@@ -73,7 +73,7 @@ class C
     }}
 }}
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Theory]
@@ -101,7 +101,7 @@ class C
     }}
 }}
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -173,7 +173,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -190,7 +190,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -219,7 +219,7 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
         [Fact]
@@ -240,10 +240,10 @@ class C
     }
 }
 ";
-            await TestCS(source);
+            await VerifyCSDiagnosticAsync(source);
         }
 
-        private static Task TestCS(string source, string corrected)
+        private static Task VerifyCSCodeFixAsync(string source, string corrected)
         {
             var test = new VerifyCS.Test
             {
@@ -256,7 +256,7 @@ class C
             return test.RunAsync();
         }
 
-        private static Task TestCS(string source)
+        private static Task VerifyCSDiagnosticAsync(string source)
         {
             var test = new VerifyCS.Test
             {

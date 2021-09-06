@@ -20,9 +20,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             var diagnostic = context.Diagnostics.First();
             var codeAction = CodeAction.Create(
-                Resx.DoNotPassMutableValueTypesByValueCodeFixTitle,
+                Resx.DoNotPassMutableValueTypesByValue_Parameters_CodeFixTitle,
                 ChangeParameterAndUpdateCallsites,
-                Resx.DoNotPassMutableValueTypesByValueCodeFixTitle);
+                Resx.DoNotPassMutableValueTypesByValue_Parameters_CodeFixTitle);
             context.RegisterCodeFix(codeAction, diagnostic);
 
             return Task.CompletedTask;
@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DoNotPassMutableValueTypesByValueAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DoNotPassMutableValueTypesByValueAnalyzer.ParametersRuleId);
 
         public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 

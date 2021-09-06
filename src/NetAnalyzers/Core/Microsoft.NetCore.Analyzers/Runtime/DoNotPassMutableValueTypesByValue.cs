@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -11,21 +13,35 @@ using Resx = Microsoft.NetCore.Analyzers.MicrosoftNetCoreAnalyzersResources;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotPassMutableValueTypesByValueAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotPassMutableValueTypesByValueAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA2019";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValueTitle), Resx.ResourceManager, typeof(Resx));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValueMessage), Resx.ResourceManager, typeof(Resx));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValueDescription), Resx.ResourceManager, typeof(Resx));
+        internal const string ParametersRuleId = "CA2019";
+        private static readonly LocalizableString s_parametersTitle = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_Parameters_Title), Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_parametersMessage = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_Parameters_Message), Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_parametersDescription = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_Parameters_Description), Resx.ResourceManager, typeof(Resx));
 
-        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
-            RuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+        internal static readonly DiagnosticDescriptor ParametersRule = DiagnosticDescriptorHelper.Create(
+            ParametersRuleId,
+            s_parametersTitle,
+            s_parametersMessage,
             DiagnosticCategory.Reliability,
             RuleLevel.BuildWarning,
-            s_localizableDescription,
+            s_parametersDescription,
+            isPortedFxCopRule: false,
+            isDataflowRule: false);
+
+        internal const string ReturnValuesRuleId = "CA2020";
+        private static readonly LocalizableString s_returnValuesTitle = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_ReturnValues_Title), Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_returnValuesMessage = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_ReturnValues_Message), Resx.ResourceManager, typeof(Resx));
+        private static readonly LocalizableString s_returnValuesDescription = new LocalizableResourceString(nameof(Resx.DoNotPassMutableValueTypesByValue_ReturnValues_Description), Resx.ResourceManager, typeof(Resx));
+
+        internal static readonly DiagnosticDescriptor ReturnValuesRule = DiagnosticDescriptorHelper.Create(
+            ReturnValuesRuleId,
+            s_returnValuesTitle,
+            s_returnValuesMessage,
+            DiagnosticCategory.Reliability,
+            RuleLevel.BuildWarning,
+            s_returnValuesDescription,
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
@@ -33,45 +49,104 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             WellKnownTypeNames.SystemTextJsonUtf8JsonReader,
             WellKnownTypeNames.SystemThreadingSpinLock);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(ParametersRule, ReturnValuesRule);
 
-        public override void Initialize(AnalysisContext context)
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSymbolAction(AnalyzeParameterSymbol, SymbolKind.Parameter);
+
+            context.RegisterSymbolAction(AnalyzeSymbols, SymbolKind.Parameter, SymbolKind.Method, SymbolKind.Property);
         }
 
-        //  We flag any parameter that:
-        //  1) Is not a ref or out parameter
-        //  2) Is in source code
-        //  3) Who's type satisfies at least one of the following:
-        //      a) Is on our hard-coded list of well-known mutable value types
-        //      b) Is added as a mutable value type via .editorconfig
-        //      c) Is a suspected struct enumerator type, which is any type that:
-        //          - Is a value type
-        //          - Is not an enum
-        //          - Is a nested type
-        //          - Name ends with "Enumerator"
-        private static void AnalyzeParameterSymbol(SymbolAnalysisContext context)
+        private protected abstract IEnumerable<Location> GetMethodReturnTypeLocations(IMethodSymbol methodSymbol, CancellationToken token);
+
+        private protected abstract IEnumerable<Location> GetPropertyReturnTypeLocations(IPropertySymbol propertySymbol, CancellationToken token);
+
+        private void AnalyzeSymbols(SymbolAnalysisContext context)
         {
-            var parameter = (IParameterSymbol)context.Symbol;
-
-            if (parameter.RefKind is RefKind.Ref or RefKind.Out || !parameter.IsInSource())
-                return;
-
-            if (_wellKnownMutableValueTypes.Contains(parameter.Type.ToString()) ||
-                IsStructEnumeratorType(parameter.Type) ||
-                parameter.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(Rule, syntaxReference.SyntaxTree, context.Compilation).Contains(parameter.Type)))
+            switch (context.Symbol)
             {
-                foreach (var syntaxReference in parameter.DeclaringSyntaxReferences)
+                case IParameterSymbol parameterSymbol:
+                    AnalyzeParameter(parameterSymbol);
+                    break;
+                case IMethodSymbol methodSymbol:
+                    AnalyzeMethod(methodSymbol);
+                    break;
+                case IPropertySymbol propertySymbol:
+                    AnalyzeProperty(propertySymbol);
+                    break;
+            }
+            return;
+
+            //  Local functions
+
+            //  We flag any parameter that:
+            //  1) Is not a ref or out parameter
+            //  2) Is in source code
+            //  3) Who's type is a mutable value type
+            //      a) Is on our hard-coded list of well-known mutable value types
+            //      b) Is added as a mutable value type via .editorconfig
+            //      c) Is a suspected struct enumerator type, which is any type that:
+            //          - Is a value type
+            //          - Is not an enum
+            //          - Is a nested type
+            //          - Name ends with "Enumerator"
+            void AnalyzeParameter(IParameterSymbol parameterSymbol)
+            {
+                if (parameterSymbol.RefKind is RefKind.Ref or RefKind.Out || !parameterSymbol.IsInSource())
+                    return;
+
+                if (IsMutableValueType(parameterSymbol.Type, context, ParametersRule))
                 {
-                    var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
-                    var diagnostic = location.CreateDiagnostic(Rule, parameter.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
+                    foreach (var syntaxReference in parameterSymbol.DeclaringSyntaxReferences)
+                    {
+                        var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
+                        var diagnostic = location.CreateDiagnostic(ParametersRule, parameterSymbol.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
+                        context.ReportDiagnostic(diagnostic);
+                    }
+                }
+            }
+
+            //  Flag any method with a mutable return type that doesn't return by reference.
+            void AnalyzeMethod(IMethodSymbol methodSymbol)
+            {
+                if (methodSymbol.IsAccessorMethod())
+                    return;
+
+                if (IsMutableValueType(methodSymbol.ReturnType, context, ReturnValuesRule) && !methodSymbol.ReturnsByRef)
+                {
+                    var locations = GetMethodReturnTypeLocations(methodSymbol, context.CancellationToken);
+                    var diagnostic = locations.First().CreateDiagnostic(ReturnValuesRule, ImmutableArray.CreateRange(locations.Skip(1)), null, methodSymbol.ReturnType.ToString());
                     context.ReportDiagnostic(diagnostic);
                 }
             }
-            return;
+
+            //  Flag any property with a mutable type that doesn't return by reference.
+            void AnalyzeProperty(IPropertySymbol propertySymbol)
+            {
+                if (IsMutableValueType(propertySymbol.Type, context, ReturnValuesRule) && !propertySymbol.ReturnsByRef)
+                {
+                    var locations = GetPropertyReturnTypeLocations(propertySymbol, context.CancellationToken);
+                    var diagnostic = locations.First().CreateDiagnostic(ReturnValuesRule, ImmutableArray.CreateRange(locations.Skip(1)), null, propertySymbol.Type.ToString());
+                    context.ReportDiagnostic(diagnostic);
+                }
+            }
+        }
+
+        //  Returns true for any type that satisfies any of the following:
+        //  - Is on our hard-coded list of well-known mutable value types
+        //  - Is added as a mutable value type via .editorconfig
+        //  - Is a suspected struct enumerator type, which is any type that satisfies all of:
+        //      a) Is a value type
+        //      b) Is not an enum
+        //      c) Is a nested type
+        //      d) Name ends with "Enumerator"
+        private static bool IsMutableValueType(ITypeSymbol typeSymbol, SymbolAnalysisContext context, DiagnosticDescriptor rule)
+        {
+            return _wellKnownMutableValueTypes.Contains(typeSymbol.ToString()) ||
+                IsStructEnumeratorType(typeSymbol) ||
+                context.Symbol.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(rule, syntaxReference.SyntaxTree, context.Compilation).Contains(typeSymbol));
 
             //  Local functions
 

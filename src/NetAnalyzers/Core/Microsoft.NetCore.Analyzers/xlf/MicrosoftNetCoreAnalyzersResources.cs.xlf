@@ -707,24 +707,39 @@
         <target state="translated">Nepředávejte literály jako lokalizované parametry</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassMutableValueTypesByValueCodeFixTitle">
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_CodeFixTitle">
         <source>Pass mutable value type by reference</source>
         <target state="new">Pass mutable value type by reference</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassMutableValueTypesByValueDescription">
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Description">
         <source>Passing mutable value types by value can result in mutations of the copy being lost.</source>
         <target state="new">Passing mutable value types by value can result in mutations of the copy being lost.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassMutableValueTypesByValueMessage">
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Message">
         <source>Do not pass mutable value type '{0}' by value</source>
         <target state="new">Do not pass mutable value type '{0}' by value</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotPassMutableValueTypesByValueTitle">
+      <trans-unit id="DoNotPassMutableValueTypesByValue_Parameters_Title">
         <source>Do not pass mutable value types by value</source>
         <target state="new">Do not pass mutable value types by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Description">
+        <source>Returning mutable value types by value can result in mutations of the copy being lost.</source>
+        <target state="new">Returning mutable value types by value can result in mutations of the copy being lost.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Message">
+        <source>Do not return mutable value type {0} by value</source>
+        <target state="new">Do not return mutable value type {0} by value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassMutableValueTypesByValue_ReturnValues_Title">
+        <source>Do not return mutable value types by value</source>
+        <target state="new">Do not return mutable value types by value</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseReservedExceptionTypesDescription">

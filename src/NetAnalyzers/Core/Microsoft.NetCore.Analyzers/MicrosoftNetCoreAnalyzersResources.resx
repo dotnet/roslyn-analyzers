@@ -1764,16 +1764,25 @@
   <data name="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle" xml:space="preserve">
     <value>The 'ModuleInitializer' attribute should not be used in libraries</value>
   </data>
-  <data name="DoNotPassMutableValueTypesByValueCodeFixTitle" xml:space="preserve">
+  <data name="DoNotPassMutableValueTypesByValue_Parameters_CodeFixTitle" xml:space="preserve">
     <value>Pass mutable value type by reference</value>
   </data>
-  <data name="DoNotPassMutableValueTypesByValueDescription" xml:space="preserve">
+  <data name="DoNotPassMutableValueTypesByValue_Parameters_Description" xml:space="preserve">
     <value>Passing mutable value types by value can result in mutations of the copy being lost.</value>
   </data>
-  <data name="DoNotPassMutableValueTypesByValueMessage" xml:space="preserve">
+  <data name="DoNotPassMutableValueTypesByValue_Parameters_Message" xml:space="preserve">
     <value>Do not pass mutable value type '{0}' by value</value>
   </data>
-  <data name="DoNotPassMutableValueTypesByValueTitle" xml:space="preserve">
+  <data name="DoNotPassMutableValueTypesByValue_Parameters_Title" xml:space="preserve">
     <value>Do not pass mutable value types by value</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValue_ReturnValues_Description" xml:space="preserve">
+    <value>Returning mutable value types by value can result in mutations of the copy being lost.</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValue_ReturnValues_Message" xml:space="preserve">
+    <value>Do not return mutable value type {0} by value</value>
+  </data>
+  <data name="DoNotPassMutableValueTypesByValue_ReturnValues_Title" xml:space="preserve">
+    <value>Do not return mutable value types by value</value>
   </data>
 </root>

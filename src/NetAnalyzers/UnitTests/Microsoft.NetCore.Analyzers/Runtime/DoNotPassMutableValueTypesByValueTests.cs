@@ -9,10 +9,10 @@ using Xunit;
 using System.Threading;
 
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotPassMutableValueTypesByValueAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotPassMutableValueTypesByValueFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.NetCore.Analyzers.Runtime.DoNotPassMutableValueTypesByValueAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotPassMutableValueTypesByValueAnalyzer,
     Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotPassMutableValueTypesByValueFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
@@ -50,14 +50,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             get
             {
                 yield return new[] { $"dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = MyMutableStruct" };
-                yield return new[] { $"dotnet_code_quality.{DoNotPassMutableValueTypesByValueAnalyzer.RuleId}.{EditorConfigOptionNames.AdditionalMutableValueTypes} = MyMutableStruct" };
+                yield return new[] { $"dotnet_code_quality.{DoNotPassMutableValueTypesByValueAnalyzer.ParametersRuleId}.{EditorConfigOptionNames.AdditionalMutableValueTypes} = MyMutableStruct" };
                 yield return new[] { $"dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = T:MyMutableStruct" };
             }
         }
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownTypes_ByValue_Diagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByValueParameter_Diagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -69,14 +69,14 @@ public class Testopolis
 {{
     public void ByValue(ref {knownTypeName} x) {{ }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
+            var diagnostics = VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments(knownTypeName);
 
             return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
         [MemberData(nameof(VB_KnownProblematicTypeNames))]
-        public Task KnownTypes_ByValue_Diagnostic_VB(string knownTypeName)
+        public Task KnownTypes_ByValueParameter_Diagnostic_VB(string knownTypeName)
         {
             string source = $@"
 Public Class Testopolis
@@ -88,14 +88,14 @@ Public Class Testopolis
     Public Sub ByValue(ByRef x As {knownTypeName})
     End Sub
 End Class";
-            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
+            var diagnostics = VerifyVB.Diagnostic(ParametersRule).WithLocation(0).WithArguments(knownTypeName);
 
             return VerifyVB.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownTypes_ByReferenceReadOnly_Diagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByReferenceReadOnlyParameter_Diagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -107,14 +107,14 @@ public class Testopolis
 {{
     public void ByReferenceReadOnly(ref {knownTypeName} x) {{ }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(knownTypeName);
+            var diagnostics = VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments(knownTypeName);
 
             return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
         [MemberData(nameof(CS_KnownProblematicTypeNames))]
-        public Task KnownTypes_ByReference_NoDiagnostic_CS(string knownTypeName)
+        public Task KnownTypes_ByReferenceParameter_NoDiagnostic_CS(string knownTypeName)
         {
             string source = $@"
 public class Testopolis
@@ -128,7 +128,7 @@ public class Testopolis
 
         [Theory]
         [MemberData(nameof(VB_KnownProblematicTypeNames))]
-        public Task KnownTypes_ByReference_NoDiagnostic_VB(string knownTypeName)
+        public Task KnownTypes_ByReferenceParameter_NoDiagnostic_VB(string knownTypeName)
         {
             string source = $@"
 Public Class Testopolis
@@ -141,7 +141,7 @@ End Class";
 
         [Theory]
         [MemberData(nameof(EnumeratorTypeNames))]
-        public Task EnumeratorTypes_ByValue_Diagnostic_CS(string enumeratorTypeName)
+        public Task EnumeratorTypes_ByValueParameter_Diagnostic_CS(string enumeratorTypeName)
         {
             string source = $@"
 public class MyList
@@ -163,14 +163,14 @@ public class Testopolis
 {{
     public void ByValue(ref MyList.{enumeratorTypeName} x) {{ }}
 }}";
-            var diagnostics = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
+            var diagnostics = VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
 
             return VerifyCS.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
 
         [Theory]
         [MemberData(nameof(EnumeratorTypeNames))]
-        public Task EnumeratorTypes_ByValue_Diagnostic_VB(string enumeratorTypeName)
+        public Task EnumeratorTypes_ByValueParameter_Diagnostic_VB(string enumeratorTypeName)
         {
             string source = $@"
 Public Class MyList
@@ -190,7 +190,7 @@ Public Class Testopolis
     Public Sub ByValue(ByRef x As MyList.{enumeratorTypeName})
     End Sub
 End Class";
-            var diagnostics = VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
+            var diagnostics = VerifyVB.Diagnostic(ParametersRule).WithLocation(0).WithArguments($"MyList.{enumeratorTypeName}");
 
             return VerifyVB.VerifyCodeFixAsync(source, diagnostics, fixedSource);
         }
@@ -319,7 +319,7 @@ public class Testopolis
                     },
                     ExpectedDiagnostics =
                     {
-                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments("MyMutableStruct")
+                        VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments("MyMutableStruct")
                     }
                 }
             };
@@ -355,7 +355,7 @@ End Class"
                     },
                     ExpectedDiagnostics =
                     {
-                        VerifyVB.Diagnostic(Rule).WithLocation(0).WithArguments("MyMutableStruct")
+                        VerifyVB.Diagnostic(ParametersRule).WithLocation(0).WithArguments("MyMutableStruct")
                     }
                 }
             };
@@ -418,7 +418,7 @@ public class Testopolis
         ByValue(ref {argument});
     }}
 }}";
-            var diagnostic = VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock);
+            var diagnostic = VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock);
 
             return VerifyCS.VerifyCodeFixAsync(source, diagnostic, fixedSource);
         }
@@ -453,7 +453,7 @@ public class Testopolis
                     },
                     ExpectedDiagnostics =
                     {
-                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
+                        VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
                     }
                 },
 
@@ -600,7 +600,7 @@ public static class Provider
                     },
                     ExpectedDiagnostics =
                     {
-                        VerifyCS.Diagnostic(Rule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
+                        VerifyCS.Diagnostic(ParametersRule).WithLocation(0).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock)
                     }
                 },
                 FixedState =
@@ -647,8 +647,10 @@ using System.Threading;
 
 public class Testopolis
 {{
+#pragma warning disable {DoNotPassMutableValueTypesByValueAnalyzer.ReturnValuesRuleId}
     private SpinLock Factory() => new SpinLock();
     private SpinLock Property {{ get; set; }}
+#pragma warning restore {DoNotPassMutableValueTypesByValueAnalyzer.ReturnValuesRuleId}
     private readonly SpinLock readOnlyField;
 
     public void ByValue({{|#0:SpinLock x|}}) {{ }}
@@ -661,7 +663,7 @@ public class Testopolis
                     },
                     ExpectedDiagnostics =
                     {
-                        VerifyCS.Diagnostic(Rule).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock).WithLocation(0)
+                        VerifyCS.Diagnostic(ParametersRule).WithArguments(WellKnownTypeNames.SystemThreadingSpinLock).WithLocation(0)
                     }
                 },
                 FixedState =
@@ -673,8 +675,10 @@ using System.Threading;
 
 public class Testopolis
 {{
+#pragma warning disable {DoNotPassMutableValueTypesByValueAnalyzer.ReturnValuesRuleId}
     private SpinLock Factory() => new SpinLock();
     private SpinLock Property {{ get; set; }}
+#pragma warning restore {DoNotPassMutableValueTypesByValueAnalyzer.ReturnValuesRuleId}
     private readonly SpinLock readOnlyField;
 
     public void ByValue(ref SpinLock x) {{ }}
@@ -695,6 +699,54 @@ public class Testopolis
             return test.RunAsync();
         }
 
-        private static DiagnosticDescriptor Rule => DoNotPassMutableValueTypesByValueAnalyzer.Rule;
+        [Theory]
+        [InlineData("System.Threading.SpinLock")]
+        [InlineData("UserDefined")]
+        [InlineData("MyList.MyEnumerator")]
+        public Task ReturnTypes_Diagnostic_CS(string returnType)
+        {
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+public struct UserDefined {{ }}
+public class MyList
+{{
+    public struct MyEnumerator {{ }}
+}}
+
+public class Testopolis
+{{
+    private {returnType} _field;
+    public {{|#0:{returnType}|}} Property {{ get; set; }}
+    public {{|#1:{returnType}|}} Method(int x, int y)
+    {{
+        return _field;
+    }}
+}}"
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+[*]
+dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = UserDefined
+")
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(ReturnValuesRule).WithLocation(0).WithArguments(returnType),
+                        VerifyCS.Diagnostic(ReturnValuesRule).WithLocation(1).WithArguments(returnType)
+                    }
+                }
+            };
+
+            return test.RunAsync();
+        }
+
+        private static DiagnosticDescriptor ParametersRule => DoNotPassMutableValueTypesByValueAnalyzer.ParametersRule;
+        private static DiagnosticDescriptor ReturnValuesRule => DoNotPassMutableValueTypesByValueAnalyzer.ReturnValuesRule;
     }
 }

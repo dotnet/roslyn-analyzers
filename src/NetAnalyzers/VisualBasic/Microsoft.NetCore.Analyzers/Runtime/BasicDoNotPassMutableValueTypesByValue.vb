@@ -11,16 +11,16 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
         Private Protected Overrides Function GetMethodReturnTypeLocations(methodSymbol As IMethodSymbol, token As CancellationToken) As IEnumerable(Of Location)
             Return methodSymbol.DeclaringSyntaxReferences.Select(
                 Function(syntaxReference)
-                    Dim node = DirectCast(syntaxReference.GetSyntax(token), MethodBlockSyntax)
-                    Return node.SubOrFunctionStatement.Identifier.GetLocation()
+                    Dim node = DirectCast(syntaxReference.GetSyntax(token), MethodStatementSyntax)
+                    Return node.Identifier.GetLocation()
                 End Function)
         End Function
 
         Private Protected Overrides Function GetPropertyReturnTypeLocations(propertySymbol As IPropertySymbol, token As CancellationToken) As IEnumerable(Of Location)
             Return propertySymbol.DeclaringSyntaxReferences.Select(
                 Function(syntaxReference)
-                    Dim node = DirectCast(syntaxReference.GetSyntax(token), PropertyBlockSyntax)
-                    Return node.PropertyStatement.Identifier.GetLocation()
+                    Dim node = DirectCast(syntaxReference.GetSyntax(token), PropertyStatementSyntax)
+                    Return node.Identifier.GetLocation()
                 End Function)
         End Function
     End Class

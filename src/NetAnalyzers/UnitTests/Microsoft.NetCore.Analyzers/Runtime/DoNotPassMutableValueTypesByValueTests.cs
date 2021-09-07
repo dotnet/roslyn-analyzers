@@ -293,6 +293,33 @@ End Class";
             return VerifyVB.VerifyAnalyzerAsync(source);
         }
 
+        [Fact]
+        public Task EnumeratorTypes_GetEnumeratorReturn_NoDiagnostic_CS()
+        {
+            string source = @"
+public class MyList
+{
+    public struct Enumerator { }
+    public Enumerator GetEnumerator() => new Enumerator();
+}";
+
+            return VerifyCS.VerifyAnalyzerAsync(source);
+        }
+
+        [Fact]
+        public Task EnumeratorTypes_GetEnumeratorReturn_NoDiagnostic_VB()
+        {
+            string source = @"
+Public Class MyList
+    Public Structure Enumerator
+    End Structure
+    Public Function GetEnumerator() As Enumerator
+    End Function
+End Class";
+
+            return VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
         [Theory]
         [MemberData(nameof(EditorConfigText))]
         public Task EditorConfigTypes_Diagnostic_CS(string editorConfigText)
@@ -739,6 +766,52 @@ dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = User
                     {
                         VerifyCS.Diagnostic(ReturnValuesRule).WithLocation(0).WithArguments(returnType),
                         VerifyCS.Diagnostic(ReturnValuesRule).WithLocation(1).WithArguments(returnType)
+                    }
+                }
+            };
+
+            return test.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("System.Threading.SpinLock")]
+        [InlineData("UserDefined")]
+        [InlineData("MyList.MyEnumerator")]
+        public Task ReturnTypes_Diagnostic_VB(string returnType)
+        {
+            var test = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
+Public Structure UserDefined
+End Structure
+Public Class MyList
+    Public Structure MyEnumerator
+    End Structure
+End Class
+
+Public Class Testopolis
+    Private _field As {returnType}
+    Public Property {{|#0:MyProperty|}} As {returnType}
+    Public Function {{|#1:MyMethod|}}(x As Integer, y As Integer) As {returnType}
+        Return _field
+    End Function
+End Class"
+                    },
+                    AnalyzerConfigFiles =
+                    {
+                        ("/.editorconfig", $@"root = true
+[*]
+dotnet_code_quality.{EditorConfigOptionNames.AdditionalMutableValueTypes} = UserDefined
+")
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyVB.Diagnostic(ReturnValuesRule).WithLocation(0).WithArguments(returnType),
+                        VerifyVB.Diagnostic(ReturnValuesRule).WithLocation(1).WithArguments(returnType)
                     }
                 }
             };

@@ -97,7 +97,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (parameterSymbol.RefKind is RefKind.Ref or RefKind.Out || !parameterSymbol.IsInSource())
                     return;
 
-                if (IsMutableValueType(parameterSymbol.Type, context, ParametersRule))
+                if (IsMutableValueType(parameterSymbol.Type, context, ParametersRule) != MutableValueTypeKind.None)
                 {
                     foreach (var syntaxReference in parameterSymbol.DeclaringSyntaxReferences)
                     {
@@ -113,9 +113,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (methodSymbol.IsAccessorMethod())
                     return;
+                var mutableTypeKind = IsMutableValueType(methodSymbol.ReturnType, context, ReturnValuesRule);
 
-                if (IsMutableValueType(methodSymbol.ReturnType, context, ReturnValuesRule) && !methodSymbol.ReturnsByRef)
+                if (mutableTypeKind != MutableValueTypeKind.None && !methodSymbol.ReturnsByRef)
                 {
+                    if (mutableTypeKind == MutableValueTypeKind.Enumerator && string.Equals(methodSymbol.Name, "GetEnumerator", StringComparison.Ordinal))
+                        return;
+
                     var locations = GetMethodReturnTypeLocations(methodSymbol, context.CancellationToken);
                     var diagnostic = locations.First().CreateDiagnostic(ReturnValuesRule, ImmutableArray.CreateRange(locations.Skip(1)), null, methodSymbol.ReturnType.ToString());
                     context.ReportDiagnostic(diagnostic);
@@ -125,13 +129,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             //  Flag any property with a mutable type that doesn't return by reference.
             void AnalyzeProperty(IPropertySymbol propertySymbol)
             {
-                if (IsMutableValueType(propertySymbol.Type, context, ReturnValuesRule) && !propertySymbol.ReturnsByRef)
+                if (IsMutableValueType(propertySymbol.Type, context, ReturnValuesRule) != MutableValueTypeKind.None && !propertySymbol.ReturnsByRef)
                 {
                     var locations = GetPropertyReturnTypeLocations(propertySymbol, context.CancellationToken);
                     var diagnostic = locations.First().CreateDiagnostic(ReturnValuesRule, ImmutableArray.CreateRange(locations.Skip(1)), null, propertySymbol.Type.ToString());
                     context.ReportDiagnostic(diagnostic);
                 }
             }
+        }
+
+        private enum MutableValueTypeKind
+        {
+            None,
+            WellKnown,
+            UserDefined,
+            Enumerator
         }
 
         //  Returns true for any type that satisfies any of the following:
@@ -142,11 +154,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         //      b) Is not an enum
         //      c) Is a nested type
         //      d) Name ends with "Enumerator"
-        private static bool IsMutableValueType(ITypeSymbol typeSymbol, SymbolAnalysisContext context, DiagnosticDescriptor rule)
+        private static MutableValueTypeKind IsMutableValueType(ITypeSymbol typeSymbol, SymbolAnalysisContext context, DiagnosticDescriptor rule)
         {
-            return _wellKnownMutableValueTypes.Contains(typeSymbol.ToString()) ||
-                IsStructEnumeratorType(typeSymbol) ||
-                context.Symbol.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(rule, syntaxReference.SyntaxTree, context.Compilation).Contains(typeSymbol));
+            if (_wellKnownMutableValueTypes.Contains(typeSymbol.ToString()))
+                return MutableValueTypeKind.WellKnown;
+            if (IsStructEnumeratorType(typeSymbol))
+                return MutableValueTypeKind.Enumerator;
+            if (context.Symbol.DeclaringSyntaxReferences.Any(syntaxReference => context.Options.GetAdditionalMutableValueTypesOption(rule, syntaxReference.SyntaxTree, context.Compilation).Contains(typeSymbol)))
+                return MutableValueTypeKind.UserDefined;
+
+            return MutableValueTypeKind.None;
 
             //  Local functions
 

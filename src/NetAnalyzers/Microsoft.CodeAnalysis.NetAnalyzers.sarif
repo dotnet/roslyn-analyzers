@@ -284,6 +284,44 @@
             ]
           }
         },
+        "CA2019": {
+          "id": "CA2019",
+          "shortDescription": "Do not pass mutable value types by value",
+          "fullDescription": "Passing mutable value types by value can result in mutations of the copy being lost.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotPassMutableValueTypesByValueAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2020": {
+          "id": "CA2020",
+          "shortDescription": "Do not return mutable value types by value",
+          "fullDescription": "Returning mutable value types by value can result in mutations of the copy being lost.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotPassMutableValueTypesByValueAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
         "CA2234": {
           "id": "CA2234",
           "shortDescription": "Pass system uri objects instead of strings",
@@ -5730,6 +5768,44 @@
             "category": "Reliability",
             "isEnabledByDefault": true,
             "typeName": "BasicForwardCancellationTokenToInvocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2019": {
+          "id": "CA2019",
+          "shortDescription": "Do not pass mutable value types by value",
+          "fullDescription": "Passing mutable value types by value can result in mutations of the copy being lost.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotPassMutableValueTypesByValueAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CA2020": {
+          "id": "CA2020",
+          "shortDescription": "Do not return mutable value types by value",
+          "fullDescription": "Returning mutable value types by value can result in mutations of the copy being lost.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotPassMutableValueTypesByValueAnalyzer",
             "languages": [
               "Visual Basic"
             ],

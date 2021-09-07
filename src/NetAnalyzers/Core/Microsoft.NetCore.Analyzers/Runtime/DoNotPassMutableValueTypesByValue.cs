@@ -99,12 +99,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (IsMutableValueType(parameterSymbol.Type, context, ParametersRule) != MutableValueTypeKind.None)
                 {
-                    foreach (var syntaxReference in parameterSymbol.DeclaringSyntaxReferences)
-                    {
-                        var location = Location.Create(syntaxReference.SyntaxTree, syntaxReference.Span);
-                        var diagnostic = location.CreateDiagnostic(ParametersRule, parameterSymbol.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
-                        context.ReportDiagnostic(diagnostic);
-                    }
+                    var locations = parameterSymbol.DeclaringSyntaxReferences.Select(x => Location.Create(x.SyntaxTree, x.Span));
+                    var diagnostic = locations.First().CreateDiagnostic(
+                        ParametersRule,
+                        ImmutableArray.CreateRange(locations.Skip(1)),
+                        null,
+                        parameterSymbol.Type.ToDisplayString(SymbolDisplayFormats.QualifiedTypeAndNamespaceSymbolDisplayFormat));
+                    context.ReportDiagnostic(diagnostic);
                 }
             }
 
@@ -117,6 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (mutableTypeKind != MutableValueTypeKind.None && !methodSymbol.ReturnsByRef)
                 {
+                    //  Don't flag GetEnumerator method for struct enumerators.
                     if (mutableTypeKind == MutableValueTypeKind.Enumerator && string.Equals(methodSymbol.Name, "GetEnumerator", StringComparison.Ordinal))
                         return;
 

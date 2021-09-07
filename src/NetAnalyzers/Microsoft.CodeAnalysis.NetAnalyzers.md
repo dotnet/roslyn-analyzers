@@ -1608,6 +1608,30 @@ Number of parameters supplied in the logging message template do not match the n
 |CodeFix|False|
 ---
 
+## [CA2019](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2019): Do not pass mutable value types by value
+
+Passing mutable value types by value can result in mutations of the copy being lost.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|True|
+---
+
+## [CA2020](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020): Do not return mutable value types by value
+
+Returning mutable value types by value can result in mutations of the copy being lost.
+
+|Item|Value|
+|-|-|
+|Category|Reliability|
+|Enabled|True|
+|Severity|Warning|
+|CodeFix|False|
+---
+
 ## [CA2100](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100): Review SQL queries for security vulnerabilities
 
 SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.

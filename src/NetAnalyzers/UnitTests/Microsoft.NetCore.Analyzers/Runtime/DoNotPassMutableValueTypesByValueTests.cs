@@ -795,8 +795,8 @@ End Class
 
 Public Class Testopolis
     Private _field As {returnType}
-    Public Property {{|#0:MyProperty|}} As {returnType}
-    Public Function {{|#1:MyMethod|}}(x As Integer, y As Integer) As {returnType}
+    Public Property MyProperty {{|#0:As {returnType}|}}
+    Public Function MyMethod(x As Integer, y As Integer) {{|#1:As {returnType}|}}
         Return _field
     End Function
 End Class"

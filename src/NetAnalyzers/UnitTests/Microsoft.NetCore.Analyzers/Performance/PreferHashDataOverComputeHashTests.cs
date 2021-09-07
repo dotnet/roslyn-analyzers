@@ -224,7 +224,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line1 = 20;
-        byte[] digest = {{|#0:{hashType}.Create().ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:{hashType}.Create().ComputeHash(buffer)|}};
         int line2 = 10;
     }}
 
@@ -232,7 +232,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line2 = 10;
-        byte[] digest2 = {{|#2:{hashType}.Create().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}};
+        byte[] digest2 = {{|#1:{hashType}.Create().ComputeHash(buffer, 0, 10)|}};
         int line3 = 10;
     }}
 
@@ -242,7 +242,7 @@ public class Test
         int line3 = 10;
         byte[] digest3 = new byte[1024];
         int line4 = 10;
-        if ({{|#6:{hashType}.Create().TryComputeHash({{|#7:buffer|}}, {{|#8:digest3|}}, {{|#9:out var i|}})|}})
+        if ({{|#2:{hashType}.Create().TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line5 = 10;
         }}
@@ -313,13 +313,13 @@ Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#0:{hashType}.Create().ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = {{|#0:{hashType}.Create().ComputeHash(buffer)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
         Dim line2 = 10
-        Dim digest As Byte() = {{|#2:{hashType}.Create().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}}
+        Dim digest As Byte() = {{|#1:{hashType}.Create().ComputeHash(buffer, 0, 10)|}}
         Dim line3 = 10
     End Sub
     Public Shared Sub TestMethod3()
@@ -327,7 +327,7 @@ Public Class Test
         Dim line3 = 10
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
-        If {{|#6:{hashType}.Create().TryComputeHash({{|#7:buffer|}}, {{|#8:digest|}}, {{|#9:i|}})|}} Then
+        If {{|#2:{hashType}.Create().TryComputeHash(buffer, digest, i)|}} Then
             Dim line5 = 10
         End If
         Dim line6 = 10
@@ -391,38 +391,38 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#4:var hasher = {hashType}.Create();|}}
+        {{|#2:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
-        byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
+        byte[] digest2 = {{|#1:hasher.ComputeHash(buffer)|}};
         int line3 = 10;
     }}
 
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#13:var hasher = {hashType}.Create();|}}
+        {{|#5:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}};
+        byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
-        byte[] digest2 = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}};
+        byte[] digest2 = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}};
         int line3 = 10;
     }}
 
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#22:var hasher = {hashType}.Create();|}}
+        {{|#8:var hasher = {hashType}.Create();|}}
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
-        if ({{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest3|}}, {{|#17:out var i|}})|}})
+        if ({{|#6:hasher.TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line3 = 10;
         }}
         int line4 = 10;
-        if ({{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest3|}}, {{|#21:out i|}})|}})
+        if ({{|#7:hasher.TryComputeHash(buffer, digest3, out i)|}})
         {{
             int line5 = 10;
         }}
@@ -500,32 +500,32 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#4:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
-        Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
+        Dim digest2 As Byte() = {{|#1:hasher.ComputeHash(buffer)|}}
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#13:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#5:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}}
+        Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
-        Dim digest2 As Byte() = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}}
+        Dim digest2 As Byte() = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}}
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#22:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#8:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
         Dim line2 = 10
-        If {{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest|}}, {{|#17:i|}})|}} Then
+        If {{|#6:hasher.TryComputeHash(buffer, digest, i)|}} Then
             Dim line3 = 10
         End If
         Dim line4 = 10
-        If {{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest|}}, {{|#21:i|}})|}} Then
+        If {{|#7:hasher.TryComputeHash(buffer, digest, i)|}} Then
             Dim line5 = 10
         End If
         Dim line6 = 10
@@ -596,29 +596,29 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#2:var hasher = {hashType}.Create();|}}
+        {{|#1:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
     }}
 
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#7:var hasher = {hashType}.Create();|}}
+        {{|#3:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+        byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
     }}
 
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#12:var hasher = {hashType}.Create();|}}
+        {{|#5:var hasher = {hashType}.Create();|}}
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
-        if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+        if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line3 = 10;
         }}
@@ -687,26 +687,26 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#1:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#3:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}}
+        Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#12:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#5:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
         Dim line2 = 10
-        If {{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest|}}, {{|#11:i|}})|}} Then
+        If {{|#4:hasher.TryComputeHash(buffer, digest, i)|}} Then
             Dim line3 = 10
         End If
         Dim line4 = 10
@@ -771,36 +771,36 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#2:var hasher = {hashType}.Create();|}}
+        {{|#1:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
-        {{|#3:hasher.Dispose();|}}
+        {{|#2:hasher.Dispose();|}}
     }}
 
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#8:var hasher = {hashType}.Create();|}}
+        {{|#4:var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#4:hasher.ComputeHash({{|#5:buffer|}}, {{|#6:0|}}, {{|#7:10|}})|}};
+        byte[] digest = {{|#3:hasher.ComputeHash(buffer,0, 10)|}};
         int line2 = 10;
-        {{|#9:hasher.Dispose();|}}
+        {{|#5:hasher.Dispose();|}}
     }}
 
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#14:var hasher = {hashType}.Create();|}}
+        {{|#7:var hasher = {hashType}.Create();|}}
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
-        if ({{|#10:hasher.TryComputeHash({{|#11:buffer|}}, {{|#12:digest3|}}, {{|#13:out var i|}})|}})
+        if ({{|#6:hasher.TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line3 = 10;
         }}
         int line4 = 10;
-        {{|#15:hasher.Dispose();|}}
+        {{|#8:hasher.Dispose();|}}
     }}
 }}
 ";
@@ -865,32 +865,32 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#1:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
-        {{|#3:hasher.Dispose()|}}
+        {{|#2:hasher.Dispose()|}}
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#8:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#4:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#4:hasher.ComputeHash({{|#5:buffer|}}, {{|#6:0|}}, {{|#7:10|}})|}}
+        Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
-        {{|#9:hasher.Dispose()|}}
+        {{|#5:hasher.Dispose()|}}
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#14:Dim hasher As {hashType} = {hashType}.Create()|}}
+        {{|#7:Dim hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
         Dim line2 = 10
-        If {{|#10:hasher.TryComputeHash({{|#11:buffer|}}, {{|#12:digest|}}, {{|#13:i|}})|}} Then
+        If {{|#6:hasher.TryComputeHash(buffer, digest, i)|}} Then
             Dim line3 = 10
         End If
         Dim line4 = 10
-        {{|#15:hasher.Dispose()|}}
+        {{|#8:hasher.Dispose()|}}
     End Sub
 End Class
 ";
@@ -952,12 +952,12 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#4:var hasher = {hashType}.Create()|}})
+        using ({{|#2:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
-            byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
+            byte[] digest2 = {{|#1:hasher.ComputeHash(buffer)|}};
             int line3 = 10;
         }}
     }}
@@ -965,12 +965,12 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#13:var hasher = {hashType}.Create()|}})
+        using ({{|#5:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}};
+            byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
-            byte[] digest2 = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}};
+            byte[] digest2 = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}};
             int line3 = 10;
         }}
     }}
@@ -978,17 +978,17 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#22:var hasher = {hashType}.Create()|}})
+        using ({{|#8:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest3|}}, {{|#17:out var i|}})|}})
+            if ({{|#6:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
             int line4 = 10;
-            if ({{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest3|}}, {{|#21:out i|}})|}})
+            if ({{|#7:hasher.TryComputeHash(buffer, digest3, out i)|}})
             {{
                 int line5 = 10;
             }}
@@ -1067,34 +1067,34 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#4:Using  hasher As {hashType} = {hashType}.Create()|}}
+        {{|#2:Using  hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
-            Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
+            Dim digest2 As Byte() = {{|#1:hasher.ComputeHash(buffer)|}}
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#13:Using  hasher As {hashType} = {hashType}.Create()|}}
+        {{|#5:Using  hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}}
+            Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
-            Dim digest2 As Byte() = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}}
+            Dim digest2 As Byte() = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}}
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#22:Using  hasher As {hashType} = {hashType}.Create()|}}
+        {{|#8:Using  hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest|}}, {{|#17:i|}})|}} Then
+            If {{|#6:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
-            If {{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest|}}, {{|#21:i|}})|}} Then
+            If {{|#7:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line5 = 10
             End If
             Dim line6 = 10
@@ -1166,29 +1166,29 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#2:using var hasher = {hashType}.Create();|}}
+        {{|#1:using var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
     }}
 
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#7:using var hasher = {hashType}.Create();|}}
+        {{|#3:using var hasher = {hashType}.Create();|}}
         int line1 = 20;
-        byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+        byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
     }}
 
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#12:using var hasher = {hashType}.Create();|}}
+        {{|#5:using var hasher = {hashType}.Create();|}}
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
-        if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+        if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line3 = 10;
         }}
@@ -1259,10 +1259,10 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:var hasher = {hashType}.Create()|}})
+        using ({{|#1:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
         }}
     }}
@@ -1270,10 +1270,10 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#7:var hasher = {hashType}.Create()|}})
+        using ({{|#3:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+            byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
         }}
     }}
@@ -1281,12 +1281,12 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#12:var hasher = {hashType}.Create()|}})
+        using ({{|#5:var hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+            if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
@@ -1356,28 +1356,28 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using hasher As {hashType} = {hashType}.Create()|}}
+        {{|#1:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Using hasher As {hashType} = {hashType}.Create()|}}
+        {{|#3:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}}
+            Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#12:Using hasher As {hashType} = {hashType}.Create()|}}
+        {{|#5:Using hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest|}}, {{|#11:i|}})|}} Then
+            If {{|#4:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
@@ -1443,10 +1443,10 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:HashAlgorithm hasher = {hashType}.Create()|}})
+        using ({{|#1:HashAlgorithm hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
         }}
     }}
@@ -1454,10 +1454,10 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#7:HashAlgorithm hasher = {hashType}.Create()|}})
+        using ({{|#3:HashAlgorithm hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+            byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
         }}
     }}
@@ -1465,12 +1465,12 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#12:HashAlgorithm hasher = {hashType}.Create()|}})
+        using ({{|#5:HashAlgorithm hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+            if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
@@ -1540,28 +1540,28 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        {{|#1:Using hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        {{|#3:Using hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}}
+            Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#12:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        {{|#5:Using hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest|}}, {{|#11:i|}})|}} Then
+            If {{|#4:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
@@ -1627,23 +1627,23 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({hashType} {{|#5:hasher = {hashType}.Create()|}}, {{|#6:hasher2 = {hashType}.Create()|}})
+        using ({hashType} {{|#1:hasher = {hashType}.Create()|}}, {{|#4:hasher2 = {hashType}.Create()|}})
         {{
             int aboveLine = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int belowLine = 10;
-            byte[] digest2 = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash({{|#4:digest|}})|}})|}};
+            byte[] digest2 = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash(digest)|}})|}};
         }}
     }}
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({hashType} {{|#18:hasher = {hashType}.Create()|}}, {{|#19:hasher2 = {hashType}.Create()|}})
+        using ({hashType} {{|#6:hasher = {hashType}.Create()|}}, {{|#9:hasher2 = {hashType}.Create()|}})
         {{
             int aboveLine = 20;
-            byte[] digest = {{|#7:hasher.ComputeHash({{|#8:buffer|}}, {{|#9:0|}}, {{|#10:10|}})|}};
+            byte[] digest = {{|#5:hasher.ComputeHash(buffer, 0, 10)|}};
             int belowLine = 10;
-            byte[] digest2 = {{|#11:hasher2.ComputeHash({{|#12:hasher2.ComputeHash({{|#13:digest|}}, {{|#14:0|}}, {{|#15:10|}})|}}, {{|#16:0|}}, {{|#17:10|}})|}};
+            byte[] digest2 = {{|#7:hasher2.ComputeHash({{|#8:hasher2.ComputeHash(digest, 0, 10)|}}, 0, 10)|}};
         }}
     }}
 }}
@@ -1681,39 +1681,27 @@ public class Test
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
-                        .WithLocation(1)
-                        .WithLocation(5),
+                        .WithLocation(1),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(6),
+                        .WithLocation(4),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(3)
-                        .WithLocation(4)
+                        .WithLocation(4),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(5)
                         .WithLocation(6),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(7)
+                        .WithLocation(9),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(8)
                         .WithLocation(9)
-                        .WithLocation(10)
-                        .WithLocation(18),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                        .WithLocation(16)
-                        .WithLocation(17)
-                        .WithLocation(19),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(12)
-                        .WithLocation(13)
-                        .WithLocation(14)
-                        .WithLocation(15)
-                        .WithLocation(19)
                     });
             }
         }
@@ -1736,11 +1724,20 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        Using {{|#5:hasher As {hashType} = {hashType}.Create()|}}, {{|#6:hasher2 As {hashType} = {hashType}.Create()|}}
+        Using {{|#1:hasher As {hashType} = {hashType}.Create()|}}, {{|#4:hasher2 As {hashType} = {hashType}.Create()|}}
             Dim aboveLine = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim belowLine = 10
-            Dim digest2 As Byte() = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash({{|#4:digest|}})|}})|}}
+            Dim digest2 As Byte() = {{|#2:hasher2.ComputeHash({{|#3:hasher2.ComputeHash(digest)|}})|}}
+        End Using
+    End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        Using {{|#6:hasher As {hashType} = {hashType}.Create()|}}, {{|#9:hasher2 As {hashType} = {hashType}.Create()|}}
+            Dim aboveLine = 20
+            Dim digest As Byte() = {{|#5:hasher.ComputeHash(buffer, 0, 10)|}}
+            Dim belowLine = 10
+            Dim digest2 As Byte() = {{|#7:hasher2.ComputeHash({{|#8:hasher2.ComputeHash(digest, 0, 10)|}}, 0, 10)|}}
         End Using
     End Sub
 End Class
@@ -1758,6 +1755,13 @@ Public Class Test
         Dim belowLine = 10
         Dim digest2 As Byte() = {hashType}.HashData({hashType}.HashData(digest))
     End Sub
+    Public Shared Sub TestMethod2()
+        Dim buffer = New Byte(1023) {{}}
+        Dim aboveLine = 20
+        Dim digest As Byte() = {hashType}.HashData(buffer.AsSpan(0, 10))
+        Dim belowLine = 10
+        Dim digest2 As Byte() = {hashType}.HashData({hashType}.HashData(digest.AsSpan(0, 10)).AsSpan(0, 10))
+    End Sub
 End Class
 ";
                 var hashAlgorithmTypeName = $"System.Security.Cryptography.{hashType}";
@@ -1768,18 +1772,27 @@ End Class
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
-                        .WithLocation(1)
-                        .WithLocation(5),
+                        .WithLocation(1),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(6),
+                        .WithLocation(4),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(3)
-                        .WithLocation(4)
-                        .WithLocation(6)
+                        .WithLocation(4),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(5)
+                        .WithLocation(6),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(7)
+                        .WithLocation(9),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(8)
+                        .WithLocation(9)
                     });
             }
         }
@@ -1833,7 +1846,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line1 = 20;
-        byte[] digest = {{|#0:new {hashType}Managed().ComputeHash({{|#1:buffer|}})|}};
+        byte[] digest = {{|#0:new {hashType}Managed().ComputeHash(buffer)|}};
         int line2 = 10;
     }}
 
@@ -1841,7 +1854,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line2 = 10;
-        byte[] digest2 = {{|#2:new {hashType}Managed().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}};
+        byte[] digest2 = {{|#1:new {hashType}Managed().ComputeHash(buffer, 0, 10)|}};
         int line3 = 10;
     }}
 
@@ -1851,7 +1864,7 @@ public class Test
         int line3 = 10;
         byte[] digest3 = new byte[1024];
         int line4 = 10;
-        if({{|#6:new {hashType}Managed().TryComputeHash({{|#7:buffer|}}, {{|#8:digest3|}}, {{|#9:out var i|}})|}})
+        if({{|#2:new {hashType}Managed().TryComputeHash(buffer, digest3, out var i)|}})
         {{
             int line5 = 10;
         }}
@@ -1921,13 +1934,13 @@ Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
         Dim line1 = 20
-        Dim digest As Byte() = {{|#0:New {hashType}Managed().ComputeHash({{|#1:buffer|}})|}}
+        Dim digest As Byte() = {{|#0:New {hashType}Managed().ComputeHash(buffer)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
         Dim line2 = 10
-        Dim digest As Byte() = {{|#2:New {hashType}Managed().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}}
+        Dim digest As Byte() = {{|#1:New {hashType}Managed().ComputeHash(buffer, 0, 10)|}}
         Dim line3 = 10
     End Sub
     Public Shared Sub TestMethod3()
@@ -1935,7 +1948,7 @@ Public Class Test
         Dim line3 = 10
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
-        If {{|#6:New {hashType}Managed().TryComputeHash({{|#7:buffer|}}, {{|#8:digest|}}, {{|#9:i|}})|}} Then
+        If {{|#2:New {hashType}Managed().TryComputeHash(buffer, digest, i)|}} Then
             Dim line5 = 10
         End If
         Dim line6 = 10
@@ -2002,7 +2015,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line1 = 20;
-        Test2({{|#0:new {hashType}Managed().ComputeHash({{|#1:buffer|}})|}});
+        Test2({{|#0:new {hashType}Managed().ComputeHash(buffer)|}});
         int line2 = 10;
     }}
 
@@ -2010,7 +2023,7 @@ public class Test
     {{
         var buffer = new byte[1024];
         int line2 = 10;
-        Test2({{|#2:new {hashType}Managed().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}});
+        Test2({{|#1:new {hashType}Managed().ComputeHash(buffer, 0, 10)|}});
         int line3 = 10;
     }}
 }}
@@ -2049,14 +2062,10 @@ public class Test
                     new[] {
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(0)
-                        .WithLocation(1),
+                        .WithLocation(0),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(4)
-                        .WithLocation(5)
+                        .WithLocation(1)
                         });
             }
         }
@@ -2081,13 +2090,13 @@ Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
         Dim line1 = 20
-        Test2({{|#0:New {hashType}Managed().ComputeHash({{|#1:buffer|}})|}})
+        Test2({{|#0:New {hashType}Managed().ComputeHash(buffer)|}})
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
         Dim line2 = 10
-        Test2({{|#2:New {hashType}Managed().ComputeHash({{|#3:buffer|}}, {{|#4:0|}}, {{|#5:10|}})|}})
+        Test2({{|#1:New {hashType}Managed().ComputeHash(buffer, 0, 10)|}})
         Dim line3 = 10
     End Sub
 End Class
@@ -2120,14 +2129,10 @@ End Class
                     vbFix,
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(0)
-                        .WithLocation(1),
+                        .WithLocation(0),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(4)
-                        .WithLocation(5));
+                        .WithLocation(1));
             }
         }
 
@@ -2150,12 +2155,12 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#4:var hasher = new {hashType}Managed()|}})
+        using ({{|#2:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
-            byte[] digest2 = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}};
+            byte[] digest2 = {{|#1:hasher.ComputeHash(buffer)|}};
             int line3 = 10;
         }}
     }}
@@ -2163,12 +2168,12 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#13:var hasher = new {hashType}Managed()|}})
+        using ({{|#5:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}};
+            byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
-            byte[] digest2 = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}};
+            byte[] digest2 = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}};
             int line3 = 10;
         }}
     }}
@@ -2176,17 +2181,17 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#22:var hasher = new {hashType}Managed()|}})
+        using ({{|#8:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest3|}}, {{|#17:out var i|}})|}})
+            if ({{|#6:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
             int line4 = 10;
-            if ({{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest3|}}, {{|#21:out i|}})|}})
+            if ({{|#7:hasher.TryComputeHash(buffer, digest3, out i)|}})
             {{
                 int line5 = 10;
             }}
@@ -2264,34 +2269,34 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#4:Using  hasher As New {hashType}Managed()|}}
+        {{|#2:Using  hasher As New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
-            Dim digest2 As Byte() = {{|#2:hasher.ComputeHash({{|#3:buffer|}})|}}
+            Dim digest2 As Byte() = {{|#1:hasher.ComputeHash(buffer)|}}
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#13:Using  hasher As New {hashType}Managed()|}}
+        {{|#5:Using  hasher As New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#5:hasher.ComputeHash({{|#6:buffer|}}, {{|#7:0|}}, {{|#8:10|}})|}}
+            Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
-            Dim digest2 As Byte() = {{|#9:hasher.ComputeHash({{|#10:buffer|}}, {{|#11:0|}}, {{|#12:10|}})|}}
+            Dim digest2 As Byte() = {{|#4:hasher.ComputeHash(buffer, 0, 10)|}}
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#22:Using  hasher As New {hashType}Managed()|}}
+        {{|#8:Using  hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#14:hasher.TryComputeHash({{|#15:buffer|}}, {{|#16:digest|}}, {{|#17:i|}})|}} Then
+            If {{|#6:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
-            If {{|#18:hasher.TryComputeHash({{|#19:buffer|}}, {{|#20:digest|}}, {{|#21:i|}})|}} Then
+            If {{|#7:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line5 = 10
             End If
             Dim line6 = 10
@@ -2362,10 +2367,10 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:var hasher = new {hashType}Managed()|}})
+        using ({{|#1:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
         }}
     }}
@@ -2373,10 +2378,10 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#7:var hasher = new {hashType}Managed()|}})
+        using ({{|#3:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+            byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
         }}
     }}
@@ -2384,12 +2389,12 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#12:var hasher = new {hashType}Managed()|}})
+        using ({{|#5:var hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+            if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
@@ -2458,28 +2463,28 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using hasher As New {hashType}Managed()|}}
+        {{|#1:Using hasher As New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Using hasher As New {hashType}Managed()|}}
+        {{|#3:Using hasher As New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}}
+            Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#12:Using hasher As New {hashType}Managed()|}}
+        {{|#5:Using hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest|}}, {{|#11:i|}})|}} Then
+            If {{|#4:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
@@ -2544,10 +2549,10 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using ({{|#1:HashAlgorithm hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}};
+            byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
             int line2 = 10;
         }}
     }}
@@ -2555,10 +2560,10 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#7:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using ({{|#3:HashAlgorithm hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
-            byte[] digest = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}};
+            byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
             int line2 = 10;
         }}
     }}
@@ -2566,12 +2571,12 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#12:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using ({{|#5:HashAlgorithm hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
             int line2 = 10;
-            if ({{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest3|}}, {{|#11:out var i|}})|}})
+            if ({{|#4:hasher.TryComputeHash(buffer, digest3, out var i)|}})
             {{
                 int line3 = 10;
             }}
@@ -2640,28 +2645,28 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        {{|#1:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#0:hasher.ComputeHash({{|#1:buffer|}})|}}
+            Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        {{|#3:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
-            Dim digest As Byte() = {{|#3:hasher.ComputeHash({{|#4:buffer|}}, {{|#5:0|}}, {{|#6:10|}})|}}
+            Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
         End Using
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#12:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        {{|#5:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
             Dim line2 = 10
-            If {{|#8:hasher.TryComputeHash({{|#9:buffer|}}, {{|#10:digest|}}, {{|#11:i|}})|}} Then
+            If {{|#4:hasher.TryComputeHash(buffer, digest, i)|}} Then
                 Dim line3 = 10
             End If
             Dim line4 = 10
@@ -2775,20 +2780,13 @@ End Class
             return new[] {
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(0)
+                        .WithLocation(0),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(1),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(4)
-                        .WithLocation(5),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(6)
-                        .WithLocation(7)
-                        .WithLocation(8)
-                        .WithLocation(9)
                     };
         }
 
@@ -2797,20 +2795,13 @@ End Class
             return new[] {
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(0)
+                        .WithLocation(0),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(1),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(2)
-                        .WithLocation(3)
-                        .WithLocation(4)
-                        .WithLocation(5),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(6)
-                        .WithLocation(7)
-                        .WithLocation(8)
-                        .WithLocation(9)
                     };
         }
 
@@ -2820,41 +2811,27 @@ End Class
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
+                        .WithLocation(2),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(1)
-                        .WithLocation(4),
+                        .WithLocation(2),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(2)
                         .WithLocation(3)
-                        .WithLocation(4),
+                        .WithLocation(5),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(5)
+                        .WithLocation(4)
+                        .WithLocation(5),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(6)
+                        .WithLocation(8),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(7)
                         .WithLocation(8)
-                        .WithLocation(13),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(9)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                        .WithLocation(13),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(14)
-                        .WithLocation(15)
-                        .WithLocation(16)
-                        .WithLocation(17)
-                        .WithLocation(22),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(18)
-                        .WithLocation(19)
-                        .WithLocation(20)
-                        .WithLocation(21)
-                        .WithLocation(22)
                     };
         }
 
@@ -2864,41 +2841,27 @@ End Class
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
+                        .WithLocation(2),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(1)
-                        .WithLocation(4),
+                        .WithLocation(2),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(2)
                         .WithLocation(3)
-                        .WithLocation(4),
+                        .WithLocation(5),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(5)
+                        .WithLocation(4)
+                        .WithLocation(5),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(6)
+                        .WithLocation(8),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(7)
                         .WithLocation(8)
-                        .WithLocation(13),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(9)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                        .WithLocation(13),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(14)
-                        .WithLocation(15)
-                        .WithLocation(16)
-                        .WithLocation(17)
-                        .WithLocation(22),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(18)
-                        .WithLocation(19)
-                        .WithLocation(20)
-                        .WithLocation(21)
-                        .WithLocation(22)
                     };
         }
 
@@ -2908,22 +2871,15 @@ End Class
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
-                        .WithLocation(1)
-                        .WithLocation(2),
+                        .WithLocation(1),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(3)
+                        .WithLocation(2)
+                        .WithLocation(3),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(4)
                         .WithLocation(5)
-                        .WithLocation(6)
-                        .WithLocation(7),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(8)
-                        .WithLocation(9)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
                     };
         }
 
@@ -2934,28 +2890,39 @@ End Class
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(0)
                         .WithLocation(1)
-                        .WithLocation(2)
-                        .WithLocation(3),
+                        .WithLocation(2),
                         VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(3)
                         .WithLocation(4)
-                        .WithLocation(5)
+                        .WithLocation(5),
+                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(6)
                         .WithLocation(7)
                         .WithLocation(8)
-                        .WithLocation(9),
-                        VerifyCS.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                        .WithLocation(13)
-                        .WithLocation(14)
-                        .WithLocation(15)
                     };
         }
 
         private static DiagnosticResult[] GetCreationSingleInvokeVBDiagnostics(string hashAlgorithmTypeName)
+        {
+            return new[] {
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(0)
+                        .WithLocation(1),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(2)
+                        .WithLocation(3),
+                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
+                        .WithArguments(hashAlgorithmTypeName)
+                        .WithLocation(4)
+                        .WithLocation(5)
+                    };
+        }
+
+        private static DiagnosticResult[] GetCreationSingleInvokeWithDisposeVBDiagnostics(string hashAlgorithmTypeName)
         {
             return new[] {
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
@@ -2967,44 +2934,12 @@ End Class
                         .WithArguments(hashAlgorithmTypeName)
                         .WithLocation(3)
                         .WithLocation(4)
-                        .WithLocation(5)
-                        .WithLocation(6)
-                        .WithLocation(7),
+                        .WithLocation(5),
                         VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
                         .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(8)
-                        .WithLocation(9)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                    };
-        }
-
-        private static DiagnosticResult[] GetCreationSingleInvokeWithDisposeVBDiagnostics(string hashAlgorithmTypeName)
-        {
-            return new[] {
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(0)
-                        .WithLocation(1)
-                        .WithLocation(2)
-                        .WithLocation(3),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(4)
-                        .WithLocation(5)
                         .WithLocation(6)
                         .WithLocation(7)
                         .WithLocation(8)
-                        .WithLocation(9),
-                        VerifyVB.Diagnostic(PreferHashDataOverComputeHashAnalyzer.StringRule)
-                        .WithArguments(hashAlgorithmTypeName)
-                        .WithLocation(10)
-                        .WithLocation(11)
-                        .WithLocation(12)
-                        .WithLocation(13)
-                        .WithLocation(14)
-                        .WithLocation(15)
                     };
         }
     }

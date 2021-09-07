@@ -95,17 +95,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // Additional locations:
                 // ComputeHash:
                 // Pattern #1                                      Pattern #2        
-                // 1. buffer arg span                              1. buffer arg span
-                // 2. span where the hash instance was created
-                // 3-N. dispose invocations
+                // 1. span where the hash instance was created
+                // 2-N. dispose invocations
                 //
                 // ComputeHash(a,b,c)/TryComputeHash
                 // Pattern #1                                      Pattern #2        
-                // 1. buffer arg span                              1. buffer arg span
-                // 2. 2nd arg span                                 2. 2nd arg span
-                // 3. 3rd arg span                                 3. 3rd arg span
-                // 4. span where the hash instance was created
-                // 5-N. dispose invocations
+                // 1. span where the hash instance was created
+                // 2-N. dispose invocations
 
                 var dataCollector = new DataCollector();
 
@@ -177,7 +173,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             var disposeArray = dataResult.GetDisposeInvocationArray(localSymbol);
                             isToDeleteHashCreation = refCount == 1;
-                            codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, computeHash, type, disposeArray, out hashCreationLocationIndex);
+                            codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, disposeArray, out hashCreationLocationIndex);
                         }
                         else
                         {
@@ -270,10 +266,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             dictBuilder.Add(TargetHashTypeDiagnosticPropertyKey, staticHashMethodType.Name);
             dictBuilder.Add(ComputeTypePropertyKey, computeType.ToString());
 
-            var fixerLocations = GetComputeHashLocations(computeHashMethod, computeType);
-
             return computeHashMethod.CreateDiagnostic(StringRule,
-                fixerLocations,
                 dictBuilder.ToImmutable(),
                 staticHashMethodType.ToDisplayString());
         }
@@ -300,39 +293,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 staticHashMethodType.ToDisplayString());
         }
 
-        private static ImmutableArray<Location> GetComputeHashLocations(IInvocationOperation computeHashInvocationOperation, ComputeType computeType)
-        {
-            if (computeType is ComputeType.ComputeHash)
-            {
-                return ImmutableArray.Create(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
-            }
-
-            return ImmutableArray.Create(
-                computeHashInvocationOperation.Arguments[0].Syntax.GetLocation(),
-                computeHashInvocationOperation.Arguments[1].Syntax.GetLocation(),
-                computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
-        }
-
         private static ImmutableArray<Location> GetFixerLocations(
             IVariableDeclaratorOperation declaratorOperation,
-            IInvocationOperation computeHashInvocationOperation,
-            ComputeType computeType,
             ImmutableArray<IInvocationOperation> disposeArray,
             out int hashCreationLocationIndex)
         {
-            ImmutableArray<Location>.Builder builder;
-            if (computeType is ComputeType.ComputeHash)
-            {
-                builder = ImmutableArray.CreateBuilder<Location>(2 + disposeArray.Length);
-                builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
-            }
-            else
-            {
-                builder = ImmutableArray.CreateBuilder<Location>(4 + disposeArray.Length);
-                builder.Add(computeHashInvocationOperation.Arguments[0].Syntax.GetLocation());
-                builder.Add(computeHashInvocationOperation.Arguments[1].Syntax.GetLocation());
-                builder.Add(computeHashInvocationOperation.Arguments[2].Syntax.GetLocation());
-            }
+            ImmutableArray<Location>.Builder builder = ImmutableArray.CreateBuilder<Location>(1 + disposeArray.Length);
             var lineDeclaration = declaratorOperation.GetAncestor<IVariableDeclarationGroupOperation>(OperationKind.VariableDeclarationGroup);
 
             Location nodeToRemove;

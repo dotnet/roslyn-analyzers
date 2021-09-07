@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>DoNotLockOnObjectsWithWeakIdentity</NuspecPackageId>
+    <Description>Hotfix for CA2002: Do not lock on objects with weak identity.</Description>
+    <Summary>Hotfix for CA2002</Summary>
+    <ReleaseNotes>Ensures CA2002 will fire even on new VB IL pattersn</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <AnalyzerDocumentationFileDir>$(RepoRoot)src\DoNotLockOnObjectsWithWeakIdentity</AnalyzerDocumentationFileDir>
+    <AnalyzerSarifFileDir>$(RepoRoot)src\DoNotLockOnObjectsWithWeakIdentity</AnalyzerSarifFileDir>
+    <IsShippingPackage>true</IsShippingPackage>
+
+    <!-- Override the version prefix and label for NetAnalyzers projects -->
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentity.dll" />
+    <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentityCSharp.dll" />
+    <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentityVisualBasic.dll" />
+    <AnalyzerNupkgFile Include="CA2002.props" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DoNotLockOnObjectsWithWeakIdentity\Core\DoNotLockOnObjectsWithWeakIdentity.csproj" />
+    <ProjectReference Include="..\..\src\DoNotLockOnObjectsWithWeakIdentity\CSharp\DoNotLockOnObjectsWithWeakIdentityCSharp.csproj" />
+    <ProjectReference Include="..\..\src\DoNotLockOnObjectsWithWeakIdentity\VisualBasic\DoNotLockOnObjectsWithWeakIdentityVisualBasic.vbproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
+    <None Update="CA2002.props" CopyToOutputDirectory="Always" Pack="true" PackagePath="build" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,61 @@
+﻿{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "DoNotLockOnObjectsWithWeakIdentity",
+        "version": "1.0.0",
+        "language": "en-US"
+      },
+      "rules": {
+      }
+    },
+    {
+      "tool": {
+        "name": "DoNotLockOnObjectsWithWeakIdentityCSharp",
+        "version": "1.0.0",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA2002": {
+          "id": "CA2002",
+          "shortDescription": "Do not lock on objects with weak identity",
+          "fullDescription": "An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain ...",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotLockOnObjectsWithWeakIdentityAnalyzerCSharp",
+            "languages": [
+              "C#"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "DoNotLockOnObjectsWithWeakIdentityVisualBasic",
+        "version": "1.0.0",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA2002": {
+          "id": "CA2002",
+          "shortDescription": "Do not lock on objects with weak identity",
+          "fullDescription": "An object is said to have a weak identity when it can be directly accessed across application domain boundaries. A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in a different application domain ...",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotLockOnObjectsWithWeakIdentityAnalyzerVisualBasic",
+            "languages": [
+              "Visual Basic"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

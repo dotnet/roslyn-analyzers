@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -8,11 +8,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
-    /// CA2253: Use null-suppression properly.
+    /// CA2259: Use null-suppression properly.
     /// </summary>
     public abstract class UseNullSuppressionCorrectly<TSyntaxKind> : DiagnosticAnalyzer where TSyntaxKind : struct
     {
-        internal const string RuleId = "CA2253";
+        internal const string RuleId = "CA2259";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionLiteralAlwaysNull = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyLiteralAlwaysNullDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));

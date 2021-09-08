@@ -29,12 +29,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyTitle,
-                    c => RemoveNullSuppression(document, root, node, c),
+                    c => RemoveNullSuppressionAsync(document, root, node, c),
                     equivalenceKey: nameof(MicrosoftNetCoreAnalyzersResources.UseNullSuppressionCorrectlyTitle)),
                 context.Diagnostics);
         }
 
-        public abstract Task<Document> RemoveNullSuppression(Document document, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken);
+        public abstract Task<Document> RemoveNullSuppressionAsync(Document document, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken);
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private sealed class MyCodeAction : DocumentChangeAction

@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     {
         public override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(CSharpUseNullSuppressionCorrectlyAnalyzer.RuleId);
 
-        public override Task<Document> RemoveNullSuppression(Document document, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken)
+        public override Task<Document> RemoveNullSuppressionAsync(Document document, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken)
         {
             SyntaxNode newNode = node.ReplaceToken(node.ChildTokens().First(x => x.IsKind(SyntaxKind.ExclamationToken)), Array.Empty<SyntaxToken>());
             return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(node, newNode)));

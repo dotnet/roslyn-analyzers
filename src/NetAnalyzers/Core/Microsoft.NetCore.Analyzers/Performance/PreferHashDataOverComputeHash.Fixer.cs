@@ -48,7 +48,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 // chained method SHA256.Create().ComputeHash(arg)
                 // instance.ComputeHash(arg) xN where N > 1
                 var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
-                    hashTypeName,
                     computeHashNode,
                     hashDataNode);
                 context.RegisterCodeFix(codeActionChain, diagnostic);
@@ -68,7 +67,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var disposeNodes = GetDisposeNodes(root, diagnostic.AdditionalLocations, hashCreationIndex);
 
             if (!TryGetCodeAction(context.Document,
-                hashTypeName,
                 computeHashNode,
                 hashDataNode,
                 createHashNode,
@@ -107,7 +105,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
         protected abstract SyntaxNode? GetHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string hashTypeName, SyntaxNode computeHashNode);
 
         protected abstract bool TryGetCodeAction(Document document,
-            string hashTypeName,
             SyntaxNode computeHashNode,
             SyntaxNode hashDataNode,
             SyntaxNode createHashNode,
@@ -116,10 +113,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract class HashDataCodeAction : CodeAction
         {
-            protected HashDataCodeAction(Document document, string hashTypeName, SyntaxNode computeHashNode, SyntaxNode hashDateNode)
+            protected HashDataCodeAction(Document document, SyntaxNode computeHashNode, SyntaxNode hashDateNode)
             {
                 Document = document;
-                HashTypeName = hashTypeName;
                 HashDataNode = hashDateNode;
                 ComputeHashNode = computeHashNode;
             }
@@ -127,7 +123,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
 
             public Document Document { get; }
-            public string HashTypeName { get; }
             public SyntaxNode ComputeHashNode { get; }
             public SyntaxNode HashDataNode { get; }
 
@@ -144,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private sealed class ReplaceNodeHashDataCodeAction : HashDataCodeAction
         {
-            public ReplaceNodeHashDataCodeAction(Document document, string hashTypeName, SyntaxNode computeHashNode, SyntaxNode hashDataNode) : base(document, hashTypeName, computeHashNode, hashDataNode)
+            public ReplaceNodeHashDataCodeAction(Document document, SyntaxNode computeHashNode, SyntaxNode hashDataNode) : base(document, computeHashNode, hashDataNode)
             {
             }
 
@@ -159,11 +154,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly SyntaxNode[] _disposeNodes;
             public RemoveNodeHashDataCodeAction(
                 Document document,
-                string hashTypeName,
                 SyntaxNode computeHashNode,
                 SyntaxNode hashDataNode,
                 SyntaxNode hashCreationNode,
-                SyntaxNode[] disposeNodes) : base(document, hashTypeName, computeHashNode, hashDataNode)
+                SyntaxNode[] disposeNodes) : base(document, computeHashNode, hashDataNode)
             {
                 HashCreationNode = hashCreationNode;
                 _disposeNodes = disposeNodes;

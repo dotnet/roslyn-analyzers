@@ -17,7 +17,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         End Function
 
         Protected Overrides Function TryGetCodeAction(document As Document,
-                                                      hashTypeName As String,
                                                       computeHashNode As SyntaxNode,
                                                       hashDataNode As SyntaxNode,
                                                       createHashNode As SyntaxNode,
@@ -28,7 +27,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
                 Dim usingBlock = TryCast(usingStatement.Parent, UsingBlockSyntax)
                 If usingBlock IsNot Nothing Then
                     If usingStatement.Variables.Count = 1 Then
-                        codeAction = New BasicRemoveUsingBlockHashDataCodeAction(document, hashTypeName, computeHashNode, hashDataNode, usingBlock)
+                        codeAction = New BasicRemoveUsingBlockHashDataCodeAction(document, computeHashNode, hashDataNode, usingBlock)
                         Return True
                     End If
                 End If
@@ -37,7 +36,7 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
             Dim localDeclarationStatement = TryCast(createHashNode, LocalDeclarationStatementSyntax)
             Dim variableDeclaratorSyntax = TryCast(createHashNode, VariableDeclaratorSyntax)
             If localDeclarationStatement IsNot Nothing Or variableDeclaratorSyntax IsNot Nothing Then
-                codeAction = New RemoveNodeHashDataCodeAction(document, hashTypeName, computeHashNode, hashDataNode, createHashNode, disposeNodes)
+                codeAction = New RemoveNodeHashDataCodeAction(document, computeHashNode, hashDataNode, createHashNode, disposeNodes)
                 Return True
             End If
             Return False
@@ -82,11 +81,10 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
         Private NotInheritable Class BasicRemoveUsingBlockHashDataCodeAction : Inherits HashDataCodeAction
             Public Sub New(document As Document,
-                           hashTypeName As String,
                            computeHashNode As SyntaxNode,
                            hashDataNode As SyntaxNode,
                            usingBlockToRemove As UsingBlockSyntax)
-                MyBase.New(document, hashTypeName, computeHashNode, hashDataNode)
+                MyBase.New(document, computeHashNode, hashDataNode)
                 Me.UsingBlockToRemove = usingBlockToRemove
             End Sub
 

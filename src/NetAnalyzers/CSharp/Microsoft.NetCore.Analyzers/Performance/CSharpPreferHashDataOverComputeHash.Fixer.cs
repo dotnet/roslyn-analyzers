@@ -24,7 +24,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         protected override bool TryGetCodeAction(
             Document document,
-            string hashTypeName,
             SyntaxNode computeHashNode,
             SyntaxNode hashDataNode,
             SyntaxNode createHashNode,
@@ -36,7 +35,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 case LocalDeclarationStatementSyntax or VariableDeclaratorSyntax:
                     {
                         codeAction = new RemoveNodeHashDataCodeAction(document,
-                            hashTypeName,
                             computeHashNode,
                             hashDataNode,
                             createHashNode,
@@ -46,7 +44,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:
                     {
                         codeAction = new CSharpRemoveUsingStatementHashDataCodeAction(document,
-                            hashTypeName,
                             computeHashNode,
                             hashDataNode,
                             usingStatement);
@@ -68,10 +65,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
         private sealed class CSharpRemoveUsingStatementHashDataCodeAction : HashDataCodeAction
         {
             public CSharpRemoveUsingStatementHashDataCodeAction(Document document,
-                string hashTypeName,
                 SyntaxNode computeHashNode,
                 SyntaxNode hashDataNode,
-                UsingStatementSyntax usingStatementToRemove) : base(document, hashTypeName, computeHashNode, hashDataNode)
+                UsingStatementSyntax usingStatementToRemove) : base(document, computeHashNode, hashDataNode)
             {
                 UsingStatementToRemove = usingStatementToRemove;
             }

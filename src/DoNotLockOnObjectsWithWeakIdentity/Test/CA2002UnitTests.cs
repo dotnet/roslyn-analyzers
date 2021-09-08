@@ -1,18 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Testing;
-
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
-    CA2002.DoNotLockOnObjectsWithWeakIdentityAnalyzerCSharp,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
-    CA2002.VisualBasic.DoNotLockOnObjectsWithWeakIdentityAnalyzerVisualBasic,
-    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace CA2002.Test
 {
+    using VerifyCS = CSharpCodeFixVerifier<DoNotLockOnObjectsWithWeakIdentityAnalyzerCSharp, EmptyCodeFixProvider>;
+    using VerifyVB = VisualBasicCodeFixVerifier<DoNotLockOnObjectsWithWeakIdentityAnalyzerVisualBasic, EmptyCodeFixProvider>;
+
     public class DoNotLockOnObjectsWithWeakIdentityTests
     {
         [Fact]
@@ -78,16 +74,16 @@ namespace CA2002.Test
             ",
             GetCSharpResultAt(8, 27, "string"),
             GetCSharpResultAt(9, 27, "string"),
-            GetCSharpResultAt(12, 27, "System.OutOfMemoryException"),
-            GetCSharpResultAt(14, 27, "System.StackOverflowException"),
-            GetCSharpResultAt(16, 27, "System.ExecutionEngineException"),
-            GetCSharpResultAt(18, 27, "System.Threading.Thread"),
-            GetCSharpResultAt(20, 27, "System.Type"),
-            GetCSharpResultAt(23, 27, "System.Reflection.MemberInfo"),
-            GetCSharpResultAt(26, 27, "System.Reflection.ConstructorInfo"),
-            GetCSharpResultAt(29, 27, "System.Reflection.ParameterInfo"),
-            GetCSharpResultAt(32, 27, "int[]"),
-            GetCSharpResultAt(37, 27, "this"));
+            GetCSharpResultAt(11, 27, "System.OutOfMemoryException"),
+            GetCSharpResultAt(13, 27, "System.StackOverflowException"),
+            GetCSharpResultAt(15, 27, "System.ExecutionEngineException"),
+            GetCSharpResultAt(16, 27, "System.Threading.Thread"),
+            GetCSharpResultAt(17, 27, "System.Type"),
+            GetCSharpResultAt(19, 27, "System.Reflection.MemberInfo"),
+            GetCSharpResultAt(21, 27, "System.Reflection.ConstructorInfo"),
+            GetCSharpResultAt(23, 27, "System.Reflection.ParameterInfo"),
+            GetCSharpResultAt(25, 27, "int[]"),
+            GetCSharpResultAt(28, 27, "this"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -132,16 +128,16 @@ namespace CA2002.Test
             End Class",
             GetBasicResultAt(6, 30, "String"),
             GetBasicResultAt(8, 30, "String"),
-            GetBasicResultAt(12, 30, "System.OutOfMemoryException"),
-            GetBasicResultAt(15, 30, "System.StackOverflowException"),
-            GetBasicResultAt(18, 30, "System.ExecutionEngineException"),
-            GetBasicResultAt(21, 30, "System.Threading.Thread"),
-            GetBasicResultAt(24, 30, "System.Type"),
-            GetBasicResultAt(28, 30, "System.Reflection.MemberInfo"),
-            GetBasicResultAt(32, 30, "System.Reflection.ConstructorInfo"),
-            GetBasicResultAt(36, 30, "System.Reflection.ParameterInfo"),
-            GetBasicResultAt(40, 30, "Integer()"),
-            GetBasicResultAt(47, 30, "Me"));
+            GetBasicResultAt(11, 30, "System.OutOfMemoryException"),
+            GetBasicResultAt(14, 30, "System.StackOverflowException"),
+            GetBasicResultAt(17, 30, "System.ExecutionEngineException"),
+            GetBasicResultAt(19, 30, "System.Threading.Thread"),
+            GetBasicResultAt(21, 30, "System.Type"),
+            GetBasicResultAt(24, 30, "System.Reflection.MemberInfo"),
+            GetBasicResultAt(27, 30, "System.Reflection.ConstructorInfo"),
+            GetBasicResultAt(30, 30, "System.Reflection.ParameterInfo"),
+            GetBasicResultAt(33, 30, "Integer()"),
+            GetBasicResultAt(38, 30, "Me"));
         }
 
         [Fact]
@@ -234,10 +230,10 @@ public class C
         Monitor.Enter(""test1"", ref b);
     }
 }",
+                GetCSharpResultAt(7, 23, "C"),
                 GetCSharpResultAt(8, 23, "C"),
-                GetCSharpResultAt(9, 23, "C"),
-                GetCSharpResultAt(12, 23, "C"),
-                GetCSharpResultAt(13, 23, "C"));
+                GetCSharpResultAt(10, 23, "C"),
+                GetCSharpResultAt(11, 23, "C"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading
@@ -251,10 +247,10 @@ Public Class C
     End Sub
 End Class
 ",
+                GetBasicResultAt(5, 23, "C"),
                 GetBasicResultAt(6, 23, "C"),
-                GetBasicResultAt(7, 23, "C"),
-                GetBasicResultAt(10, 23, "C"),
-                GetBasicResultAt(11, 23, "C"));
+                GetBasicResultAt(8, 23, "C"),
+                GetBasicResultAt(9, 23, "C"));
         }
 
         [Fact]
@@ -280,16 +276,16 @@ public class C
         Monitor.TryEnter(""test1"", 42, ref b);
     }
 }",
+                GetCSharpResultAt(8, 26, "C"),
                 GetCSharpResultAt(9, 26, "C"),
                 GetCSharpResultAt(10, 26, "C"),
+                GetCSharpResultAt(11, 26, "C"),
                 GetCSharpResultAt(12, 26, "C"),
                 GetCSharpResultAt(13, 26, "C"),
                 GetCSharpResultAt(15, 26, "C"),
                 GetCSharpResultAt(16, 26, "C"),
-                GetCSharpResultAt(19, 26, "C"),
-                GetCSharpResultAt(20, 26, "C"),
-                GetCSharpResultAt(22, 26, "C"),
-                GetCSharpResultAt(23, 26, "C"));
+                GetCSharpResultAt(17, 26, "C"),
+                GetCSharpResultAt(18, 26, "C"));
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -310,16 +306,16 @@ Public Class C
     End Sub
 End Class
 ",
+                GetBasicResultAt(6, 26, "C"),
                 GetBasicResultAt(7, 26, "C"),
                 GetBasicResultAt(8, 26, "C"),
+                GetBasicResultAt(9, 26, "C"),
                 GetBasicResultAt(10, 26, "C"),
                 GetBasicResultAt(11, 26, "C"),
                 GetBasicResultAt(13, 26, "C"),
                 GetBasicResultAt(14, 26, "C"),
-                GetBasicResultAt(17, 26, "C"),
-                GetBasicResultAt(18, 26, "C"),
-                GetBasicResultAt(20, 26, "C"),
-                GetBasicResultAt(21, 26, "C"));
+                GetBasicResultAt(15, 26, "C"),
+                GetBasicResultAt(16, 26, "C"));
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)

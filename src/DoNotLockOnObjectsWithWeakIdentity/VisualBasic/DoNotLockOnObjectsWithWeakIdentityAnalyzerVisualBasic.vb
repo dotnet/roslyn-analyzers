@@ -4,7 +4,7 @@ Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace CA2002.VisualBasic
+Namespace CA2002
 
     <DiagnosticAnalyzer(LanguageNames.VisualBasic)>
     Public Class DoNotLockOnObjectsWithWeakIdentityAnalyzerVisualBasic

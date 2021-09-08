@@ -23,7 +23,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             get
             {
                 yield return new[] { "System.Threading.SpinLock" };
-                yield return new[] { "System.Text.Json.Utf8JsonReader" };
             }
         }
 

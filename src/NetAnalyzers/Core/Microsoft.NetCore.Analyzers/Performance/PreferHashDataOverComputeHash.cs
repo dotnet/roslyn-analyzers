@@ -173,7 +173,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         {
                             var disposeArray = dataResult.GetDisposeInvocationArray(localSymbol);
                             isToDeleteHashCreation = refCount == 1;
-                            codefixerLocations = GetFixerLocations(declarationTuple.DeclaratorOperation, disposeArray, out hashCreationLocationIndex);
+                            codefixerLocations = GetFixerLocations(declarationTuple.VariableIntitializerOperation, disposeArray, out hashCreationLocationIndex);
                         }
                         else
                         {
@@ -203,12 +203,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 switch (variableInitializerOperation.Parent)
                 {
                     case IVariableDeclaratorOperation declaratorOperation:
-                        dataCollector.CollectVariableDeclaratorOperation(declaratorOperation, createdType);
+                        dataCollector.CollectVariableDeclaratorOperation(declaratorOperation.Symbol, variableInitializerOperation, createdType);
                         break;
                     case IVariableDeclarationOperation declarationOperation when declarationOperation.Declarators.Length == 1:
                         {
                             var declaratorOperationAlt = declarationOperation.Declarators[0];
-                            dataCollector.CollectVariableDeclaratorOperation(declaratorOperationAlt, createdType);
+                            dataCollector.CollectVariableDeclaratorOperation(declaratorOperationAlt.Symbol, variableInitializerOperation, createdType);
                             break;
                         }
                 }
@@ -282,6 +282,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             dictBuilder.Add(TargetHashTypeDiagnosticPropertyKey, staticHashMethodType.Name);
             dictBuilder.Add(ComputeTypePropertyKey, computeType.ToString());
             dictBuilder.Add(HashCreationIndexPropertyKey, hashCreationLocationIndex.ToString(CultureInfo.InvariantCulture));
+
             if (isSingleLocalRef)
             {
                 dictBuilder.Add(DeleteHashCreationPropertyKey, DeleteHashCreationPropertyKey);
@@ -294,28 +295,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
 
         private static ImmutableArray<Location> GetFixerLocations(
-            IVariableDeclaratorOperation declaratorOperation,
+            IVariableInitializerOperation variableInitializerOperation,
             ImmutableArray<IInvocationOperation> disposeArray,
             out int hashCreationLocationIndex)
         {
             ImmutableArray<Location>.Builder builder = ImmutableArray.CreateBuilder<Location>(1 + disposeArray.Length);
-            var lineDeclaration = declaratorOperation.GetAncestor<IVariableDeclarationGroupOperation>(OperationKind.VariableDeclarationGroup);
-
-            Location nodeToRemove;
-            if (lineDeclaration?.Declarations.Length == 1 && lineDeclaration.Declarations[0].Declarators.Length == 1)
-            {
-                nodeToRemove = lineDeclaration.Syntax.GetLocation();
-            }
-            else if (lineDeclaration?.Declarations.Length > 1 && lineDeclaration.Language.Equals("Visual Basic"))
-            {
-                nodeToRemove = declaratorOperation.Syntax.Parent.GetLocation();
-            }
-            else
-            {
-                nodeToRemove = declaratorOperation.Syntax.GetLocation();
-            }
+            Location hashCreation = variableInitializerOperation.Syntax.Parent.GetLocation();
             hashCreationLocationIndex = builder.Count;
-            builder.Add(nodeToRemove);
+            builder.Add(hashCreation);
 
             foreach (var disposeInvocation in disposeArray)
             {
@@ -339,13 +326,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private readonly struct DeclarationTuple
 #pragma warning restore CA1815 // Override equals and operator equals on value types
         {
-            public IVariableDeclaratorOperation DeclaratorOperation { get; }
+            public IVariableInitializerOperation VariableIntitializerOperation { get; }
 
             public ITypeSymbol OriginalType { get; }
 
-            public DeclarationTuple(IVariableDeclaratorOperation declaratorOperation, ITypeSymbol type)
+            public DeclarationTuple(IVariableInitializerOperation variableIntitializerOperation, ITypeSymbol type)
             {
-                DeclaratorOperation = declaratorOperation;
+                VariableIntitializerOperation = variableIntitializerOperation;
                 OriginalType = type;
             }
         }
@@ -583,7 +570,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public void CollectLocalReferenceInheritingHashAlgorithm(ILocalReferenceOperation localReferenceOperation) => _localReferenceMap.TryAdd(localReferenceOperation, localReferenceOperation.Local);
 
-            public void CollectVariableDeclaratorOperation(IVariableDeclaratorOperation declaratorOperation, ITypeSymbol createdType) => _createdSymbolMap.TryAdd(declaratorOperation.Symbol, new DeclarationTuple(declaratorOperation, createdType));
+            public void CollectVariableDeclaratorOperation(ILocalSymbol localSymbol, IVariableInitializerOperation declaratorOperation, ITypeSymbol createdType) => _createdSymbolMap.TryAdd(localSymbol, new DeclarationTuple(declaratorOperation, createdType));
 
             public void CollectComputeHashInvocation(IInvocationOperation computeHashInvocation, ComputeType computeType) => _computeHashMap.TryAdd(computeHashInvocation, computeType);
 

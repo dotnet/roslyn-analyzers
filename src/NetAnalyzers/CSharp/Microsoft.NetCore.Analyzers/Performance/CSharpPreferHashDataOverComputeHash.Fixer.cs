@@ -30,9 +30,17 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
             SyntaxNode[] disposeNodes,
             [NotNullWhen(true)] out HashDataCodeAction? codeAction)
         {
-            switch (createHashNode)
+            switch (createHashNode.Parent)
             {
-                case LocalDeclarationStatementSyntax or VariableDeclaratorSyntax:
+                case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:
+                    {
+                        codeAction = new CSharpRemoveUsingStatementHashDataCodeAction(document,
+                            computeHashNode,
+                            hashDataNode,
+                            usingStatement);
+                        return true;
+                    }
+                case { Parent: UsingStatementSyntax }:
                     {
                         codeAction = new RemoveNodeHashDataCodeAction(document,
                             computeHashNode,
@@ -41,12 +49,22 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                             disposeNodes);
                         return true;
                     }
-                case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:
+                case { Parent: LocalDeclarationStatementSyntax localDeclarationStatementSyntax }:
                     {
-                        codeAction = new CSharpRemoveUsingStatementHashDataCodeAction(document,
+                        codeAction = new RemoveNodeHashDataCodeAction(document,
                             computeHashNode,
                             hashDataNode,
-                            usingStatement);
+                            localDeclarationStatementSyntax,
+                            disposeNodes);
+                        return true;
+                    }
+                case VariableDeclaratorSyntax variableDeclaratorSyntax:
+                    {
+                        codeAction = new RemoveNodeHashDataCodeAction(document,
+                            computeHashNode,
+                            hashDataNode,
+                            variableDeclaratorSyntax,
+                            disposeNodes);
                         return true;
                     }
                 default:
@@ -74,9 +92,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
             public UsingStatementSyntax UsingStatementToRemove { get; }
 
-            protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
+            protected override void EditNodes(DocumentEditor documentEditor)
             {
-                var statements = UsingStatementToRemove.Statement.ReplaceNode(ComputeHashNode, hashDataInvoked)
+                var statements = UsingStatementToRemove.Statement.ReplaceNode(ComputeHashNode, HashDataNode)
                     .ChildNodes()
                     .Select(s => s.WithAdditionalAnnotations(Formatter.Annotation));
 
@@ -152,22 +170,31 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     }
 
                     var currentCreateNode = root.GetCurrentNode(target.CreateNode);
-                    switch (currentCreateNode)
+                    switch (currentCreateNode.Parent)
                     {
-
-                        case { Parent: { Parent: UsingStatementSyntax usingStatement } } when usingStatement.Declaration.Variables.Count == 1:
-                            {
-                                root = RemoveUsingStatement(root, usingStatement);
-                                break;
-                            }
                         case { Parent: UsingStatementSyntax usingStatement } when usingStatement.Declaration.Variables.Count == 1:
                             {
-                                root = RemoveUsingStatement(root, usingStatement);
+                                var statements = usingStatement.Statement
+                                    .ChildNodes()
+                                    .Select(s => s.WithAdditionalAnnotations(Formatter.Annotation));
+                                root = root.TrackNodes(usingStatement);
+                                root = root.InsertNodesBefore(root.GetCurrentNode(usingStatement), statements);
+                                root = root.RemoveNode(root.GetCurrentNode(usingStatement), SyntaxRemoveOptions.KeepNoTrivia);
                                 break;
                             }
-                        case LocalDeclarationStatementSyntax or VariableDeclaratorSyntax:
+                        case { Parent: UsingStatementSyntax usingStatement }:
                             {
                                 root = root.RemoveNode(currentCreateNode, SyntaxRemoveOptions.KeepNoTrivia);
+                                break;
+                            }
+                        case { Parent: LocalDeclarationStatementSyntax localDeclarationStatementSyntax }:
+                            {
+                                root = root.RemoveNode(localDeclarationStatementSyntax, SyntaxRemoveOptions.KeepNoTrivia);
+                                break;
+                            }
+                        case VariableDeclaratorSyntax variableDeclaratorSyntax:
+                            {
+                                root = root.RemoveNode(variableDeclaratorSyntax, SyntaxRemoveOptions.KeepNoTrivia);
                                 break;
                             }
                     }
@@ -184,17 +211,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                     }
                 }
                 return root;
-
-                static SyntaxNode RemoveUsingStatement(SyntaxNode root, UsingStatementSyntax usingStatement)
-                {
-                    var statements = usingStatement.Statement
-                        .ChildNodes()
-                        .Select(s => s.WithAdditionalAnnotations(Formatter.Annotation));
-                    root = root.TrackNodes(usingStatement);
-                    root = root.InsertNodesBefore(root.GetCurrentNode(usingStatement), statements);
-                    root = root.RemoveNode(root.GetCurrentNode(usingStatement), SyntaxRemoveOptions.KeepNoTrivia);
-                    return root;
-                }
             }
         }
 

@@ -129,12 +129,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
                 DocumentEditor editor = await DocumentEditor.CreateAsync(Document, cancellationToken).ConfigureAwait(false);
-                EditNodes(editor, HashDataNode);
+                EditNodes(editor);
 
                 return editor.GetChangedDocument();
             }
 
-            protected abstract void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked);
+            protected abstract void EditNodes(DocumentEditor documentEditor);
         }
 
         private sealed class ReplaceNodeHashDataCodeAction : HashDataCodeAction
@@ -143,9 +143,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
             }
 
-            protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
+            protected override void EditNodes(DocumentEditor documentEditor)
             {
-                documentEditor.ReplaceNode(ComputeHashNode, hashDataInvoked);
+                documentEditor.ReplaceNode(ComputeHashNode, HashDataNode);
             }
         }
 
@@ -156,19 +156,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 Document document,
                 SyntaxNode computeHashNode,
                 SyntaxNode hashDataNode,
-                SyntaxNode hashCreationNode,
+                SyntaxNode nodeToRemove,
                 SyntaxNode[] disposeNodes) : base(document, computeHashNode, hashDataNode)
             {
-                HashCreationNode = hashCreationNode;
+                NodeToRemove = nodeToRemove;
                 _disposeNodes = disposeNodes;
             }
 
-            public SyntaxNode HashCreationNode { get; }
+            public SyntaxNode NodeToRemove { get; }
 
-            protected override void EditNodes(DocumentEditor documentEditor, SyntaxNode hashDataInvoked)
+            protected override void EditNodes(DocumentEditor documentEditor)
             {
-                documentEditor.ReplaceNode(ComputeHashNode, hashDataInvoked);
-                documentEditor.RemoveNode(HashCreationNode);
+                documentEditor.ReplaceNode(ComputeHashNode, HashDataNode);
+                documentEditor.RemoveNode(NodeToRemove);
 
                 foreach (var disposeNode in _disposeNodes)
                 {

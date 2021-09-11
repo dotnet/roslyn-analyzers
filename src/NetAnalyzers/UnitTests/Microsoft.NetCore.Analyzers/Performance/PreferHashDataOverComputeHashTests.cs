@@ -391,7 +391,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#2:var hasher = {hashType}.Create();|}}
+        var {{|#2:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
@@ -402,7 +402,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#5:var hasher = {hashType}.Create();|}}
+        var {{|#5:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
@@ -413,7 +413,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#8:var hasher = {hashType}.Create();|}}
+        var {{|#8:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
@@ -500,7 +500,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#2:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
@@ -508,7 +508,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#5:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
@@ -516,7 +516,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#8:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#8:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
@@ -596,7 +596,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#1:var hasher = {hashType}.Create();|}}
+        var {{|#1:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
@@ -605,7 +605,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#3:var hasher = {hashType}.Create();|}}
+        var {{|#3:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
@@ -614,7 +614,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#5:var hasher = {hashType}.Create();|}}
+        var {{|#5:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
@@ -687,21 +687,21 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#1:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#3:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#3:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#5:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
@@ -771,7 +771,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#1:var hasher = {hashType}.Create();|}}
+        var {{|#1:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
@@ -781,7 +781,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#4:var hasher = {hashType}.Create();|}}
+        var {{|#4:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#3:hasher.ComputeHash(buffer,0, 10)|}};
         int line2 = 10;
@@ -791,7 +791,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#7:var hasher = {hashType}.Create();|}}
+        var {{|#7:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
@@ -865,7 +865,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#1:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
         Dim line2 = 10
@@ -873,7 +873,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#4:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#4:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
         Dim line2 = 10
@@ -881,7 +881,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#7:Dim hasher As {hashType} = {hashType}.Create()|}}
+        Dim {{|#7:hasher As {hashType} = {hashType}.Create()|}}
         Dim line1 = 20
         Dim digest = New Byte(1023) {{}}
         Dim i As Integer
@@ -952,7 +952,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:var hasher = {hashType}.Create()|}})
+        using (var {{|#2:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -965,7 +965,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:var hasher = {hashType}.Create()|}})
+        using (var {{|#5:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -978,7 +978,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#8:var hasher = {hashType}.Create()|}})
+        using (var {{|#8:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -1067,7 +1067,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using  hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#2:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -1076,7 +1076,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using  hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#5:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -1085,7 +1085,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#8:Using  hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#8:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
@@ -1166,7 +1166,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        {{|#1:using var hasher = {hashType}.Create();|}}
+        using var {{|#1:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
         int line2 = 10;
@@ -1175,7 +1175,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        {{|#3:using var hasher = {hashType}.Create();|}}
+        using var {{|#3:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
         int line2 = 10;
@@ -1184,7 +1184,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        {{|#5:using var hasher = {hashType}.Create();|}}
+        using var {{|#5:hasher = {hashType}.Create()|}};
         int line1 = 20;
         byte[] digest3 = new byte[1024];
         int line2 = 10;
@@ -1259,7 +1259,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#1:var hasher = {hashType}.Create()|}})
+        using (var {{|#1:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -1270,7 +1270,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#3:var hasher = {hashType}.Create()|}})
+        using (var {{|#3:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -1281,7 +1281,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:var hasher = {hashType}.Create()|}})
+        using (var {{|#5:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -1356,7 +1356,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Using hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#1:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -1364,7 +1364,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#3:Using hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#3:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -1372,7 +1372,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using hasher As {hashType} = {hashType}.Create()|}}
+        Using {{|#5:hasher As {hashType} = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
@@ -1443,7 +1443,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#1:HashAlgorithm hasher = {hashType}.Create()|}})
+        using (HashAlgorithm {{|#1:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -1454,7 +1454,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#3:HashAlgorithm hasher = {hashType}.Create()|}})
+        using (HashAlgorithm {{|#3:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -1465,7 +1465,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:HashAlgorithm hasher = {hashType}.Create()|}})
+        using (HashAlgorithm {{|#5:hasher = {hashType}.Create()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -1540,7 +1540,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        Using {{|#1:hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -1548,7 +1548,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#3:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        Using {{|#3:hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -1556,7 +1556,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using hasher As HashAlgorithm = {hashType}.Create()|}}
+        Using {{|#5:hasher As HashAlgorithm = {hashType}.Create()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
@@ -2155,7 +2155,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#2:var hasher = new {hashType}Managed()|}})
+        using (var {{|#2:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -2168,7 +2168,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:var hasher = new {hashType}Managed()|}})
+        using (var {{|#5:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -2181,7 +2181,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#8:var hasher = new {hashType}Managed()|}})
+        using (var {{|#8:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -2269,7 +2269,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#2:Using  hasher As New {hashType}Managed()|}}
+        Using {{|#2:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -2278,7 +2278,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using  hasher As New {hashType}Managed()|}}
+        Using {{|#5:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#3:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -2287,7 +2287,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#8:Using  hasher As New {hashType}Managed()|}}
+        Using {{|#8:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
@@ -2367,7 +2367,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#1:var hasher = new {hashType}Managed()|}})
+        using (var {{|#1:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -2378,7 +2378,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#3:var hasher = new {hashType}Managed()|}})
+        using (var {{|#3:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -2389,7 +2389,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:var hasher = new {hashType}Managed()|}})
+        using (var {{|#5:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -2463,7 +2463,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Using hasher As New {hashType}Managed()|}}
+        Using {{|#1:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -2471,7 +2471,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#3:Using hasher As New {hashType}Managed()|}}
+        Using {{|#3:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -2479,7 +2479,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using hasher As New {hashType}Managed()|}}
+        Using {{|#5:hasher As New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer
@@ -2549,7 +2549,7 @@ public class Test
     public static void TestMethod()
     {{
         var buffer = new byte[1024];
-        using ({{|#1:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using (HashAlgorithm {{|#1:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#0:hasher.ComputeHash(buffer)|}};
@@ -2560,7 +2560,7 @@ public class Test
     public static void TestMethod2()
     {{
         var buffer = new byte[1024];
-        using ({{|#3:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using (HashAlgorithm {{|#3:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}};
@@ -2571,7 +2571,7 @@ public class Test
     public static void TestMethod3()
     {{
         var buffer = new byte[1024];
-        using ({{|#5:HashAlgorithm hasher = new {hashType}Managed()|}})
+        using (HashAlgorithm {{|#5:hasher = new {hashType}Managed()|}})
         {{
             int line1 = 20;
             byte[] digest3 = new byte[1024];
@@ -2645,7 +2645,7 @@ Imports System.Security.Cryptography
 Public Class Test
     Public Shared Sub TestMethod()
         Dim buffer = New Byte(1023) {{}}
-        {{|#1:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        Using {{|#1:hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#0:hasher.ComputeHash(buffer)|}}
             Dim line2 = 10
@@ -2653,7 +2653,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod2()
         Dim buffer = New Byte(1023) {{}}
-        {{|#3:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        Using {{|#3:hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest As Byte() = {{|#2:hasher.ComputeHash(buffer, 0, 10)|}}
             Dim line2 = 10
@@ -2661,7 +2661,7 @@ Public Class Test
     End Sub
     Public Shared Sub TestMethod3()
         Dim buffer = New Byte(1023) {{}}
-        {{|#5:Using hasher As HashAlgorithm = New {hashType}Managed()|}}
+        Using {{|#5:hasher As HashAlgorithm = New {hashType}Managed()|}}
             Dim line1 = 20
             Dim digest = New Byte(1023) {{}}
             Dim i As Integer

@@ -1,6 +1,5 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-Imports System.Collections.Immutable
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Formatting
@@ -17,28 +16,21 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         Public Overrides Function GetFixAllProvider() As FixAllProvider
             Return s_fixAllProvider
         End Function
+
         Protected Overrides ReadOnly Property Helper As PreferHashDataOverComputeHashFixHelper
             Get
                 Return s_helper
             End Get
         End Property
 
-        Private NotInheritable Class BasicPreferHashDataOverComputeHashFixAllCodeAction : Inherits PreferHashDataOverComputeHashFixAllCodeAction
-            Public Sub New(title As String, solution As Solution, diagnosticsToFix As List(Of KeyValuePair(Of Project, ImmutableArray(Of Diagnostic))))
-                MyBase.New(title, solution, diagnosticsToFix)
-            End Sub
-
+        Private NotInheritable Class BasicPreferHashDataOverComputeHashFixAllProvider : Inherits PreferHashDataOverComputeHashFixAllProvider
             Protected Overrides ReadOnly Property Helper As PreferHashDataOverComputeHashFixHelper
                 Get
                     Return s_helper
                 End Get
             End Property
         End Class
-        Private NotInheritable Class BasicPreferHashDataOverComputeHashFixAllProvider : Inherits PreferHashDataOverComputeHashFixAllProvider
-            Protected Overrides Function GetCodeAction(title As String, solution As Solution, diagnosticsToFix As List(Of KeyValuePair(Of Project, ImmutableArray(Of Diagnostic)))) As PreferHashDataOverComputeHashFixAllCodeAction
-                Return New BasicPreferHashDataOverComputeHashFixAllCodeAction(title, solution, diagnosticsToFix)
-            End Function
-        End Class
+
         Private NotInheritable Class BasicPreferHashDataOverComputeHashFixHelper : Inherits PreferHashDataOverComputeHashFixHelper
             Protected Overrides Function FixHashCreateNode(root As SyntaxNode, createNode As SyntaxNode) As SyntaxNode
                 Dim currentCreateNode = root.GetCurrentNode(createNode)
@@ -72,9 +64,6 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             Protected Overrides Function GetHashDataSyntaxNode(computeType As PreferHashDataOverComputeHashAnalyzer.ComputeType, hashTypeName As String, computeHashNode As SyntaxNode) As SyntaxNode
                 Dim argumentList = DirectCast(computeHashNode, InvocationExpressionSyntax).ArgumentList
-                Return CreatetHashDataSyntaxNode(computeType, hashTypeName, argumentList)
-            End Function
-            Private Overloads Shared Function CreatetHashDataSyntaxNode(computeType As PreferHashDataOverComputeHashAnalyzer.ComputeType, hashTypeName As String, argumentList As ArgumentListSyntax) As SyntaxNode
                 Select Case computeType
                     Case PreferHashDataOverComputeHashAnalyzer.ComputeType.ComputeHash
                         Dim hashData = SyntaxFactory.MemberAccessExpression(

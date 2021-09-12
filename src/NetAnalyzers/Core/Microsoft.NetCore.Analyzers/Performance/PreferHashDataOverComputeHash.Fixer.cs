@@ -76,19 +76,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        protected abstract class PreferHashDataOverComputeHashFixAllCodeAction : CodeAction
+        private sealed class PreferHashDataOverComputeHashFixAllCodeAction : CodeAction
         {
             private readonly List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> _diagnosticsToFix;
             private readonly Solution _solution;
+            private readonly PreferHashDataOverComputeHashFixHelper _helper;
 
-            protected PreferHashDataOverComputeHashFixAllCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix)
+            public PreferHashDataOverComputeHashFixAllCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix, PreferHashDataOverComputeHashFixHelper helper)
             {
                 Title = title;
                 _solution = solution;
                 _diagnosticsToFix = diagnosticsToFix;
+                _helper = helper;
             }
             public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
-            protected abstract PreferHashDataOverComputeHashFixHelper Helper { get; }
 
             protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
@@ -119,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             continue;
                         }
 
-                        root = Helper.TrackTargets(root, hashInstanceTargets);
+                        root = _helper.TrackTargets(root, hashInstanceTargets);
 
                         root = FixDocumentRoot(root, hashInstanceTargets);
                         root = Formatter.Format(root, Formatter.Annotation, newSolution.Workspace, cancellationToken: cancellationToken);
@@ -150,18 +151,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     foreach (var d in grouping)
                     {
-                        if (!Helper.TryComputeHashNode(root, d, out var computeHashSyntaxHolder))
+                        if (!_helper.TryComputeHashNode(root, d, out var computeHashSyntaxHolder))
                         {
                             return false;
                         }
-                        if (!Helper.TryGetHashCreationNode(root, d, out var createNode, out var hashCreationIndex))
+                        if (!_helper.TryGetHashCreationNode(root, d, out var createNode, out var hashCreationIndex))
                         {
                             chainedComputeHashList.Add(computeHashSyntaxHolder);
                             continue;
                         }
                         if (!dictionary.TryGetValue(createNode, out HashInstanceTarget hashInstanceTarget))
                         {
-                            var disposeNodes = Helper.GetDisposeNodes(root, d, hashCreationIndex);
+                            var disposeNodes = _helper.GetDisposeNodes(root, d, hashCreationIndex);
                             hashInstanceTarget = new HashInstanceTarget(createNode, disposeNodes);
                             dictionary.Add(createNode, hashInstanceTarget);
                         }
@@ -175,7 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 foreach (var target in hashInstanceTargets)
                 {
-                    root = Helper.FixHashInstanceTarget(root, target);
+                    root = _helper.FixHashInstanceTarget(root, target);
                 }
                 return root;
             }
@@ -217,6 +218,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         protected abstract class PreferHashDataOverComputeHashFixAllProvider : FixAllProvider
         {
+            protected abstract PreferHashDataOverComputeHashFixHelper Helper { get; }
             public override async Task<CodeAction?> GetFixAsync(FixAllContext fixAllContext)
             {
                 var diagnosticsToFix = new List<KeyValuePair<Project, ImmutableArray<Diagnostic>>>();
@@ -247,10 +249,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     default:
                         return null;
                 }
-                return GetCodeAction(title, fixAllContext.Solution, diagnosticsToFix);
+                return new PreferHashDataOverComputeHashFixAllCodeAction(title, fixAllContext.Solution, diagnosticsToFix, Helper);
             }
-
-            protected abstract PreferHashDataOverComputeHashFixAllCodeAction GetCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix);
         }
 
 #pragma warning disable CA1822 // Mark members as static

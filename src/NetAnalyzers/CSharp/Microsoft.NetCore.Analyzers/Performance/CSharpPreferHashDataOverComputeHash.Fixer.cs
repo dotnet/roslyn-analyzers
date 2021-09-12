@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -25,32 +23,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
         protected override PreferHashDataOverComputeHashFixHelper Helper => s_helper;
 
-        private sealed class CSharpPreferHashDataOverComputeHashFixAllCodeAction : PreferHashDataOverComputeHashFixAllCodeAction
-        {
-            public CSharpPreferHashDataOverComputeHashFixAllCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix) : base(title, solution, diagnosticsToFix)
-            {
-            }
-
-            protected override PreferHashDataOverComputeHashFixHelper Helper => s_helper;
-        }
-
         private sealed class CSharpPreferHashDataOverComputeHashFixAllProvider : PreferHashDataOverComputeHashFixAllProvider
         {
-            protected override PreferHashDataOverComputeHashFixAllCodeAction GetCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix)
-            {
-                return new CSharpPreferHashDataOverComputeHashFixAllCodeAction(title, solution, diagnosticsToFix);
-            }
+            protected override PreferHashDataOverComputeHashFixHelper Helper => s_helper;
         }
 
         private sealed class CSharpPreferHashDataOverComputeHashFixHelper : PreferHashDataOverComputeHashFixHelper
         {
             protected override SyntaxNode GetHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string hashTypeName, SyntaxNode computeHashNode)
             {
-                return CreateHashDataSyntaxNode(computeType, hashTypeName, ((InvocationExpressionSyntax)computeHashNode).ArgumentList);
-            }
-
-            private static SyntaxNode CreateHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string hashTypeName, ArgumentListSyntax argumentList)
-            {
+                var argumentList = ((InvocationExpressionSyntax)computeHashNode).ArgumentList;
                 switch (computeType)
                 {
                     // hashTypeName.HashData(buffer)

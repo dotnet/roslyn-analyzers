@@ -67,16 +67,6 @@
         <target state="translated">out-Parameter vermeiden</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotCallOrderByMultipleTimesDescription">
-        <source>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDecending'.</source>
-        <target state="new">Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDecending'.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotCallOrderByMultipleTimesTitle">
-        <source>Do not call 'OrderBy' multiple times</source>
-        <target state="new">Do not call 'OrderBy' multiple times</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
         <target state="translated">Eine allgemeine Ausnahme wie "System.Exception" oder "System.SystemException" oder ein unzulässiger Ausnahmetyp wurde durch eine catch-Anweisung abgefangen, oder es wird eine Klausel verwendet, um Ausnahmen generell abzufangen. Allgemeine und unzulässige Ausnahmen sollten jedoch nicht abgefangen werden.</target>

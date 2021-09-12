@@ -492,9 +492,19 @@
         <target state="translated">Quand vous désérialisez une instance de la classe {0}, la méthode {1} peut appeler une méthode dangereuse {2}. Les appels de méthode potentiels sont : {3}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesCodefixTitle">
+        <source>Replace 'OrderBy' with 'ThenBy'</source>
+        <target state="new">Replace 'OrderBy' with 'ThenBy'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOrderByMultipleTimesDescription">
         <source>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</source>
         <target state="new">Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesMessage">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOrderByMultipleTimesTitle">

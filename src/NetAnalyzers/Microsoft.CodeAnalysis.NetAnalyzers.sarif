@@ -3751,7 +3751,7 @@
         "CA2259": {
           "id": "CA2259",
           "shortDescription": "Do not call 'OrderBy' multiple times",
-          "fullDescription": "Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.",
+          "fullDescription": "Do not call 'OrderBy' multiple times",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259",
           "properties": {

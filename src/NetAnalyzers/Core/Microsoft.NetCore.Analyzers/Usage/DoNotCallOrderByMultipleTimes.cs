@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
         internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
             RuleId,
             CreateLocalizableResourceString(nameof(DoNotCallOrderByMultipleTimesTitle)),
-            CreateLocalizableResourceString(nameof(DoNotCallOrderByMultipleTimesDescription)),
+            CreateLocalizableResourceString(nameof(DoNotCallOrderByMultipleTimesMessage)),
             DiagnosticCategory.Usage,
             RuleLevel.BuildWarning,
             description: null,

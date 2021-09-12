@@ -2138,7 +2138,7 @@ Providing a functional 'DynamicInterfaceCastableImplementationAttribute'-attribu
 
 ## [CA2259](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259): Do not call 'OrderBy' multiple times
 
-Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.
+Do not call 'OrderBy' multiple times
 
 |Item|Value|
 |-|-|

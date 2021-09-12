@@ -5,3 +5,5 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 CA1849 | Performance | Info | PreferHashDataOverComputeHashAnalyzer, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1849)
+CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
+CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)

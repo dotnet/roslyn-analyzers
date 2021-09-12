@@ -11,7 +11,6 @@ using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.NetCore.Analyzers.Performance
@@ -19,161 +18,61 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public abstract class PreferHashDataOverComputeHashFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(PreferHashDataOverComputeHashAnalyzer.CA1849);
-        public override FixAllProvider? GetFixAllProvider() => null;
+        public abstract override FixAllProvider GetFixAllProvider();
+        protected abstract PreferHashDataOverComputeHashFixHelper Helper { get; }
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var diagnostic = context.Diagnostics[0];
-            if (!Enum.TryParse<PreferHashDataOverComputeHashAnalyzer.ComputeType>(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.ComputeTypePropertyKey],
-                out var computeType))
-            {
-                return;
-            }
-            var computeHashNode = root.FindNode(context.Span, getInnermostNodeForTie: true);
-            if (computeHashNode is null)
+            if (!Helper.TryComputeHashNode(root, diagnostic, out var computeHashSyntaxHolder))
             {
                 return;
             }
 
-            var hashTypeName = diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
-            var hashDataNode = GetHashDataSyntaxNode(computeType, hashTypeName, computeHashNode);
-            if (hashDataNode is null)
-            {
-                return;
-            }
-
-            if (!diagnostic.Properties.ContainsKey(PreferHashDataOverComputeHashAnalyzer.DeleteHashCreationPropertyKey))
+            if (!diagnostic.Properties.ContainsKey(PreferHashDataOverComputeHashAnalyzer.DeleteHashCreationPropertyKey) ||
+                !Helper.TryGetHashCreationNodes(root, diagnostic, out var createHashNode, out var disposeNodes))
             {
                 // chained method SHA256.Create().ComputeHash(arg)
                 // instance.ComputeHash(arg) xN where N > 1
-                var codeActionChain = new ReplaceNodeHashDataCodeAction(context.Document,
-                    computeHashNode,
-                    hashDataNode);
+                var hashInstanceTarget = new HashInstanceTarget(new List<ComputeHashSyntaxHolder> { computeHashSyntaxHolder });
+                var codeActionChain = new HashDataCodeAction(context.Document, hashInstanceTarget, Helper, root);
                 context.RegisterCodeFix(codeActionChain, diagnostic);
                 return;
             }
-
-            if (!int.TryParse(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey], out int hashCreationIndex))
+            else
             {
-                return;
+                var hashInstanceTarget = new HashInstanceTarget(createHashNode, disposeNodes);
+                hashInstanceTarget.ComputeHashNodes.Add(computeHashSyntaxHolder);
+                var codeAction = new HashDataCodeAction(context.Document, hashInstanceTarget, Helper, root);
+                context.RegisterCodeFix(codeAction, diagnostic);
             }
-
-            var createHashNode = root.FindNode(diagnostic.AdditionalLocations[hashCreationIndex].SourceSpan);
-            if (createHashNode is null)
-            {
-                return;
-            }
-            var disposeNodes = GetDisposeNodes(root, diagnostic.AdditionalLocations, hashCreationIndex);
-
-            if (!TryGetCodeAction(context.Document,
-                computeHashNode,
-                hashDataNode,
-                createHashNode,
-                disposeNodes,
-                out HashDataCodeAction? codeAction))
-            {
-                return;
-            }
-
-            context.RegisterCodeFix(codeAction, diagnostic);
-
         }
 
-        private static SyntaxNode[] GetDisposeNodes(SyntaxNode root, IReadOnlyList<Location> additionalLocations, int hashCreationIndex)
+        private sealed class HashDataCodeAction : CodeAction
         {
-            var disposeCount = additionalLocations.Count - hashCreationIndex - 1;
-            if (disposeCount == 0)
-            {
-                return Array.Empty<SyntaxNode>();
-            }
-            var disposeNodes = new SyntaxNode[disposeCount];
-
-            for (int i = 0; i < disposeNodes.Length; i++)
-            {
-                var node = root.FindNode(additionalLocations[hashCreationIndex + i + 1].SourceSpan);
-                if (node is null)
-                {
-                    return Array.Empty<SyntaxNode>();
-                }
-                disposeNodes[i] = node;
-            }
-
-            return disposeNodes;
-        }
-
-        protected abstract SyntaxNode? GetHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string hashTypeName, SyntaxNode computeHashNode);
-
-        protected abstract bool TryGetCodeAction(Document document,
-            SyntaxNode computeHashNode,
-            SyntaxNode hashDataNode,
-            SyntaxNode createHashNode,
-            SyntaxNode[] disposeNodes,
-            [NotNullWhen(true)] out HashDataCodeAction? codeAction);
-
-        protected abstract class HashDataCodeAction : CodeAction
-        {
-            protected HashDataCodeAction(Document document, SyntaxNode computeHashNode, SyntaxNode hashDateNode)
+            private readonly HashInstanceTarget _hashInstanceTarget;
+            private readonly PreferHashDataOverComputeHashFixHelper _helper;
+            private readonly SyntaxNode _root;
+            public HashDataCodeAction(Document document, HashInstanceTarget hashInstanceTarget, PreferHashDataOverComputeHashFixHelper helper, SyntaxNode root)
             {
                 Document = document;
-                HashDataNode = hashDateNode;
-                ComputeHashNode = computeHashNode;
+                _hashInstanceTarget = hashInstanceTarget;
+                _helper = helper;
+                _root = root;
             }
             public override string Title => MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle;
             public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
 
             public Document Document { get; }
-            public SyntaxNode ComputeHashNode { get; }
-            public SyntaxNode HashDataNode { get; }
 
-            protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
+            protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
-                DocumentEditor editor = await DocumentEditor.CreateAsync(Document, cancellationToken).ConfigureAwait(false);
-                EditNodes(editor);
+                var root = _helper.TrackTarget(_root, _hashInstanceTarget);
+                root = _helper.FixHashInstanceTarget(root, _hashInstanceTarget);
+                root = Formatter.Format(root, Formatter.Annotation, Document.Project.Solution.Workspace, cancellationToken: cancellationToken);
 
-                return editor.GetChangedDocument();
-            }
-
-            protected abstract void EditNodes(DocumentEditor documentEditor);
-        }
-
-        private sealed class ReplaceNodeHashDataCodeAction : HashDataCodeAction
-        {
-            public ReplaceNodeHashDataCodeAction(Document document, SyntaxNode computeHashNode, SyntaxNode hashDataNode) : base(document, computeHashNode, hashDataNode)
-            {
-            }
-
-            protected override void EditNodes(DocumentEditor documentEditor)
-            {
-                documentEditor.ReplaceNode(ComputeHashNode, HashDataNode);
-            }
-        }
-
-        protected sealed class RemoveNodeHashDataCodeAction : HashDataCodeAction
-        {
-            private readonly SyntaxNode[] _disposeNodes;
-            public RemoveNodeHashDataCodeAction(
-                Document document,
-                SyntaxNode computeHashNode,
-                SyntaxNode hashDataNode,
-                SyntaxNode nodeToRemove,
-                SyntaxNode[] disposeNodes) : base(document, computeHashNode, hashDataNode)
-            {
-                NodeToRemove = nodeToRemove;
-                _disposeNodes = disposeNodes;
-            }
-
-            public SyntaxNode NodeToRemove { get; }
-
-            protected override void EditNodes(DocumentEditor documentEditor)
-            {
-                documentEditor.ReplaceNode(ComputeHashNode, HashDataNode);
-                documentEditor.RemoveNode(NodeToRemove);
-
-                foreach (var disposeNode in _disposeNodes)
-                {
-                    documentEditor.RemoveNode(disposeNode);
-                }
+                return Task.FromResult(Document.WithSyntaxRoot(root));
             }
         }
 
@@ -189,6 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 _diagnosticsToFix = diagnosticsToFix;
             }
             public override string EquivalenceKey => nameof(MicrosoftNetCoreAnalyzersResources.PreferHashDataCodefixTitle);
+            protected abstract PreferHashDataOverComputeHashFixHelper Helper { get; }
 
             protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
@@ -219,7 +119,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             continue;
                         }
 
-                        root = TrackTargets(root, hashInstanceTargets);
+                        root = Helper.TrackTargets(root, hashInstanceTargets);
 
                         root = FixDocumentRoot(root, hashInstanceTargets);
                         root = Formatter.Format(root, Formatter.Annotation, newSolution.Workspace, cancellationToken: cancellationToken);
@@ -231,34 +131,59 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             public override string Title { get; }
-            private static SyntaxNode TrackTargets(SyntaxNode root, HashInstanceTarget[] targets)
+
+            private HashInstanceTarget[]? CollectTargets(SyntaxNode root, IGrouping<SyntaxTree, Diagnostic> grouping, CancellationToken cancellationToken)
             {
-                var list = new List<SyntaxNode>();
-                foreach (var t in targets)
+                var dictionary = PooledDictionary<SyntaxNode, HashInstanceTarget>.GetInstance();
+                var chainedComputeHashList = new List<ComputeHashSyntaxHolder>();
+
+                if (!CollectNodes())
                 {
-                    if (t.CreateNode is not null)
-                    {
-                        list.Add(t.CreateNode);
-                    }
-                    if (t.DisposeNodes is not null)
-                    {
-                        list.AddRange(t.DisposeNodes);
-                    }
-
-                    foreach (var computeNode in t.ComputeHashNodes)
-                    {
-                        list.Add(computeNode.ComputeHashNode);
-                    }
+                    dictionary.Free(cancellationToken);
+                    return null;
                 }
+                var hashInstanceTargets = dictionary.Values.Append(new HashInstanceTarget(chainedComputeHashList)).ToArray();
+                dictionary.Free(cancellationToken);
+                return hashInstanceTargets;
 
-                return root.TrackNodes(list);
+                bool CollectNodes()
+                {
+                    foreach (var d in grouping)
+                    {
+                        if (!Helper.TryComputeHashNode(root, d, out var computeHashSyntaxHolder))
+                        {
+                            return false;
+                        }
+                        if (!Helper.TryGetHashCreationNode(root, d, out var createNode, out var hashCreationIndex))
+                        {
+                            chainedComputeHashList.Add(computeHashSyntaxHolder);
+                            continue;
+                        }
+                        if (!dictionary.TryGetValue(createNode, out HashInstanceTarget hashInstanceTarget))
+                        {
+                            var disposeNodes = Helper.GetDisposeNodes(root, d, hashCreationIndex);
+                            hashInstanceTarget = new HashInstanceTarget(createNode, disposeNodes);
+                            dictionary.Add(createNode, hashInstanceTarget);
+                        }
+                        hashInstanceTarget.ComputeHashNodes.Add(computeHashSyntaxHolder);
+                    }
+                    return true;
+                }
             }
-            internal abstract SyntaxNode FixDocumentRoot(SyntaxNode root, HashInstanceTarget[] hashInstanceTargets);
+
+            internal SyntaxNode FixDocumentRoot(SyntaxNode root, HashInstanceTarget[] hashInstanceTargets)
+            {
+                foreach (var target in hashInstanceTargets)
+                {
+                    root = Helper.FixHashInstanceTarget(root, target);
+                }
+                return root;
+            }
         }
 
         protected sealed class HashInstanceTarget
         {
-            public HashInstanceTarget(SyntaxNode? createNode, SyntaxNode[]? disposeNodes)
+            public HashInstanceTarget(SyntaxNode createNode, SyntaxNode[]? disposeNodes)
             {
                 CreateNode = createNode;
                 DisposeNodes = disposeNodes;
@@ -288,60 +213,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public SyntaxNode ComputeHashNode { get; }
             public PreferHashDataOverComputeHashAnalyzer.ComputeType ComputeType { get; }
             public string HashTypeName { get; }
-        }
-
-        private static HashInstanceTarget[]? CollectTargets(SyntaxNode root, IGrouping<SyntaxTree, Diagnostic> grouping, CancellationToken cancellationToken)
-        {
-            var dictionary = PooledDictionary<SyntaxNode, HashInstanceTarget>.GetInstance();
-            var chainedComputeHashList = new List<ComputeHashSyntaxHolder>();
-
-            if (!CollectNodes())
-            {
-                dictionary.Free(cancellationToken);
-                return null;
-            }
-            var hashInstanceTargets = dictionary.Values.Append(new HashInstanceTarget(chainedComputeHashList)).ToArray();
-            dictionary.Free(cancellationToken);
-            return hashInstanceTargets;
-
-            bool CollectNodes()
-            {
-                foreach (var d in grouping)
-                {
-                    if (!Enum.TryParse<PreferHashDataOverComputeHashAnalyzer.ComputeType>(d.Properties[PreferHashDataOverComputeHashAnalyzer.ComputeTypePropertyKey],
-                        out var computeType))
-                    {
-                        return false;
-                    }
-
-                    var computeHashNode = root.FindNode(d.Location.SourceSpan, getInnermostNodeForTie: true);
-                    if (computeHashNode is null)
-                    {
-                        return false;
-                    }
-                    var hashTypeName = d.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
-                    if (!d.Properties.TryGetValue(PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey, out var hashCreationIndexPropertyKey) ||
-                        !int.TryParse(hashCreationIndexPropertyKey, out int hashCreationIndex))
-                    {
-                        chainedComputeHashList.Add(new ComputeHashSyntaxHolder(computeHashNode, computeType, hashTypeName));
-                        continue;
-                    }
-                    var createNode = root.FindNode(d.AdditionalLocations[hashCreationIndex].SourceSpan);
-                    if (createNode is null)
-                    {
-                        return false;
-                    }
-                    if (!dictionary.TryGetValue(createNode, out HashInstanceTarget hashInstanceTarget))
-                    {
-                        var disposeNodes = GetDisposeNodes(root, d.AdditionalLocations, hashCreationIndex);
-                        hashInstanceTarget = new HashInstanceTarget(createNode, disposeNodes);
-                        dictionary.Add(createNode, hashInstanceTarget);
-                    }
-                    var computeHashSyntaxHolder = new ComputeHashSyntaxHolder(computeHashNode, computeType, hashTypeName);
-                    hashInstanceTarget.ComputeHashNodes.Add(computeHashSyntaxHolder);
-                }
-                return true;
-            }
         }
 
         protected abstract class PreferHashDataOverComputeHashFixAllProvider : FixAllProvider
@@ -380,7 +251,153 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             protected abstract PreferHashDataOverComputeHashFixAllCodeAction GetCodeAction(string title, Solution solution, List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix);
-
         }
+
+#pragma warning disable CA1822 // Mark members as static
+        protected abstract class PreferHashDataOverComputeHashFixHelper
+        {
+            public bool TryComputeHashNode(SyntaxNode root, Diagnostic diagnostic, [NotNullWhen(true)] out ComputeHashSyntaxHolder? computeHashHolder)
+            {
+                if (!Enum.TryParse<PreferHashDataOverComputeHashAnalyzer.ComputeType>(diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.ComputeTypePropertyKey],
+                    out var computeType))
+                {
+                    computeHashHolder = null;
+                    return false;
+                }
+                var computeHashNode = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+                if (computeHashNode is null)
+                {
+                    computeHashHolder = null;
+                    return false;
+                }
+                var hashTypeName = diagnostic.Properties[PreferHashDataOverComputeHashAnalyzer.TargetHashTypeDiagnosticPropertyKey];
+
+                computeHashHolder = new ComputeHashSyntaxHolder(computeHashNode, computeType, hashTypeName);
+                return true;
+            }
+
+            public bool TryGetHashCreationNodes(SyntaxNode root, Diagnostic diagnostic, [NotNullWhen(true)] out SyntaxNode? createNode, out SyntaxNode[]? disposeNodes)
+            {
+                if (!TryGetHashCreationNode(root, diagnostic, out createNode, out int hashCreationIndex))
+                {
+                    disposeNodes = null;
+                    return false;
+                }
+
+                disposeNodes = GetDisposeNodes(root, diagnostic, hashCreationIndex);
+                return true;
+            }
+
+            public bool TryGetHashCreationNode(SyntaxNode root, Diagnostic diagnostic, [NotNullWhen(true)] out SyntaxNode? createNode, out int hashCreationIndex)
+            {
+                if (!diagnostic.Properties.TryGetValue(PreferHashDataOverComputeHashAnalyzer.HashCreationIndexPropertyKey, out var hashCreationIndexPropertyKey) ||
+                    !int.TryParse(hashCreationIndexPropertyKey, out hashCreationIndex))
+                {
+                    createNode = null;
+                    hashCreationIndex = default;
+                    return false;
+                }
+
+                createNode = root.FindNode(diagnostic.AdditionalLocations[hashCreationIndex].SourceSpan);
+                return createNode is not null;
+            }
+
+            public SyntaxNode[]? GetDisposeNodes(SyntaxNode root, Diagnostic diagnostic, int hashCreationIndex)
+            {
+                var additionalLocations = diagnostic.AdditionalLocations;
+                var disposeCount = additionalLocations.Count - hashCreationIndex - 1;
+                if (disposeCount == 0)
+                {
+                    return null;
+                }
+                var disposeNodes = new SyntaxNode[disposeCount];
+
+                for (int i = 0; i < disposeNodes.Length; i++)
+                {
+                    var node = root.FindNode(additionalLocations[hashCreationIndex + i + 1].SourceSpan);
+                    if (node is null)
+                    {
+                        return null;
+                    }
+                    disposeNodes[i] = node;
+                }
+                return disposeNodes;
+            }
+
+            public SyntaxNode TrackTargets(SyntaxNode root, HashInstanceTarget[] targets)
+            {
+                var list = new List<SyntaxNode>();
+                foreach (var t in targets)
+                {
+                    if (t.CreateNode is not null)
+                    {
+                        list.Add(t.CreateNode);
+                    }
+                    if (t.DisposeNodes is not null)
+                    {
+                        list.AddRange(t.DisposeNodes);
+                    }
+
+                    foreach (var computeNode in t.ComputeHashNodes)
+                    {
+                        list.Add(computeNode.ComputeHashNode);
+                    }
+                }
+
+                return root.TrackNodes(list);
+            }
+
+            public SyntaxNode TrackTarget(SyntaxNode root, HashInstanceTarget target)
+            {
+                var list = new List<SyntaxNode>();
+                if (target.CreateNode is not null)
+                {
+                    list.Add(target.CreateNode);
+                }
+                if (target.DisposeNodes is not null)
+                {
+                    list.AddRange(target.DisposeNodes);
+                }
+
+                foreach (var computeNode in target.ComputeHashNodes)
+                {
+                    list.Add(computeNode.ComputeHashNode);
+                }
+
+                return root.TrackNodes(list);
+            }
+
+            public SyntaxNode FixHashInstanceTarget(SyntaxNode root, HashInstanceTarget hashInstanceTarget)
+            {
+                foreach (var c in hashInstanceTarget.ComputeHashNodes)
+                {
+                    var tracked = root.GetCurrentNode(c.ComputeHashNode);
+                    var hashDataNode = GetHashDataSyntaxNode(c.ComputeType, c.HashTypeName, tracked);
+                    root = root.ReplaceNode(tracked, hashDataNode);
+                }
+
+                if (hashInstanceTarget.CreateNode is null)
+                {
+                    return root;
+                }
+
+                root = FixHashCreateNode(root, hashInstanceTarget.CreateNode);
+
+                if (hashInstanceTarget.DisposeNodes is null)
+                {
+                    return root;
+                }
+
+                foreach (var disposeNode in hashInstanceTarget.DisposeNodes)
+                {
+                    var trackedDisposeNode = root.GetCurrentNode(disposeNode);
+                    root = root.RemoveNode(trackedDisposeNode, SyntaxRemoveOptions.KeepNoTrivia);
+                }
+                return root;
+            }
+            protected abstract SyntaxNode GetHashDataSyntaxNode(PreferHashDataOverComputeHashAnalyzer.ComputeType computeType, string hashTypeName, SyntaxNode computeHashNode);
+            protected abstract SyntaxNode FixHashCreateNode(SyntaxNode root, SyntaxNode createNode);
+        }
+#pragma warning restore CA1822 // Mark members as static
     }
 }

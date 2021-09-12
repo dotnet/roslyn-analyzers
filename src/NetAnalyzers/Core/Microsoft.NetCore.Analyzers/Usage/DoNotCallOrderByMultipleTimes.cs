@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
     using static MicrosoftNetCoreAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotCallOrderByMultipleTimes : DiagnosticAnalyzer
+    public sealed class DoNotCallOrderByMultipleTimes : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2259";
 

@@ -3,11 +3,11 @@
 using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
-    Microsoft.CodeQuality.CSharp.Analyzers.Usage.CSharpDoNotCallOrderByMultipleTimesFixer>;
+    Microsoft.NetCore.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
+    Microsoft.NetCore.CSharp.Analyzers.Usage.CSharpDoNotCallOrderByMultipleTimesFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
-    Microsoft.CodeQuality.VisualBasic.Analyzers.Usage.BasicDoNotCallOrderByMultipleTimesFixer>;
+    Microsoft.NetCore.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
+    Microsoft.NetCore.VisualBasic.Analyzers.Usage.BasicDoNotCallOrderByMultipleTimesFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 {

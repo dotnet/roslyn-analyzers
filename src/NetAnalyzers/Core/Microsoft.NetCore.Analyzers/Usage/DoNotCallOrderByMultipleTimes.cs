@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.CodeQuality.Analyzers.Usage
+namespace Microsoft.NetCore.Analyzers.Usage
 {
-    using static MicrosoftCodeQualityAnalyzersResources;
+    using static MicrosoftNetCoreAnalyzersResources;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotCallOrderByMultipleTimes : DiagnosticAnalyzer

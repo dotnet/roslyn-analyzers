@@ -9,9 +9,9 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.CodeQuality.Analyzers.Usage
+namespace Microsoft.NetCore.Analyzers.Usage
 {
-    using static MicrosoftCodeQualityAnalyzersResources;
+    using static MicrosoftNetCoreAnalyzersResources;
 
     public abstract class DoNotCallOrderByMultipleTimesFixer : CodeFixProvider
     {

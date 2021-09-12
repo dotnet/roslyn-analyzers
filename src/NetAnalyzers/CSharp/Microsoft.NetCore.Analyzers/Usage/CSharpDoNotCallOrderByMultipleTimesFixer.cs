@@ -5,9 +5,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeQuality.Analyzers.Usage;
+using Microsoft.NetCore.Analyzers.Usage;
 
-namespace Microsoft.CodeQuality.CSharp.Analyzers.Usage
+namespace Microsoft.NetCore.CSharp.Analyzers.Usage
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotCallOrderByMultipleTimesFixer : DoNotCallOrderByMultipleTimesFixer

@@ -1764,6 +1764,12 @@
   <data name="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle" xml:space="preserve">
     <value>The 'ModuleInitializer' attribute should not be used in libraries</value>
   </data>
+  <data name="DoNotCallOrderByMultipleTimesDescription" xml:space="preserve">
+    <value>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</value>
+  </data>
+  <data name="DoNotCallOrderByMultipleTimesTitle" xml:space="preserve">
+    <value>Do not call 'OrderBy' multiple times</value>
+  </data>
   <data name="DoNotDisableTokenValidationChecksTitle" xml:space="preserve">
     <value>Do not disable token validation checks</value>
   </data>

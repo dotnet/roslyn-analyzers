@@ -30,7 +30,17 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task OnlyOneOrderByCall_NoDiagnostic_VB()
         {
-            await VerifyVB.VerifyAnalyzerAsync("");
+            string source = VBUsings + @"
+Module Program
+    Sub OnlyOneOrderByCall_NoDiagnostic_VB()
+        Dim q = System.Net.NetworkInformation.NetworkInterface _
+                          .GetAllNetworkInterfaces() _
+                          .OrderBy(Function(ni) ni.NetworkInterfaceType)
+    End Sub
+End Module
+";
+
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
@@ -72,7 +82,29 @@ namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
         [Fact]
         public async Task AtLeastTwoOrderByCalls_OfferFixerAsync_VB()
         {
-            await VerifyVB.VerifyCodeFixAsync("", "");
+            string source = VBUsings + @"
+Module Program
+    Sub OnlyOneOrderByCall_NoDiagnostic_VB()
+        Dim q = System.Net.NetworkInformation.NetworkInterface _
+                          .GetAllNetworkInterfaces() _
+                          .OrderBy(Function(ni) ni.NetworkInterfaceType) _
+                          .OrderBy(Function(ni) ni.Name)
+    End Sub
+End Module
+";
+
+            string fixedSource = VBUsings + @"
+Module Program
+    Sub OnlyOneOrderByCall_NoDiagnostic_VB()
+        Dim q = System.Net.NetworkInformation.NetworkInterface _
+                          .GetAllNetworkInterfaces() _
+                          .OrderBy(Function(ni) ni.NetworkInterfaceType) _
+                          .ThenBy(Function(ni) ni.Name)
+    End Sub
+End Module
+";
+
+            await VerifyVB.VerifyCodeFixAsync(source, fixedSource);
         }
 
         #region Helpers

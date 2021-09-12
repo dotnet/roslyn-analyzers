@@ -20,25 +20,19 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Usage
                 return document;
             }
 
-            SyntaxNode newRoot;
-
-            string newMember;
-
-            switch (memberAccessExpression.Name.ToString())
+            string? newMember = memberAccessExpression.Name.ToString() switch
             {
-                case "OrderBy":
-                    newMember = "ThenBy";
-                    break;
-                case "OrderByDescending":
-                    newMember = "ThenByDescending";
-                    break;
-                default:
-                    return document; // should we throw NotSupported at this point?
-            }
+                "OrderBy" => "ThenBy",
+                "OrderByDescending" => "ThenByDescending",
+                _ => null
+            };
+
+            if (newMember is null)
+                return document; // should we throw NotSupported at this point?
 
             var generatedSyntax = SyntaxGenerator.GetGenerator(document).IdentifierName(newMember);
 
-            newRoot = root.ReplaceNode(memberAccessExpression.Name, generatedSyntax);
+            var newRoot = root.ReplaceNode(memberAccessExpression.Name, generatedSyntax);
 
             return document.WithSyntaxRoot(newRoot);
         }

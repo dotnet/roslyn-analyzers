@@ -75,9 +75,9 @@ namespace Microsoft.CodeQuality.Analyzers.Usage
                 {
                     PreviousOrderByInvocation = invocationOperation;
                 }
-                else
+                else if (PreviousOrderByInvocation != invocationOperation)
                 {
-                    context.ReportDiagnostic(invocationOperation.CreateDiagnostic(Rule));
+                    context.ReportDiagnostic(PreviousOrderByInvocation.CreateDiagnostic(Rule));
                 }
             }
         }

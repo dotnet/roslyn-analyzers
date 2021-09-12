@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
-    Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimesFixer>;
+    Microsoft.CodeQuality.CSharp.Analyzers.Usage.CSharpDoNotCallOrderByMultipleTimesFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimes,
-    Microsoft.CodeQuality.Analyzers.Usage.DoNotCallOrderByMultipleTimesFixer>;
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Usage.BasicDoNotCallOrderByMultipleTimesFixer>;
 
-namespace Microsoft.CodeQuality.Analyzers.Usage.UnitTests
+namespace Microsoft.NetCore.Analyzers.Usage.UnitTests
 {
     public class DoNotCallOrderByMultipleTimesTests
     {
@@ -51,10 +51,10 @@ namespace Microsoft.CodeQuality.Analyzers.Usage.UnitTests
             string source = CSUsings + CSNamespaceAndClassStart + @"
         public MyClass()
         {
-            var q = System.Net.NetworkInformation.NetworkInterface
+            var q = [|System.Net.NetworkInformation.NetworkInterface
                           .GetAllNetworkInterfaces()
                           .OrderBy(ni => ni.NetworkInterfaceType)
-                          .OrderBy(ni => ni.Name);
+                          .OrderBy(ni => ni.Name)|];
         }" + CSNamespaceAndClassEnd;
 
             string fixedSource = CSUsings + CSNamespaceAndClassStart + @"

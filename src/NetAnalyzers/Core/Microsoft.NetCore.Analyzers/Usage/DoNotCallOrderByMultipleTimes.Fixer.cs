@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Usage
         private class CodeAction : DocumentChangeAction
         {
             public CodeAction(Func<CancellationToken, Task<Document>> action)
-            : base(DoNotCallOrderByMultipleTimesCodefixTitle, action, DoNotCallOrderByMultipleTimes.RuleId)
+            : base(nameof(DoNotCallOrderByMultipleTimesCodefixTitle), action, DoNotCallOrderByMultipleTimes.RuleId)
             { }
         }
     }

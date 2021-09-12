@@ -1764,6 +1764,12 @@
   <data name="ModuleInitializerAttributeShouldNotBeUsedInLibrariesTitle" xml:space="preserve">
     <value>The 'ModuleInitializer' attribute should not be used in libraries</value>
   </data>
+  <data name="DoNotCallOrderByMultipleTimesDescription" xml:space="preserve">
+    <value>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</value>
+  </data>
+  <data name="DoNotCallOrderByMultipleTimesTitle" xml:space="preserve">
+    <value>Do not call 'OrderBy' multiple times</value>
+  </data>
   <data name="DoNotDisableTokenValidationChecksTitle" xml:space="preserve">
     <value>Do not disable token validation checks</value>
   </data>
@@ -1781,5 +1787,11 @@
   </data>
   <data name="DoNotAlwaysSkipTokenValidationInDelegatesMessage" xml:space="preserve">
     <value>The {0} is set to a function that is always returning true. By setting the validation delegate, you are overriding default validation and by always returning true, this validation is completely disabled.</value>
+  </data>
+  <data name="DoNotCallOrderByMultipleTimesCodefixTitle" xml:space="preserve">
+    <value>Replace 'OrderBy' with 'ThenBy'</value>
+  </data>
+  <data name="DoNotCallOrderByMultipleTimesMessage" xml:space="preserve">
+    <value>Do not call 'OrderBy' multiple times</value>
   </data>
 </root>

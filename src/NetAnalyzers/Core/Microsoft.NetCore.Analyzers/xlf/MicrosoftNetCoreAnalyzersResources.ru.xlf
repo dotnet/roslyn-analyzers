@@ -492,6 +492,26 @@
         <target state="translated">При десериализации экземпляра класса {0} метод {1} может вызывать опасный метод {2}. Потенциальные вызовы методов: {3}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesCodefixTitle">
+        <source>Replace 'OrderBy' with 'ThenBy'</source>
+        <target state="new">Replace 'OrderBy' with 'ThenBy'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesDescription">
+        <source>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</source>
+        <target state="new">Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesMessage">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesTitle">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
         <target state="translated">Когда конструктор вызывает виртуальный метод, конструктор может не выполняться для экземпляра, вызывающего этот метод.</target>

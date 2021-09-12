@@ -4,5 +4,6 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
+CA2259 | Usage | Warning | DoNotCallOrderByMultipleTimes, [Documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2259)
 CA5404 | Security | Disabled | DoNotDisableTokenValidationChecks, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5404)
 CA5405 | Security | Disabled | DoNotAlwaysSkipTokenValidationInDelegates, [Documentation](https://docs.microsoft.com/visualstudio/code-quality/ca5405)

@@ -492,6 +492,26 @@
         <target state="translated">反序列化类 {0} 的实例时，方法 {1} 可调用危险方法 {2}。潜在的方法调用为: {3}。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesCodefixTitle">
+        <source>Replace 'OrderBy' with 'ThenBy'</source>
+        <target state="new">Replace 'OrderBy' with 'ThenBy'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesDescription">
+        <source>Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</source>
+        <target state="new">Do not call 'OrderBy' or 'OrderByDescending' multiple times. Only the last call would have an effect. Instead, for subsequent calls, use 'ThenBy' and 'ThenByDescending'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesMessage">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallOrderByMultipleTimesTitle">
+        <source>Do not call 'OrderBy' multiple times</source>
+        <target state="new">Do not call 'OrderBy' multiple times</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsDescription">
         <source>When a constructor calls a virtual method, the constructor for the instance that invokes the method may not have executed.</source>
         <target state="translated">构造函数调用虚方法时，可能尚未执行调用该方法的实例的构造函数。</target>

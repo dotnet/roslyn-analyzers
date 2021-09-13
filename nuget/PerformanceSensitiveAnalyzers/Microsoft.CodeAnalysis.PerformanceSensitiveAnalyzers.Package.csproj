@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
 
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers</NuspecPackageId>
     <Description>PerformanceSensitive Analyzers</Description>

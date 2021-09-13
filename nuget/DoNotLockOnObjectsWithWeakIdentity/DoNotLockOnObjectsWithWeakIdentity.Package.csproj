@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
 
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>DoNotLockOnObjectsWithWeakIdentity</NuspecPackageId>
     <Description>Hotfix for CA2002: Do not lock on objects with weak identity.</Description>

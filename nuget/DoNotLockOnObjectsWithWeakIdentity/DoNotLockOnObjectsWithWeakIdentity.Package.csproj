@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
 
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecPackageId>DoNotLockOnObjectsWithWeakIdentity</NuspecPackageId>
     <Description>Hotfix for CA2002: Do not lock on objects with weak identity.</Description>

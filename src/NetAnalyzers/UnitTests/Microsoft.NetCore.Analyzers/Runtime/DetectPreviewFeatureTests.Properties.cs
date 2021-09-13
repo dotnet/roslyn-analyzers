@@ -20,9 +20,13 @@ namespace Preview_Feature_Scratch
     class Program
     {
         public int Value { get; }
-        static void Main(string[] args)
+        public Program()
         {
             Value = 1;
+        }
+
+        static void Main(string[] args)
+        {
         }
     }
 }";

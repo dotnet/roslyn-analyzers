@@ -33,9 +33,6 @@
           Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerRulesetAssembly)' != ''">
 
     <PropertyGroup>
-      <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
-      <_GeneratedEditorconfigsDir>$(IntermediateOutputPath)Editorconfig</_GeneratedEditorconfigsDir>
-      <_GeneratedGlobalAnalyzerConfigsDir>$(IntermediateOutputPath)GlobalAnalyzerConfigs</_GeneratedGlobalAnalyzerConfigsDir>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
       <GenerateDisableNETAnalyzersPackagePropsFile Condition=" '$(GenerateDisableNETAnalyzersPackagePropsFile)' == '' and '$(ContainsPortedFxCopRules)' == 'true'">true</GenerateDisableNETAnalyzersPackagePropsFile>
@@ -52,36 +49,6 @@
       <GenerateAnalyzerRulesMissingDocumentationFile Condition="'$(Sign)' == 'true'">false</GenerateAnalyzerRulesMissingDocumentationFile>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
-      <PackagePropsFileDir>$(IntermediateOutputPath)Build</PackagePropsFileDir>
-      <PackagePropsFileName>$(NuspecPackageId).props</PackagePropsFileName>
-    </PropertyGroup>
-    <ItemGroup Condition="'$(GeneratePackagePropsFile)' == 'true'" >
-      <AnalyzerNupkgFile Include="$(PackagePropsFileDir)\$(PackagePropsFileName)"/>
-    </ItemGroup>
-
-    <PropertyGroup Condition="'$(GenerateDisableNETAnalyzersPackagePropsFile)' == 'true'">
-      <DisableNETAnalyzersPackagePropsFileName>DisableNETAnalyzersForNuGetPackage.props</DisableNETAnalyzersPackagePropsFileName>
-    </PropertyGroup>
-    <ItemGroup Condition="'$(GenerateDisableNETAnalyzersPackagePropsFile)' == 'true'" >
-      <AnalyzerNupkgFile Include="$(PackagePropsFileDir)\$(DisableNETAnalyzersPackagePropsFileName)"/>
-    </ItemGroup>
-    
-    <PropertyGroup>
-      <PackageTargetsFileDir>$(IntermediateOutputPath)Build</PackageTargetsFileDir>
-      <PackageTargetsFileName>$(NuspecPackageId).targets</PackageTargetsFileName>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(GenerateAnalyzerMdFile)' == 'true'">
-      <AnalyzerDocumentationFileDir Condition="'$(AnalyzerDocumentationFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerDocumentationFileDir>
-      <AnalyzerDocumentationFileName>$(NuspecPackageId).md</AnalyzerDocumentationFileName>
-    </PropertyGroup>
-    
-    <PropertyGroup Condition="'$(GenerateAnalyzerSarifFile)' == 'true'">
-      <AnalyzerSarifFileDir Condition="'$(AnalyzerSarifFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerSarifFileDir>
-      <AnalyzerSarifFileName>$(NuspecPackageId).sarif</AnalyzerSarifFileName>
-    </PropertyGroup>
-    
     <PropertyGroup Condition="'$(GenerateAnalyzerConfigurationFile)' == 'true'">
       <AnalyzerConfigurationFileDir>$(RepoRoot)docs</AnalyzerConfigurationFileDir>
       <AnalyzerConfigurationFileName>Analyzer Configuration.md</AnalyzerConfigurationFileName>
@@ -104,15 +71,6 @@
       <AnalyzerRulesetAssembly Update="@(AnalyzerRulesetAssembly)" Condition="'%(AnalyzerRulesetAssembly.TargetFramework)' == ''" TargetFramework="$(TargetFramework)" />
     </ItemGroup>
 
-    <!-- Only run validate only in CI builds. Running them in local builds will prevent refreshing auto-generated files. -->
-    <Exec Condition="'$(ContinuousIntegrationBuild)' == 'true'"
-          Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:true" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />
-
-    <Exec Command='"$(DotNetExecutable)" "$(_GenerateDocumentationAndConfigFilesPath)" "-validateOnly:false" "$(_GeneratedRulesetsDir)" "$(_GeneratedEditorconfigsDir)" "$(_GeneratedGlobalAnalyzerConfigsDir)" "$(ArtifactsBinDir)$(EscapeDirectorySuffix)" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(PackageTargetsFileDir)" "$(PackageTargetsFileName)" "$(DisableNETAnalyzersPackagePropsFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerDocumentationFileName)" "$(AnalyzerSarifFileDir)" "$(AnalyzerSarifFileName)" "$(VersionPrefix)" $(NuspecPackageId) $(ContainsPortedFxCopRules) $(GenerateAnalyzerRulesMissingDocumentationFile) "$(ReleaseTrackingOptOut)"' />
-
-    <ItemGroup Condition="Exists('$(PackageTargetsFileDir)\$(PackageTargetsFileName)')">
-      <AnalyzerNupkgFile Include="$(PackageTargetsFileDir)\$(PackageTargetsFileName)"/>
-    </ItemGroup>
   </Target>
   
   <PropertyGroup>

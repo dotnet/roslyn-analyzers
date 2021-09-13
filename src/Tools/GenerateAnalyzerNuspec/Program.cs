@@ -20,13 +20,13 @@ var libraryList = args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var rulesetsDir = args[11];
 var editorconfigsDir = args[12];
 var artifactsBinDir = args[13];
-var analyzerDocumentationFileDir = args[14];
-var analyzerDocumentationFileName = args[15];
-var analyzerSarifFileDir = args[16];
-var analyzerSarifFileName = args[17];
-var analyzerConfigurationFileDir = args[18];
-var analyzerConfigurationFileName = args[19];
-var globalAnalyzerConfigsDir = args[20];
+var analyzerDocumentationFileDir = string.Empty;
+var analyzerDocumentationFileName = string.Empty;
+var analyzerSarifFileDir = string.Empty;
+var analyzerSarifFileName = string.Empty;
+var analyzerConfigurationFileDir = string.Empty;
+var analyzerConfigurationFileName = string.Empty;
+var globalAnalyzerConfigsDir = string.Empty;
 
 var result = new StringBuilder();
 

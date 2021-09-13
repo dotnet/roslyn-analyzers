@@ -11,10 +11,14 @@
     <Summary>Hotfix for CA2002</Summary>
     <ReleaseNotes>Ensures CA2002 will fire even on new VB IL pattersn</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
-    <AnalyzerDocumentationFileDir>$(RepoRoot)src\DoNotLockOnObjectsWithWeakIdentity</AnalyzerDocumentationFileDir>
-    <AnalyzerSarifFileDir>$(RepoRoot)src\DoNotLockOnObjectsWithWeakIdentity</AnalyzerSarifFileDir>
     <IsShippingPackage>true</IsShippingPackage>
 
+    <GenerateAnalyzerMdFile>false</GenerateAnalyzerMdFile>
+    <GenerateAnalyzerSarifFile>false</GenerateAnalyzerSarifFile>
+    <GenerateAnalyzerConfigurationFile>false</GenerateAnalyzerConfigurationFile>
+    <ContainsPortedFxCopRules>false</ContainsPortedFxCopRules>
+    <PleaseJustGiveMeASimpleNugetPackage>true</PleaseJustGiveMeASimpleNugetPackage>
+    
     <!-- Override the version prefix and label for NetAnalyzers projects -->
     <VersionPrefix>1.0.0</VersionPrefix>
     <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
@@ -24,7 +28,7 @@
     <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentity.dll" />
     <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentityCSharp.dll" />
     <AnalyzerNupkgAssembly Include="DoNotLockOnObjectsWithWeakIdentityVisualBasic.dll" />
-    <AnalyzerNupkgFile Include="CA2002.props" />
+    <AnalyzerNupkgFile Include="DoNotLockOnObjectsWithWeakIdentity.props" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,9 +37,4 @@
     <ProjectReference Include="..\..\src\DoNotLockOnObjectsWithWeakIdentity\VisualBasic\DoNotLockOnObjectsWithWeakIdentityVisualBasic.vbproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
-    <None Update="CA2002.props" CopyToOutputDirectory="Always" Pack="true" PackagePath="build" />
-  </ItemGroup>
-
 </Project>

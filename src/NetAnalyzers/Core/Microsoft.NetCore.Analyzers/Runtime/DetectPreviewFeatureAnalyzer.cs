@@ -677,6 +677,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         symbol = propertySymbol.SetMethod;
                     }
+
+                    if (symbol == null)
+                    {
+                        referencedPreviewSymbol = null;
+                        return false;
+                    }
                 }
 
                 if (operation is IEventAssignmentOperation eventAssignment && symbol is IEventSymbol eventSymbol)

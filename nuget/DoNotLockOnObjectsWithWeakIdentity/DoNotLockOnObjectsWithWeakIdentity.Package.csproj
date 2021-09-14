@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>net45</TargetFramework>
 
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsPackable>true</IsPackable>
@@ -17,7 +17,7 @@
     <GenerateAnalyzerSarifFile>false</GenerateAnalyzerSarifFile>
     <GenerateAnalyzerConfigurationFile>false</GenerateAnalyzerConfigurationFile>
     <ContainsPortedFxCopRules>false</ContainsPortedFxCopRules>
-    <PleaseJustGiveMeASimpleNugetPackage>true</PleaseJustGiveMeASimpleNugetPackage>
+    <NoWarn>$(NoWarn);NU1701;NU1702</NoWarn>
     
     <!-- Override the version prefix and label for NetAnalyzers projects -->
     <VersionPrefix>1.0.0</VersionPrefix>

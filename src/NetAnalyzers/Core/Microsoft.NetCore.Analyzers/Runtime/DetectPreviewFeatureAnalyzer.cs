@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -20,13 +21,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     public abstract class DetectPreviewFeatureAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2252";
+        internal const string DefaultURL = "https://aka.ms/dotnet-warnings/preview-features";
         private static readonly LocalizableString s_localizableTitle = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesTitle));
         private static readonly LocalizableString s_localizableDescription = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesDescription));
+        internal static readonly LocalizableString s_detectPreviewFeaturesMessage = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesMessage));
+        internal static readonly LocalizableString s_detectPreviewFeaturesUrl = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesURL));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
+        internal static DiagnosticDescriptor CustomPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
+                                                                                                                    s_localizableTitle,
+                                                                                                                    CreateLocalizableResourceString(nameof(CustomPreviewAPIMessage)),
+                                                                                                                    DiagnosticCategory.Usage,
+                                                                                                                    RuleLevel.BuildError,
+                                                                                                                    s_localizableDescription,
+                                                                                                                    isPortedFxCopRule: false,
+                                                                                                                    isDataflowRule: false);
         internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                                     s_localizableTitle,
-                                                                                                                    CreateLocalizableResourceString(nameof(DetectPreviewFeaturesMessage)),
+                                                                                                                    CreateLocalizableResourceString(nameof(DetectPreviewFeaturesDiagnosticMessage)),
                                                                                                                     DiagnosticCategory.Usage,
                                                                                                                     RuleLevel.BuildError,
                                                                                                                     s_localizableDescription,
@@ -113,7 +125,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     isPortedFxCopRule: false,
                                                                                                                     isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(GeneralPreviewFeatureAttributeRule,
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            CustomPreviewFeatureAttributeRule,
+            GeneralPreviewFeatureAttributeRule,
             ImplementsPreviewInterfaceRule,
             ImplementsPreviewMethodRule,
             OverridesPreviewMethodRule,
@@ -152,6 +166,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols = new();
+                ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolToMessageAndUrl = new();
 
                 IFieldSymbol? virtualStaticsInInterfaces = null;
                 if (context.Compilation.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesRuntimeFeature, out INamedTypeSymbol? runtimeFeatureType))
@@ -163,12 +178,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (virtualStaticsInInterfaces != null)
                     {
-                        SymbolIsAnnotatedAsPreview(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols, previewFeaturesAttribute);
+                        SymbolIsAnnotatedAsPreview(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols/*, previewSymbolToMessageAndUrl*/, previewFeaturesAttribute/*, out _, out _*/);
                     }
                 }
 
                 // Handle symbol operations involving preview features
-                context.RegisterOperationAction(context => BuildSymbolInformationFromOperations(context, requiresPreviewFeaturesSymbols, previewFeaturesAttribute),
+                context.RegisterOperationAction(context => BuildSymbolInformationFromOperations(context, requiresPreviewFeaturesSymbols, previewSymbolToMessageAndUrl, previewFeaturesAttribute),
                     OperationKind.Invocation,
                     OperationKind.ObjectCreation,
                     OperationKind.PropertyReference,
@@ -610,9 +625,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
         }
 
-        private void BuildSymbolInformationFromOperations(OperationAnalysisContext context, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttributeSymbol)
+        private void BuildSymbolInformationFromOperations(OperationAnalysisContext context,
+                                                          ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                          ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                          INamedTypeSymbol previewFeatureAttributeSymbol)
         {
-            if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out ISymbol? symbol))
+            if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols/*, previewSymbolsToMessageAndUrl*/, previewFeatureAttributeSymbol, out ISymbol? symbol/*, out string? customMessage, out string? customUrl*/))
             {
                 IOperation operation = context.Operation;
                 if (operation is ICatchClauseOperation catchClauseOperation)
@@ -620,13 +638,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operation = catchClauseOperation.ExceptionDeclarationOrExpression;
                 }
 
-                context.ReportDiagnostic(operation.CreateDiagnostic(GeneralPreviewFeatureAttributeRule, symbol.Name));
+                //string message = string.Format((string)s_detectPreviewFeaturesMessage, symbol.Name);
+                //string url = (string)s_detectPreviewFeaturesUrl;
+                //if (customMessage != null)
+                //{
+                //    message = customMessage;
+                //}
+
+                //if (customUrl != null)
+                //{
+                //    url = customUrl;
+                //}
+
+                //context.ReportDiagnostic(operation.CreateDiagnostic(GeneralPreviewFeatureAttributeRule, message, url));
+                ReportDiagnosticWithCustomOrGivenDiagnostic(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, symbol.Name);
             }
         }
 
-        private bool SymbolIsAnnotatedOrUsesPreviewTypes(ISymbol symbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttributeSymbol, [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
+        private bool SymbolIsAnnotatedOrUsesPreviewTypes(ISymbol symbol,
+                                                         ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                         INamedTypeSymbol previewFeatureAttributeSymbol,
+                                                         [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
+        //out string? customMessage,
+        //out string? customUrl)
         {
-            if (SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
+            if (SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols/*, previewSymbolsToMessageAndUrl*/, previewFeatureAttributeSymbol/*, out customMessage, out customUrl*/))
             {
                 referencedPreviewSymbol = symbol;
                 return true;
@@ -646,11 +682,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private bool OperationUsesPreviewFeatures(OperationAnalysisContext context, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttributeSymbol, [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
+        private bool OperationUsesPreviewFeatures(OperationAnalysisContext context,
+                                                  ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                  INamedTypeSymbol previewFeatureAttributeSymbol,
+                                                  [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
+        //out string? customMessage,
+        //out string? customUrl)
         {
             IOperation operation = context.Operation;
             ISymbol containingSymbol = context.ContainingSymbol;
-            if (SymbolIsAnnotatedAsPreview(containingSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
+            if (SymbolIsAnnotatedAsPreview(containingSymbol, requiresPreviewFeaturesSymbols,/* previewSymbolsToMessageAndUrl,*/ previewFeatureAttributeSymbol/*, out customMessage, out customUrl*/))
             {
                 referencedPreviewSymbol = null;
                 return false;
@@ -662,7 +703,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (symbol is IPropertySymbol propertySymbol)
                 {
                     // bool AProperty => true is different from bool AProperty { get => false }. Handle both here
-                    if (SymbolIsAnnotatedOrUsesPreviewTypes(propertySymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out referencedPreviewSymbol))
+                    if (SymbolIsAnnotatedOrUsesPreviewTypes(propertySymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out referencedPreviewSymbol/*, out customMessage, out customUrl*/))
                     {
                         return true;
                     }
@@ -767,10 +808,136 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttribute)
+        private static string? GetMessageAndURLFromAttributeConstructor(AttributeData attribute, out string? url)
+        {
+            string? message = null;
+            url = null;
+            ImmutableArray<TypedConstant> constructorArguments = attribute.ConstructorArguments;
+            if (constructorArguments.Length != 0)
+            {
+                if (constructorArguments.First().Value is string messageValue)
+                {
+                    message = messageValue;
+                }
+            }
+
+            ImmutableArray<System.Collections.Generic.KeyValuePair<string, TypedConstant>> namedArguments = attribute.NamedArguments;
+            if (namedArguments.Length != 0)
+            {
+                foreach (System.Collections.Generic.KeyValuePair<string, TypedConstant> namedArgument in namedArguments)
+                {
+                    if (namedArgument.Key == "Message")
+                    {
+                        message = (string)namedArgument.Value.Value;
+                    }
+
+                    if (namedArgument.Key == "Url")
+                    {
+                        url = (string)namedArgument.Value.Value;
+                    }
+                }
+            }
+
+            return message;
+        }
+
+        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(OperationAnalysisContext context,
+                                                                        IOperation operation,
+                                                                        ISymbol symbol,
+                                                                        ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                                        INamedTypeSymbol previewFeatureAttribute,
+                                                                        DiagnosticDescriptor diagnosticDescriptor,
+                                                                        params string[] args)
+        {
+            string message = string.Format((string)s_detectPreviewFeaturesMessage, args);
+            string url = DefaultURL;
+            //if (customMessage != null)
+            //{
+            //    message = customMessage;
+            //}
+
+            //if (customUrl != null)
+            //{
+            //    url = customUrl;
+            //}
+            if (!previewSymbolsToMessageAndUrl.TryGetValue(symbol, out (string? existingMessage, string? existingUrl) value))
+            {
+                ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
+                foreach (var attribute in attributes)
+                {
+                    if (attribute.AttributeClass.Equals(previewFeatureAttribute))
+                    {
+                        string? customMessage = GetMessageAndURLFromAttributeConstructor(attribute, out string? customUrl);
+
+                        if (customMessage != null)
+                        {
+                            message = customMessage;
+                        }
+
+                        if (customUrl != null)
+                        {
+                            url = customUrl;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (value.existingMessage != null)
+                {
+                    message = value.existingMessage;
+                }
+
+                if (value.existingUrl != null)
+                {
+                    url = value.existingUrl;
+                }
+            }
+
+            url = string.Format((string)s_detectPreviewFeaturesUrl, url);
+            context.ReportDiagnostic(operation.CreateDiagnostic(GeneralPreviewFeatureAttributeRule, message, url));
+            //context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptor, args));
+        }
+
+        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(SymbolAnalysisContext context, ISymbol symbol, INamedTypeSymbol previewFeatureAttribute, DiagnosticDescriptor diagnosticDescriptor, params string[] args)
+        {
+            ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
+            foreach (var attribute in attributes)
+            {
+                if (attribute.AttributeClass.Equals(previewFeatureAttribute))
+                {
+                    string message = GetMessageAndURLFromAttributeConstructor(attribute, out string url);
+
+                    if (message != "" || url != "")
+                    {
+                        // Empty message/URL in the constructor don't go down this path.
+                        context.ReportDiagnostic(symbol.CreateDiagnostic(CustomPreviewFeatureAttributeRule, message, url));
+                    }
+
+                    context.ReportDiagnostic(symbol.CreateDiagnostic(diagnosticDescriptor, args));
+                }
+            }
+        }
+
+        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, /*ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolToMessageAndUrl,*/ INamedTypeSymbol previewFeatureAttribute/*, out string? message, out string? url*/)
         {
             if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out bool existing))
             {
+                //ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
+                //foreach (var attribute in attributes)
+                //{
+                //    if (attribute.AttributeClass.Equals(previewFeatureAttribute))
+                //    {
+                //        message = GetMessageAndURLFromAttributeConstructor(attribute, out url);
+                //        if (message != null || url != null)
+                //        {
+                //            previewSymbolToMessageAndUrl.GetOrAdd(symbol, new ValueTuple<string?, string?>(message, url));
+                //        }
+                //        requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
+                //        return true;
+                //    }
+                //}
+
                 if (symbol.HasAttribute(previewFeatureAttribute))
                 {
                     requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
@@ -785,7 +952,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (parent != null)
                 {
-                    if (SymbolIsAnnotatedAsPreview(parent, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
+                    if (SymbolIsAnnotatedAsPreview(parent, requiresPreviewFeaturesSymbols,/* previewSymbolToMessageAndUrl,*/ previewFeatureAttribute/*, out message, out url*/))
                     {
                         requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
                         return true;
@@ -793,8 +960,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 requiresPreviewFeaturesSymbols.GetOrAdd(symbol, false);
+                //message = null;
+                //url = null;
                 return false;
             }
+
+            //message = null;
+            //url = null;
+            //if (previewSymbolToMessageAndUrl.TryGetValue(symbol, out (string? existingMessage, string? existingUrl) value))
+            //{
+            //    message = value.existingMessage;
+            //    url = value.existingUrl;
+            //}
 
             return existing;
         }

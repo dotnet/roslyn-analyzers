@@ -182,6 +182,11 @@
         <target state="translated">, </target>
         <note>Separator used for separating list of platform names: {API} is only supported on: {‘windows’, ‘browser’, ‘linux’}</note>
       </trans-unit>
+      <trans-unit id="CustomPreviewAPIMessage">
+        <source>'{0}'. '{1}'</source>
+        <target state="new">'{0}'. '{1}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataSetDataTableInDeserializableObjectGraphMessage">
         <source>When deserializing untrusted input, deserializing a {0} object is insecure. '{1}' either is or derives from {0}</source>
         <target state="translated">Beim Deserialisieren einer nicht vertrauenswürdigen Eingabe ist die Deserialisierung eines {0}-Objekts unsicher. "{1}" ist entweder "{0}" oder davon abgeleitet.</target>
@@ -347,14 +352,24 @@
         <target state="new">An assembly has to opt into preview features before using them.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesDiagnosticMessage">
+        <source>'{0}'. '{1}'.</source>
+        <target state="new">'{0}'. '{1}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DetectPreviewFeaturesMessage">
-        <source>Using '{0}' requires opting into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</source>
-        <target state="new">Using '{0}' requires opting into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</target>
+        <source>Using '{0}' requires opting into preview features.</source>
+        <target state="new">Using '{0}' requires opting into preview features.</target>
         <note />
       </trans-unit>
       <trans-unit id="DetectPreviewFeaturesTitle">
         <source>This API requires opting into preview features</source>
         <target state="new">This API requires opting into preview features</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DetectPreviewFeaturesURL">
+        <source>See '{0}' for more information.</source>
+        <target state="new">See '{0}' for more information.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">

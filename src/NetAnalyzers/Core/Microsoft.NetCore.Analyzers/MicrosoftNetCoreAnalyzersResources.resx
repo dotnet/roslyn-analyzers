@@ -1720,7 +1720,7 @@
     <value>An assembly has to opt into preview features before using them.</value>
   </data>
   <data name="DetectPreviewFeaturesMessage" xml:space="preserve">
-    <value>Using '{0}' requires opting into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</value>
+    <value>Using '{0}' requires opting into preview features.</value>
   </data>
   <data name="DetectPreviewFeaturesTitle" xml:space="preserve">
     <value>This API requires opting into preview features</value>
@@ -1794,5 +1794,14 @@
   </data>
   <data name="DoNotAlwaysSkipTokenValidationInDelegatesMessage" xml:space="preserve">
     <value>The {0} is set to a function that is always returning true. By setting the validation delegate, you are overriding default validation and by always returning true, this validation is completely disabled.</value>
+  </data>
+  <data name="CustomPreviewAPIMessage" xml:space="preserve">
+    <value>'{0}'. '{1}'</value>
+  </data>
+  <data name="DetectPreviewFeaturesDiagnosticMessage" xml:space="preserve">
+    <value>'{0}'. '{1}'</value>
+  </data>
+  <data name="DetectPreviewFeaturesURL" xml:space="preserve">
+    <value>See '{0}' for more information.</value>
   </data>
 </root>

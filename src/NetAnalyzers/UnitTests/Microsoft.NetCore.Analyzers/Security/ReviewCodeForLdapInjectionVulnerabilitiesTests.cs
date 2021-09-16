@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -183,6 +183,26 @@ public partial class WebForm : System.Web.UI.Page
         new DirectoryEntry(input);
     }
 }");
+        }
+
+        [Fact]
+        public async Task AspNetCoreHttpRequest_DirectoryEntry_Path_Diagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.DirectoryServices;
+using Microsoft.AspNetCore.Mvc;
+
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        string input = Request.Form[""in""];
+        new DirectoryEntry(input);
+
+        return View();
+    }
+}",
+                GetCSharpResultAt(10, 9, 9, 24, "DirectoryEntry.DirectoryEntry(string path)", "IActionResult HomeController.Index()", "IFormCollection HttpRequest.Form", "IActionResult HomeController.Index()"));
         }
     }
 }

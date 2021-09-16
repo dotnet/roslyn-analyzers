@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -126,6 +126,10 @@ Class C
     <{|CA2101:DllImport(""user32.dll"", CharSet:=CharSet.Ansi)|}>
     Private Shared Sub SomeMethod2(s As String)
     End Sub
+
+    <{|CA2101:DllImport(""user32.dll"", CHARSET:=CharSet.Ansi)|}>
+    Private Shared Sub SomeMethod3(s As String)
+    End Sub
 End Class
 ", @"
 Imports System.Runtime.InteropServices
@@ -138,6 +142,10 @@ Class C
 
     <DllImport(""user32.dll"", CharSet:=CharSet.Unicode)>
     Private Shared Sub SomeMethod2(s As String)
+    End Sub
+
+    <DllImport(""user32.dll"", CharSet:=CharSet.Unicode)>
+    Private Shared Sub SomeMethod3(s As String)
     End Sub
 End Class
 ");

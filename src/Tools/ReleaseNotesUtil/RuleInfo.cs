@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Runtime.Serialization;
@@ -53,25 +53,14 @@ namespace ReleaseNotesUtil
 
         // Computed properties.
         public string IdWithHelpLinkMarkdown
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(this.HelpLink)
-                    ? $"[{this.Id}]({this.HelpLink})"
-                    : this.Id ?? string.Empty;
-            }
-        }
+            => !string.IsNullOrWhiteSpace(this.HelpLink)
+                ? $"[{this.Id}]({this.HelpLink})"
+                : this.Id ?? string.Empty;
 
         public string DescriptionOrMessageFormatMarkdown
-        {
-            get
-            {
-                return
-                    (!string.IsNullOrWhiteSpace(this.Description)
-                        ? this.Description
-                        : this.MessageFormat)
-                    ?? string.Empty;
-            }
-        }
+            => (!string.IsNullOrWhiteSpace(this.Description)
+                    ? this.Description
+                    : this.MessageFormat)
+                ?? string.Empty;
     }
 }

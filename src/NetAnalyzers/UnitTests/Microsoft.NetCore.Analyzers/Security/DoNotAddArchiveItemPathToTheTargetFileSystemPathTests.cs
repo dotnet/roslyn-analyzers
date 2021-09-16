@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -205,7 +205,8 @@ class TestClass
         [Theory]
         [InlineData("")]
         [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
-        [InlineData("dotnet_code_quality." + DoNotAddArchiveItemPathToTheTargetFileSystemPath.RuleId + ".excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.CA5389.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.CA5389.excluded_symbol_names = TestMet*")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
         public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
@@ -227,7 +228,11 @@ class TestClass
     {
         zipArchiveEntry.ExtractToFile(zipArchiveEntry.FullName);
     }
-}", (".editorconfig", editorConfigText), expected);
+}", ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), expected);
         }
     }
 }

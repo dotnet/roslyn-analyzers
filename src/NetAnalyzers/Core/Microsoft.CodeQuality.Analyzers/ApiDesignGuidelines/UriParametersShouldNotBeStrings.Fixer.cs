@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -21,17 +21,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public class UriParametersShouldNotBeStringsFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UriParametersShouldNotBeStringsAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(UriParametersShouldNotBeStringsAnalyzer.RuleId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            // Fixes all occurrences within within Document, Project, or Solution
+            // Fixes all occurrences within Document, Project, or Solution
             return WellKnownFixAllProviders.BatchFixer;
         }
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftCodeQualityAnalyzersResources.UriParametersShouldNotBeStringsTitle;
+            var title = MicrosoftCodeQualityAnalyzersResources.UriParametersShouldNotBeStringsCodeFixTitle;
 
             var document = context.Document;
             var cancellationToken = context.CancellationToken;

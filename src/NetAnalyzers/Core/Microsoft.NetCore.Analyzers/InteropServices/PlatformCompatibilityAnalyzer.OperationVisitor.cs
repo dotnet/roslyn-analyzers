@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities.PooledObjects;
@@ -13,11 +13,11 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         private sealed class OperationVisitor : GlobalFlowStateDataFlowOperationVisitor
         {
             private readonly ImmutableArray<IMethodSymbol> _platformCheckMethods;
-            private readonly INamedTypeSymbol _osPlatformType;
+            private readonly INamedTypeSymbol? _osPlatformType;
 
             public OperationVisitor(
                 ImmutableArray<IMethodSymbol> platformCheckMethods,
-                INamedTypeSymbol osPlatformType,
+                INamedTypeSymbol? osPlatformType,
                 GlobalFlowStateAnalysisContext analysisContext)
                 : base(analysisContext, hasPredicatedGlobalState: true)
             {

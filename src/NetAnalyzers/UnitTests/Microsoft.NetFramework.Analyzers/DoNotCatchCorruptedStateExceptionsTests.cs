@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -1531,9 +1531,13 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         private static DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(signature, typeName);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetCA2153BasicResultAt(int line, int column, string signature, string typeName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(signature, typeName);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

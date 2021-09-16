@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -129,6 +129,26 @@ public partial class WebForm : System.Web.UI.Page
     }
 }",
                 GetCSharpResultAt(15, 9, 14, 24, "int AppDomain.ExecuteAssembly(string assemblyFile)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public async Task AspNetCoreHttpRequest_AppDomain_ExecuteAssembly_Diagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        string input = Request.Form[""in""];
+        AppDomain.CurrentDomain.ExecuteAssembly(input);
+
+        return View();
+    }
+}",
+                GetCSharpResultAt(10, 9, 9, 24, "int AppDomain.ExecuteAssembly(string assemblyFile)", "IActionResult HomeController.Index()", "IFormCollection HttpRequest.Form", "IActionResult HomeController.Index()"));
         }
     }
 }

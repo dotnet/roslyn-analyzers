@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -19,7 +19,9 @@ public class C
 {
     public virtual event EventHandler ThresholdReached;
 }",
+#pragma warning disable RS0030 // Do not used banned APIs
                 VerifyCS.Diagnostic().WithLocation(5, 39).WithArguments("ThresholdReached"));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
@@ -78,7 +80,11 @@ public class OuterClass
     {accessibility} virtual event EventHandler [|ThresholdReached|];
 }}"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText), },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+"), },
                 },
             }.RunAsync();
         }

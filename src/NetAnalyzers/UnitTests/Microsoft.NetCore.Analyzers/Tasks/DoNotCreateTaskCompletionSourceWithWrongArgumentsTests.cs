@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Xunit;
@@ -55,6 +55,11 @@ class C
     }
     TaskCreationOptions MyProperty { get; set; }
 }
+
+class Derived : TaskCompletionSource<int>
+{
+    public Derived() : base(TaskCreationOptions.RunContinuationsAsynchronously) { }
+}
 ");
         }
 
@@ -89,6 +94,14 @@ Class T
 
     Private Property MyProperty As TaskCreationOptions
 End Class
+
+Class Derived
+    Inherits TaskCompletionSource(Of Integer)
+
+    Public Sub New()
+        MyBase.New(TaskCreationOptions.RunContinuationsAsynchronously)
+    End Sub
+End Class
 ");
         }
 
@@ -109,6 +122,11 @@ class C
     }
     TaskContinuationOptions MyProperty { get; set; }
 }
+
+class Derived : TaskCompletionSource<int>
+{
+    public Derived() : base([|TaskContinuationOptions.RunContinuationsAsynchronously|]) { }
+}
 ",
 @"
 using System.Threading.Tasks;
@@ -122,6 +140,11 @@ class C
         var tcs = new TaskCompletionSource<int>(TaskCreationOptions.AttachedToParent);
     }
     TaskContinuationOptions MyProperty { get; set; }
+}
+
+class Derived : TaskCompletionSource<int>
+{
+    public Derived() : base(TaskCreationOptions.RunContinuationsAsynchronously) { }
 }
 ");
         }
@@ -152,6 +175,11 @@ class C
     }
     TaskContinuationOptions MyProperty { get; set; }
 }
+
+class Derived : TaskCompletionSource
+{
+    public Derived() : base([|TaskContinuationOptions.RunContinuationsAsynchronously|]) { }
+}
 ",
 @"
 using System.Threading.Tasks;
@@ -175,6 +203,11 @@ class C
     }
     TaskContinuationOptions MyProperty { get; set; }
 }
+
+class Derived : TaskCompletionSource
+{
+    public Derived() : base(TaskCreationOptions.RunContinuationsAsynchronously) { }
+}
 ");
         }
 
@@ -194,6 +227,14 @@ Class C
 
     Private Property MyProperty As TaskContinuationOptions
 End Class
+
+Class Derived
+    Inherits TaskCompletionSource(Of Integer)
+
+    Public Sub New()
+        MyBase.New([|TaskContinuationOptions.RunContinuationsAsynchronously|])
+    End Sub
+End Class
 ",
 @"
 Imports System.Threading.Tasks
@@ -206,6 +247,14 @@ Class C
     End Sub
 
     Private Property MyProperty As TaskContinuationOptions
+End Class
+
+Class Derived
+    Inherits TaskCompletionSource(Of Integer)
+
+    Public Sub New()
+        MyBase.New(TaskCreationOptions.RunContinuationsAsynchronously)
+    End Sub
 End Class
 ");
         }

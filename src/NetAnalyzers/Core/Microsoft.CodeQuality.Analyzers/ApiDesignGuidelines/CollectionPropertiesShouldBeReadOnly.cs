@@ -1,15 +1,18 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.Lightup;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA2227: Collection properties should be read only
     ///
@@ -33,27 +36,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA2227";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(CollectionPropertiesShouldBeReadOnlyTitle)),
+            CreateLocalizableResourceString(nameof(CollectionPropertiesShouldBeReadOnlyMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled, // Guidance needs to be improved to be more clear
+            description: CreateLocalizableResourceString(nameof(CollectionPropertiesShouldBeReadOnlyDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                    s_localizableTitle,
-                                                                    s_localizableMessage,
-                                                                    DiagnosticCategory.Usage,
-                                                                    RuleLevel.Disabled, // Guidance needs to be improved to be more clear
-                                                                    description: s_localizableDescription,
-                                                                    isPortedFxCopRule: true,
-                                                                    isDataflowRule: false);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
-            analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(
+            context.RegisterCompilationStartAction(
                 (context) =>
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
@@ -91,6 +91,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            // make sure this property is NOT an init
+            if (setter.IsInitOnly())
+            {
+                return;
+            }
+
             // make sure return type is NOT array
             if (Inherits(property.Type, knownTypes.ArrayType))
             {
@@ -119,14 +125,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            if (knownTypes.DataMemberAttribute != null)
+            // Special case: the DataContractSerializer requires that a public setter exists.
+            if (property.HasAttribute(knownTypes.DataMemberAttribute))
             {
-                // Special case: the DataContractSerializer requires that a public setter exists.
-                bool hasDataMemberAttribute = property.GetAttributes().Any(a => a.AttributeClass.Equals(knownTypes.DataMemberAttribute));
-                if (hasDataMemberAttribute)
-                {
-                    return;
-                }
+                return;
             }
 
             context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));

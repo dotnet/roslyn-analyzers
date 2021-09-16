@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA2234: Pass system uri objects instead of strings
     /// </summary>
@@ -19,31 +21,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA2234";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(PassSystemUriObjectsInsteadOfStringsTitle)),
+            CreateLocalizableResourceString(nameof(PassSystemUriObjectsInsteadOfStringsMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,        // Heuristics based rules are prone to false positives
+            description: CreateLocalizableResourceString(nameof(PassSystemUriObjectsInsteadOfStringsDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,        // Heuristics based rules are prone to false positives
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext analysisContext)
+        public override void Initialize(AnalysisContext context)
         {
             // this is stateless analyzer, can run concurrently
-            analysisContext.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // this has no meaning on running on generated code which user can't control
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterCompilationStartAction(c =>
+            context.RegisterCompilationStartAction(c =>
             {
                 INamedTypeSymbol? @string = c.Compilation.GetSpecialType(SpecialType.System_String);
                 INamedTypeSymbol? uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
@@ -94,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (!method.MatchesConfiguredVisibility(context.ContainingSymbol, context.Options, Rule, context.Compilation, context.CancellationToken))
+                if (!context.Options.MatchesConfiguredVisibility(Rule, method, context.ContainingSymbol, context.Compilation))
                 {
                     // only apply to methods that are exposed outside by default
                     return;
@@ -149,7 +147,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
-                    // original FxCop implementation doesnt account for case where original method call contains
+                    // original FxCop implementation doesn't account for case where original method call contains
                     // 2+ string uri parameters that has overload with matching uri parameters. original implementation works
                     // when there is exactly 1 parameter having matching uri overload. this implementation follow that.
                     foreach (int index in indicesSet)

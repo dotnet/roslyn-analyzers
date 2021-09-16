@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -899,17 +899,21 @@ End NameSpace
         private static readonly string CA1044MessageMakeMoreAccessible = MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible;
 
         private static DiagnosticResult GetCA1044CSharpResultAt(int line, int column, string CA1044Message, string objectName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(CA1044Message == CA1044MessageAddGetter
                     ? PropertiesShouldNotBeWriteOnlyAnalyzer.AddGetterRule
                     : PropertiesShouldNotBeWriteOnlyAnalyzer.MakeMoreAccessibleRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
 
         private static DiagnosticResult GetCA1044BasicResultAt(int line, int column, string CA1044Message, string objectName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(CA1044Message == CA1044MessageAddGetter
                     ? PropertiesShouldNotBeWriteOnlyAnalyzer.AddGetterRule
                     : PropertiesShouldNotBeWriteOnlyAnalyzer.MakeMoreAccessibleRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(objectName);
     }
 }

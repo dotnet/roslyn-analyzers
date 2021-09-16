@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
@@ -732,6 +732,8 @@ class Blah
         [InlineData("dotnet_code_quality.excluded_symbol_names = Method")]
         [InlineData(@"dotnet_code_quality.CA2329.excluded_symbol_names = Method
                       dotnet_code_quality.CA2330.excluded_symbol_names = Method")]
+        [InlineData(@"dotnet_code_quality.CA2329.excluded_symbol_names = Met*
+                      dotnet_code_quality.CA2330.excluded_symbol_names = Met*")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = Method")]
         public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
@@ -755,7 +757,11 @@ class Blah
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
 
@@ -812,11 +818,15 @@ class Blah
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, DiagnosticDescriptor rule)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic(rule)
                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, DiagnosticDescriptor rule)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyVB.Diagnostic(rule)
                .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

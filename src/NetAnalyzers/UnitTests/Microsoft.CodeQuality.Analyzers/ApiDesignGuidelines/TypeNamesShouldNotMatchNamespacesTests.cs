@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -17,23 +17,31 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class TypeNamesShouldNotMatchNamespacesTests
     {
         private static DiagnosticResult CSharpDefaultResultAt(int line, int column, string typeName, string namespaceName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult CSharpSystemResultAt(int line, int column, string typeName, string namespaceName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult BasicDefaultResultAt(int line, int column, string typeName, string namespaceName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.DefaultRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(typeName, namespaceName);
 
         private static DiagnosticResult BasicSystemResultAt(int line, int column, string typeName, string namespaceName)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(TypeNamesShouldNotMatchNamespacesAnalyzer.SystemRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(typeName, namespaceName);
 
         [Fact]

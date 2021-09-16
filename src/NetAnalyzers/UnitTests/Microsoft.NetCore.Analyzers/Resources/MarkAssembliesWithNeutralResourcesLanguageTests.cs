@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -56,25 +56,33 @@ End Class", VerifyVB.Diagnostic());
         [Fact]
         public async Task TestCSharpInvalidAttribute1()
         {
+#pragma warning disable RS0030 // Do not used banned APIs
             await VerifyCSharpWithDependenciesAsync(@"[assembly: System.Resources.NeutralResourcesLanguage("""")]", VerifyCS.Diagnostic().WithLocation(1, 12));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
         public async Task TestCSharpInvalidAttribute2()
         {
+#pragma warning disable RS0030 // Do not used banned APIs
             await VerifyCSharpWithDependenciesAsync(@"[assembly: System.Resources.NeutralResourcesLanguage(null)]", VerifyCS.Diagnostic().WithLocation(1, 12));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
         public async Task TestBasicInvalidAttribute1()
         {
+#pragma warning disable RS0030 // Do not used banned APIs
             await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage("""")>", VerifyVB.Diagnostic().WithLocation(1, 2));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]
         public async Task TestBasicInvalidAttribute2()
         {
+#pragma warning disable RS0030 // Do not used banned APIs
             await VerifyBasicWithDependenciesAsync(@"<Assembly: System.Resources.NeutralResourcesLanguage(Nothing)>", VerifyVB.Diagnostic().WithLocation(1, 2));
+#pragma warning restore RS0030 // Do not used banned APIs
         }
 
         [Fact]

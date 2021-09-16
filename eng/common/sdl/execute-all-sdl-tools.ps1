@@ -93,13 +93,6 @@ try {
     }
   }
 
-  if ($UpdateBaseline) {
-    & (Join-Path $PSScriptRoot 'push-gdn.ps1') -Repository $RepoName -BranchName $BranchName -GdnFolder $GdnFolder -AzureDevOpsAccessToken $AzureDevOpsAccessToken -PushReason 'Update baseline'
-    if ($LASTEXITCODE -ne 0) {
-      ExitWithExitCode $LASTEXITCODE
-    }
-  }
-
   if ($TsaPublish) {
     if ($TsaBranchName -and $BuildNumber) {
       if (-not $TsaRepositoryName) {

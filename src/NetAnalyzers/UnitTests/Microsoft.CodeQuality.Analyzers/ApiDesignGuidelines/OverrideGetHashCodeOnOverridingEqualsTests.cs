@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -55,26 +55,6 @@ End Structure");
             await VerifyVB.VerifyAnalyzerAsync(@"
 Structure C
 End Structure");
-        }
-
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7305")]
-        public async Task Ignored_Interace()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Interace I
-    Public Overrides Function Equals(o As Object) As Boolean
-        Return True
-    End Function
-End Interface");
-        }
-
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7305")]
-        public async Task Ignored_TopLevel()
-        {
-            await VerifyVB.VerifyAnalyzerAsync(@"
-Public Overrides Function Equals(o As Object) As Boolean
-    Return True
-End Function");
         }
 
         [Fact]
@@ -144,7 +124,9 @@ End Class",
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column);
+#pragma warning restore RS0030 // Do not used banned APIs
     }
 }

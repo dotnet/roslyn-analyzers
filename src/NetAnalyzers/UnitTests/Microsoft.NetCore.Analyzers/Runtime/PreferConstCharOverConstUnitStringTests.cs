@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. 
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information. 
 
 using System.Threading.Tasks;
 using Xunit;
@@ -493,11 +493,12 @@ namespace TestNamespace
         { 
             StringBuilder sb = new StringBuilder();
             const string ch = ""a"";
-            sb.Append($""{ch}"");
+            sb.Append([|$""{ch}""|]);
         } 
     } 
 }";
-            await VerifyCS.VerifyAnalyzerAsync(interpolatedString_cs);
+
+            await VerifyCS.VerifyCodeFixAsync(interpolatedString_cs, interpolatedString_cs);
             const string interpolatedString_vb = @"
 Imports System
 

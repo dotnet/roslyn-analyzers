@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
@@ -20,13 +20,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     public class DisposableFieldsShouldBeDisposedTests
     {
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
            => VerifyCS.Diagnostic()
                .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic()
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         [Fact]
@@ -1006,8 +1010,11 @@ class C
 ";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await csTest.RunAsync();
@@ -1041,8 +1048,11 @@ End Class
 ";
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await vbTest.RunAsync();
@@ -1090,8 +1100,11 @@ class C
 ";
             var csTest = new VerifyCS.Test()
             {
-                TestCode = csCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { csCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await csTest.RunAsync();
@@ -1124,8 +1137,11 @@ End Class
 ";
             var vbTest = new VerifyVB.Test()
             {
-                TestCode = vbCode,
-                AnalyzerConfigDocument = editorConfig
+                TestState =
+                {
+                    Sources = { vbCode },
+                    AnalyzerConfigFiles = { ("/.editorconfig", $"[*]\r\n{editorConfig}") },
+                }
             };
 
             await vbTest.RunAsync();
@@ -3287,9 +3303,10 @@ class C : B
 
         [Theory]
         [InlineData("")]
-        [InlineData("dotnet_code_quality.excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality." + DisposableFieldsShouldBeDisposed.RuleId + ".excluded_symbol_names = B")]
-        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = B")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = BB")]
+        [InlineData("dotnet_code_quality.CA2213.excluded_symbol_names = B*")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = BB")]
         public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
             var csharpTest = new VerifyCS.Test
@@ -3308,10 +3325,10 @@ class A : IDisposable
     }
 }
 
-class B : IDisposable
+class BB : IDisposable
 {
     private readonly A a;
-    public B()
+    public BB()
     {
         a = new A();
     }
@@ -3321,15 +3338,19 @@ class B : IDisposable
     }
 }
 "                    },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
             if (editorConfigText.Length == 0)
             {
                 csharpTest.ExpectedDiagnostics.Add(
-                    // Test0.cs(13,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetCSharpResultAt(13, 24, "B", "a", "A"));
+                    // Test0.cs(13,24): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetCSharpResultAt(13, 24, "BB", "a", "A"));
             }
 
             await csharpTest.RunAsync();
@@ -3349,7 +3370,7 @@ Class A
     End Sub
 End Class
 
-Class B
+Class BB
     Implements IDisposable
 
     Private ReadOnly a As A
@@ -3361,15 +3382,19 @@ Class B
     End Sub
 End Class"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 }
             };
 
             if (editorConfigText.Length == 0)
             {
                 basicTest.ExpectedDiagnostics.Add(
-                    // Test0.vb(13,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-                    GetBasicResultAt(13, 22, "B", "a", "A"));
+                    // Test0.vb(13,22): warning CA2213: 'BB' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+                    GetBasicResultAt(13, 22, "BB", "a", "A"));
             }
 
             await basicTest.RunAsync();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -1390,6 +1390,41 @@ namespace VulnerableWebApp
     }
 }",
                 GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "SqlCommand injectSql(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public async Task SimpleLambda()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            Func<string, SqlCommand> injectSql = (sqlInjection) =>
+            {
+                return new SqlCommand()
+                {
+                    CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                    CommandType = CommandType.Text,
+                };
+            };
+
+            injectSql(taintedInput);
+        }
+    }
+}",
+                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "lambda expression", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -3666,6 +3701,25 @@ public class MyController
         }
 
         [Fact]
+        public async Task AspNetMvcController_HasPropertySetter()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data.SqlClient;
+
+public class MyController
+{
+    public void DoSomething(string input)
+    {
+    }
+
+    public string AString 
+    {
+        set { _ = value; }
+    }
+}");
+        }
+
+        [Fact]
         public async Task TaintFunctionArguments()
         {
             await VerifyCSharpWithDependenciesAsync(@"
@@ -3797,6 +3851,31 @@ public class MyController
         public async Task AssemblyAttributeRegressionTest()
         {
             await VerifyVisualBasicWithDependenciesAsync(@"<Assembly: System.Reflection.AssemblyTitle(""Title"")>");
+        }
+
+        [Fact]
+        public async Task AspNetCoreHttpRequest_Form_Direct_Diagnostic()
+        {
+            await VerifyCSharpWithDependenciesAsync(@"
+using System.Data;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
+
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        string input = Request.Form[""in""];
+        var sqlCommand = new SqlCommand()
+        {
+            CommandText = input,
+            CommandType = CommandType.Text,
+        };
+
+        return View();
+    }
+}",
+                GetCSharpResultAt(13, 13, 10, 24, "string SqlCommand.CommandText", "IActionResult HomeController.Index()", "IFormCollection HttpRequest.Form", "IActionResult HomeController.Index()"));
         }
     }
 }

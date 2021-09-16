@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -12,31 +12,28 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    using static MicrosoftCodeQualityAnalyzersResources;
+
     /// <summary>
     /// CA1801: Review unused parameters
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class ReviewUnusedParametersAnalyzer : DiagnosticAnalyzer
+    public abstract class ReviewUnusedParametersAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1801";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal static readonly DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(
+            RuleId,
+            CreateLocalizableResourceString(nameof(ReviewUnusedParametersTitle)),
+            CreateLocalizableResourceString(nameof(ReviewUnusedParametersMessage)),
+            DiagnosticCategory.Usage,
+            RuleLevel.Disabled,    // We have an implementation in IDE.
+            description: CreateLocalizableResourceString(nameof(ReviewUnusedParametersDescription)),
+            isPortedFxCopRule: true,
+            isDataflowRule: false);
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rule);
 
-        internal static DiagnosticDescriptor Rule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Usage,
-                                                                             RuleLevel.Disabled,    // We have an implementation in IDE.
-                                                                             description: s_localizableDescription,
-                                                                             isPortedFxCopRule: true,
-                                                                             isDataflowRule: false);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-
-        public override void Initialize(AnalysisContext context)
+        public sealed override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
@@ -163,7 +160,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         }
 
 #pragma warning disable RS1012 // Start action has no registered actions.
-        private static bool ShouldAnalyzeMethod(
+        private bool ShouldAnalyzeMethod(
             IMethodSymbol method,
             OperationBlockStartAnalysisContext startOperationBlockContext,
             INamedTypeSymbol? eventsArgSymbol,
@@ -196,6 +193,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
+            // Ignore primary constructor (body-less) of positional records.
+            if (IsPositionalRecordPrimaryConstructor(method))
+            {
+                return false;
+            }
+
             // Ignore serialization special methods
             if (method.IsSerializationConstructor(serializationInfoType, streamingContextType) ||
                 method.IsGetObjectData(serializationInfoType, streamingContextType))
@@ -216,11 +219,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             // Bail out if user has configured to skip analysis for the method.
-            if (!method.MatchesConfiguredVisibility(
-                startOperationBlockContext.Options,
+            if (!startOperationBlockContext.Options.MatchesConfiguredVisibility(
                 Rule,
+                method,
                 startOperationBlockContext.Compilation,
-                startOperationBlockContext.CancellationToken,
                 defaultRequiredVisibility: SymbolVisibilityGroup.All))
             {
                 return false;
@@ -241,5 +243,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return true;
         }
+
+        protected abstract bool IsPositionalRecordPrimaryConstructor(IMethodSymbol methodSymbol);
     }
 }

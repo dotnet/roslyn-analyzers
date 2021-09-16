@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -238,6 +238,7 @@ class TestClass
         [InlineData("")]
         [InlineData("dotnet_code_quality.excluded_symbol_names = ExampleMethod")]
         [InlineData("dotnet_code_quality.CA5378.excluded_symbol_names = ExampleMethod")]
+        [InlineData("dotnet_code_quality.CA5378.excluded_symbol_names = ExampleMet*")]
         [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = ExampleMethod")]
         public async Task EditorConfigConfiguration_ExcludedSymbolNamesWithValueOption(string editorConfigText)
         {
@@ -259,7 +260,11 @@ public class ExampleClass
     }
 }"
                     },
-                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                    AnalyzerConfigFiles = { ("/.editorconfig", $@"root = true
+
+[*]
+{editorConfigText}
+") }
                 },
             };
 
@@ -272,13 +277,17 @@ public class ExampleClass
         }
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyCS.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, params string[] arguments)
+#pragma warning disable RS0030 // Do not used banned APIs
             => VerifyVB.Diagnostic(DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule)
                 .WithLocation(line, column)
+#pragma warning restore RS0030 // Do not used banned APIs
                 .WithArguments(arguments);
     }
 }

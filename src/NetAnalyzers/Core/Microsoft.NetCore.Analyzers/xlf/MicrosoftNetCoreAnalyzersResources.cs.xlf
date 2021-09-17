@@ -1273,8 +1273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementsPreviewInterfaceMessage">
-        <source>'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</source>
-        <target state="new">'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</target>
+        <source>'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features.</source>
+        <target state="new">'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementsPreviewMethodMessage">

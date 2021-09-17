@@ -104,11 +104,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static IArrayCreationOperation GetArrayCreationOperation(SyntaxNode node, SemanticModel model, CancellationToken cancellationToken,
                 out bool isInvoked)
         {
-            // The analyzer only passes a diagnostic for two scenarios:
+            // The analyzer only passes a diagnostic for two scenarios, each having an IArrayCreationOperation:
             //      1. The node is an IArgumentOperation that is a direct parent of an IArrayCreationOperation
             //      2. The node is an IArrayCreationOperation already, as it was pulled from an
             //         invocation, like with LINQ extension methods
-            // Therefore, casting to IArrayCreationOperation in this case is safe
 
             // If this is a LINQ invocation, the node is already an IArrayCreationOperation
             if (model.GetOperation(node, cancellationToken) is IArrayCreationOperation arrayCreation)
@@ -116,6 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 isInvoked = true;
                 return arrayCreation;
             }
+            // Otherwise, we'll get the IArrayCreationOperation from the argument node's child
             isInvoked = false;
             return (IArrayCreationOperation)model.GetOperation(node.ChildNodes().First(), cancellationToken);
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -36,14 +37,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal static readonly LocalizableString s_fieldOrEventIsPreviewTypeMessage = CreateLocalizableResourceString(nameof(FieldIsPreviewTypeMessage));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
-        internal static DiagnosticDescriptor CustomPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
-                                                                                                                    s_localizableTitle,
-                                                                                                                    CreateLocalizableResourceString(nameof(CustomPreviewAPIMessage)),
-                                                                                                                    DiagnosticCategory.Usage,
-                                                                                                                    RuleLevel.BuildError,
-                                                                                                                    s_localizableDescription,
-                                                                                                                    isPortedFxCopRule: false,
-                                                                                                                    isDataflowRule: false);
         internal static DiagnosticDescriptor GeneralPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                                     s_localizableTitle,
                                                                                                                     CreateLocalizableResourceString(nameof(DetectPreviewFeaturesDiagnosticMessage)),
@@ -134,7 +127,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                                     isDataflowRule: false);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-            CustomPreviewFeatureAttributeRule,
             GeneralPreviewFeatureAttributeRule,
             ImplementsPreviewInterfaceRule,
             ImplementsPreviewMethodRule,
@@ -186,7 +178,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (virtualStaticsInInterfaces != null)
                     {
-                        SymbolIsAnnotatedAsPreview(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols/*, previewSymbolToMessageAndUrl*/, previewFeaturesAttribute/*, out _, out _*/);
+                        SymbolIsAnnotatedAsPreview(virtualStaticsInInterfaces, requiresPreviewFeaturesSymbols, previewFeaturesAttribute);
                     }
                 }
 
@@ -272,7 +264,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             if (SymbolIsAnnotatedAsPreview(symbolType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
             {
-                string message = string.Format((string)s_fieldOrEventIsPreviewTypeMessage, symbol.Name, symbolType.Name);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_fieldOrEventIsPreviewTypeMessage, symbol.Name, symbolType.Name);
                 SyntaxNode? node = GetPreviewSyntaxNodeForFieldsOrEvents(symbol, symbolType);
                 if (node != null)
                 {
@@ -291,7 +283,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 out SyntaxNode? syntaxNode,
                                                                 methodOrFieldOrEventSymbolForGenericParameterSyntaxNode: symbol))
             {
-                string message = string.Format((string)s_fieldOrEventIsPreviewTypeMessage, symbol.Name, previewSymbol.Name);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_fieldOrEventIsPreviewTypeMessage, symbol.Name, previewSymbol.Name);
                 if (syntaxNode != null)
                 {
                     ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, FieldOrEventIsPreviewTypeRule, message);
@@ -331,7 +323,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (SymbolIsAnnotatedAsPreview(anInterface, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
                     SyntaxNode? interfaceNode = GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(symbol, anInterface);
-                    string message = string.Format((string)s_implementsPreviewInterfaceMessage, symbol.Name, anInterface.Name);
+                    string message = string.Format(CultureInfo.CurrentCulture, (string)s_implementsPreviewInterfaceMessage, symbol.Name, anInterface.Name);
                     if (interfaceNode != null)
                     {
                         ReportDiagnosticWithCustomOrGivenDiagnostic(context, interfaceNode, anInterface, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewInterfaceRule, message);
@@ -349,7 +341,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 out ISymbol? previewSymbol,
                                                                 out SyntaxNode? syntaxNode))
             {
-                string message = string.Format((string)s_usesPreviewTypeParameterMessage, symbol.Name, previewSymbol.Name);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, symbol.Name, previewSymbol.Name);
                 if (syntaxNode != null)
                 {
                     ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
@@ -362,7 +354,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (ProcessTypeAttributeForPreviewness(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out SyntaxReference? attributeSyntaxReference, out string? attributeName, out ISymbol? previewAttributeSymbol))
             {
-                string message = string.Format((string)s_detectPreviewFeaturesMessage, attributeName);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesMessage, attributeName);
                 ReportDiagnosticWithCustomOrGivenDiagnostic(context, attributeSyntaxReference.GetSyntax(context.CancellationToken), previewAttributeSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
 
@@ -371,7 +363,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 if (SymbolIsAnnotatedAsPreview(baseType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
-                    string message = string.Format((string)s_derivesFromPreviewClassMessage, symbol.Name, baseType.Name);
+                    string message = string.Format(CultureInfo.CurrentCulture, (string)s_derivesFromPreviewClassMessage, symbol.Name, baseType.Name);
                     SyntaxNode? baseTypeNode = GetPreviewInterfaceNodeForTypeImplementingPreviewInterface(symbol, baseType);
                     if (baseTypeNode != null)
                     {
@@ -521,7 +513,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (SymbolIsAnnotatedAsPreview(baseInterfaceMember, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
                     string baseInterfaceMemberName = baseInterfaceMember.ContainingSymbol != null ? baseInterfaceMember.ContainingSymbol.Name + "." + baseInterfaceMember.Name : baseInterfaceMember.Name;
-                    string message = string.Format((string)s_implementsPreviewMethodMessage, propertyOrMethodSymbol.Name, baseInterfaceMemberName);
+                    string message = string.Format(CultureInfo.CurrentCulture, (string)s_implementsPreviewMethodMessage, propertyOrMethodSymbol.Name, baseInterfaceMemberName);
                     ReportDiagnosticWithCustomOrGivenDiagnostic(context, baseInterfaceMember, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, ImplementsPreviewMethodRule, message);
                 }
             }
@@ -532,7 +524,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (SymbolIsAnnotatedAsPreview(overridden, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
                     string overriddenName = overridden.ContainingSymbol != null ? overridden.ContainingSymbol.Name + "." + overridden.Name : overridden.Name;
-                    string message = string.Format((string)s_overridePreviewMethodMessage, propertyOrMethodSymbol.Name, overriddenName);
+                    string message = string.Format(CultureInfo.CurrentCulture, (string)s_overridePreviewMethodMessage, propertyOrMethodSymbol.Name, overriddenName);
                     ReportDiagnosticWithCustomOrGivenDiagnostic(context, overridden, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, OverridesPreviewMethodRule, message);
                 }
             }
@@ -547,7 +539,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (SymbolIsAnnotatedAsPreview(methodReturnType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                 {
-                    string message = string.Format((string)s_methodReturnsPreviewTypeMessage, propertyOrMethodSymbol.Name, methodReturnType.Name);
+                    string message = string.Format(CultureInfo.CurrentCulture, (string)s_methodReturnsPreviewTypeMessage, propertyOrMethodSymbol.Name, methodReturnType.Name);
                     SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, methodReturnType);
                     if (returnTypeNode != null)
                     {
@@ -564,7 +556,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ISymbol? innerPreviewSymbol = GetPreviewSymbolForGenericTypesFromTypeArguments(typeSymbol.TypeArguments, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
                     if (innerPreviewSymbol != null)
                     {
-                        string message = string.Format((string)s_methodReturnsPreviewTypeMessage, propertyOrMethodSymbol.Name, innerPreviewSymbol.Name);
+                        string message = string.Format(CultureInfo.CurrentCulture, (string)s_methodReturnsPreviewTypeMessage, propertyOrMethodSymbol.Name, innerPreviewSymbol.Name);
                         SyntaxNode? returnTypeNode = GetPreviewReturnTypeSyntaxNodeForMethodOrProperty(method.IsPropertyGetter() ? method.AssociatedSymbol : method, innerPreviewSymbol);
                         if (returnTypeNode != null)
                         {
@@ -588,7 +580,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (SymbolIsAnnotatedAsPreview(parameterType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
                     {
-                        string message = string.Format((string)s_methodUsesPreviewTypeAsParameterMessage, propertyOrMethodSymbol.Name, parameterType.Name);
+                        string message = string.Format(CultureInfo.CurrentCulture, (string)s_methodUsesPreviewTypeAsParameterMessage, propertyOrMethodSymbol.Name, parameterType.Name);
                         SyntaxNode? previewParameterNode = GetPreviewParameterSyntaxNodeForMethod(method, parameterType);
                         if (previewParameterNode != null)
                         {
@@ -607,7 +599,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                         out SyntaxNode? syntaxNode,
                                                                         methodOrFieldOrEventSymbolForGenericParameterSyntaxNode: method))
                     {
-                        string message = string.Format((string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name);
+                        string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name);
                         if (syntaxNode != null)
                         {
                             ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, referencedPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
@@ -626,7 +618,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 out ISymbol? previewSymbol,
                                                                 out SyntaxNode? referencedPreviewTypeSyntaxNode))
             {
-                string message = string.Format((string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, previewSymbol.Name);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, previewSymbol.Name);
                 if (referencedPreviewTypeSyntaxNode != null)
                 {
                     ReportDiagnosticWithCustomOrGivenDiagnostic(context, referencedPreviewTypeSyntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
@@ -675,7 +667,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                           ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
                                                           INamedTypeSymbol previewFeatureAttributeSymbol)
         {
-            if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols/*, previewSymbolsToMessageAndUrl*/, previewFeatureAttributeSymbol, out ISymbol? symbol/*, out string? customMessage, out string? customUrl*/))
+            if (OperationUsesPreviewFeatures(context, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out ISymbol? symbol))
             {
                 IOperation operation = context.Operation;
                 if (operation is ICatchClauseOperation catchClauseOperation)
@@ -683,7 +675,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operation = catchClauseOperation.ExceptionDeclarationOrExpression;
                 }
 
-                string message = string.Format((string)s_detectPreviewFeaturesMessage, symbol.Name);
+                string message = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesMessage, symbol.Name);
                 ReportDiagnosticWithCustomOrGivenDiagnostic(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
         }
@@ -693,7 +685,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                          INamedTypeSymbol previewFeatureAttributeSymbol,
                                                          [NotNullWhen(true)] out ISymbol? referencedPreviewSymbol)
         {
-            if (SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols/*, previewSymbolsToMessageAndUrl*/, previewFeatureAttributeSymbol/*, out customMessage, out customUrl*/))
+            if (SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
             {
                 referencedPreviewSymbol = symbol;
                 return true;
@@ -720,7 +712,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             IOperation operation = context.Operation;
             ISymbol containingSymbol = context.ContainingSymbol;
-            if (SymbolIsAnnotatedAsPreview(containingSymbol, requiresPreviewFeaturesSymbols,/* previewSymbolsToMessageAndUrl,*/ previewFeatureAttributeSymbol/*, out customMessage, out customUrl*/))
+            if (SymbolIsAnnotatedAsPreview(containingSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
             {
                 referencedPreviewSymbol = null;
                 return false;
@@ -732,7 +724,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (symbol is IPropertySymbol propertySymbol)
                 {
                     // bool AProperty => true is different from bool AProperty { get => false }. Handle both here
-                    if (SymbolIsAnnotatedOrUsesPreviewTypes(propertySymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out referencedPreviewSymbol/*, out customMessage, out customUrl*/))
+                    if (SymbolIsAnnotatedOrUsesPreviewTypes(propertySymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out referencedPreviewSymbol))
                     {
                         return true;
                     }
@@ -837,7 +829,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
+#pragma warning disable CA1054,CA1055 // url should be of type URI
         private static string? GetMessageAndURLFromAttributeConstructor(AttributeData attribute, out string? url)
+#pragma warning restore CA1054,CA1055
         {
             string? message = null;
             url = null;
@@ -870,10 +864,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return message;
         }
 
+#pragma warning disable CA1054,CA1055 // url should be of type URI
         private static string? GetMessageAndURLForSymbol(ISymbol symbol,
             INamedTypeSymbol previewFeatureAttribute,
             ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
             out string? url)
+#pragma warning restore CA1054,CA1055
         {
             string? message = null;
             url = null;
@@ -928,7 +924,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 message = customMessage;
             }
 
-            url = string.Format((string)s_detectPreviewFeaturesUrl, customUrl ?? url);
+            url = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesUrl, customUrl ?? url);
             context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptor, message, url));
         }
 
@@ -946,7 +942,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 message = customMessage;
             }
 
-            url = string.Format((string)s_detectPreviewFeaturesUrl, customUrl ?? url);
+            url = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesUrl, customUrl ?? url);
             context.ReportDiagnostic(node.CreateDiagnostic(diagnosticDescriptor, message, url));
         }
 
@@ -964,29 +960,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 message = customMessage;
             }
 
-            url = string.Format((string)s_detectPreviewFeaturesUrl, customUrl ?? url);
+            url = string.Format(CultureInfo.CurrentCulture, (string)s_detectPreviewFeaturesUrl, customUrl ?? url);
             context.ReportDiagnostic(symbolToRaiseDiagnosticOn.CreateDiagnostic(diagnosticDescriptor, message, url));
         }
 
-        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, /*ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolToMessageAndUrl,*/ INamedTypeSymbol previewFeatureAttribute/*, out string? message, out string? url*/)
+        private static bool SymbolIsAnnotatedAsPreview(ISymbol symbol, ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols, INamedTypeSymbol previewFeatureAttribute)
         {
             if (!requiresPreviewFeaturesSymbols.TryGetValue(symbol, out bool existing))
             {
-                //ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
-                //foreach (var attribute in attributes)
-                //{
-                //    if (attribute.AttributeClass.Equals(previewFeatureAttribute))
-                //    {
-                //        message = GetMessageAndURLFromAttributeConstructor(attribute, out url);
-                //        if (message != null || url != null)
-                //        {
-                //            previewSymbolToMessageAndUrl.GetOrAdd(symbol, new ValueTuple<string?, string?>(message, url));
-                //        }
-                //        requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
-                //        return true;
-                //    }
-                //}
-
                 if (symbol.HasAttribute(previewFeatureAttribute))
                 {
                     requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
@@ -1001,7 +982,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 if (parent != null)
                 {
-                    if (SymbolIsAnnotatedAsPreview(parent, requiresPreviewFeaturesSymbols,/* previewSymbolToMessageAndUrl,*/ previewFeatureAttribute/*, out message, out url*/))
+                    if (SymbolIsAnnotatedAsPreview(parent, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
                     {
                         requiresPreviewFeaturesSymbols.GetOrAdd(symbol, true);
                         return true;
@@ -1009,18 +990,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 requiresPreviewFeaturesSymbols.GetOrAdd(symbol, false);
-                //message = null;
-                //url = null;
                 return false;
             }
-
-            //message = null;
-            //url = null;
-            //if (previewSymbolToMessageAndUrl.TryGetValue(symbol, out (string? existingMessage, string? existingUrl) value))
-            //{
-            //    message = value.existingMessage;
-            //    url = value.existingUrl;
-            //}
 
             return existing;
         }

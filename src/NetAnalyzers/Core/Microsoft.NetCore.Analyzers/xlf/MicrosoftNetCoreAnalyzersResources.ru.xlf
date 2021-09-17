@@ -343,8 +343,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DerivesFromPreviewClassMessage">
-        <source>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</source>
-        <target state="new">'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</target>
+        <source>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features.</source>
+        <target state="new">'{0}' derives from preview class '{1}' and therefore needs to opt into preview features.</target>
         <note />
       </trans-unit>
       <trans-unit id="DetectPreviewFeaturesDescription">

@@ -1732,7 +1732,7 @@
     <value>Converting an instance method to a static method may produce invalid code</value>
   </data>
   <data name="DerivesFromPreviewClassMessage" xml:space="preserve">
-    <value>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</value>
+    <value>'{0}' derives from preview class '{1}' and therefore needs to opt into preview features.</value>
   </data>
   <data name="ImplementsPreviewInterfaceMessage" xml:space="preserve">
     <value>'{0}' implements the preview interface '{1}' and therefore needs to opt into preview features.</value>

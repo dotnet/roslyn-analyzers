@@ -18,8 +18,8 @@
   <PropertyGroup>
     <VersionPrefix>3.3.3</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
-    <NetAnalyzersVersionPrefix>6.0.0</NetAnalyzersVersionPrefix>
-    <NetAnalyzersPreReleaseVersionLabel>rc2</NetAnalyzersPreReleaseVersionLabel>
+    <NetAnalyzersVersionPrefix>7.0.0</NetAnalyzersVersionPrefix>
+    <NetAnalyzersPreReleaseVersionLabel>preview1</NetAnalyzersPreReleaseVersionLabel>
     <AnalyzerUtilitiesVersionPrefix>$(VersionPrefix)</AnalyzerUtilitiesVersionPrefix>
     <!--
         When StabilizePackageVersion is set to 'true', this branch will produce stable outputs for 'Shipping' packages
@@ -57,7 +57,7 @@
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.26-alpha</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.0.1-beta1.21202.2</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.1.1-beta1.21351.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>

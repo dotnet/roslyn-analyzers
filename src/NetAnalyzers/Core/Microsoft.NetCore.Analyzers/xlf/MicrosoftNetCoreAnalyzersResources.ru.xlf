@@ -353,8 +353,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DetectPreviewFeaturesDiagnosticMessage">
-        <source>'{0}'. '{1}'.</source>
-        <target state="new">'{0}'. '{1}'.</target>
+        <source>'{0}' '{1}'</source>
+        <target state="new">'{0}' '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DetectPreviewFeaturesMessage">

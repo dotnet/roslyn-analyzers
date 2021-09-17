@@ -1799,7 +1799,7 @@
     <value>'{0}'. '{1}'</value>
   </data>
   <data name="DetectPreviewFeaturesDiagnosticMessage" xml:space="preserve">
-    <value>'{0}'. '{1}'</value>
+    <value>'{0}' '{1}'</value>
   </data>
   <data name="DetectPreviewFeaturesURL" xml:space="preserve">
     <value>See '{0}' for more information.</value>

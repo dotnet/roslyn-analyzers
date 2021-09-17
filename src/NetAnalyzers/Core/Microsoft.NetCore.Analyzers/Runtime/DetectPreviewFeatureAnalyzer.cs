@@ -199,7 +199,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     );
 
                 // Handle preview symbol definitions
-                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols, virtualStaticsInInterfaces, previewFeaturesAttribute), s_symbols);
+                context.RegisterSymbolAction(context => AnalyzeSymbol(context, requiresPreviewFeaturesSymbols, previewSymbolToMessageAndUrl, virtualStaticsInInterfaces, previewFeaturesAttribute), s_symbols);
             });
         }
 
@@ -301,9 +301,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ProcessFieldOrEventSymbolAttributes(context, symbol, symbolType, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
         }
 
-        private void ProcessTypeSymbolAttributes(SymbolAnalysisContext context, ITypeSymbol symbol,
-            ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
-            INamedTypeSymbol previewFeatureAttributeSymbol)
+        private void ProcessTypeSymbolAttributes(SymbolAnalysisContext context,
+                                                 ITypeSymbol symbol,
+                                                 ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                 ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                 INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             // We're only concerned about types(class/struct/interface) directly implementing preview interfaces. Implemented interfaces(direct/base) will report their diagnostics independently
             ImmutableArray<INamedTypeSymbol> interfaces = symbol.Interfaces;
@@ -339,9 +341,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            if (ProcessTypeAttributeForPreviewness(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out SyntaxReference? attributeSyntaxReference, out string? attributeName))
+            if (ProcessTypeAttributeForPreviewness(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol, out SyntaxReference? attributeSyntaxReference, out string? attributeName, out ISymbol? previewAttributeSymbol))
             {
-                context.ReportDiagnostic(attributeSyntaxReference.GetSyntax(context.CancellationToken).CreateDiagnostic(GeneralPreviewFeatureAttributeRule, attributeName));
+                string message = string.Format((string)s_detectPreviewFeaturesMessage, attributeName);
+                ReportDiagnosticWithCustomOrGivenDiagnostic(context, attributeSyntaxReference.GetSyntax(context.CancellationToken), previewAttributeSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
 
             INamedTypeSymbol? baseType = symbol.BaseType;
@@ -363,23 +366,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private static bool ProcessTypeAttributeForPreviewness(ISymbol symbol,
-            ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
-            INamedTypeSymbol previewFeatureAttribute, [NotNullWhen(true)] out SyntaxReference? attributeSyntaxReference, [NotNullWhen(true)] out string? attributeName)
+                                                               ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                               INamedTypeSymbol previewFeatureAttribute,
+                                                               [NotNullWhen(true)] out SyntaxReference? attributeSyntaxReference,
+                                                               [NotNullWhen(true)] out string? attributeName,
+                                                               out ISymbol? previewSymbol)
         {
             ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
             for (int i = 0; i < attributes.Length; i++)
             {
                 AttributeData attribute = attributes[i];
-                if (SymbolIsAnnotatedAsPreview(attribute.AttributeClass, requiresPreviewFeaturesSymbols, previewFeatureAttribute) || SymbolIsAnnotatedAsPreview(attribute.AttributeConstructor, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
+                if (SymbolIsAnnotatedAsPreview(attribute.AttributeClass, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
                 {
                     attributeName = attribute.AttributeClass.Name;
                     attributeSyntaxReference = attribute.ApplicationSyntaxReference;
+                    previewSymbol = attribute.AttributeClass;
+                    return true;
+                }
+
+                if (SymbolIsAnnotatedAsPreview(attribute.AttributeConstructor, requiresPreviewFeaturesSymbols, previewFeatureAttribute))
+                {
+                    attributeName = attribute.AttributeClass.Name;
+                    attributeSyntaxReference = attribute.ApplicationSyntaxReference;
+                    previewSymbol = attribute.AttributeConstructor;
                     return true;
                 }
             }
 
             attributeName = null;
             attributeSyntaxReference = null;
+            previewSymbol = null;
             return false;
         }
 
@@ -595,9 +611,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         }
 
         private void AnalyzeSymbol(SymbolAnalysisContext context,
-            ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
-            IFieldSymbol? virtualStaticsInInterfaces,
-            INamedTypeSymbol previewFeatureAttributeSymbol)
+                                   ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                   ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                   IFieldSymbol? virtualStaticsInInterfaces,
+                                   INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             ISymbol symbol = context.Symbol;
 
@@ -609,7 +626,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (symbol is ITypeSymbol typeSymbol)
             {
-                ProcessTypeSymbolAttributes(context, typeSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
+                ProcessTypeSymbolAttributes(context, typeSymbol, requiresPreviewFeaturesSymbols, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol);
             }
             else if (symbol is IMethodSymbol || symbol is IPropertySymbol)
             {
@@ -651,7 +668,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 //}
 
                 //context.ReportDiagnostic(operation.CreateDiagnostic(GeneralPreviewFeatureAttributeRule, message, url));
-                ReportDiagnosticWithCustomOrGivenDiagnostic(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, symbol.Name);
+                string message = string.Format((string)s_detectPreviewFeaturesMessage, symbol.Name);
+                ReportDiagnosticWithCustomOrGivenDiagnostic(context, operation, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, GeneralPreviewFeatureAttributeRule, message);
             }
         }
 
@@ -841,25 +859,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return message;
         }
 
-        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(OperationAnalysisContext context,
-                                                                        IOperation operation,
-                                                                        ISymbol symbol,
-                                                                        ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
-                                                                        INamedTypeSymbol previewFeatureAttribute,
-                                                                        DiagnosticDescriptor diagnosticDescriptor,
-                                                                        params string[] args)
+        private static string? GetMessageAndURLForSymbol(ISymbol symbol,
+            INamedTypeSymbol previewFeatureAttribute,
+            ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+            out string? url)
         {
-            string message = string.Format((string)s_detectPreviewFeaturesMessage, args);
-            string url = DefaultURL;
-            //if (customMessage != null)
-            //{
-            //    message = customMessage;
-            //}
-
-            //if (customUrl != null)
-            //{
-            //    url = customUrl;
-            //}
+            string? message = null;
+            url = null;
             if (!previewSymbolsToMessageAndUrl.TryGetValue(symbol, out (string? existingMessage, string? existingUrl) value))
             {
                 ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
@@ -894,9 +900,44 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            url = string.Format((string)s_detectPreviewFeaturesUrl, url);
-            context.ReportDiagnostic(operation.CreateDiagnostic(GeneralPreviewFeatureAttributeRule, message, url));
-            //context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptor, args));
+            return message;
+        }
+
+        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(OperationAnalysisContext context,
+                                                                        IOperation operation,
+                                                                        ISymbol symbol,
+                                                                        ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                                        INamedTypeSymbol previewFeatureAttribute,
+                                                                        DiagnosticDescriptor diagnosticDescriptor,
+                                                                        string message)
+        {
+            string url = DefaultURL;
+            if (GetMessageAndURLForSymbol(symbol, previewFeatureAttribute, previewSymbolsToMessageAndUrl, out string? customUrl) is string customMessage)
+            {
+                message = customMessage;
+            }
+
+            url = string.Format((string)s_detectPreviewFeaturesUrl, customUrl ?? url);
+            context.ReportDiagnostic(operation.CreateDiagnostic(diagnosticDescriptor, message, url));
+        }
+
+        private static void ReportDiagnosticWithCustomOrGivenDiagnostic(SymbolAnalysisContext context,
+                                                                        SyntaxNode node,
+                                                                        ISymbol previewSymbol,
+                                                                        ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                                        INamedTypeSymbol previewFeatureAttribute,
+                                                                        DiagnosticDescriptor diagnosticDescriptor,
+                                                                        string message)
+        {
+            string url = DefaultURL;
+            if (GetMessageAndURLForSymbol(previewSymbol, previewFeatureAttribute, previewSymbolsToMessageAndUrl, out string? customUrl) is string customMessage)
+            {
+                message = customMessage;
+            }
+
+            url = string.Format((string)s_detectPreviewFeaturesUrl, customUrl ?? url);
+            context.ReportDiagnostic(node.CreateDiagnostic(diagnosticDescriptor, message, url));
+
         }
 
         private static void ReportDiagnosticWithCustomOrGivenDiagnostic(SymbolAnalysisContext context, ISymbol symbol, INamedTypeSymbol previewFeatureAttribute, DiagnosticDescriptor diagnosticDescriptor, params string[] args)

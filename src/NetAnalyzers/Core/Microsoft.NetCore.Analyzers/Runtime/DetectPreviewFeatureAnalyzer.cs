@@ -27,6 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal static readonly LocalizableString s_detectPreviewFeaturesMessage = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesMessage));
         internal static readonly LocalizableString s_detectPreviewFeaturesUrl = CreateLocalizableResourceString(nameof(DetectPreviewFeaturesURL));
         internal static readonly LocalizableString s_implementPreviewInterfaceMessage = CreateLocalizableResourceString(nameof(ImplementsPreviewInterfaceMessage));
+        internal static readonly LocalizableString s_usesPreviewTypeParameterMessage = CreateLocalizableResourceString(nameof(UsesPreviewTypeParameterMessage));
         private static readonly ImmutableArray<SymbolKind> s_symbols = ImmutableArray.Create(SymbolKind.NamedType, SymbolKind.Method, SymbolKind.Property, SymbolKind.Field, SymbolKind.Event);
 
         internal static DiagnosticDescriptor CustomPreviewFeatureAttributeRule = DiagnosticDescriptorHelper.Create(RuleId,
@@ -84,7 +85,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal static DiagnosticDescriptor UsesPreviewTypeParameterRule = DiagnosticDescriptorHelper.Create(RuleId,
                                                                                                               s_localizableTitle,
-                                                                                                              CreateLocalizableResourceString(nameof(UsesPreviewTypeParameterMessage)),
+                                                                                                              CreateLocalizableResourceString(nameof(DetectPreviewFeaturesDiagnosticMessage)),
                                                                                                               DiagnosticCategory.Usage,
                                                                                                               RuleLevel.BuildError,
                                                                                                               s_localizableDescription,
@@ -333,13 +334,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 out ISymbol? previewSymbol,
                                                                 out SyntaxNode? syntaxNode))
             {
+                string message = string.Format((string)s_usesPreviewTypeParameterMessage, symbol.Name, previewSymbol.Name);
                 if (syntaxNode != null)
                 {
-                    context.ReportDiagnostic(syntaxNode.CreateDiagnostic(UsesPreviewTypeParameterRule, symbol.Name, previewSymbol.Name));
+                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
                 else
                 {
-                    context.ReportDiagnostic(symbol.CreateDiagnostic(UsesPreviewTypeParameterRule, symbol.Name, previewSymbol.Name));
+                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewSymbol, symbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
             }
 
@@ -431,7 +433,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     if (methodOrFieldOrEventSymbolForGenericParameterSyntaxNode != null)
                     {
-
                         previewSyntaxNode = GetPreviewSyntaxNodeFromSymbols(methodOrFieldOrEventSymbolForGenericParameterSyntaxNode, previewTypeArgument);
                     }
                     else
@@ -484,10 +485,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return symbol.IsStatic && symbol.IsAbstract && symbol.ContainingType != null && symbol.ContainingType.TypeKind == TypeKind.Interface && !SymbolIsAnnotatedAsPreview(symbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol);
         }
 
-        private void ProcessPropertyOrMethodAttributes(SymbolAnalysisContext context, ISymbol propertyOrMethodSymbol,
-            ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
-            IFieldSymbol? virtualStaticsInInterfaces,
-            INamedTypeSymbol previewFeatureAttributeSymbol)
+        private void ProcessPropertyOrMethodAttributes(SymbolAnalysisContext context,
+                                                       ISymbol propertyOrMethodSymbol,
+                                                       ConcurrentDictionary<ISymbol, bool> requiresPreviewFeaturesSymbols,
+                                                       ConcurrentDictionary<ISymbol, ValueTuple<string?, string?>> previewSymbolsToMessageAndUrl,
+                                                       IFieldSymbol? virtualStaticsInInterfaces,
+                                                       INamedTypeSymbol previewFeatureAttributeSymbol)
         {
             if (SymbolIsStaticAndAbstract(propertyOrMethodSymbol, requiresPreviewFeaturesSymbols, previewFeatureAttributeSymbol))
             {
@@ -583,13 +586,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                         out SyntaxNode? syntaxNode,
                                                                         methodOrFieldOrEventSymbolForGenericParameterSyntaxNode: method))
                     {
+                        string message = string.Format((string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name);
                         if (syntaxNode != null)
                         {
-                            context.ReportDiagnostic(syntaxNode.CreateDiagnostic(UsesPreviewTypeParameterRule, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name));
+                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, syntaxNode, referencedPreviewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                         }
                         else
                         {
-                            context.ReportDiagnostic(parameter.CreateDiagnostic(UsesPreviewTypeParameterRule, propertyOrMethodSymbol.Name, referencedPreviewSymbol.Name));
+                            ReportDiagnosticWithCustomOrGivenDiagnostic(context, referencedPreviewSymbol, parameter, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                         }
                     }
                 }
@@ -601,13 +605,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                 out ISymbol? previewSymbol,
                                                                 out SyntaxNode? referencedPreviewTypeSyntaxNode))
             {
+                string message = string.Format((string)s_usesPreviewTypeParameterMessage, propertyOrMethodSymbol.Name, previewSymbol.Name);
                 if (referencedPreviewTypeSyntaxNode != null)
                 {
-                    context.ReportDiagnostic(referencedPreviewTypeSyntaxNode.CreateDiagnostic(UsesPreviewTypeParameterRule, propertyOrMethodSymbol.Name, previewSymbol.Name));
+                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, referencedPreviewTypeSyntaxNode, previewSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
                 else
                 {
-                    context.ReportDiagnostic(propertyOrMethodSymbol.CreateDiagnostic(UsesPreviewTypeParameterRule, propertyOrMethodSymbol.Name, previewSymbol.Name));
+                    ReportDiagnosticWithCustomOrGivenDiagnostic(context, previewSymbol, propertyOrMethodSymbol, previewSymbolsToMessageAndUrl, previewFeatureAttributeSymbol, UsesPreviewTypeParameterRule, message);
                 }
             }
         }
@@ -632,7 +637,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else if (symbol is IMethodSymbol || symbol is IPropertySymbol)
             {
-                ProcessPropertyOrMethodAttributes(context, symbol, requiresPreviewFeaturesSymbols, virtualStaticsInInterfaces, previewFeatureAttributeSymbol);
+                ProcessPropertyOrMethodAttributes(context, symbol, requiresPreviewFeaturesSymbols, previewSymbolsToMessageAndUrl, virtualStaticsInInterfaces, previewFeatureAttributeSymbol);
             }
             else if (symbol is IFieldSymbol fieldSymbol)
             {

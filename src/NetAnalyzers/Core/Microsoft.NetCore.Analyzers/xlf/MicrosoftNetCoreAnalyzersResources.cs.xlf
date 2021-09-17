@@ -2783,8 +2783,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsesPreviewTypeParameterMessage">
-        <source>'{0}' uses the preview type '{1}' and needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</source>
-        <target state="new">'{0}' uses the preview type '{1}' and needs to opt into preview features. See https://aka.ms/dotnet-warnings/preview-features for more information.</target>
+        <source>'{0}' uses the preview type '{1}' and needs to opt into preview features.</source>
+        <target state="new">'{0}' uses the preview type '{1}' and needs to opt into preview features.</target>
         <note />
       </trans-unit>
     </body>

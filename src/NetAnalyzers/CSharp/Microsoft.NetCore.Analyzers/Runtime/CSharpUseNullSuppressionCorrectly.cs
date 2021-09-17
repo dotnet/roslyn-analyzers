@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return;
             }
 
-            DiagnosticDescriptor rule = NeverNullLiteralsRule; // default, as a plain literal expression is not null
+            DiagnosticDescriptor rule = LiteralNeverNullRule; // default, as a plain literal expression is not null
 
             SyntaxKind expressionKind = literalExpression.Token.Kind();
             if (expressionKind == SyntaxKind.NullKeyword)
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             else if (expressionKind == SyntaxKind.DefaultKeyword)
             {
                 rule = context.SemanticModel.GetTypeInfo(literalExpression).ConvertedType.IsNonNullableValueType()
-                    ? NeverNullLiteralsRule
+                    ? LiteralNeverNullRule
                     : LiteralAlwaysNullRule;
             }
 

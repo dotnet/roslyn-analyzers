@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        internal static readonly DiagnosticDescriptor NeverNullLiteralsRule = DiagnosticDescriptorHelper.Create(RuleId,
+        internal static readonly DiagnosticDescriptor LiteralNeverNullRule = DiagnosticDescriptorHelper.Create(RuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Usage,
@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             isPortedFxCopRule: false,
             isDataflowRule: false);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LiteralAlwaysNullRule, NeverNullLiteralsRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LiteralAlwaysNullRule, LiteralNeverNullRule);
 
         protected abstract ImmutableArray<TSyntaxKind> SyntaxKinds { get; }
 

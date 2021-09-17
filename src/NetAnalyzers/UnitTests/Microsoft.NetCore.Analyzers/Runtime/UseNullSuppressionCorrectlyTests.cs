@@ -28,7 +28,8 @@ public class A
         string x = {|#0:null!|};
         Console.WriteLine(x.Length);
     }
-}",
+}
+",
                 ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralAlwaysNullRule).WithLocation(0) },
                 FixedCode = @"
 using System;
@@ -99,7 +100,7 @@ public class A
     }
 }
 ",
-                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.NeverNullLiteralsRule).WithLocation(0) },
+                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralNeverNullRule).WithLocation(0) },
                 FixedCode = @"
 using System;
 
@@ -134,7 +135,7 @@ public class A
     }
 }
 ",
-                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.NeverNullLiteralsRule).WithLocation(0) },
+                ExpectedDiagnostics = { VerifyCS.Diagnostic(NullSuppressionAnalyzer.LiteralNeverNullRule).WithLocation(0) },
                 FixedCode = @"
 using System;
 

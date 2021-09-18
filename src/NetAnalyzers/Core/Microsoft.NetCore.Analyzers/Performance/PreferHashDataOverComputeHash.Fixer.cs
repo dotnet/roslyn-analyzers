@@ -107,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     {
                         Document? document = project.GetDocument(grouping.Key);
 
-                        if (document == null)
+                        if (document is null)
                         {
                             continue;
                         }

@@ -1782,4 +1782,16 @@
   <data name="DoNotAlwaysSkipTokenValidationInDelegatesMessage" xml:space="preserve">
     <value>The {0} is set to a function that is always returning true. By setting the validation delegate, you are overriding default validation and by always returning true, this validation is completely disabled.</value>
   </data>
+  <data name="SuspiciousCastFromCharToIntDescription" xml:space="preserve">
+    <value>Implicit cast from char to int in method call is suspicious. Consider using a different overload.</value>
+  </data>
+  <data name="SuspiciousCastFromCharToIntMessage" xml:space="preserve">
+    <value>Suspicious implicit cast from char to int</value>
+  </data>
+  <data name="SuspiciousCastFromCharToIntTitle" xml:space="preserve">
+    <value>Suspicious cast from char to int</value>
+  </data>
+  <data name="SuspiciousCastFromCharToIntCodeFixTitle" xml:space="preserve">
+    <value>Use correct overload</value>
+  </data>
 </root>
